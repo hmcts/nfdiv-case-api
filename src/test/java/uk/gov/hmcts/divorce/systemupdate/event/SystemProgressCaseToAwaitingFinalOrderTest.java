@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.common.notification.AwaitingFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -27,6 +28,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaiti
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
@@ -84,12 +86,35 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
     }
 
     @Test
-    void shouldGenerateFinalOrderLettersIfApplicant2Offline() {
+    void shouldGenerateFinalOrderLettersIfApplicant2IsOffline() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(getApplicant());
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.getApplicant1().setOffline(NO);
         caseData.getApplicant2().setOffline(YES);
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+
+        systemProgressCaseToAwaitingFinalOrder.aboutToSubmit(details, details);
+
+        verify(generateD36Form).generateD36Document(caseData, TEST_CASE_ID);
+        verify(generateApplyForFinalOrderDocument).generateApplyForFinalOrder(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            caseData.getApplicant1()
+        );
+
+        verifyNoMoreInteractions(generateD36Form);
+        verifyNoMoreInteractions(generateApplyForFinalOrderDocument);
+    }
+
+    @Test
+    void shouldGenerateFinalOrderLettersIfApplicant2EmailIsNotPresentAndIsNotRepresented() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(getApplicant());
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant2().setOffline(NO);
         caseData.getApplicant2().setEmail(null);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
@@ -115,6 +140,24 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
         caseData.getApplicant1().setOffline(NO);
         caseData.getApplicant2().setOffline(NO);
         caseData.getApplicant2().setEmail("test@email.com");
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        systemProgressCaseToAwaitingFinalOrder.aboutToSubmit(details, details);
+
+        verifyNoInteractions(generateD36Form);
+        verifyNoInteractions(generateApplyForFinalOrderDocument);
+    }
+
+    @Test
+    void shouldNotGenerateFinalOrderLettersForApplicant2IfApplicant2EmailIsNotPresentAndIsSolicitorRepresented() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(getApplicant());
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant2().setEmail(null);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         systemProgressCaseToAwaitingFinalOrder.aboutToSubmit(details, details);
