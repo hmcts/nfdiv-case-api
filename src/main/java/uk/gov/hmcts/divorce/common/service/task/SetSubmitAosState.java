@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
-import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
@@ -9,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
