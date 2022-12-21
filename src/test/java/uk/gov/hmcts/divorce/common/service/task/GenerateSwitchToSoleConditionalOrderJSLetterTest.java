@@ -88,7 +88,7 @@ class GenerateSwitchToSoleConditionalOrderJSLetterTest {
         expectedTemplateContent.put(IS_DIVORCE, true);
         expectedTemplateContent.put(FIRST_NAME, TEST_APP2_FIRST_NAME);
         expectedTemplateContent.put(LAST_NAME, TEST_APP2_LAST_NAME);
-        expectedTemplateContent.put(ADDRESS, "");
+        expectedTemplateContent.put(ADDRESS, "line1\nline2\npostcode");
         expectedTemplateContent.put(PARTNER, "husband");
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
