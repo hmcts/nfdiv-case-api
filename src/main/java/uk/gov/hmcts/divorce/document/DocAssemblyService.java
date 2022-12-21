@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.document;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
@@ -12,6 +13,9 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
+
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 
 @Service
 @Slf4j
@@ -29,6 +33,9 @@ public class DocAssemblyService {
     @Autowired
     private DocmosisTemplateProvider docmosisTemplateProvider;
 
+    @Value("${toggle.enable_case_document_access_management}")
+    private boolean caseDocumentAccessManagementEnabled;
+
     public DocumentInfo renderDocument(final Map<String, Object> templateContent,
                                        final Long caseId,
                                        final String authorisation,
@@ -38,13 +45,7 @@ public class DocAssemblyService {
 
         final String templateName = docmosisTemplateProvider.templateNameFor(templateId, languagePreference);
 
-        final DocAssemblyRequest docAssemblyRequest =
-            DocAssemblyRequest
-                .builder()
-                .templateId(templateName)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateContent))
-                .build();
+        final DocAssemblyRequest docAssemblyRequest = getDocAssemblyRequest(templateName, templateContent);
 
         log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
@@ -64,5 +65,27 @@ public class DocAssemblyService {
             filename + ".pdf",
             docAssemblyResponse.getBinaryFilePath()
         );
+    }
+
+    private DocAssemblyRequest getDocAssemblyRequest(final String templateName, final Map<String, Object> templateContent) {
+
+        if (caseDocumentAccessManagementEnabled) {
+            return DocAssemblyRequest
+                .builder()
+                .templateId(templateName)
+                .outputType("PDF")
+                .formPayload(objectMapper.valueToTree(templateContent))
+                .secureDocStoreEnabled(true)
+                .caseTypeId(CASE_TYPE)
+                .jurisdictionId(JURISDICTION)
+                .build();
+        } else {
+            return DocAssemblyRequest
+                .builder()
+                .templateId(templateName)
+                .outputType("PDF")
+                .formPayload(objectMapper.valueToTree(templateContent))
+                .build();
+        }
     }
 }

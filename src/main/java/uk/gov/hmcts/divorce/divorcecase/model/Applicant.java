@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.Objects;
@@ -185,6 +186,12 @@ public class Applicant {
     @Builder.Default
     private ApplicantPrayer applicantPrayer = new ApplicantPrayer();
 
+    @CCD(
+        label = "CO Pronounced cover letter regenerated",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo coPronouncedCoverLetterRegenerated;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
@@ -239,6 +246,32 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public String getCorrespondenceAddressWithoutConfidentialCheck() {
+        if (isRepresented()) {
+            return Stream.of(
+                    Optional.ofNullable(solicitor.getOrganisationPolicy())
+                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
+                    solicitor.getAddress()
+                ).filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+        } else if (null != address) {
+            return Stream.of(
+                    address.getAddressLine1(),
+                    address.getAddressLine2(),
+                    address.getAddressLine3(),
+                    address.getPostTown(),
+                    address.getCounty(),
+                    address.getPostCode(),
+                    address.getCountry()
+                )
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+        }
+
+        return null;
+    }
+
+    @JsonIgnore
     public String getPostalAddress() {
         if (isRepresented()) {
             return solicitor.getAddress();
@@ -253,7 +286,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    public boolean isOffline() {
+    public boolean isApplicantOffline() {
         return offline != null && offline.toBoolean();
     }
 

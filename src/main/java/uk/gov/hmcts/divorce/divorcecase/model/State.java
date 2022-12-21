@@ -70,6 +70,12 @@ public enum State {
     )
     Withdrawn,
 
+    @CCD(
+        label = "Archived",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {SolicitorAccess.class}
+    )
+    Archived,
 
     @CCD(
         label = "Awaiting admin clarification",
@@ -177,6 +183,20 @@ public enum State {
     AwaitingHWFDecision,
 
     @CCD(
+        label = "Awaiting HWF evidence",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingHWFEvidence,
+
+    @CCD(
+        label = "Awaiting HWF part payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingHWFPartPayment,
+
+    @CCD(
         label = "Awaiting joint conditional order",
         hint = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {DefaultStateAccess.class}
@@ -207,7 +227,7 @@ public enum State {
     @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
+        access = {DefaultStateAccess.class}
     )
     AwaitingService,
 
@@ -326,7 +346,7 @@ public enum State {
     @CCD(
         label = "Offline document received by CW",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
+        access = {DefaultStateAccessExcludingCAA.class}
     )
     OfflineDocumentReceived,
 
@@ -373,6 +393,16 @@ public enum State {
         Withdrawn,
         Rejected
     ));
+
+    public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPayment,
+        AwaitingHWFDecision,
+        AwaitingDocuments
+    );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
         Draft,
