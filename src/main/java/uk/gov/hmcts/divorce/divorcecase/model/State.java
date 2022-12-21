@@ -348,7 +348,7 @@ public enum State {
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )
-     OfflineDocumentReceived,
+    OfflineDocumentReceived,
 
     @CCD(
         label = "Pending hearing outcome",
