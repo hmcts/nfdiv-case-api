@@ -426,10 +426,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Respondent")
             .field("doesApplicant2WantToApplyForFinalOrder")
             .field("applicant2FinalOrderExplanation")
-            .label("labelFinalOrderDetails-AuditHistory",
-                "finalOrdersGrantedAudit=\"*\"",
-                "### Audit History")
-            .field("finalOrdersGrantedAudit");
+            .field("rescindedFinalOrders");
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

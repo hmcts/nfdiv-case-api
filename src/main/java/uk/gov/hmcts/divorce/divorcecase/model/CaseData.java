@@ -272,11 +272,11 @@ public class CaseData {
     private SentNotifications sentNotifications = new SentNotifications();
 
     @CCD(
-        label = "All final orders granted",
+        label = "Rescinded Final Orders",
         typeOverride = Collection,
         typeParameterOverride = "FinalOrder"
     )
-    private List<ListValue<FinalOrder>> finalOrdersGrantedAudit;
+    private List<ListValue<FinalOrder>> rescindedFinalOrders;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {

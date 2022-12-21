@@ -8,11 +8,12 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
@@ -58,16 +59,19 @@ public class CaseworkerRescindFinalOrder implements CCDConfig<CaseData, State, U
         removeDocumentsBasedOnContactPrivacy(caseData,
             List.of(FINAL_ORDER_GRANTED, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2));
 
-        // Set rescind date
-        caseData.getFinalOrder().setRescindedDate(LocalDate.now(clock));
-
         // Set audit
-        caseData.setFinalOrdersGrantedAudit(
-            CaseData.addAuditRecord(caseData.getFinalOrdersGrantedAudit(), caseData.getFinalOrder()));
+        FinalOrder finalOrderForAudit = FinalOrder.builder()
+            .rescindedDateTime(LocalDateTime.now(clock))
+            .grantedDate(caseData.getFinalOrder().getGrantedDate())
+            .build();
+
+        caseData.setRescindedFinalOrders(CaseData.addAuditRecord(caseData.getRescindedFinalOrders(), finalOrderForAudit));
 
         // Nullify current final order
         caseData.getFinalOrder().setGranted(null);
         caseData.getFinalOrder().setGrantedDate(null);
+        caseData.getFinalOrder().setDoesApplicant1WantToApplyForFinalOrder(null);
+        caseData.getFinalOrder().setDoesApplicant2WantToApplyForFinalOrder(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

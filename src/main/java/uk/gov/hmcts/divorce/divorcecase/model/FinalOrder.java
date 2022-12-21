@@ -268,10 +268,10 @@ public class FinalOrder {
     private LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo;
 
     @CCD(
-        label = "Date final order rescinded"
+        label = "Final order rescinded date and time"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate rescindedDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime rescindedDateTime;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
