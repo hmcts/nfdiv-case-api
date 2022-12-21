@@ -96,7 +96,7 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
         }
 
         if (caseData.getApplicant2().isApplicantOffline()
-            || (isBlank(caseData.getApplicant2EmailAddress()) && !caseData.getApplicant2().isRepresented())
+            || isBlank(caseData.getApplicant2EmailAddress()) && !caseData.getApplicant2().isRepresented()
         ) {
             log.info("Generating applicant 2 offline final order documents for CaseID: {}", caseId);
 
