@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,7 @@ public class SetSubmitAosState implements CaseTask {
         boolean isSoleJsApplication = caseData.getApplicationType().isSole()
             && caseData.getIsJudicialSeparation().toBoolean();
         if (isSoleJsApplication) {
+            caseData.setAwaitingJsAnswerStartDate(LocalDate.now());
             return caseData.getAcknowledgementOfService().isDisputed() ? AwaitingAnswer : AwaitingJsNullity;
         } else {
             return Holding;
