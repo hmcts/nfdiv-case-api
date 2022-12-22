@@ -54,7 +54,7 @@ public class SystemSolicitorPayment implements CCDConfig<CaseData, State, UserRo
             .description("Invoke solicitor PBA payment")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
         // I dont think we need retries here
         // .retries(120, 120));
     }
