@@ -10,28 +10,27 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.springframework.http.HttpStatus.CREATED;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -44,6 +43,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemSolicitorPayment.SYSTEM_SOLICITOR_PAYMENT;
 
 @Slf4j
 @Component
@@ -58,7 +58,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private SolPayment solPayment;
 
     @Autowired
-    private SubmissionService submissionService;
+    private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -110,66 +116,25 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Validating case data CaseID: {}", caseId);
         final List<String> submittedErrors = validateReadyForPayment(caseData);
 
-        if (!submittedErrors.isEmpty()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .state(details.getState())
-                .errors(submittedErrors)
-                .build();
-        }
-
-        final var application = caseData.getApplication();
-        final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
-
-        if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
-            final Optional<String> pbaNumber = application.getPbaNumber();
-            if (pbaNumber.isPresent()) {
-                final PbaResponse response = paymentService.processPbaPayment(
-                    caseData,
-                    caseId,
-                    caseData.getApplicant1().getSolicitor(),
-                    pbaNumber.get(),
-                    caseData.getApplication().getApplicationFeeOrderSummary(),
-                    caseData.getApplication().getFeeAccountReference()
-                );
-
-                if (response.getHttpStatus() == CREATED) {
-                    caseData.updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
-                } else {
-                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                        .data(details.getData())
-                        .errors(singletonList(response.getErrorMessage()))
-                        .build();
-                }
-            } else {
-                log.error(
-                    "PBA number not present when payment method is 'Solicitor fee account (PBA)' for CaseId: {}",
-                    details.getId());
-
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(details.getData())
-                    .errors(singletonList("PBA number not present when payment method is 'Solicitor fee account (PBA)'"))
-                    .build();
-            }
-        }
-
-        updateApplicant2DigitalDetails(caseData);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(updatedCaseDetails.getData())
-            .state(updatedCaseDetails.getState())
+            .data(details.getData())
+            .state(details.getState())
+            .errors(submittedErrors)
             .build();
     }
 
-    private void updateApplicant2DigitalDetails(CaseData caseData) {
-        if (caseData.getApplicant2().getSolicitor() != null
-            && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null) {
-            log.info("Applicant 2 has a solicitor and is digital");
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
 
-            caseData.getApplication().setApp2ContactMethodIsDigital(YES);
-        }
+        log.info("Solicitor submit application submitted callback invoked for case id: {}", details.getId());
+
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
+        log.info("Submitting system-solicitor-payment event for case id: {}", details.getId());
+        ccdUpdateService.submitEvent(details, SYSTEM_SOLICITOR_PAYMENT, user, serviceAuthorization);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -184,6 +149,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(
                 CASE_WORKER,

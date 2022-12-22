@@ -36,7 +36,20 @@
         }
       ],
       "PaymentTotal": "55000"
-    }
+    },
+    "dateSubmitted": "${json-unit.any-string}",
+    "applicationPayments": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "feeCode": "FEE002",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online"
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}"
   },
-  "state": "Draft"
+  "state": "Submitted"
 }
