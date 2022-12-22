@@ -139,7 +139,7 @@ public class Applicant2SolicitorSwitchToSoleFoIT {
                 .applicant2CanIntendToSwitchToSoleFo(YES)
                 .applicant2IntendsToSwitchToSole(Set.of(FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE))
                 .doesApplicant2IntendToSwitchToSole(YES)
-                .dateApplicant2DeclaredIntentionToSwitchToSoleFo(LocalDate.now())
+                .dateApplicant2DeclaredIntentionToSwitchToSoleFo(LocalDate.of(2022, 11, 11))
                 .build()
         );
 
@@ -175,7 +175,6 @@ public class Applicant2SolicitorSwitchToSoleFoIT {
             .getResponse()
             .getContentAsString();
 
-        System.out.println(response);
         assertThatJson(response)
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
