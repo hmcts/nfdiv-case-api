@@ -21,7 +21,9 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -47,7 +49,7 @@ public class SystemSolicitorPayment implements CCDConfig<CaseData, State, UserRo
 
         new PageBuilder(configBuilder
             .event(SYSTEM_SOLICITOR_PAYMENT)
-            .forState(AwaitingService)
+            .forStates(Draft, Applicant2Approved, Archived)
             .name("Solicitor PBA payment")
             .description("Invoke solicitor PBA payment")
             .aboutToSubmitCallback(this::aboutToSubmit)
