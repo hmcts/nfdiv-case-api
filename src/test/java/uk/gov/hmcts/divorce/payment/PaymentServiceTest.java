@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
+import uk.gov.hmcts.divorce.payment.model.PaymentsResponse;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -578,5 +579,15 @@ public class PaymentServiceTest {
         assertThatThrownBy(() -> paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_INVALID))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
+    }
+
+    @Test
+    public void shouldGetPaymentsOnCase() {
+        PaymentsResponse payments = PaymentsResponse.builder().build();
+        ResponseEntity<PaymentsResponse> response = ResponseEntity.ok(payments);
+        when(paymentPbaClient.getCasePayments(any(), any(), any())).thenReturn(response);
+        PaymentsResponse paymentsOnCase = paymentService.getPaymentsOnCase(TEST_CASE_ID.toString());
+
+        assertThat(paymentsOnCase).isEqualTo(payments);
     }
 }
