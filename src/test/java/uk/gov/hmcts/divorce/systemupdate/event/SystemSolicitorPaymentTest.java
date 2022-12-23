@@ -22,10 +22,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
+import uk.gov.hmcts.divorce.payment.model.PaymentsResponse;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,6 +95,10 @@ public class SystemSolicitorPaymentTest {
         when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
+        PaymentsResponse paymentsResponse = PaymentsResponse.builder()
+            .payments(Collections.emptyList())
+            .build();
+        when(paymentService.getPaymentsOnCase(TEST_CASE_ID.toString())).thenReturn(paymentsResponse);
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemSolicitorPayment.aboutToSubmit(caseDetails, beforeCaseDetails);
 
@@ -131,6 +137,10 @@ public class SystemSolicitorPaymentTest {
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
+        PaymentsResponse paymentsResponse = PaymentsResponse.builder()
+            .payments(Collections.emptyList())
+            .build();
+        when(paymentService.getPaymentsOnCase(TEST_CASE_ID.toString())).thenReturn(paymentsResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemSolicitorPayment
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -162,6 +172,10 @@ public class SystemSolicitorPaymentTest {
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
+        PaymentsResponse paymentsResponse = PaymentsResponse.builder()
+            .payments(Collections.emptyList())
+            .build();
+        when(paymentService.getPaymentsOnCase(TEST_CASE_ID.toString())).thenReturn(paymentsResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
 
@@ -210,6 +224,10 @@ public class SystemSolicitorPaymentTest {
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
+        PaymentsResponse paymentsResponse = PaymentsResponse.builder()
+            .payments(Collections.emptyList())
+            .build();
+        when(paymentService.getPaymentsOnCase(TEST_CASE_ID.toString())).thenReturn(paymentsResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
         expectedCaseDetails.setId(TEST_CASE_ID);

@@ -2,10 +2,13 @@ package uk.gov.hmcts.divorce.payment;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
+import uk.gov.hmcts.divorce.payment.model.PaymentsResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
@@ -19,5 +22,11 @@ public interface PaymentPbaClient {
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
         CreditAccountPaymentRequest creditAccountPaymentRequest);
+
+    @GetMapping(value = "/cases/{case}/payments")
+    ResponseEntity<PaymentsResponse> getCasePayments(
+        @RequestHeader(AUTHORIZATION) String authorisation,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
+        @PathVariable("case") String caseReference);
 
 }

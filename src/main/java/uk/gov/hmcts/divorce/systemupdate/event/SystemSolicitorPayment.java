@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.model.PaymentsResponse;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 
 import java.util.List;
@@ -83,6 +84,12 @@ public class SystemSolicitorPayment implements CCDConfig<CaseData, State, UserRo
         if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
             final Optional<String> pbaNumber = application.getPbaNumber();
             if (pbaNumber.isPresent()) {
+                if (alreadyHasSuccessfulPaymentForCase(caseId)) {
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .data(details.getData())
+                        .errors(singletonList("already has payment on case: " + caseId))
+                        .build();
+                }
                 final PbaResponse response = paymentService.processPbaPayment(
                     caseData,
                     caseId,
@@ -120,6 +127,14 @@ public class SystemSolicitorPayment implements CCDConfig<CaseData, State, UserRo
             .data(updatedCaseDetails.getData())
             .state(updatedCaseDetails.getState())
             .build();
+    }
+
+    private boolean alreadyHasSuccessfulPaymentForCase(Long caseId) {
+        PaymentsResponse paymentsResponse = paymentService.getPaymentsOnCase(caseId.toString());
+        long numberSuccessful = paymentsResponse.getPayments().stream().filter(
+            paymentResponse -> "Success".equals(paymentResponse.getStatus())).count();
+
+        return numberSuccessful > 0;
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
