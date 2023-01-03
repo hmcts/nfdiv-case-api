@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -31,7 +32,8 @@ public final class IdamWireMock {
     public static final String SUPER_USER_ROLE = "caseworker-divorce-superuser";
     public static final String CITIZEN_ROLE = "citizen";
 
-    private static final WireMockServer IDAM_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
+    private static final WireMockServer IDAM_SERVER = new WireMockServer(wireMockConfig.portNumber());
 
     private IdamWireMock() {
     }
@@ -82,7 +84,7 @@ public final class IdamWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("idam.api.url=" + "http://localhost:" + IDAM_SERVER.port())
+                .of("idam.api.url=" + "http://localhost:" + wireMockConfig.portNumber())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

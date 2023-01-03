@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -15,7 +16,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public final class FeesWireMock {
 
-    private static final WireMockServer FEES_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
+    private static final WireMockServer FEES_SERVER = new WireMockServer(wireMockConfig.portNumber());
 
     private FeesWireMock() {
     }
@@ -66,7 +68,7 @@ public final class FeesWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("fee.api.baseUrl=" + "http://localhost:" + FEES_SERVER.port())
+                .of("fee.api.baseUrl=" + "http://localhost:" + wireMockConfig.portNumber())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

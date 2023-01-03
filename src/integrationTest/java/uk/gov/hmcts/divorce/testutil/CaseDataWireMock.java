@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -21,7 +22,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 
 public final class CaseDataWireMock {
 
-    private static final WireMockServer CASE_DATA_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
+    private static final WireMockServer CASE_DATA_SERVER = new WireMockServer(wireMockConfig.portNumber());
 
     private CaseDataWireMock() {
     }
@@ -92,7 +94,7 @@ public final class CaseDataWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("core_case_data.api.url=" + "http://localhost:" + CASE_DATA_SERVER.port())
+                .of("core_case_data.api.url=" + "http://localhost:" + wireMockConfig.portNumber())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

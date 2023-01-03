@@ -36,8 +36,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.NOT_FOUND;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateBulkCase.SYSTEM_MIGRATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -146,7 +146,7 @@ public class SystemMigrateBulkCasesTaskTest {
         when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .doNothing()
             .when(ccdUpdateService)
             .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
@@ -192,7 +192,7 @@ public class SystemMigrateBulkCasesTaskTest {
         when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .doNothing()
             .when(ccdUpdateService)
             .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
@@ -215,7 +215,7 @@ public class SystemMigrateBulkCasesTaskTest {
         when(ccdSearchService.searchForBulkCasesWithVersionLessThan(latestVersion, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doThrow(new CcdManagementException(NOT_FOUND, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(NOT_FOUND.value(), "Failed processing of case", mock(FeignException.class)))
             .doNothing()
             .when(ccdUpdateService)
             .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());

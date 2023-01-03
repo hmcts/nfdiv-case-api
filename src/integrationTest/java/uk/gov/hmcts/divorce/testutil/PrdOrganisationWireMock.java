@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -20,7 +21,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 
 public final class PrdOrganisationWireMock {
 
-    private static final WireMockServer PRD_ORGANISATION_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
+    private static final WireMockServer PRD_ORGANISATION_SERVER = new WireMockServer(wireMockConfig.portNumber());
 
     private PrdOrganisationWireMock() {
     }
@@ -65,7 +67,7 @@ public final class PrdOrganisationWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("prd.api.url=" + "http://localhost:" + PRD_ORGANISATION_SERVER.port())
+                .of("prd.api.url=" + "http://localhost:" + wireMockConfig.portNumber())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

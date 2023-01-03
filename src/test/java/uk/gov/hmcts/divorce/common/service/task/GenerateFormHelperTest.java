@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +19,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;

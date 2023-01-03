@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -40,7 +41,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 
 public final class PaymentWireMock {
 
-    private static final WireMockServer PAYMENTS_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
+    private static final WireMockServer PAYMENTS_SERVER = new WireMockServer(wireMockConfig.portNumber());
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -99,8 +101,8 @@ public final class PaymentWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("payment.service.api.baseurl=" + "http://localhost:" + PAYMENTS_SERVER.port())
-                .and("pba.ref.data.service.url=" + "http://localhost:" + PAYMENTS_SERVER.port())
+                .of("payment.service.api.baseurl=" + "http://localhost:" + wireMockConfig.portNumber())
+                .and("pba.ref.data.service.url=" + "http://localhost:" + wireMockConfig.portNumber())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

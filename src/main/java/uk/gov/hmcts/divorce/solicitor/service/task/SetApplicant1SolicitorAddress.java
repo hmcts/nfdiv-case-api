@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.service.task;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,6 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInf
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;

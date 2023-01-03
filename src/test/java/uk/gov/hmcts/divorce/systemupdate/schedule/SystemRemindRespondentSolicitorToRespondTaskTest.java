@@ -44,7 +44,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindRespondentSolicitor.SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT2_REPRESENTED;
@@ -172,7 +172,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(caseDetailsList);
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
 
         remindRespondentSolicitorToRespondTask.run();

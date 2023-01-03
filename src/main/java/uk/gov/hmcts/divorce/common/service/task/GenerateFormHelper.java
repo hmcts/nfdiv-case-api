@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;

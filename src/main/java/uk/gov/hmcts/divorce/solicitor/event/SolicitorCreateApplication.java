@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;

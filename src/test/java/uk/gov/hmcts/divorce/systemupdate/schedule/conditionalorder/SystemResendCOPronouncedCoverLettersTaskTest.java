@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
@@ -254,7 +254,7 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
         when(objectMapper.convertValue(caseDetails2.getData(), CaseData.class))
             .thenReturn(buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE));
 
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();

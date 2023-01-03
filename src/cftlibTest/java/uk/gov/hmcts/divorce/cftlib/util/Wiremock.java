@@ -1,9 +1,8 @@
 package uk.gov.hmcts.divorce.cftlib.util;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 

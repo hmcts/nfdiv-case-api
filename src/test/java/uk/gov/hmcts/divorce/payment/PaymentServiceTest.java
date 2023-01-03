@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 import static feign.Request.HttpMethod.GET;
 import static feign.Request.HttpMethod.POST;
