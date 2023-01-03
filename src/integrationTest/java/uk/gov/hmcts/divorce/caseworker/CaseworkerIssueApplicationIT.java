@@ -665,7 +665,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V2.docx");
+        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V3.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -1987,6 +1987,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(null);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -2029,6 +2030,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail("notNull@email.com");
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -2069,6 +2071,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail("notNull@email.com");
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);

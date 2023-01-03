@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
@@ -186,17 +187,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -221,7 +211,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -285,17 +275,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -320,7 +299,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -384,17 +363,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -420,7 +388,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
@@ -493,17 +461,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -528,7 +485,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
@@ -593,17 +550,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -628,7 +574,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -693,17 +639,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -728,7 +663,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -804,17 +739,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -839,7 +763,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
@@ -922,17 +846,6 @@ public class NoticeOfProceedingContentIT {
                 .build()
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .phoneNumber("0300 303 0642")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
 
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
@@ -958,7 +871,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
@@ -1037,17 +950,6 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
@@ -1072,7 +974,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
@@ -1337,5 +1239,18 @@ public class NoticeOfProceedingContentIT {
         );
 
         assertThat(templateContent).containsAllEntriesOf(expectedEntries);
+    }
+
+    private CtscContactDetails buildCtscContactDetails() {
+        return CtscContactDetails
+                .builder()
+                .centreName("HMCTS Digital Divorce and Dissolution")
+                .serviceCentre("Courts and Tribunals Service Centre")
+                .poBox("PO Box 13226")
+                .town("Harlow")
+                .postcode("CM20 9UG")
+                .phoneNumber("0300 303 0642")
+                .emailAddress("contactdivorce@justice.gov.uk")
+                .build();
     }
 }
