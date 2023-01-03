@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+
 @Component
 @Slf4j
 public class SendAosPackToRespondent implements CaseTask {
@@ -22,7 +24,8 @@ public class SendAosPackToRespondent implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplication().isCourtServiceMethod()) {
+        if (caseData.getApplication().isCourtServiceMethod()
+                && !YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
             log.info("Sending respondent AoS pack to bulk print.  Case ID: {}", caseId);
             aosPackPrinter.sendAosLetterToRespondent(caseData, caseId);
         }
