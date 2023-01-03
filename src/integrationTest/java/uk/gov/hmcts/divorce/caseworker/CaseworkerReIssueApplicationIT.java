@@ -1848,6 +1848,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
         caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
         caseData.getApplicant2().setEmail(null);
 
         ListValue<DivorceDocument> divorceDocumentListValue = ListValue.<DivorceDocument>builder()
