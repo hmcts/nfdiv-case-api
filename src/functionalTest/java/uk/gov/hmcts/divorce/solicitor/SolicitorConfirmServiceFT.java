@@ -9,12 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +28,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CASEWORKER_CONFIRM_SERVICE;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
@@ -122,5 +126,26 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
             json -> json.inPath("errors[0]")
                 .isEqualTo(SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR)
         );
+    }
+
+    @Test
+    public void shouldNotChangeStateWhenSoleAndAoSSubmitted() throws IOException {
+        final var caseData = getConfirmServiceCaseData();
+        caseData.getApplication().setCurrentState(State.AwaitingApplicant1Response);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setAcknowledgementOfService(new AcknowledgementOfService());
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.now());
+
+        Map<String, Object> caseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
+
+        Response response = triggerCallback(caseDataMap, SOLICITOR_CONFIRM_SERVICE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        final String expectedStateJSON = String.format("{state: '%s'}", State.AwaitingApplicant1Response);
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(expectedStateJSON);
     }
 }

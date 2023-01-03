@@ -90,6 +90,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
+        final State currentState = caseData.getApplication().getCurrentState();
 
         log.info("Solicitor confirm service about to submit callback invoked with service method {}, Case Id: {}",
             caseData.getApplication().getServiceMethod().toString(),
@@ -100,6 +101,10 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
         confirmService.addToDocumentsUploaded(updateDetails);
 
         log.info("Due date after submit Task is {}", updateDetails.getData().getDueDate());
+
+        if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            updateDetails.setState(currentState);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
