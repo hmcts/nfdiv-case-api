@@ -19,7 +19,10 @@ public class SetConfirmServiceState implements CaseTask {
 
         CaseData caseData = caseDetails.getData();
 
-        if (!isEmpty(caseData.getApplication().getSolicitorService().getServiceProcessedByProcessServer())) {
+        if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            log.info("Setting State: {} for CaseId: {}", caseData.getApplication().getCurrentState(), caseDetails.getId());
+            caseDetails.setState(caseData.getApplication().getCurrentState());
+        } else if (!isEmpty(caseData.getApplication().getSolicitorService().getServiceProcessedByProcessServer())) {
             log.info("Setting State: Holding for CaseId: {}", caseDetails.getId());
             caseDetails.setState(Holding);
         }
