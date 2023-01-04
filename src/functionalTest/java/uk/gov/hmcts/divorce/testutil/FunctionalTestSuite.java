@@ -148,6 +148,11 @@ public abstract class FunctionalTestSuite {
     }
 
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url, State state) throws IOException {
+        return triggerCallback(caseData, eventId, url, state, state);
+    }
+
+    protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url,
+                                       State beforeState, State state) throws IOException {
         CallbackRequest request = CallbackRequest
             .builder()
             .eventId(eventId)
@@ -158,7 +163,7 @@ public abstract class FunctionalTestSuite {
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
                     .caseTypeId(CASE_TYPE)
-                    .state(state.name())
+                    .state(beforeState.name())
                     .build()
             )
             .caseDetails(
