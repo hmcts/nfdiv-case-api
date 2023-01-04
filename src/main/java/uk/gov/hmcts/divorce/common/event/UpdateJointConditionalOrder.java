@@ -49,7 +49,7 @@ public class UpdateJointConditionalOrder implements CCDConfig<CaseData, State, U
             .name("Update conditional order")
             .description("Update joint conditional order")
             .endButtonLabel("Save conditional order")
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\" AND coApplicant2IsSubmitted=\"No\"")
+            .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\" AND coApplicant2IsSubmitted!=\"Yes\"")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(
                 CASE_WORKER,
