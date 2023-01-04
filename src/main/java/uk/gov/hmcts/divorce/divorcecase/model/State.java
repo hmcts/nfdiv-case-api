@@ -341,7 +341,7 @@ public enum State {
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
     )
-    LAReview,
+    LegalAdvisorReview,
 
     @CCD(
         label = "Listed; awaiting pronouncement",
