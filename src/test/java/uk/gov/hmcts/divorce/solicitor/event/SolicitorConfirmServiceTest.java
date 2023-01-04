@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.service.ConfirmService;
 import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
@@ -70,6 +71,7 @@ public class SolicitorConfirmServiceTest {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -93,6 +95,7 @@ public class SolicitorConfirmServiceTest {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
