@@ -97,7 +97,6 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        final State currentState = caseData.getApplication().getCurrentState();
 
         var serviceMethod = !isNull(caseData.getApplication().getServiceMethod())
             ? caseData.getApplication().getServiceMethod().toString()
@@ -114,7 +113,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
         confirmService.addToDocumentsUploaded(updateDetails);
 
         if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            updateDetails.setState(currentState);
+            updateDetails.setState(beforeDetails.getState());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
