@@ -23,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS_CY;
@@ -84,7 +85,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
-        expectedEntries.put("ctscContactDetails", buildCtscContactDetails());
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -96,7 +97,6 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -110,7 +110,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -123,7 +123,6 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -137,7 +136,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -149,7 +148,6 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -162,7 +160,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -176,7 +174,6 @@ public class ServiceOrderTemplateContentIT {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -189,7 +186,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -255,7 +252,7 @@ public class ServiceOrderTemplateContentIT {
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .emailAddress("divorcecase@justice.gov.uk")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .phoneNumber("0300 303 0642")
             .build();
     }
