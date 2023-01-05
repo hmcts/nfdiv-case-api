@@ -232,7 +232,7 @@ public class CertificateOfEntitlementContentTest {
         final ConditionalOrderCourtDetails expectedDetails = new ConditionalOrderCourtDetails();
         expectedDetails.setName("Bury St. Edmunds Regional Divorce Centre");
         expectedDetails.setAddress("2nd Floor\nTriton House\nSt. Andrews Street North\nBury St. Edmunds\nIP33 1TR");
-        expectedDetails.setEmail("divorcecase@justice.gov.uk");
+        expectedDetails.setEmail("contactdivorce@justice.gov.uk");
         expectedDetails.setPhone("0300 303 0642");
 
         when(conditionalOrderCourtDetailsConfig.get(BURY_ST_EDMUNDS.getCourtId())).thenReturn(expectedDetails);
