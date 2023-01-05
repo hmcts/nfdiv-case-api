@@ -332,7 +332,7 @@ public enum State {
     @CCD(
         label = "Judicial Separation, Awaiting legal advisor",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+        access = {DefaultStateAccess.class}
     )
     JSAwaitingLA,
 

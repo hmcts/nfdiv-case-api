@@ -24,9 +24,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
@@ -229,8 +227,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, languagePreference));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
-                WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CONTACT_DIVORCE_JUSTICE_GOV_UK);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(CommonContent.IS_DIVORCE, true);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
                 WELSH.equals(languagePreference) ? DIVORCE_PROCEEDINGS_CY : DIVORCE_PROCEEDINGS);
@@ -255,8 +252,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         } else {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
-                WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(CommonContent.IS_DIVORCE, false);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
                 WELSH.equals(languagePreference)
