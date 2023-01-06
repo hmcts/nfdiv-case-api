@@ -101,10 +101,6 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
 
         log.info("Due date after submit Task is {}", updateDetails.getData().getDueDate());
 
-        if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            updateDetails.setState(beforeDetails.getState());
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
             .state(updateDetails.getState())
@@ -114,7 +110,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CONFIRM_SERVICE)
-            .forStateTransition(AwaitingService, AwaitingAos)
+            .forStates(AwaitingService)
             .name("Solicitor confirm service")
             .description("Solicitor confirm service")
             .showSummary()

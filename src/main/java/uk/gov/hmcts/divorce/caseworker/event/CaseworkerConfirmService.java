@@ -44,7 +44,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CONFIRM_SERVICE)
-            .forStateTransition(POST_SUBMISSION_STATES, AwaitingAos)
+            .forStates(POST_SUBMISSION_STATES)
             .name("Confirm service")
             .description("Confirm service")
             .showSummary()
@@ -111,10 +111,6 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
         log.info("Due date after submit task is {}", updateDetails.getData().getDueDate());
 
         confirmService.addToDocumentsUploaded(updateDetails);
-
-        if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            updateDetails.setState(beforeDetails.getState());
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
