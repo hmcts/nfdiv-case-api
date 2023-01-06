@@ -45,7 +45,6 @@ public class CaseworkerConfirmServiceFT extends FunctionalTestSuite {
     @Test
     public void shouldSetDueDateTo14DaysAfterServiceDateWhenServiceNotProcessedByProcessServer() throws IOException {
         final var caseData = getConfirmServiceCaseData();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -58,14 +57,12 @@ public class CaseworkerConfirmServiceFT extends FunctionalTestSuite {
 
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
-            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SUBMIT_CONFIRM_SERVICE_JSON)));
     }
 
     @Test
     public void shouldSetDueDateTo141DaysAfterIssuedDateWhenServiceProcessedByProcessServer() throws IOException {
         final var caseData = getConfirmServiceCaseData();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.getApplication().getSolicitorService()
             .setServiceProcessedByProcessServer(Set.of(SolicitorService.ServiceProcessedByProcessServer.CONFIRM));
 
