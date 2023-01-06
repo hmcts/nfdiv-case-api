@@ -21,6 +21,7 @@ public class SetConfirmServiceState implements CaseTask {
         CaseData caseData = caseDetails.getData();
 
         if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            log.info("Skip Setting State for Sole Case: AoS previously Submitted for CaseId: {}", caseDetails.getId());
             return caseDetails;
         } else {
             if (!isEmpty(caseData.getApplication().getSolicitorService().getServiceProcessedByProcessServer())) {
