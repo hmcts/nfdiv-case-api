@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -136,13 +135,6 @@ public class NoticeOfProceedingContentTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "serviceCentre", "Courts and Tribunals Service Centre");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "centreName", "HMCTS Digital Divorce and Dissolution");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "town", "Harlow");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "postcode", "CM20 9UG");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "phoneNumber", "0300 303 0642");
-
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(any())).thenReturn(getBasicDocmosisContent());
     }
 

@@ -167,7 +167,7 @@ public class CaseworkerIssueApplicationIT {
     private static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
     private static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
     private static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID = "eb780eb7-8982-40a7-b30f-902b582ded26";
-    private static final String NFD_NOP_APP2_JS_SOLE_ID = "c35b1868-e397-457a-aa67-ac1422bb810a";
+    private static final String NFD_NOP_APP2_JS_SOLE_ID = "8d2bd0f2-80e9-4b0f-b38d-2c138b243e27";
     private static final String NFD_NOP_APP1_JS_SOLE_ID = "c35b1868-e397-457a-zz67-ac1422bb810a";
     private static final String D10_DOCUMENT_ID = "c35b1868-e397-457a-bb67-ac1422bb810a";
 
