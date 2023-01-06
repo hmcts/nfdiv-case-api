@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -54,7 +55,26 @@ public class CasePronouncementService {
 
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
+        pronounceCasesWithFilter(
+            details,
+            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
+            EnumSet.of(ConditionalOrderPronounced)
+        );
+    }
 
+    @Async
+    public void retryPronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
+        pronounceCasesWithFilter(
+            details,
+            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
+            EnumSet.noneOf(State.class)
+        );
+    }
+
+    private void pronounceCasesWithFilter(CaseDetails<BulkActionCaseData, BulkActionState> details,
+                                          EnumSet<State> awaitingPronouncement,
+                                          EnumSet<State> postStates
+    ) {
         final BulkActionCaseData bulkActionCaseData = details.getData();
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
@@ -63,8 +83,8 @@ public class CasePronouncementService {
             bulkActionCaseData.getBulkListCaseDetails(),
             user,
             serviceAuth,
-            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced);
+            awaitingPronouncement,
+            postStates);
 
         final List<ListValue<BulkListCaseDetails>> erroredCaseDetails = caseFilterProcessingState.getErroredCases();
         final List<ListValue<BulkListCaseDetails>> processedCaseDetails = caseFilterProcessingState.getProcessedCases();
