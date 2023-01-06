@@ -183,6 +183,13 @@ public enum State {
     AwaitingHWFDecision,
 
     @CCD(
+        label = "Awaiting HWF evidence",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingHWFEvidence,
+
+    @CCD(
         label = "Awaiting HWF part payment",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
@@ -321,6 +328,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     IssuedToBailiff,
+
+    @CCD(
+        label = "Judicial Separation, Awaiting legal advisor",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    JSAwaitingLA,
 
     @CCD(
         label = "Listed; awaiting pronouncement",
