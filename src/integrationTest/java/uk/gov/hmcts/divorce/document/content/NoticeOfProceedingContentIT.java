@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -238,7 +239,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -327,7 +328,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(WELSH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -424,7 +425,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -516,7 +517,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -606,7 +607,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -696,7 +697,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(WELSH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -804,7 +805,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -917,7 +918,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1019,7 +1020,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        expectedEntries.putAll(getDocmosisCommonContent());
+        expectedEntries.putAll(getDocmosisCommonContent(ENGLISH));
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1271,12 +1272,15 @@ public class NoticeOfProceedingContentIT {
                 .build();
     }
 
-    private HashMap<String, String> getDocmosisCommonContent() {
+    private HashMap<String, String> getDocmosisCommonContent(LanguagePreference lang) {
         HashMap<String, String> docmosisCommon = new HashMap<>();
-        docmosisCommon.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        docmosisCommon.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        docmosisCommon.put(DIVORCE_AND_DISSOLUTION_HEADER,
+            lang.equals(ENGLISH) ? DIVORCE_AND_DISSOLUTION_HEADER_TEXT : DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
+        docmosisCommon.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER,
+            lang.equals(ENGLISH) ? COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT : COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         docmosisCommon.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
-        docmosisCommon.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        docmosisCommon.put(PHONE_AND_OPENING_TIMES,
+            lang.equals(ENGLISH) ? PHONE_AND_OPENING_TIMES_TEXT : PHONE_AND_OPENING_TIMES_TEXT_CY);
 
         return docmosisCommon;
     }
