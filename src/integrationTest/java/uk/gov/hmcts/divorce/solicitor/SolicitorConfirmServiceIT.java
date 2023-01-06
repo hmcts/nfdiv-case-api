@@ -17,7 +17,6 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
@@ -97,7 +96,6 @@ public class SolicitorConfirmServiceIT {
         caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
                 .contentType(APPLICATION_JSON)
@@ -189,8 +187,6 @@ public class SolicitorConfirmServiceIT {
         caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-
         final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentLink(new Document("url", "filename.pdf", "url/binary"))
