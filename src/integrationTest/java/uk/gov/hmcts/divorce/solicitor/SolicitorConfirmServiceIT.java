@@ -17,15 +17,19 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -96,6 +100,7 @@ public class SolicitorConfirmServiceIT {
         caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
                 .contentType(APPLICATION_JSON)
@@ -187,6 +192,8 @@ public class SolicitorConfirmServiceIT {
         caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
         caseData.getApplication().setIssueDate(serviceDate);
         caseData.getApplication().setSolicitorService(solicitorService);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+
         final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentLink(new Document("url", "filename.pdf", "url/binary"))
@@ -205,6 +212,54 @@ public class SolicitorConfirmServiceIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_CONFIRM_SERVICE)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.data.dueDate").value(caseData.getApplication().getIssueDate().plusDays(141).toString()))
+            .andExpect(jsonPath("$.state").value("Holding"));
+    }
+
+    @Test
+    void shouldSetDueDateTo141DaysFromTodayAndDoNotChangeStateWhenSoleApplicationAndAoSSubmitted() throws Exception {
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        setMockClock(clock);
+        final LocalDate serviceDate = getExpectedLocalDate();
+
+        final SolicitorService solicitorService = SolicitorService.builder()
+            .dateOfService(serviceDate)
+            .serviceProcessedByProcessServer(Set.of(SolicitorService.ServiceProcessedByProcessServer.CONFIRM))
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(serviceDate);
+        caseData.getApplication().setSolicitorService(solicitorService);
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().dateAosSubmitted(LocalDateTime.now()).build());
+
+        final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentLink(new Document("url", "filename.pdf", "url/binary"))
+                .build())
+            .build();
+
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsUploaded(new ArrayList<>())
+            .build());
+
+        caseData.getDocuments().setDocumentsUploadedOnConfirmService(Lists.newArrayList(confirmServiceAttachments));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_CONFIRM_SERVICE, State.Holding.toString())))
                 .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
