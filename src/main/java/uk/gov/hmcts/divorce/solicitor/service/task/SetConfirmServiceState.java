@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
 @Component
@@ -19,9 +20,15 @@ public class SetConfirmServiceState implements CaseTask {
 
         CaseData caseData = caseDetails.getData();
 
-        if (!isEmpty(caseData.getApplication().getSolicitorService().getServiceProcessedByProcessServer())) {
-            log.info("Setting State: Holding for CaseId: {}", caseDetails.getId());
-            caseDetails.setState(Holding);
+        if (caseData.getApplicationType().isSole() && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            return caseDetails;
+        } else {
+            if (!isEmpty(caseData.getApplication().getSolicitorService().getServiceProcessedByProcessServer())) {
+                log.info("Setting State: Holding for CaseId: {}", caseDetails.getId());
+                caseDetails.setState(Holding);
+            } else {
+                caseDetails.setState(AwaitingAos);
+            }
         }
 
         return caseDetails;
