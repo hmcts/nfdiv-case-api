@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
@@ -107,7 +107,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
         expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
         expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
         expectedEntries.put("issueDate", "1 January 2020");
         expectedEntries.put("relation", "husband");
@@ -118,7 +118,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -165,7 +165,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
         expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
         expectedEntries.put("divorceOrEndCivilPartnershipApplication", "application to end your civil partnership");
         expectedEntries.put("issueDate", "1 January 2020");
         expectedEntries.put("relation", "civil partner");
@@ -176,7 +176,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -240,7 +240,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
         expectedEntries.put("isDivorce", true);
         expectedEntries.put("applicant1Address", "App1Sol Address");
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "divorcecase@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", CONTACT_DIVORCE_EMAIL);
         expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
         expectedEntries.put("issueDate", "1 January 2020");
         expectedEntries.put("relation", "husband");
@@ -252,7 +252,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(RECIPIENT_NAME, "App1Sol Name");
         expectedEntries.put(RECIPIENT_ADDRESS, "App1Sol Address");
