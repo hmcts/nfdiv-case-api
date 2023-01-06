@@ -78,6 +78,7 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(SUBMIT_CONFIRM_SERVICE_JSON));
         jsonDocument.set("data.dueDate", caseData.getApplication().getIssueDate().plusDays(141).toString());
+        jsonDocument.set("state", State.Holding);
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
