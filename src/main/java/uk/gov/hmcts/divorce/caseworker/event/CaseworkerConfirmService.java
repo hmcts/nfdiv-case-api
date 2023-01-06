@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static java.util.Objects.isNull;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
