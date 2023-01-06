@@ -58,7 +58,6 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
 
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
-            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SUBMIT_CONFIRM_SERVICE_JSON)));
     }
 
