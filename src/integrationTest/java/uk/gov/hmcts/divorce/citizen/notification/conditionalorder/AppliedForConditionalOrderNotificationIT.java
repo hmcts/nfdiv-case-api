@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applied
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.APPLICANT2;
 import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification.PLUS_14_DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
@@ -74,7 +74,7 @@ public class AppliedForConditionalOrderNotificationIT {
             entry(FIRST_NAME, "Bob"),
             entry(LAST_NAME, "Smith"),
             entry(PARTNER, "wife"),
-            entry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+            entry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PLUS_14_DUE_DATE, submittedDate.plusDays(14).format(DATE_TIME_FORMATTER)),
             entry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
         );
@@ -103,7 +103,7 @@ public class AppliedForConditionalOrderNotificationIT {
             entry(FIRST_NAME, "Bob"),
             entry(LAST_NAME, "Smith"),
             entry(PARTNER, "gwraig"),
-            entry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+            entry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PLUS_14_DUE_DATE, submittedDate.plusDays(14).format(DATE_TIME_FORMATTER)),
             entry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
         );
@@ -140,7 +140,7 @@ public class AppliedForConditionalOrderNotificationIT {
             entry(ISSUE_DATE, date.format(DATE_TIME_FORMATTER)),
             entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
             entry(SOLICITOR_REFERENCE, "REF01"),
-            entry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK)
+            entry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL)
         );
     }
 
@@ -166,7 +166,7 @@ public class AppliedForConditionalOrderNotificationIT {
             entry(FIRST_NAME, "Bob"),
             entry(LAST_NAME, "Smith"),
             entry(PARTNER, "wife"),
-            entry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+            entry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PLUS_14_DUE_DATE, submittedDate.plusDays(14).format(DATE_TIME_FORMATTER)),
             entry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
         );
@@ -196,7 +196,7 @@ public class AppliedForConditionalOrderNotificationIT {
             entry(FIRST_NAME, "Bob"),
             entry(LAST_NAME, "Smith"),
             entry(PARTNER, "gwraig"),
-            entry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+            entry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PLUS_14_DUE_DATE, submittedDate.plusDays(14).format(DATE_TIME_FORMATTER)),
             entry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
         );
