@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -97,7 +98,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -120,6 +121,70 @@ public class CasePronouncementServiceTest {
         )).thenReturn(emptyList());
 
         casePronouncementService.pronounceCases(bulkActionCaseDetails);
+
+        verify(bulkTriggerService).bulkTrigger(
+            eq(bulkActionCaseData.getBulkListCaseDetails()),
+            eq(SYSTEM_PRONOUNCE_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            eq(bulkActionCaseDetails),
+            eq(SYSTEM_UPDATE_BULK_CASE),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+    }
+
+    @Test
+    void shouldSuccessfullyRetryPronounceBulkCasesIfCaseSateConditionalOrderPronounced() {
+
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = List.of(getBulkListCaseDetailsListValue("1"));
+
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
+            .court(BIRMINGHAM)
+            .bulkListCaseDetails(bulkListCaseDetails)
+            .erroredCaseDetails(new ArrayList<>())
+            .processedCaseDetails(new ArrayList<>())
+            .build();
+
+        final var user = mock(User.class);
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+
+        when(caseProcessingStateFilter.filterProcessingState(
+            bulkListCaseDetails,
+            user,
+            SERVICE_AUTHORIZATION,
+            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
+            EnumSet.noneOf(State.class)
+        )).thenReturn(new CaseFilterProcessingState(
+            bulkListCaseDetails,
+            new ArrayList<>(),
+            new ArrayList<>()));
+
+        final var caseTask = mock(CaseTask.class);
+        final var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+
+        when(bulkTriggerService.bulkTrigger(
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
+        )).thenReturn(emptyList());
+
+        casePronouncementService.retryPronounceCases(bulkActionCaseDetails);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
@@ -171,7 +236,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -249,7 +314,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             new ArrayList<>(),
             bulkListCaseDetails,
@@ -316,7 +381,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -384,7 +449,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),
@@ -452,7 +517,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             new ArrayList<>(),
             new ArrayList<>(),
@@ -516,7 +581,7 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            ConditionalOrderPronounced
+            EnumSet.of(ConditionalOrderPronounced)
         )).thenReturn(new CaseFilterProcessingState(
             bulkListCaseDetails,
             new ArrayList<>(),

@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.LocalDate;
@@ -117,6 +118,9 @@ public class CommonContent {
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Autowired
     private EmailTemplatesConfig config;
@@ -262,7 +266,8 @@ public class CommonContent {
                                                 final Applicant applicant,
                                                 final Applicant partner, final LocalDate date) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            applicant.getLanguagePreference());
 
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
 
