@@ -122,7 +122,6 @@ public class NoticeOfProceedingContentTest {
     @InjectMocks
     private NoticeOfProceedingContent noticeOfProceedingContent;
 
-
     @Test
     public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
         CaseData caseData = caseData();
