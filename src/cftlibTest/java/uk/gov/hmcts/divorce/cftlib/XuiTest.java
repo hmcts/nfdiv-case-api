@@ -65,8 +65,8 @@ public class XuiTest extends CftlibTest {
     void signInWith(String username) {
         page.navigate("http://localhost:3000");
 
-        page.locator("#username").fill(username);
-        page.locator("#password").fill("anythingWillWork");
+        page.getByPlaceholder("Enter Username").fill(username);
+        page.getByPlaceholder("Enter Password").fill("anythingWillWork");
         page.locator("text=Sign in").click();
         assertThat(page).hasURL("http://localhost:3000/cases");
     }
