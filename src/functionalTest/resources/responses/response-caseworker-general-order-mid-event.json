@@ -3,6 +3,8 @@
     "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "John",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2Gender": "female",
