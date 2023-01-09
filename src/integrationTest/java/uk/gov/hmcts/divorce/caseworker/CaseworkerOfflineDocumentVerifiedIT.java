@@ -211,7 +211,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingLegalAdvisorReferralIfD84Verified() throws Exception {
+    void shouldTriggerCoSubmissionAndMoveCaseStateToJSAwaitingLAIfD84VerifiedAndJudicialSeparation() throws Exception {
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -234,6 +234,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setIsJudicialSeparation(YES);
         caseData.setDocuments(
             CaseDocuments.builder()
                 .typeOfDocumentAttached(CO_D84)
