@@ -15,7 +15,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
@@ -63,7 +62,6 @@ class DocmosisCommonContentTest {
 
         var templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
-        CTSC_CONTACT.setEmailAddress(CONTACT_DIVORCE_EMAIL);
         assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
@@ -80,12 +78,11 @@ class DocmosisCommonContentTest {
 
         var templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
-        CTSC_CONTACT.setEmailAddress(CONTACT_JUSTICE_GOV_UK_CY);
         assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
-                entry(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY),
+                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
     }
