@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -51,6 +51,9 @@ class ConditionalOrderRefusedForClarificationContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
+
+    @Mock
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Mock
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
@@ -100,7 +103,7 @@ class ConditionalOrderRefusedForClarificationContentTest {
                     entry(REASON_MARRIAGE_CERT_TRANSLATION, false),
                     entry(REASON_MARRIAGE_CERTIFICATE,false),
                     entry(REASON_PREVIOUS_PROCEEDINGS_DETAILS, false),
-                    entry(LEGAL_ADVISOR_COMMENTS, new ArrayList<>()),
+                    entry(LEGAL_ADVISOR_COMMENTS, Collections.emptyList()),
                     entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
                     entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
                     entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
