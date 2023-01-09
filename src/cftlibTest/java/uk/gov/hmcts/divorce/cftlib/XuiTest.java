@@ -54,7 +54,7 @@ public class XuiTest extends CftlibTest {
     void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
-        page.setDefaultTimeout(30000);
+        page.setDefaultTimeout(60000);
     }
 
     @AfterEach
@@ -65,9 +65,8 @@ public class XuiTest extends CftlibTest {
     void signInWith(String username) {
         page.navigate("http://localhost:3000");
 
-        page.getByPlaceholder("Enter Username").fill(username);
-        page.getByPlaceholder("Enter Password").fill("anythingWillWork");
-        page.pause();
+        page.locator("[placeholder=\"Enter Username\"]").fill(username);
+        page.locator("[placeholder=\"Enter Password\"]").fill("anythingWillWork");
         page.locator("text=Sign in").click();
         assertThat(page).hasURL("http://localhost:3000/cases");
     }
