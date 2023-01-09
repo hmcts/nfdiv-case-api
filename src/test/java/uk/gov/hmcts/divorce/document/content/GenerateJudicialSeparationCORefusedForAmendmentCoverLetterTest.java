@@ -80,7 +80,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(CONTACT_EMAIL, "divorcecase@justice.gov.uk");
+        templateContent.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
