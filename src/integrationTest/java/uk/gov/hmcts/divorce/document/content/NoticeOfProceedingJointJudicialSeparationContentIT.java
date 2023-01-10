@@ -82,9 +82,14 @@ public class NoticeOfProceedingJointJudicialSeparationContentIT {
 
         var ctscContactDetails = CtscContactDetails
             .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .emailAddress("contactdivorce@justice.gov.uk")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .phoneNumber("0300 303 0642")
             .poBox("PO Box 13226")
-            .postcode("CM20 9UG")
             .town("Harlow")
+            .postcode("CM20 9UG")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
