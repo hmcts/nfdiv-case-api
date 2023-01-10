@@ -276,7 +276,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
         applicant1TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant1TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant1TemplateVars.put(NAME, "Bob Smith");
         applicant1TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
@@ -319,7 +319,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         applicant2TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant2TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         applicant2TemplateVars.put("courtName", caseData.getConditionalOrder().getCourt().getLabel());
-        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant2TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant2TemplateVars.put(NAME, "Lily Jones");
         applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
