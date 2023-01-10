@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -17,12 +15,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -36,85 +32,21 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CAN_SERVE_BY_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNER;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_DOCUMENTS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DISPLAY_EMAIL_CONFIRMATION;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_DOCUMENTS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_CIVIL_PARTNERSHIP_URL;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PAPERS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_URL;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DUE_DATE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENDING_A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENDING_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.END_A_CIVIL_PARTNERSHIP_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_OFFLINE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATIONS_SOLICITOR;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SERVE_PAPERS_BEFORE_DATE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_THEIR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.*;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingContentTest {
@@ -133,18 +65,6 @@ public class NoticeOfProceedingContentTest {
 
     @InjectMocks
     private NoticeOfProceedingContent noticeOfProceedingContent;
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "serviceCentre", "Courts and Tribunals Service Centre");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "centreName", "HMCTS Digital Divorce and Dissolution");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "town", "Harlow");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "postcode", "CM20 9UG");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "phoneNumber", "0300 303 0642");
-
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(any())).thenReturn(getBasicDocmosisContent());
-    }
 
     @Test
     public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
@@ -178,6 +98,9 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
@@ -189,8 +112,6 @@ public class NoticeOfProceedingContentTest {
             caseData.getApplicant2(),
             ENGLISH);
 
-        assertBasicDocmosisContent(templateContent);
-
         assertThat(templateContent)
             .contains(
                 entry(CASE_REFERENCE, formatId(1616591401473378L)),
@@ -199,7 +120,7 @@ public class NoticeOfProceedingContentTest {
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(DUE_DATE, "19 June 2021"),
                 entry(RELATIONS_SOLICITOR, "wife's solicitor"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS),
                 entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE),
                 entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION),
@@ -269,6 +190,9 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn(CIVIL_PARTNER);
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
             .thenReturn(LocalDate.of(2021, 11, 6));
@@ -279,8 +203,6 @@ public class NoticeOfProceedingContentTest {
             caseData.getApplicant2(),
             ENGLISH);
 
-        assertBasicDocmosisContent(templateContent);
-
         assertThat(templateContent)
             .contains(
                 entry(CASE_REFERENCE, formatId(1616591401473378L)),
@@ -288,7 +210,7 @@ public class NoticeOfProceedingContentTest {
                 entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(DUE_DATE, "19 June 2021"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(RELATION, CIVIL_PARTNER),
@@ -326,16 +248,6 @@ public class NoticeOfProceedingContentTest {
             );
     }
 
-    private Map<String, Object> getBasicDocmosisContent() {
-        Map<String, Object> basicContent = new HashMap<>();
-        basicContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        basicContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        basicContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
-        basicContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-
-        return basicContent;
-    }
-
     private CtscContactDetails getCtscContactDetails() {
         return CtscContactDetails
             .builder()
@@ -344,19 +256,8 @@ public class NoticeOfProceedingContentTest {
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
+            .emailAddress(CONTACT_DIVORCE_EMAIL)
             .phoneNumber("0300 303 0642")
             .build();
-
     }
-
-    private void assertBasicDocmosisContent(Map<String, Object> templateContent) {
-        assertThat(templateContent)
-            .contains(
-                entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-                entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
-            );
-    }
-
 }
