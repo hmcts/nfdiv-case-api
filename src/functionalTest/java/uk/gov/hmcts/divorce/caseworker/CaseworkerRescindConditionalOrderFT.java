@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.io.IOException;
@@ -46,10 +45,9 @@ public class CaseworkerRescindConditionalOrderFT extends FunctionalTestSuite {
     public void shouldUnlinkFromBulkCaseIfCaseStateIsAwaitingPronouncement() throws IOException {
 
         Map<String, Object> request = caseData(REQUEST);
-        request.put("bulkListCaseReference",
-            CaseLink.builder().caseReference("1234-1234-1234-1234").build());
 
-        Response response = triggerCallback(request, RESCIND_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL, AwaitingPronouncement);
+        Response response = triggerCallback(
+            request, RESCIND_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL, AwaitingPronouncement);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

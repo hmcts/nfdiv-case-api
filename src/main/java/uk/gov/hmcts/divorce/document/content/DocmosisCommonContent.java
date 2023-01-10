@@ -25,6 +25,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 @Component
 public class DocmosisCommonContent {
 
+    @Value("${court.locations.serviceCentre.serviceCentreName}")
+    private String serviceCentre;
+
+    @Value("${court.locations.serviceCentre.centreName}")
+    private String centreName;
+
     @Value("${court.locations.serviceCentre.poBox}")
     private String poBox;
 
@@ -34,28 +40,39 @@ public class DocmosisCommonContent {
     @Value("${court.locations.serviceCentre.postCode}")
     private String postcode;
 
+    @Value("${court.locations.serviceCentre.email}")
+    private String email;
+
+    @Value("${court.locations.serviceCentre.phoneNumber}")
+    private String phoneNumber;
+
     public Map<String, Object> getBasicDocmosisTemplateContent(LanguagePreference languagePreference) {
         Map<String, Object> templateContent = new HashMap<>();
 
         if (ENGLISH.equals(languagePreference)) {
             templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
             templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+            templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         } else {
             templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
             templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
+            templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         }
 
         final var ctscContactDetails = CtscContactDetails
             .builder()
+            .centreName(centreName)
+            .serviceCentre(serviceCentre)
             .poBox(poBox)
             .town(town)
+            .emailAddress(email)
             .postcode(postcode)
+            .phoneNumber(phoneNumber)
             .build();
 
         templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
 
         return templateContent;
     }

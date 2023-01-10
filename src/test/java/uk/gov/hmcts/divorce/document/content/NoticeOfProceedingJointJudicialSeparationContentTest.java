@@ -44,7 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentNewEmail;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingJointJudicialSeparationContentTest {
@@ -82,7 +82,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentNewEmail(ENGLISH));
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -135,7 +135,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentNewEmail(ENGLISH));
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
@@ -187,7 +187,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 8, 18));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentNewEmail(ENGLISH));
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
 
         Map<String, Object> templateContent = nopJointJudicialSeparationContent.apply(
