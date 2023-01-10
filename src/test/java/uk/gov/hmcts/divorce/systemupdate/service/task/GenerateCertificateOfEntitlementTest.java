@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -52,11 +53,12 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_FO_ELIGIBLE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
@@ -90,6 +92,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getSolicitorDocTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
@@ -189,12 +192,14 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant1TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        applicant1TemplateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         applicant1TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
 
@@ -246,12 +251,14 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         templateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         templateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        templateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        templateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         templateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
 
@@ -294,14 +301,16 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
         applicant2TemplateVars.put(DATE_FO_ELIGIBLE_FROM,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
+        applicant2TemplateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         applicant2TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant2TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant2TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
 
@@ -344,17 +353,19 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
         applicant2TemplateVars.put(DATE_FO_ELIGIBLE_FROM,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
+        applicant2TemplateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         applicant2TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant2TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant2TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()))
             .thenReturn("husband");
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
 
@@ -406,12 +417,14 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         templateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         templateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        templateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        templateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         templateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         when(commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()))
             .thenReturn("husband");
@@ -504,7 +517,8 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicantTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicantTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        applicantTemplateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         applicantTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicantTemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
@@ -529,15 +543,17 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         respondentTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         respondentTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        respondentTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        respondentTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         respondentTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        respondentTemplateVars.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         respondentTemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         respondentTemplateVars.put(IS_RESPONDENT, true);
         respondentTemplateVars.put(IS_DIVORCE, true);
         respondentTemplateVars.put(IS_JOINT, false);
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
 
@@ -593,7 +609,7 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant1TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant1TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
@@ -618,7 +634,7 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicant2TemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicant2TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant2TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant2TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
@@ -675,7 +691,7 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
         applicantTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicantTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicantTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicantTemplateVars.put(IS_DIVORCE, true);
         applicantTemplateVars.put(IS_JOINT, false);
@@ -739,7 +755,7 @@ class GenerateCertificateOfEntitlementTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
         applicantTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         applicantTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicantTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicantTemplateVars.put(IS_DIVORCE, true);
         applicantTemplateVars.put(IS_JOINT, true);
@@ -833,6 +849,19 @@ class GenerateCertificateOfEntitlementTest {
                     .court(BURY_ST_EDMUNDS)
                     .build()
             )
+            .build();
+    }
+
+    private CtscContactDetails buildCtscContactDetails() {
+        return CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .build();
     }
 }
