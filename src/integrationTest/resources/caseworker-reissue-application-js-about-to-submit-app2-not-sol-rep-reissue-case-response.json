@@ -1,5 +1,7 @@
 {
   "data": {
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "sentNotifications": {},
     "applicationType": "soleApplication",
     "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
