@@ -45,6 +45,8 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     private static final String RE_ISSUE_SOLE_APPLICATION_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-reissue-sole-application-applicant-represented-about-to-submit.json";
+    private static final String RE_ISSUE_SOLE_APPLICATION_RESPONSE =
+        "classpath:responses/response-caseworker-reissue-sole-application-applicant-represented-about-to-submit.json";
 
     @Test
     public void shouldGenerateRespondentAosAndSendEmailToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos() throws Exception {

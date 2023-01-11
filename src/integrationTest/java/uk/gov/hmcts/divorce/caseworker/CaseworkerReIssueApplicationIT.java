@@ -166,6 +166,10 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-reissue-joint-application-applicant1-solicitor-about-to-submit-response.json";
     private static final String JOINT_APPLICATION_APPLICANT2_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-reissue-joint-application-applicant2-solicitor-about-to-submit-response.json";
+    private static final String SOLE_CITIZEN_CASEWORKER_PERSONAL_SERVICE_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-reissue-sole-citizen-application-personal-service-about-to-submit-response.json";
+    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
+        "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
     private static final String SOLE_JS_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-js-applicant1-represented-by-solicitor-about-to-submit-response.json";
 
