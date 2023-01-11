@@ -44,6 +44,7 @@ public final class DocumentConstants {
     public static final String NFD_NOP_AS2_SOLE_APP1_SOL_SS = "NFD_NOP_AS2_SOLE_APP1_SOL_SS";
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT = "NFD_NOP_JA1_JOINT_APP1APP2_CIT";
     public static final String NFD_NOP_AL2_SOLE_APP1_CIT_PS = "NFD_NOP_AL2_SOLE_APP1_CIT_PS";
+    public static final String NFD_NOP_APP1_JS_SOLE = "NFD_NOP_APP1_JS_SOLE";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
@@ -105,6 +106,7 @@ public final class DocumentConstants {
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
+    public static final String AOS_OVERDUE_JS_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED_JS";
 
     public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
     public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_APPLICANT2_SOLICITOR";
