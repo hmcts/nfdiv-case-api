@@ -97,7 +97,7 @@ class GenerateCertificateOfEntitlementTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(generateCertificateOfEntitlement, "email", "divorcecase@justice.gov.uk");
+        ReflectionTestUtils.setField(generateCertificateOfEntitlement, "email", "contactdivorce@justice.gov.uk");
         ReflectionTestUtils.setField(generateCertificateOfEntitlement, "phoneNumber", "0300 303 0642");
         ReflectionTestUtils.setField(generateCertificateOfEntitlement, "finalOrderOffsetDays", 43);
     }
@@ -464,7 +464,7 @@ class GenerateCertificateOfEntitlementTest {
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .emailAddress("divorcecase@justice.gov.uk")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .phoneNumber("0300 303 0642")
             .build();
     }
