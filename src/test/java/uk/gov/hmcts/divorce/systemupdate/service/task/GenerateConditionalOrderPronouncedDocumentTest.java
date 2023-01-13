@@ -27,8 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -173,5 +175,35 @@ class GenerateConditionalOrderPronouncedDocumentTest {
 
         assertEquals(1, caseData.getDocuments().getDocumentsGenerated().size());
         assertEquals(APPLICATION, caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType());
+    }
+
+    @Test
+    void shouldGenerateConditionalOrderGrantedDocAndUpdateCaseDataForJudicialSeparation() {
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .languagePreferenceWelsh(NO)
+                .build())
+            .isJudicialSeparation(YES)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH))
+            .thenReturn(templateContent);
+
+        generateConditionalOrderPronouncedDocument.apply(caseDetails);
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            caseData,
+            CONDITIONAL_ORDER_GRANTED,
+            templateContent,
+            TEST_CASE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID,
+            ENGLISH,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME);
     }
 }
