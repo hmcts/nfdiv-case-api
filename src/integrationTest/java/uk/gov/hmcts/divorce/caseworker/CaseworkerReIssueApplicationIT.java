@@ -1987,8 +1987,8 @@ public class CaseworkerReIssueApplicationIT {
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID,
-            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline.docx");
+        stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
