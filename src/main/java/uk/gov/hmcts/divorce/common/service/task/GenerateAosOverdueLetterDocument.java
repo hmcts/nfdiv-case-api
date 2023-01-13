@@ -10,6 +10,8 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosOverdueLetterTemplateContent;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
@@ -36,7 +38,7 @@ public class GenerateAosOverdueLetterDocument implements CaseTask {
             AOS_OVERDUE_LETTER,
             templateContent.apply(caseData, caseId),
             caseId,
-            AOS_OVERDUE_TEMPLATE_ID,
+            YES.equals(caseData.getIsJudicialSeparation()) ? AOS_OVERDUE_JS_TEMPLATE_ID : AOS_OVERDUE_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
             AOS_OVERDUE_LETTER_DOCUMENT_NAME
         );
