@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -70,7 +70,7 @@ public class SoleApplicationDisputedNotificationIT {
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "husband"),
-                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 hasEntry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
             )),
             eq(ENGLISH)
@@ -96,7 +96,7 @@ public class SoleApplicationDisputedNotificationIT {
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "gŵr"),
-                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 hasEntry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
             )),
             eq(WELSH)

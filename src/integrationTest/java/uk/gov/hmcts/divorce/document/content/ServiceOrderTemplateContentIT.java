@@ -64,7 +64,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
-        expectedEntries.put("ctscContactDetails", buildCtscContactDetails());
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -96,8 +96,6 @@ public class ServiceOrderTemplateContentIT {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
-        var ctscContactDetails = buildCtscContactDetails();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
@@ -110,7 +108,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -121,8 +119,6 @@ public class ServiceOrderTemplateContentIT {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
-
-        var ctscContactDetails = buildCtscContactDetails();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -136,7 +132,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -146,8 +142,6 @@ public class ServiceOrderTemplateContentIT {
     public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDeemedServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
-
-        var ctscContactDetails = buildCtscContactDetails();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -160,7 +154,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -173,8 +167,6 @@ public class ServiceOrderTemplateContentIT {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
-        var ctscContactDetails = buildCtscContactDetails();
-
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
@@ -186,7 +178,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -201,12 +193,10 @@ public class ServiceOrderTemplateContentIT {
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
-        var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
-
         assertThat(templateContent).contains(
             entry(PARTNER, "priod"),
-            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY)
+            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY),
+            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
         );
     }
 
@@ -219,12 +209,10 @@ public class ServiceOrderTemplateContentIT {
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
-        var ctscContactDetails = buildCtscContactDetails();
-        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
-
         assertThat(templateContent).contains(
             entry(PARTNER, "partner sifil"),
-            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY)
+            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY),
+            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
         );
     }
 

@@ -18,8 +18,10 @@ import java.util.Map;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -67,7 +69,9 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             documentType,
             templateVars(caseData, caseId, applicant),
             caseId,
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            YES.equals(caseData.getIsJudicialSeparation())
+                ? CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID
+                : CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
@@ -83,7 +87,9 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
             templateVarsForOfflineRespondent(caseData, caseId, applicant, partner),
             caseId,
-            CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+            YES.equals(caseData.getIsJudicialSeparation())
+                ? CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID
+                : CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );

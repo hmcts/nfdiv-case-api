@@ -8,13 +8,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -33,15 +31,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
@@ -145,19 +142,18 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class NoticeOfProceedingContentIT {
 
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private DocmosisTemplatesConfig config;
+    private static final String APPLICANT_2_FULL_NAME_TXT = "applicant2FirstName applicant2LastName";
+    private static final String APPLICANT_1_FULL_NAME_TXT = "test_first_name test_middle_name test_last_name";
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingNoticeOfProceedingDocumentForDivorceApplication() {
@@ -196,7 +192,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RELATION, "wife");
@@ -233,10 +229,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -284,7 +282,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS_CY);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE_CY);
         expectedEntries.put(RELATION, "gwraig");
@@ -325,6 +323,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -372,7 +372,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RELATION, "wife");
@@ -418,8 +418,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_OFFLINE, false);
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -464,13 +466,23 @@ public class NoticeOfProceedingContentIT {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .build();
+
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RELATION, "wife");
@@ -509,8 +521,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_OFFLINE, false);
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -559,7 +573,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(RELATION, CIVIL_PARTNER);
@@ -598,8 +612,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_OFFLINE, false);
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -648,7 +664,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP_CY);
         expectedEntries.put(RELATION, "partner sifil");
@@ -687,8 +703,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_OFFLINE, false);
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -748,7 +766,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RELATION, "wife");
@@ -791,10 +809,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -856,7 +876,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RELATION, "wife");
@@ -902,10 +922,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -959,7 +981,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
         expectedEntries.put(RELATION, "wife");
@@ -1002,10 +1024,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1173,7 +1197,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
         expectedEntries.put("hasCaseBeenReissued", true);
         expectedEntries.put("reissueDate", "19 June 2021");
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", CONTACT_DIVORCE_EMAIL);
         expectedEntries.put("divorceOrCivilPartnershipUrl", "https://www.gov.uk/divorce");
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true);
         expectedEntries.put(RELATIONS_SOLICITOR, "cyfreithiwr eich gwraig");
@@ -1228,7 +1252,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, true);
-        expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", CONTACT_DIVORCE_EMAIL);
         expectedEntries.put("divorceOrCivilPartnershipUrl", "https://www.gov.uk/end-civil-partnership");
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
         expectedEntries.put(RELATION, "partner sifil");
