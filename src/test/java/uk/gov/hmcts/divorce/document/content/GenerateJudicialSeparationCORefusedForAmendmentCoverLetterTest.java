@@ -27,7 +27,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -128,14 +128,14 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
             eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
-            eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
+            eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
             eq(ENGLISH),
             anyString()
         );
