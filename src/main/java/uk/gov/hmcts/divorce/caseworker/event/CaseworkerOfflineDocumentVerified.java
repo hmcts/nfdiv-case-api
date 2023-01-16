@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -220,9 +221,13 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
+            var state = YES.equals(caseData.getIsJudicialSeparation())
+                ? JSAwaitingLA
+                : AwaitingLegalAdvisorReferral;
+
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(AwaitingLegalAdvisorReferral)
+                .state(state)
                 .build();
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
