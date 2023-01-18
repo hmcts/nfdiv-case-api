@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
@@ -69,6 +70,10 @@ class SwitchedToSoleCoTest {
 
     @Mock
     private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Mock
+    private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
+
 
     @Mock
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
@@ -256,5 +261,31 @@ class SwitchedToSoleCoTest {
 
         verify(switchToSoleCoPrinter).print(caseData, caseId);
         verifyNoMoreInteractions(switchToSoleCoPrinter);
+    }
+
+    @Test
+    void shouldSwitchToSoleSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparationIfApplicantIsRepresented() {
+
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_2)
+            .build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(switchToSoleService).switchUserRoles(caseData, caseId);
+        verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateJudicialSeparationSwitchToSoleSolicitorLetter).apply(caseData, caseId, caseData.getApplicant1(),
+            caseData.getApplicant2());
     }
 }
