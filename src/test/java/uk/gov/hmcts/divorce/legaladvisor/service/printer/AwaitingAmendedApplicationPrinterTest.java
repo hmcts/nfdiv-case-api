@@ -278,7 +278,7 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateJudicialSeparationCORefusedForAmendmentCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
