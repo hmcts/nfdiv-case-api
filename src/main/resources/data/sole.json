@@ -111,5 +111,6 @@
   "labelContentGotMarriedOrFormedCivilPartnership": "got married",
   "labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership": "finalise the divorce",
   "coApplicant1IsSubmitted": "No",
-  "coApplicant1IsDrafted": "No"
+  "coApplicant1IsDrafted": "No",
+  "isJudicialSeparation": "No"
 }

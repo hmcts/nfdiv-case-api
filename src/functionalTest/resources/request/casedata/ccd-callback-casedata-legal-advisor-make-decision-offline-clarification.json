@@ -1,6 +1,7 @@
 {
   "divorceOrDissolution": "divorce",
-  "applicationType": "soleApplication"
+  "applicationType": "soleApplication",
+  "isJudicialSeparation": "No",
   "coGranted": "No",
   "coRefusalDecision": "moreInfo",
   "coRefusalClarificationReason": ["marriageCertificate"],

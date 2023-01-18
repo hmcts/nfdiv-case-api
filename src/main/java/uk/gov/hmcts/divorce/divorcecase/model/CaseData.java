@@ -238,10 +238,6 @@ public class CaseData {
     )
     private YesOrNo isJudicialSeparation;
 
-    public YesOrNo getIsJudicialSeparation() {
-        return this.isJudicialSeparation != null ? this.isJudicialSeparation : YesOrNo.NO;
-    }
-
     @CCD(
         label = "General emails",
         typeOverride = Collection,
