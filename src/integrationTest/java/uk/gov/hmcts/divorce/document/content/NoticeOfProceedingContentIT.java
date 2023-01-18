@@ -152,6 +152,9 @@ public class NoticeOfProceedingContentIT {
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingNoticeOfProceedingDocumentForDivorceApplication() {
         CaseData caseData = caseData();

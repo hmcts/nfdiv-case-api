@@ -23,9 +23,13 @@ import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
@@ -76,12 +80,41 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
         if (isSoleApplication) {
             caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
-            generateSoleNoticeOfProceedings(caseData, caseId);
+            ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
+            if (YES.equals(caseDetails.getData().getIsJudicialSeparation())) {
+                if (!DIGITAL_AOS.equals(reissueOption)) {
+                    generateSoleJSNoticeOfProceedings(caseData, caseId);
+                }
+            } else {
+                generateSoleNoticeOfProceedings(caseData, caseId);
+            }
         } else {
             generateJointNoticeOfProceedings(caseData, caseId);
         }
 
         return caseDetails;
+    }
+
+    private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
+        final Applicant applicant2 = caseData.getApplicant2();
+        log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
+        if (!applicant2.isRepresented()) {
+            generateNoticeOfProceedings(
+                caseData,
+                caseId,
+                NFD_NOP_APP2_JS_SOLE,
+                noticeOfProceedingContent.apply(caseData, caseId, applicant2,
+                    caseData.getApplicant2().getLanguagePreference())
+            );
+            log.info("Generating coversheet for JS respondent for sole case id {} ", caseId);
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2),
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 
     private void generateSoleNoticeOfProceedings(final CaseData caseData, final Long caseId) {
@@ -120,7 +153,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             final LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
             final Applicant applicant1 = caseData.getApplicant1();
 
-            boolean reissuedAsOfflineAOS = ReissueOption.OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+            boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
 
             if (applicant2.isBasedOverseas()) {
                 log.info("Generating NOP for overseas respondent for sole case id {} ", caseId);
@@ -224,3 +257,4 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         );
     }
 }
+
