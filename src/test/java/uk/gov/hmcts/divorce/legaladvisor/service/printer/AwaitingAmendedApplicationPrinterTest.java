@@ -103,7 +103,6 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.NO)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -229,7 +228,6 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(emptyList())
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.NO)
             .build();
 
         awaitingAmendedApplicationPrinter.sendLetters(
@@ -265,7 +263,6 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc))
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.NO)
             .build();
 
         awaitingAmendedApplicationPrinter.sendLetters(

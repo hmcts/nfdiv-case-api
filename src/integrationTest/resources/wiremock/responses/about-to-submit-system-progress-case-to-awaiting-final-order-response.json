@@ -56,7 +56,6 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "isJudicialSeparation": "No"
+    "warnings": []
   }
 }
