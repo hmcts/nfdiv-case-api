@@ -7,15 +7,18 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -66,6 +69,9 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
+
+    @Autowired
+    private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
 
     @Autowired
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
@@ -127,7 +133,18 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
-            generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            if (YES.equals(caseData.getIsJudicialSeparation())) {
+
+                if (caseData.getApplicant2().isRepresented()) {
+
+                    generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, caseId, caseData.getApplicant1(),
+                        caseData.getApplicant2());
+                }
+
+            } else {
+                generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            }
+
         }
 
         generateConditionalOrderAnswersDocument.apply(
