@@ -141,9 +141,9 @@ public class AwaitingAmendedApplicationPrinter {
             applicant.getLanguagePreference()
         );
         if (caseData.getIsJudicialSeparation().toBoolean()) {
-            String jsCoverLetterTemplateId = caseData.getApplication().isPaperCase() && applicant.isRepresented() ?
-                JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID :
-                JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+            String jsCoverLetterTemplateId = caseData.getApplication().isPaperCase() && applicant.isRepresented()
+                ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+                : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 
             generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
                 caseData,
