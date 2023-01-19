@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 
 import java.time.Clock;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
@@ -85,8 +84,7 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
 
         setMockClock(clock);
 
-        final Map<String, Object> expectedTemplateContent = new HashMap<>
-            (getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
+        final Map<String, Object> expectedTemplateContent = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference())).thenReturn(expectedTemplateContent);
