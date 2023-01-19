@@ -31,12 +31,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
@@ -93,7 +95,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(CONTACT_EMAIL, "divorcecase@justice.gov.uk");
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -143,14 +145,14 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
             eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
-            eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
+            eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
             eq(ENGLISH),
             anyString()
         );
@@ -164,7 +166,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(CONTACT_EMAIL, "divorcecase@justice.gov.uk");
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -257,7 +259,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(CONTACT_EMAIL, "divorcecase@justice.gov.uk");
+        templateContent.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
