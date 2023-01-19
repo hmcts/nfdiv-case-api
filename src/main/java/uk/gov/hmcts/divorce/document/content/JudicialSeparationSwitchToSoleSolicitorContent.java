@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -37,9 +36,6 @@ public class JudicialSeparationSwitchToSoleSolicitorContent {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
-
-    @Autowired
-    private CommonContent commonContent;
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
