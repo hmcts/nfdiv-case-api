@@ -135,9 +135,6 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
             templateContent.put(PARTNER, conditionalOrderCommonContent.getPartner(caseData));
         }
 
-
-
-
         return templateContent;
     }
 }
