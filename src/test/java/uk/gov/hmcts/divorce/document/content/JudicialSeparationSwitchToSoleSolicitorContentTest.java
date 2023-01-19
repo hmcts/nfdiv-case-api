@@ -57,10 +57,10 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
     private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
 
     @Test
-    void shouldRenderDocumentAndUpdateCaseData() {
+    void shouldGenerateSwitchToSoleLetterToSolicitorForJudicialSeparation() {
         CaseData caseData = caseData();
 
-        Applicant applicant = Applicant.builder()
+        final Applicant applicant = Applicant.builder()
             .languagePreferenceWelsh(NO)
             .solicitor(
                 Solicitor.builder()
@@ -71,7 +71,7 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
             )
             .build();
 
-        Applicant respondent = Applicant.builder()
+        final Applicant respondent = Applicant.builder()
             .languagePreferenceWelsh(NO)
             .solicitor(
                 Solicitor.builder()
@@ -85,13 +85,12 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
 
         setMockClock(clock);
 
-        Map<String, Object> expectedTemplateContent = new HashMap<>(getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
+        final Map<String, Object> expectedTemplateContent = new HashMap<>
+            (getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference())).thenReturn(expectedTemplateContent);
 
-
-        generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), respondent);
 
         expectedTemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
@@ -104,6 +103,8 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
         expectedTemplateContent.put(SOLICITOR_REFERENCE, TEST_REFERENCE);
 
         expectedTemplateContent.put(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
+
+        generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), respondent);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
