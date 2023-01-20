@@ -17,6 +17,7 @@ import static java.time.LocalDateTime.now;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID;
@@ -25,6 +26,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
@@ -56,11 +59,79 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
     private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
 
     @Test
-    void shouldGenerateSwitchToSoleLetterToSolicitorForJudicialSeparation() {
+    void shouldGenerateSwitchToSoleLetterWhenApp2isRepresentedAndNoSolicitorReference() {
+
         CaseData caseData = caseData();
 
         final Applicant applicant = Applicant.builder()
             .languagePreferenceWelsh(NO)
+            .firstName("test first name")
+            .lastName("test last name")
+            .solicitorRepresented(NO)
+            .build();
+
+        caseData.setApplicant1(applicant);
+
+        final Applicant respondent = Applicant.builder()
+            .languagePreferenceWelsh(NO)
+            .firstName("test first name")
+            .lastName("test last name")
+            .solicitorRepresented(YES)
+            .solicitor(
+                Solicitor.builder()
+                    .name(TEST_SOLICITOR_NAME)
+                    .address(TEST_SOLICITOR_ADDRESS)
+                    .build()
+            )
+            .build();
+        caseData.setApplicant2(respondent);
+
+        setMockClock(clock);
+
+
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            applicant.getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
+
+        final Map<String, Object> expectedTemplateContent = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
+
+        expectedTemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        expectedTemplateContent.put(RESPONDENT_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
+        expectedTemplateContent.put(RESPONDENT_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS);
+        expectedTemplateContent.put(APPLICANT_1_FULL_NAME, "test first name test last name");
+        expectedTemplateContent.put(APPLICANT_2_FULL_NAME, "test first name test last name");
+
+        expectedTemplateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriage");
+
+        expectedTemplateContent.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
+
+        expectedTemplateContent.put(APPLICANT_1_SOLICITOR_NAME, NOT_REPRESENTED);
+
+        generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), respondent);
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            caseData,
+            SWITCH_TO_SOLE_CO_LETTER,
+            expectedTemplateContent,
+            TEST_CASE_ID,
+            JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME, now(clock))
+        );
+    }
+
+
+
+    @Test
+    void shouldGenerateSwitchToSoleLetterWhenBothApplicantsAreRepresented() {
+
+        CaseData caseData = caseData();
+
+        final Applicant applicant = Applicant.builder()
+            .languagePreferenceWelsh(NO)
+            .firstName("test first name")
+            .lastName("test last name")
+            .solicitorRepresented(YES)
             .solicitor(
                 Solicitor.builder()
                     .name(TEST_SOLICITOR_NAME)
@@ -70,8 +141,13 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
             )
             .build();
 
+        caseData.setApplicant1(applicant);
+
         final Applicant respondent = Applicant.builder()
             .languagePreferenceWelsh(NO)
+            .firstName("test first name")
+            .lastName("test last name")
+            .solicitorRepresented(YES)
             .solicitor(
                 Solicitor.builder()
                     .name(TEST_SOLICITOR_NAME)
@@ -84,22 +160,18 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
 
         setMockClock(clock);
 
-        final Map<String, Object> expectedTemplateContent = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
-
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            applicant.getLanguagePreference())).thenReturn(expectedTemplateContent);
+            applicant.getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
 
+        final Map<String, Object> expectedTemplateContent = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         expectedTemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS);
-        expectedTemplateContent.put(APPLICANT_1_FULL_NAME, "applicant1 Full Name");
-        expectedTemplateContent.put(APPLICANT_2_FULL_NAME, "respondent Full Name");
-
-        expectedTemplateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, "Marriage");
-
+        expectedTemplateContent.put(APPLICANT_1_FULL_NAME, "test first name test last name");
+        expectedTemplateContent.put(APPLICANT_2_FULL_NAME, "test first name test last name");
+        expectedTemplateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriage");
         expectedTemplateContent.put(SOLICITOR_REFERENCE, TEST_REFERENCE);
-
         expectedTemplateContent.put(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
 
         generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), respondent);

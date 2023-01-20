@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -264,7 +266,7 @@ class SwitchedToSoleCoTest {
     }
 
     @Test
-    void shouldSwitchToSoleSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparationIfApplicantIsRepresented() {
+    void shouldSwitchToSoleSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
 
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
@@ -287,5 +289,39 @@ class SwitchedToSoleCoTest {
         verify(switchToSoleService).switchApplicantData(caseData);
         verify(generateJudicialSeparationSwitchToSoleSolicitorLetter).apply(caseData, caseId, caseData.getApplicant1(),
             caseData.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSwitchToSoleSwitchUserDataAndRolesIfApplicant1TriggeredD84SwitchToSoleInJudicialSeparation() {
+        final long caseId = 1L;
+        CaseData caseData = CaseData.builder()
+            .isJudicialSeparation(YES)
+            .build();
+
+        Applicant applicant = Applicant.builder()
+                .solicitorRepresented(NO)
+                    .build();
+        caseData.setApplicant1(applicant);
+
+        Applicant respondent = Applicant.builder()
+            .solicitorRepresented(YES)
+            .build();
+        caseData.setApplicant2(respondent);
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_1)
+            .build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(generateJudicialSeparationSwitchToSoleSolicitorLetter).apply(caseData, caseId, caseData.getApplicant1(),
+            caseData.getApplicant2());
+        verifyNoMoreInteractions(switchToSoleCoPrinter);
     }
 }
