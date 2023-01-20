@@ -164,13 +164,6 @@ ccd:
         value: .security*,.watches,.triggered_watches,.watcher-history-*,.logstash_dead_letter,.ml*
     persistence:
       enabled: false
-    ingress:
-      enabled: true
-      path: /
-      hosts:
-        - host: es-${SERVICE_FQDN}
-          paths:
-            - path: /
 
   logstash:
     image:
