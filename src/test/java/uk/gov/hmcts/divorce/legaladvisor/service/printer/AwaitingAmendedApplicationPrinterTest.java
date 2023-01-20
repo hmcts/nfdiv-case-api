@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
@@ -57,6 +59,9 @@ public class AwaitingAmendedApplicationPrinterTest {
 
     @Mock
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Mock
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Mock
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
@@ -271,7 +276,7 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateCoversheet).generateCoversheet(
             eq(caseData),
             eq(TEST_CASE_ID),
-            eq(COVERSHEET_APPLICANT),
+            eq(COVERSHEET_APPLICANT2_SOLICITOR),
             anyMap(),
             eq(ENGLISH)
         );
