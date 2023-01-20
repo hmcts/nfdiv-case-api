@@ -41,9 +41,14 @@ public class ConditionalOrderRefusedForAmendmentContent {
     @Autowired
     private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        Map<String, Object> templateContent = new HashMap<>();
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -53,8 +58,6 @@ public class ConditionalOrderRefusedForAmendmentContent {
 
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
-
-        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
