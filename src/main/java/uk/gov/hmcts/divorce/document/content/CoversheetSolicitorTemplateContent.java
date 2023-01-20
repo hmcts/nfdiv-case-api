@@ -18,10 +18,10 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 public class CoversheetSolicitorTemplateContent {
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
-        return this.apply(caseData, ccdCaseReference, caseData.getApplicant2());
+        return this.apply(ccdCaseReference, caseData.getApplicant2());
     }
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
+    public Map<String, Object> apply(final Long ccdCaseReference, final Applicant applicant) {
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());

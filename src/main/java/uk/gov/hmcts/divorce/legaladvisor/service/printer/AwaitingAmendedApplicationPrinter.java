@@ -145,7 +145,7 @@ public class AwaitingAmendedApplicationPrinter {
     private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             final Map<String, Object> coverSheetTemplateContent = isPaperCaseAndApplicantRepresented(caseData, applicant)
-                ? coversheetSolicitorTemplateContent.apply(caseData, caseId, applicant)
+                ? coversheetSolicitorTemplateContent.apply(caseId, applicant)
                 : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant);
 
             final String coverSheetTemplateId = isPaperCaseAndApplicantRepresented(caseData, applicant)

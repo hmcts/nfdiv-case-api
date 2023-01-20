@@ -53,7 +53,7 @@ class CoversheetSolicitorTemplateContentTest {
             .address(APPLICANT_1_SOLICITOR_ADDRESS)
             .build());
 
-        final Map<String, Object> result = coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        final Map<String, Object> result = coversheetSolicitorTemplateContent.apply(TEST_CASE_ID, caseData.getApplicant1());
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put("caseReference", formatId(1616591401473378L));
