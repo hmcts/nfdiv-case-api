@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
