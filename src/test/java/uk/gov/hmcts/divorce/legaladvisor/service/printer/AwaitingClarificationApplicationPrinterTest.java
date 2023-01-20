@@ -118,7 +118,6 @@ public class AwaitingClarificationApplicationPrinterTest {
         verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
@@ -210,7 +209,6 @@ public class AwaitingClarificationApplicationPrinterTest {
         verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 

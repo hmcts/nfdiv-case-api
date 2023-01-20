@@ -23,6 +23,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -138,13 +139,15 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
             .thenReturn(refusalReasons);
         when(conditionalOrderCommonContent.getDocumentType(caseData, caseData.getApplicant1(), true))
             .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        when(conditionalOrderCommonContent.getDocumentTemplateId(caseData, caseData.getApplicant1(), true))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.getPartner(caseData))
             .thenReturn("wife");
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
@@ -233,11 +236,13 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
             .thenReturn(refusalReasons);
         when(conditionalOrderCommonContent.getDocumentType(caseData, caseData.getApplicant1(), true))
             .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        when(conditionalOrderCommonContent.getDocumentTemplateId(caseData, caseData.getApplicant1(), true))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
@@ -317,11 +322,13 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
             .thenReturn(refusalReasons);
         when(conditionalOrderCommonContent.getDocumentType(caseData, caseData.getApplicant1(), true))
             .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        when(conditionalOrderCommonContent.getDocumentTemplateId(caseData, caseData.getApplicant1(), true))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),

@@ -125,7 +125,6 @@ public class GenerateCoRefusedCoverLetterTest {
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
@@ -192,7 +191,6 @@ public class GenerateCoRefusedCoverLetterTest {
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 

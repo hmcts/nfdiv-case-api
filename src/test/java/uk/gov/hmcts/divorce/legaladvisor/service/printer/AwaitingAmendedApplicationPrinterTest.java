@@ -130,7 +130,6 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
@@ -207,7 +206,6 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateJudicialSeparationCORefusedForAmendmentCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
@@ -285,7 +283,6 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateJudicialSeparationCORefusedForAmendmentCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
@@ -373,7 +370,6 @@ public class AwaitingAmendedApplicationPrinterTest {
         verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
