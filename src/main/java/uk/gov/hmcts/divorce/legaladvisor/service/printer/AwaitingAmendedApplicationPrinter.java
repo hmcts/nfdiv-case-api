@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -16,12 +17,14 @@ import uk.gov.hmcts.divorce.legaladvisor.service.task.GenerateCoRefusedCoverLett
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.locks.Condition;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
@@ -48,6 +51,9 @@ public class AwaitingAmendedApplicationPrinter {
 
     @Autowired
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Autowired
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Autowired
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
@@ -81,6 +87,10 @@ public class AwaitingAmendedApplicationPrinter {
                 caseId
             );
         }
+    }
+
+    private Boolean isPaperCaseAndApplicantRepresented(final CaseData caseData, final Applicant applicant) {
+        return caseData.getApplication().isPaperCase() && applicant.isRepresented();
     }
 
     private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData, final Applicant applicant) {
@@ -128,20 +138,37 @@ public class AwaitingAmendedApplicationPrinter {
     }
 
     private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
-        generateCoversheet.generateCoversheet(
-            caseData,
-            caseId,
-            COVERSHEET_APPLICANT,
-            coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
-            applicant.getLanguagePreference()
-        );
         if (caseData.getIsJudicialSeparation().toBoolean()) {
+            final Map<String, Object> coverSheetTemplateContent = isPaperCaseAndApplicantRepresented(caseData, applicant)
+                ? coversheetSolicitorTemplateContent.apply(caseId, applicant)
+                : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant);
+
+            final String coverSheetTemplateId = isPaperCaseAndApplicantRepresented(caseData, applicant)
+                ? COVERSHEET_APPLICANT2_SOLICITOR
+                : COVERSHEET_APPLICANT;
+
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                coverSheetTemplateId,
+                coverSheetTemplateContent,
+                applicant.getLanguagePreference()
+            );
+
             generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
                 applicant
             );
         } else {
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
+                applicant.getLanguagePreference()
+            );
+
             generateCoRefusedCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
