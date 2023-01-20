@@ -134,15 +134,14 @@ public class AwaitingClarificationApplicationPrinter {
             generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
-                CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
                 applicant
             );
         } else {
             generateCoRefusedCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
-                CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-                applicant
+                applicant,
+                true
             );
         }
     }

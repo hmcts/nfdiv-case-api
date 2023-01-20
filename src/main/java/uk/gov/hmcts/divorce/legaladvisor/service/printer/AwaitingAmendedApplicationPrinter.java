@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.divorce.legaladvisor.service.task.GenerateCoRefusedCoverLett
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.Condition;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -40,6 +42,9 @@ public class AwaitingAmendedApplicationPrinter {
 
     @Autowired
     private GenerateCoversheet generateCoversheet;
+
+    @Autowired
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
@@ -131,21 +136,15 @@ public class AwaitingAmendedApplicationPrinter {
             applicant.getLanguagePreference()
         );
         if (caseData.getIsJudicialSeparation().toBoolean()) {
-            String jsCoverLetterTemplateId = caseData.getApplication().isPaperCase() && applicant.isRepresented()
-                ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
-                : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
-
             generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
-                jsCoverLetterTemplateId,
                 applicant
             );
         } else {
             generateCoRefusedCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
-                REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
                 applicant
             );
         }

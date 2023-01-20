@@ -48,8 +48,14 @@ public class GenerateCoRefusedCoverLetter {
 
     public void generateAndUpdateCaseData(final CaseData caseData,
                                           final Long caseId,
-                                          final String templateId,
                                           final Applicant applicant) {
+        this.generateAndUpdateCaseData(caseData, caseId, applicant, false);
+    }
+
+    public void generateAndUpdateCaseData(final CaseData caseData,
+                                          final Long caseId,
+                                          final Applicant applicant,
+                                          final Boolean isClarificationRefusal) {
 
         log.info("Generating Conditional Order Refused Cover Letter for case id {} ", caseId);
 
@@ -58,7 +64,7 @@ public class GenerateCoRefusedCoverLetter {
             CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
             templateContent(caseData, caseId, applicant),
             caseId,
-            templateId,
+            conditionalOrderCommonContent.getDocumentTemplateId(caseData, applicant, isClarificationRefusal),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );

@@ -59,7 +59,6 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
     public void generateAndUpdateCaseData(final CaseData caseData,
                                           final Long caseId,
-                                          final String templateId,
                                           final Applicant applicant) {
 
         log.info("Generating Judicial Separation Conditional Order Refused Cover Letter for case id {} ", caseId);
@@ -71,7 +70,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
             coverLetter,
             templateContent(caseData, caseId, applicant),
             caseId,
-            templateId,
+            this.getDocumentTemplateId(caseData, applicant),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
@@ -79,6 +78,10 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
     public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant) {
         return conditionalOrderCommonContent.getDocumentType(caseData, applicant, false);
+    }
+
+    public String getDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getDocumentTemplateId(caseData, applicant, false);
     }
 
     private String getSolicitorName(final Applicant applicant) {
