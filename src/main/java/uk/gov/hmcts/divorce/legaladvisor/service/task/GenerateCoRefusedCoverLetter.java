@@ -26,6 +26,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -86,6 +89,8 @@ public class GenerateCoRefusedCoverLetter {
 
         if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
             templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), applicant.getLanguagePreference()));
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
         }
 
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
