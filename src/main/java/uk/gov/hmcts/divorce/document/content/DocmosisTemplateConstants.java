@@ -78,6 +78,8 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
     public static final String APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS = "applicant1HasEnteredRespondentsSolicitorDetails";
     public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
+    public static final String APPLICANT_1_SOLICITOR_FIRM_NAME = "applicant1SolicitorFirmName";
+    public static final String APPLICANT_1_SOLICITOR_ADDRESS = "applicant1SolicitorAddress";
     public static final String APPLICANT_2_SOLICITOR_NAME = "applicant2SolicitorName";
     public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
     public static final String APPLICANT_2_SOLICITOR_FIRM_NAME = "applicant2SolicitorFirmName";
