@@ -7,7 +7,10 @@ import java.util.List;
 
 @Builder(toBuilder = true)
 public class MissingDocumentsValidation {
-    public String message;
-    public List<DocumentType> documentTypeList;
-    public int expectedDocumentsSize;
+    @Builder.Default
+    public String message = "";
+    @Builder.Default
+    public List<DocumentType> documentTypeList = List.of();
+    @Builder.Default
+    public int expectedDocumentsSize = 0;
 }
