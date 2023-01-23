@@ -169,4 +169,21 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(OFFLINE_WITH_PRIVATE_CONTACT_RESPONSE)));
     }
+
+    @Test
+    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsInJudicialSeparation()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
+        request.put("isJudicialSeparation", "Yes");
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_NOT_REPRESENTED_RESPONSE)));
+    }
 }
