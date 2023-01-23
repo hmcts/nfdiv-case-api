@@ -39,6 +39,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -369,6 +370,11 @@ public class CaseData {
     @JsonIgnore
     public boolean isDivorce() {
         return divorceOrDissolution.isDivorce();
+    }
+
+    @JsonIgnore
+    public boolean isJudicialSeparationCase() {
+        return !isNull(isJudicialSeparation) && isJudicialSeparation == YES;
     }
 
     @JsonIgnore
