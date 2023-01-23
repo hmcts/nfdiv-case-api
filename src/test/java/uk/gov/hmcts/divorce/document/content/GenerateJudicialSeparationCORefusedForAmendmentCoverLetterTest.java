@@ -157,7 +157,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
     }
 
     @Test
-    void shouldGenerateAndUpdateCaseDataForOfflineRepresentedApplicant() {
+    void shouldGenerateAndUpdateCaseDataForRepresentedApplicant() {
         setMockClock(clock);
 
         final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
@@ -248,7 +248,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
     }
 
     @Test
-    void shouldGenerateAndUpdateCaseDataForOfflineRepresentedApplicantWithNoReferenceAndUnrepresentedRespondent() {
+    void shouldGenerateAndUpdateCaseDataForRepresentedApplicantWithNoReferenceAndUnrepresentedRespondent() {
         setMockClock(clock);
 
         final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
