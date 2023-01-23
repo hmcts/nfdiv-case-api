@@ -75,16 +75,14 @@ public class ConditionalOrderCommonContent {
     }
 
     public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant, final boolean isClarificationRefusal) {
-        final boolean isRepresentedPaperCase = caseData.getApplication().isPaperCase() && applicant.isRepresented();
-
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             if (isClarificationRefusal) {
-                return isRepresentedPaperCase
+                return applicant.isRepresented()
                     ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
                     : CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
                 // Check this - which doc should be sent to unrepresented applicants for JS clarification refusal?
             }
-            return isRepresentedPaperCase
+            return applicant.isRepresented()
                 ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
                 : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
         }
@@ -92,15 +90,13 @@ public class ConditionalOrderCommonContent {
     }
 
     public String getDocumentTemplateId(final CaseData caseData, final Applicant applicant, final boolean isClarificationRefusal) {
-        final boolean isRepresentedPaperCase = caseData.getApplication().isPaperCase() && applicant.isRepresented();
-
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             if (isClarificationRefusal) {
-                return isRepresentedPaperCase
+                return applicant.isRepresented()
                     ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
                     : CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
             }
-            return isRepresentedPaperCase
+            return applicant.isRepresented()
                 ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
                 : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
         }
