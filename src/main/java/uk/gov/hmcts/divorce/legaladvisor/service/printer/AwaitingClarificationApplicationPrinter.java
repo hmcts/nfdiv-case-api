@@ -28,7 +28,7 @@ public class AwaitingClarificationApplicationPrinter extends AwaitingAmendedAppl
     @Autowired
     private GenerateJudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
 
-    private void logSendLettersWarning(final Boolean isJudicialSeparation, final Long caseId) {
+    void logSendLettersWarning(final Boolean isJudicialSeparation, final Long caseId) {
         String defaultMsg =
             "Awaiting clarification Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
         String judicialSeparationMsg =
@@ -45,23 +45,23 @@ public class AwaitingClarificationApplicationPrinter extends AwaitingAmendedAppl
         log.warn(message, docList, caseId);
     }
 
-    private String getAwaitingAmendmentOrClarificationLetterType() {
+    String getAwaitingAmendmentOrClarificationLetterType() {
         return awaitingAmendmentOrClarificationLetterType(true);
     }
 
-    private int getExpectedDocumentsSize(final CaseData caseData) {
+    int getExpectedDocumentsSize(final CaseData caseData) {
         return expectedDocumentsSize(caseData.getIsJudicialSeparation().toBoolean(), true);
     }
 
-    private List<Letter> getLetters(final CaseData caseData, final Applicant applicant) {
+    List<Letter> getLetters(final CaseData caseData, final Applicant applicant) {
         return awaitingAmendedOrClarificationApplicationLetters(caseData, applicant, true);
     }
 
-    private DocumentType getRefusalCoverLetterType(final CaseData caseData, final Applicant applicant) {
+    DocumentType getRefusalCoverLetterType(final CaseData caseData, final Applicant applicant) {
         return generateJudicialSeparationCORefusedForClarificationCoverLetter.getDocumentType(caseData, applicant);
     }
 
-    private void generateJudicialSeparationCoverLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+    void generateJudicialSeparationCoverLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
             caseData,
             caseId,
@@ -69,7 +69,7 @@ public class AwaitingClarificationApplicationPrinter extends AwaitingAmendedAppl
         );
     }
 
-    private void generateCoverLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+    void generateCoverLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             caseId,
