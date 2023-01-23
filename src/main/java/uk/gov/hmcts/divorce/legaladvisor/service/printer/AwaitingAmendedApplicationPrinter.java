@@ -87,10 +87,6 @@ public class AwaitingAmendedApplicationPrinter {
         }
     }
 
-    private Boolean isPaperCaseAndApplicantRepresented(final CaseData caseData, final Applicant applicant) {
-        return caseData.getApplication().isPaperCase() && applicant.isRepresented();
-    }
-
     private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData, final Applicant applicant) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
@@ -99,7 +95,7 @@ public class AwaitingAmendedApplicationPrinter {
 
         DocumentType refusalCoverLetterType = CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
         if (caseData.getIsJudicialSeparation().toBoolean()) {
-            refusalCoverLetterType = isPaperCaseAndApplicantRepresented(caseData, applicant)
+            refusalCoverLetterType = applicant.isRepresented()
                 ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
                 : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
         }
@@ -144,11 +140,11 @@ public class AwaitingAmendedApplicationPrinter {
 
     private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         if (caseData.getIsJudicialSeparation().toBoolean()) {
-            final Map<String, Object> coverSheetTemplateContent = isPaperCaseAndApplicantRepresented(caseData, applicant)
+            final Map<String, Object> coverSheetTemplateContent = applicant.isRepresented()
                 ? coversheetSolicitorTemplateContent.apply(caseId, applicant)
                 : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant);
 
-            final String coverSheetTemplateId = isPaperCaseAndApplicantRepresented(caseData, applicant)
+            final String coverSheetTemplateId = applicant.isRepresented()
                 ? COVERSHEET_APPLICANT2_SOLICITOR
                 : COVERSHEET_APPLICANT;
 
@@ -160,7 +156,7 @@ public class AwaitingAmendedApplicationPrinter {
                 applicant.getLanguagePreference()
             );
 
-            final String jsCoverLetterTemplateId = isPaperCaseAndApplicantRepresented(caseData, applicant)
+            final String jsCoverLetterTemplateId = applicant.isRepresented()
                 ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
                 : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 

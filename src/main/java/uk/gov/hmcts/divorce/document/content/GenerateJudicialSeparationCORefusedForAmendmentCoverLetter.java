@@ -66,7 +66,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         log.info("Generating Judicial Separation Conditional Order Refused Cover Letter for case id {} ", caseId);
 
-        final DocumentType coverLetter = caseData.getApplication().isPaperCase() && applicant.isRepresented()
+        final DocumentType coverLetter = applicant.isRepresented()
             ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
             : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 
@@ -110,7 +110,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         templateContent.put(FEEDBACK, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
 
-        if (caseData.getApplication().isPaperCase() && applicant.isRepresented()) {
+        if (applicant.isRepresented()) {
             templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
             templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
             templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
