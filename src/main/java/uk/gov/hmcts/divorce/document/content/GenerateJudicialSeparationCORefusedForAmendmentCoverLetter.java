@@ -63,14 +63,12 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         log.info("Generating Judicial Separation Conditional Order Refused Cover Letter for case id {} ", caseId);
 
-        final DocumentType coverLetter = this.getDocumentType(caseData, applicant);
-
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            coverLetter,
+            getDocumentType(caseData, applicant),
             templateContent(caseData, caseId, applicant),
             caseId,
-            this.getDocumentTemplateId(caseData, applicant),
+            getDocumentTemplateId(caseData, applicant),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
