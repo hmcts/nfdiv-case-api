@@ -52,4 +52,19 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
+
+    @Test
+    public void shouldSendAppliedForCoLetterIfD84SelectedForJudicialSeparationAndApplicant2IsRepresented() throws IOException {
+        final Map<String, Object> caseData = caseData(CASEWORKER_D84_REQUEST);
+        caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
+        caseData.put("isJudicialSeparation", "Yes");
+        caseData.put("applicant2SolicitorRepresented", "Yes");
+        caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
+        caseData.put("dueDate", "2022-01-18");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
 }
