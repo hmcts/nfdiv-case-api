@@ -85,10 +85,6 @@ public class AwaitingAmendedApplicationPrinter {
         }
     }
 
-    private Boolean isPaperCaseAndApplicantRepresented(final CaseData caseData, final Applicant applicant) {
-        return caseData.getApplication().isPaperCase() && applicant.isRepresented();
-    }
-
     private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData, final Applicant applicant) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
@@ -135,11 +131,11 @@ public class AwaitingAmendedApplicationPrinter {
 
     private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         if (caseData.getIsJudicialSeparation().toBoolean()) {
-            final Map<String, Object> coverSheetTemplateContent = isPaperCaseAndApplicantRepresented(caseData, applicant)
+            final Map<String, Object> coverSheetTemplateContent = applicant.isRepresented()
                 ? coversheetSolicitorTemplateContent.apply(caseId, applicant)
                 : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant);
 
-            final String coverSheetTemplateId = isPaperCaseAndApplicantRepresented(caseData, applicant)
+            final String coverSheetTemplateId = applicant.isRepresented()
                 ? COVERSHEET_APPLICANT2_SOLICITOR
                 : COVERSHEET_APPLICANT;
 

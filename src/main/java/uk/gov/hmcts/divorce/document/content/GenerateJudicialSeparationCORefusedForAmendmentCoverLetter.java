@@ -113,7 +113,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         templateContent.put(FEEDBACK, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
 
-        if (caseData.getApplication().isPaperCase() && applicant.isRepresented()) {
+        if (applicant.isRepresented()) {
             templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
             templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
             templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
