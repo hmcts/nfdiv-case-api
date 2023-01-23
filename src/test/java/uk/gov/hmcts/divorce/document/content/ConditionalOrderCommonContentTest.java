@@ -119,7 +119,7 @@ class ConditionalOrderCommonContentTest {
         Applicant applicant = Applicant.builder()
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getDocumentType(caseData, applicant, false);
+        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
 
         assertThat(result).isEqualTo(DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
     }
@@ -133,7 +133,7 @@ class ConditionalOrderCommonContentTest {
         Applicant applicant = Applicant.builder()
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getDocumentType(caseData, applicant, false);
+        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
 
         assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
     }
@@ -153,7 +153,7 @@ class ConditionalOrderCommonContentTest {
             .solicitorRepresented(YES)
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getDocumentType(caseData, applicant, false);
+        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
 
         assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
     }
@@ -167,7 +167,7 @@ class ConditionalOrderCommonContentTest {
         Applicant applicant = Applicant.builder()
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getDocumentType(caseData, applicant, true);
+        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
 
         assertThat(result).isEqualTo(DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
     }
@@ -187,7 +187,7 @@ class ConditionalOrderCommonContentTest {
             .solicitorRepresented(YES)
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getDocumentType(caseData, applicant, true);
+        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
 
         assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
     }

@@ -15,11 +15,11 @@ public class GenerateJudicialSeparationCORefusedForClarificationCoverLetter exte
     @Autowired
     private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant) {
-        return conditionalOrderCommonContent.getDocumentType(caseData, applicant, true);
+    public DocumentType getCoverLetterDocumentType(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
     }
 
-    public String getDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
-        return conditionalOrderCommonContent.getDocumentTemplateId(caseData, applicant, true);
+    public String getCoverLetterDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
     }
 }

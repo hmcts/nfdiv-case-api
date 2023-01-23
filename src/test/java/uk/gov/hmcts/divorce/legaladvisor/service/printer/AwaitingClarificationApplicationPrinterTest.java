@@ -97,7 +97,7 @@ public class AwaitingClarificationApplicationPrinterTest {
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
-        when(generateJudicialSeparationCORefusedForClarificationCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+        when(generateJudicialSeparationCORefusedForClarificationCoverLetter.getCoverLetterDocumentType(caseData, caseData.getApplicant1()))
             .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
 
         awaitingClarificationApplicationPrinter.sendLetters(
@@ -148,7 +148,7 @@ public class AwaitingClarificationApplicationPrinterTest {
             )
             .build();
 
-        when(generateJudicialSeparationCORefusedForClarificationCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+        when(generateJudicialSeparationCORefusedForClarificationCoverLetter.getCoverLetterDocumentType(caseData, caseData.getApplicant1()))
             .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
 
         awaitingClarificationApplicationPrinter.sendLetters(
@@ -188,7 +188,7 @@ public class AwaitingClarificationApplicationPrinterTest {
             )
             .build();
 
-        when(generateJudicialSeparationCORefusedForClarificationCoverLetter.getDocumentType(caseData, caseData.getApplicant1()))
+        when(generateJudicialSeparationCORefusedForClarificationCoverLetter.getCoverLetterDocumentType(caseData, caseData.getApplicant1()))
             .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
 
         awaitingClarificationApplicationPrinter.sendLetters(

@@ -74,7 +74,11 @@ public class ConditionalOrderCommonContent {
         }
     }
 
-    public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant, final boolean isClarificationRefusal) {
+    public DocumentType getCoverLetterDocumentType(
+        final CaseData caseData,
+        final Applicant applicant,
+        final boolean isClarificationRefusal
+    ) {
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             if (isClarificationRefusal) {
                 return applicant.isRepresented()
@@ -89,7 +93,11 @@ public class ConditionalOrderCommonContent {
         return CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
     }
 
-    public String getDocumentTemplateId(final CaseData caseData, final Applicant applicant, final boolean isClarificationRefusal) {
+    public String getCoverLetterDocumentTemplateId(
+        final CaseData caseData,
+        final Applicant applicant,
+        final boolean isClarificationRefusal
+    ) {
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             if (isClarificationRefusal) {
                 return applicant.isRepresented()

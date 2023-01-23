@@ -65,21 +65,21 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            getDocumentType(caseData, applicant),
+            getCoverLetterDocumentType(caseData, applicant),
             templateContent(caseData, caseId, applicant),
             caseId,
-            getDocumentTemplateId(caseData, applicant),
+            getCoverLetterDocumentTemplateId(caseData, applicant),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
     }
 
-    public DocumentType getDocumentType(final CaseData caseData, final Applicant applicant) {
-        return conditionalOrderCommonContent.getDocumentType(caseData, applicant, false);
+    public DocumentType getCoverLetterDocumentType(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
     }
 
-    public String getDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
-        return conditionalOrderCommonContent.getDocumentTemplateId(caseData, applicant, false);
+    public String getCoverLetterDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
     }
 
     private String getSolicitorName(final Applicant applicant) {

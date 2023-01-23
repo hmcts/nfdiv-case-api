@@ -60,10 +60,10 @@ public class GenerateCoRefusedCoverLetter {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            conditionalOrderCommonContent.getDocumentType(caseData, applicant, isClarificationRefusal),
+            conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, isClarificationRefusal),
             templateContent(caseData, caseId, applicant),
             caseId,
-            conditionalOrderCommonContent.getDocumentTemplateId(caseData, applicant, isClarificationRefusal),
+            conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, isClarificationRefusal),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
