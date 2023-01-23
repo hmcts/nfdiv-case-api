@@ -26,28 +26,28 @@ public class AwaitingClarificationApplicationPrinter {
             "Awaiting clarification Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
         final String judicialSeparationClarificationMessage =
             "Awaiting clarification JS Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
-        MissingDocumentsValidation missingDocumentsValidation = new MissingDocumentsValidation(
-            clarificationMessage,
-            List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL),
-            3
-        );
+        MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder()
+            .message(clarificationMessage)
+            .documentTypeList(List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL))
+            .expectedDocumentsSize(3)
+            .build();
+
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             missingDocumentsValidation.message = judicialSeparationClarificationMessage;
-            missingDocumentsValidation.documentTypeList =
-                applicant.isRepresented()
-                    ? List.of(
-                        COVERSHEET,
-                        JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
-                        CONDITIONAL_ORDER_REFUSAL,
-                        APPLICATION
-                    )
-                    : List.of(
-                        COVERSHEET,
-                        CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
-                        // Check this - which doc should be sent to unrepresented applicants for JS clarification refusal?
-                        CONDITIONAL_ORDER_REFUSAL,
-                        APPLICATION
-                    );
+            missingDocumentsValidation.documentTypeList = applicant.isRepresented()
+                ? List.of(
+                    COVERSHEET,
+                    JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
+                    CONDITIONAL_ORDER_REFUSAL,
+                    APPLICATION
+                )
+                : List.of(
+                    COVERSHEET,
+                    CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
+                    // Check this - which doc should be sent to unrepresented applicants for JS clarification refusal?
+                    CONDITIONAL_ORDER_REFUSAL,
+                    APPLICATION
+                );
             missingDocumentsValidation.expectedDocumentsSize = 4;
         }
 

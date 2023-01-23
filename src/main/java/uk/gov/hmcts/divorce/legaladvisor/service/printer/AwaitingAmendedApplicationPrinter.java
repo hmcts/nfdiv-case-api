@@ -23,11 +23,11 @@ public class AwaitingAmendedApplicationPrinter {
     private AwaitingAmendedOrClarificationApplicationCommonPrinter awaitingAmendedOrClarificationApplicationCommonPrinter;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
-        MissingDocumentsValidation missingDocumentsValidation = new MissingDocumentsValidation(
-            "Awaiting Amended Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}",
-            List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL, APPLICATION),
-            4
-        );
+        MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder()
+            .message("Awaiting Amended Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}")
+            .documentTypeList(List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL, APPLICATION))
+            .expectedDocumentsSize(4)
+            .build();
 
         if (caseData.getIsJudicialSeparation().toBoolean()) {
             missingDocumentsValidation.message =
