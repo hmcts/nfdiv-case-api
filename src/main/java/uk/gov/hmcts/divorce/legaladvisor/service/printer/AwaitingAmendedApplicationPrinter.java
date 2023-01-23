@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -34,16 +34,11 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 @Slf4j
 public class AwaitingAmendedApplicationPrinter {
 
-    private static final String LETTER_TYPE_AWAITING_CLARIFICATION = "awaiting-amended-application-letter";
-
     @Autowired
     private BulkPrintService bulkPrintService;
 
     @Autowired
     private GenerateCoversheet generateCoversheet;
-
-    @Autowired
-    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
@@ -57,76 +52,125 @@ public class AwaitingAmendedApplicationPrinter {
     @Autowired
     private GenerateJudicialSeparationCORefusedForAmendmentCoverLetter generateJudicialSeparationCORefusedForAmendmentCoverLetter;
 
-    private static final int EXPECTED_DOCUMENTS_SIZE = 4;
+    private void logSendLettersWarning(final Boolean isJudicialSeparation, final Long caseId) {
+        String defaultMsg =
+            "Awaiting Amended Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
+        String judicialSeparationMsg =
+            "Awaiting Amended JS Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
+        String message = isJudicialSeparation ? judicialSeparationMsg : defaultMsg;
+        log.warn(
+            message,
+            List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL, APPLICATION),
+            caseId
+        );
+    }
+
+    String awaitingAmendmentOrClarificationLetterType(final Boolean isClarificationRefusal) {
+        return isClarificationRefusal
+            ? "awaiting-clarification-application-letter"
+            : "awaiting-amended-application-letter";
+    }
+
+    private String getAwaitingAmendmentOrClarificationLetterType() {
+        return awaitingAmendmentOrClarificationLetterType(false);
+    }
+
+    int expectedDocumentsSize(final Boolean isJudicialSeparation, final Boolean isClarificationRefusal) {
+        if (isJudicialSeparation || !isClarificationRefusal) {
+            return 4;
+        }
+        return 3;
+    }
+
+    private int getExpectedDocumentsSize(final CaseData caseData) {
+        return expectedDocumentsSize(caseData.getIsJudicialSeparation().toBoolean(), false);
+    }
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateLetters(caseData, caseId, applicant);
-        final List<Letter> currentAwaitingAmendedApplicationLetters = awaitingAmendedApplicationLetters(caseData, applicant);
+        final List<Letter> currentLetters = getLetters(caseData, applicant);
 
-        if (!isEmpty(currentAwaitingAmendedApplicationLetters)
-            && currentAwaitingAmendedApplicationLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
+        if (!isEmpty(currentLetters)
+            && currentLetters.size() == getExpectedDocumentsSize(caseData)) {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(
-                currentAwaitingAmendedApplicationLetters,
+                currentLetters,
                 caseIdString,
                 caseIdString,
-                LETTER_TYPE_AWAITING_CLARIFICATION
+                getAwaitingAmendmentOrClarificationLetterType()
             );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
-            log.warn(
-                "Awaiting Amended Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL, APPLICATION),
-                caseId
-            );
+            logSendLettersWarning(caseData.getIsJudicialSeparation().toBoolean(), caseId);
         }
     }
 
-    private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData, final Applicant applicant) {
+    private List<Letter> getLetters(final CaseData caseData, final Applicant applicant) {
+        return awaitingAmendedOrClarificationApplicationLetters(caseData, applicant, false);
+    }
 
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET);
+    private DocumentType getRefusalCoverLetterType(final CaseData caseData, final Applicant applicant) {
+        return generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, applicant);
+    }
 
-        final List<Letter> refusalCoverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            generateJudicialSeparationCORefusedForAmendmentCoverLetter.getDocumentType(caseData, applicant)
-        );
+    private Letter getFirstLetterWithDocumentType(final CaseData caseData, final DocumentType documentType) {
+        final List<Letter> letters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), documentType);
+        return firstElement(letters);
+    }
 
-        final List<Letter> refusalLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_REFUSAL
-        );
+    List<Letter> awaitingAmendedOrClarificationApplicationLetters(
+        final CaseData caseData,
+        final Applicant applicant,
+        final Boolean isClarificationRefusal) {
 
-        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            APPLICATION
-        );
+        final Letter coversheetLetter = getFirstLetterWithDocumentType(caseData, COVERSHEET);
+        final Letter refusalCoverLetter = getFirstLetterWithDocumentType(caseData, getRefusalCoverLetterType(caseData, applicant));
+        final Letter refusalLetter = getFirstLetterWithDocumentType(caseData, CONDITIONAL_ORDER_REFUSAL);
 
-        final Letter coversheetLetter = firstElement(coversheetLetters);
-        final Letter refusalCoverLetter = firstElement(refusalCoverLetters);
-        final Letter refusalLetter = firstElement(refusalLetters);
-        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
-
-        final List<Letter> awaitingAmendmentLetters = new ArrayList<>();
+        final List<Letter> awaitingAmendmentOrClarificationLetters = new ArrayList<>();
 
         if (coversheetLetter != null) {
-            awaitingAmendmentLetters.add(coversheetLetter);
+            awaitingAmendmentOrClarificationLetters.add(coversheetLetter);
         }
         if (refusalCoverLetter != null) {
-            awaitingAmendmentLetters.add(refusalCoverLetter);
+            awaitingAmendmentOrClarificationLetters.add(refusalCoverLetter);
         }
         if (refusalLetter != null) {
-            awaitingAmendmentLetters.add(refusalLetter);
-        }
-        if (null != divorceApplicationLetter) {
-            awaitingAmendmentLetters.add(divorceApplicationLetter);
+            awaitingAmendmentOrClarificationLetters.add(refusalLetter);
         }
 
-        return awaitingAmendmentLetters;
+        // If not clarification refusal, or if is JS, then add the application to the document list
+        if (caseData.getIsJudicialSeparation().toBoolean() || !isClarificationRefusal) {
+            final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
+                caseData.getDocuments().getDocumentsGenerated(),
+                APPLICATION
+            );
+            final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
+            if (divorceApplicationLetter != null) {
+                awaitingAmendmentOrClarificationLetters.add(divorceApplicationLetter);
+            }
+        }
+
+        return awaitingAmendmentOrClarificationLetters;
+    }
+
+    private void generateJudicialSeparationCoverLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+            caseData,
+            caseId,
+            applicant
+        );
+    }
+
+    private void generateCoverLetter(final CaseData caseData, final Long caseId, final Applicant applicant) {
+        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
+            caseData,
+            caseId,
+            applicant
+        );
     }
 
     private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
@@ -147,11 +191,7 @@ public class AwaitingAmendedApplicationPrinter {
                 applicant.getLanguagePreference()
             );
 
-            generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
-                caseData,
-                caseId,
-                applicant
-            );
+            generateJudicialSeparationCoverLetter(caseData, caseId, applicant);
         } else {
             generateCoversheet.generateCoversheet(
                 caseData,
@@ -161,11 +201,7 @@ public class AwaitingAmendedApplicationPrinter {
                 applicant.getLanguagePreference()
             );
 
-            generateCoRefusedCoverLetter.generateAndUpdateCaseData(
-                caseData,
-                caseId,
-                applicant
-            );
+            generateCoverLetter(caseData, caseId, applicant);
         }
     }
 }
