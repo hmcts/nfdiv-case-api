@@ -379,6 +379,13 @@ public enum State {
     BulkCaseReject,
 
     @CCD(
+        label = "Separation order granted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    SeparationOrderGranted,
+
+    @CCD(
         label = "Submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
