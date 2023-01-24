@@ -55,13 +55,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
     @Mock
-    private final AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter = new AwaitingAmendedApplicationPrinter();
-
-    @Mock
-    private final AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter =
-        new AwaitingClarificationApplicationPrinter();
-
-    @Mock
     private BulkPrintService bulkPrintService;
 
     @Mock
@@ -162,7 +155,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-amended-application-letter");
+        assertThat(print.getLetterType()).isEqualTo(AWAITING_AMENDED_APPLICATION_LETTER_TYPE.toString());
         assertThat(print.getLetters().size()).isEqualTo(4);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
@@ -238,7 +231,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-application-letter");
+        assertThat(print.getLetterType()).isEqualTo(AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE.toString());
         assertThat(print.getLetters().size()).isEqualTo(3);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
@@ -317,7 +310,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-amended-application-letter");
+        assertThat(print.getLetterType()).isEqualTo(AWAITING_AMENDED_APPLICATION_LETTER_TYPE.toString());
         assertThat(print.getLetters()).hasSize(4);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
@@ -397,7 +390,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-application-letter");
+        assertThat(print.getLetterType()).isEqualTo(AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE.toString());
         assertThat(print.getLetters()).hasSize(4);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
@@ -478,7 +471,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-amended-application-letter");
+        assertThat(print.getLetterType()).isEqualTo(AWAITING_AMENDED_APPLICATION_LETTER_TYPE.toString());
         assertThat(print.getLetters()).hasSize(4);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
@@ -559,7 +552,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("awaiting-clarification-application-letter");
+        assertThat(print.getLetterType()).isEqualTo(AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE.toString());
         assertThat(print.getLetters()).hasSize(4);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coversheetDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coCanApplyDoc.getValue());
