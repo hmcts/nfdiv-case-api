@@ -39,6 +39,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -190,6 +191,13 @@ public class CaseData {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
+
+    @CCD(
+        label = "Awaiting answer start date",
+        access = {DefaultAccess.class, CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate awaitingJsAnswerStartDate;
 
     @CCD(
         label = "Notes",
@@ -364,6 +372,11 @@ public class CaseData {
     @JsonIgnore
     public boolean isDivorce() {
         return divorceOrDissolution.isDivorce();
+    }
+
+    @JsonIgnore
+    public boolean isJudicialSeparationCase() {
+        return !isNull(isJudicialSeparation) && isJudicialSeparation == YES;
     }
 
     @JsonIgnore
