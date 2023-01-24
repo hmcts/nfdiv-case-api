@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterType.AWAITING_AMENDED_APPLICATION_LETTER_TYPE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,14 +53,14 @@ public class AwaitingAmendedApplicationPrinterTest {
             eq(TEST_CASE_ID),
             eq(caseData.getApplicant1()),
             missingDocumentsValidationCaptor.capture(),
-            eq(awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE)
+            eq(AWAITING_AMENDED_APPLICATION_LETTER_TYPE)
         );
 
         final MissingDocumentsValidation missingDocumentsValidation = missingDocumentsValidationCaptor.getValue();
-        assertThat(missingDocumentsValidation.message).isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_MESSAGE);
-        assertThat(missingDocumentsValidation.documentTypeList).isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_TYPE_LIST);
+        assertThat(missingDocumentsValidation.message).isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsMessage);
+        assertThat(missingDocumentsValidation.documentTypeList).isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsTypeList);
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_EXPECTED_DOCUMENTS_SIZE);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsExpectedDocumentsSize);
     }
 
     @Test
@@ -83,16 +84,16 @@ public class AwaitingAmendedApplicationPrinterTest {
             eq(TEST_CASE_ID),
             eq(caseData.getApplicant1()),
             missingDocumentsValidationCaptor.capture(),
-            eq(awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE)
+            eq(AWAITING_AMENDED_APPLICATION_LETTER_TYPE)
         );
 
         final MissingDocumentsValidation missingDocumentsValidation = missingDocumentsValidationCaptor.getValue();
         assertThat(missingDocumentsValidation.message)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_JUDICIAL_SEPARATION_MESSAGE);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsJudicialSeparationMessage);
         assertThat(missingDocumentsValidation.documentTypeList)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_JUDICIAL_SEPARATION_TYPE_LIST);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsJudicialSeparationTypeList);
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_EXPECTED_DOCUMENTS_SIZE);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsExpectedDocumentsSize);
     }
 
     @Test
@@ -116,15 +117,15 @@ public class AwaitingAmendedApplicationPrinterTest {
             eq(TEST_CASE_ID),
             eq(caseData.getApplicant1()),
             missingDocumentsValidationCaptor.capture(),
-            eq(awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE)
+            eq(AWAITING_AMENDED_APPLICATION_LETTER_TYPE)
         );
 
         final MissingDocumentsValidation missingDocumentsValidation = missingDocumentsValidationCaptor.getValue();
         assertThat(missingDocumentsValidation.message)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_JUDICIAL_SEPARATION_MESSAGE);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsJudicialSeparationMessage);
         assertThat(missingDocumentsValidation.documentTypeList)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_JUDICIAL_SEPARATION_REPRESENTED_TYPE_LIST);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsJudicialSeparationRepresentedTypeList);
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(awaitingAmendedApplicationPrinter.MISSING_DOCUMENTS_EXPECTED_DOCUMENTS_SIZE);
+            .isEqualTo(awaitingAmendedApplicationPrinter.missingDocumentsExpectedDocumentsSize);
     }
 }
