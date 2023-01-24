@@ -133,7 +133,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             )
             .build();
 
-        templateContent.put(ADDRESS, caseData.getApplicant1().getAddress());
+        templateContent.put(ADDRESS, caseData.getApplicant1().getPostalAddress());
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
