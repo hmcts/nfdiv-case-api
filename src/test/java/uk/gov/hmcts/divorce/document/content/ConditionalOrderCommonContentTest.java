@@ -169,7 +169,7 @@ class ConditionalOrderCommonContentTest {
 
         final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
 
-        assertThat(result).isEqualTo(DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER);
     }
 
     @Test
