@@ -16,7 +16,7 @@ public class MissingDocumentsValidationTest {
     private MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder().build();
 
     @Test
-    void ShouldReturnDefaultInstanceOfMissingDocumentsValidationClass() {
+    void shouldReturnDefaultInstanceOfMissingDocumentsValidationClass() {
         assertThat(missingDocumentsValidation.message)
             .isEqualTo("");
         assertThat(missingDocumentsValidation.documentTypeList)
