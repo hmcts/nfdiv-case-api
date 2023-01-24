@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 
 @ExtendWith(MockitoExtension.class)
 public class MissingDocumentsValidationTest {
@@ -18,10 +19,10 @@ public class MissingDocumentsValidationTest {
     @Test
     void shouldReturnDefaultInstanceOfMissingDocumentsValidationClass() {
         assertThat(missingDocumentsValidation.message)
-            .isEqualTo("");
+            .isEqualTo("Warning Message When Insufficient Documents Are Found");
         assertThat(missingDocumentsValidation.documentTypeList)
-            .isEqualTo(List.of());
+            .isEqualTo(List.of(COVERSHEET));
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(0);
+            .isEqualTo(1);
     }
 }
