@@ -24,27 +24,27 @@ public class AwaitingAmendedApplicationPrinter {
     @Autowired
     private AwaitingAmendedOrClarificationApplicationCommonPrinter awaitingAmendedOrClarificationApplicationCommonPrinter;
 
-    public final String missingDocumentsMessage =
+    public final static String missingDocumentsMessage =
         "Awaiting Amended Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
-    public final String missingDocumentsJudicialSeparationMessage =
+    public final static String missingDocumentsJudicialSeparationMessage =
         "Awaiting Amended JS Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
-    public final List<DocumentType> missingDocumentsTypeList =
+    public final static List<DocumentType> missingDocumentsTypeList =
         List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL, APPLICATION);
-    public final List<DocumentType> missingDocumentsJudicialSeparationTypeList =
+    public final static List<DocumentType> missingDocumentsJudicialSeparationTypeList =
         List.of(
             COVERSHEET,
             JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
             CONDITIONAL_ORDER_REFUSAL,
             APPLICATION
         );
-    public final List<DocumentType> missingDocumentsJudicialSeparationRepresentedTypeList =
+    public final static List<DocumentType> missingDocumentsJudicialSeparationRepresentedTypeList =
         List.of(
             COVERSHEET,
             JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER,
             CONDITIONAL_ORDER_REFUSAL,
             APPLICATION
         );
-    public final int missingDocumentsExpectedDocumentsSize = 4;
+    public final static int missingDocumentsExpectedDocumentsSize = 4;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder()
