@@ -7,6 +7,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
@@ -51,6 +52,13 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
+
+    @Mock
+    private final AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter = new AwaitingAmendedApplicationPrinter();
+
+    @Mock
+    private final AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter =
+        new AwaitingClarificationApplicationPrinter();
 
     @Mock
     private BulkPrintService bulkPrintService;
@@ -132,7 +140,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            false
+            awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -208,7 +216,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(3).build(),
-            true
+            awaitingClarificationApplicationPrinter.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -288,7 +296,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            false
+            awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -368,7 +376,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            true
+            awaitingClarificationApplicationPrinter.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -449,7 +457,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            false
+            awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -530,7 +538,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            true
+            awaitingClarificationApplicationPrinter.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -580,7 +588,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            false
+            awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE
         );
 
         verifyNoInteractions(bulkPrintService);
@@ -610,7 +618,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(3).build(),
-            true
+            awaitingClarificationApplicationPrinter.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE
         );
 
         verifyNoInteractions(bulkPrintService);
@@ -653,7 +661,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(4).build(),
-            false
+            awaitingAmendedApplicationPrinter.AWAITING_AMENDED_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
@@ -712,7 +720,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             TEST_CASE_ID,
             caseData.getApplicant1(),
             MissingDocumentsValidation.builder().expectedDocumentsSize(3).build(),
-            true
+            awaitingClarificationApplicationPrinter.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE
         );
 
         verify(generateCoversheet).generateCoversheet(
