@@ -396,11 +396,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public void updateCaseDataWithPaymentDetails(
-        OrderSummary applicationFeeOrderSummary,
-        CaseData caseData,
-        String paymentReference
-    ) {
+    public void updateCaseDataWithPaymentDetails(OrderSummary applicationFeeOrderSummary, CaseData caseData, String paymentReference) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
@@ -409,7 +405,6 @@ public class CaseData {
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
-
 
         var application = caseData.getApplication();
 
