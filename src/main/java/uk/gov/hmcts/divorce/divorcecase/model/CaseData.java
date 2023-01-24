@@ -380,11 +380,6 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean isJudicialSeparationCase() {
-        return !isNull(isJudicialSeparation) && isJudicialSeparation == YES;
-    }
-
-    @JsonIgnore
     public void deriveAndPopulateApplicantGenderDetails() {
         Gender app1Gender;
         Gender app2Gender;
