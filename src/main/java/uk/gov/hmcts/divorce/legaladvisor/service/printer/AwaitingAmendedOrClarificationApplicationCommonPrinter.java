@@ -36,6 +36,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
 
     @Autowired
+    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
+
+    @Autowired
     private BulkPrintService bulkPrintService;
 
     @Autowired
@@ -64,8 +67,9 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
         final Long caseId,
         final Applicant applicant,
         final MissingDocumentsValidation missingDocumentsValidation,
-        final Boolean isClarificationRefusal
+        final String awaitingAmendmentOrClarificationLetterType
     ) {
+        final boolean isClarificationRefusal = isClarificationRefusal(awaitingAmendmentOrClarificationLetterType);
         generateLetters(caseData, caseId, applicant, isClarificationRefusal);
         final List<Letter> currentLetters = awaitingAmendedOrClarificationApplicationLetters(caseData, applicant, isClarificationRefusal);
 
@@ -73,9 +77,6 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
             && currentLetters.size() == missingDocumentsValidation.expectedDocumentsSize) {
 
             final String caseIdString = caseId.toString();
-            final String awaitingAmendmentOrClarificationLetterType = isClarificationRefusal
-                ? "awaiting-clarification-application-letter"
-                : "awaiting-amended-application-letter";
             final Print print = new Print(
                 currentLetters,
                 caseIdString,
@@ -88,6 +89,11 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
         } else {
             log.warn(missingDocumentsValidation.message, missingDocumentsValidation.documentTypeList, caseId);
         }
+    }
+
+    private Boolean isClarificationRefusal(String awaitingAmendmentOrClarificationLetterType) {
+        return awaitingAmendmentOrClarificationLetterType
+            .equals(awaitingClarificationApplicationPrinter.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE);
     }
 
     private Letter getFirstLetterWithDocumentType(final CaseData caseData, final DocumentType documentType) {
