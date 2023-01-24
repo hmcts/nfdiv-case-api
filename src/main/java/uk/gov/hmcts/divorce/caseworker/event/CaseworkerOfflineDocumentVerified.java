@@ -109,6 +109,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+
             .complex(CaseData::getDocuments)
                 .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
                 .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"")
@@ -126,21 +127,21 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
-                .mandatory(ConditionalOrder::getD84WhoApplying,
-                    "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\" AND coD84ApplicationType=\"switchToSole\"")
+                .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
                 .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36ApplicationType,
                     "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
-                .mandatory(FinalOrder::getD36WhoApplying,
-                    "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\" AND d36ApplicationType=\"switchToSole\"")
+                .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getStateToTransitionApplicationTo)
             .done()
+
+
             .page("stateToTransitionToJoint")
             .showCondition("applicationType=\"jointApplication\" AND typeOfDocumentAttached!=\"D84\" OR scannedSubtypeReceived!=\"D84\"")
             .complex(CaseData::getApplication)
