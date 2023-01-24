@@ -20,21 +20,21 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantDisputeFormOverdue.SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemJsDisputedAnswerOverdue.SYSTEM_JS_DISPUTED_ANSWER_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AOS_RESPONSE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AWAITING_JS_ANSWER_START_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.IS_JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEventSubmit {
+public class SystemJsDisputedAnswerOverdueTask extends AbstractTaskEventSubmit {
 
-    public static final String NOTIFICATION_SENT_FLAG = "applicantNotifiedDisputeFormOverdue";
-    private static final String CCD_SEARCH_ERROR = "NotifyApplicantDisputeFormOverdue schedule task stopped after search error";
+    private static final String CCD_SEARCH_ERROR = "JsDisputedAnswerOverdue schedule task stopped after search error";
     private static final String TASK_CONFLICT_ERROR =
-        "NotifyApplicantDisputeFormOverdue scheduled task stopping due to conflict with another running task";
+        "JsDisputedAnswerOverdue scheduled task stopping due to conflict with another running task";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -45,28 +45,29 @@ public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEve
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Value("${submit_aos.dispute_offset_days}")
-    private int disputeDueDateOffsetDays;
+    @Value("${judicial_separation_answer_overdue.offset_days}")
+    private int answerOverdueOffsetDays;
 
     @Override
     public void run() {
-        log.info("NotifyApplicantDisputeFormOverdue scheduled task started");
+        log.info("JsDisputedAnswerOverdue scheduled task started");
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
             final BoolQueryBuilder query =
                 boolQuery()
-                    .must(matchQuery(STATE, Holding))
+                    .must(matchQuery(STATE, AwaitingAnswer))
+                    .must(matchQuery(String.format(DATA, IS_JUDICIAL_SEPARATION), YesOrNo.YES))
                     .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
-                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(disputeDueDateOffsetDays)))
-                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
+                    .filter(rangeQuery(String.format(DATA, AWAITING_JS_ANSWER_START_DATE))
+                        .lte(LocalDate.now().minusDays(answerOverdueOffsetDays)));
 
-            ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, Holding)
-                .forEach(caseDetails -> notifyApplicant(caseDetails, user, serviceAuth));
+            ccdSearchService.searchForAllCasesWithQuery(query, systemUser, serviceAuth, AwaitingAnswer)
+                .forEach(caseDetails -> updateState(caseDetails, systemUser, serviceAuth));
 
-            log.info("NotifyApplicantDisputeFormOverdue scheduled task complete.");
+            log.info("JsDisputedAnswerOverdue scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error(CCD_SEARCH_ERROR, e);
         } catch (CcdConflictException e) {
@@ -74,8 +75,8 @@ public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEve
         }
     }
 
-    private void notifyApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
-        log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseDetails.getId());
-        submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
+    private void updateState(CaseDetails caseDetails, User user, String serviceAuth) {
+        log.info("Answer Overdue for Disputed JS Case (id={}), setting state to AwaitingJS/Nullity", caseDetails.getId());
+        submitEvent(caseDetails, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, user, serviceAuth);
     }
 }
