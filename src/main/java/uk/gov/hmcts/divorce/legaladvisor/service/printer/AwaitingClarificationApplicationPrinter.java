@@ -23,13 +23,13 @@ public class AwaitingClarificationApplicationPrinter {
     @Autowired
     private AwaitingAmendedOrClarificationApplicationCommonPrinter awaitingAmendedOrClarificationApplicationCommonPrinter;
 
-    public final static String missingDocumentsMessage =
+    public static final String missingDocumentsMessage =
         "Awaiting clarification Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
-    public final static String missingDocumentsJudicialSeparationMessage =
+    public static final String missingDocumentsJudicialSeparationMessage =
         "Awaiting clarification JS Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
-    public final static List<DocumentType> missingDocumentsTypeList =
+    public static final List<DocumentType> missingDocumentsTypeList =
         List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL);
-    public final static List<DocumentType> missingDocumentsJudicialSeparationTypeList =
+    public static final List<DocumentType> missingDocumentsJudicialSeparationTypeList =
         List.of(
             COVERSHEET,
             CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
@@ -37,15 +37,15 @@ public class AwaitingClarificationApplicationPrinter {
             CONDITIONAL_ORDER_REFUSAL,
             APPLICATION
         );
-    public final static List<DocumentType> missingDocumentsJudicialSeparationRepresentedTypeList =
+    public static final List<DocumentType> missingDocumentsJudicialSeparationRepresentedTypeList =
         List.of(
             COVERSHEET,
             JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
             CONDITIONAL_ORDER_REFUSAL,
             APPLICATION
         );
-    public final static int missingDocumentsExpectedDocumentsSize = 3;
-    public final static int missingDocumentsJudicialSeparationExpectedDocumentsSize = 4;
+    public static final int missingDocumentsExpectedDocumentsSize = 3;
+    public static final int missingDocumentsJudicialSeparationExpectedDocumentsSize = 4;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder()
