@@ -145,5 +145,5 @@
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
-  "state": "AwaitingJSOrNullity"
+  "state": "AwaitingJsNullity"
 }
