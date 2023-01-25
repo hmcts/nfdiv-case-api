@@ -64,8 +64,7 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        templateContent.put(JUDICIAL_SEPARATION,
-            caseData.getIsJudicialSeparation() != null && caseData.getIsJudicialSeparation().toBoolean());
+        templateContent.put(JUDICIAL_SEPARATION, caseData.isJudicialSeparationCase());
 
         templateContent.put(REASON_JURISDICTION_DETAILS,
             clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));

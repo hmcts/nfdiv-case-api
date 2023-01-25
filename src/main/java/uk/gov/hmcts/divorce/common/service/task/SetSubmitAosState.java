@@ -58,7 +58,7 @@ public class SetSubmitAosState implements CaseTask {
 
     private State getState(CaseData caseData) {
         boolean isSoleJsApplication = caseData.getApplicationType().isSole()
-            && caseData.getIsJudicialSeparation().toBoolean();
+            && caseData.isJudicialSeparationCase();
         if (isSoleJsApplication) {
             caseData.setAwaitingJsAnswerStartDate(LocalDate.now());
             return caseData.getAcknowledgementOfService().isDisputed() ? AwaitingAnswer : AwaitingJsNullity;
