@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -19,12 +20,14 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -68,7 +71,11 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication) {
-            generateSoleNoticeOfProceedings(caseData, caseId);
+            if (YES.equals(caseData.getIsJudicialSeparation())) {
+                generateSoleNoticeOfProceedingsForJudicialSeparation(caseData, caseId);
+            } else {
+                generateSoleNoticeOfProceedings(caseData, caseId);
+            }
         } else {
             if (caseData.isJudicialSeparationCase() && !DIGITAL_AOS.equals(caseData.getApplication().getReissueOption())) {
                 generateJointJSNoticeOfProceedings(caseData, caseId);
@@ -167,5 +174,24 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );
+    }
+
+    private void generateSoleNoticeOfProceedingsForJudicialSeparation(CaseData caseData, Long caseId) {
+        final Applicant applicant1 = caseData.getApplicant1();
+        final LanguagePreference languagePreference = applicant1.getLanguagePreference();
+
+        if (!applicant1.isRepresented()) {
+            log.info("Generating notice of judicial separation proceedings for applicant for case id {} ", caseId);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS_APP_1,
+                templateContent.apply(caseData, caseId, caseData.getApplicant2(), languagePreference),
+                caseId,
+                NFD_NOP_APP1_JS_SOLE,
+                languagePreference,
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+            );
+        }
     }
 }

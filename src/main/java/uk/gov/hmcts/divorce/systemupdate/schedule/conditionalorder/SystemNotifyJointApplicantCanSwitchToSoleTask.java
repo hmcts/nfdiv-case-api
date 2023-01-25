@@ -9,11 +9,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -31,11 +30,9 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
+public class SystemNotifyJointApplicantCanSwitchToSoleTask extends AbstractTaskEventSubmit {
 
     public static final String NOTIFICATION_FLAG = "jointApplicantNotifiedCanSwitchToSole";
-    public static final String SUBMIT_EVENT_ERROR = "Submit event failed for case id: {}, continuing to next case";
-    public static final String DESERIALIZATION_ERROR = "Deserialization failed for case id: {}, continuing to next case";
     public static final String CCD_SEARCH_ERROR =
         "SystemNotifyJointApplicantCanSwitchToSoleTask scheduled task stopped after search error";
     public static final String CCD_CONFLICT_ERROR =
@@ -43,9 +40,6 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
 
     @Autowired
     private CcdSearchService ccdSearchService;
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
 
     @Autowired
     private IdamService idamService;
@@ -88,18 +82,11 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask implements Runnable {
     }
 
     private void remindJointApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
-        try {
-            log.info(
-                "Conditional order application +{}days elapsed for Case({}) - reminding Joint Applicant they can switch to sole",
-                submitCOrderReminderOffsetDays, caseDetails.getId()
-            );
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, serviceAuth);
-
-        } catch (final CcdManagementException e) {
-            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId());
-        } catch (final IllegalArgumentException e) {
-            log.error(DESERIALIZATION_ERROR, caseDetails.getId());
-        }
+        log.info(
+            "Conditional order application +{}days elapsed for Case({}) - reminding Joint Applicant they can switch to sole",
+            submitCOrderReminderOffsetDays, caseDetails.getId()
+        );
+        submitEvent(caseDetails, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, serviceAuth);
     }
 
     private boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {

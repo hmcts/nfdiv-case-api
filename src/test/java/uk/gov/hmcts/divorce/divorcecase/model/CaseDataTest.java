@@ -230,4 +230,29 @@ class CaseDataTest {
 
         assertThat(caseData.getFirstAlternativeServiceOutcome()).isEqualTo(Optional.of(alternativeServiceOutcome2));
     }
+
+    @Test
+    void shouldReturnTrueIfJudicialSeparationCase() {
+        final CaseData caseData = CaseData.builder()
+            .isJudicialSeparation(YES)
+            .build();
+
+        assertThat(caseData.isJudicialSeparationCase()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfNotJudicialSeparationCase() {
+        final CaseData caseData = CaseData.builder()
+            .isJudicialSeparation(NO)
+            .build();
+
+        assertThat(caseData.isJudicialSeparationCase()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfJudicialSeparationIsNotSet() {
+        final CaseData caseData = CaseData.builder().build();
+
+        assertThat(caseData.isJudicialSeparationCase()).isFalse();
+    }
 }
