@@ -405,8 +405,7 @@ public class SwitchedToSoleCoIT {
             .build());
 
         setupMocks(false, false);
-        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc"
-            , "FL-NFD-GOR-ENG-Judicial-Separation-Switch-To-Sole-Solicitor.docx");
+        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc", "FL-NFD-GOR-ENG-Judicial-Separation-Switch-To-Sole-Solicitor.docx");
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
