@@ -145,7 +145,7 @@ public class CertificateOfEntitlementPrinterTest {
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .emailAddress("divorcecase@justice.gov.uk")
+            .emailAddress("contactdivorce@justice.gov.uk")
             .phoneNumber("0300 303 0642")
             .build();
     }
