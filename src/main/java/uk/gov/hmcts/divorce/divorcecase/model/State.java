@@ -246,6 +246,20 @@ public enum State {
     AwaitingServicePayment,
 
     @CCD(
+        label = "AwaitingAnswer",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingAnswer,
+
+    @CCD(
+        label = "AwaitingJS/Nullity",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingJsNullity,
+
+    @CCD(
         label = "Clarification response submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -337,6 +351,13 @@ public enum State {
     JSAwaitingLA,
 
     @CCD(
+        label = "LA Review",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+    )
+    LAReview,
+
+    @CCD(
         label = "Listed; awaiting pronouncement",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
@@ -370,6 +391,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     BulkCaseReject,
+
+    @CCD(
+        label = "Separation order granted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    SeparationOrderGranted,
 
     @CCD(
         label = "Submitted",
