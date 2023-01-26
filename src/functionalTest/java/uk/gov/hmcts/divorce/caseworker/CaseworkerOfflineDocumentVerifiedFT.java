@@ -52,5 +52,4 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
-
 }
