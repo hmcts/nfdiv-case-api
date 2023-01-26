@@ -47,6 +47,7 @@ public final class DocumentConstants {
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS = "NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS";
     public static final String NFD_NOP_APP1_JS_SOLE = "NFD_NOP_APP1_JS_SOLE";
     public static final String NFD_NOP_APP2_JS_SOLE = "NFD_NOP_APP2_JS_SOLE";
+    public static final String NFD_NOP_APP1_SOLICITOR_JS_SOLE = "NFD_NOP_APP1_SOLICITOR_JS_SOLE";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";

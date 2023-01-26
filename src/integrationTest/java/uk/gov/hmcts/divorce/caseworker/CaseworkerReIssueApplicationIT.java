@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FilenameUtils;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterAll;
@@ -54,6 +56,7 @@ import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
@@ -171,6 +174,8 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
     private static final String JOINT_APPLICATION_CASEWORKER_REISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT =
         "classpath:caseworker-reissue-application-joint-js-about-to-submit-respondent-response.json";
+    private static final String SOLE_JS_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-js-applicant1-represented-by-solicitor-about-to-submit-response.json";
 
     private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
@@ -186,6 +191,7 @@ public class CaseworkerReIssueApplicationIT {
     private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
     private static final String D84_DOCUMENT_ID = "67db1868-e917-457a-b9a7-209d1905810a";
     private static final String NFD_NOP_APP2_JS_SOLE_ID = "c35b1868-e397-457a-aa67-ac1422bb810a";
+    private static final String D10_DOCUMENT_ID = "c35b1868-e397-457a-bb67-ac1422bb811a";
 
     @Autowired
     private MockMvc mockMvc;
@@ -2011,6 +2017,66 @@ public class CaseworkerReIssueApplicationIT {
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk());
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSetReIssueDateAndGenerateDocumentsForSoleSpplicantSolicitorJudicialSeparation() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 17));
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("Sol1")
+            .reference("1234")
+            .build());
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant1().setEmail(null);
+        caseData.getApplicant2().setEmail(null);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId())
+            .thenReturn("Notice of proceeding applicant solicitor")
+            .thenReturn("Notice of proceeding respondent")
+            .thenReturn("Coversheet")
+            .thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx");
+        stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn().getResponse().getContentAsString();
+
+        DocumentContext jsonDocument = JsonPath.parse(
+            expectedResponse(SOLE_JS_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT));
+        jsonDocument.put("data", "previousReissueOption", "offlineAos");
+        jsonDocument.put("data", "reissueDate", "2021-06-17");
+
+        assertThatJson(response)
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
 
         verifyNoInteractions(notificationService);
     }
