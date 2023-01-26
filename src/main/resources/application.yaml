@@ -363,6 +363,7 @@ docmosis:
       NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx
       NFD_NOP_APP1_SOLICITOR_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx
+      NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
       CONDITIONAL_ORDER_PRONOUNCED_JS: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx
@@ -423,6 +424,7 @@ docmosis:
       NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx #TODO: update welsh content
       NFD_NOP_APP1_SOLICITOR_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx #TODO: update welsh content
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx #TODO: update welsh content
+      NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS-V1.docx #TODO: uodate welsh content
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V2.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
       CONDITIONAL_ORDER_PRONOUNCED_JS: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx #TODO: update welsh content
