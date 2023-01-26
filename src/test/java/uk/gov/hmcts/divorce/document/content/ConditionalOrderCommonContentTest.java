@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -212,7 +211,8 @@ class ConditionalOrderCommonContentTest {
         final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
 
         assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
-        assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
+        assertThat(documentTemplateId)
+            .isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test

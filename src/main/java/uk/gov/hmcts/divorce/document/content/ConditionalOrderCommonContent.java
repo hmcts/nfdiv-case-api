@@ -101,7 +101,7 @@ public class ConditionalOrderCommonContent {
         final boolean isClarificationRefusal
     ) {
         if (caseData.getIsJudicialSeparation().toBoolean()) {
-            if(isClarificationRefusal) {
+            if (isClarificationRefusal) {
                 return applicant.isRepresented()
                     ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
                     : JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
