@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -46,6 +47,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMEN
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOLICITOR_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -296,21 +298,29 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE);
+        verifyNoMoreInteractions(caseDataDocumentService);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
     @Test
-    void shouldNotGenerateApplicantJSNopWhenCaseIsSoleJudicialSeparationAndApplicantIsRepresented() {
+    void shouldGenerateApplicantSolicitorJSNopWhenCaseIsSoleJudicialSeparationAndApplicantIsRepresented() {
 
-        final CaseData caseData = caseData(SOLE_APPLICATION, NO);
-        caseData.getApplicant1().setSolicitorRepresented(YES);
+        setMockClock(clock);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, YES);
         caseData.setIsJudicialSeparation(YES);
 
-        generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        verifyNoInteractions(noticeOfProceedingContent);
-        verifyNoInteractions(caseDataDocumentService);
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1_SOLICITOR_JS_SOLE);
+        verifyNoMoreInteractions(caseDataDocumentService);
+
+        assertThat(result.getData()).isEqualTo(caseData);
     }
 
     private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent,

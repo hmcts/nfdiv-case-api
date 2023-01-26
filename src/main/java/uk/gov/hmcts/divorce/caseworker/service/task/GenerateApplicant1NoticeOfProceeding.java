@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMEN
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOLICITOR_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -180,7 +181,19 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         final Applicant applicant1 = caseData.getApplicant1();
         final LanguagePreference languagePreference = applicant1.getLanguagePreference();
 
-        if (!applicant1.isRepresented()) {
+        if (applicant1.isRepresented()) {
+            log.info("Generating notice of judicial separation proceedings for applicant solicitor for case id {} ", caseId);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS_APP_1,
+                solicitorContent.apply(caseData, caseId, true),
+                caseId,
+                NFD_NOP_APP1_SOLICITOR_JS_SOLE,
+                languagePreference,
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+            );
+        } else {
             log.info("Generating notice of judicial separation proceedings for applicant for case id {} ", caseId);
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
