@@ -13,7 +13,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType
+    .JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterType.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE;
 
 @Component
@@ -32,8 +34,7 @@ public class AwaitingClarificationApplicationPrinter {
     public static final List<DocumentType> missingDocumentsJudicialSeparationTypeList =
         List.of(
             COVERSHEET,
-            CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
-            // Check this - which doc should be sent to unrepresented applicants for JS clarification refusal?
+            JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
             CONDITIONAL_ORDER_REFUSAL,
             APPLICATION
         );
