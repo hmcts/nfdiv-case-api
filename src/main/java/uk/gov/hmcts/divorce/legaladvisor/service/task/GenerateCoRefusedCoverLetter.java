@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
@@ -38,7 +38,7 @@ public class GenerateCoRefusedCoverLetter {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
     private Clock clock;
@@ -82,7 +82,7 @@ public class GenerateCoRefusedCoverLetter {
 
         templateContent.put(
             LEGAL_ADVISOR_COMMENTS,
-            conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder())
+            conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder())
         );
 
         templateContent.put(
