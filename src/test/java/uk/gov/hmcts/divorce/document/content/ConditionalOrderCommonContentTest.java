@@ -25,6 +25,12 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,7 +117,7 @@ class ConditionalOrderCommonContentTest {
     }
 
     @Test
-    void shouldReturnDocumentType() {
+    void shouldReturnDocumentTypeAndTemplateId() {
         CaseData caseData = CaseData.builder()
             .isJudicialSeparation(NO)
             .build();
@@ -119,47 +125,32 @@ class ConditionalOrderCommonContentTest {
         Applicant applicant = Applicant.builder()
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+        final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+        final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
 
-        assertThat(result).isEqualTo(DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        assertThat(documentTemplateId).isEqualTo(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
-    void shouldReturnDocumentTypeForJudicialSeparationAmendment() {
+    void shouldReturnDocumentTypeAndTemplateIdForClarification() {
         CaseData caseData = CaseData.builder()
-            .isJudicialSeparation(YES)
-            .build();
-
-        Applicant applicant = Applicant.builder()
-            .build();
-
-        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
-
-        assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
-    }
-
-    @Test
-    void shouldReturnDocumentTypeForJudicialSeparationAmendmentOfflineRepresented() {
-        CaseData caseData = CaseData.builder()
-            .isJudicialSeparation(YES)
-            .application(
-                Application.builder()
-                    .newPaperCase(YES)
-                    .build()
-            )
+            .isJudicialSeparation(NO)
             .build();
 
         Applicant applicant = Applicant.builder()
             .solicitorRepresented(YES)
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+        final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
+        final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
 
-        assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        assertThat(documentTemplateId).isEqualTo(CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
-    void shouldReturnDocumentTypeForJudicialSeparationClarification() {
+    void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationAmendment() {
         CaseData caseData = CaseData.builder()
             .isJudicialSeparation(YES)
             .build();
@@ -167,29 +158,61 @@ class ConditionalOrderCommonContentTest {
         Applicant applicant = Applicant.builder()
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
+        final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+        final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
 
-        assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
-    void shouldReturnDocumentTypeForJudicialSeparationClarificationOfflineRepresented() {
+    void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationAmendmentWhenApplicantRepresented() {
         CaseData caseData = CaseData.builder()
             .isJudicialSeparation(YES)
-            .application(
-                Application.builder()
-                    .newPaperCase(YES)
-                    .build()
-            )
             .build();
 
         Applicant applicant = Applicant.builder()
             .solicitorRepresented(YES)
             .build();
 
-        final DocumentType result = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
+        final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+        final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
 
-        assertThat(result).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+        assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
+    }
+
+    @Test
+    void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationClarification() {
+        CaseData caseData = CaseData.builder()
+            .isJudicialSeparation(YES)
+            .build();
+
+        Applicant applicant = Applicant.builder()
+            .build();
+
+        final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
+        final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
+
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER);
+        assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID);
+    }
+
+    @Test
+    void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationClarificationWhenApplicantRepresented() {
+        CaseData caseData = CaseData.builder()
+            .isJudicialSeparation(YES)
+            .build();
+
+        Applicant applicant = Applicant.builder()
+            .solicitorRepresented(YES)
+            .build();
+
+        final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
+        final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
+
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
