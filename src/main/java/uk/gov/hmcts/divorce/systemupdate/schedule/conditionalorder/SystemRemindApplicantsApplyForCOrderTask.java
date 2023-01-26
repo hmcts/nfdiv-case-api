@@ -15,11 +15,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
+import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -40,11 +39,9 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
+public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventSubmit {
 
     public static final String NOTIFICATION_FLAG = "applicantsRemindedCanApplyForConditionalOrder";
-    public static final String SUBMIT_EVENT_ERROR = "Submit event failed for Case Id: {}, State: {}, continuing to next case";
-    public static final String DESERIALIZATION_ERROR = "Deserialization failed for Case Id: {}, continuing to next case";
     public static final String CCD_SEARCH_ERROR =
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopped after search error";
     public static final String CCD_CONFLICT_ERROR =
@@ -53,9 +50,6 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
 
     @Autowired
     private CcdSearchService ccdSearchService;
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
 
     @Autowired
     private IdamService idamService;
@@ -97,8 +91,8 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization,
-                AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
-                    .forEach(caseDetails -> remindJointApplicants(caseDetails, user, serviceAuthorization));
+                    AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
+                .forEach(caseDetails -> remindJointApplicants(caseDetails, user, serviceAuthorization));
 
             log.info("SystemRemindApplicantsApplyForCOrderTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -133,7 +127,11 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
             }
 
             caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
-            triggerRemindApplicantsApplyForCo(caseDetails, user, serviceAuth);
+            log.info(
+                "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
+                caseDetails.getId()
+            );
+            triggerEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
 
         } catch (NotificationException | HttpServerErrorException exception) {
             log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
@@ -148,20 +146,12 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                     caseDetails.getState());
 
                 caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
-                ccdUpdateService.submitEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
+                triggerEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
             }
-        } catch (final CcdManagementException e) {
-            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId(), caseDetails.getState());
-        } catch (final IllegalArgumentException e) {
-            log.error(DESERIALIZATION_ERROR, caseDetails.getId());
         }
     }
 
-    private void triggerRemindApplicantsApplyForCo(CaseDetails caseDetails, User user, String serviceAuth) {
-        log.info(
-            "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
-            caseDetails.getId()
-        );
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
+    private void triggerEvent(CaseDetails caseDetails, String eventId, User user, String serviceAuth) {
+        submitEvent(caseDetails, eventId, user, serviceAuth);
     }
 }

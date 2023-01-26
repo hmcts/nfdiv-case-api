@@ -20,8 +20,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
@@ -120,7 +122,7 @@ public class NoticeOfProceedingContent {
     public static final String CIVIL_PARTNERSHIP_DOCUMENTS = "documents to end your civil partnership";
 
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
-    private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
+    public static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
@@ -151,6 +153,8 @@ public class NoticeOfProceedingContent {
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         if (!isNull(caseData.getDueDate())) {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));

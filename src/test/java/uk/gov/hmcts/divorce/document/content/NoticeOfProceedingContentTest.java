@@ -154,17 +154,6 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
@@ -204,7 +193,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE),
-                entry("ctscContactDetails", ctscContactDetails),
+                entry("ctscContactDetails", getCtscContactDetails()),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street the town UK"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -257,19 +246,8 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .build();
-
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
-                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn(CIVIL_PARTNER);
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
@@ -306,7 +284,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP),
-                entry("ctscContactDetails", ctscContactDetails),
+                entry("ctscContactDetails", getCtscContactDetails()),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street\nthe town"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -324,5 +302,18 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS),
                 entry(IS_OFFLINE, false)
             );
+    }
+
+    private CtscContactDetails getCtscContactDetails() {
+        return CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .emailAddress(CONTACT_DIVORCE_EMAIL)
+            .phoneNumber("0300 303 0642")
+            .build();
     }
 }

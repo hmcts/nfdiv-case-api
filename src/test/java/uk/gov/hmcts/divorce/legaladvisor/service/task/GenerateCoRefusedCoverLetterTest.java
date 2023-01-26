@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
@@ -62,7 +62,7 @@ public class GenerateCoRefusedCoverLetterTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Mock
     private Clock clock;
@@ -77,8 +77,8 @@ public class GenerateCoRefusedCoverLetterTest {
     void shouldGenerateCoRefusedCoverLetterWithDivorceContent() {
         setMockClock(clock);
 
-        final List<ConditionalOrderRefusedForAmendmentContent.RefusalReason> refusalReasons =
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Court does not have jurisdiction"));
+        final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -117,7 +117,7 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
-        when(conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
+        when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
@@ -144,8 +144,8 @@ public class GenerateCoRefusedCoverLetterTest {
     void shouldGenerateCoRefusedCoverLetterWithDissolutionContent() {
         setMockClock(clock);
 
-        final List<ConditionalOrderRefusedForAmendmentContent.RefusalReason> refusalReasons =
-            List.of(new ConditionalOrderRefusedForAmendmentContent.RefusalReason("Court does not have jurisdiction"));
+        final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
+            List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -184,7 +184,7 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
-        when(conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
+        when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));

@@ -1,5 +1,7 @@
 {
   "data": {
+    "applicationType": "soleApplication",
+    "isJudicialSeparation": "No",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
     "applicant1FinancialOrder": "No",

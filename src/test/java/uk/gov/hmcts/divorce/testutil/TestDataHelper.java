@@ -343,6 +343,7 @@ public class TestDataHelper {
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(NO)
             .build();
     }
 
