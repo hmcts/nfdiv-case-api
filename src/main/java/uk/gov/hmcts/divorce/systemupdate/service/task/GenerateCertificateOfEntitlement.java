@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -35,6 +34,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
@@ -42,7 +42,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_FO_ELIGIBLE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
@@ -54,6 +53,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -66,15 +66,11 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
     public static final String GET_A_DIVORCE = "get a divorce";
     public static final String END_YOUR_CIVIL_PARTNERSHIP = "end your civil partnership";
+    public static final String IS_JOINT = "isJoint";
+    public static final String IS_RESPONDENT = "isRespondent";
 
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
-
-    @Value("${court.locations.serviceCentre.email}")
-    private String email;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -126,6 +122,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
+        final boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
 
         if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating certificate of entitlement cover letter for Applicant 1 for case id {} ", caseId);
@@ -134,7 +131,9 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 templateVars(caseData, caseId, caseData.getApplicant1()),
                 caseId,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+                isJudicialSeparation
+                    ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
+                    : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
             );
@@ -151,12 +150,18 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
                     commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
                 );
 
+                if (isJudicialSeparation) {
+                    templateVars.put(IS_RESPONDENT, true);
+                }
+
                 caseDataDocumentService.renderDocumentAndUpdateCaseData(
                     caseData,
                     CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
                     templateVars,
                     caseId,
-                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+                    isJudicialSeparation
+                        ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
+                        : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
                     caseData.getApplicant2().getLanguagePreference(),
                     formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
                 );
@@ -167,7 +172,9 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
                     CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
                     templateVars(caseData, caseId, caseData.getApplicant2()),
                     caseId,
-                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+                    isJudicialSeparation
+                        ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
+                        : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
                     caseData.getApplicant2().getLanguagePreference(),
                     formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
                 );
@@ -212,13 +219,10 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .emailAddress(email)
-            .phoneNumber(phoneNumber)
-            .build();
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
+            templateContent.put(IS_DIVORCE, caseData.isDivorce());
+            templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+        }
 
         return templateContent;
     }
