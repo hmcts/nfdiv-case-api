@@ -50,9 +50,6 @@ public class CertificateOfEntitlementContent {
     @Autowired
     private ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-
     public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         final Map<String, Object> templateContent = new HashMap<>();
