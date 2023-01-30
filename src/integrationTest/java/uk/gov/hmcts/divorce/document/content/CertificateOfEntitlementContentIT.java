@@ -30,11 +30,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -149,6 +153,62 @@ class CertificateOfEntitlementContentIT {
             entry(APPLICANT_1_FULL_NAME, "John Smith"),
             entry(APPLICANT_2_FULL_NAME, "Jane Jones"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE_CY),
+            entry("isSole", true),
+            entry("isJoint", false),
+            entry(DATE_OF_HEARING, "8 November 2021"),
+            entry(TIME_OF_HEARING, "14:56 pm"),
+            entry(HAS_FINANCIAL_ORDERS, true)
+        );
+    }
+
+    @Test
+    void shouldReturnTemplateSetFromCaseDataAndCourtDetailsConfigForJudicialSeparation() {
+
+        final LocalDateTime localDateTime = LocalDateTime.of(2021, 11, 8, 14, 56);
+        final LocalDate localDate = LocalDate.of(2021, 11, 8);
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .isJudicialSeparation(YES)
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder()
+                .firstName("John")
+                .lastName("Smith")
+                .financialOrder(YES)
+                .gender(FEMALE)
+                .build())
+            .applicant2(Applicant.builder()
+                .firstName("Jane")
+                .lastName("Jones")
+                .gender(MALE)
+                .build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .court(BURY_ST_EDMUNDS)
+                .dateAndTimeOfHearing(localDateTime)
+                .decisionDate(localDate)
+                .claimsGranted(YES)
+                .claimsCostsOrderInformation("info")
+                .build())
+            .application(Application.builder()
+                .divorceWho(HUSBAND)
+                .build())
+            .build();
+
+        final ConditionalOrderCourtDetails expectedDetails = new ConditionalOrderCourtDetails();
+        expectedDetails.setName("Bury St. Edmunds Regional Divorce Centre");
+        expectedDetails.setAddress("2nd Floor\nTriton House\nSt. Andrews Street North\nBury St. Edmunds\nIP33 1TR");
+        expectedDetails.setEmail("contactdivorce@justice.gov.uk");
+        expectedDetails.setPhone("0300 303 0642");
+
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(contentMap).contains(
+            entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry("courtDetails", expectedDetails),
+            entry("approvalDate", "8 November 2021"),
+            entry(APPLICANT_1_FULL_NAME, "John Smith"),
+            entry(APPLICANT_2_FULL_NAME, "Jane Jones"),
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry("isSole", true),
             entry("isJoint", false),
             entry(DATE_OF_HEARING, "8 November 2021"),
