@@ -105,7 +105,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put("judicialSeparation", caseData.getIsJudicialSeparation().toBoolean());
+        expectedEntries.put("judicialSeparation", caseData.isJudicialSeparationCase());
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
 
@@ -172,7 +172,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put("judicialSeparation", caseData.getIsJudicialSeparation().toBoolean());
+        expectedEntries.put("judicialSeparation", caseData.isJudicialSeparationCase());
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
 
