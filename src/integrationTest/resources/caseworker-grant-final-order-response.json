@@ -71,7 +71,8 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": []
+    "warnings": [],
+    "isJudicialSeparation": "No"
   },
   "state": "FinalOrderComplete"
 }

@@ -73,4 +73,22 @@ class SendAosPackToApplicantTest {
 
         verifyNoMoreInteractions(aosPackPrinter);
     }
+
+    @Test
+    void shouldSendAosLetterToApplicantIfJudicialSeparation() {
+        final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
 }
