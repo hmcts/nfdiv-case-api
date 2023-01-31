@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,4 +42,26 @@ public class SystemProgressCaseToAosOverdueFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Test
+    public void shouldPassValidationAndGenerateDocToApplicantAndRespondentWhenJudicialSeparation() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("isJudicialSeparation", "Yes");
+        request.put("applicant1Offline", "Yes");
+        request.put("applicant2Offline", "Yes");
+        request.remove("applicant1Email");
+        request.remove("applicant2Email");
+
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_TO_AOS_OVERDUE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.delete("data.applicant1Email");
+        jsonDocument.delete("data.applicant2Email");
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(jsonDocument.json());
+    }
 }

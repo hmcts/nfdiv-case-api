@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSol
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -286,6 +287,14 @@ public class CaseDocuments {
         if (!isEmpty(this.getDocumentsGenerated())) {
             this.getDocumentsGenerated()
                 .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
+        }
+    }
+
+    @JsonIgnore
+    public void removeConfidentialDocumentGeneratedWithType(final ConfidentialDocumentsReceived documentType) {
+        if (!isEmpty(this.getConfidentialDocumentsGenerated())) {
+            this.getConfidentialDocumentsGenerated()
+                .removeIf(document -> documentType.equals(document.getValue().getConfidentialDocumentsReceived()));
         }
     }
 

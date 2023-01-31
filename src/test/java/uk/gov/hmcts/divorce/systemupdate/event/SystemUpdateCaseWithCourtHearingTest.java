@@ -17,6 +17,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -94,7 +96,7 @@ class SystemUpdateCaseWithCourtHearingTest {
 
         systemUpdateCaseWithCourtHearing.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(entitlementGrantedConditionalOrderNotification, caseDetails.getData(), caseDetails.getId());
+        verify(notificationDispatcher).send(eq(entitlementGrantedConditionalOrderNotification), any(), eq(caseDetails.getId()));
         verifyNoMoreInteractions(notificationDispatcher);
     }
 }

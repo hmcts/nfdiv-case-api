@@ -15,7 +15,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
@@ -33,6 +32,7 @@ class DocmosisCommonContentTest {
     private static final String PO_BOX = "PO Box 13226";
     private static final String TOWN = "Harlow";
     private static final String POSTCODE = "CM20 9UG";
+    private static final String PHONE_NUMBER = "0300 303 0642";
 
     private static final int EXPECTED_ENTRY_SIZE = 5;
 
@@ -41,6 +41,7 @@ class DocmosisCommonContentTest {
         .poBox(PO_BOX)
         .town(TOWN)
         .postcode(POSTCODE)
+        .phoneNumber(PHONE_NUMBER)
         .build();
 
     @InjectMocks
@@ -51,6 +52,7 @@ class DocmosisCommonContentTest {
         ReflectionTestUtils.setField(docmosisCommonContent, "poBox", PO_BOX);
         ReflectionTestUtils.setField(docmosisCommonContent, "town", TOWN);
         ReflectionTestUtils.setField(docmosisCommonContent, "postcode", POSTCODE);
+        ReflectionTestUtils.setField(docmosisCommonContent, "phoneNumber", PHONE_NUMBER);
     }
 
     @Test
@@ -80,7 +82,7 @@ class DocmosisCommonContentTest {
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
-                entry(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY),
+                entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
     }
