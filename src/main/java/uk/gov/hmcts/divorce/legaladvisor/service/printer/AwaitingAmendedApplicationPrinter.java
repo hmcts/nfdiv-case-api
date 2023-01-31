@@ -85,7 +85,7 @@ public class AwaitingAmendedApplicationPrinter {
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
-        DocumentType refusalCoverLetterType = caseData.getIsJudicialSeparation().toBoolean()
+        DocumentType refusalCoverLetterType = caseData.isJudicialSeparationCase()
             ? JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER
             : CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 
@@ -135,7 +135,7 @@ public class AwaitingAmendedApplicationPrinter {
             coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
             applicant.getLanguagePreference()
         );
-        if (caseData.getIsJudicialSeparation().toBoolean()) {
+        if (caseData.isJudicialSeparationCase()) {
             generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
                 caseData,
                 caseId,
