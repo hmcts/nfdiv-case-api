@@ -36,6 +36,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
@@ -199,9 +201,9 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-        templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference());
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor() != null ? caseData.getApplicant1().getSolicitor().getName() : NOT_REPRESENTED);
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor() != null ? caseData.getApplicant2().getSolicitor().getName() : NOT_REPRESENTED);
+        templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference() != null ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
         return templateContent;
