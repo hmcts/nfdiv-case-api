@@ -72,7 +72,7 @@ public class ConditionalOrderRefusedForAmendmentContent {
                 WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
         }
 
-        templateContent.put(IS_JUDICIAL_SEPARATION, YesOrNo.YES.equals(caseData.getIsJudicialSeparation()));
+        templateContent.put(IS_JUDICIAL_SEPARATION, caseData.isJudicialSeparationCase());
 
         templateContent.put(
             LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
