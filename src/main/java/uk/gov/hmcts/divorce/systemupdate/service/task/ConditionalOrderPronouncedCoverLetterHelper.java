@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_SOLICITOR_COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -80,7 +80,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             : templateVars(caseData, caseId, applicant);
 
         final DocumentType coverLetterType = isRepresentedJSCase(caseData, applicant)
-            ? CONDITIONAL_ORDER_GRANTED_SOLICITOR_COVERSHEET
+            ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET
             : documentType;
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -104,7 +104,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             : templateVarsForOfflineRespondent(caseData, caseId, applicant, partner);
 
         final DocumentType coverLetterType = isRepresentedJSCase(caseData, applicant)
-            ? CONDITIONAL_ORDER_GRANTED_SOLICITOR_COVERSHEET
+            ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET
             : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
