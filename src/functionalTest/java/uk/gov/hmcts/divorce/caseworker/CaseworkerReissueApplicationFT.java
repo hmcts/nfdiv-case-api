@@ -163,6 +163,19 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldReIssueApplicationWhenSoleJudicialSeparationAndReissuedAsOfflineAOS() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
+        caseData.put("applicant1Represented", "No");
+        caseData.put("isJudicialSeparation", "Yes");
+        caseData.put("reissueOption", "offlineAos");
+        caseData.put("dueDate", "2022-01-15");
+        caseData.put("accessCode", ACCESS_CODE);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldReIssueJudicialSeparationApplicationWhenSoleAppRepresentedAndReissuedAsOfflineAOS() throws Exception {
+        final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("isJudicialSeparation", "Yes");
         caseData.put("reissueOption", "offlineAos");
         caseData.put("dueDate", "2022-01-15");
