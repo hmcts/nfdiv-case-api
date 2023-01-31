@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -201,9 +200,18 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor() != null ? caseData.getApplicant1().getSolicitor().getName() : NOT_REPRESENTED);
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor() != null ? caseData.getApplicant2().getSolicitor().getName() : NOT_REPRESENTED);
-        templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference() != null ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor() != null
+            ? caseData.getApplicant1().getSolicitor().getName()
+            : NOT_REPRESENTED
+        );
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor() != null
+            ? caseData.getApplicant2().getSolicitor().getName()
+            : NOT_REPRESENTED
+        );
+        templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference() != null
+            ? applicant.getSolicitor().getReference()
+            : NOT_PROVIDED
+        );
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
         return templateContent;
