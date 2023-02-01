@@ -209,8 +209,29 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("coGrantedCoversheetApp2")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Conditional order granted cover letter"),
 
-    @JsonProperty("jsGrantedSolicitorCoversheet")
-    JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET("Judicial separation order granted solicitor cover letter"),
+    @JsonProperty("judicialSeparationGrantedCoversheet")
+    JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Respondent/Applicant 1 Judicial Separation order granted cover letter"),
+
+    @JsonProperty("separationGrantedCoversheetApp1")
+    SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Respondent/Applicant 1 Separation order granted cover letter"),
+
+    @JsonProperty("judicialSeparationGrantedCoversheetApp2")
+    JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Judicial Separation order granted cover letter"),
+
+    @JsonProperty("separationGrantedCoversheetApp2")
+    SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Separation order granted cover letter"),
+
+    @JsonProperty("judicialSeparationGrantedSolicitorCoversheet")
+    JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET("Judicial Separation order granted solicitor cover letter"),
+
+    @JsonProperty("separationGrantedSolicitorCoversheet")
+    SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET("Separation order granted solicitor cover letter"),
+
+    @JsonProperty("judicialSeparationOrderGranted")
+    JUDICIAL_SEPARATION_ORDER_GRANTED("Judicial Separation Order Granted"),
+
+    @JsonProperty("separationOrderGranted")
+    SEPARATION_ORDER_GRANTED("Separation Order Granted"),
 
     @JsonProperty("switchToSoleCoLetter")
     SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter");

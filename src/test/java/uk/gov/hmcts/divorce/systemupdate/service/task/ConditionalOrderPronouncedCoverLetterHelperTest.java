@@ -29,9 +29,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_SOLICITOR_COVER_LETTER_JS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
@@ -57,6 +59,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -310,12 +314,12 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1,
             applicant1TemplateVars,
             TEST_CASE_ID,
-            CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID,
             ENGLISH,
-            formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+            formatDocumentName(TEST_CASE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
 
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -358,12 +362,12 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2,
             applicant2TemplateVars,
             TEST_CASE_ID,
-            CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID,
             ENGLISH,
-            formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+            formatDocumentName(TEST_CASE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
 
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -408,9 +412,9 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
             JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET,
             solicitorTemplateVars,
             TEST_CASE_ID,
-            CO_GRANTED_SOLICITOR_COVER_LETTER_JS_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
             ENGLISH,
-            formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+            formatDocumentName(TEST_CASE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
 
         verifyNoMoreInteractions(caseDataDocumentService);
@@ -454,9 +458,9 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
             JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET,
             solicitorTemplateVars,
             TEST_CASE_ID,
-            CO_GRANTED_SOLICITOR_COVER_LETTER_JS_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
             ENGLISH,
-            formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+            formatDocumentName(TEST_CASE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME, now(clock))
         );
 
         verifyNoMoreInteractions(caseDataDocumentService);
