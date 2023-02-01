@@ -23,8 +23,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,11 +94,11 @@ class GenerateConditionalOrderPronouncedDocumentTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_GRANTED,
+            JUDICIAL_SEPARATION_ORDER_GRANTED,
             templateContent,
             TEST_CASE_ID,
             JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID,
             ENGLISH,
-            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME);
+            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME);
     }
 }
