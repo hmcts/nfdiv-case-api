@@ -99,9 +99,9 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
             content = solicitorContent.apply(caseData, caseId, true);
 
-            var isCourtService = caseData.getApplication().isCourtServiceMethod();
-            templateId = isCourtService
-                    ? NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS : getTemplateForPersonalOrSolicitorServiceMethod(false, caseData, caseId);
+            templateId = caseData.getApplication().isCourtServiceMethod()
+                    ? NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS
+                    : NFD_NOP_AS2_SOLE_APP1_SOL_SS;
         } else {
             log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
@@ -120,17 +120,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             applicant1.getLanguagePreference(),
             formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
         );
-    }
-
-    private String getTemplateForPersonalOrSolicitorServiceMethod(boolean isCourtService, CaseData caseData, Long caseId) {
-        if (caseData.isJudicialSeparationCase() && (!isCourtService || caseData.getApplicant2().isBasedOverseas())) {
-            log.info("Generating notice of " + (caseData.isDivorce() ? "judicial " : "")
-                    + "separation proceedings for applicant solicitor for " + "case id {} ", caseId);
-
-            return NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR_TEMPLATE_ID;
-        }
-
-        return NFD_NOP_AS2_SOLE_APP1_SOL_SS;
     }
 
     private void generateJointNoticeOfProceedings(CaseData caseData, Long caseId) {
@@ -191,18 +180,25 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     }
 
     private void generateSoleNoticeOfProceedingsForJudicialSeparation(CaseData caseData, Long caseId) {
+
+        final String templateId;
         final Applicant applicant1 = caseData.getApplicant1();
         final LanguagePreference languagePreference = applicant1.getLanguagePreference();
 
         if (applicant1.isRepresented()) {
             log.info("Generating notice of judicial separation proceedings for applicant solicitor for case id {} ", caseId);
 
+            var isCourtService = caseData.getApplication().isCourtServiceMethod();
+            templateId = isCourtService
+                    ? NFD_NOP_APP1_SOLICITOR_JS_SOLE
+                    : NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR_TEMPLATE_ID;
+
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 solicitorContent.apply(caseData, caseId, true),
                 caseId,
-                NFD_NOP_APP1_SOLICITOR_JS_SOLE,
+                templateId,
                 languagePreference,
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );

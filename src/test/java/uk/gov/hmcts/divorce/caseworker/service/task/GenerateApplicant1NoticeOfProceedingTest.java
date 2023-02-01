@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
@@ -39,6 +38,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
@@ -311,6 +311,8 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, YES);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.setIsJudicialSeparation(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -352,7 +354,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UAE").build());
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant1().setSolicitorRepresented(YES);
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
+        caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setIsJudicialSeparation(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
