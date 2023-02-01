@@ -125,7 +125,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
         }
 
         // If not clarification refusal, or if is JS, then add the application to the document list
-        if (caseData.getIsJudicialSeparation().toBoolean() || !isClarificationRefusal) {
+        if (caseData.isJudicialSeparationCase() || !isClarificationRefusal) {
             final Letter divorceApplicationLetter = getFirstLetterWithDocumentType(caseData, APPLICATION);
             if (divorceApplicationLetter != null) {
                 awaitingAmendmentOrClarificationLetters.add(divorceApplicationLetter);
@@ -170,7 +170,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
         final Applicant applicant,
         final Boolean isClarificationRefusal
     ) {
-        if (caseData.getIsJudicialSeparation().toBoolean()) {
+        if (caseData.isJudicialSeparationCase()) {
             generateJudicialSeparationLetters(caseData, caseId, applicant, isClarificationRefusal);
         } else {
             generateCoversheet.generateCoversheet(

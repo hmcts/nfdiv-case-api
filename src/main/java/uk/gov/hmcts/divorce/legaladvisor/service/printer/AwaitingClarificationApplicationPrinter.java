@@ -54,7 +54,7 @@ public class AwaitingClarificationApplicationPrinter {
             .expectedDocumentsSize(missingDocumentsExpectedDocumentsSize)
             .build();
 
-        if (caseData.getIsJudicialSeparation().toBoolean()) {
+        if (caseData.isJudicialSeparationCase()) {
             missingDocumentsValidation.message = missingDocumentsJudicialSeparationMessage;
             missingDocumentsValidation.documentTypeList = applicant.isRepresented()
                 ? missingDocumentsJudicialSeparationRepresentedTypeList
