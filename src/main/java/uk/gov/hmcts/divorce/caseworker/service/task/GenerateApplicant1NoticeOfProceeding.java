@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 
@@ -191,7 +191,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             var isCourtService = caseData.getApplication().isCourtServiceMethod();
             templateId = isCourtService
                     ? NFD_NOP_APP1_SOLICITOR_JS_SOLE
-                    : NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR_TEMPLATE_ID;
+                    : NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID;
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,

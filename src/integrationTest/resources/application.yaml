@@ -113,7 +113,7 @@ docmosis:
       NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS.docx
       NFD_NOP_APP1_SOLICITOR_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx
-      NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-NOP-Personal-Service-Solicitor.docx
+      NFD_NOP_JS_SERVICE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-NOP-Solicitor-Service.docx
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V2.docx

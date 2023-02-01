@@ -53,7 +53,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -361,7 +361,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_JS_PERSONAL_SERVICE_SOLICITOR_TEMPLATE_ID);
+        verifyInteractions(caseData, templateContent, NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
