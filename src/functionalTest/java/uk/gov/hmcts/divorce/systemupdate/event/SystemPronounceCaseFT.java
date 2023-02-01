@@ -42,8 +42,8 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-offline.json";
     private static final String OFFLINE_NOT_REPRESENTED_RESPONSE =
         "classpath:responses/response-system-pronounce-case-offline.json";
-    private static final String OFFLINE_NOT_REPRESENTED_RESPONSE_JUDICIAL_SEPARATION =
-        "classpath:responses/response-system-pronounce-case-offline-judicial-separation.json";
+    private static final String JUDICIAL_SEPARATION_REPRESENTED_RESPONSE =
+        "classpath:responses/response-system-pronounce-case-judical-separation-represented.json";
     private static final String OFFLINE_WITH_PRIVATE_CONTACT_RESPONSE =
         "classpath:responses/response-system-pronounce-case-offline-with-private-contract.json";
 
@@ -186,6 +186,6 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(OFFLINE_NOT_REPRESENTED_RESPONSE_JUDICIAL_SEPARATION)));
+            .isEqualTo(json(expectedResponse(JUDICIAL_SEPARATION_REPRESENTED_RESPONSE)));
     }
 }
