@@ -161,4 +161,65 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForOfflineSoleJudicialSeparation() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("isJudicialSeparation", "Yes");
+        caseData.remove("applicant1Email");
+        caseData.remove("applicant2Email");
+        caseData.put("applicant1Offline", "Yes");
+        caseData.put("applicant2Offline", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplicationWithJudicialSeparation()
+        throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("isJudicialSeparation", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForWelshSoleCitizenApplicationWithJudicialSeparation()
+        throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("applicant2LanguagePreferenceWelsh", "Yes");
+        caseData.put("isJudicialSeparation", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForJointJudicialSeparation() throws Exception {
+        final Map<String, Object> caseData = caseData(JOINT_CITIZEN_REQUEST);
+        caseData.put("isJudicialSeparation", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleJudicialSeparationApp1Represented() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST);
+        caseData.put("isJudicialSeparation", "Yes");
+        caseData.remove("applicant1Email");
+        caseData.remove("applicant2Email");
+        caseData.put("applicant1Offline", "Yes");
+        caseData.put("applicant2Offline", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
 }

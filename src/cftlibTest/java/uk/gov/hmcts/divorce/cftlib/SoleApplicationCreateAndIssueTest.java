@@ -252,9 +252,9 @@ public class SoleApplicationCreateAndIssueTest extends XuiTest {
         // Select 1: 05af69c6-72f8-478d-bd11-56f533e980e0
         page.locator("select").selectOption(select("PBA0077597"));
         // Click input[type="text"]
-        page.getByLabel("Enter your payment reference").click();
+        page.locator("#feeAccountReference").click();
         // Fill input[type="text"]
-        page.getByLabel("Enter your payment reference").fill("123");
+        page.locator("#feeAccountReference").fill("123");
         // Click text=Continue
         page.locator("text=Continue").click();
         assertThat(page).hasURL("http://localhost:3000/cases/case-details/" + caseRef + "/trigger/solicitor-submit-application/solicitor"

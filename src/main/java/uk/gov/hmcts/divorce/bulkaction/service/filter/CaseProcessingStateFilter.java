@@ -25,7 +25,7 @@ public class CaseProcessingStateFilter {
                                                            final User user,
                                                            final String serviceAuth,
                                                            final EnumSet<State> prestates,
-                                                           final State postState) {
+                                                           final EnumSet<State> postStates) {
 
         final List<String> processedCaseReferences = new ArrayList<>();
         final List<String> erroredCaseReferences = new ArrayList<>();
@@ -35,12 +35,14 @@ public class CaseProcessingStateFilter {
 
         ccdSearchService.searchForCases(getCasesReferences(bulkListCaseDetails), user, serviceAuth)
             .forEach(caseDetails -> {
-                if (postState.name().equals(caseDetails.getState())) {
+                if (postStates.contains(State.valueOf(caseDetails.getState()))) {
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
                         caseDetails.getId());
                     processedCaseReferences.add(String.valueOf(caseDetails.getId()));
                 } else if (isValidPrestate(prestates, caseDetails)) {
+                    log.info("Case ID {} will be added to unprocessedCases", caseDetails.getId());
+                } else {
                     log.info(
                         "Case ID {} will be skipped and moved to error list as not in correct state to be processed",
                         caseDetails.getId());
@@ -62,7 +64,7 @@ public class CaseProcessingStateFilter {
     }
 
     private boolean isValidPrestate(final EnumSet<State> startStates, final CaseDetails caseDetails) {
-        return !startStates.contains(State.valueOf(caseDetails.getState()));
+        return startStates.contains(State.valueOf(caseDetails.getState()));
     }
 
     private List<String> getCasesReferences(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {

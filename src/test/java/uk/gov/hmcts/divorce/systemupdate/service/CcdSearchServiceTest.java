@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -61,6 +62,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
@@ -759,6 +761,35 @@ class CcdSearchServiceTest {
             ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(100);
+    }
+
+    @Test
+    public void shouldReturnBulkCaseDetailsWithGivenCaseId() {
+        final User user = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().id("123").build());
+
+        when(coreCaseDataApi.readForCaseWorker(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            user.getUserDetails().getId(),
+            BulkActionCaseTypeConfig.JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            "1"
+        )).thenReturn(mock(CaseDetails.class));
+
+        uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
+            = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+
+        when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(any(CaseDetails.class)))
+            .thenReturn(bulkCaseDetails);
+
+        ccdSearchService.searchForBulkCaseById("1", user, SERVICE_AUTHORIZATION);
+
+        verify(coreCaseDataApi).readForCaseWorker(CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            user.getUserDetails().getId(),
+            BulkActionCaseTypeConfig.JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            "1");
     }
 
     private List<CaseDetails> createCaseDetailsList(final int size, final long idStart) {

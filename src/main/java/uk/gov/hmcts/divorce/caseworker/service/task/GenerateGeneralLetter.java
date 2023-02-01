@@ -63,7 +63,7 @@ public class GenerateGeneralLetter implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             GENERAL_LETTER,
-            templateContent.apply(caseData, caseId),
+            templateContent.apply(caseData, caseId, languagePreference),
             caseId,
             GENERAL_LETTER_TEMPLATE_ID,
             languagePreference,

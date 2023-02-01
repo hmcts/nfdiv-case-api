@@ -1,9 +1,13 @@
 {
   "data": {
+    "applicationType": "soleApplication",
+    "isJudicialSeparation": "No",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
     "applicant1LanguagePreferenceWelsh": "No",

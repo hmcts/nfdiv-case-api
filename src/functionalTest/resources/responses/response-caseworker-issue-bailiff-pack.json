@@ -3,6 +3,8 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "divorceOrDissolution": "divorce",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "marriageFormationType": "oppositeSexCouple",
     "solPaymentHowToPay": "feePayByAccount",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",

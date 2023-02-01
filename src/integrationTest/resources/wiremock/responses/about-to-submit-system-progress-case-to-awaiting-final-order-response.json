@@ -5,6 +5,8 @@
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "private",
@@ -54,6 +56,7 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": []
+    "warnings": [],
+    "isJudicialSeparation": "No"
   }
 }

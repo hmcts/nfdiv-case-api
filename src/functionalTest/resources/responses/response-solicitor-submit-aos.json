@@ -1,10 +1,14 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "applicationType": "soleApplication",
+    "isJudicialSeparation": "No",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2FirstName": "Jane",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant2LastName": "Smith",
     "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
