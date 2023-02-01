@@ -99,7 +99,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
                 } else {
                     log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
-                        + "Minimum size {} Case list size {}", minimumCasesToProcess, casesAwaitingPronouncement.size());
+                        + "Minimum size needed {}, Case list size {}", minimumCasesToProcess, casesAwaitingPronouncement.size());
                 }
             }
 
