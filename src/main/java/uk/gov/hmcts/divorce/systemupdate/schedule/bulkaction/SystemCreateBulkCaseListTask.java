@@ -170,6 +170,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
             bulkListCaseDetails.add(bulkListCaseDetailsListValue);
         }
+
         return bulkListCaseDetails;
     }
 }
