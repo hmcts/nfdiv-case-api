@@ -19,50 +19,41 @@
     "coGrantedDate":"2022-01-06",
     "coCourt":"birmingham",
     "coDateAndTimeOfHearing":"2022-01-06T10:30:00.000",
-    "coConditionalOrderGrantedDocument":{
-      "documentLink":{
-        "document_url":"${json-unit.any-string}",
-        "document_filename":"judicialSeparationOrderGranted.pdf",
-        "document_binary_url":"${json-unit.any-string}"
-      },
-      "documentFileName":"judicialSeparationOrderGranted.pdf",
-      "documentType":"judicialSeparationOrderGranted"
-    },
     "documentsGenerated":[
       {
         "id":"${json-unit.any-string}",
         "value":{
           "documentLink":{
             "document_url":"${json-unit.any-string}",
-            "document_filename":"${json-unit.any-string}",
-            "document_binary_url":"${json-unit.any-string}"
-          },
-          "documentFileName":"${json-unit.any-string}",
-          "documentType":"judicialSeparationGrantedCoversheet"
-        }
-      },
-      {
-        "id":"${json-unit.any-string}",
-        "value":{
-          "documentLink":{
-            "document_url":"${json-unit.any-string}",
-            "document_filename":"${json-unit.any-string}",
-            "document_binary_url":"${json-unit.any-string}"
-          },
-          "documentFileName":"${json-unit.any-string}",
-          "documentType":"judicialSeparationGrantedCoversheetApp2"
-        }
-      },
-      {
-        "id":"${json-unit.any-string}",
-        "value":{
-          "documentLink":{
-            "document_url":"${json-unit.any-string}",
-            "document_filename":"conditionalOrderGranted.pdf",
+            "document_filename":"judicialSeparationOrderGranted.pdf",
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"judicialSeparationOrderGranted.pdf",
           "documentType":"judicialSeparationOrderGranted"
+        }
+      },
+      {
+        "id":"${json-unit.any-string}",
+        "value":{
+          "documentLink":{
+            "document_url":"${json-unit.any-string}",
+            "document_filename":"${json-unit.any-string}",
+            "document_binary_url":"${json-unit.any-string}"
+          },
+          "documentFileName":"${json-unit.any-string}",
+          "documentType":"judicialSeparationGrantedSolicitorCoversheet"
+        }
+      },
+      {
+        "id":"${json-unit.any-string}",
+        "value":{
+          "documentLink":{
+            "document_url":"${json-unit.any-string}",
+            "document_filename":"${json-unit.any-string}",
+            "document_binary_url":"${json-unit.any-string}"
+          },
+          "documentFileName":"${json-unit.any-string}",
+          "documentType":"judicialSeparationGrantedSolicitorCoversheet"
         }
       }
     ],
