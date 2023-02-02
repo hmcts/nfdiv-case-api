@@ -44,8 +44,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -161,7 +161,7 @@ public class AwaitingAmendedApplicationPrinterTest {
 
         final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER)
+                .documentType(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER)
                 .build())
             .build();
 
@@ -236,7 +236,7 @@ public class AwaitingAmendedApplicationPrinterTest {
 
         final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER)
+                .documentType(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER)
                 .build())
             .build();
 

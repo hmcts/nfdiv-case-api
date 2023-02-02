@@ -57,8 +57,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -147,7 +147,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
-            eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
+            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
             eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
@@ -238,7 +238,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
-            eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER),
+            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
             eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
@@ -320,7 +320,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
-            eq(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER),
+            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
             eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
