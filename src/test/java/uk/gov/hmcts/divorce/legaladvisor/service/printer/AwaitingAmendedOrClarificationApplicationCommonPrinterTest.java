@@ -45,8 +45,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterType.AWAITING_AMENDED_APPLICATION_LETTER_TYPE;
 import static uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterType.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -251,7 +251,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER)
+                .documentType(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER)
                 .build())
             .build();
 
@@ -281,7 +281,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
         when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER);
         when(coversheetApplicantTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
@@ -331,7 +331,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER)
+                .documentType(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER)
                 .build())
             .build();
 
@@ -361,7 +361,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
         when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), true))
-            .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER);
         when(coversheetApplicantTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
@@ -411,7 +411,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER)
+                .documentType(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER)
                 .build())
             .build();
 
@@ -442,7 +442,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
         when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
         when(coversheetSolicitorTemplateContent.apply(TEST_CASE_ID, caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
@@ -492,7 +492,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         final ListValue<DivorceDocument> coCanApplyDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER)
+                .documentType(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER)
                 .build())
             .build();
 
@@ -523,7 +523,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
         when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), true))
-            .thenReturn(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
         when(coversheetSolicitorTemplateContent.apply(TEST_CASE_ID, caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 

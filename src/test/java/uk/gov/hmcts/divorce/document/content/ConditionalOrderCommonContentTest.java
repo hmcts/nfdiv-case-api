@@ -160,7 +160,7 @@ class ConditionalOrderCommonContentTest {
         final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
         final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
 
-        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER);
         assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID);
     }
 
@@ -177,7 +177,7 @@ class ConditionalOrderCommonContentTest {
         final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
         final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
 
-        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
         assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
 
@@ -193,7 +193,7 @@ class ConditionalOrderCommonContentTest {
         final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
         final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
 
-        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER);
         assertThat(documentTemplateId).isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID);
     }
 
@@ -210,7 +210,7 @@ class ConditionalOrderCommonContentTest {
         final DocumentType documentType = conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, true);
         final String documentTemplateId = conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, true);
 
-        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        assertThat(documentType).isEqualTo(DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
         assertThat(documentTemplateId)
             .isEqualTo(JUDICIAL_SEPARATION_CONDITIONAL_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
