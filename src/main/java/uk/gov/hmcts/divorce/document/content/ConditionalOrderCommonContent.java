@@ -33,6 +33,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATI
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 
@@ -84,13 +88,25 @@ public class ConditionalOrderCommonContent {
     ) {
         if (caseData.isJudicialSeparationCase()) {
             if (isClarificationRefusal) {
-                return applicant.isRepresented()
-                    ? JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
-                    : JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+                if (caseData.isDivorce()) {
+                    return applicant.isRepresented()
+                        ? JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
+                        : JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+                } else {
+                    return applicant.isRepresented()
+                        ? SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
+                        : SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+                }
             }
-            return applicant.isRepresented()
-                ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
-                : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+            if (caseData.isDivorce()) {
+                return applicant.isRepresented()
+                    ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                    : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+            } else {
+                return applicant.isRepresented()
+                    ? SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                    : SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+            }
         }
         return CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
     }
