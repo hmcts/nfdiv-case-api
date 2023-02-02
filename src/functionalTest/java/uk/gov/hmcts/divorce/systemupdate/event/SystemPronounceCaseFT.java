@@ -175,7 +175,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsInJudicialSeparation()
+    public void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
@@ -192,7 +192,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitorsInJudicialSeparation()
+    public void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitors()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
