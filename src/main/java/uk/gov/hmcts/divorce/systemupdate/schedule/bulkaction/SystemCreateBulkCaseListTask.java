@@ -99,7 +99,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
                 } else {
                     log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
-                        + " Case list size {}", casesAwaitingPronouncement.size());
+                        + "Minimum size needed {}, Case list size {}", minimumCasesToProcess, casesAwaitingPronouncement.size());
                 }
             }
 
@@ -170,6 +170,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
             bulkListCaseDetails.add(bulkListCaseDetailsListValue);
         }
+
         return bulkListCaseDetails;
     }
 }
