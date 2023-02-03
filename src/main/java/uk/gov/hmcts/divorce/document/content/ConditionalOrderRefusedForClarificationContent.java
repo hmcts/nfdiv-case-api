@@ -41,7 +41,7 @@ public class ConditionalOrderRefusedForClarificationContent {
     private Clock clock;
 
     @Autowired
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
@@ -64,8 +64,7 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        templateContent.put(JUDICIAL_SEPARATION,
-            caseData.getIsJudicialSeparation() != null && caseData.getIsJudicialSeparation().toBoolean());
+        templateContent.put(JUDICIAL_SEPARATION, caseData.isJudicialSeparationCase());
 
         templateContent.put(REASON_JURISDICTION_DETAILS,
             clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
@@ -76,8 +75,7 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
-            .generateLegalAdvisorComments(conditionalOrder));
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(conditionalOrder));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
