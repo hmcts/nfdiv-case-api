@@ -61,7 +61,11 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
                                           final Long caseId,
                                           final Applicant applicant) {
 
-        log.info("Generating Judicial Separation Conditional Order Refused Cover Letter for case id {} ", caseId);
+        if (caseData.isDivorce()) {
+            log.info("Generating Judicial Separation Order Refused Cover Letter for case id {} ", caseId);
+        } else {
+            log.info("Generating Separation Order Refused Cover Letter for case id {} ", caseId);
+        }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
