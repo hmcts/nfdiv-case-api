@@ -20,7 +20,6 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -28,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMEN
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_OS_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOLICITOR_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
@@ -72,7 +72,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication) {
-            if (YES.equals(caseData.getIsJudicialSeparation())) {
+            if (caseData.isJudicialSeparationCase() && !DIGITAL_AOS.equals(caseData.getApplication().getReissueOption())) {
                 generateSoleNoticeOfProceedingsForJudicialSeparation(caseData, caseId);
             } else {
                 generateSoleNoticeOfProceedings(caseData, caseId);
@@ -193,6 +193,33 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 languagePreference,
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
+        } else if (applicant1.isBasedOverseas() || caseData.getApplication().isPersonalServiceMethod()) {
+            final String templateId;
+            final Map<String, Object> content;
+            log.info("Generating notice of proceedings for applicant1 JS for sole case id {} ", caseId);
+
+            content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
+            templateId = NFD_NOP_APP1_JS_SOLE_OS_PS;
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                NOTICE_OF_PROCEEDINGS_APP_1,
+                content,
+                caseId,
+                templateId,
+                applicant1.getLanguagePreference(),
+                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
+            );
+
+            log.info("Generating coversheet for Applicant1 JS respondent for sole case id {} ", caseId);
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant1),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+
         } else {
             log.info("Generating notice of judicial separation proceedings for applicant for case id {} ", caseId);
 
