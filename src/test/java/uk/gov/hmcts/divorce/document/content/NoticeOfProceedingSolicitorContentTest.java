@@ -5,6 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.AddressUK;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -23,16 +26,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ADDRESS_BASED_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP1_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
@@ -264,5 +270,58 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(IS_JOINT, true),
                 entry(IS_DIVORCE, true));
+    }
+
+    @Test
+    public void shouldMapSolicitorTemplateContentWhenJudicialSeparation() {
+        Applicant applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant1.getSolicitor().setAddress(ADDRESS);
+        applicant1.getSolicitor().setReference("12345");
+
+        Applicant applicant2 = applicantRepresentedBySolicitor();
+        applicant2.setFirstName(TestConstants.APPLICANT_2_FIRST_NAME);
+        applicant2.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant2.getSolicitor().setAddress(ADDRESS);
+        applicant2.getSolicitor().setReference("98765");
+        applicant2.setAddress(AddressGlobalUK.builder().country("UK").build());
+
+        CaseData caseData = CaseData.builder()
+                .applicant1(applicant1)
+                .applicant2(applicant2)
+                .divorceOrDissolution(DIVORCE)
+                .applicationType(JOINT_APPLICATION)
+                .isJudicialSeparation(YesOrNo.YES)
+                .application(Application.builder()
+                        .issueDate(APPLICATION_ISSUE_DATE)
+                        .build())
+                .build();
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant1(), ENGLISH)).thenReturn("wife");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+                caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, false);
+
+        assertThat(templateContent)
+                .contains(
+                        entry(ISSUE_DATE, "30 March 2022"),
+                        entry(RELATION, "wife"),
+                        entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                        entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+                        entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+                        entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
+                        entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+                        entry(SOLICITOR_NAME, "The Solicitor"),
+                        entry(SOLICITOR_ADDRESS, ADDRESS),
+                        entry(SOLICITOR_REFERENCE, "98765"),
+                        entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
+                        entry(APPLICANT_SOLICITOR_REGISTERED, true),
+                        entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+                        entry(IS_JOINT, true),
+                        entry(IS_DIVORCE, true),
+                        entry(APPLICANT_2_SOLICITOR_ADDRESS, ADDRESS),
+                        entry(IS_APP1_REPRESENTED, true),
+                        entry(ADDRESS_BASED_OVERSEAS, false));
     }
 }

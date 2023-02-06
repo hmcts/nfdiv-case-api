@@ -3,12 +3,11 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.AddressUK;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -16,6 +15,7 @@ import java.util.Map;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ADDRESS_BASED_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -138,14 +138,10 @@ public class NoticeOfProceedingSolicitorContent {
             );
         }
 
-        if (YES.equals(caseData.getIsJudicialSeparation())) {
-            templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
-            templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
-            //TODO Need to fix this once we find out if Solicitor address can be overseas
-            //templateContent.put(ADDRESS_BASED_OVERSEAS, );
-
+            templateContent.put(ADDRESS_BASED_OVERSEAS, !AddressUtil.isEnglandOrWales(applicant2.getAddress()));
         }
 
         return templateContent;
