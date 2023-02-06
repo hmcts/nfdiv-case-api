@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
@@ -151,7 +151,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     generateCoversheet.generateCoversheet(
                         caseData,
                         caseId,
-                        COVERSHEET_APPLICANT2_SOLICITOR,
+                        COVERSHEET_SOLICITOR,
                         coversheetSolicitorTemplateContent.apply(caseData, caseId),
                         caseData.getApplicant2().getLanguagePreference());
                 } else {
@@ -162,7 +162,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 generateCoversheet.generateCoversheet(
                     caseData,
                     caseId,
-                    COVERSHEET_APPLICANT2_SOLICITOR,
+                    COVERSHEET_SOLICITOR,
                     coversheetSolicitorTemplateContent.apply(caseData, caseId),
                     caseData.getApplicant2().getLanguagePreference());
             }
