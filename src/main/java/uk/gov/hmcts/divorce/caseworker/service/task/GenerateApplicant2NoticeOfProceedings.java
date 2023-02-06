@@ -116,7 +116,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 caseData.getApplicant2().getLanguagePreference());
 
         if (applicant2.isRepresented()) {
-            coverSheet = COVERSHEET_APPLICANT2_SOLICITOR;
+            coverSheet = COVERSHEET_SOLICITOR;
             templateId = NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
             templateContent = solicitorTemplateContent.apply(caseData, caseId, false);
         }
