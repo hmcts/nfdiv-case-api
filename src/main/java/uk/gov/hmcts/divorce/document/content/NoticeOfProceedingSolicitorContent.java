@@ -44,7 +44,6 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RE
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 

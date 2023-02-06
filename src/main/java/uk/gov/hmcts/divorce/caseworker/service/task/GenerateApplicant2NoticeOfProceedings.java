@@ -29,8 +29,8 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
