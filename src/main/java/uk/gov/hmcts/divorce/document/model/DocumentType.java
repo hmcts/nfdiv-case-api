@@ -210,10 +210,10 @@ public enum DocumentType implements HasLabel {
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Conditional order granted cover letter"),
 
     @JsonProperty("judicialSeparationGrantedCoversheet")
-    JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Respondent/Applicant 1 Judicial Separation order granted cover letter"),
+    JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Judicial Separation order granted cover letter"),
 
     @JsonProperty("separationGrantedCoversheetApp1")
-    SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Respondent/Applicant 1 Separation order granted cover letter"),
+    SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Separation order granted cover letter"),
 
     @JsonProperty("judicialSeparationGrantedCoversheetApp2")
     JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Judicial Separation order granted cover letter"),
