@@ -46,12 +46,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -135,13 +132,9 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
                 ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET
                 : SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
         } else if (isOfflineRespondent) {
-            return isDivorce
-                ? JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2
-                : SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2;
+            return CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
         } else {
-            return isDivorce
-                ? JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1
-                : SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1;
+            return CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
         }
     }
 

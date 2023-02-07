@@ -209,18 +209,6 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("coGrantedCoversheetApp2")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Conditional order granted cover letter"),
 
-    @JsonProperty("judicialSeparationGrantedCoversheet")
-    JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Judicial Separation order granted cover letter"),
-
-    @JsonProperty("separationGrantedCoversheetApp1")
-    SEPARATION_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Separation order granted cover letter"),
-
-    @JsonProperty("judicialSeparationGrantedCoversheetApp2")
-    JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Judicial Separation order granted cover letter"),
-
-    @JsonProperty("separationGrantedCoversheetApp2")
-    SEPARATION_ORDER_GRANTED_COVERSHEET_APP_2("Respondent/Applicant 2 Separation order granted cover letter"),
-
     @JsonProperty("judicialSeparationGrantedSolicitorCoversheet")
     JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET("Judicial Separation order granted solicitor cover letter"),
 
