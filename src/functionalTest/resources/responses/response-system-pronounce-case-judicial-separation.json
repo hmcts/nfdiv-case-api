@@ -39,7 +39,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"${json-unit.any-string}",
-          "documentType":"conditionalOrderGrantedCoversheet"
+          "documentType":"coGrantedCoversheet"
         }
       },
       {
@@ -51,7 +51,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"${json-unit.any-string}",
-          "documentType":"conditionalOrderGrantedCoversheetApp2"
+          "documentType":"coGrantedCoversheetApp2"
         }
       }
     ],
