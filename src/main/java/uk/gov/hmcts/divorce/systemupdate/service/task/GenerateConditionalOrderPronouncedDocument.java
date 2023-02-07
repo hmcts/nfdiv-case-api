@@ -17,8 +17,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATIO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_GRANTED;
 
 @Component
 @Slf4j
@@ -37,16 +35,13 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
 
         String logMsg = "Generating {} Order granted pdf for CaseID: {}";
         String orderType = "Conditional";
-        DocumentType documentType = CONDITIONAL_ORDER_GRANTED;
         String documentName = CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
         if (caseData.isJudicialSeparationCase()) {
             if (caseData.isDivorce()) {
                 orderType = "Judicial Separation";
-                documentType = JUDICIAL_SEPARATION_ORDER_GRANTED;
                 documentName = JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
             } else {
                 orderType = "Separation";
-                documentType = SEPARATION_ORDER_GRANTED;
                 documentName = SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
             }
         }
@@ -55,7 +50,7 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            documentType,
+            CONDITIONAL_ORDER_GRANTED,
             conditionalOrderPronouncedTemplateContent.apply(caseData, caseId, caseData.getApplicant1().getLanguagePreference()),
             caseId,
             caseData.isJudicialSeparationCase()

@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,7 +93,7 @@ class GenerateConditionalOrderPronouncedDocumentTest {
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
-            JUDICIAL_SEPARATION_ORDER_GRANTED,
+            CONDITIONAL_ORDER_GRANTED,
             templateContent,
             TEST_CASE_ID,
             JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID,
