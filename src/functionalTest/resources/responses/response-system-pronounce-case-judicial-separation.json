@@ -27,7 +27,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"judicialSeparationOrderGranted.pdf",
-          "documentType":"judicialSeparationOrderGranted"
+          "documentType":"conditionalOrderGranted"
         }
       },
       {
@@ -39,7 +39,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"${json-unit.any-string}",
-          "documentType":"judicialSeparationGrantedCoversheet"
+          "documentType":"conditionalOrderGrantedCoversheet"
         }
       },
       {
@@ -51,7 +51,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"${json-unit.any-string}",
-          "documentType":"judicialSeparationGrantedCoversheetApp2"
+          "documentType":"conditionalOrderGrantedCoversheetApp2"
         }
       }
     ],

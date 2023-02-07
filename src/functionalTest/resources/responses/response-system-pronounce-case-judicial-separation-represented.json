@@ -29,7 +29,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"judicialSeparationOrderGranted.pdf",
-          "documentType":"judicialSeparationOrderGranted"
+          "documentType":"conditionalOrderGranted"
         }
       },
       {
