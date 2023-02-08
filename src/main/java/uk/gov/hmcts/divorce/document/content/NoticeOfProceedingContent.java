@@ -122,7 +122,7 @@ public class NoticeOfProceedingContent {
     public static final String CIVIL_PARTNERSHIP_DOCUMENTS = "documents to end your civil partnership";
 
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
-    private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
+    public static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
