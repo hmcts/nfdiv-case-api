@@ -1,7 +1,10 @@
 {
+  "state": "Holding",
   "data": {
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "servicePaymentFeePaymentMethod": "feePayByAccount",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "servicePaymentFeeAccountNumber": "FEE0233",
     "servicePaymentFeeAccountReferenceNumber": "Ref1",
     "documentsUploaded": [{

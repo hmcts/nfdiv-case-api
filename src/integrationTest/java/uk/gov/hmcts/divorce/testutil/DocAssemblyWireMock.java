@@ -101,4 +101,5 @@ public final class DocAssemblyWireMock {
                 .applyTo(applicationContext.getEnvironment());
         }
     }
+
 }

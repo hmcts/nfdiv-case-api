@@ -38,6 +38,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -204,6 +207,34 @@ class SwitchedToSoleCoTest {
 
         verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldKeepSameStateIfInJSAwaitingLA() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .state(JSAwaitingLA)
+            .build();
+
+        var response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
+    }
+
+    @Test
+    void shouldProgressStateIfNotInStateJSAwaitingLA() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .state(ConditionalOrderPending)
+            .build();
+
+        var response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
     }
 
     @Test

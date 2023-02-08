@@ -6,6 +6,8 @@
     "applicant1LastName":"test_last_name",
     "applicant1Offline": "Yes",
     "applicant1Gender":"female",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant2FirstName":"test_first_name",
     "applicant2LastName":"test_last_name",
     "applicant2Offline": "Yes",

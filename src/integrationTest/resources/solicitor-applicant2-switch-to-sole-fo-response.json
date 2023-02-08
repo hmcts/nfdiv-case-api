@@ -48,7 +48,7 @@
     "applicant1CanIntendToSwitchToSoleFo": "Yes",
     "applicant1IntendsToSwitchToSole": ["Yes"],
     "doesApplicant1IntendToSwitchToSole": "Yes",
-    "dateApplicant1DeclaredIntentionToSwitchToSoleFo": "${json-unit.any-string}",
+    "dateApplicant1DeclaredIntentionToSwitchToSoleFo": "2022-11-11",
     "dataVersion": 5,
     "warnings": []
   }

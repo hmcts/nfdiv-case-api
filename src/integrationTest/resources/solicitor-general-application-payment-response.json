@@ -11,6 +11,8 @@
         "OrganisationID": "App2OrgPolicy"
       }
     },
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicationPayments": [{
       "id": "${json-unit.any-string}",

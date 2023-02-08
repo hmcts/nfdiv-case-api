@@ -43,7 +43,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 
 @Component
 @Slf4j
-
 public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, UserRole> {
 
     @Value("${toggle.enable_qr_code_reading}")
@@ -53,7 +52,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
     private Clock clock;
 
     @Override
-
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .attachScannedDocEvent()
@@ -65,13 +63,12 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
             .complex(CaseData::getDocuments)
-            .mandatory(CaseDocuments::getScannedDocuments)
+                .mandatory(CaseDocuments::getScannedDocuments)
             .done()
             .complex(CaseData::getBulkScanMetaInfo)
-            .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
+                .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
             .done();
     }
-
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
@@ -84,7 +81,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .data(caseData)
             .build();
     }
-
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
@@ -108,7 +104,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .build();
     }
 
-
     private void handleScannedDocument(CaseData caseData, CaseData beforeCaseData) {
         final List<ListValue<ScannedDocument>> afterScannedDocs = caseData.getDocuments().getScannedDocuments();
         final List<ListValue<ScannedDocument>> beforeScannedDocs =
@@ -120,12 +115,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .flatMap(Collection::stream)
             .filter(element -> !beforeScannedDocs.contains(element))
             .map(ListValue::getValue)
-            .filter(scannedDocument ->
-                EnumUtils.isValidEnum(
-                    CaseDocuments.ScannedDocumentSubtypes.class,
-                    scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
-                )
-            )
+            .filter(SystemAttachScannedDocuments::isValidDocumentSubtype)
             .findFirst();
 
         if (mostRecentScannedSubtypeReceived.isPresent()) {
@@ -141,6 +131,13 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         }
     }
 
+    private static boolean isValidDocumentSubtype(ScannedDocument scannedDocument) {
+        return isNotEmpty(scannedDocument.getSubtype())
+            && EnumUtils.isValidEnum(
+            CaseDocuments.ScannedDocumentSubtypes.class,
+            scannedDocument.getSubtype().toUpperCase(Locale.ROOT)
+        );
+    }
 
     private DocumentType getDocumentType(CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype) {
 
