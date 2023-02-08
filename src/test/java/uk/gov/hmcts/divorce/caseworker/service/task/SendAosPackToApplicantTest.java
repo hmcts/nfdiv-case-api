@@ -82,6 +82,7 @@ class SendAosPackToApplicantTest {
         caseData.setIsJudicialSeparation(YES);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
