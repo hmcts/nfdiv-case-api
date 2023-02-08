@@ -125,6 +125,10 @@ public class AosPackPrinter {
 
         final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
 
+        Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+        if (null != coversheetLetter) {
+            aosResponseLetterWithAos.add(coversheetLetter);
+        }
         if (null != aosResponseLetter) {
             aosResponseLetterWithAos.add(aosResponseLetter);
         }
@@ -134,11 +138,6 @@ public class AosPackPrinter {
 
         if (null != d84FormLetter) {
             aosResponseLetterWithAos.add(d84FormLetter);
-        }
-
-        Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
-        if (null != coversheetLetter) {
-            aosResponseLetterWithAos.add(coversheetLetter);
         }
 
         if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
