@@ -41,7 +41,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"${json-unit.any-string}",
-          "documentType":"judicialSeparationGrantedSolicitorCoversheet"
+          "documentType":"coGrantedCoversheet"
         }
       },
       {
@@ -53,7 +53,7 @@
             "document_binary_url":"${json-unit.any-string}"
           },
           "documentFileName":"${json-unit.any-string}",
-          "documentType":"judicialSeparationGrantedSolicitorCoversheet"
+          "documentType":"coGrantedCoversheetApp2"
         }
       }
     ],

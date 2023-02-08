@@ -46,10 +46,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -86,13 +83,9 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             ? templateVarsForJSSolicitor(caseData, caseId, applicant)
             : templateVars(caseData, caseId, applicant);
 
-        DocumentType coverLetterType = caseData.isJudicialSeparationCase()
-            ? getJSCoverLetterType(applicant.isRepresented(), caseData.isDivorce(), false)
-            : documentType;
-
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            coverLetterType,
+            documentType,
             templateVars,
             caseId,
             getCoverLetterTemplateId(caseData.isJudicialSeparationCase(), applicant.isRepresented(), false),
@@ -110,32 +103,15 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             ? templateVarsForJSSolicitor(caseData, caseId, applicant)
             : templateVarsForOfflineRespondent(caseData, caseId, applicant, partner);
 
-        final DocumentType coverLetterType = caseData.isJudicialSeparationCase()
-            ? getJSCoverLetterType(applicant.isRepresented(), caseData.isDivorce(), true)
-            : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            coverLetterType,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
             templateVarsForOfflineRespondent,
             caseId,
             getCoverLetterTemplateId(caseData.isJudicialSeparationCase(), applicant.isRepresented(), true),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, getCoverLetterDocumentName(caseData, applicant.isRepresented()), now(clock))
         );
-    }
-
-    private DocumentType getJSCoverLetterType(final boolean isRepresented, final boolean isDivorce, final boolean isOfflineRespondent) {
-
-        if (isRepresented) {
-            return isDivorce
-                ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET
-                : SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET;
-        } else if (isOfflineRespondent) {
-            return CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-        } else {
-            return CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-        }
     }
 
     private String getCoverLetterTemplateId(final boolean isJudicialSeparation,
