@@ -114,11 +114,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         var templateId = NFD_NOP_APP2_JS_SOLE;
         var templateContent = noticeOfProceedingContent.apply(caseData, caseId, applicant2,
                 caseData.getApplicant2().getLanguagePreference());
+        var coversheetContent = coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2);
 
         if (applicant2.isRepresented()) {
             coverSheet = COVERSHEET_SOLICITOR;
             templateId = NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
             templateContent = solicitorTemplateContent.apply(caseData, caseId, false);
+            coversheetContent = coversheetSolicitorTemplateContent.apply(caseData, caseId);
         }
         generateNoticeOfProceedings(
                 caseData,
@@ -131,7 +133,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                 caseData,
                 caseId,
                 coverSheet,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2),
+                coversheetContent,
                 caseData.getApplicant2().getLanguagePreference()
         );
     }
