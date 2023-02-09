@@ -150,7 +150,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     private void generateJointJSNoticeOfProceedings(CaseData caseData, Long caseId) {
         String templateId;
         Map<String, Object> content;
-        // if statement needs to be added here to check for is represented, use the NoPSolicitorContent class
+        // if statement needs to be added here to check for whether applicant is represented, use the NoPSolicitorContent class
         if (caseData.getApplicant1().isRepresented()) {
             log.info("Generating applicant 1 solicitor notice of proceedings for joint Judicial Separation case id {} ", caseId);
 
