@@ -76,7 +76,8 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
-            caseData.getApplicant2()
+            caseData.getApplicant2(),
+            true
         );
 
         verifyNoMoreInteractions(generateD36Form);
@@ -84,10 +85,10 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
     }
 
     @Test
-    void shouldGenerateFinalOrderLettersIfApplicant2Offline() {
+    void shouldGenerateFinalOrderLettersIfApplicant2OfflineInJointApplication() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(getApplicant());
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant1().setOffline(NO);
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setEmail(null);
@@ -100,7 +101,8 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant2(),
-            caseData.getApplicant1()
+            caseData.getApplicant1(),
+            false
         );
 
         verifyNoMoreInteractions(generateD36Form);
@@ -121,6 +123,28 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
 
         verifyNoInteractions(generateD36Form);
         verifyNoInteractions(generateApplyForFinalOrderDocument);
+    }
+
+    @Test
+    void shouldNotGenerateFinalOrderLettersForApplicant2IfSoleCase() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(getApplicant());
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setEmail("test@email.com");
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        systemProgressCaseToAwaitingFinalOrder.aboutToSubmit(details, details);
+
+        verify(generateApplyForFinalOrderDocument).generateApplyForFinalOrder(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            caseData.getApplicant2(),
+            true
+        );
+        verifyNoMoreInteractions(generateApplyForFinalOrderDocument);
     }
 
     @Test
