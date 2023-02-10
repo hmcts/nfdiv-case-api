@@ -133,7 +133,9 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setEmail("test@email.com");
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .id(TEST_CASE_ID).build();
 
         systemProgressCaseToAwaitingFinalOrder.aboutToSubmit(details, details);
 
