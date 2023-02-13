@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -239,7 +240,18 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             log.info("Generating applicant 2 solicitor notice of proceedings for joint Judicial Separation case id {} ", caseId);
 
             templateContent = solicitorTemplateContent.apply(caseData, caseId, false);
-            templateId = NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
+            templateId = NFD_NOP_APP1APP2_SOL_JS_JOINT;
+
+            log.info("Generating coversheet for applicant 2 solicitor for joint judicial separation case id {} ", caseId);
+
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT2_SOLICITOR,
+                coversheetSolicitorTemplateContent.apply(caseData, caseId),
+                caseData.getApplicant2().getLanguagePreference(),
+                formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, "applicant2", now(clock))
+            );
 
         } else {
             log.info("Generating applicant 1 notice of proceedings for joint Judicial Separation case id {} ", caseId);

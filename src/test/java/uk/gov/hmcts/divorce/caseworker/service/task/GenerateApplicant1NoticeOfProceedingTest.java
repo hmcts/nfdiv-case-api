@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent;
@@ -43,9 +45,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOLICITOR_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
@@ -77,6 +81,9 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
     @Mock
     private GenerateCoversheet generateCoversheet;
+
+    @Mock
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Mock
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
@@ -318,6 +325,38 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_APP1_SOLICITOR_JS_SOLE);
+        verifyNoMoreInteractions(caseDataDocumentService);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateApplicantSolicitorJSNopWhenCaseIsJointJudicialSeparationAndApplicantIsRepresented() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData(JOINT_APPLICATION, YES);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+
+        when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1APP2_SOL_JS_JOINT);
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT1_SOLICITOR,
+                templateContent,
+                ENGLISH,
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
+            );
         verifyNoMoreInteractions(caseDataDocumentService);
 
         assertThat(result.getData()).isEqualTo(caseData);
