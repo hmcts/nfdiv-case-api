@@ -12,11 +12,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -71,7 +71,8 @@ public class CertificateOfEntitlementContentTest {
         final ConditionalOrderCourtDetails expectedDetails = setupConditionalOrderCourtDetailsConfig();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-                caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+                caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
 
@@ -104,7 +105,8 @@ public class CertificateOfEntitlementContentTest {
         final ConditionalOrderCourtDetails expectedDetails = setupConditionalOrderCourtDetailsConfig();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-                caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+                caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
 
