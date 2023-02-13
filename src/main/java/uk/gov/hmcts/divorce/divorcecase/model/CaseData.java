@@ -359,6 +359,9 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public boolean hasNoAdditionalCaseType() { return NA.equals(this.additionalCaseType) || this.additionalCaseType == null; }
+
+    @JsonIgnore
     public String getApplicant2EmailAddress() {
         final String applicant2Email = applicant2.getEmail();
 
