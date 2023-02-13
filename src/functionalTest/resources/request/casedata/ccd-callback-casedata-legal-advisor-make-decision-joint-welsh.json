@@ -14,5 +14,6 @@
   "applicant2LastName": "Oil",
   "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant2LanguagePreferenceWelsh": "Yes",
-  "applicant2Gender": "female"
+  "applicant2Gender": "female",
+  "isJudicialSeparation": "No"
 }
