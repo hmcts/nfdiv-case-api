@@ -17,8 +17,8 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -48,7 +48,7 @@ public class GenerateCoversheetTest {
         generateCoversheet.generateCoversheet(
             caseData,
             TEST_CASE_ID,
-            COVERSHEET_APPLICANT2_SOLICITOR,
+            COVERSHEET_SOLICITOR,
             templateContent,
             caseData.getApplicant2().getLanguagePreference()
         );
@@ -59,7 +59,7 @@ public class GenerateCoversheetTest {
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT2_SOLICITOR,
+                COVERSHEET_SOLICITOR,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
@@ -77,7 +77,7 @@ public class GenerateCoversheetTest {
         generateCoversheet.generateCoversheet(
             caseData,
             TEST_CASE_ID,
-            COVERSHEET_APPLICANT2_SOLICITOR,
+            COVERSHEET_SOLICITOR,
             templateContent,
             caseData.getApplicant2().getLanguagePreference(),
             formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
@@ -89,7 +89,7 @@ public class GenerateCoversheetTest {
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT2_SOLICITOR,
+                COVERSHEET_SOLICITOR,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
