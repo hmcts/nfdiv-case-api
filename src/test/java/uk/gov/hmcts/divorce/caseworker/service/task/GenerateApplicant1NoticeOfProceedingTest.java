@@ -44,8 +44,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
@@ -351,7 +351,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
             .generateCoversheet(
                 caseData,
                 TEST_CASE_ID,
-                COVERSHEET_APPLICANT1_SOLICITOR,
+                COVERSHEET_SOLICITOR,
                 templateContent,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))

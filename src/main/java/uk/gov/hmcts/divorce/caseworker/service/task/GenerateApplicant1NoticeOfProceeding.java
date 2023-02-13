@@ -25,8 +25,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
@@ -168,7 +168,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             generateCoversheet.generateCoversheet(
                 caseData,
                 caseId,
-                COVERSHEET_APPLICANT1_SOLICITOR,
+                COVERSHEET_SOLICITOR,
                 coversheetSolicitorTemplateContent.apply(caseData, caseId),
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
