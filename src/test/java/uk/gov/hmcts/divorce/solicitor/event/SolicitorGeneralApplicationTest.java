@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -47,6 +48,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType.DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -95,8 +97,32 @@ public class SolicitorGeneralApplicationTest {
     }
 
     @Test
+    void shouldResetGeneralApplicationWhenAboutToStartCallbackTriggered() {
+        final CaseData caseData = caseData();
+        caseData.setGeneralApplication(GeneralApplication.builder()
+            .generalApplicationType(DEEMED_SERVICE)
+            .generalApplicationTypeOtherComments("some comments")
+            .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToStart(details);
+
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationType()).isNull();
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationTypeOtherComments()).isNull();
+        assertThat(response.getData().getGeneralApplication()).isEqualTo(GeneralApplication.builder().build());
+    }
+
+    @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = mock(DivorceDocument.class);
+        final DivorceDocument document = DivorceDocument.builder()
+                .documentLink(Document.builder().build())
+                .build();
         final CaseData caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationDocument(document);
 
@@ -163,6 +189,11 @@ public class SolicitorGeneralApplicationTest {
                                 .build()
                         )
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
+                        .build()
+                )
+                .generalApplicationDocument(
+                    DivorceDocument.builder()
+                        .documentLink(Document.builder().build())
                         .build()
                 )
                 .build()

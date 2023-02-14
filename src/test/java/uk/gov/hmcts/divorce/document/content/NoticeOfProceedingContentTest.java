@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -34,8 +32,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
@@ -105,6 +102,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class NoticeOfProceedingContentTest {
@@ -118,18 +116,11 @@ public class NoticeOfProceedingContentTest {
     @Mock
     private DocmosisTemplatesConfig config;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private NoticeOfProceedingContent noticeOfProceedingContent;
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "serviceCentre", "Courts and Tribunals Service Centre");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "centreName", "HMCTS Digital Divorce and Dissolution");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "poBox", "PO Box 13226");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "town", "Harlow");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "postcode", "CM20 9UG");
-        ReflectionTestUtils.setField(noticeOfProceedingContent, "phoneNumber", "0300 303 0642");
-    }
 
     @Test
     public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
@@ -163,15 +154,8 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("wife");
@@ -192,7 +176,7 @@ public class NoticeOfProceedingContentTest {
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(DUE_DATE, "19 June 2021"),
                 entry(RELATIONS_SOLICITOR, "wife's solicitor"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS),
                 entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE),
                 entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION),
@@ -209,7 +193,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE),
-                entry("ctscContactDetails", ctscContactDetails),
+                entry("ctscContactDetails", getCtscContactDetails()),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street the town UK"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -262,15 +246,8 @@ public class NoticeOfProceedingContentTest {
             new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
 
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName("HMCTS Digital Divorce and Dissolution")
-            .serviceCentre("Courts and Tribunals Service Centre")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .phoneNumber("0300 303 0642")
-            .build();
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn(CIVIL_PARTNER);
         when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
@@ -289,7 +266,7 @@ public class NoticeOfProceedingContentTest {
                 entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
                 entry(ISSUE_DATE, "18 June 2021"),
                 entry(DUE_DATE, "19 June 2021"),
-                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(RELATION, CIVIL_PARTNER),
@@ -307,7 +284,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP),
                 entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH),
                 entry(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP),
-                entry("ctscContactDetails", ctscContactDetails),
+                entry("ctscContactDetails", getCtscContactDetails()),
                 entry(APPLICANT_1_ADDRESS, "line1\nline2"),
                 entry(APPLICANT_2_ADDRESS, "10 the street\nthe town"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
@@ -325,5 +302,18 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS),
                 entry(IS_OFFLINE, false)
             );
+    }
+
+    private CtscContactDetails getCtscContactDetails() {
+        return CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .emailAddress(CONTACT_DIVORCE_EMAIL)
+            .phoneNumber("0300 303 0642")
+            .build();
     }
 }

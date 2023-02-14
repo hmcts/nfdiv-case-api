@@ -46,23 +46,29 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -162,6 +168,8 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setIsJudicialSeparation(NO);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
@@ -203,7 +211,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingLegalAdvisorReferralIfD84Verified() throws Exception {
+    void shouldTriggerCoSubmissionAndMoveCaseStateToJSAwaitingLAIfD84VerifiedAndJudicialSeparation() throws Exception {
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -212,12 +220,12 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                     .url(
                         Document
                             .builder()
-                            .filename("doc1.pdf")
+                            .filename(FILENAME)
                             .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
                             .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
                             .build()
                     )
-                    .fileName("doc1.pdf")
+                    .fileName(FILENAME)
                     .type(ScannedDocumentType.FORM)
                     .build()
             )
@@ -226,6 +234,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setIsJudicialSeparation(YES);
         caseData.setDocuments(
             CaseDocuments.builder()
                 .typeOfDocumentAttached(CO_D84)
@@ -236,7 +245,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                         .value(
                             DynamicListElement
                                 .builder()
-                                .label("doc1.pdf")
+                                .label(FILENAME)
                                 .build()
                         )
                         .build()
@@ -259,6 +268,120 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_D84_RESPONSE));
+    }
+
+    @Test
+    void shouldTriggerCoSubmissionAndMoveCaseStateToAwaitingFinalOrderIfSoleCaseAndD36Verified() throws Exception {
+
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename(FILENAME)
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName(FILENAME)
+                    .type(ScannedDocumentType.FORM)
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label(FILENAME)
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
+
+        final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(FinalOrderRequested.name()));
+    }
+
+    @Test
+    void shouldTriggerCoSubmissionAndMoveCaseStateToFinalOrderRequestedIfJointCaseAndD36Verified() throws Exception {
+
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename(FILENAME)
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName(FILENAME)
+                    .type(ScannedDocumentType.FORM)
+                    .build()
+            )
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(getApplicant(FEMALE));
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label(FILENAME)
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(
+                objectMapper.writeValueAsString(
+                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(FinalOrderRequested.name()));
     }
 
     @Test
@@ -378,37 +501,37 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         retiredFields.setDataVersion(5);
 
         CaseData data = CaseData.builder()
-                .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-                .applicationType(JOINT_APPLICATION)
-                .application(Application.builder()
-                        .issueDate(LOCAL_DATE)
-                        .applicant1HelpWithFees(HelpWithFees.builder()
-                                .build())
-                        .applicant2HelpWithFees(HelpWithFees.builder()
-                                .build())
-                        .build())
-                .applicant1(Applicant.builder()
-                        .solicitorRepresented(NO)
-                        .offline(YES)
-                        .solicitor(Solicitor.builder()
-                                .build())
-                        .build())
-                .acknowledgementOfService(AcknowledgementOfService.builder()
-                        .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
-                        .build())
-                .applicant2(Applicant.builder()
-                        .solicitorRepresented(NO)
-                        .solicitor(Solicitor.builder()
-                                .build())
-                        .offline(YES)
-                        .build())
-                .dueDate(LOCAL_DATE)
-                .noticeOfChange(NoticeOfChange.builder()
-                        .build())
-                .retiredFields(retiredFields)
-                .caseInvite(CaseInvite.builder()
-                        .build())
-                .build();
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .applicationType(JOINT_APPLICATION)
+            .application(Application.builder()
+                    .issueDate(LOCAL_DATE)
+                    .applicant1HelpWithFees(HelpWithFees.builder()
+                            .build())
+                    .applicant2HelpWithFees(HelpWithFees.builder()
+                            .build())
+                    .build())
+            .applicant1(Applicant.builder()
+                    .solicitorRepresented(NO)
+                    .offline(YES)
+                    .solicitor(Solicitor.builder()
+                            .build())
+                    .build())
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                    .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+                    .build())
+            .applicant2(Applicant.builder()
+                    .solicitorRepresented(NO)
+                    .solicitor(Solicitor.builder()
+                            .build())
+                    .offline(YES)
+                    .build())
+            .dueDate(LOCAL_DATE)
+            .noticeOfChange(NoticeOfChange.builder()
+                    .build())
+            .retiredFields(retiredFields)
+            .caseInvite(CaseInvite.builder()
+                    .build())
+            .build();
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
                 .value(
@@ -423,7 +546,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
         data.setDocuments(CaseDocuments.builder()
                         .scannedDocuments(singletonList(doc1))
-                        .typeOfDocumentAttached(CO_D84)
+                        .typeOfDocumentAttached(AOS_D10)
                         .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
@@ -437,9 +560,77 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 .getResponse()
                 .getContentAsString();
 
-        verify(aosPackPrinter).sendAosResponseLetterToApplicant(data, TEST_CASE_ID);
+        verify(aosPackPrinter).sendAosResponseLetterToApplicant(any(), eq(TEST_CASE_ID));
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
+
+    @Test
+    public void shouldTriggerSubmittedCallbackAndSendConditionalOrderLetters() throws Exception {
+
+        RetiredFields retiredFields = new RetiredFields();
+        retiredFields.setDataVersion(5);
+
+        CaseData data = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .applicationType(JOINT_APPLICATION)
+            .application(Application.builder()
+                .issueDate(LOCAL_DATE)
+                .applicant1HelpWithFees(HelpWithFees.builder()
+                    .build())
+                .applicant2HelpWithFees(HelpWithFees.builder()
+                    .build())
+                .build())
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(NO)
+                .offline(YES)
+                .solicitor(Solicitor.builder()
+                    .build())
+                .build())
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+                .build())
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(NO)
+                .solicitor(Solicitor.builder()
+                    .build())
+                .offline(YES)
+                .build())
+            .dueDate(LOCAL_DATE)
+            .noticeOfChange(NoticeOfChange.builder()
+                .build())
+            .retiredFields(retiredFields)
+            .caseInvite(CaseInvite.builder()
+                .build())
+            .build();
+
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .fileName(FILENAME)
+                    .type(ScannedDocumentType.OTHER)
+                    .subtype("aos")
+                    .build()
+            )
+            .build();
+
+        data.setDocuments(CaseDocuments.builder()
+            .scannedDocuments(singletonList(doc1))
+            .typeOfDocumentAttached(CO_D84)
+            .build());
+
+        mockMvc.perform(post(SUBMITTED_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
         verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
         verifyNoMoreInteractions(appliedForCoPrinter);
-        verifyNoMoreInteractions(aosPackPrinter);
     }
 }

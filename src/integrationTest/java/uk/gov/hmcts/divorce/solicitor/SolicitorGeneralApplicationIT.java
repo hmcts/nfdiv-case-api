@@ -30,7 +30,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
@@ -55,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
@@ -130,7 +130,7 @@ public class SolicitorGeneralApplicationIT {
                     .binaryUrl("GA.pdf/binary")
                     .build()
             )
-            .documentType(DocumentType.D11)
+            .documentType(GENERAL_APPLICATION)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -171,7 +171,7 @@ public class SolicitorGeneralApplicationIT {
                     .binaryUrl("GA.pdf/binary")
                     .build()
             )
-            .documentType(DocumentType.D11)
+            .documentType(GENERAL_APPLICATION)
             .build();
 
         final CaseData caseData = CaseData.builder()

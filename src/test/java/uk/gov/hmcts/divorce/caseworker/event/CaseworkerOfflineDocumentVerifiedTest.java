@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -50,17 +51,28 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder.D84ApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84NVA;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOINT;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -224,6 +236,86 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldSetStateToHoldingAndSkipDocumentReclassificationIfD10DocumentSelectedAndScannedSubtypeReceivedIsD10() {
+
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename("doc1.pdf")
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.OTHER)
+                    .subtype("d10")
+                    .build()
+            )
+            .build();
+
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .documentFileName("doc1.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("doc1.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+
+        CaseData caseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .documentsUploaded(singletonList(doc))
+                    .scannedSubtypeReceived(D10)
+                    .scannedDocuments(singletonList(doc1))
+                    .build()
+            )
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .howToRespondApplication(DISPUTE_DIVORCE)
+                .build())
+            .build();
+
+        details.setData(caseData);
+
+        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
+        updatedDetails.setData(CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .documentsUploaded(singletonList(doc))
+                    .scannedSubtypeReceived(D10)
+                    .scannedDocuments(singletonList(doc1))
+                    .build()
+            )
+            .applicant2(Applicant.builder()
+                .build())
+            .build());
+        updatedDetails.setState(Holding);
+
+        when(submitAosService.submitOfflineAos(details)).thenReturn(updatedDetails);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        verify(submitAosService).submitOfflineAos(details);
+        assertThat(response.getState().name()).isEqualTo(Holding.name());
+        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+    }
+
+    @Test
     void shouldSetStateToHoldingAndSkipReclassifyIfSelectedD10DocumentIsNotFoundInScannedDocNames() {
         final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -269,8 +361,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         verify(submitAosService).submitOfflineAos(details);
         assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
-
-
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
 
@@ -278,7 +368,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     void shouldSetStateToUserValueProvidedIfTypeOfDocumentSelectedIsOther() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().typeOfDocumentAttached(OTHER).build())
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(OTHER).scannedSubtypeReceived(D84NVA).build())
             .application(Application.builder()
                 .stateToTransitionApplicationTo(AwaitingAmendedApplication)
                 .build())
@@ -292,6 +382,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getState().name()).isEqualTo(AwaitingAmendedApplication.name());
         assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isNull();
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
     }
 
     @Test
@@ -318,7 +409,65 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndD84Selected() {
+    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndStateToJSAwaitingLAD84SelectedAndIsJudicialSeparation() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D84.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .isJudicialSeparation(YES)
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(CO_D84)
+                    .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D84.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
+        assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndStateAwaitingLegalAdvisorReferralIfD84SelectedAndNotJudicialSeparation() {
         setMockClock(clock);
 
         final Document document = Document.builder()
@@ -368,7 +517,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
@@ -426,11 +575,371 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
-        assertThat(response.getData().getApplicant1().isOffline()).isTrue();
-        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
         assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldNotReclassifyDocumentAndNotSetScannedSubtypeReceivedToNullIfScannedDocIsD84AndSwitchToSoleSelected() {
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+
+        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .subtype("D84")
+                    .fileName("D84.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_APPLICATION)
+                .documentFileName("d84.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("d84.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(SWITCH_TO_SOLE).build())
+            .documents(
+                CaseDocuments.builder()
+                    .scannedSubtypeReceived(D84)
+                    .documentsUploaded(singletonList(doc))
+                    .scannedDocuments(List.of(scannedD84Document))
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNotNull();
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(D84);
+    }
+
+    @Test
+    void shouldNotReclassifyDocumentAndSetScannedSubtypeReceivedToNullIfScannedDocIsD84AndJointSelected() {
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+
+        final ListValue<ScannedDocument> scannedD84Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .subtype("D84")
+                    .fileName("D84.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_APPLICATION)
+                .documentFileName("d84.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("d84.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(JOINT).build())
+            .documents(
+                CaseDocuments.builder()
+                    .scannedSubtypeReceived(D84)
+                    .documentsUploaded(singletonList(doc))
+                    .scannedDocuments(List.of(scannedD84Document))
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+    }
+
+    @Test
+    void shouldSetOnlyApplicant1ToOfflineIfSoleCaseAndD36Selected() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(FO_D36)
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D36.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+    }
+
+    @Test
+    void shouldSetBothApplicantsToOfflineIfJointCaseAndD36Selected() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(FO_D36)
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D36.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
+    }
+
+    @Test
+    void shouldNotReclassifyDocumentAndNotSetScannedSubtypeReceivedToNullIfScannedDocIsD36AndSwitchToSoleSelected() {
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .subtype("D36")
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(FINAL_ORDER_APPLICATION)
+                .documentFileName("d36.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("d36.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder().build())
+            .finalOrder(FinalOrder.builder().d36ApplicationType(SWITCH_TO_SOLE).build())
+            .documents(
+                CaseDocuments.builder()
+                    .scannedSubtypeReceived(D36)
+                    .documentsUploaded(singletonList(doc))
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNotNull();
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(D36);
+    }
+
+    @Test
+    void shouldNotReclassifyDocumentAndSetScannedSubtypeReceivedToNullIfScannedDocIsD36AndJointSelected() {
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .subtype("D36")
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(FINAL_ORDER_APPLICATION)
+                .documentFileName("d36.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("d36.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .applicant2(Applicant.builder().build())
+            .finalOrder(FinalOrder.builder().d36ApplicationType(JOINT).build())
+            .documents(
+                CaseDocuments.builder()
+                    .scannedSubtypeReceived(D36)
+                    .documentsUploaded(singletonList(doc))
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(FinalOrderRequested);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
     }
 
     @Test
@@ -458,11 +967,12 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     void shouldSendOfflineNotifications() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
-                .application(Application.builder()
-                        .issueDate(LocalDate.of(2022, 01, 01))
-                        .stateToTransitionApplicationTo(Holding)
-                        .build())
-                .build();
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
+            .application(Application.builder()
+                    .issueDate(LocalDate.of(2022, 01, 01))
+                    .stateToTransitionApplicationTo(Holding)
+                    .build())
+            .build();
         details.setData(caseData);
 
         SubmittedCallbackResponse response =
@@ -470,6 +980,26 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         verify(submitAosService).submitAosNotifications(details);
         verifyNoMoreInteractions(submitAosService);
+    }
+
+    @Test
+    void shouldNotSetDynamicListWithScannedDocumentNamesIfScannedSubtypeReceivedIsPopulated() {
+        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
+        final ListValue<ScannedDocument> doc2 = scannedDocument("doc2.pdf");
+
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .scannedSubtypeReceived(D36)
+                .scannedDocuments(List.of(doc1, doc2))
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToStart(details);
+
+        assertThat(response.getData().getDocuments().getScannedDocumentNames()).isNull();
     }
 
     @Test
@@ -502,6 +1032,42 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().build())
             .conditionalOrder(ConditionalOrder.builder().build())
+            .build();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldTriggerSwitchToSoleEventIfD36AndSwitchToSoleSelected() {
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .build())
+            .finalOrder(FinalOrder.builder().d36ApplicationType(SWITCH_TO_SOLE).build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_FO, user, TEST_SERVICE_AUTH_TOKEN);
+    }
+
+    @Test
+    void shouldNotTriggerSwitchToSoleEventIfD36AndSwitchToSoleNotSelected() {
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().build())
+            .finalOrder(FinalOrder.builder().build())
             .build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
         details.setData(caseData);

@@ -51,7 +51,7 @@ class NotificationDispatcherTest {
         when(applicant1.isRepresented()).thenReturn(false);
         when(caseData.getApplicant2()).thenReturn(applicant2);
         when(applicant2.isRepresented()).thenReturn(true);
-        when(applicant1.isOffline()).thenReturn(true);
+        when(applicant1.isApplicantOffline()).thenReturn(true);
 
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 

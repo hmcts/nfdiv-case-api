@@ -28,6 +28,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -316,10 +318,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\" OR "
-                + showForState(ConditionalOrderDrafted, ConditionalOrderPending, AwaitingLegalAdvisorReferral)
+                + showForState(ConditionalOrderDrafted, ConditionalOrderPending, AwaitingLegalAdvisorReferral, JSAwaitingLA)
             )
             .label("labelConditionalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
+                "### Applicant 1")
+            .label("labelApplicant1-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
             .field("labelContentUnionType", "applicationType=\"NEVER_SHOW\"")
             .field("labelContentDivorceOrCivilPartnershipApplication", "applicationType=\"NEVER_SHOW\"")
@@ -334,6 +339,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1SolicitorAdditionalComments")
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
+                "### Applicant 2")
+            .label("labelApplicant2-SwitchToSole",
+                "finalOrderSwitchedToSole=\"Yes\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
             .field("coApplicant2ConfirmInformationStillCorrect")
@@ -360,7 +368,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingAdminClarification,
                     AwaitingClarification,
                     AwaitingAmendedApplication,
-                    ClarificationSubmitted)
+                    ClarificationSubmitted,
+                    LAReview)
             )
             .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
             .field("coDecisionDate")
@@ -404,12 +413,20 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
-            .field("doesApplicant2WantToApplyForFinalOrder")
-            .field("applicant2FinalOrderExplanation")
             .field("granted")
             .field("grantedDate")
             .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent", IS_SOLE);
+            .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
+            .field("doesApplicant1IntendToSwitchToSole")
+            .field("dateApplicant1DeclaredIntentionToSwitchToSoleFo")
+            .field("doesApplicant2IntendToSwitchToSole")
+            .field("dateApplicant2DeclaredIntentionToSwitchToSoleFo")
+            .field("finalOrderSwitchedToSole")
+            .label("labelFinalOrderDetails-SoleRespondent",
+                "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
+                "### Respondent")
+            .field("doesApplicant2WantToApplyForFinalOrder")
+            .field("applicant2FinalOrderExplanation");
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

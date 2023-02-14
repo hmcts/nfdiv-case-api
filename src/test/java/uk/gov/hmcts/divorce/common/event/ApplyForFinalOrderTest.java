@@ -9,18 +9,16 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
+import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.service.task.ProgressFinalOrderState;
 
-import java.time.Clock;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -33,7 +31,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -50,10 +47,7 @@ class ApplyForFinalOrderTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private ProgressFinalOrderState progressFinalOrderState;
-
-    @Mock
-    private Clock clock;
+    private ApplyForFinalOrderService applyForFinalOrderService;
 
     @InjectMocks
     private ApplyForFinalOrder applyForFinalOrder;
@@ -120,9 +114,6 @@ class ApplyForFinalOrderTest {
 
     @Test
     void shouldUpdateCaseDataAndStateWhenAboutToSubmitIsCalled() {
-        LocalDate submittedDate = LocalDate.of(2022, 10, 10);
-        setMockClock(clock, submittedDate);
-
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
@@ -131,16 +122,30 @@ class ApplyForFinalOrderTest {
         updatedCaseDetails.setData(caseData);
         updatedCaseDetails.setState(FinalOrderRequested);
 
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(updatedCaseDetails);
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant1(caseDetails)).thenReturn(updatedCaseDetails);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(aboutToSubmitResponse.getState()).isEqualTo(FinalOrderRequested);
-        FinalOrder finalOrder = aboutToSubmitResponse.getData().getFinalOrder();
-        assertThat(finalOrder.getApplicant1AppliedForFinalOrderFirst()).isEqualTo(YesOrNo.YES);
-        assertThat(finalOrder.getApplicant2AppliedForFinalOrderFirst()).isEqualTo(YesOrNo.NO);
-        assertThat(finalOrder.getDateFinalOrderSubmitted().toLocalDate()).isEqualTo(submittedDate);
+        verify(applyForFinalOrderService).applyForFinalOrderAsApplicant1(caseDetails);
+        assertThat(aboutToSubmitResponse.getData().getApplication().getPreviousState()).isEqualTo(AwaitingFinalOrder);
 
         verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldReturnErrorCallbackIfValidateApplyForFinalOrderFails() {
+        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        caseDetails.setState(AwaitingFinalOrder);
+
+        final List<String> errors = new ArrayList<>();
+        errors.add("Test error app1");
+
+        when(applyForFinalOrderService.validateApplyForFinalOrder(caseData, false)).thenReturn(errors);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse =
+            applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(aboutToSubmitResponse.getErrors()).isNotEmpty();
     }
 }

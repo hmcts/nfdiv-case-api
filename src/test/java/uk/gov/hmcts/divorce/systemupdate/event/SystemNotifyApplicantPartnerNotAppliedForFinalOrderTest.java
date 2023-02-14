@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.PartnerNotAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -18,6 +17,9 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantPartnerNotAppliedForFinalOrder.SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -47,8 +49,10 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
     }
 
     @Test
-    void shouldSetReminderNotificationSentToYes() {
+    void shouldSetReminderNotificationSentToYesAndIntendToSwitchToSoleFoFlagToYesForApplicant1() {
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(YES);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -57,6 +61,26 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
             systemNotifyApplicantPartnerNotAppliedForFinalOrder.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(partnerNotAppliedForFinalOrderNotification, caseData, details.getId());
-        assertThat(response.getData().getFinalOrder().getFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getFinalOrder().getFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getApplicant1CanIntendToSwitchToSoleFo()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getDoesApplicant1IntendToSwitchToSole()).isEqualTo(NO);
+    }
+
+    @Test
+    void shouldSetReminderNotificationSentToYesAndIntendToSwitchToSoleFoFlagToYesForApplicant2() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(YES);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyApplicantPartnerNotAppliedForFinalOrder.aboutToSubmit(details, details);
+
+        verify(notificationDispatcher).send(partnerNotAppliedForFinalOrderNotification, caseData, details.getId());
+        assertThat(response.getData().getFinalOrder().getFinalOrderFirstInTimeNotifiedOtherApplicantNotApplied()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getApplicant2CanIntendToSwitchToSoleFo()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getDoesApplicant2IntendToSwitchToSole()).isEqualTo(NO);
     }
 }

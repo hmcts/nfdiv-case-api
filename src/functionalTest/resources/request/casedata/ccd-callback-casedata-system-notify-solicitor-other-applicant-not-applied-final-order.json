@@ -1,0 +1,19 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "applicant1FirstName": "test_first_name_male",
+  "applicant1LastName": "test_last_name",
+  "applicant1SolicitorName": "test_solicitor_name",
+  "applicant1SolicitorEmail": "simulate-delivered2@notifications.service.gov.uk",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1Email": "simulate-delivered2@notifications.service.gov.uk",
+  "applicant1Gender": "female",
+  "applicant2FirstName": "app2_first_name_male",
+  "applicant2LastName": "app2_last_name",
+  "applicant2SolicitorName": "test_solicitor_name",
+  "applicant2SolicitorEmail": "simulate-delivered2@notifications.service.gov.uk",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2Email": "simulate-delivered2@notifications.service.gov.uk",
+  "applicant2Gender": "male",
+  "issueDate": "2022-06-20"
+}

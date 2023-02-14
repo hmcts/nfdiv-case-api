@@ -1,6 +1,8 @@
 {
   "data": {
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "generalApplicationDocument": {
       "documentLink": {
         "document_url": "http://localhost:4200/assets/d11",
@@ -8,8 +10,22 @@
         "document_binary_url": "GA.pdf/binary"
       },
       "documentDateAdded": "${json-unit.any-string}",
-      "documentType": "d11"
+      "documentType": "generalApplication"
     },
+    "generalApplications": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "generalApplicationDocument": {
+          "documentLink": {
+            "document_url": "http://localhost:4200/assets/d11",
+            "document_filename": "GA.pdf",
+            "document_binary_url": "GA.pdf/binary"
+          },
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentType": "generalApplication"
+        }
+      }
+    }],
     "documentsUploaded": [{
       "id": "${json-unit.any-string}",
       "value": {
@@ -19,7 +35,7 @@
           "document_binary_url": "GA.pdf/binary"
         },
         "documentDateAdded": "${json-unit.any-string}",
-        "documentType": "d11"
+        "documentType": "generalApplication"
       }
     }],
     "dataVersion": "${json-unit.any-number}",

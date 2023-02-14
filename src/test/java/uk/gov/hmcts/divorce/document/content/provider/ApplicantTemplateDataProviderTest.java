@@ -42,7 +42,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder().build();
 
-        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant)).isNull();
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false)).isNull();
     }
 
     @Test
@@ -53,7 +53,7 @@ class ApplicantTemplateDataProviderTest {
             .financialOrdersFor(emptySet())
             .build();
 
-        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant)).isNull();
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false)).isNull();
     }
 
     @Test
@@ -63,7 +63,7 @@ class ApplicantTemplateDataProviderTest {
             .financialOrder(NO)
             .build();
 
-        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant)).isNull();
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false)).isNull();
     }
 
     @Test
@@ -74,7 +74,7 @@ class ApplicantTemplateDataProviderTest {
             .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
             .build();
 
-        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant))
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false))
             .isEqualTo("applicants, and for the children of both the applicants.");
     }
 
@@ -86,7 +86,7 @@ class ApplicantTemplateDataProviderTest {
             .financialOrdersFor(Set.of(APPLICANT))
             .build();
 
-        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant))
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false))
             .isEqualTo("applicants.");
     }
 
@@ -98,8 +98,73 @@ class ApplicantTemplateDataProviderTest {
             .financialOrdersFor(Set.of(CHILDREN))
             .build();
 
-        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant))
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false))
             .isEqualTo("children of both the applicants.");
+    }
+
+    @Test
+    void shouldReturnNullForJointIfNoFinancialOrderInWelsh() {
+
+        final Applicant applicant = Applicant.builder().build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, false)).isNull();
+    }
+
+    @Test
+    void shouldReturnNullForJointIfEmptyFinancialOrderInWelsh() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .financialOrdersFor(emptySet())
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, true)).isNull();
+    }
+
+    @Test
+    void shouldReturnNullForJointIfFinancialOrderIsNoInWelsh() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(NO)
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, true)).isNull();
+    }
+
+    @Test
+    void shouldReturnCorrectStringForJointFinancialOrderForApplicantAndChildrenForJointInWelsh() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, true))
+            .isEqualTo("ceiswyr, a phlant y ddau geisydd.");
+    }
+
+    @Test
+    void shouldReturnCorrectStringForJointFinancialOrderForApplicantInWelsh() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT))
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, true))
+            .isEqualTo("ceiswyr.");
+    }
+
+    @Test
+    void shouldReturnCorrectStringForJointFinancialOrderForChildrenInWelsh() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(CHILDREN))
+            .build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, true))
+            .isEqualTo("phlant y ddau geisydd.");
     }
 
     @Test

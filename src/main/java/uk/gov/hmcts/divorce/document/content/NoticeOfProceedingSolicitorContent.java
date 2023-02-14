@@ -2,34 +2,33 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_SOLICITOR_REGISTERED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
@@ -38,6 +37,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AP
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -47,21 +47,19 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class NoticeOfProceedingSolicitorContent {
 
-    @Value("${court.locations.serviceCentre.email}")
-    private String email;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
-
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -85,8 +83,10 @@ public class NoticeOfProceedingSolicitorContent {
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
         templateContent.put(ISSUE_DATE, applicationIssueDate.format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
@@ -117,16 +117,21 @@ public class NoticeOfProceedingSolicitorContent {
             );
         }
 
-        if (nonNull(caseData.getApplication().getReissueDate())) {
-            templateContent.put(HAS_CASE_BEEN_REISSUED, true);
-            templateContent.put(REISSUE_DATE, caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
-        }
+        LocalDate reIssueDate = caseData.getApplication().getReissueDate();
 
-        templateContent.put(CTSC_CONTACT_DETAILS, CtscContactDetails
-            .builder()
-            .emailAddress(email)
-            .phoneNumber(phoneNumber)
-            .build());
+        if (nonNull(reIssueDate)) {
+            templateContent.put(HAS_CASE_BEEN_REISSUED, true);
+            templateContent.put(REISSUE_DATE, reIssueDate.format(DATE_TIME_FORMATTER));
+            templateContent.put(
+                RESPOND_BY_DATE,
+                reIssueDate.plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            );
+        } else {
+            templateContent.put(
+                RESPOND_BY_DATE,
+                caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+            );
+        }
 
         return templateContent;
     }
