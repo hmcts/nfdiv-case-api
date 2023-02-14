@@ -94,7 +94,8 @@ public class CaseData {
         typeOverride = FixedRadioList,
         typeParameterOverride = "AdditionalCaseTypes"
     )
-    private AdditionalCaseType additionalCaseType;
+    @Builder.Default
+    private AdditionalCaseType additionalCaseType = NA;
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
