@@ -17,8 +17,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
     private static final String SOLE_APPLICATION = "applicationType=\"soleApplication\"";
     private static final String NOT_NEW_PAPER_CASE = "newPaperCase!=\"Yes\"";
-    private static final String NOT_JS_OR_NULLITY_CASE = "additionalCaseType=\"notApplicable\"";
-    private static final String JS_OR_NULLITY_CASE = "additionalCaseType!=\"notApplicable\"";
+    private static final String NOT_JS_OR_NULLITY_CASE = "divorceOrDissolutionExtension=\"notApplicable\"";
+    private static final String JS_OR_NULLITY_CASE = "divorceOrDissolutionExtension!=\"notApplicable\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -79,7 +79,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dueDate")
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution, NOT_JS_OR_NULLITY_CASE)
-            .field(CaseData::getAdditionalCaseType, JS_OR_NULLITY_CASE)
+            .field(CaseData::getDivorceOrDissolutionExtension, JS_OR_NULLITY_CASE)
             .field(CaseData::getDivorceUnit)
             .field(CaseData::getBulkListCaseReferenceLink)
             .field(CaseData::getHyphenatedCaseRef, NEVER_SHOW);

@@ -79,7 +79,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
             List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
             caseData.setDivorceOrDissolution(DIVORCE);
-            caseData.setAdditionalCaseType(JUDICIAL_SEPARATION);
+            caseData.setDivorceOrDissolutionExtension(JUDICIAL_SEPARATION);
             caseData.setApplicationType(commonFormToCaseTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer

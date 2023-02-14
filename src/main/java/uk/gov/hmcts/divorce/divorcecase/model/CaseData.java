@@ -54,6 +54,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.NA;
 import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -78,7 +79,6 @@ public class CaseData {
     )
     private ApplicationType applicationType;
 
-    @Setter(AccessLevel.NONE)
     @CCD(
         label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
@@ -95,7 +95,7 @@ public class CaseData {
         typeParameterOverride = "AdditionalCaseType"
     )
     @Builder.Default
-    private AdditionalCaseType additionalCaseType = NA;
+    private AdditionalCaseType divorceOrDissolutionExtension = NA;
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
@@ -330,37 +330,29 @@ public class CaseData {
         }
     }
 
-    public void setDivorceOrDissolution(DivorceOrDissolution divOrDiss) {
-        this.divorceOrDissolution = divOrDiss;
-        if (this.additionalCaseType == null) {
-            this.setAdditionalCaseType(NA);
+    public void setDivorceOrDissolutionExtension(AdditionalCaseType additionalCT) {
+        if (additionalCT == NA || additionalCT == NULLITY) {
+            this.divorceOrDissolutionExtension = additionalCT;
+        } else if (this.divorceOrDissolution == DIVORCE) {
+            this.divorceOrDissolutionExtension = JUDICIAL_SEPARATION;
+        } else if (this.divorceOrDissolution == DISSOLUTION) {
+            this.divorceOrDissolutionExtension = SEPARATION;
         }
     }
 
-    public void setAdditionalCaseType(AdditionalCaseType additionalCT) {
-        if (additionalCT == NA || additionalCT == NULLITY) {
-            this.additionalCaseType = additionalCT;
-        } else {
-            if (this.divorceOrDissolution == DIVORCE) {
-                this.additionalCaseType = JUDICIAL_SEPARATION;
-            } else {
-                this.additionalCaseType = SEPARATION;
-            }
-        }
-    }
 
     @JsonIgnore
     public boolean isJudicialSeparationCase() {
-        return JUDICIAL_SEPARATION.equals(this.additionalCaseType) || SEPARATION.equals(this.additionalCaseType);
+        return JUDICIAL_SEPARATION.equals(this.divorceOrDissolutionExtension) || SEPARATION.equals(this.divorceOrDissolutionExtension);
     }
 
     @JsonIgnore
     public boolean isNullityCase() {
-        return NULLITY.equals(this.additionalCaseType);
+        return NULLITY.equals(this.divorceOrDissolutionExtension);
     }
 
     @JsonIgnore
-    public boolean hasNoAdditionalCaseType() { return NA.equals(this.additionalCaseType) || this.additionalCaseType == null; }
+    public boolean hasNoAdditionalCaseType() { return NA.equals(this.divorceOrDissolutionExtension) || this.divorceOrDissolutionExtension == null; }
 
     @JsonIgnore
     public String getApplicant2EmailAddress() {
