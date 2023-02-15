@@ -131,20 +131,19 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
     }
 
     private String getCoverLetterDocumentName(final CaseData caseData, final boolean isRepresented) {
-        String documentName = CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
         if (caseData.isJudicialSeparationCase()) {
             if (caseData.isDivorce()) {
-                documentName = isRepresented
+                return isRepresented
                     ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
                     : JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
             } else {
-                documentName = isRepresented
+                return isRepresented
                     ? SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
                     : SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
             }
         }
-
-        return documentName;
+        
+        return CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
     }
 
     private Map<String, Object> templateVars(final CaseData caseData, final Long caseId, final Applicant applicant) {
