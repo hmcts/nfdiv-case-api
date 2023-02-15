@@ -196,7 +196,7 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-application-joint-js-about-to-submit-respondent-response.json";
     private static final String SOLE_JS_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-js-applicant1-represented-by-solicitor-about-to-submit-response.json";
-    private static final String JOINT_JS_APPLICANTS_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT=
+    private static final String JOINT_JS_APPLICANTS_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-js-applicant1-applicant2-represented-by-solicitor-joint-about-to-submit-response.json";
 
     @Autowired
