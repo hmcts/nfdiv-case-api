@@ -116,7 +116,7 @@ public final class DocumentConstants {
     public static final String AOS_OVERDUE_JS_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED_JS";
 
     public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
-    public static final String COVERSHEET_SOLICITOR = "COVERSHEET_SOLICITOR";
+    public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_SOLICITOR";
 
     public static final String GENERAL_LETTER_DOCUMENT_NAME = "GeneralLetter";
     public static final String GENERAL_LETTER_TEMPLATE_ID = "GENERAL_LETTER";

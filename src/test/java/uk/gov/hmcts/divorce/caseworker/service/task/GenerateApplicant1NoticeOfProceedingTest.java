@@ -43,9 +43,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
@@ -259,7 +256,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
     }
 
     @Test
-    void shouldGenerateJointCitizenJudicialSeparationNoticeOfProceedingsAndCoversheet() {
+    void shouldGenerateJointCitizenJudicialSeparationNoticeOfProceedings() {
 
         setMockClock(clock);
 
@@ -270,21 +267,10 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         when(noticeOfProceedingJointJudicialSeparationContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(),
             caseData.getApplicant2())).thenReturn(templateContent);
-        when(coversheetApplicantTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS);
-
-        verify(generateCoversheet)
-            .generateCoversheet(
-                caseData,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
-                templateContent,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
-            );
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
@@ -342,20 +328,10 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
 
-        when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
         verifyInteractions(caseData, templateContent, NFD_NOP_APP1APP2_SOL_JS_JOINT);
-        verify(generateCoversheet)
-            .generateCoversheet(
-                caseData,
-                TEST_CASE_ID,
-                COVERSHEET_SOLICITOR,
-                templateContent,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant1", now(clock))
-            );
+
         verifyNoMoreInteractions(caseDataDocumentService);
 
         assertThat(result.getData()).isEqualTo(caseData);
