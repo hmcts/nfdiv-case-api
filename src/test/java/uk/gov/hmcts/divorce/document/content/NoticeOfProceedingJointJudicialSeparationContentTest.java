@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -76,7 +77,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         );
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -129,7 +130,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         );
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.SEPARATION);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -180,7 +181,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
         );
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.SEPARATION);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));

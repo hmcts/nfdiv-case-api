@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
@@ -39,7 +38,7 @@ import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.inputScannedDocuments;
@@ -88,7 +87,7 @@ class D8sFormToCaseTransformerTest {
         final var caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
         final var transformationDetails =
             TransformationDetails

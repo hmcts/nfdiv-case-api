@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
@@ -486,7 +487,7 @@ class GenerateCertificateOfEntitlementTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -578,7 +579,7 @@ class GenerateCertificateOfEntitlementTest {
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

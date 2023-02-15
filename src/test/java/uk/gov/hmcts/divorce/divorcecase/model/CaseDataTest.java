@@ -16,8 +16,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 
 class CaseDataTest {
@@ -236,7 +236,7 @@ class CaseDataTest {
     @Test
     void shouldReturnTrueIfJudicialSeparationCase() {
         final CaseData caseData = CaseData.builder()
-            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         assertThat(caseData.isJudicialSeparationCase()).isTrue();
@@ -245,7 +245,7 @@ class CaseDataTest {
     @Test
     void shouldReturnFalseIfNotJudicialSeparationCase() {
         final CaseData caseData = CaseData.builder()
-            .divorceOrDissolutionExtension(NA)
+            .supplementaryCaseType(NA)
             .build();
 
         assertThat(caseData.isJudicialSeparationCase()).isFalse();

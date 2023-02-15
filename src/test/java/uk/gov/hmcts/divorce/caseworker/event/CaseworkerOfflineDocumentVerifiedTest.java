@@ -63,7 +63,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84NVA;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
@@ -72,6 +71,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorR
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -435,7 +435,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().build())
             .conditionalOrder(ConditionalOrder.builder().build())
-            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .documents(
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)

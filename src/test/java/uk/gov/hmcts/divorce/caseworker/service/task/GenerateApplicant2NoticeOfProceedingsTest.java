@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
@@ -342,7 +343,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -370,7 +371,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -385,7 +386,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -453,7 +454,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO, NO);
         caseData.getApplicant2().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 

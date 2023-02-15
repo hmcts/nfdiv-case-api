@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -32,9 +31,9 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NA;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
@@ -105,7 +104,7 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .divorceOrDissolutionExtension(NA)
+            .supplementaryCaseType(NA)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -180,7 +179,7 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -231,7 +230,7 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(emptyList())
                     .build()
             )
-            .divorceOrDissolutionExtension(NA)
+            .supplementaryCaseType(NA)
             .build();
 
         awaitingAmendedApplicationPrinter.sendLetters(
@@ -267,7 +266,7 @@ public class AwaitingAmendedApplicationPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc))
                     .build()
             )
-            .divorceOrDissolutionExtension(NA)
+            .supplementaryCaseType(NA)
             .build();
 
         awaitingAmendedApplicationPrinter.sendLetters(

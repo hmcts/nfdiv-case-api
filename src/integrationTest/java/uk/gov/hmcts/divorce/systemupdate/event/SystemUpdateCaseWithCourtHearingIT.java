@@ -52,6 +52,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
@@ -377,7 +378,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
 
         CaseData data = validCaseWithCourtHearing();
-        data.setIsJudicialSeparation(YES);
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setOffline(YES);
@@ -410,7 +411,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
 
         CaseData data = validCaseWithCourtHearing();
-        data.setIsJudicialSeparation(YES);
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setOffline(YES);

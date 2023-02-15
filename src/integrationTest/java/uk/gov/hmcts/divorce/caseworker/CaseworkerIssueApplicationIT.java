@@ -99,6 +99,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERV
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -2125,7 +2126,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setOffline(YES);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
@@ -2226,7 +2227,7 @@ public class CaseworkerIssueApplicationIT {
     void shouldIssueApplicationAndGenerateDocumentsForApplicantForSoleJudicialSeparation() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().setOffline(YES);
@@ -2278,7 +2279,7 @@ public class CaseworkerIssueApplicationIT {
     void shouldIssueApplicationAndGenerateDocumentsForApplicantSolicitorForSoleJudicialSeparation() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()

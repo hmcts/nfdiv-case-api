@@ -102,7 +102,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
@@ -344,7 +344,7 @@ public class TestDataHelper {
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .applicationType(JOINT_APPLICATION)
-            .divorceOrDissolutionExtension(NA)
+            .supplementaryCaseType(NA)
             .build();
     }
 
