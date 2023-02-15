@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -101,7 +102,7 @@ class SetPostIssueStateTest {
         final CaseData caseData = CaseData.builder()
             .application(Application.builder().build())
             .applicationType(ApplicationType.JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

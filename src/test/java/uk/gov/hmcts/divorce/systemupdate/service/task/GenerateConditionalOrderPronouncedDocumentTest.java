@@ -19,6 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID;
@@ -75,7 +76,7 @@ class GenerateConditionalOrderPronouncedDocumentTest {
             .applicant1(Applicant.builder()
                 .languagePreferenceWelsh(NO)
                 .build())
-            .isJudicialSeparation(YES)
+            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

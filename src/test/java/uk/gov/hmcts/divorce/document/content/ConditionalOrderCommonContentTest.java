@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
@@ -43,7 +44,7 @@ class ConditionalOrderCommonContentTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
             .applicant1(
                 Applicant.builder()
                     .firstName("Bob")
@@ -80,7 +81,7 @@ class ConditionalOrderCommonContentTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
             .applicant1(
                 Applicant.builder()
                     .firstName("Bob")

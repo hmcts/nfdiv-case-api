@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
@@ -97,7 +98,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .divorceOrDissolutionExtension(JUDICIAL_SEPARATION)
             .applicant1(
                 Applicant.builder()
                     .firstName("Bob")
