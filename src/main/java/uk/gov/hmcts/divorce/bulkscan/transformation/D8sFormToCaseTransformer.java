@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
-import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 
 @Component

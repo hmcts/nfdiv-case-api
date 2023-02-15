@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum AdditionalCaseType implements HasLabel {
+public enum DivorceOrDissolutionExtension implements HasLabel {
 
     @JsonProperty("notApplicable")
     NA("Not Applicable"),

@@ -49,10 +49,10 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.NULLITY;
-import static uk.gov.hmcts.divorce.divorcecase.model.AdditionalCaseType.SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NULLITY;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -95,7 +95,7 @@ public class CaseData {
         typeParameterOverride = "AdditionalCaseType"
     )
     @Builder.Default
-    private AdditionalCaseType divorceOrDissolutionExtension = NA;
+    private DivorceOrDissolutionExtension divorceOrDissolutionExtension = NA;
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
@@ -330,9 +330,9 @@ public class CaseData {
         }
     }
 
-    public void setDivorceOrDissolutionExtension(AdditionalCaseType additionalCT) {
-        if (additionalCT == NA || additionalCT == NULLITY) {
-            this.divorceOrDissolutionExtension = additionalCT;
+    public void setDivorceOrDissolutionExtension(DivorceOrDissolutionExtension divOrDissExtension) {
+        if (divOrDissExtension == NA || divOrDissExtension == NULLITY) {
+            this.divorceOrDissolutionExtension = divOrDissExtension;
         } else if (this.divorceOrDissolution == DIVORCE) {
             this.divorceOrDissolutionExtension = JUDICIAL_SEPARATION;
         } else if (this.divorceOrDissolution == DISSOLUTION) {
