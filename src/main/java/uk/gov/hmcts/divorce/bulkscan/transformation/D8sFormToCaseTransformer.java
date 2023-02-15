@@ -13,8 +13,8 @@ import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 
 @Component
 @Slf4j
@@ -79,7 +79,7 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
             List<String> transformationWarnings = transformationDetails.getTransformationWarnings();
             caseData.setDivorceOrDissolution(DIVORCE);
-            caseData.setDivorceOrDissolutionExtension(JUDICIAL_SEPARATION);
+            caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
             caseData.setApplicationType(commonFormToCaseTransformer.getApplicationType(ocrDataFields, transformationWarnings));
 
             applicant1Transformer

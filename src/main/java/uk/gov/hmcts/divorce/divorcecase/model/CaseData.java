@@ -49,16 +49,16 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.NULLITY;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolutionExtension.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
@@ -95,7 +95,7 @@ public class CaseData {
         typeParameterOverride = "AdditionalCaseType"
     )
     @Builder.Default
-    private DivorceOrDissolutionExtension divorceOrDissolutionExtension = NA;
+    private SupplementaryCaseType supplementaryCaseType = NA;
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
@@ -330,29 +330,29 @@ public class CaseData {
         }
     }
 
-    public void setDivorceOrDissolutionExtension(DivorceOrDissolutionExtension divOrDissExtension) {
-        if (divOrDissExtension == NA || divOrDissExtension == NULLITY) {
-            this.divorceOrDissolutionExtension = divOrDissExtension;
+    public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
+        if (supplementaryCaseType == NA || supplementaryCaseType == NULLITY) {
+            this.supplementaryCaseType = supplementaryCaseType;
         } else if (this.divorceOrDissolution == DIVORCE) {
-            this.divorceOrDissolutionExtension = JUDICIAL_SEPARATION;
+            this.supplementaryCaseType = JUDICIAL_SEPARATION;
         } else if (this.divorceOrDissolution == DISSOLUTION) {
-            this.divorceOrDissolutionExtension = SEPARATION;
+            this.supplementaryCaseType = SEPARATION;
         }
     }
 
 
     @JsonIgnore
     public boolean isJudicialSeparationCase() {
-        return JUDICIAL_SEPARATION.equals(this.divorceOrDissolutionExtension) || SEPARATION.equals(this.divorceOrDissolutionExtension);
+        return JUDICIAL_SEPARATION.equals(this.supplementaryCaseType) || SEPARATION.equals(this.supplementaryCaseType);
     }
 
     @JsonIgnore
     public boolean isNullityCase() {
-        return NULLITY.equals(this.divorceOrDissolutionExtension);
+        return NULLITY.equals(this.supplementaryCaseType);
     }
 
     @JsonIgnore
-    public boolean hasNoAdditionalCaseType() { return NA.equals(this.divorceOrDissolutionExtension) || this.divorceOrDissolutionExtension == null; }
+    public boolean hasNoAdditionalCaseType() { return NA.equals(this.supplementaryCaseType) || this.supplementaryCaseType == null; }
 
     @JsonIgnore
     public String getApplicant2EmailAddress() {
