@@ -383,6 +383,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Test
     void shouldNotGenerateJSWhenSoleAndDigitalReissue() {
+        setMockClock(clock);
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setEmail("notnull@something.com");
@@ -393,7 +394,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyNoInteractions(generateCoversheet, noticeOfProceedingContent);
+        verifyNoInteractions(coversheetSolicitorTemplateContent, noticeOfProceedingSolicitorContent);
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();

@@ -76,15 +76,6 @@ class GenerateApplicant1NoticeOfProceedingTest {
     private NoticeOfProceedingJointJudicialSeparationContent noticeOfProceedingJointJudicialSeparationContent;
 
     @Mock
-    private GenerateCoversheet generateCoversheet;
-
-    @Mock
-    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
-
-    @Mock
-    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
-
-    @Mock
     private Clock clock;
 
     @InjectMocks
