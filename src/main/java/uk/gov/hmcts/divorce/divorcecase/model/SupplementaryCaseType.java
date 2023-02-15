@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,5 +31,7 @@ public enum SupplementaryCaseType implements HasLabel {
         return NULLITY.name().equalsIgnoreCase(this.name());
     }
 
-    public boolean isNotApplicable() { return NA.name().equalsIgnoreCase(this.name()); }
+    public boolean isNotApplicable() {
+        return NA.name().equalsIgnoreCase(this.name());
+    }
 }
