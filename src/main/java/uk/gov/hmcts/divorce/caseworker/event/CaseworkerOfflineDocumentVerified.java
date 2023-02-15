@@ -221,7 +221,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            var state = YES.equals(caseData.getIsJudicialSeparation())
+            var state = caseData.isJudicialSeparationCase()
                 ? JSAwaitingLA
                 : AwaitingLegalAdvisorReferral;
 

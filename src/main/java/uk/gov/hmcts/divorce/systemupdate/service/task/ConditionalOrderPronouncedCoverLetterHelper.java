@@ -69,7 +69,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             documentType,
             templateVars(caseData, caseId, applicant),
             caseId,
-            YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID
                 : CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
             applicant.getLanguagePreference(),
@@ -87,7 +87,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
             templateVarsForOfflineRespondent(caseData, caseId, applicant, partner),
             caseId,
-            YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID
                 : CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
             applicant.getLanguagePreference(),

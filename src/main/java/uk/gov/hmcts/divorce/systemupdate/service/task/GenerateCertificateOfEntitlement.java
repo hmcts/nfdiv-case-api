@@ -120,7 +120,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-        final boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
+        final boolean isJudicialSeparation = caseData.isJudicialSeparationCase();
 
         if (caseData.getApplicant1().isApplicantOffline()) {
             log.info("Generating certificate of entitlement cover letter for Applicant 1 for case id {} ", caseId);
@@ -217,7 +217,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
-        if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         }

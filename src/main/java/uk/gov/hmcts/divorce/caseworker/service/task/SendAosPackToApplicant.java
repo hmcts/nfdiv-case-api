@@ -23,7 +23,7 @@ public class SendAosPackToApplicant implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplication().isCourtServiceMethod() || YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.getApplication().isCourtServiceMethod() || caseData.isJudicialSeparationCase()) {
             log.info("Sending AOS pack to applicant for sole case with id: {}", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
         } else {

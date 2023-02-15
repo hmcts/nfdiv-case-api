@@ -38,7 +38,7 @@ public class GenerateD10Form implements CaseTask {
             : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isApplicantOffline();
 
         var d10Needed = caseData.getApplicationType().isSole() && (!caseData.getApplication().isCourtServiceMethod() || app2Offline
-            || YES.equals(caseData.getIsJudicialSeparation()));
+            || caseData.isJudicialSeparationCase());
 
         if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {

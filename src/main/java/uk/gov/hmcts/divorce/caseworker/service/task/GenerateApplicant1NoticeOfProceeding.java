@@ -72,7 +72,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication) {
-            if (YES.equals(caseData.getIsJudicialSeparation())) {
+            if (caseData.isJudicialSeparationCase()) {
                 generateSoleNoticeOfProceedingsForJudicialSeparation(caseData, caseId);
             } else {
                 generateSoleNoticeOfProceedings(caseData, caseId);

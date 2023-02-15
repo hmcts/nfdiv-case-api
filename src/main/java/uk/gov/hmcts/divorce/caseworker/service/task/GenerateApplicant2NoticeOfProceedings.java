@@ -87,7 +87,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         if (isSoleApplication) {
             caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
             ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
-            if (YES.equals(caseDetails.getData().getIsJudicialSeparation())) {
+            if (caseDetails.getData().isJudicialSeparationCase()) {
                 if (!DIGITAL_AOS.equals(reissueOption)) {
                     generateSoleJSNoticeOfProceedings(caseData, caseId);
                 }

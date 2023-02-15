@@ -38,7 +38,7 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
             CONDITIONAL_ORDER_GRANTED,
             conditionalOrderPronouncedTemplateContent.apply(caseData, caseId, caseData.getApplicant1().getLanguagePreference()),
             caseId,
-            YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID
                 : CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),

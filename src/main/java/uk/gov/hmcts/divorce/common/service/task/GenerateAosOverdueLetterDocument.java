@@ -38,7 +38,7 @@ public class GenerateAosOverdueLetterDocument implements CaseTask {
             AOS_OVERDUE_LETTER,
             templateContent.apply(caseData, caseId),
             caseId,
-            YES.equals(caseData.getIsJudicialSeparation()) ? AOS_OVERDUE_JS_TEMPLATE_ID : AOS_OVERDUE_TEMPLATE_ID,
+            caseData.isJudicialSeparationCase() ? AOS_OVERDUE_JS_TEMPLATE_ID : AOS_OVERDUE_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
             AOS_OVERDUE_LETTER_DOCUMENT_NAME
         );
