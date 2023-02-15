@@ -2,7 +2,7 @@
   "data": {
     "divorceOrDissolution": "divorce",
     "applicationType": "soleApplication",
-    "isJudicialSeparation": "No",
+    "supplementaryCaseType": "Not Applicable",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",

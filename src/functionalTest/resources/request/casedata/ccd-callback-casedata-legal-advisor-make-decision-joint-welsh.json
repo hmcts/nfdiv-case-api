@@ -15,5 +15,5 @@
   "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant2LanguagePreferenceWelsh": "Yes",
   "applicant2Gender": "female",
-  "isJudicialSeparation": "No"
+  "supplementaryCaseType": "Not Applicable"
 }

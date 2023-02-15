@@ -1,6 +1,6 @@
 {
   "data": {
-    "isJudicialSeparation": "No",
+    "supplementaryCaseType": "Not Applicable",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
     "applicant1FinancialOrder": "No",
