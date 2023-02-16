@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.GenerateFormHelper;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -43,7 +43,7 @@ public class GenerateD84FormTest {
         final CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.setIsJudicialSeparation(YesOrNo.YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
