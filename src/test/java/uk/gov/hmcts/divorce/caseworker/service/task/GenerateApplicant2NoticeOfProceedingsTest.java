@@ -124,7 +124,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
             .generateCoversheet(
                 caseData,
                 TEST_CASE_ID,
-                    COVERSHEET_APPLICANT2_SOLICITOR,
+                COVERSHEET_APPLICANT2_SOLICITOR,
                 templateContent,
                 ENGLISH
             );
@@ -198,7 +198,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
             .generateCoversheet(
                 caseData,
                 TEST_CASE_ID,
-                    COVERSHEET_APPLICANT2_SOLICITOR,
+                COVERSHEET_APPLICANT2_SOLICITOR,
                 templateContent,
                 ENGLISH
             );

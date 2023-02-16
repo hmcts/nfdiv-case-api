@@ -48,7 +48,7 @@ public class GenerateCoversheetTest {
         generateCoversheet.generateCoversheet(
             caseData,
             TEST_CASE_ID,
-                COVERSHEET_APPLICANT2_SOLICITOR,
+            COVERSHEET_APPLICANT2_SOLICITOR,
             templateContent,
             caseData.getApplicant2().getLanguagePreference()
         );
@@ -59,7 +59,7 @@ public class GenerateCoversheetTest {
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                    COVERSHEET_APPLICANT2_SOLICITOR,
+                COVERSHEET_APPLICANT2_SOLICITOR,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
@@ -77,7 +77,7 @@ public class GenerateCoversheetTest {
         generateCoversheet.generateCoversheet(
             caseData,
             TEST_CASE_ID,
-                COVERSHEET_APPLICANT2_SOLICITOR,
+            COVERSHEET_APPLICANT2_SOLICITOR,
             templateContent,
             caseData.getApplicant2().getLanguagePreference(),
             formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
@@ -89,7 +89,7 @@ public class GenerateCoversheetTest {
                 COVERSHEET,
                 templateContent,
                 TEST_CASE_ID,
-                    COVERSHEET_APPLICANT2_SOLICITOR,
+                COVERSHEET_APPLICANT2_SOLICITOR,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );

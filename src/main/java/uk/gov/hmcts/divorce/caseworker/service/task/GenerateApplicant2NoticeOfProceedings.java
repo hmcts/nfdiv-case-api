@@ -249,7 +249,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             );
 
         } else {
-            log.info("Generating applicant 1 notice of proceedings for joint Judicial Separation case id {} ", caseId);
+            log.info("Generating applicant 2 notice of proceedings for joint Judicial Separation case id {} ", caseId);
 
             templateContent = jointContentJudicialSeparationContent.apply(caseData, caseId, caseData.getApplicant2(),
                 caseData.getApplicant1());

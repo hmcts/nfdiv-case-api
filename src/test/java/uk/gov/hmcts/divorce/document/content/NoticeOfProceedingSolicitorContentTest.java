@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
@@ -307,12 +308,12 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(IS_DIVORCE, true),
                 entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
-                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(SOLICITOR_ADDRESS, ADDRESS),
                 entry(SOLICITOR_REFERENCE, "Not provided"),
-                entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
-                entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
-                entry(APPLICANT_2_SOLICITOR_NAME, "The Solicitor"));
+                entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, TEST_SOLICITOR_NAME),
+                entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
+                entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME));
 
         verifyNoInteractions(holdingPeriodService);
     }
