@@ -127,7 +127,7 @@ class D8sFormToCaseTransformerTest {
         final CaseData captorValueCaseData = transformationDetailsCaptorValue.getCaseData();
 
         assertThat(captorValueCaseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
-        assertThat(captorValueCaseData.isJudicialSeparationCase()).isEqualTo(YES);
+        assertThat(captorValueCaseData.isJudicialSeparationCase()).isTrue();
 
         assertThat(transformedOutput.get("scannedDocuments"))
             .usingRecursiveComparison()
@@ -193,7 +193,7 @@ class D8sFormToCaseTransformerTest {
         final CaseData captorValueCaseData = transformationDetailsCaptorValue.getCaseData();
 
         assertThat(captorValueCaseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
-        assertThat(captorValueCaseData.isJudicialSeparationCase()).isEqualTo(YES);
+        assertThat(captorValueCaseData.isJudicialSeparationCase()).isTrue();
 
         assertThat(warnings)
             .extracting("value")
