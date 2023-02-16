@@ -93,7 +93,7 @@ public class CaseData {
         label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
         typeOverride = FixedRadioList,
-        typeParameterOverride = "AdditionalCaseType"
+        typeParameterOverride = "SupplementaryCaseType"
     )
     @Builder.Default
     private SupplementaryCaseType supplementaryCaseType = NA;
