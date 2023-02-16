@@ -79,6 +79,7 @@ public class CaseData {
     )
     private ApplicationType applicationType;
 
+    @Setter(AccessLevel.NONE)
     @CCD(
         label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
@@ -330,8 +331,17 @@ public class CaseData {
         }
     }
 
+    public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
+        this.divorceOrDissolution = divorceOrDissolution;
+        if (this.divorceOrDissolution == DIVORCE && this.supplementaryCaseType == SEPARATION) {
+            this.setSupplementaryCaseType(JUDICIAL_SEPARATION); // prevent Separation when Divorce
+        } else if (this.divorceOrDissolution == DISSOLUTION && this.supplementaryCaseType == JUDICIAL_SEPARATION) {
+            this.setSupplementaryCaseType(SEPARATION); // prevent Judicial Separation when Dissolution
+        }
+    }
+
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-        if (supplementaryCaseType == NA || supplementaryCaseType == NULLITY) {
+        if (supplementaryCaseType == NA || supplementaryCaseType == NULLITY || this.divorceOrDissolution == null) {
             this.supplementaryCaseType = supplementaryCaseType;
         } else if (this.divorceOrDissolution == DIVORCE) {
             this.supplementaryCaseType = JUDICIAL_SEPARATION;
