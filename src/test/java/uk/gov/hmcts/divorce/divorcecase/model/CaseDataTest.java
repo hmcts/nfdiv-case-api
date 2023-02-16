@@ -18,6 +18,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 
 class CaseDataTest {
@@ -234,27 +236,177 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldReturnTrueIfJudicialSeparationCase() {
-        final CaseData caseData = CaseData.builder()
+    void shouldSetJudicialSeparationIfSeparationIsAlreadySetWhenSettingDivorce() {
+        CaseData caseData = CaseData.builder()
+            .supplementaryCaseType(SEPARATION)
+            .build();
+
+        caseData.setDivorceOrDissolution(DIVORCE);
+
+        assertThat(caseData.isDivorce()).isTrue();
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
+    }
+
+    @Test
+    void shouldSetSeparationIfJudicialSeparationIsAlreadySetWhenSettingDissolution() {
+        CaseData caseData = CaseData.builder()
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+
+        assertThat(caseData.isDivorce()).isFalse();
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
+    }
+
+    @Test
+    void shouldSetAnySupplementalCaseTypeIfDivorceOrDissolutionIsNull() {
+        CaseData caseData = CaseData.builder().build();
+
+        caseData.setSupplementaryCaseType(NA);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NA);
+        caseData.setSupplementaryCaseType(NULLITY);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NULLITY);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
+        caseData.setSupplementaryCaseType(SEPARATION);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
+    }
+
+    @Test
+    void shouldSetNAOrNullityIfDivorce() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
+        caseData.setSupplementaryCaseType(NA);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NA);
+        caseData.setSupplementaryCaseType(NULLITY);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NULLITY);
+    }
+
+    @Test
+    void shouldSetNAOrNullityIfDissolution() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .build();
+
+        caseData.setSupplementaryCaseType(NA);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NA);
+        caseData.setSupplementaryCaseType(NULLITY);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NULLITY);
+    }
+
+    @Test
+    void shouldForceJudicialSeparationIfDivorce() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
+        caseData.setSupplementaryCaseType(SEPARATION);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
+    }
+
+    @Test
+    void shouldForceSeparationIfDissolution() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .build();
+
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
+    }
+
+    @Test
+    void shouldReturnTrueIfJudicialSeparationOrSeparationCase() {
+        CaseData caseData = CaseData.builder()
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .build();
+
+        assertThat(caseData.isJudicialSeparationCase()).isTrue();
+
+        caseData.setSupplementaryCaseType(SEPARATION);
 
         assertThat(caseData.isJudicialSeparationCase()).isTrue();
     }
 
     @Test
-    void shouldReturnFalseIfNotJudicialSeparationCase() {
-        final CaseData caseData = CaseData.builder()
+    void shouldReturnFalseIfNotJudicialSeparationOrSeparationCase() {
+        CaseData caseData = CaseData.builder()
             .supplementaryCaseType(NA)
             .build();
+
+        assertThat(caseData.isJudicialSeparationCase()).isFalse();
+
+        caseData.setSupplementaryCaseType(NULLITY);
 
         assertThat(caseData.isJudicialSeparationCase()).isFalse();
     }
 
     @Test
-    void shouldReturnFalseIfJudicialSeparationIsNotSet() {
-        final CaseData caseData = CaseData.builder().build();
+    void shouldReturnFalseIfSupplementalCaseTypeIsNullOrNA() {
+        CaseData caseData = CaseData.builder().build();
 
         assertThat(caseData.isJudicialSeparationCase()).isFalse();
+        assertThat(caseData.isNullityCase()).isFalse();
+
+        caseData.setSupplementaryCaseType(NA);
+
+        assertThat(caseData.isJudicialSeparationCase()).isFalse();
+        assertThat(caseData.isNullityCase()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfSupplementalCaseTypeIsNullOrNA() {
+        CaseData caseData = CaseData.builder().build();
+
+        assertThat(caseData.hasNoAdditionalCaseType()).isTrue();
+
+        caseData.setSupplementaryCaseType(NA);
+
+        assertThat(caseData.hasNoAdditionalCaseType()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfSupplementalCaseTypeIsNotNullOrNA() {
+        final CaseData caseData = CaseData.builder()
+            .supplementaryCaseType(SEPARATION)
+            .build();
+
+        assertThat(caseData.hasNoAdditionalCaseType()).isFalse();
+
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+
+        assertThat(caseData.hasNoAdditionalCaseType()).isFalse();
+
+        caseData.setSupplementaryCaseType(NULLITY);
+
+        assertThat(caseData.hasNoAdditionalCaseType()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfNullityCase() {
+        final CaseData caseData = CaseData.builder()
+            .supplementaryCaseType(NULLITY)
+            .build();
+
+        assertThat(caseData.isNullityCase()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfNotNullityCase() {
+        CaseData caseData = CaseData.builder()
+            .supplementaryCaseType(NA)
+            .build();
+
+        assertThat(caseData.isNullityCase()).isFalse();
+
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+
+        assertThat(caseData.isNullityCase()).isFalse();
+
+        caseData.setSupplementaryCaseType(SEPARATION);
+
+        assertThat(caseData.isNullityCase()).isFalse();
     }
 }

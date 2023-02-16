@@ -350,7 +350,6 @@ public class CaseData {
         }
     }
 
-
     @JsonIgnore
     public boolean isJudicialSeparationCase() {
         return JUDICIAL_SEPARATION.equals(this.supplementaryCaseType) || SEPARATION.equals(this.supplementaryCaseType);
