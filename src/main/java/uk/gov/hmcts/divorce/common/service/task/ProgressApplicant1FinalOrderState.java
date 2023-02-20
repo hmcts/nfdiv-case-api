@@ -13,11 +13,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 
 @Slf4j
 @Component
-public class ProgressFinalOrderState implements CaseTask {
+public class ProgressApplicant1FinalOrderState implements CaseTask {
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
-        log.info("Running ProgressFinalOrderState task for CaseID {}", details.getId());
+        log.info("Running ProgressApplicant1FinalOrderState task for CaseID {}", details.getId());
 
         CaseData data = details.getData();
         State state = details.getState();
