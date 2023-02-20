@@ -72,7 +72,7 @@ public class CertificateOfEntitlementContent {
         templateContent.put(COURT_DETAILS, conditionalOrderCourtDetails);
         templateContent.put(APPROVAL_DATE, approvalDate);
 
-        if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         }

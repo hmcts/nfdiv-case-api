@@ -98,7 +98,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         final Document certificateOfEntitlement = caseDataDocumentService.renderDocument(
             certificateOfEntitlementContent.apply(caseData, caseId),
             caseId,
-            YesOrNo.YES.equals(caseData.getIsJudicialSeparation()) ? CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID
+            caseData.isJudicialSeparationCase() ? CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID
             : CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_NAME, now(clock))

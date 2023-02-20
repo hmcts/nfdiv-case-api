@@ -56,9 +56,6 @@ public class CertificateOfEntitlementContentTest {
     @InjectMocks
     private CertificateOfEntitlementContent certificateOfEntitlementContent;
 
-    @Mock
-    private DocmosisCommonContent docmosisCommonContent;
-
     @Test
     void shouldReturnTemplateContentForSole() {
 
