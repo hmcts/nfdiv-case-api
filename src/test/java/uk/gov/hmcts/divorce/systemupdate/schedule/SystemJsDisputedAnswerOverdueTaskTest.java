@@ -33,15 +33,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemJsDisputedAnswerOverdue.SYSTEM_JS_DISPUTED_ANSWER_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AOS_RESPONSE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AWAITING_JS_ANSWER_START_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.IS_JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEMENTARY_CASE_TYPE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -68,7 +69,8 @@ class SystemJsDisputedAnswerOverdueTaskTest {
     final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingAnswer))
-            .must(matchQuery(String.format(DATA, IS_JUDICIAL_SEPARATION), YES))
+            .mustNot(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), NA))
+            .mustNot(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), NULLITY))
             .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
             .filter(
                 rangeQuery(String.format(DATA, AWAITING_JS_ANSWER_START_DATE)).lte(LocalDate.now().minusDays(answerOverdueOffsetDays))

@@ -259,12 +259,6 @@ public class CaseData {
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
     @CCD(
-        label = "Is case judicial separation?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo isJudicialSeparation;
-
-    @CCD(
         label = "General emails",
         typeOverride = Collection,
         typeParameterOverride = "GeneralEmailDetails",
