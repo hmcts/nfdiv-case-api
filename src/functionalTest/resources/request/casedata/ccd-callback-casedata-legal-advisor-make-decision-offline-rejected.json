@@ -1,5 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
   "applicationType": "soleApplication",
   "coGranted": "No",
   "coRefusalDecision": "reject",
@@ -13,6 +14,5 @@
   "applicant1SolicitorRepresented": "No",
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant2SolicitorRepresented": "No",
-  "applicant2LanguagePreferenceWelsh": "No",
-  "supplementaryCaseType": "Not Applicable"
+  "applicant2LanguagePreferenceWelsh": "No"
 }
