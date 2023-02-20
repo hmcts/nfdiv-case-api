@@ -48,7 +48,7 @@
           "document_binary_url": "${json-unit.any-string}"
         },
         "documentFileName": "${json-unit.any-string}",
-        "documentType": "finalOrderCanApply"
+        "documentType": "finalOrderCanApplyApp2"
       }
     }, {
       "id": "${json-unit.any-string}",
@@ -70,7 +70,7 @@
           "document_binary_url": "${json-unit.any-string}"
         },
         "documentFileName": "${json-unit.any-string}",
-        "documentType": "finalOrderCanApply"
+        "documentType": "finalOrderCanApplyApp1"
       }
     }],
     "dueDate": "${json-unit.any-string}",

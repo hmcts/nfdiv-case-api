@@ -17,5 +17,5 @@
     "applicant2AppliedForFinalOrderFirst": "Yes",
     "dateFinalOrderNoLongerEligible": "${json-unit.ignore}"
   },
-  "state": "FinalOrderRequested"
+  "state": "RespondentFinalOrderRequested"
 }
