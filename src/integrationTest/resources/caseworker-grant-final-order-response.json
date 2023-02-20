@@ -72,7 +72,7 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "supplementaryCaseType": "Not Applicable"
+    "supplementaryCaseType": "notApplicable"
   },
   "state": "FinalOrderComplete"
 }

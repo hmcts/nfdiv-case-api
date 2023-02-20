@@ -1,6 +1,6 @@
 {
   "data": {
-    "supplementaryCaseType": "Not Applicable",
+    "supplementaryCaseType": "notApplicable",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
     "applicant1FinancialOrder": "No",
