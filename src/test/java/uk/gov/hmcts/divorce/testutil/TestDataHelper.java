@@ -283,6 +283,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(NA)
             .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
@@ -291,6 +292,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getInvalidApplicant())
             .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(NA)
             .build();
     }
 
