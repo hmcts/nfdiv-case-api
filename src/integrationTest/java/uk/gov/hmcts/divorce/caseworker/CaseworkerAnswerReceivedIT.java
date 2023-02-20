@@ -42,6 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAnswerReceived.CASEWORKER_ADD_ANSWER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -116,15 +117,14 @@ public class CaseworkerAnswerReceivedIT {
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_ADD_ANSWER)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_ADD_ANSWER, Holding.toString())))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
-        assertThatJson(actualResponse)
-            .isEqualTo(json(expectedResponse(CASEWORKER_ANSWERS_RECEIVED_RESPONSE)));
+        assertThatJson(actualResponse).isEqualTo(json(expectedResponse(CASEWORKER_ANSWERS_RECEIVED_RESPONSE)));
     }
 
     @Test

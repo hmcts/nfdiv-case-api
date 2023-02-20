@@ -10,11 +10,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +49,12 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private SwitchedToSoleFoNotification switchedToSoleFoNotification;
 
     @InjectMocks
     private SwitchedToSoleFinalOrder switchedToSoleFinalOrder;
@@ -162,5 +170,19 @@ public class SwitchedToSoleFinalOrderTest {
         switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verifyNoInteractions(switchToSoleService);
+    }
+
+    @Test
+    void shouldSendNotificationsInSubmittedCallback() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        switchedToSoleFinalOrder.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(switchedToSoleFoNotification, caseDetails.getData(), caseId);
     }
 }

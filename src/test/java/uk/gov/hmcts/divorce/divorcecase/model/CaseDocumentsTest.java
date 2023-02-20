@@ -13,15 +13,15 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.CHERISHED;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.COVERSHEET;
@@ -204,7 +204,6 @@ class CaseDocumentsTest {
 
     @Test
     public void shouldRemoveGivenDocumentType() {
-        final Map<String, Object> templateContent = new HashMap<>();
         final CaseDocuments caseDocuments = CaseDocuments.builder()
             .documentsGenerated(Lists.newArrayList(
                 ListValue.<DivorceDocument>builder()
@@ -329,6 +328,91 @@ class CaseDocumentsTest {
 
         assertThat(caseDocuments.mapScannedDocumentToDivorceDocument(scannedDocument, FINAL_ORDER_APPLICATION, clock))
             .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void shouldRemoveGivenConfidentialDocumentType() {
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .confidentialDocumentsGenerated(Lists.newArrayList(
+                ListValue.<ConfidentialDivorceDocument>builder()
+                    .id("1")
+                    .value(ConfidentialDivorceDocument.builder()
+                        .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+                        .build())
+                    .build(),
+                ListValue.<ConfidentialDivorceDocument>builder()
+                    .id("2")
+                    .value(ConfidentialDivorceDocument.builder()
+                        .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
+                        .build()).build()
+            ))
+            .build();
+
+        caseDocuments.removeConfidentialDocumentGeneratedWithType(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1);
+
+        assertEquals(1, caseDocuments.getConfidentialDocumentsGenerated().size());
+        assertEquals(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
+            caseDocuments.getConfidentialDocumentsGenerated().get(0).getValue().getConfidentialDocumentsReceived());
+    }
+
+    @Test
+    public void shouldReturnConditionalOrderDocumentWhenExists() {
+
+        final ListValue<DivorceDocument> divorceDocumentListValue = ListValue
+            .<DivorceDocument>builder()
+            .id(APPLICATION.getLabel())
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> coDocumentListValue = ListValue
+            .<DivorceDocument>builder()
+            .id(CONDITIONAL_ORDER_GRANTED.getLabel())
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_GRANTED)
+                .build())
+            .build();
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsGenerated(List.of(divorceDocumentListValue, coDocumentListValue))
+            .build();
+
+        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
+            caseDocuments.getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED);
+
+        assertTrue(conditionalOrderGrantedDoc.isPresent());
+    }
+
+    @Test
+    public void shouldNotReturnConditionalOrderDocumentWhenDoesNotExists() {
+        final ListValue<DivorceDocument> divorceDocumentListValue = ListValue
+            .<DivorceDocument>builder()
+            .id(APPLICATION.getLabel())
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsGenerated(singletonList(divorceDocumentListValue))
+            .build();
+
+        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
+            caseDocuments.getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED);
+
+        assertTrue(conditionalOrderGrantedDoc.isEmpty());
+    }
+
+    @Test
+    public void shouldNotReturnConditionalOrderDocumentWhenNoCaseDocuments() {
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder().build();
+
+        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
+            caseDocuments.getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED);
+
+        assertTrue(conditionalOrderGrantedDoc.isEmpty());
     }
 
     private ListValue<ScannedDocument> getDocumentListValue(final String url,

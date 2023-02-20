@@ -146,8 +146,8 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
-        caseData.put("applicant1AppliedForFinalOrderFirst", "No");
-        caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
+        caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "No");
 
         final Response response = triggerCallback(caseData, APPLICANT2_FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
 
@@ -155,6 +155,8 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
         jsonDocument.set("data.applicationType", "jointApplication");
+        jsonDocument.set("data.applicant2AppliedForFinalOrderFirst", "No");
+        jsonDocument.set("data.applicant1AppliedForFinalOrderFirst", "Yes");
         jsonDocument.set("state", "FinalOrderRequested");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
@@ -172,8 +174,8 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
-        caseData.put("applicant1AppliedForFinalOrderFirst", "No");
-        caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
+        caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "No");
         caseData.put("applicant1LanguagePreferenceWelsh", YES);
         caseData.put("applicant2LanguagePreferenceWelsh", YES);
 
@@ -184,6 +186,8 @@ public class Applicant2ApplyForFinalOrderFT extends FunctionalTestSuite {
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
         jsonDocument.set("data.applicationType", "jointApplication");
         jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
+        jsonDocument.set("data.applicant2AppliedForFinalOrderFirst", "No");
+        jsonDocument.set("data.applicant1AppliedForFinalOrderFirst", "Yes");
         jsonDocument.set("state", "FinalOrderRequested");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());

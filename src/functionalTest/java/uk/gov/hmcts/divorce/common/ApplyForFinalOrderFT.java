@@ -142,14 +142,16 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
-        caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
-        caseData.put("applicant2AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant1AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
 
         final Response response = triggerCallback(caseData, FINAL_ORDER_REQUESTED, ABOUT_TO_SUBMIT_URL, AwaitingJointFinalOrder);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.set("data.applicant1AppliedForFinalOrderFirst", "No");
+        jsonDocument.set("data.applicant2AppliedForFinalOrderFirst", "Yes");
         jsonDocument.set("data.applicationType", "jointApplication");
         jsonDocument.set("state", "FinalOrderRequested");
 
@@ -168,8 +170,8 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicationType", "jointApplication");
         caseData.put("dateFinalOrderNoLongerEligible", LocalDate.now().plusDays(30).toString());
-        caseData.put("applicant1AppliedForFinalOrderFirst", "Yes");
-        caseData.put("applicant2AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant1AppliedForFinalOrderFirst", "No");
+        caseData.put("applicant2AppliedForFinalOrderFirst", "Yes");
         caseData.put("applicant1LanguagePreferenceWelsh", YES);
         caseData.put("applicant2LanguagePreferenceWelsh", YES);
 
@@ -178,6 +180,8 @@ public class ApplyForFinalOrderFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(RESPONSE));
+        jsonDocument.set("data.applicant2AppliedForFinalOrderFirst", "Yes");
+        jsonDocument.set("data.applicant1AppliedForFinalOrderFirst", "No");
         jsonDocument.set("data.applicationType", "jointApplication");
         jsonDocument.set("state", "FinalOrderRequested");
         jsonDocument.set("data.applicant1LanguagePreferenceWelsh", "Yes");
