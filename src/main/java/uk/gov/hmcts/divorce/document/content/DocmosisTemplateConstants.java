@@ -199,6 +199,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";
+    public static final String ADDRESS_BASED_OVERSEAS = "isBasedOverseas";
 
     private DocmosisTemplateConstants() {
     }
