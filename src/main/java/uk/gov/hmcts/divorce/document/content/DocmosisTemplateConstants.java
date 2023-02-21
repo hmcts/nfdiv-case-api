@@ -84,7 +84,6 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
     public static final String APPLICANT_2_SOLICITOR_FIRM_NAME = "applicant2SolicitorFirmName";
     public static final String APPLICANT_2_SOLICITOR_ADDRESS = "applicant2SolicitorAddress";
-    public static final String APPLICANT_1_SOLICITOR_ADDRESS = "applicant1SolicitorAddress";
     public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
