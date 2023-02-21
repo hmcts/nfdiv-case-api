@@ -38,6 +38,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
@@ -52,6 +53,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -309,6 +311,8 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, YES);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.setIsJudicialSeparation(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -319,6 +323,45 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         verifyInteractions(caseData, templateContent, NFD_NOP_APP1_SOLICITOR_JS_SOLE);
         verifyNoMoreInteractions(caseDataDocumentService);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGenerateA2WhenSoleWithAppRepresentedAndPersonalOrSolicitorServiceAndNonJS() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UK").build());
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_AS2_SOLE_APP1_SOL_SS);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldGeneratePersonalSolicitorServiceWhenSoleWithAppRepresentedAndPersonalOrSolicitorServiceJudicialSeparation() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, YES);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("UAE").build());
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setIsJudicialSeparation(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
