@@ -10,18 +10,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter.NAME;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter.CIVIL_PARTNERSHIP_LEGALLY_ENDED;
 import static uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter.DIVORCED_OR_CP_LEGALLY_ENDED;
@@ -36,10 +35,20 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
@@ -52,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class GenerateSwitchToSoleConditionalOrderLetterTest {
@@ -64,6 +74,9 @@ public class GenerateSwitchToSoleConditionalOrderLetterTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleConditionalOrderLetter;
@@ -90,7 +103,8 @@ public class GenerateSwitchToSoleConditionalOrderLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put(FIRST_NAME, respondent.getFirstName());
+        templateContent.put(LAST_NAME, respondent.getLastName());
         templateContent.put(ADDRESS, AddressUtil.getPostalAddress(APPLICANT_ADDRESS));
         templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, "husband");
@@ -98,7 +112,13 @@ public class GenerateSwitchToSoleConditionalOrderLetterTest {
         templateContent.put(DIVORCED_OR_CP_LEGALLY_ENDED, YOU_ARE_DIVORCED);
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
         templateContent.put(THE_APPLICATION, DIVORCE);
+        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference()));
         when(commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()))
             .thenReturn("husband");
 
@@ -137,7 +157,8 @@ public class GenerateSwitchToSoleConditionalOrderLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put(FIRST_NAME, respondent.getFirstName());
+        templateContent.put(LAST_NAME, respondent.getLastName());
         templateContent.put(ADDRESS, AddressUtil.getPostalAddress(APPLICANT_ADDRESS));
         templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, "civil partner");
@@ -145,7 +166,13 @@ public class GenerateSwitchToSoleConditionalOrderLetterTest {
         templateContent.put(DIVORCED_OR_CP_LEGALLY_ENDED, CIVIL_PARTNERSHIP_LEGALLY_ENDED);
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         templateContent.put(THE_APPLICATION, APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP);
+        templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference()));
         when(commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()))
             .thenReturn("civil partner");
 
