@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -28,6 +29,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
@@ -48,6 +51,8 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
 
+    @Mock
+    private CommonContent commonContent;
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -93,15 +98,18 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant1(), ENGLISH)).thenReturn("husband");
+
         final Map<String, Object> expectedTemplateContent = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         expectedTemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS);
         expectedTemplateContent.put(APPLICANT_1_FULL_NAME, "test first name test last name");
-        expectedTemplateContent.put(APPLICANT_2_FULL_NAME, "test first name test last name");
+        expectedTemplateContent.put(RESPONDENT_FULL_NAME, "test first name test last name");
 
         expectedTemplateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriage");
+        expectedTemplateContent.put(RELATION, "husband");
 
         expectedTemplateContent.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
 
@@ -163,13 +171,16 @@ class JudicialSeparationSwitchToSoleSolicitorContentTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(applicant.getLanguagePreference()));
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant1(), ENGLISH)).thenReturn("husband");
+
         final Map<String, Object> expectedTemplateContent = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         expectedTemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         expectedTemplateContent.put(RESPONDENT_SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS);
         expectedTemplateContent.put(APPLICANT_1_FULL_NAME, "test first name test last name");
-        expectedTemplateContent.put(APPLICANT_2_FULL_NAME, "test first name test last name");
+        expectedTemplateContent.put(RESPONDENT_FULL_NAME, "test first name test last name");
+        expectedTemplateContent.put(RELATION, "husband");
         expectedTemplateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriage");
         expectedTemplateContent.put(SOLICITOR_REFERENCE, TEST_REFERENCE);
         expectedTemplateContent.put(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME);

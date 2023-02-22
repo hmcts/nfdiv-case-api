@@ -131,7 +131,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
-            if (YES.equals(caseData.getIsJudicialSeparation())) {
+            if (caseData.isJudicialSeparationCase()) {
 
                 if (caseData.getApplicant2().isRepresented()) {
 
