@@ -19,7 +19,7 @@ class UpdateApplicant2OfflineTest {
     private UpdateApplicant2Offline updateApplicant2Offline;
 
     @Test
-    void shouldSetConfirmReadPetitionFields() {
+    void shouldSetApplicant2OfflineToYes() {
 
         final CaseData caseData = caseData();
 
