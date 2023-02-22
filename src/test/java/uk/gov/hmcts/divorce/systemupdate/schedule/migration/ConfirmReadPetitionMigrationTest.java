@@ -154,7 +154,8 @@ class ConfirmReadPetitionMigrationTest {
             updateConfirmReadPetitionFields,
             user,
             SERVICE_AUTHORIZATION
-        );    }
+        );
+    }
 
 
     @Test
