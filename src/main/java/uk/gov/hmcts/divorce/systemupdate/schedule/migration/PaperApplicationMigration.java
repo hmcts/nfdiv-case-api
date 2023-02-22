@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.UpdateApplicant2Offline;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -23,6 +24,9 @@ public class PaperApplicationMigration implements Migration {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private UpdateApplicant2Offline updateApplicant2Offline;
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
@@ -53,11 +57,17 @@ public class PaperApplicationMigration implements Migration {
     }
 
     private void setApplicant2Offline(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
-        final Long caseId = caseDetails.getId();
+        final String caseId = caseDetails.getId().toString();
 
         try {
-            caseDetails.getData().put("applicant2Offline", YesOrNo.YES);
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
+            ccdUpdateService.submitEventWithRetry(
+                caseId,
+                SYSTEM_MIGRATE_CASE,
+                updateApplicant2Offline,
+                user,
+                serviceAuthorization
+            );
+
             log.info("Set applicant2Offline field to Yes successfully for case id: {}", caseId);
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseId);
