@@ -77,7 +77,6 @@ public class SystemProgressHeldCasesTask implements Runnable {
         try {
             log.info("Case id {} has been in holding state for > {} days hence moving state to AwaitingConditionalOrder",
                 caseDetails.getId(), holdingPeriodService.getHoldingPeriodInDays());
-            caseDetails.getData().put(DUE_DATE, null);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
