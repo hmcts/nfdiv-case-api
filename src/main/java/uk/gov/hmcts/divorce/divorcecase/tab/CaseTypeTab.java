@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -411,7 +412,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderRequested,
                 FinalOrderPending,
                 FinalOrderOverdue,
-                FinalOrderComplete))
+                FinalOrderComplete,
+                RespondentFinalOrderRequested))
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
