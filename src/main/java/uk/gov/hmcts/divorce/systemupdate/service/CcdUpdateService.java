@@ -54,7 +54,7 @@ public class CcdUpdateService {
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
 
         try {
-            startAndSubmitEventForCaseworkers(caseDetails, eventId, serviceAuth, caseId, userId, authorization);
+            startAndSubmitEventForCaseworkers(eventId, serviceAuth, caseId, userId, authorization);
         } catch (final FeignException e) {
 
             final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
@@ -200,8 +200,7 @@ public class CcdUpdateService {
         );
     }
 
-    private void startAndSubmitEventForCaseworkers(final CaseDetails caseDetails,
-                                                   final String eventId,
+    private void startAndSubmitEventForCaseworkers(final String eventId,
                                                    final String serviceAuth,
                                                    final String caseId,
                                                    final String userId,
@@ -220,7 +219,7 @@ public class CcdUpdateService {
             startEventResponse,
             DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
             DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-            caseDetails.getData());
+            startEventResponse.getCaseDetails().getData());
 
         coreCaseDataApi.submitEventForCaseWorker(
             authorization,

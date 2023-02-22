@@ -213,7 +213,7 @@ class CcdUpdateServiceTest {
                 startEventResponse,
                 DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
                 DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-                caseData);
+                startEventResponse.getCaseDetails().getData());
 
         final CcdManagementException exception = assertThrows(
             CcdManagementException.class,
@@ -439,6 +439,7 @@ class CcdUpdateServiceTest {
         return StartEventResponse.builder()
             .eventId(SYSTEM_PROGRESS_HELD_CASE)
             .token("startEventToken")
+            .caseDetails(getCaseDetails(new HashMap<>()))
             .build();
     }
 
