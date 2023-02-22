@@ -21,7 +21,8 @@ public class CorrectRelationshipDetails implements CcdPageConfiguration {
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
             .done()
-            .mandatory(CaseData::getDivorceOrDissolution)
+            .mandatoryWithLabel(CaseData::getDivorceOrDissolution,
+                "Divorce (Marriage/Judicial Separation) or Dissolution (Civil Partnership/Separation)?")
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getScreenHasMarriageCert,
