@@ -305,8 +305,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
 
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())
+        } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
 
             log.info(

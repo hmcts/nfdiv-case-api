@@ -1093,4 +1093,24 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 .build()
             ).build();
     }
+
+    @Test
+    void shouldNotTriggerSwitchToSoleEventIfD36OrFOD36AndNotSwitchToSoleSelected() {
+        final CaseData caseData = CaseData.builder()
+                .documents(CaseDocuments.builder()
+                        .typeOfDocumentAttached(FO_D36)
+                        .build())
+                .finalOrder(FinalOrder.builder().d36ApplicationType(JOINT).build())
+                .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
 }

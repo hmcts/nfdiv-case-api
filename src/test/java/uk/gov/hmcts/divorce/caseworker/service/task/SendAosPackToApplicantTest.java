@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -82,6 +83,7 @@ class SendAosPackToApplicantTest {
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -90,6 +92,25 @@ class SendAosPackToApplicantTest {
         sendAosPackToApplicant.apply(caseDetails);
 
         verify(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendAosLetterToApplicantIfJudicialSeparationIfNotCourtServiceSelected() {
+        final var caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosPackPrinter);
     }
 }
