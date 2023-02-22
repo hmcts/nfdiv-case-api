@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_ADDRESS;
@@ -287,7 +288,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 .application(Application.builder()
                         .issueDate(APPLICATION_ISSUE_DATE)
                         .build())
-                .isJudicialSeparation(YES)
+                .supplementaryCaseType(JUDICIAL_SEPARATION)
                 .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");

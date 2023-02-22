@@ -356,7 +356,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 

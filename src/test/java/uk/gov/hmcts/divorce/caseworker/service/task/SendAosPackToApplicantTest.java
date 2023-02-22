@@ -100,7 +100,7 @@ class SendAosPackToApplicantTest {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setSolicitorRepresented(NO);
 

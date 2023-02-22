@@ -137,7 +137,7 @@ public class NoticeOfProceedingSolicitorContent {
             );
         }
 
-        if (YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
             templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1Solicitor.getAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
