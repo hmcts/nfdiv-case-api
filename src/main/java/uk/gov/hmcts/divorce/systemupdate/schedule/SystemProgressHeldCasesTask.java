@@ -46,8 +46,6 @@ public class SystemProgressHeldCasesTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    private static final String DUE_DATE = "dueDate";
-
     @Override
     public void run() {
         log.info("SystemProgressHeldCasesTask scheduled task started");
