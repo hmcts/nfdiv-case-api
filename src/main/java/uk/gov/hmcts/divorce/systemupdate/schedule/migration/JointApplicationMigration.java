@@ -25,7 +25,7 @@ public class JointApplicationMigration implements Migration {
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
-    private RemoveAccessCode removeAccessCode;
+    private RemoveAccessCode removeAccessCodeTask;
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
@@ -48,7 +48,7 @@ public class JointApplicationMigration implements Migration {
             ccdUpdateService.submitEventWithRetry(
                 caseId,
                 SYSTEM_MIGRATE_CASE,
-                removeAccessCode,
+                removeAccessCodeTask,
                 user,
                 serviceAuthorization
             );
