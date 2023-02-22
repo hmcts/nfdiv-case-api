@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.UpdateApplicant2Offline;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
