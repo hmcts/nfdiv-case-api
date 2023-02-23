@@ -7,7 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.service.task.ProgressFinalOrderState;
+import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderState;
+import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -34,7 +35,10 @@ class ApplyForFinalOrderServiceTest {
     private SetFinalOrderFieldsAsApplicant2 setFinalOrderFieldsAsApplicant2;
 
     @Mock
-    private ProgressFinalOrderState progressFinalOrderState;
+    private ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
+
+    @Mock
+    private ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
 
     @Test
     void shouldRunCorrectTasksForApplyForFinalOrderAsApplicant1() {
@@ -42,12 +46,12 @@ class ApplyForFinalOrderServiceTest {
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
 
         when(setFinalOrderFieldsAsApplicant1.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(progressApplicant1FinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         applyForFinalOrderService.applyForFinalOrderAsApplicant1(caseDetails);
 
         verify(setFinalOrderFieldsAsApplicant1).apply(caseDetails);
-        verify(progressFinalOrderState).apply(caseDetails);
+        verify(progressApplicant1FinalOrderState).apply(caseDetails);
     }
 
     @Test
@@ -56,12 +60,12 @@ class ApplyForFinalOrderServiceTest {
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
 
         when(setFinalOrderFieldsAsApplicant2.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(progressFinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(progressApplicant2FinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         applyForFinalOrderService.applyForFinalOrderAsApplicant2(caseDetails);
 
         verify(setFinalOrderFieldsAsApplicant2).apply(caseDetails);
-        verify(progressFinalOrderState).apply(caseDetails);
+        verify(progressApplicant2FinalOrderState).apply(caseDetails);
     }
 
     @Test
