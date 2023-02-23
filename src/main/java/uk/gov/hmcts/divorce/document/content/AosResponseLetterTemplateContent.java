@@ -104,7 +104,7 @@ public class AosResponseLetterTemplateContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, END_CP_SERVICE);
         }
 
-        if (YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
             templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
             templateContent.put(IS_DIVORCE, caseData.isDivorce());

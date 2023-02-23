@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -255,15 +256,15 @@ public class AwaitingAmendedApplicationPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
-            .applicant1(Applicant.builder().solicitorRepresented(YesOrNo.YES).languagePreferenceWelsh(NO).build())
+            .applicant1(Applicant.builder().solicitorRepresented(YES).languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .documents(
                 CaseDocuments.builder()
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .application(Application.builder().newPaperCase(YesOrNo.YES).build())
-            .isJudicialSeparation(YesOrNo.YES)
+            .application(Application.builder().newPaperCase(YES).build())
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
