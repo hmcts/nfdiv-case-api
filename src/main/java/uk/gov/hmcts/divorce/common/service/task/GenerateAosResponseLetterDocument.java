@@ -114,7 +114,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                     }
                 }
             }
-            return caseDetails;
         }
+        return caseDetails;
     }
 }
