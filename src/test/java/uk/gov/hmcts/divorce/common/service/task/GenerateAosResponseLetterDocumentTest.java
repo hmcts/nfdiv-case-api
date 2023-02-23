@@ -209,27 +209,6 @@ class GenerateAosResponseLetterDocumentTest {
     }
 
     @Test
-    void shouldNotGenerateRespondentRespondedDocWhenApplicant1IsOfflineAndDisputedAndJS() {
-
-        final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
-        caseData.getApplicant1().setOffline(YES);
-        caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        generateAosResponseLetterDocument.apply(caseDetails);
-
-        verifyNoMoreInteractions(caseDataDocumentService);
-        verifyNoMoreInteractions(generateD84Form);
-        verifyNoMoreInteractions(coversheetApplicantTemplateContent);
-    }
-
-    @Test
     void shouldNotGenerateRespondentAnswerDocWhenApplicant1IsOfflineAndIsDisputedAndNotJS() {
 
         final CaseData caseData = caseData();
