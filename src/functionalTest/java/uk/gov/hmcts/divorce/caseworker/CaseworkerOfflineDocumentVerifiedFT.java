@@ -31,6 +31,10 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-sol-disputed-about-to-submit.json";
     private static final String CASEWORKER_D10_JS_SOL_DISPUTED_SUBMITTED_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-sol-disputed-submitted.json";
+    private static final String CASEWORKER_D10_JS_DISPUTED_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-disputed-about-to-submit.json";
+    private static final String CASEWORKER_D10_JS_DISPUTED_SUBMITTED_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-disputed-submitted.json";
 
     @Test
     public void shouldReclassifyScannedDocumentsIfD84Selected() throws IOException {
@@ -72,6 +76,30 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     @Test
     public void shouldSendAosLetterForApp1SolJSDisputedForSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_SOL_DISPUTED_SUBMITTED_REQUEST);
+        caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
+        caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
+        caseData.put("dueDate", "2022-01-18");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendAosLetterForJSDisputed() throws IOException {
+        final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_DISPUTED_REQUEST);
+        caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
+        caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
+        caseData.put("dueDate", "2022-01-18");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendAosLetterForJSDisputedForSubmitted() throws IOException {
+        final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_DISPUTED_SUBMITTED_REQUEST);
         caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
         caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
         caseData.put("dueDate", "2022-01-18");
