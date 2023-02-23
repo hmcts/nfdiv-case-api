@@ -88,32 +88,33 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                             AOS_RESPONSE_LETTER_DOCUMENT_NAME
                         );
                     }
-            } else {
-                if (acknowledgementOfService.isDisputed()) {
-                    log.info("Generating aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
-                    caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                        caseData,
-                        AOS_RESPONSE_LETTER,
-                        aosResponseLetterTemplateContent.apply(caseData, caseId),
-                        caseId,
-                        RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
-                        caseData.getApplicant1().getLanguagePreference(),
-                        AOS_RESPONSE_LETTER_DOCUMENT_NAME
-                    );
                 } else {
-                    log.info("Generating aos response (undefended) letter pdf for case id: {}", caseId);
-                    caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                        caseData,
-                        AOS_RESPONSE_LETTER,
-                        aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
-                        caseId,
-                        RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
-                        caseData.getApplicant1().getLanguagePreference(),
-                        AOS_RESPONSE_LETTER_DOCUMENT_NAME
-                    );
+                    if (acknowledgementOfService.isDisputed()) {
+                        log.info("Generating aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
+                        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                            caseData,
+                            AOS_RESPONSE_LETTER,
+                            aosResponseLetterTemplateContent.apply(caseData, caseId),
+                            caseId,
+                            RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+                            caseData.getApplicant1().getLanguagePreference(),
+                            AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                        );
+                    } else {
+                        log.info("Generating aos response (undefended) letter pdf for case id: {}", caseId);
+                        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                            caseData,
+                            AOS_RESPONSE_LETTER,
+                            aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
+                            caseId,
+                            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
+                            caseData.getApplicant1().getLanguagePreference(),
+                            AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                        );
+                    }
                 }
             }
+            return caseDetails;
         }
-        return caseDetails;
     }
 }
