@@ -76,16 +76,18 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                     );
 
                 } else {
-                    log.info("Generating aos response (undefended) JS letter pdf for case id: {}", caseId);
-                    caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                        caseData,
-                        AOS_RESPONSE_LETTER,
-                        aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
-                        caseId,
-                        NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
-                        caseData.getApplicant1().getLanguagePreference(),
-                        AOS_RESPONSE_LETTER_DOCUMENT_NAME
-                    );
+                    if (caseData.getApplicant1().isRepresented()) {
+                        log.info("Generating aos response (undefended) JS letter pdf for case id: {}", caseId);
+                        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                            caseData,
+                            AOS_RESPONSE_LETTER,
+                            aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
+                            caseId,
+                            NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
+                            caseData.getApplicant1().getLanguagePreference(),
+                            AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                        );
+                    }
                 }
             } else {
                 if (acknowledgementOfService.isDisputed()) {

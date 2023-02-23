@@ -140,12 +140,13 @@ class GenerateAosResponseLetterDocumentTest {
     }
 
     @Test
-    void shouldGenerateRespondentRespondedDocWhenApplicant1IsOfflineAndUndisputedAndJS() {
+    void shouldGenerateRespondentRespondedDocWhenApplicant1SolIsOfflineAndUndisputedAndJS() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setOffline(YES);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
         caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
