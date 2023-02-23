@@ -109,7 +109,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CONFIRM_SERVICE)
-            .forStates(AwaitingService)
+            .forState(AwaitingService)
             .name("Solicitor confirm service")
             .description("Solicitor confirm service")
             .showSummary()
