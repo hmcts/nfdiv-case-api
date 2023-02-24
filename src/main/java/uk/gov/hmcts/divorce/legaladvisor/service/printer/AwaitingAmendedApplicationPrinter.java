@@ -7,6 +7,9 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
+import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -14,17 +17,23 @@ import uk.gov.hmcts.divorce.legaladvisor.service.task.GenerateCoRefusedCoverLett
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 
 @Component
 @Slf4j
@@ -42,13 +51,19 @@ public class AwaitingAmendedApplicationPrinter {
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @Autowired
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
+
+    @Autowired
     private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
+
+    @Autowired
+    private GenerateJudicialSeparationCORefusedForAmendmentCoverLetter generateJudicialSeparationCORefusedForAmendmentCoverLetter;
 
     private static final int EXPECTED_DOCUMENTS_SIZE = 4;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         generateLetters(caseData, caseId, applicant);
-        final List<Letter> currentAwaitingAmendedApplicationLetters = awaitingAmendedApplicationLetters(caseData);
+        final List<Letter> currentAwaitingAmendedApplicationLetters = awaitingAmendedApplicationLetters(caseData, applicant);
 
         if (!isEmpty(currentAwaitingAmendedApplicationLetters)
             && currentAwaitingAmendedApplicationLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
@@ -72,15 +87,23 @@ public class AwaitingAmendedApplicationPrinter {
         }
     }
 
-    private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData) {
+    private List<Letter> awaitingAmendedApplicationLetters(final CaseData caseData, final Applicant applicant) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
+        DocumentType refusalCoverLetterType = CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+        if (caseData.isJudicialSeparationCase()) {
+            refusalCoverLetterType = applicant.isRepresented()
+                ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+        }
+
         final List<Letter> refusalCoverLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+            refusalCoverLetterType
+        );
 
         final List<Letter> refusalLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
@@ -97,37 +120,69 @@ public class AwaitingAmendedApplicationPrinter {
         final Letter refusalLetter = firstElement(refusalLetters);
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
 
-        final List<Letter> awaitingClarificationLetters = new ArrayList<>();
+        final List<Letter> awaitingAmendmentLetters = new ArrayList<>();
 
         if (coversheetLetter != null) {
-            awaitingClarificationLetters.add(coversheetLetter);
+            awaitingAmendmentLetters.add(coversheetLetter);
         }
         if (refusalCoverLetter != null) {
-            awaitingClarificationLetters.add(refusalCoverLetter);
+            awaitingAmendmentLetters.add(refusalCoverLetter);
         }
         if (refusalLetter != null) {
-            awaitingClarificationLetters.add(refusalLetter);
+            awaitingAmendmentLetters.add(refusalLetter);
         }
         if (null != divorceApplicationLetter) {
-            awaitingClarificationLetters.add(divorceApplicationLetter);
+            awaitingAmendmentLetters.add(divorceApplicationLetter);
         }
 
-        return awaitingClarificationLetters;
+        return awaitingAmendmentLetters;
     }
 
     private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
-        generateCoversheet.generateCoversheet(
-            caseData,
-            caseId,
-            COVERSHEET_APPLICANT,
-            coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
-            applicant.getLanguagePreference()
-        );
-        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
-            caseData,
-            caseId,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            applicant
-        );
+
+        if (caseData.isJudicialSeparationCase()) {
+            final Map<String, Object> coverSheetTemplateContent = applicant.isRepresented()
+                ? coversheetSolicitorTemplateContent.apply(caseId, applicant)
+                : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant);
+
+            final String coverSheetTemplateId = applicant.isRepresented()
+                ? COVERSHEET_APPLICANT2_SOLICITOR
+                : COVERSHEET_APPLICANT;
+
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                coverSheetTemplateId,
+                coverSheetTemplateContent,
+                applicant.getLanguagePreference()
+            );
+
+            final String jsCoverLetterTemplateId = applicant.isRepresented()
+                ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+                : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+
+
+            generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+                caseData,
+                caseId,
+                jsCoverLetterTemplateId,
+                applicant
+            );
+        } else {
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
+                applicant.getLanguagePreference()
+            );
+
+            generateCoRefusedCoverLetter.generateAndUpdateCaseData(
+                caseData,
+                caseId,
+                REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+                applicant
+            );
+        }
     }
 }

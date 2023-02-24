@@ -432,6 +432,12 @@ public class Application {
     private YesOrNo jointApplicantNotifiedCanSwitchToSole;
 
     @CCD(
+        label = "CO Pronounced cover letters resent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo coPronouncedCoverLetterResent;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption",

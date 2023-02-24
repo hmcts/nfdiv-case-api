@@ -11,7 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.common.service.task.ProgressFinalOrderState;
+import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderState;
+import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -76,7 +77,10 @@ public class Applicant2ApplyForFinalOrderIT {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ProgressFinalOrderState progressFinalOrderState;
+    private ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
+
+    @Autowired
+    private ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;

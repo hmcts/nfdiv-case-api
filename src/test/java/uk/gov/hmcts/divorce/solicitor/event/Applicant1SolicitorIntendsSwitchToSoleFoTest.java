@@ -12,12 +12,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorIntendsToSwitchToSoleFoNotification;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.APPLICANT_1_INTENDS_TO_SWITCH_TO_SOLE_FO;
@@ -25,10 +28,17 @@ import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class Applicant1SolicitorIntendsSwitchToSoleFoTest {
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
 
     @Mock
     private Clock clock;
@@ -94,5 +104,19 @@ public class Applicant1SolicitorIntendsSwitchToSoleFoTest {
             .isEqualTo(YES);
         assertThat(response.getData().getFinalOrder().getDateApplicant1DeclaredIntentionToSwitchToSoleFo())
             .isEqualTo(LocalDate.now(clock));
+    }
+
+    @Test
+    void shouldTriggerEmailInSubmittedCallback() {
+
+        CaseData caseData = CaseData.builder().build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        applicant1SolicitorIntendsSwitchToSoleFo.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(solicitorIntendsToSwitchToSoleFoNotification, caseData, TEST_CASE_ID);
     }
 }

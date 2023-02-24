@@ -28,6 +28,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationUploadDocumen
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
@@ -181,18 +182,18 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         }
 
         String applicant1SolicitorSelectedOrgId =
-            caseData
+            Objects.requireNonNull(caseData
                 .getApplicant1()
                 .getSolicitor()
-                .getOrganisationPolicy()
+                .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
         String applicant2SolicitorSelectedOrgId =
-            caseData
+            Objects.requireNonNull(caseData
                 .getApplicant2()
                 .getSolicitor()
-                .getOrganisationPolicy()
+                .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
@@ -200,9 +201,9 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .getUserOrganisation(userAuth, authTokenGenerator.generate())
             .getOrganisationIdentifier();
 
-        if (applicant1SolicitorSelectedOrgId.equalsIgnoreCase(solicitorUserOrgId)) {
+        if (solicitorUserOrgId.equalsIgnoreCase(applicant1SolicitorSelectedOrgId)) {
             return caseData.getApplicant1().getSolicitor();
-        } else if (applicant2SolicitorSelectedOrgId.equalsIgnoreCase(solicitorUserOrgId)) {
+        } else if (solicitorUserOrgId.equalsIgnoreCase(applicant2SolicitorSelectedOrgId)) {
             return caseData.getApplicant2().getSolicitor();
         } else {
             return null;

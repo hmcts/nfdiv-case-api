@@ -12,6 +12,9 @@ import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataPro
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
@@ -24,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MARRIAGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
@@ -35,9 +39,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JURISDICTIONS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP_CY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -60,19 +66,24 @@ public class DivorceApplicationJointTemplateContent {
         final Application application = caseData.getApplication();
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
+        final boolean isWelsh = YES.equals(applicant1.getLanguagePreferenceWelsh()) && YES.equals(applicant2.getLanguagePreferenceWelsh());
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce.");
-            templateContent.put(DIVORCE_OR_DISSOLUTION, "divorce application");
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-            templateContent.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce");
+            templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, isWelsh
+                ? "am orchymyn ysgaru terfynol." : "for a final order of divorce.");
+            templateContent.put(DIVORCE_OR_DISSOLUTION, isWelsh ? "am ysgariad" : "divorce application");
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isWelsh ? MARRIAGE_CY : MARRIAGE);
+            templateContent.put(MARRIAGE_OR_RELATIONSHIP, isWelsh ? MARRIAGE_CY : MARRIAGE);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, isWelsh ? "yr ysgariad" : "the divorce");
         } else {
-            templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership.");
-            templateContent.put(DIVORCE_OR_DISSOLUTION, "application to end a civil partnership");
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-            templateContent.put(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP);
-            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership");
+            templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, isWelsh
+                ? "i ddiddymu eu partneriaeth sifil." : "for the dissolution of their civil partnership.");
+            templateContent.put(DIVORCE_OR_DISSOLUTION, isWelsh
+                ? "i ddod â phartneriaeth sifil i ben" : "application to end a civil partnership");
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isWelsh ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
+            templateContent.put(MARRIAGE_OR_RELATIONSHIP, isWelsh ? RELATIONSHIP_CY : RELATIONSHIP);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, isWelsh
+                ? "ddod â’r bartneriaeth sifil i ben" : "ending the civil partnership");
         }
 
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
@@ -89,7 +100,7 @@ public class DivorceApplicationJointTemplateContent {
         }
         if (null != applicant1.getFinancialOrder()) {
             templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_1, applicant1.getFinancialOrder().toBoolean());
-            templateContent.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant1));
+            templateContent.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant1, isWelsh));
         }
         if (null != applicant1.getLegalProceedings()) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
@@ -103,7 +114,7 @@ public class DivorceApplicationJointTemplateContent {
 
         if (null != applicant2.getFinancialOrder()) {
             templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_2, applicant2.getFinancialOrder().toBoolean());
-            templateContent.put(APPLICANT_2_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant2));
+            templateContent.put(APPLICANT_2_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant2, isWelsh));
         }
         if (null != applicant2.getLegalProceedings()) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_2, applicant2.getLegalProceedings().toBoolean());
@@ -112,7 +123,8 @@ public class DivorceApplicationJointTemplateContent {
 
         applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
 
-        templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, caseId));
+        templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(
+            application, caseId, isWelsh ? WELSH : ENGLISH));
 
         return templateContent;
     }

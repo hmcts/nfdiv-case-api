@@ -17,6 +17,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -129,5 +132,22 @@ class Applicant2ApplyForFinalOrderTest {
         assertThat(aboutToSubmitResponse.getData().getApplication().getPreviousState()).isEqualTo(AwaitingFinalOrder);
 
         verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldReturnErrorCallbackIfValidateApplyForFinalOrderFails() {
+        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        caseDetails.setState(AwaitingFinalOrder);
+
+        final List<String> errors = new ArrayList<>();
+        errors.add("Test error app2");
+
+        when(applyForFinalOrderService.validateApplyForFinalOrder(caseData, true)).thenReturn(errors);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse =
+            applicant2ApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(aboutToSubmitResponse.getErrors()).isNotEmpty();
     }
 }

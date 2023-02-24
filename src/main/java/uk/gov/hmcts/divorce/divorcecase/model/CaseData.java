@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
@@ -25,8 +26,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +40,20 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -185,6 +192,13 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
+        label = "Awaiting answer start date",
+        access = {DefaultAccess.class, CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate awaitingJsAnswerStartDate;
+
+    @CCD(
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
@@ -257,6 +271,13 @@ public class CaseData {
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
 
+    @CCD(
+        label = "Sent notifications",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    private SentNotifications sentNotifications = new SentNotifications();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
@@ -289,6 +310,11 @@ public class CaseData {
                 || YES.equals(applicant1.getUsedWelshTranslationOnSubmission())
                 || YES.equals(applicant2.getUsedWelshTranslationOnSubmission());
         }
+    }
+
+    @JsonIgnore
+    public boolean isJudicialSeparationCase() {
+        return YES.equals(this.isJudicialSeparation);
     }
 
     @JsonIgnore
@@ -423,6 +449,53 @@ public class CaseData {
             conditionalOrder.setDateAndTimeOfHearing(null);
             conditionalOrder.setPronouncementJudge(null);
             conditionalOrder.setCertificateOfEntitlementDocument(null);
+        }
+    }
+
+    @JsonIgnore
+    public void reclassifyScannedDocumentToChosenDocumentType(DocumentType documentType,
+                                                              Clock clock,
+                                                              String filename) {
+
+        Optional<ListValue<ScannedDocument>> scannedDocumentOptional =
+            emptyIfNull(documents.getScannedDocuments())
+                .stream()
+                .filter(scannedDoc -> scannedDoc.getValue().getFileName().equals(filename))
+                .findFirst();
+
+        scannedDocumentOptional.ifPresent(
+            scannedDocumentListValue ->
+                reclassifyScannedDocumentToChosenDocumentType(
+                    documentType,
+                    clock,
+                    scannedDocumentListValue.getValue())
+        );
+    }
+
+    @JsonIgnore
+    public void reclassifyScannedDocumentToChosenDocumentType(DocumentType documentType,
+                                                              Clock clock,
+                                                              ScannedDocument scannedDocument) {
+
+        DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
+            scannedDocument,
+            documentType,
+            clock
+        );
+
+        List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
+            documents.getDocumentsUploaded(),
+            divorceDocument
+        );
+
+        documents.setDocumentsUploaded(updatedDocumentsUploaded);
+
+        if (CONDITIONAL_ORDER_APPLICATION.equals(documentType)) {
+            documents.setDocumentsGenerated(
+                addDocumentToTop(documents.getDocumentsGenerated(), divorceDocument)
+            );
+            conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
+            conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
         }
     }
 }

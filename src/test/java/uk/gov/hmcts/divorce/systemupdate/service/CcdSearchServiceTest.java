@@ -25,10 +25,14 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -42,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -57,6 +62,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
@@ -90,7 +96,8 @@ class CcdSearchServiceTest {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final int from = 0;
         final int pageSize = 100;
-        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, AwaitingApplicant2Response))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
@@ -123,8 +130,10 @@ class CcdSearchServiceTest {
             .must(matchQuery(STATE, Submitted))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected1 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(PAGE_SIZE)).build();
-        final SearchResult expected2 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(1)).build();
+        final SearchResult expected1 = SearchResult.builder().total(totalCases)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
+        final SearchResult expected2 = SearchResult.builder().total(totalCases)
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -145,6 +154,47 @@ class CcdSearchServiceTest {
     }
 
     @Test
+    void shouldNotReturnDuplicateCases() {
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery(STATE, Submitted))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+
+        final List<CaseDetails> caseDetailsList = createCaseDetailsList(PAGE_SIZE, 1L);
+        final List<CaseDetails> duplicateCasesDetailsList = createCaseDetailsList(PAGE_SIZE, 1L);
+
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(caseDetailsList).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(duplicateCasesDetailsList).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            getSourceBuilder(0, PAGE_SIZE).toString()))
+            .thenReturn(searchResult1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
+            .thenReturn(searchResult2);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            getSourceBuilder(PAGE_SIZE * 2, PAGE_SIZE).toString()))
+            .thenReturn(SearchResult.builder().total(PAGE_SIZE)
+                .cases(emptyList()).build());
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
+    }
+
+    @Test
     void shouldReturnAllCasesInHolding() {
         final int totalCases = 101;
         final BoolQueryBuilder query = boolQuery()
@@ -152,8 +202,8 @@ class CcdSearchServiceTest {
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected1 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(PAGE_SIZE)).build();
-        final SearchResult expected2 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(1)).build();
+        final SearchResult expected1 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
+        final SearchResult expected2 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
 
         SearchSourceBuilder sourceBuilder1 = SearchSourceBuilder
             .searchSource()
@@ -201,8 +251,10 @@ class CcdSearchServiceTest {
         final int totalCases = 101;
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final int from = 0;
-        final SearchResult expected = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(PAGE_SIZE)).build();
-        final SearchResult expected2 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(1)).build();
+        final SearchResult expected = SearchResult.builder().total(totalCases)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
+        final SearchResult expected2 = SearchResult.builder().total(totalCases)
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery("state", AwaitingApplicant2Response))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
@@ -246,7 +298,8 @@ class CcdSearchServiceTest {
     void shouldReturnCasesWithVersionOlderThan() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -281,7 +334,8 @@ class CcdSearchServiceTest {
     void shouldReturnBulkCasesWithVersionOlderThan() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -336,11 +390,11 @@ class CcdSearchServiceTest {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
-            .cases(createCaseDetailsList(PAGE_SIZE)).build();
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
         final SearchResult searchResult2 = SearchResult.builder().total(1)
-            .cases(createCaseDetailsList(1)).build();
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
         final List<CaseDetails> expectedCases = concat(searchResult1.getCases().stream(), searchResult2.getCases().stream())
-            .collect(toList());
+            .collect(toSet()).stream().toList();
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -354,7 +408,8 @@ class CcdSearchServiceTest {
             CASE_TYPE,
             searchSourceBuilderForAwaitingPronouncementCases(100).toString()))
             .thenReturn(searchResult2);
-        when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases)).thenReturn(createConvertedCaseDetailsList(101));
+        when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases))
+            .thenReturn(createConvertedCaseDetailsList(101, 1));
 
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
@@ -363,6 +418,46 @@ class CcdSearchServiceTest {
         assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldNotReturnDuplicateCasesInStateAwaitingPronouncement() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(1)
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
+        final List<CaseDetails> expectedCases = concat(searchResult1.getCases().stream(), searchResult2.getCases().stream())
+            .collect(toSet()).stream().toList();
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetailsList1 = createConvertedCaseDetailsList(50, 1);
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetailsList2 = createConvertedCaseDetailsList(49, 51);
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetailsList3 = createConvertedCaseDetailsList(1, 101);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            searchSourceBuilderForAwaitingPronouncementCases(0).toString()))
+            .thenReturn(searchResult1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            searchSourceBuilderForAwaitingPronouncementCases(100).toString()))
+            .thenReturn(searchResult2);
+        when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases))
+            .thenReturn(Stream.of(caseDetailsList1, caseDetailsList2, caseDetailsList3)
+                .flatMap(Collection::stream)
+                .toList());
+
+        final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
+            ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+
+        assertThat(allPages.size()).isEqualTo(2);
+        assertThat(allPages.poll()).isEqualTo(caseDetailsList1);
+        assertThat(allPages.poll()).isEqualTo(Stream.of(caseDetailsList2, caseDetailsList3).flatMap(Collection::stream).toList());
+        assertThat(allPages.poll()).isNull();
     }
 
     @Test
@@ -391,9 +486,9 @@ class CcdSearchServiceTest {
         final int totalCases = 101;
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expectedSearchResult1 = SearchResult.builder().total(totalCases)
-            .cases(createCaseDetailsList(100)).build();
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
         final SearchResult expectedSearchResult2 = SearchResult.builder().total(totalCases)
-            .cases(createCaseDetailsList(1)).build();
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails =
             mock(uk.gov.hmcts.ccd.sdk.api.CaseDetails.class);
 
@@ -442,9 +537,9 @@ class CcdSearchServiceTest {
         final int totalCases = 101;
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expectedSearchResult1 = SearchResult.builder().total(totalCases)
-            .cases(createCaseDetailsList(100)).build();
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
         final SearchResult expectedSearchResult2 = SearchResult.builder().total(totalCases)
-            .cases(createCaseDetailsList(1)).build();
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails =
             mock(uk.gov.hmcts.ccd.sdk.api.CaseDetails.class);
 
@@ -498,7 +593,7 @@ class CcdSearchServiceTest {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected = SearchResult.builder()
             .total(caseReferences.size())
-            .cases(createCaseDetailsList(caseReferences.size()))
+            .cases(createCaseDetailsList(caseReferences.size(), 1L))
             .build();
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
@@ -526,7 +621,8 @@ class CcdSearchServiceTest {
     void shouldReturnJointApplicationCasesContainingAccessCodePostIssueApplication() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
 
         final QueryBuilder issueDateExist = existsQuery("data.issueDate");
         final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
@@ -562,7 +658,8 @@ class CcdSearchServiceTest {
     void shouldReturnCasesInAwaitingAosWhereConfirmReadPetitionIsYes() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
 
         final QueryBuilder confirmReadPetitionYes = matchQuery("data.confirmReadPetition", YesOrNo.YES);
         final QueryBuilder awaitingAosState = matchQuery(STATE, AwaitingAos);
@@ -594,7 +691,8 @@ class CcdSearchServiceTest {
     void shouldReturnJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
 
         final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
         final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
@@ -630,7 +728,8 @@ class CcdSearchServiceTest {
     void shouldReturnSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1L)).build();
 
         final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
         final QueryBuilder soleApplication = matchQuery("data.applicationType", "soleApplication");
@@ -664,27 +763,59 @@ class CcdSearchServiceTest {
         assertThat(searchResult.size()).isEqualTo(100);
     }
 
-    private List<CaseDetails> createCaseDetailsList(final int size) {
+    @Test
+    public void shouldReturnBulkCaseDetailsWithGivenCaseId() {
+        final User user = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().id("123").build());
+
+        when(coreCaseDataApi.readForCaseWorker(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            user.getUserDetails().getId(),
+            BulkActionCaseTypeConfig.JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            "1"
+        )).thenReturn(mock(CaseDetails.class));
+
+        uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
+            = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+
+        when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(any(CaseDetails.class)))
+            .thenReturn(bulkCaseDetails);
+
+        ccdSearchService.searchForBulkCaseById("1", user, SERVICE_AUTHORIZATION);
+
+        verify(coreCaseDataApi).readForCaseWorker(CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            user.getUserDetails().getId(),
+            BulkActionCaseTypeConfig.JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            "1");
+    }
+
+    private List<CaseDetails> createCaseDetailsList(final int size, final long idStart) {
 
         final List<CaseDetails> caseDetails = new ArrayList<>();
 
         for (int index = 0; index < size; index++) {
-            caseDetails.add(mock(CaseDetails.class));
+            caseDetails.add(CaseDetails.builder().id(idStart + index).build());
         }
 
         return caseDetails;
     }
 
     @SuppressWarnings("unchecked")
-    private List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> createConvertedCaseDetailsList(final int size) {
+    private List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> createConvertedCaseDetailsList(final int size,
+                                                                                                       final long idStart) {
 
-        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetails = new ArrayList<>();
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetailsList = new ArrayList<>();
 
         for (int index = 0; index < size; index++) {
-            caseDetails.add(mock(uk.gov.hmcts.ccd.sdk.api.CaseDetails.class));
+            final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+            caseDetails.setId(idStart + index);
+            caseDetailsList.add(caseDetails);
         }
 
-        return caseDetails;
+        return caseDetailsList;
     }
 
     private SearchSourceBuilder getSourceBuilder(final int from, final int pageSize) {

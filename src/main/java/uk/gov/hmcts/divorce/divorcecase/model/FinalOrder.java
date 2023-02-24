@@ -162,13 +162,13 @@ public class FinalOrder {
     private YesOrNo finalOrderFirstInTimeNotifiedOtherApplicantNotApplied;
 
     @CCD(
-        label = "Has applicant 1 been notified they can continue and switch to sole for final order?",
+        label = "Has applicant been notified they can continue and switch to sole for final order?",
         access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention;
 
     @CCD(
-        label = "Has applicant 2 been notified they can continue and switch to sole for final order?",
+        label = "Has applicant been notified they can continue and switch to sole for final order?",
         access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention;
@@ -216,13 +216,13 @@ public class FinalOrder {
 
     @CCD(
         label = "Applicant 2 can intend to switch to sole at final order stage",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2CanIntendToSwitchToSoleFo;
 
     @CCD(
         label = "Applicant 2 intends to switch to sole?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private Set<IntendsToSwitchToSole> applicant2IntendsToSwitchToSole;
 
@@ -256,13 +256,13 @@ public class FinalOrder {
 
     @CCD(
         label = "Does applicant 2 intend to switch to sole?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo doesApplicant2IntendToSwitchToSole;
 
     @CCD(
         label = "Date applicant 2 declared their intention to switch to sole final order to switch to sole final order",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo;
