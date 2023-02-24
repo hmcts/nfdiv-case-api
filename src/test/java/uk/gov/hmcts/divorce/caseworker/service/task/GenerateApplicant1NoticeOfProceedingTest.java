@@ -294,6 +294,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO);
         caseData.setIsJudicialSeparation(YES);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -388,14 +389,6 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE_OS_PS);
 
-        verify(generateCoversheet)
-            .generateCoversheet(
-                caseData,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
-                templateContent,
-                ENGLISH
-            );
         assertThat(result.getData()).isEqualTo(caseData);
 
     }
@@ -404,7 +397,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
     void shouldGenerateJSWhenSoleForBasedOverseas() {
         setMockClock(clock);
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         AddressGlobalUK addressGlobalOverseas = AddressGlobalUK.builder()
             .country("France")
             .postCode("75005")
@@ -420,14 +413,6 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE_OS_PS);
 
-        verify(generateCoversheet)
-            .generateCoversheet(
-                caseData,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
-                templateContent,
-                ENGLISH
-            );
         assertThat(result.getData()).isEqualTo(caseData);
 
     }

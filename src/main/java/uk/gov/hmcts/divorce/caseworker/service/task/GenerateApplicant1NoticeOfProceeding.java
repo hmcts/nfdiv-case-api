@@ -202,32 +202,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 languagePreference,
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
-        } else if (applicant1.isBasedOverseas() || caseData.getApplication().isPersonalServiceMethod()) {
-            final Map<String, Object> content;
-            log.info("Generating notice of proceedings for applicant1 JS for sole case id {} ", caseId);
-
-            content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
-            templateId = NFD_NOP_APP1_JS_SOLE_OS_PS;
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_1,
-                content,
-                caseId,
-                templateId,
-                applicant1.getLanguagePreference(),
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
-            );
-
-            log.info("Generating coversheet for Applicant1 JS respondent for sole case id {} ", caseId);
-            generateCoversheet.generateCoversheet(
-                caseData,
-                caseId,
-                COVERSHEET_APPLICANT,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant1),
-                caseData.getApplicant1().getLanguagePreference()
-            );
-
         } else {
             log.info("Generating notice of judicial separation proceedings for applicant for case id {} ", caseId);
 
@@ -236,7 +210,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 templateContent.apply(caseData, caseId, caseData.getApplicant2(), languagePreference),
                 caseId,
-                NFD_NOP_APP1_JS_SOLE,
+                caseData.getApplication().isCourtServiceMethod() ? NFD_NOP_APP1_JS_SOLE : NFD_NOP_APP1_JS_SOLE_OS_PS,
                 languagePreference,
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
