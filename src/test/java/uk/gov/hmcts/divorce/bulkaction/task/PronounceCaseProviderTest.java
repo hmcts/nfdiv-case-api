@@ -42,7 +42,6 @@ class PronounceCaseProviderTest {
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(localDateTime)
-            .pronouncementJudge("District Judge Adam")
             .build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
@@ -68,7 +67,6 @@ class PronounceCaseProviderTest {
         assertThat(resultFinalOrder.getDateFinalOrderEligibleFrom()).isEqualTo(expectedFinalOrderEligibleFrom);
         assertThat(resultFinalOrder.getDateFinalOrderNoLongerEligible()).isEqualTo(expectedFinalOrderNoLongerEligible);
         assertThat(resultFinalOrder.getDateFinalOrderEligibleToRespondent()).isEqualTo(expectedFinalOrderEligibleToRespondent);
-        assertThat(resultConditionalOrder.getPronouncementJudge()).isEqualTo("District Judge Adam");
     }
 
     @Test

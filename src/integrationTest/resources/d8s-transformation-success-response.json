@@ -7,8 +7,6 @@
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
       "applicant1HWFAppliedForFees": "No",
-      "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
       "marriageCertifiedTranslation" : "No",
       "scannedDocuments": [
         {
@@ -138,7 +136,6 @@
       "warnings": [],
       "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
       "screenHasMarriageCert": "Yes",
-      "applicant1Email": "app1test@dummy.com",
       "applicant2Email": "app2test@dummy.com",
       "applicant1SolicitorRepresented": "Yes",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",

@@ -3,17 +3,13 @@ package uk.gov.hmcts.divorce.solicitor;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.testutil.CaseDocumentAMDocument;
-import uk.gov.hmcts.divorce.testutil.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.document.domain.Document;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +36,6 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
     @Autowired
     private DocumentManagementStore documentManagementStore;
 
-    @Autowired
-    private CaseDocumentAccessManagement caseDocumentAccessManagement;
-
-    @Value("${toggle.enable_case_document_access_management}")
-    private boolean caseDocumentAccessManagementEnabled;
-
     @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
@@ -54,10 +44,12 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
         caseData.put("jurisdictionConnections", List.of(APP_1_APP_2_RESIDENT));
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
 
+        Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf", "classpath:Test.pdf");
+
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
-                .documentLink(uploadDocument())
+                .documentLink(new uk.gov.hmcts.ccd.sdk.type.Document(document.links.self.href, document.originalDocumentName, document.links.binary.href))
                 .build())
             .build();
 
@@ -74,32 +66,5 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-solicitor-update-about-to-submit.json"
             )));
-    }
-
-    private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
-        if (caseDocumentAccessManagementEnabled) {
-            CaseDocumentAMDocument document = caseDocumentAccessManagement.upload(
-                "",
-                "draft-divorce-application-1234567890123456.pdf",
-                "classpath:Test.pdf"
-            );
-            return new uk.gov.hmcts.ccd.sdk.type.Document(
-                document.links.self.href,
-                document.originalDocumentName,
-                document.links.binary.href
-            );
-        } else {
-            Document document = documentManagementStore.upload(
-                "",
-                "draft-divorce-application-1234567890123456.pdf",
-                "classpath:Test.pdf"
-            );
-
-            return new uk.gov.hmcts.ccd.sdk.type.Document(
-                document.links.self.href,
-                document.originalDocumentName,
-                document.links.binary.href
-            );
-        }
     }
 }

@@ -80,7 +80,7 @@
   <rule ref="category/java/security.xml"/>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
-      <property name="minimum" value="62.0" />
+      <property name="minimum" value="56.0" />
     </properties>
   </rule>
   <rule ref="category/java/codestyle.xml/UseUnderscoresInNumericLiterals">

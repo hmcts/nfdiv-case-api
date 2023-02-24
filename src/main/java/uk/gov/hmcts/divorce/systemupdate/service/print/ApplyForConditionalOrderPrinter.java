@@ -69,6 +69,7 @@ public class ApplyForConditionalOrderPrinter {
         } else {
             log.warn("Apply for Conditional order letters missing. Failed to send to bulk print for Case ID: {}", caseId);
         }
+
     }
 
     private List<Letter> conditionalOrderLetters(final CaseData caseData) {

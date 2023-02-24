@@ -420,22 +420,10 @@ public class Application {
     private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
-        label = "Reminder sent to Applicants indicating other party has applied for final order and their final order is awaiting",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicantsRemindedAwaitingJointFinalOrder;
-
-    @CCD(
         label = "Notification sent to Joint Applicant indicating they can switch to sole",
         access = {DefaultAccess.class}
     )
     private YesOrNo jointApplicantNotifiedCanSwitchToSole;
-
-    @CCD(
-        label = "CO Pronounced cover letters resent",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo coPronouncedCoverLetterResent;
 
     @CCD(
         label = "What would you like to reissue?",

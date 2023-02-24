@@ -49,11 +49,11 @@ class CaseworkerRetryPronounceListTest {
         details.setData(BulkActionCaseData.builder().build());
         details.setId(1L);
 
-        doNothing().when(casePronouncementService).retryPronounceCases(details);
+        doNothing().when(casePronouncementService).pronounceCases(details);
 
         SubmittedCallbackResponse submittedCallbackResponse = caseworkerRetryPronounceList.submitted(details, details);
 
         assertThat(submittedCallbackResponse).isNotNull();
-        verify(casePronouncementService).retryPronounceCases(details);
+        verify(casePronouncementService).pronounceCases(details);
     }
 }

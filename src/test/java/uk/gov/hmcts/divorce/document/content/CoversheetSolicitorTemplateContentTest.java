@@ -11,8 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -26,7 +24,7 @@ class CoversheetSolicitorTemplateContentTest {
     private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Test
-    void shouldReturnCoversheetTemplateContentForApplicant2SolicitorByDefault() {
+    void shouldReturnCoversheetTemplateContent() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
@@ -40,25 +38,6 @@ class CoversheetSolicitorTemplateContentTest {
         expectedEntries.put("caseReference", formatId(1616591401473378L));
         expectedEntries.put("solicitorName", APPLICANT_2_SOLICITOR_NAME);
         expectedEntries.put("solicitorAddress", APPLICANT_2_SOLICITOR_ADDRESS);
-
-        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
-    }
-
-    @Test
-    void shouldReturnCoversheetTemplateContentForSpecifiedApplicantSolicitor() {
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder()
-            .name(APPLICANT_1_SOLICITOR_NAME)
-            .address(APPLICANT_1_SOLICITOR_ADDRESS)
-            .build());
-
-        final Map<String, Object> result = coversheetSolicitorTemplateContent.apply(TEST_CASE_ID, caseData.getApplicant1());
-
-        Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put("caseReference", formatId(1616591401473378L));
-        expectedEntries.put("solicitorName", APPLICANT_1_SOLICITOR_NAME);
-        expectedEntries.put("solicitorAddress", APPLICANT_1_SOLICITOR_ADDRESS);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }

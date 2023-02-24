@@ -12,10 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -23,7 +20,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronounce
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -63,12 +59,6 @@ public class ConditionalOrderPronouncedPrinterTest {
             .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
             .build();
 
-    private static final ConfidentialDivorceDocument coGrantedCoversheetValueApp2 =
-        ConfidentialDivorceDocument.builder()
-            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
-            .build();
-
-
     @Test
     void shouldGenerateDivorceCoGrantedCoversheetAddressedToApplicant1IfNotRepresentedAndPrintDocs() {
 
@@ -96,24 +86,6 @@ public class ConditionalOrderPronouncedPrinterTest {
         conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
         verifyNoInteractions(bulkPrintService);
-    }
-
-    @Test
-    void shouldGenerateDivorceCoGrantedCoversheetAddressedToApplicant2WhenContactIsPrivate() {
-
-        CaseData caseData = caseDataWithContactPrivate();
-
-        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
-
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
-
-        final Print print = printCaptor.getValue();
-        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
-        assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(coGrantedCoversheetValueApp2);
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coGrantedDocValue);
     }
 
     private CaseData caseData() {
@@ -151,50 +123,6 @@ public class ConditionalOrderPronouncedPrinterTest {
             .documents(
                 CaseDocuments.builder()
                     .documentsGenerated(asList(coGrantedDoc, coGrantedCoversheet))
-                    .build()
-            )
-            .conditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.of(2022, 4, 28)).build())
-            .build();
-    }
-
-    private CaseData caseDataWithContactPrivate() {
-        final ListValue<DivorceDocument> coGrantedDoc = ListValue.<DivorceDocument>builder()
-            .value(coGrantedDocValue)
-            .build();
-
-        final ListValue<ConfidentialDivorceDocument> coGrantedCoversheet = ListValue.<ConfidentialDivorceDocument>builder()
-            .value(coGrantedCoversheetValueApp2)
-            .build();
-
-        return CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .divorceOrDissolution(DIVORCE)
-            .applicant1(
-                Applicant.builder()
-                    .firstName("Bob")
-                    .lastName("Smith")
-                    .offline(YES)
-                    .address(APPLICANT_ADDRESS)
-                    .solicitorRepresented(NO)
-                    .contactDetailsType(ContactDetailsType.PUBLIC)
-                    .solicitor(Solicitor.builder().build())
-                    .languagePreferenceWelsh(NO)
-                    .build())
-            .applicant2(
-                Applicant.builder()
-                    .firstName("Julie")
-                    .lastName("Smith")
-                    .offline(YES)
-                    .address(APPLICANT_ADDRESS)
-                    .contactDetailsType(ContactDetailsType.PRIVATE)
-                    .solicitorRepresented(NO)
-                    .solicitor(Solicitor.builder().build())
-                    .languagePreferenceWelsh(NO)
-                    .build())
-            .documents(
-                CaseDocuments.builder()
-                    .documentsGenerated(List.of(coGrantedDoc))
-                    .confidentialDocumentsGenerated(List.of(coGrantedCoversheet))
                     .build()
             )
             .conditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.of(2022, 4, 28)).build())

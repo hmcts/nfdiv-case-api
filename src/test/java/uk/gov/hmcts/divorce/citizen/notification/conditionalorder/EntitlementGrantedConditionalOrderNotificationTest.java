@@ -25,8 +25,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
@@ -118,21 +116,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldSendLettersToSoleOfflineRespondentWithCourtHearingContent() {
-        CaseData data = validCaseWithCourtHearing();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplicant2().setEmail(null);
-        data.getApplicant2().setOffline(YesOrNo.YES);
-        data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
-
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
-
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
     }
 
     @Test
@@ -286,7 +269,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant1());
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isTrue();
     }
 
@@ -306,7 +289,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, data.getApplicant2());
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isTrue();
     }
 

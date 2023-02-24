@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.service.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.print.FinalOrderGrantedPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -28,8 +27,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
@@ -70,20 +67,12 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
 
-        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
-
-        if (YesOrNo.YES.equals(caseData.getFinalOrder().getFinalOrderSwitchedToSole())) {
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
-            );
-        } else {
+        if (caseData.getApplicationType().isSole()) {
+            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                citizenTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
                 caseData.getApplicant1().getLanguagePreference()
             );
         }
@@ -98,21 +87,13 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
 
-        log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID,
-            caseData.getApplicationType().isSole() ? "respondent" : "applicant 2", caseId);
+        if (caseData.getApplicationType().isSole()) {
+            log.info(FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID, "respondent", caseId);
 
-        if (YesOrNo.YES.equals(caseData.getFinalOrder().getFinalOrderSwitchedToSole())) {
-            notificationService.sendEmail(
-                caseData.getApplicant2().getEmail(),
-                FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
-            );
-        } else {
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                citizenTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
@@ -149,6 +130,19 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             ? applicant.getSolicitor().getReference()
             : "not provided");
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
+
+        return templateVars;
+    }
+
+    private Map<String, String> citizenTemplateContent(final CaseData caseData,
+                                                         final Long caseId,
+                                                         final Applicant applicant,
+                                                         final Applicant partner) {
+        Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
+
+        //TODO: temporarily set to false, need to update when Final Order switch to sole journey is being developed
+        templateVars.put("isSwitchedToSolePartner", "false");
 
         return templateVars;
     }

@@ -2,32 +2,19 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing;
 
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import static uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
-import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 
 @Component
 @Slf4j
@@ -63,12 +50,12 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_S_FIRM_ADDRESS_LABEL = "${%s} solicitor's firm address/DX address";
     public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
     public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
-
+    
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder
             = pageBuilder
-                .page(PAGE_ID, this::midEvent)
+                .page(PAGE_ID)
                 .pageLabel(TITLE)
                 .complex(CaseData::getLabelContent)
                     .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, ALWAYS_HIDE)
@@ -139,14 +126,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
-            .done()
-            .complex(CaseData::getApplication)
-                .complex(Application::getMarriageDetails)
-                    .optional(MarriageDetails::getFormationType)
-                .done()
-                .optional(Application::getDivorceWho)
-            .done()
-            .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
@@ -193,64 +172,5 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
     private String getLabel(final String label, final Object... value) {
         return String.format(label, value);
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
-                                                                  final CaseDetails<CaseData, State> detailsBefore) {
-        CaseData caseData = details.getData();
-
-        if (!isValidCombination(caseData)) {
-            final String errorMessage = String.format(
-                """
-                You have selected the applicant gender as %s and they are divorcing their %s and they are an %s.
-                Please ensure this is correct before submitting.""",
-                caseData.getApplicant1().getGender().getLabel(),
-                caseData.getApplication().getDivorceWho().getLabel(),
-                caseData.getApplication().getMarriageDetails().getFormationType().getLabel()
-            );
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(errorMessage))
-                .build();
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
-    }
-
-    private boolean isValidCombination(final CaseData caseData) {
-
-        final Gender applicant1Gender = caseData.getApplicant1().getGender();
-        final Gender applicant2Gender = caseData.getApplicant2().getGender();
-        final WhoDivorcing divorceWho = caseData.getApplication().getDivorceWho();
-        final MarriageFormation formationType = caseData.getApplication().getMarriageDetails().getFormationType();
-
-        if (isEmpty(applicant1Gender) || isEmpty(applicant2Gender) || isEmpty(divorceWho) || isEmpty(formationType)) {
-            return true;
-        } else if (FEMALE.equals(applicant1Gender)
-            && MALE.equals(applicant2Gender)
-            && HUSBAND.equals(divorceWho)
-            && OPPOSITE_SEX_COUPLE.equals(formationType)
-        ) {
-            return true;
-        } else if (MALE.equals(applicant1Gender)
-            && FEMALE.equals(applicant2Gender)
-            && WIFE.equals(divorceWho)
-            && OPPOSITE_SEX_COUPLE.equals(formationType)
-        ) {
-            return true;
-        } else if (FEMALE.equals(applicant1Gender)
-            && FEMALE.equals(applicant2Gender)
-            && WIFE.equals(divorceWho)
-            && SAME_SEX_COUPLE.equals(formationType)
-        ) {
-            return true;
-        } else {
-            return MALE.equals(applicant1Gender)
-                && MALE.equals(applicant2Gender)
-                && HUSBAND.equals(divorceWho)
-                && SAME_SEX_COUPLE.equals(formationType);
-        }
     }
 }

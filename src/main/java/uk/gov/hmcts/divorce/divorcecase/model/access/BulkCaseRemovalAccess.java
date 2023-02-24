@@ -22,7 +22,7 @@ public class BulkCaseRemovalAccess implements HasAccessControl {
         grants.putAll(SOLICITOR, Permissions.READ);
         grants.putAll(SUPER_USER, Permissions.READ);
 
-        grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE_DELETE);
+        grants.putAll(CASE_WORKER, Permissions.READ_UPDATE_DELETE);
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
 

@@ -2,8 +2,6 @@
   "data": {
     "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
-    "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -22,7 +20,6 @@
     "applicant2ContactDetailsType": "public",
     "applicant2FinancialOrder": "No",
     "applicant2Offline": "Yes",
-    "isJudicialSeparation": "Yes",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "coScannedD84Form": {
       "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
@@ -78,5 +75,5 @@
     "dataVersion": 5,
     "warnings": []
   },
-  "state": "JSAwaitingLA"
+  "state": "AwaitingLegalAdvisorReferral"
 }

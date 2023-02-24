@@ -36,18 +36,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -93,8 +85,6 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .phoneNumber("0300 303 0642")
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
@@ -105,7 +95,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put("judicialSeparation", caseData.isJudicialSeparationCase());
+        expectedEntries.put("judicialSeparation", caseData.getIsJudicialSeparation().toBoolean());
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
 
@@ -119,11 +109,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
         expectedEntries.put("legalAdvisorComments", emptyList());
+
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
-        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 
@@ -160,8 +147,6 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             .poBox("PO Box 13226")
             .town("Harlow")
             .postcode("CM20 9UG")
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .phoneNumber("0300 303 0642")
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
@@ -172,7 +157,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
-        expectedEntries.put("judicialSeparation", caseData.isJudicialSeparationCase());
+        expectedEntries.put("judicialSeparation", caseData.getIsJudicialSeparation().toBoolean());
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
 
@@ -188,10 +173,6 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put("legalAdvisorComments", emptyList());
 
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
-        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
-        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 

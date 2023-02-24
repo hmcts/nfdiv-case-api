@@ -68,7 +68,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, Holding))
-            .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
+            .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
             .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(DISPUTE_DUE_DATE_OFFSET_DAYS, DAYS)))
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
 

@@ -64,15 +64,15 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
     public void shouldSearchForDisputeFormOverdueCases() {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, Holding))
-            .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
+            .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
             .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(disputeDueDateOffsetDays)))
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
         searchForCasesWithQuery(query)
             .forEach(caseDetails -> {
-                assertThat(caseDetails.getState()).isEqualTo(Holding.toString());
+                assertThat(caseDetails.getState().equals(Holding));
                 CaseData caseData = getCaseData(caseDetails.getData());
-                assertThat(DISPUTE_DIVORCE).isEqualTo(caseData.getAcknowledgementOfService().getHowToRespondApplication());
+                assertThat(DISPUTE_DIVORCE.getType().equals(caseData.getAcknowledgementOfService().getHowToRespondApplication()));
                 assertThat(caseData.getApplication().getIssueDate().plusDays(10)).isBeforeOrEqualTo(LocalDate.now());
                 assertThat(caseData.getAcknowledgementOfService().getApplicantNotifiedDisputeFormOverdue()).isNotEqualTo(YesOrNo.YES);
             });

@@ -35,18 +35,4 @@ public final class FileNameUtil {
             .add(localDateTime.format(FILE_NAME_DATE_TIME_FORMATTER))
             .toString();
     }
-
-    public static String formatDocumentName(
-        final Long caseId,
-        final String documentName,
-        final String applicant1Or2,
-        final LocalDateTime localDateTime
-    ) {
-        return new StringJoiner(DELIMITER)
-            .add(documentName)
-            .add(String.valueOf(caseId))
-            .add(applicant1Or2)
-            .add(localDateTime.format(FILE_NAME_DATE_TIME_FORMATTER))
-            .toString();
-    }
 }

@@ -63,7 +63,7 @@ withPipeline(type, product, component) {
       enableHighLevelDataSetup()
     }
 
-    afterAlways('test') {
+    after('test') {
       builder.gradle('jacocoTestReport')
 
       publishHTML target: [
@@ -110,18 +110,9 @@ withPipeline(type, product, component) {
         reportFiles          : "index.html",
         reportName           : "Unit Tests Report"
       ]
-
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/pmd",
-        reportFiles          : "main.html",
-        reportName           : "PMD Report"
-      ]
     }
 
-    afterAlways('functionalTest') {
+    after('functionalTest') {
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
@@ -132,7 +123,7 @@ withPipeline(type, product, component) {
       ]
     }
 
-    afterAlways('smoketest:preview') {
+    after('smoketest:preview') {
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
@@ -143,7 +134,7 @@ withPipeline(type, product, component) {
       ]
     }
 
-    afterAlways('smoketest:aat') {
+    after('smoketest:aat') {
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
@@ -154,7 +145,7 @@ withPipeline(type, product, component) {
       ]
     }
 
-    afterAlways('checkout') {
+    after('checkout') {
       builder.gradle('generateCCDConfig')
       generateDefinitions()
     }
@@ -185,7 +176,7 @@ withPipeline(type, product, component) {
         setCommonEnvVariables()
     }
 
-    afterAlways('functionalTest:aat') {
+    after('functionalTest:aat') {
         env.ENVIRONMENT="prod"
         env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
         env.CCD_DEF_NAME="prod"

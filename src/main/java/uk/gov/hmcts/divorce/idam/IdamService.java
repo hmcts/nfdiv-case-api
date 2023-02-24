@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.idam;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +8,8 @@ import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREFIX;
 
@@ -25,7 +24,7 @@ public class IdamService {
     @Autowired
     private IdamClient idamClient;
 
-    private final Cache<String, String> cache = Caffeine.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
+    private final Map<String, String> tokensMap = new ConcurrentHashMap<>();
 
     public User retrieveUser(String authorisation) {
         final String bearerToken = getBearerToken(authorisation);
@@ -37,7 +36,7 @@ public class IdamService {
     public User retrieveSystemUpdateUserDetails() {
         String clusterName = System.getenv().getOrDefault("CLUSTER_NAME", null);
 
-        if (null != clusterName && !clusterName.contains("prod")) {
+        if (null != clusterName && clusterName.contains("preview")) {
             retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
         }
 
@@ -45,12 +44,7 @@ public class IdamService {
     }
 
     private String getCachedIdamOauth2Token(String username, String password) {
-        String userToken = cache.getIfPresent(username);
-        if (userToken == null) {
-            userToken = idamClient.getAccessToken(username, password);
-            cache.put(username, userToken);
-        }
-        return userToken;
+        return tokensMap.computeIfAbsent(username, token -> idamClient.getAccessToken(username, password));
     }
 
     private String getIdamOauth2Token(String username, String password) {

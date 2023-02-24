@@ -8,12 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
-import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -27,7 +23,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,47 +97,4 @@ public class FinalOrderGrantedPrinterTest {
 
         verifyNoInteractions(bulkPrintService);
     }
-
-    @Test
-    void shouldGenerateFinalOrderAndUpdateCaseDataWhenContactIsPrivate() {
-
-        final ListValue<DivorceDocument> finalOrderGrantedLetter =
-            ListValue.<DivorceDocument>builder()
-                .value(DivorceDocument.builder()
-                    .documentType(FINAL_ORDER_GRANTED)
-                    .build())
-                .build();
-
-        final ListValue<ConfidentialDivorceDocument> finalOrderGrantedCoverLetter =
-            ListValue.<ConfidentialDivorceDocument>builder()
-                .value(ConfidentialDivorceDocument.builder()
-                    .confidentialDocumentsReceived(ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2)
-                    .build())
-                .build();
-
-        final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .contactDetailsType(ContactDetailsType.PRIVATE)
-                .build())
-            .documents(
-                CaseDocuments.builder()
-                    .documentsGenerated(List.of(finalOrderGrantedLetter))
-                    .confidentialDocumentsGenerated(List.of(finalOrderGrantedCoverLetter))
-                    .build()
-            )
-            .build();
-
-        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
-
-        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
-
-        final Print print = printCaptor.getValue();
-        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("final-order-granted-letter");
-        assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(finalOrderGrantedCoverLetter.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(finalOrderGrantedLetter.getValue());
-    }
-
 }

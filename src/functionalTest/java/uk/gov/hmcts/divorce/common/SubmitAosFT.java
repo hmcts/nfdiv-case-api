@@ -64,17 +64,4 @@ public class SubmitAosFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
-
-    @Test
-    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForOfflineApplicantWithPrivateContact() throws Exception {
-
-        final Map<String, Object> caseData = caseData(REQUEST);
-
-        caseData.put("applicant1ContactDetailsType", "private");
-        caseData.put("applicant1Offline", "Yes");
-
-        final Response response = triggerCallback(caseData, SUBMIT_AOS, ABOUT_TO_SUBMIT_URL, AosDrafted);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
 }

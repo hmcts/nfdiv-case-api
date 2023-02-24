@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChanges
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -149,7 +149,7 @@ public class Applicant2RequestChangesNotificationIT {
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
-                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH)

@@ -28,8 +28,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -89,58 +88,13 @@ public class GenerateApplyForFinalOrderDocumentTest {
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
-            caseData.getApplicant2(),
-            true
+            caseData.getApplicant2()
         );
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                FINAL_ORDER_CAN_APPLY_APP1,
-                templateContent,
-                TEST_CASE_ID,
-                FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
-            );
-    }
-
-    @Test
-    void shouldGenerateWithSoleDivorceContentApp2() {
-        setMockClock(clock);
-
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.setApplicant1(getApplicantWithAddress());
-        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        templateContent.put(FIRST_NAME, TEST_FIRST_NAME);
-        templateContent.put(LAST_NAME, TEST_LAST_NAME);
-        templateContent.put(ADDRESS, "line 1\ntown\npostcode");
-        templateContent.put(PARTNER, "husband");
-        templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-        templateContent.put(IS_JOINT, false);
-        templateContent.put(IS_DIVORCE, true);
-
-        when(commonContent.templateContentCanApplyForCoOrFo(
-            caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1(), getExpectedLocalDate())
-        ).thenReturn(templateContent);
-
-        generateApplyForFinalOrderDocument.generateApplyForFinalOrder(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant2(),
-            caseData.getApplicant1(),
-            false
-        );
-
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                FINAL_ORDER_CAN_APPLY_APP2,
+                FINAL_ORDER_CAN_APPLY,
                 templateContent,
                 TEST_CASE_ID,
                 FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
@@ -177,14 +131,13 @@ public class GenerateApplyForFinalOrderDocumentTest {
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
-            caseData.getApplicant2(),
-            true
+            caseData.getApplicant2()
         );
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                FINAL_ORDER_CAN_APPLY_APP1,
+                FINAL_ORDER_CAN_APPLY,
                 templateContent,
                 TEST_CASE_ID,
                 FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,
@@ -221,14 +174,13 @@ public class GenerateApplyForFinalOrderDocumentTest {
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
-            caseData.getApplicant2(),
-            true
+            caseData.getApplicant2()
         );
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                FINAL_ORDER_CAN_APPLY_APP1,
+                FINAL_ORDER_CAN_APPLY,
                 templateContent,
                 TEST_CASE_ID,
                 FINAL_ORDER_CAN_APPLY_TEMPLATE_ID,

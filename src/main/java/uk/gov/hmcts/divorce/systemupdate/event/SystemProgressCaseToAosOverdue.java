@@ -56,7 +56,7 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
 
         CaseData data = details.getData();
 
-        if (data.getApplicant1().isApplicantOffline()) {
+        if (data.getApplicant1().isOffline()) {
             generateAosOverdueLetterDocument.apply(details);
         }
 

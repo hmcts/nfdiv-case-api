@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.testutil;
 import com.google.common.collect.ImmutableSet;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.ResolvedCCDConfig;
-import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Search;
@@ -58,7 +57,7 @@ public final class ConfigTestUtil {
 
     @SuppressWarnings({"unchecked"})
     public static <T, S, R extends HasRole> Map<String, Event<T, R, S>> getEventsFrom(
-        final ConfigBuilder<T, S, R> configBuilder) {
+        final ConfigBuilderImpl<T, S, R> configBuilder) {
 
         return (Map<String, Event<T, R, S>>) findMethod(ConfigBuilderImpl.class, "getEvents")
             .map(method -> {

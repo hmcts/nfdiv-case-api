@@ -24,7 +24,7 @@
           "document_binary_url": "${json-unit.any-string}"
         },
         "documentFileName": "${json-unit.any-string}",
-        "documentType": "certificateOfEntitlementCoverLetterApp2"
+        "documentType": "certificateOfEntitlementCoverLetter"
       }
     }, {
       "id": "${json-unit.any-string}",

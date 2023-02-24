@@ -3,15 +3,18 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -20,13 +23,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
@@ -122,10 +126,10 @@ public class NoticeOfProceedingContent {
     public static final String CIVIL_PARTNERSHIP_DOCUMENTS = "documents to end your civil partnership";
 
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
-    public static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
+    private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
-    private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
-    private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
+    private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
+    private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
@@ -136,15 +140,30 @@ public class NoticeOfProceedingContent {
     @Autowired
     private DocmosisTemplatesConfig config;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    @Value("${court.locations.serviceCentre.serviceCentreName}")
+    private String serviceCentre;
+
+    @Value("${court.locations.serviceCentre.centreName}")
+    private String centreName;
+
+    @Value("${court.locations.serviceCentre.poBox}")
+    private String poBox;
+
+    @Value("${court.locations.serviceCentre.town}")
+    private String town;
+
+    @Value("${court.locations.serviceCentre.postCode}")
+    private String postcode;
+
+    @Value("${court.locations.serviceCentre.phoneNumber}")
+    private String phoneNumber;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference,
                                      final Applicant partner,
                                      final LanguagePreference languagePreference) {
 
-        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
+        final Map<String, Object> templateContent = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -153,14 +172,12 @@ public class NoticeOfProceedingContent {
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
-        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
-        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         if (!isNull(caseData.getDueDate())) {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         }
 
-        templateContent.put(IS_OFFLINE, caseData.getApplicant1().isApplicantOffline());
+        templateContent.put(IS_OFFLINE, caseData.getApplicant1().isOffline());
 
         templateContent.put(
             SUBMISSION_RESPONSE_DATE,
@@ -181,7 +198,7 @@ public class NoticeOfProceedingContent {
                 ? caseData.getApplicant1().getSolicitor().getName()
                 : NOT_REPRESENTED);
 
-        boolean displayEmailConfirmation = !caseData.getApplicant1().isApplicantOffline()
+        boolean displayEmailConfirmation = !caseData.getApplicant1().isOffline()
             && ObjectUtils.isNotEmpty(caseData.getApplicant1().getEmail());
 
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
@@ -209,16 +226,27 @@ public class NoticeOfProceedingContent {
         }
 
         templateContent.put(IS_RESPONDENT_BASED_IN_UK, !caseData.getApplicant2().isBasedOverseas());
-        templateContent.put(CAN_SERVE_BY_EMAIL,
-            !caseData.getApplicant1().isApplicantOffline() && !caseData.getApplicant2().isBasedOverseas());
+        templateContent.put(CAN_SERVE_BY_EMAIL, !caseData.getApplicant1().isOffline() && !caseData.getApplicant2().isBasedOverseas());
 
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
         templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
-            config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
+            config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
+
+        final var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName(centreName)
+            .serviceCentre(serviceCentre)
+            .poBox(poBox)
+            .town(town)
+            .postcode(postcode)
+            .phoneNumber(phoneNumber)
+            .build();
+
+        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }
@@ -231,7 +259,8 @@ public class NoticeOfProceedingContent {
         templateContent.put(RELATION, commonContent.getPartner(caseData, partner, languagePreference));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
+                WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(CommonContent.IS_DIVORCE, true);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
                 WELSH.equals(languagePreference) ? DIVORCE_PROCEEDINGS_CY : DIVORCE_PROCEEDINGS);
@@ -256,7 +285,8 @@ public class NoticeOfProceedingContent {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         } else {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL,
+                WELSH.equals(languagePreference) ? CONTACT_JUSTICE_GOV_UK_CY : CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
             templateContent.put(CommonContent.IS_DIVORCE, false);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS,
                 WELSH.equals(languagePreference)

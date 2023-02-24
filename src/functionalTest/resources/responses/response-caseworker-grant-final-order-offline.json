@@ -49,20 +49,6 @@
     "dateFinalOrderEligibleFrom": "2021-12-21",
     "grantedDate": "${json-unit.any-string}",
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
-    "confidentialDocumentsGenerated" : [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "${json-unit.any-string}"
-          },
-          "documentFileName": "${json-unit.any-string}",
-          "confidentialDocumentsReceived": "finalOrderGrantedCoverLetterApp1"
-        }
-      }
-    ],
     "documentsGenerated": [{
       "id": "${json-unit.any-string}",
       "value": {
@@ -84,6 +70,17 @@
         },
         "documentFileName": "${json-unit.any-string}",
         "documentType": "finalOrderGrantedCoverLetterApp2"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "documentType": "finalOrderGrantedCoverLetterApp1"
       }
     }],
     "dataVersion": 5,

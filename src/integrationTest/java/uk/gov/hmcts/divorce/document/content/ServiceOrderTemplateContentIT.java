@@ -23,7 +23,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS_CY;
@@ -64,7 +63,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
-        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put("ctscContactDetails", buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -85,7 +84,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
-        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put("ctscContactDetails", buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -95,6 +94,9 @@ public class ServiceOrderTemplateContentIT {
     public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDispensedWithServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -108,7 +110,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -119,6 +121,9 @@ public class ServiceOrderTemplateContentIT {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -132,7 +137,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -142,6 +147,9 @@ public class ServiceOrderTemplateContentIT {
     public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDeemedServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -154,7 +162,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -167,6 +175,9 @@ public class ServiceOrderTemplateContentIT {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
@@ -178,7 +189,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
-        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put("ctscContactDetails", ctscContactDetails);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -193,10 +204,12 @@ public class ServiceOrderTemplateContentIT {
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+
         assertThat(templateContent).contains(
             entry(PARTNER, "priod"),
-            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY),
-            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
+            entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY)
         );
     }
 
@@ -209,10 +222,12 @@ public class ServiceOrderTemplateContentIT {
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
+        var ctscContactDetails = buildCtscContactDetails();
+        ctscContactDetails.setEmailAddress("divorcecase@justice.gov.uk");
+
         assertThat(templateContent).contains(
             entry(PARTNER, "partner sifil"),
-            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY),
-            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
+            entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY)
         );
     }
 
@@ -240,7 +255,7 @@ public class ServiceOrderTemplateContentIT {
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .emailAddress("contactdivorce@justice.gov.uk")
+            .emailAddress("divorcecase@justice.gov.uk")
             .phoneNumber("0300 303 0642")
             .build();
     }

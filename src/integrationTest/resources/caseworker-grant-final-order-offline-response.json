@@ -2,8 +2,6 @@
   "data": {
     "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
-    "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -57,20 +55,6 @@
     "dateFinalOrderEligibleFrom": "2021-12-21",
     "grantedDate": "2022-02-15T13:39:00.000",
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
-    "confidentialDocumentsGenerated" : [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421",
-            "document_filename": "FinalOrderGrantedCoverLetter-2022-02-15:13:39.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421/binary"
-          },
-          "documentFileName": "FinalOrderGrantedCoverLetter-2022-02-15:13:39.pdf",
-          "confidentialDocumentsReceived": "finalOrderGrantedCoverLetterApp1"
-        }
-      }
-    ],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -95,11 +79,21 @@
           "documentFileName": "FinalOrderGrantedCoverLetter-2022-02-15:13:39.pdf",
           "documentType": "finalOrderGrantedCoverLetterApp2"
         }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421",
+            "document_filename": "FinalOrderGrantedCoverLetter-2022-02-15:13:39.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421/binary"
+          },
+          "documentFileName": "FinalOrderGrantedCoverLetter-2022-02-15:13:39.pdf",
+          "documentType": "finalOrderGrantedCoverLetterApp1"
+        }
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "isJudicialSeparation": "No"
-  },
-  "state": "FinalOrderComplete"
+    "warnings": []
+  }
 }

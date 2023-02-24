@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -36,8 +35,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -79,7 +76,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_MAKE_DECISION)
-            .forStates(AwaitingLegalAdvisorReferral, JSAwaitingLA, ClarificationSubmitted, LAReview)
+            .forStates(AwaitingLegalAdvisorReferral, ClarificationSubmitted)
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
@@ -138,8 +135,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         final CaseData caseData = details.getData();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
-
-        caseData.getConditionalOrder().setIsAdminClarificationSubmitted(YesOrNo.NO);
 
         State endState;
 

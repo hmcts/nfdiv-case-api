@@ -73,7 +73,7 @@ public class FinalOrder {
     }
 
     @CCD(
-        label = "Final Order granted date and time",
+        label = "Final Order granted date",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -117,24 +117,25 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
-        label = "${labelContentApplicantsOrApplicant1s} final order late explanation",
+        label = "Final order late explanation",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanation;
 
     @CCD(
-        label = "${labelContentApplicantsOrApplicant1s} final order late explanation (translated)",
+        label = "Final order late explanation",
         access = {DefaultAccess.class}
     )
     private String applicant1FinalOrderLateExplanationTranslated;
 
     @CCD(
-        label = "${labelContentApplicantsOrApplicant1s} final order late explanation translated to?",
+        label = "Translated To?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
+
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -156,116 +157,10 @@ public class FinalOrder {
     private YesOrNo finalOrderReminderSentApplicant1;
 
     @CCD(
-        label = "Has the first in time applicant been notified that other applicant has not applied for the Final Order?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo finalOrderFirstInTimeNotifiedOtherApplicantNotApplied;
-
-    @CCD(
-        label = "Has applicant been notified they can continue and switch to sole for final order?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention;
-
-    @CCD(
-        label = "Has applicant been notified they can continue and switch to sole for final order?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention;
-
-    @CCD(
         label = "Has the respondent been sent a reminder to apply for the Final Order?",
         access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderReminderSentApplicant2;
-
-    @CCD(
-        label = "What application type is the D36?",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "OfflineApplicationType",
-        access = {DefaultAccess.class}
-    )
-    private OfflineApplicationType d36ApplicationType;
-
-    @CCD(
-        label = "Who is submitting the D36?",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "OfflineWhoApplying",
-        access = {DefaultAccess.class}
-    )
-    private OfflineWhoApplying d36WhoApplying;
-
-    @CCD(
-        label = "Switched to sole",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo finalOrderSwitchedToSole;
-
-
-    @CCD(
-        label = "Applicant 1 can intend to switch to sole at final order stage",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1CanIntendToSwitchToSoleFo;
-
-    @CCD(
-        label = "Applicant 1 intends to switch to sole?",
-        access = {DefaultAccess.class}
-    )
-    private Set<IntendsToSwitchToSole> applicant1IntendsToSwitchToSole;
-
-    @CCD(
-        label = "Applicant 2 can intend to switch to sole at final order stage",
-        access = {DefaultAccess.class, Applicant2Access.class}
-    )
-    private YesOrNo applicant2CanIntendToSwitchToSoleFo;
-
-    @CCD(
-        label = "Applicant 2 intends to switch to sole?",
-        access = {DefaultAccess.class, Applicant2Access.class}
-    )
-    private Set<IntendsToSwitchToSole> applicant2IntendsToSwitchToSole;
-
-    @Getter
-    @AllArgsConstructor
-    public enum IntendsToSwitchToSole implements HasLabel {
-
-        @JsonProperty("Yes")
-        I_INTEND_TO_SWITCH_TO_SOLE(
-            """
-                I intend to apply for a final order as sole applicant on behalf of my client,
-                and I want the court to notify the other applicant
-                """
-        );
-
-        private final String label;
-    }
-
-    @CCD(
-        label = "Does applicant 1 intend to switch to sole?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo doesApplicant1IntendToSwitchToSole;
-
-    @CCD(
-        label = "Date applicant 1 declared their intention to switch to sole final order to switch to sole final order",
-        access = {DefaultAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateApplicant1DeclaredIntentionToSwitchToSoleFo;
-
-    @CCD(
-        label = "Does applicant 2 intend to switch to sole?",
-        access = {DefaultAccess.class, Applicant2Access.class}
-    )
-    private YesOrNo doesApplicant2IntendToSwitchToSole;
-
-    @CCD(
-        label = "Date applicant 2 declared their intention to switch to sole final order to switch to sole final order",
-        access = {DefaultAccess.class, Applicant2Access.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
@@ -285,20 +180,5 @@ public class FinalOrder {
     @JsonIgnore
     public boolean hasFinalOrderReminderSentApplicant1() {
         return YES.equals(finalOrderReminderSentApplicant1);
-    }
-
-    @JsonIgnore
-    public boolean hasFirstInTimeApplicantBeenNotifiedOtherApplicantHasNotApplied() {
-        return YES.equals(finalOrderFirstInTimeNotifiedOtherApplicantNotApplied);
-    }
-
-    @JsonIgnore
-    public boolean hasApplicant1BeenNotifiedTheyCanContinueSwitchToSoleFO() {
-        return YES.equals(finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention);
-    }
-
-    @JsonIgnore
-    public boolean hasApplicant2BeenNotifiedTheyCanContinueSwitchToSoleFO() {
-        return YES.equals(finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention);
     }
 }

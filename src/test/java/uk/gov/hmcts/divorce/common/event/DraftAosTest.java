@@ -10,13 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
-
-import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -26,7 +23,6 @@ import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -52,9 +48,8 @@ class DraftAosTest {
 
     @Test
     void shouldCallAddMiniApplicationAndReturnCaseDataOnAboutToStart() {
-        final CaseData expectedCaseData = CaseData.builder().build();
-        expectedCaseData.setApplication(Application.builder().issueDate(LocalDate.of(2022, 1, 1)).build());
 
+        final CaseData expectedCaseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> updateCaseDetails = new CaseDetails<>();
         caseDetails.setData(expectedCaseData);
@@ -96,16 +91,15 @@ class DraftAosTest {
     }
 
     @Test
-    void shouldThrowErrorAndReturnCaseDataOnAboutToStartIfAosHasAlreadyBeenDrafted() {
+    void shouldThrowErrorAndReturnCaseDataOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder().build();
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .confirmReadPetition(YES)
             .build();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
-        caseData.setApplication(Application.builder().issueDate(LocalDate.of(2022, 1, 1)).build());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(AosDrafted);
+        caseDetails.setState(AwaitingConditionalOrder);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
 
@@ -113,20 +107,5 @@ class DraftAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "The Acknowledgement Of Service has already been drafted.");
-    }
-
-    @Test
-    void shouldThrowErrorAndReturnCaseDataOnAboutToStartIfApplicationHasNotBeenIssuedYet() {
-        final CaseData caseData = CaseData.builder().build();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
-
-        assertThat(response.getData()).isSameAs(caseData);
-        assertThat(response.getErrors())
-            .containsExactly(
-                "You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
     }
 }

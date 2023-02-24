@@ -21,8 +21,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICA
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY;
 
 @Component
 @Slf4j
@@ -40,11 +39,11 @@ public class ApplyForFinalOrderPrinter {
     public static final String LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK = "apply-for-final-order-pack";
     private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
-    public void sendLettersToApplicant1Offline(final CaseData caseData, final Long caseId, final Applicant applicant) {
+    public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
 
         generateFinalOrderCoversheet(caseData, caseId, applicant);
 
-        final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData, true);
+        final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData);
 
         if (!isEmpty(finalOrderLettersToSend) && finalOrderLettersToSend.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
@@ -62,44 +61,15 @@ public class ApplyForFinalOrderPrinter {
 
     }
 
-    public void sendLettersToApplicant2Offline(final CaseData caseData, final Long caseId, final Applicant applicant) {
-
-        generateFinalOrderCoversheet(caseData, caseId, applicant);
-
-        final List<Letter> finalOrderLettersToSend = finalOrderLetters(caseData, false);
-
-        if (!isEmpty(finalOrderLettersToSend) && finalOrderLettersToSend.size() == EXPECTED_DOCUMENTS_SIZE) {
-            final String caseIdString = caseId.toString();
-            final Print print = new Print(
-                finalOrderLettersToSend,
-                caseIdString,
-                caseIdString,
-                LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK);
-
-            final UUID letterId = bulkPrintService.print(print);
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
-        } else {
-            log.warn("Apply for Final order letters missing. Failed to send to bulk print for Case ID: {}", caseId);
-        }
-
-    }
-
-    private List<Letter> finalOrderLetters(final CaseData caseData, boolean isApplicant1) {
+    private List<Letter> finalOrderLetters(final CaseData caseData) {
 
         final List<Letter> coversheetLetters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),
             COVERSHEET);
 
-        final List<Letter> canApplyFinalOrderLetters;
-        if (isApplicant1) {
-            canApplyFinalOrderLetters = lettersWithDocumentType(
-                caseData.getDocuments().getDocumentsGenerated(),
-                FINAL_ORDER_CAN_APPLY_APP1);
-        } else {
-            canApplyFinalOrderLetters = lettersWithDocumentType(
-                caseData.getDocuments().getDocumentsGenerated(),
-                FINAL_ORDER_CAN_APPLY_APP2);
-        }
+        final List<Letter> canApplyFinalOrderLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            FINAL_ORDER_CAN_APPLY);
 
         final List<Letter> d36Letters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),

@@ -1,8 +1,6 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicationType": "soleApplication",
     "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "John",

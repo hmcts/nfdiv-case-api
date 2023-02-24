@@ -6,8 +6,6 @@
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FinancialOrder": "No",
     "divorceWho": "wife",
-    "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
     "marriageFormationType": "oppositeSexCouple",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "solPaymentHowToPay": "feePayByAccount",

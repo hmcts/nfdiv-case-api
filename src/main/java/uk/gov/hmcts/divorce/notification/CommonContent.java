@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
-import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.LocalDate;
@@ -93,7 +92,6 @@ public class CommonContent {
     public static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
     public static final String CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS = "CO pronouncement date plus 43 days plus 3 months";
     public static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
-    public static final String DATE_PLUS_14_DAYS = "date plus 14 days";
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
 
@@ -118,9 +116,6 @@ public class CommonContent {
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
-
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
 
     @Autowired
     private EmailTemplatesConfig config;
@@ -266,8 +261,7 @@ public class CommonContent {
                                                 final Applicant applicant,
                                                 final Applicant partner, final LocalDate date) {
 
-        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-            applicant.getLanguagePreference());
+        final Map<String, Object> templateContent = new HashMap<>();
 
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
 

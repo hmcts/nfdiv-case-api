@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -15,8 +16,10 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Service
 @Slf4j
@@ -102,6 +105,18 @@ public class CaseDataDocumentService {
                 divorceDocumentFrom(documentInfo, documentType),
                 documentIdProvider.documentId()
             ));
+        }
+    }
+
+    private ConfidentialDocumentsReceived getConfidentialDocumentType(DocumentType documentType) {
+        if (NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)) {
+            return ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1;
+        } else if (NOTICE_OF_PROCEEDINGS_APP_2.equals(documentType)) {
+            return ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
+        } else if (GENERAL_LETTER.equals(documentType)) {
+            return ConfidentialDocumentsReceived.GENERAL_LETTER;
+        } else {
+            return ConfidentialDocumentsReceived.OTHER;
         }
     }
 }

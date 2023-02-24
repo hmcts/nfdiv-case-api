@@ -23,8 +23,6 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -66,7 +64,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(result.getData().getApplicant1().isOffline()).isTrue();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -79,7 +77,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void testSoleApplicationApp1NowOfflineSolicitor() {
+    public void testApp1NowOfflineSolicitor() {
         var caseDetails = getCaseDetails();
         caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(APPLICANT_1)
@@ -89,14 +87,9 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(result.getData().getApplicant1().isOffline()).isTrue();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
@@ -107,7 +100,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void testSoleApplicationApp1NowOnlineSolicitor() {
+    public void testApp1NowOnlineSolicitor() {
         var caseDetails = getCaseDetails();
         caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(APPLICANT_1)
@@ -117,43 +110,9 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().isOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
-            )
-        ));
-    }
-
-    @Test
-    public void testJointApplicationApp1NowOnlineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setApplicationType(JOINT_APPLICATION);
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_1)
-            .areTheyRepresented(YES)
-            .areTheyDigital(YES)
-            .build());
-
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
-        assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isEqualTo(NO);
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
@@ -173,7 +132,7 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
+        assertThat(result.getData().getApplicant2().isOffline()).isTrue();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -186,7 +145,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void testSoleApp2NowOfflineSolicitor() {
+    public void testApp2NowOfflineSolicitor() {
         var caseDetails = getCaseDetails();
         caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(APPLICANT_2)
@@ -196,14 +155,9 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
+        assertThat(result.getData().getApplicant2().isOffline()).isTrue();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
@@ -214,7 +168,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void testSoleApplicationApp2NowOnlineSolicitor() {
+    public void testApp2NowOnlineSolicitor() {
         var caseDetails = getCaseDetails();
         caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(APPLICANT_2)
@@ -224,45 +178,9 @@ class CaseworkerNoticeOfChangeTest {
 
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant2().isOffline()).isFalse();
         assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
-
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
-            )
-        ));
-    }
-
-    @Test
-    public void testJointApplicationApp2NowOnlineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setApplicationType(JOINT_APPLICATION);
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_2)
-            .areTheyRepresented(YES)
-            .areTheyDigital(YES)
-            .build());
-
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isFalse();
-        assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isEqualTo(NO);
-
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
@@ -275,7 +193,7 @@ class CaseworkerNoticeOfChangeTest {
     private CaseDetails<CaseData, State> getCaseDetails() {
         final var details = new CaseDetails<CaseData, State>();
         final var data = caseData();
-        data.setApplicationType(SOLE_APPLICATION);
+
         data.setApplicant1(applicantRepresentedBySolicitor());
         data.setApplicant2(applicantRepresentedBySolicitor());
         data.getApplicant1().setOffline(NO);

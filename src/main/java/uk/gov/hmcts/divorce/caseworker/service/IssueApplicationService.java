@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -61,9 +60,6 @@ public class IssueApplicationService {
     private GenerateD10Form generateD10Form;
 
     @Autowired
-    private GenerateD84Form generateD84Form;
-
-    @Autowired
     private SetServiceType setServiceType;
 
     @Autowired
@@ -80,8 +76,7 @@ public class IssueApplicationService {
             generateApplicant2NoticeOfProceedings,
             divorceApplicationRemover,
             generateDivorceApplication,
-            generateD10Form,
-            generateD84Form
+            generateD10Form
         ).run(caseDetails);
     }
 

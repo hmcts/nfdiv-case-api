@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
@@ -27,7 +26,6 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -159,11 +157,6 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .binaryUrl(docBinaryUrl)
             .build();
 
-        Application application = Application
-            .builder()
-            .issueDate(LocalDate.of(2022, 1, 1))
-            .build();
-
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentType(documentType)
@@ -182,7 +175,6 @@ public class SolicitorSubmitUpdateDraftAosIT {
 
         return CaseData
             .builder()
-            .application(application)
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceUnit(Court.SERVICE_CENTRE)

@@ -28,7 +28,6 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
@@ -103,7 +102,7 @@ class GenerateDivorceApplicationTest {
         final var caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .applicant1(Applicant.builder()
-                .languagePreferenceWelsh(YES)
+                .languagePreferenceWelsh(NO)
                 .build())
             .application(Application.builder()
                 .solSignStatementOfTruth(YES)
@@ -129,49 +128,6 @@ class GenerateDivorceApplicationTest {
                 TEST_CASE_ID,
                 DIVORCE_APPLICATION_JOINT,
                 ENGLISH,
-                formatDocumentName(TEST_CASE_ID, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
-            );
-
-        assertThat(result.getData()).isEqualTo(caseData);
-    }
-
-    @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithJointApplicationDocumentInWelshForJointApplication() {
-
-        setMockClock(clock);
-
-        final var caseData = CaseData.builder()
-            .applicationType(JOINT_APPLICATION)
-            .applicant1(Applicant.builder()
-                .languagePreferenceWelsh(YES)
-                .build())
-            .applicant2(Applicant.builder()
-                .languagePreferenceWelsh(YES)
-                .build())
-            .application(Application.builder()
-                .solSignStatementOfTruth(YES)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        when(divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        final var result = generateDivorceApplication.apply(caseDetails);
-
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                APPLICATION,
-                templateContent,
-                TEST_CASE_ID,
-                DIVORCE_APPLICATION_JOINT,
-                WELSH,
                 formatDocumentName(TEST_CASE_ID, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
             );
 

@@ -28,7 +28,7 @@
         "document_binary_url": "GA.pdf/binary"
       },
       "documentDateAdded": "2022-05-04",
-      "documentType": "generalApplication"
+      "documentType": "d11"
     },
     "generalApplicationFeeOrderSummary": {
       "Fees": [{
@@ -56,10 +56,10 @@
           "document_binary_url": "GA.pdf/binary"
         },
         "documentDateAdded": "2022-05-04",
-        "documentType": "generalApplication"
+        "documentType": "d11"
       }
     }],
-    "dataVersion": 5,
+    "dataVersion": 4,
     "warnings": []
   },
   "state": "GeneralApplicationReceived"

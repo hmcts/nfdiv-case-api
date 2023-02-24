@@ -34,7 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -371,12 +370,6 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> d84Form = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(D84)
-                .build())
-            .build();
-
         final ListValue<DivorceDocument> respondentAnswersDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(RESPONDENT_ANSWERS)
@@ -387,7 +380,7 @@ class AosPackPrinterTest {
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().offline(YES).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(aosResponseDoc, d84Form))
+                .documentsGenerated(singletonList(aosResponseDoc))
                 .documentsUploaded(singletonList(respondentAnswersDoc))
                 .build())
             .build();
@@ -401,10 +394,9 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
-        assertThat(print.getLetters().size()).isEqualTo(3);
+        assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(aosResponseDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
-        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(d84Form.getValue());
     }
 
     @Test
@@ -441,44 +433,6 @@ class AosPackPrinterTest {
         assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(aosResponseDoc.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
-    }
-
-    @Test
-    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivate() {
-
-        final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
-            .value(ConfidentialDivorceDocument.builder()
-                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER)
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> respondentAnswersDoc = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(RESPONDENT_ANSWERS)
-                .build())
-            .build();
-
-        final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder()
-                .contactDetailsType(ContactDetailsType.PRIVATE)
-                .build())
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(respondentAnswersDoc))
-                .confidentialDocumentsGenerated(singletonList(doc1))
-                .build())
-            .build();
-
-        when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
-
-        aosPackPrinter.sendAosResponseLetterToApplicant(caseData, TEST_CASE_ID);
-
-        final Print print = printCaptor.getValue();
-        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
-        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
     }
 

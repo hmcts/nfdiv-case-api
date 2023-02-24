@@ -28,11 +28,6 @@ public class SolicitorGeneralApplicationFT extends FunctionalTestSuite {
     private static final String VALID_ABOUT_TO_SUBMIT_RESPONSE =
         "classpath:responses/response-solicitor-general-application-about-to-submit.json";
 
-    private static final String VALID_ABOUT_TO_SUBMIT_REQUEST_TELEPHONE_PAYMENT =
-        "classpath:request/casedata/ccd-callback-solicitor-general-application-about-to-submit-telephone-payment.json";
-    private static final String VALID_ABOUT_TO_SUBMIT_RESPONSE_TELEPHONE_PAYMENT =
-        "classpath:responses/response-solicitor-general-application-about-to-submit-telephone-payment.json";
-
     /**
      * If this test fails please rerun the test as it will be most likely due to payments being made by
      * other PR's/master build with same PBA number
@@ -67,30 +62,5 @@ public class SolicitorGeneralApplicationFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE)));
-    }
-
-    @Test
-    public void shouldSubmitGeneralApplication() throws Exception {
-        CallbackRequest request = CallbackRequest
-            .builder()
-            .eventId(SOLICITOR_GENERAL_APPLICATION)
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .id(1L)
-                    .caseTypeId(CASE_TYPE)
-                    .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST_TELEPHONE_PAYMENT))
-                    .state(IssuedToBailiff.name())
-                    .build()
-            )
-            .build();
-
-        final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
-        assertThatJson(response.asString())
-            .when(TREATING_NULL_AS_ABSENT)
-            .isEqualTo(json(expectedResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE_TELEPHONE_PAYMENT)));
     }
 }

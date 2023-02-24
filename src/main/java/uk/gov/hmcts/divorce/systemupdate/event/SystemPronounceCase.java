@@ -17,23 +17,20 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 
 @Component
 @Slf4j
@@ -48,10 +45,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-
-    @Autowired
-    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
+    private GenerateConditionalOrderPronouncedDocument generateDocument;
 
     @Autowired
     private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
@@ -62,13 +56,12 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         new PageBuilder(
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
-                .forStateTransition(
-                    EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
-                    EnumSet.of(ConditionalOrderPronounced, SeparationOrderGranted))
+                .forStateTransition(EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived), ConditionalOrderPronounced)
+                .showCondition(NEVER_SHOW)
                 .name("System pronounce case")
                 .description("System pronounce case")
-                .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
-                .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR)
+                .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+                .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
                 .aboutToSubmitCallback(this::aboutToSubmit)
                 .submittedCallback(this::submitted)
         );
@@ -81,12 +74,9 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         log.info("Conditional order pronounced for Case({})", caseId);
 
-        final State state = caseData.isJudicialSeparationCase() ? SeparationOrderGranted : ConditionalOrderPronounced;
-
         generateConditionalOrderGrantedDocs(details, beforeDetails);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .state(state)
             .data(caseData)
             .build();
     }
@@ -103,29 +93,23 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private void generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,
-                                                     final CaseDetails<CaseData, State> beforeDetails) {
-
-        final CaseData newCaseData = details.getData();
+    private void generateConditionalOrderGrantedDocs(CaseDetails<CaseData, State> details,
+                                                    CaseDetails<CaseData, State> beforeDetails) {
 
         generateCoversheetDocument.apply(details);
 
-        if (newCaseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
+        if (generateDocument.getConditionalOrderGrantedDoc(details.getData()).isPresent()) {
             ConditionalOrder oldCO = beforeDetails.getData().getConditionalOrder();
-            ConditionalOrder newCO = newCaseData.getConditionalOrder();
+            ConditionalOrder newCO = details.getData().getConditionalOrder();
 
             if (!newCO.getPronouncementJudge().equals(oldCO.getPronouncementJudge())
                 || !newCO.getCourt().equals(oldCO.getCourt())
                 || !newCO.getDateAndTimeOfHearing().equals(oldCO.getDateAndTimeOfHearing())) {
-
-                caseTasks(
-                    removeExistingConditionalOrderPronouncedDocument,
-                    generateConditionalOrderPronouncedDocument
-                ).run(details);
+                generateDocument.removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
             }
 
         } else {
-            caseTasks(generateConditionalOrderPronouncedDocument).run(details);
+            generateDocument.apply(details);
         }
     }
 }

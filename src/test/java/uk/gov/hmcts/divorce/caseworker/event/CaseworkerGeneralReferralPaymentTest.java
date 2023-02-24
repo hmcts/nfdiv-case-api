@@ -20,8 +20,8 @@ import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferralPayment.CASEWORKER_GENERAL_REFERRAL_PAYMENT;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE_AMEND_PETITION;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -54,7 +54,7 @@ public class CaseworkerGeneralReferralPaymentTest {
         details.setData(caseData);
         final OrderSummary orderSummary = OrderSummary.builder().build();
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_AMEND_PETITION))
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED))
             .thenReturn(orderSummary);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalReferralPayment.aboutToStart(details);

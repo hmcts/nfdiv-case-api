@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -22,7 +23,6 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -65,7 +65,7 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
                 .must(existsQuery(FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE))
                 .filter(rangeQuery(FINAL_ORDER_ELIGIBLE_FROM_DATE)
                     .lte(LocalDate.now().minusDays(applyForFinalOrderReminderOffsetDays)))
-                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
+                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingFinalOrderNeedingReminder =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingFinalOrder);

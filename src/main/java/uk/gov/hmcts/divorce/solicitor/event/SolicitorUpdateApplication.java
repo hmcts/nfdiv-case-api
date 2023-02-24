@@ -29,7 +29,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -90,7 +89,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE)
-            .forStates(Draft, AwaitingApplicant1Response, Archived)
+            .forStates(Draft, AwaitingApplicant1Response)
             .name("Amend divorce application")
             .description("Amend divorce application")
             .showSummary()

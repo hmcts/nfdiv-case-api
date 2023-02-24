@@ -33,7 +33,6 @@ import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -175,7 +174,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder.event(SOLICITOR_SUBMIT)
-            .forStates(Draft, Applicant2Approved, Archived)
+            .forStates(Draft, Applicant2Approved)
             .name("Sign and submit")
             .description("Agree statement of truth, pay & submit")
             .showSummary()

@@ -24,14 +24,10 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorSwitchToSoleCo.APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 public class Applicant1SolicitorSwitchToSoleCoTest {
@@ -43,7 +39,7 @@ public class Applicant1SolicitorSwitchToSoleCoTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private SolicitorSwitchToSoleCoNotification solicitorSwitchToSoleCoNotification;
+    private SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
 
     @InjectMocks
     private Applicant1SolicitorSwitchToSoleCo applicant1SolicitorSwitchToSoleCo;
@@ -79,46 +75,6 @@ public class Applicant1SolicitorSwitchToSoleCoTest {
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
 
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
-    }
-
-    @Test
-    void shouldSendEmailsInSubmittedCallback() {
-        CaseData caseData = CaseData.builder().build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        applicant1SolicitorSwitchToSoleCo.submitted(caseDetails, caseDetails);
-
-        verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldKeepSameStateIfInJSAwaitingLA() {
-        final long caseId = 1L;
-        CaseData caseData = validJointApplicant1CaseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .state(JSAwaitingLA)
-            .build();
-
-        var response = applicant1SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
-    }
-
-    @Test
-    void shouldProgressStateIfNotInStateJSAwaitingLA() {
-        final long caseId = 1L;
-        CaseData caseData = validJointApplicant1CaseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .state(ConditionalOrderPending)
-            .build();
-
-        var response = applicant1SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+        verify(notificationDispatcher).send(applicant1SolicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 }

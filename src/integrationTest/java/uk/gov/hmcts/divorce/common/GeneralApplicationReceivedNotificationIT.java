@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceiv
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -68,7 +68,7 @@ public class GeneralApplicationReceivedNotificationIT {
             argThat(allOf(
                 hasEntry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net"),
                 hasEntry(IS_BAILIFF_SERVICE, NO),
-                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
                 hasEntry(PARTNER, "husband"),
@@ -97,7 +97,7 @@ public class GeneralApplicationReceivedNotificationIT {
             argThat(allOf(
                 hasEntry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net"),
                 hasEntry(IS_BAILIFF_SERVICE, NO),
-                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
+                hasEntry(COURT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK),
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
                 hasEntry(PARTNER, "gŵr"),

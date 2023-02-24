@@ -22,7 +22,7 @@ public class CaseworkerAnswerReceivedFT extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-caseworker-answer-received-submitted.json";
 
     @Test
-    public void shouldUpdateCaseDataWithNotesWhenSubmittedCallbackIsInvoked() throws Exception {
+    public void shouldUpdateCaseDataWithNotesWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST);
 
         final Response response = triggerCallback(caseData, CASEWORKER_ADD_ANSWER, SUBMITTED_URL);

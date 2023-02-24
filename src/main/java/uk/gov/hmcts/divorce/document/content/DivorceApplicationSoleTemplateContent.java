@@ -45,10 +45,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HINT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HINT_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -119,8 +115,6 @@ public class DivorceApplicationSoleTemplateContent {
         if (null != applicant1.getFinancialOrder()) {
             templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_1, applicant1.getFinancialOrder().toBoolean());
             templateContent.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant1));
-            templateContent.put(FINANCIAL_ORDER_POLICY_HEADER, FINANCIAL_ORDER_POLICY_HEADER_TEXT);
-            templateContent.put(FINANCIAL_ORDER_POLICY_HINT, FINANCIAL_ORDER_POLICY_HINT_TEXT);
         }
         if (null != applicant1.getLegalProceedings()) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());

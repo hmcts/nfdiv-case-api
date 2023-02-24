@@ -506,9 +506,8 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldSendLetterToApplicant2IfOffline() {
-        CaseData data = CaseData.builder()
-            .build();
+    void shouldSendLetterToApplicant21IfOffline() {
+        CaseData data = CaseData.builder().build();
 
         notification.sendToApplicant2Offline(data, 1234567890123456L);
 

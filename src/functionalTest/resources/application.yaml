@@ -61,9 +61,6 @@ doc_assembly:
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
 
-case_document_am:
-  url: ${CASE_DOCUMENT_AM_URL:http://ccd-case-document-am-api-aat.service.core-compute-aat.internal}
-
 prd:
   api:
     url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
@@ -86,7 +83,6 @@ submit_co:
 final_order:
   eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
   respondent_eligible_from_offset_months: ${FINAL_ORDER_RESPONDENT_ELIGIBLE_FROM_OFFSET_MONTHS:3}
-  awaiting_joint_final_order_reminder_offset_days: ${AWAITING_JOINT_FINAL_ORDER_REMINDER_OFFSET_DAYS:7}
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
@@ -103,9 +99,6 @@ applicant_2:
 respondent_solicitor:
   response_offset_days: ${RESPONDENT_SOLICITOR_RESPOND_BY_OFFSET_DAYS:10}
 
-judicial_separation_answer_overdue:
-  offset_days: ${JS_ANSWER_OVERDUE_BY_OFFSET_DAYS:14}
-
 court:
   locations:
     serviceCentre:
@@ -114,7 +107,7 @@ court:
       town: 'Harlow'
       poBox: 'PO Box 13226'
       postCode: 'CM20 9UG'
-      email: 'contactdivorce@justice.gov.uk'
+      email: 'divorcecase@justice.gov.uk'
       phoneNumber: '0300 303 0642'
 
 pba:
@@ -135,9 +128,6 @@ bulk-action:
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
-toggle:
-  enable_case_document_access_management: ${ENABLE_CDAM:true}
-  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
 
 logging:
   level:

@@ -11,6 +11,5 @@
   "applicant2LastName": "Oil",
   "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
   "solSignStatementOfTruth": "Yes",
-  "coGranted": "Yes",
-  "applicant2Email": "app2@example.com"
+  "coGranted": "Yes"
 }

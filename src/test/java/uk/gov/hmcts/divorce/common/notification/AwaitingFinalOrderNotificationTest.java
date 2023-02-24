@@ -367,7 +367,7 @@ class AwaitingFinalOrderNotificationTest {
 
         awaitingFinalOrderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(applyForFinalOrderPrinter).sendLettersToApplicant1Offline(
+        verify(applyForFinalOrderPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -380,7 +380,7 @@ class AwaitingFinalOrderNotificationTest {
 
         awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(applyForFinalOrderPrinter).sendLettersToApplicant2Offline(
+        verify(applyForFinalOrderPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant2()

@@ -21,7 +21,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,9 +72,6 @@ class ReIssueApplicationServiceTest {
     private GenerateD10Form generateD10Form;
 
     @Mock
-    private GenerateD84Form generateD84Form;
-
-    @Mock
     private ResetAosFields resetAosFields;
 
     @InjectMocks
@@ -106,7 +102,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
         expectedCaseData.getApplicant2().setOffline(NO);
 
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -131,7 +127,6 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -140,7 +135,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setOffline(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
 
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -165,7 +160,6 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -173,7 +167,7 @@ class ReIssueApplicationServiceTest {
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
 
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -217,8 +211,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setPreviousReissueOption(DIGITAL_AOS);
         expectedCaseData.getApplicant2().setOffline(NO);
 
-        assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -252,7 +245,6 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -265,7 +257,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
 
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
@@ -299,7 +291,6 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -310,7 +301,7 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
 
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);

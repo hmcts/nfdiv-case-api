@@ -25,20 +25,10 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 public class AosOverdueLetterTemplateContentTest {
@@ -48,9 +38,6 @@ public class AosOverdueLetterTemplateContentTest {
 
     @Mock
     private PaymentService paymentService;
-
-    @Mock
-    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private AosOverdueLetterTemplateContent templateContent;
@@ -70,9 +57,6 @@ public class AosOverdueLetterTemplateContentTest {
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
-
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
@@ -90,11 +74,7 @@ public class AosOverdueLetterTemplateContentTest {
             entry("deemedServiceCost", "£45.00"),
             entry("dispensedServiceCost", "£45.00"),
             entry("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk"),
-            entry("divorceOrCivilPartnershipServiceHeader", "The Divorce Service"),
-            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
-            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
+            entry("divorceOrCivilPartnershipServiceHeader", "The Divorce Service")
         );
     }
 
@@ -103,9 +83,6 @@ public class AosOverdueLetterTemplateContentTest {
         CaseData caseData = buildCaseData(DISSOLUTION);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("civil partner");
-
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -124,11 +101,7 @@ public class AosOverdueLetterTemplateContentTest {
             entry("deemedServiceCost", "£45.00"),
             entry("dispensedServiceCost", "£45.00"),
             entry("divorceOrCivilPartnershipEmail", "civilpartnership.case@justice.gov.uk"),
-            entry("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service"),
-            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
-            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
+            entry("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service")
         );
     }
 

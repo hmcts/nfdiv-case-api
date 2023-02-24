@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
@@ -48,9 +49,6 @@ public class AosOverdueLetterTemplateContent {
     @Autowired
     private PaymentService paymentService;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-
     @Value("${aos_overdue.arrange_service_offset_days}")
     private int offsetDays;
 
@@ -62,8 +60,7 @@ public class AosOverdueLetterTemplateContent {
         String bailiffServiceCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF));
         String otherServiceCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE));
 
-        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference());
+        Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());

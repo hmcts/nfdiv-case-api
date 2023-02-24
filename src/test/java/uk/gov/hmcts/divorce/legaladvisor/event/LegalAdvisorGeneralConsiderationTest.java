@@ -15,12 +15,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorGeneralReferralDecisionNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.REFUSE;
@@ -35,6 +39,12 @@ class LegalAdvisorGeneralConsiderationTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private LegalAdvisorGeneralReferralDecisionNotification notification;
 
     @InjectMocks
     private LegalAdvisorGeneralConsideration legalAdvisorGeneralConsideration;
@@ -79,6 +89,8 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseGeneralReferral.getGeneralReferralDecisionReason()).isEqualTo("approved");
         assertThat(responseData.getGeneralReferral()).hasAllNullFieldsOrPropertiesExcept("generalReferralFee");
         assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
+
+        verify(notificationDispatcher).send(notification, caseData, 12345L);
     }
 
     @Test
@@ -110,6 +122,8 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseGeneralReferral.getGeneralReferralDecisionReason()).isEqualTo("rejected");
         assertThat(responseData.getGeneralReferral()).hasAllNullFieldsOrPropertiesExcept("generalReferralFee");
         assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
+
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test

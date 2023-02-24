@@ -64,34 +64,4 @@ public class GenerateCoversheetTest {
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
             );
     }
-
-    @Test
-    void shouldGenerateCoversheetWithCustomFileName() {
-        setMockClock(clock);
-
-        CaseData caseData = new CaseData();
-        caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
-
-        Map<String, Object> templateContent = new HashMap<>();
-
-        generateCoversheet.generateCoversheet(
-            caseData,
-            TEST_CASE_ID,
-            COVERSHEET_APPLICANT2_SOLICITOR,
-            templateContent,
-            caseData.getApplicant2().getLanguagePreference(),
-            formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
-        );
-
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
-                caseData,
-                COVERSHEET,
-                templateContent,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT2_SOLICITOR,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, now(clock))
-            );
-    }
 }

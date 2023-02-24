@@ -5,8 +5,6 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
     "applicant1FinancialOrder": "No",

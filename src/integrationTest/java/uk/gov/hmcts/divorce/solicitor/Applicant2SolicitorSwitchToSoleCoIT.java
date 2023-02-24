@@ -46,7 +46,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
@@ -60,7 +59,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -120,7 +118,7 @@ public class Applicant2SolicitorSwitchToSoleCoIT {
     }
 
     @Test
-    void shouldSwitchApplicationTypeToSoleSwitchUsersDataAndGenerateConditionalOrderAnswers()
+    void shouldSwitchApplicationTypeToSoleSwitchUsersDataAndGenerateConditionalOrderAnswersAndNotifyApp1SolicitorAndApp2Solicitor()
         throws Exception {
 
         final String app1SolicitorEmail = "app1solicitor@test.com";
@@ -182,25 +180,31 @@ public class Applicant2SolicitorSwitchToSoleCoIT {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO_RESPONSE)));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(app2SolicitorEmail),
+                eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(app1SolicitorEmail),
+                eq(SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
+                anyMap(),
+                eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
-    void shouldNotifyApplicant1SolicitorAndApplicant2Solicitor()
+    void shouldSwitchApplicationTypeToSoleSwitchUsersDataAndGenerateConditionalOrderAnswersAndNotifyApp1AndApp2Solicitor()
         throws Exception {
 
-        final String app1SolicitorEmail = "app1solicitor@test.com";
         final String app2SolicitorEmail = "app2solicitor@test.com";
 
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LOCAL_DATE);
-        data.getApplicant1().setSolicitorRepresented(YES);
-        data.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .name("App1 Sol")
-                .firmName("App1 Sol Firm")
-                .email(app1SolicitorEmail)
-                .build()
-        );
+
         data.getApplicant2().setSolicitorRepresented(YES);
         data.getApplicant2().setSolicitor(
             Solicitor.builder()
@@ -210,61 +214,39 @@ public class Applicant2SolicitorSwitchToSoleCoIT {
                 .build()
         );
 
-        mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(data, APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)))
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
-        verify(notificationService)
-            .sendEmail(
-                eq(app1SolicitorEmail),
-                eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
-                anyMap(),
-                eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(
-                eq(app2SolicitorEmail),
-                eq(SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
-                anyMap(),
-                eq(ENGLISH));
-        verifyNoMoreInteractions(notificationService);
-    }
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPTWOSOLICITOR]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[APPONESOLICITOR]").build()
+            ))
+            .build();
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            "Bearer " + TEST_SYSTEM_AUTHORISATION_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(String.valueOf(TEST_CASE_ID))
+        )).thenReturn(caseRolesResponse);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("Bearer " + TEST_SYSTEM_AUTHORISATION_TOKEN, UserDetails.builder().build()));
 
-    @Test
-    void shouldNotifyApplicant1SolicitorAndApplicant2()
-        throws Exception {
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers.docx");
 
-        final String app1SolicitorEmail = "app1solicitor@test.com";
-
-        CaseData data = validJointApplicant1CaseData();
-        data.getApplication().setIssueDate(LOCAL_DATE);
-
-        data.getApplicant1().setSolicitorRepresented(YES);
-        data.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .name("App2 Sol")
-                .firmName("App2 Sol Firm")
-                .email(app1SolicitorEmail)
-                .build()
-        );
-        data.getApplicant2().setEmail(TEST_USER_EMAIL);
-
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(
-                    callbackRequest(data, APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)))
+                    callbackRequest(data, APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationService)
             .sendEmail(
-                eq(app1SolicitorEmail),
+                eq(app2SolicitorEmail),
                 eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
                 anyMap(),
                 eq(ENGLISH));
@@ -274,50 +256,6 @@ public class Applicant2SolicitorSwitchToSoleCoIT {
                 eq(PARTNER_SWITCHED_TO_SOLE_CO),
                 anyMap(),
                 eq(ENGLISH));
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldNotifyApplicant1SolicitorAndApplicant2Welsh()
-        throws Exception {
-
-        final String app1SolicitorEmail = "app1solicitor@test.com";
-
-        CaseData data = validJointApplicant1CaseData();
-        data.getApplication().setIssueDate(LOCAL_DATE);
-
-        data.getApplicant1().setSolicitorRepresented(YES);
-        data.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .name("App2 Sol")
-                .firmName("App2 Sol Firm")
-                .email(app1SolicitorEmail)
-                .build()
-        );
-        data.getApplicant2().setEmail(TEST_USER_EMAIL);
-        data.getApplicant2().setLanguagePreferenceWelsh(YES);
-
-        mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(data, APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)))
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
-
-        verify(notificationService)
-            .sendEmail(
-                eq(app1SolicitorEmail),
-                eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
-                anyMap(),
-                eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(PARTNER_SWITCHED_TO_SOLE_CO),
-                anyMap(),
-                eq(WELSH));
         verifyNoMoreInteractions(notificationService);
     }
 }

@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 
@@ -35,10 +34,9 @@ public class GenerateD10Form implements CaseTask {
         var app2 = caseData.getApplicant2();
         var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
             ? !app2.getSolicitor().hasOrgId()
-            : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isApplicantOffline();
+            : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline();
 
-        var d10Needed = caseData.getApplicationType().isSole() && (!caseData.getApplication().isCourtServiceMethod() || app2Offline
-            || YES.equals(caseData.getIsJudicialSeparation()));
+        var d10Needed = caseData.getApplicationType().isSole() && (!caseData.getApplication().isCourtServiceMethod() || app2Offline);
 
         if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {

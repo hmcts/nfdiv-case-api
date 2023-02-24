@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
@@ -31,8 +30,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
@@ -82,62 +79,6 @@ public class DocAssemblyServiceTest {
                 .templateId(ENGLISH_TEMPLATE_ID)
                 .outputType("PDF")
                 .formPayload(objectMapper.valueToTree(caseDataMap))
-                .build();
-
-        String documentUuid = UUID.randomUUID().toString();
-
-        DocAssemblyResponse docAssemblyResponse = new DocAssemblyResponse(
-            DOC_STORE_BASE_URL_PATH + documentUuid
-        );
-
-        when(docAssemblyClient.generateAndStoreDraftApplication(
-            TEST_AUTHORIZATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            docAssemblyRequest
-        )).thenReturn(docAssemblyResponse);
-
-        DocumentInfo documentInfo = docAssemblyService.renderDocument(
-            templateContent,
-            TEST_CASE_ID,
-            TEST_AUTHORIZATION_TOKEN,
-            DIVORCE_DRAFT_APPLICATION,
-            ENGLISH,
-            DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
-        );
-
-        assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
-        assertThat(documentInfo.getBinaryUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid + BINARY);
-        assertThat(documentInfo.getFilename()).isEqualTo(DRAFT_APPLICATION_FILENAME);
-
-        verify(authTokenGenerator).generate();
-        verify(docAssemblyClient).generateAndStoreDraftApplication(
-            TEST_AUTHORIZATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            docAssemblyRequest
-        );
-        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient);
-    }
-
-    @Test
-    public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrlWithCdamEnabled() {
-
-        ReflectionTestUtils.setField(docAssemblyService, "caseDocumentAccessManagementEnabled", true);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        Map<String, Object> caseDataMap = expectedCaseData();
-
-        when(docmosisTemplateProvider.templateNameFor(DIVORCE_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        DocAssemblyRequest docAssemblyRequest =
-            DocAssemblyRequest
-                .builder()
-                .templateId(ENGLISH_TEMPLATE_ID)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(caseDataMap))
-                .secureDocStoreEnabled(true)
-                .caseTypeId(CASE_TYPE)
-                .jurisdictionId(JURISDICTION)
                 .build();
 
         String documentUuid = UUID.randomUUID().toString();

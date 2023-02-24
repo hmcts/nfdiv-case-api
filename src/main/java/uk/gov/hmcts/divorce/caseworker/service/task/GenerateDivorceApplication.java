@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -16,10 +15,7 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
@@ -51,7 +47,6 @@ public class GenerateDivorceApplication implements CaseTask {
 
         final Map<String, Object> templateContent;
         final String templateId;
-        LanguagePreference languagePreference = ENGLISH;
 
         if (caseData.getApplicationType().isSole()) {
             templateContent = divorceApplicationSoleTemplateContent.apply(caseData, caseId);
@@ -59,10 +54,6 @@ public class GenerateDivorceApplication implements CaseTask {
         } else {
             templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId);
             templateId = DIVORCE_APPLICATION_JOINT;
-            if (YES.equals(caseData.getApplicant1().getLanguagePreferenceWelsh())
-                && YES.equals(caseData.getApplicant2().getLanguagePreferenceWelsh())) {
-                languagePreference = WELSH;
-            }
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -71,7 +62,7 @@ public class GenerateDivorceApplication implements CaseTask {
             templateContent,
             caseId,
             templateId,
-            languagePreference,
+            caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
         );
 

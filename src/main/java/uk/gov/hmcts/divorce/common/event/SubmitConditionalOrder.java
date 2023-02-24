@@ -83,7 +83,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
-            .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted!=\"Yes\"")
+            .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
@@ -125,8 +125,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         setIsSubmitted(appQuestions);
 
         final boolean isSole = data.getApplicationType().isSole();
-        boolean haveBothApplicantsSubmitted = !Objects.isNull(app1Questions.getSubmittedDate())
-            && !Objects.isNull(app2Questions.getSubmittedDate());
+        boolean haveBothApplicantsSubmitted = app1Questions.getStatementOfTruth() == YES && app2Questions.getStatementOfTruth() == YES;
 
         var state = isSole || haveBothApplicantsSubmitted ? AwaitingLegalAdvisorReferral : ConditionalOrderPending;
 

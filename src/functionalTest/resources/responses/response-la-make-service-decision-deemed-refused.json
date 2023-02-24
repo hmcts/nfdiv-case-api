@@ -1,8 +1,6 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "test@test.com",

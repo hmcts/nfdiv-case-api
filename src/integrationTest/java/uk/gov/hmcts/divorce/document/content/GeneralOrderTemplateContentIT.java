@@ -22,21 +22,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdv
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.PROPER_OFFICER_OF_THE_COURT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_MADE_BY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_RECITALS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -67,13 +59,9 @@ public class GeneralOrderTemplateContentIT {
         var ctscContactDetails = CtscContactDetails
             .builder()
             .centreName("HMCTS Digital Divorce and Dissolution")
-            .emailAddress("contactdivorce@justice.gov.uk")
+            .emailAddress("divorcecase@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
             .phoneNumber("0300 303 0642")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .emailAddress("contactdivorce@justice.gov.uk")
             .build();
 
         assertThat(templateContent).contains(
@@ -88,11 +76,7 @@ public class GeneralOrderTemplateContentIT {
             entry(APPLICANT_HEADING, "Applicant"),
             entry(RESPONDENT_HEADING, "Respondent"),
             entry(GENERAL_ORDER_RECITALS, "test recitals"),
-            entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
-            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
-            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
+            entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
         );
     }
 
@@ -112,13 +96,9 @@ public class GeneralOrderTemplateContentIT {
         var ctscContactDetails = CtscContactDetails
             .builder()
             .centreName("HMCTS Digital Divorce and Dissolution")
-            .emailAddress("contactdivorce@justice.gov.uk")
+            .emailAddress("divorcecase@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
             .phoneNumber("0300 303 0642")
-            .poBox("PO Box 13226")
-            .town("Harlow")
-            .postcode("CM20 9UG")
-            .emailAddress("contactdivorce@justice.gov.uk")
             .build();
 
         assertThat(templateContent).contains(
@@ -133,11 +113,7 @@ public class GeneralOrderTemplateContentIT {
             entry(APPLICANT_HEADING, "Applicant 1"),
             entry(RESPONDENT_HEADING, "Applicant 2"),
             entry(GENERAL_ORDER_RECITALS, "test recitals"),
-            entry(CTSC_CONTACT_DETAILS, ctscContactDetails),
-            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
-            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
-            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
-            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
+            entry(CTSC_CONTACT_DETAILS, ctscContactDetails)
         );
     }
 

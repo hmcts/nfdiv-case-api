@@ -23,9 +23,6 @@ public enum GeneralReferralType implements HasLabel {
     @JsonProperty("disclosureViaDwp")
     DISCLOSURE_VIA_DWP("Disclosure via DWP"),
 
-    @JsonProperty("amendApplication")
-    AMEND_APPLICATION("Amend Application"),
-
     @JsonProperty("other")
     OTHER("Other");
 

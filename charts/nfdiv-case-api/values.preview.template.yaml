@@ -51,7 +51,6 @@ ccd:
 
   ccd-api-gateway-web:
     nodejs:
-      disableKeyVaults: true
       imagePullPolicy: Always
       environment:
         ADDRESS_LOOKUP_TOKEN: ${ADDRESS_LOOKUP_TOKEN}
@@ -60,9 +59,9 @@ ccd:
         PROXY_DOCUMENT_MANAGEMENT: http://dm-store-aat.service.core-compute-aat.internal
       ingressHost: gateway-${SERVICE_FQDN}
       ingressIP: ${INGRESS_IP}
+      keyVaults: []
   ccd-data-store-api:
     java:
-      disableKeyVaults: true
       imagePullPolicy: Always
       environment:
         DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
@@ -81,17 +80,17 @@ ccd:
         IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET: ${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET}
         IDAM_DATA_STORE_SYSTEM_USER_USERNAME: ${IDAM_DATA_STORE_SYSTEM_USER_USERNAME}
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
+      keyVaults: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   am-role-assignment-service:
     java:
-      disableKeyVaults: true
       environment:
         CCD_DATA_STORE_URL: http://${SERVICE_NAME}-ccd-data-store-api
         RUN_LD_ON_STARTUP: false
+      keyVaults: []
 
   ccd-definition-store-api:
     java:
-      disableKeyVaults: true
       imagePullPolicy: Always
       environment:
         DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
@@ -99,20 +98,21 @@ ccd:
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
+      keyVaults: []
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
   ccd-user-profile-api:
     java:
-      disableKeyVaults: true
       imagePullPolicy: Always
       enviroment:
         USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
+      keyVaults: []
       ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
 
   ccd-admin-web:
     nodejs:
-      disableKeyVaults: true
       image: hmctspublic.azurecr.io/ccd/admin-web:latest
       ingressHost: admin-web-${SERVICE_FQDN}
+      keyVaults: []
       environment:
         USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
         IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
@@ -144,6 +144,7 @@ ccd:
   elasticsearch:
     nameOverride: ${SERVICE_NAME}-es
     clusterName: "es"
+    imageTag: "7.17.0"
     replicas: 1
     initResources:
       limits:
@@ -164,6 +165,13 @@ ccd:
         value: .security*,.watches,.triggered_watches,.watcher-history-*,.logstash_dead_letter,.ml*
     persistence:
       enabled: false
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: traefik
+      path: /
+      hosts:
+        - es-${SERVICE_FQDN}
 
   logstash:
     image:
@@ -238,7 +246,6 @@ nfdiv-frontend:
 aac-manage-case-assignment:
   enabled: true
   java:
-    disableKeyVaults: true
     imagePullPolicy: Always
     releaseNameOverride: ${SERVICE_NAME}-aac-manage-case-assignment
     image: hmctspublic.azurecr.io/aac/manage-case-assignment:latest
@@ -256,6 +263,7 @@ aac-manage-case-assignment:
       PRD_HOST: http://rd-professional-api-aat.service.core-compute-aat.internal
     autoscaling:
       enabled: false
+    keyVaults: []
 
 idam-pr:
   enabled: true

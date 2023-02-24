@@ -20,11 +20,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static java.util.Objects.isNull;
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -68,7 +67,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
-            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted!=\"Yes\"")
+            .showCondition("applicationType=\"soleApplication\"")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
@@ -86,12 +85,12 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         log.info("Draft AoS about to start callback invoked for Case Id: {}", details.getId());
 
         final var caseData = details.getData();
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        final List<String> errors = validateDraftAos(caseData);
-        if (!errors.isEmpty()) {
+        if (null != acknowledgementOfService && acknowledgementOfService.getConfirmReadPetition() == YES) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(errors)
+                .errors(singletonList("The Acknowledgement Of Service has already been drafted."))
                 .build();
         }
 
@@ -115,20 +114,5 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .data(details.getData())
             .state(state)
             .build();
-    }
-
-    private List<String> validateDraftAos(final CaseData caseData) {
-        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
-        final List<String> errors = new ArrayList<>();
-
-        if (!isNull(acknowledgementOfService) && YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
-            errors.add("The Acknowledgement Of Service has already been drafted.");
-        }
-
-        if (isNull(caseData.getApplication().getIssueDate())) {
-            errors.add("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
-        }
-
-        return errors;
     }
 }

@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.SwitchedToSole;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -25,7 +24,6 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -219,7 +217,6 @@ public class SwitchToSoleService {
         populateSwitchedToSoleData(application);
         switchConditionalOrderAnswers(data.getConditionalOrder());
         data.setCaseInvite(new CaseInvite(data.getApplicant2().getEmail(), null, null));
-        switchFinalOrderAnswers(data.getFinalOrder());
     }
 
     private void switchApplicationData(final CaseData data, final Application application, final Applicant applicant2) {
@@ -303,59 +300,6 @@ public class SwitchToSoleService {
         ConditionalOrderQuestions conditionalOrderApplicant2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
         conditionalOrder.setConditionalOrderApplicant1Questions(conditionalOrderApplicant2Questions);
         conditionalOrder.setConditionalOrderApplicant2Questions(conditionalOrderApplicant1Questions);
-
-        YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant1 =
-            conditionalOrder.getOfflineCertificateOfEntitlementDocumentSentToApplicant1();
-        YesOrNo offlineCertificateOfEntitlementDocumentSentToApplicant2 =
-            conditionalOrder.getOfflineCertificateOfEntitlementDocumentSentToApplicant2();
-
-        conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant1(
-            offlineCertificateOfEntitlementDocumentSentToApplicant2);
-        conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant2(
-            offlineCertificateOfEntitlementDocumentSentToApplicant1);
-    }
-
-    private void switchFinalOrderAnswers(FinalOrder finalOrder) {
-
-        YesOrNo doesApplicant1WantToApplyForFinalOrder = finalOrder.getDoesApplicant1WantToApplyForFinalOrder();
-        YesOrNo doesApplicant2WantToApplyForFinalOrder = finalOrder.getDoesApplicant2WantToApplyForFinalOrder();
-
-        finalOrder.setDoesApplicant1WantToApplyForFinalOrder(doesApplicant2WantToApplyForFinalOrder);
-        finalOrder.setDoesApplicant2WantToApplyForFinalOrder(doesApplicant1WantToApplyForFinalOrder);
-
-        YesOrNo applicant1AppliedForFinalOrderFirst = finalOrder.getApplicant1AppliedForFinalOrderFirst();
-        YesOrNo applicant2AppliedForFinalOrderFirst = finalOrder.getApplicant2AppliedForFinalOrderFirst();
-
-        finalOrder.setApplicant1AppliedForFinalOrderFirst(applicant2AppliedForFinalOrderFirst);
-        finalOrder.setApplicant2AppliedForFinalOrderFirst(applicant1AppliedForFinalOrderFirst);
-
-        YesOrNo applicant1CanIntendToSwitchToSoleFo = finalOrder.getApplicant1CanIntendToSwitchToSoleFo();
-        YesOrNo applicant2CanIntendToSwitchToSoleFo = finalOrder.getApplicant2CanIntendToSwitchToSoleFo();
-
-        finalOrder.setApplicant1CanIntendToSwitchToSoleFo(applicant2CanIntendToSwitchToSoleFo);
-        finalOrder.setApplicant2CanIntendToSwitchToSoleFo(applicant1CanIntendToSwitchToSoleFo);
-
-        Set<FinalOrder.IntendsToSwitchToSole> applicant1IntendsToSwitchToSole =
-            finalOrder.getApplicant1IntendsToSwitchToSole();
-        Set<FinalOrder.IntendsToSwitchToSole> applicant2IntendsToSwitchToSole =
-            finalOrder.getApplicant2IntendsToSwitchToSole();
-
-        finalOrder.setApplicant1IntendsToSwitchToSole(applicant2IntendsToSwitchToSole);
-        finalOrder.setApplicant2IntendsToSwitchToSole(applicant1IntendsToSwitchToSole);
-
-        YesOrNo doesApplicant1IntendToSwitchToSole = finalOrder.getDoesApplicant1IntendToSwitchToSole();
-        YesOrNo doesApplicant2IntendToSwitchToSole = finalOrder.getDoesApplicant2IntendToSwitchToSole();
-
-        finalOrder.setDoesApplicant1IntendToSwitchToSole(doesApplicant2IntendToSwitchToSole);
-        finalOrder.setDoesApplicant2IntendToSwitchToSole(doesApplicant1IntendToSwitchToSole);
-
-        LocalDate dateApplicant1DeclaredIntentionToSwitchToSoleFo =
-            finalOrder.getDateApplicant1DeclaredIntentionToSwitchToSoleFo();
-        LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo =
-            finalOrder.getDateApplicant2DeclaredIntentionToSwitchToSoleFo();
-
-        finalOrder.setDateApplicant1DeclaredIntentionToSwitchToSoleFo(dateApplicant2DeclaredIntentionToSwitchToSoleFo);
-        finalOrder.setDateApplicant2DeclaredIntentionToSwitchToSoleFo(dateApplicant1DeclaredIntentionToSwitchToSoleFo);
     }
 
     private void populateSwitchedToSoleData(final Application application) {

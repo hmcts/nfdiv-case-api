@@ -93,7 +93,7 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
             .description("Draft conditional order")
             .showSummary()
             .endButtonLabel("Save conditional order")
-            .showCondition("coApplicant1IsDrafted!=\"Yes\"")
+            .showCondition("coApplicant1IsDrafted=\"No\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)

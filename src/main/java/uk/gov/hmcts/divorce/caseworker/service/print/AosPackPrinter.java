@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -49,7 +48,7 @@ public class AosPackPrinter {
 
             var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
                 ? !app2.getSolicitor().hasOrgId()
-                : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isApplicantOffline();
+                : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isOffline();
 
             var d10Needed = caseData.getApplicationType().isSole() && app2Offline;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
@@ -104,14 +103,15 @@ public class AosPackPrinter {
 
     public void sendAosResponseLetterToApplicant(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
+        final List<Letter> aosResponseLetters = lettersWithDocumentType(
+            caseData.getDocuments().getDocumentsGenerated(),
+            AOS_RESPONSE_LETTER);
 
         List<Letter> aosLetters;
-        List<Letter> d84FormLetters = null;
-        if (caseData.getApplicant2().isApplicantOffline()) {
+        if (caseData.getApplicant2().isOffline()) {
             // When respondent is offline respondent answers doc is reclassified and added to docs uploaded list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
-            d84FormLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
+
         } else {
             // When respondent is online respondent answers doc is generated and added to docs generated list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), RESPONDENT_ANSWERS);
@@ -121,15 +121,7 @@ public class AosPackPrinter {
 
         final Letter aosLetter = firstElement(aosLetters);
 
-        final Letter d84FormLetter = firstElement(d84FormLetters);
-
         final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
-
-        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
-
-        if (null != coversheetLetter) {
-            aosResponseLetterWithAos.add(coversheetLetter);
-        }
 
         if (null != aosResponseLetter) {
             aosResponseLetterWithAos.add(aosResponseLetter);
@@ -138,18 +130,13 @@ public class AosPackPrinter {
             aosResponseLetterWithAos.add(aosLetter);
         }
 
-        if (null != d84FormLetter) {
-            aosResponseLetterWithAos.add(d84FormLetter);
-        }
+        if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() == AOS_RESPONSE_LETTERS_COUNT) {
 
-        if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
-
-            log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
             final String caseIdString = caseId.toString();
             final Print print = new Print(aosResponseLetterWithAos, caseIdString, caseIdString, LETTER_TYPE_AOS_RESPONSE_PACK);
             final UUID letterId = bulkPrintService.print(print);
 
-            log.info("Letter service responded with letter Id {}, size {}, for case {}", letterId, aosResponseLetterWithAos.size(), caseId);
+            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
                 "Aos response letter for applicant has missing documents. Expected documents with type {} , for case id: {}",

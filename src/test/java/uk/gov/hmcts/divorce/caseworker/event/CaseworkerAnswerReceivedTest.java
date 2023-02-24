@@ -30,9 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAnswerReceived.CASEWORKER_ADD_ANSWER;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEF;
@@ -75,11 +72,10 @@ class CaseworkerAnswerReceivedTest {
         final var caseData = caseData();
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
 
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData)
-            .id(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE_TIME)
-            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         caseworkerAnswerReceived.aboutToStart(caseDetails);
 
@@ -98,7 +94,12 @@ class CaseworkerAnswerReceivedTest {
         DivorceDocument d11 = DivorceDocument.builder()
             .documentDateAdded(LocalDate.now())
             .documentLink(
-                Document.builder().url("http://localhost:4200/assets/d11").filename("d11.pdf").binaryUrl("d11.pdf/binary").build()
+                Document
+                    .builder()
+                    .url("http://localhost:4200/assets/d11")
+                    .filename("d11.pdf")
+                    .binaryUrl("d11.pdf/binary")
+                    .build()
             )
             .documentType(DocumentType.D11)
             .build();
@@ -110,41 +111,16 @@ class CaseworkerAnswerReceivedTest {
             )
         );
 
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .state(Holding)
-            .data(caseData)
-            .id(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE_TIME)
-            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
-    }
-
-    @Test
-    void shouldTransitionStateToAwaitingJsNullityFromAwaitingAnswer() {
-        CaseData caseData = caseData();
-        caseData.getDocuments().setAnswerReceivedSupportingDocuments(new ArrayList<>());
-        final CaseDetails<CaseData, State> caseDetails =
-            CaseDetails.<CaseData, State>builder().data(caseData).state(AwaitingAnswer).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(AwaitingJsNullity);
-    }
-
-    @Test
-    void shouldKeepExistingStateWhenNotAwaitingAnswer() {
-        CaseData caseData = caseData();
-        caseData.getDocuments().setAnswerReceivedSupportingDocuments(new ArrayList<>());
-        final CaseDetails<CaseData, State> caseDetails =
-            CaseDetails.<CaseData, State>builder().data(caseData).state(Holding).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(Holding);
     }
 
     @Test
@@ -171,12 +147,10 @@ class CaseworkerAnswerReceivedTest {
             )
         );
 
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .state(Holding)
-            .data(caseData)
-            .id(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE_TIME)
-            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
@@ -191,10 +165,7 @@ class CaseworkerAnswerReceivedTest {
         caseData.setAcknowledgementOfService(
             AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE).build()
         );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData)
-            .id(TEST_CASE_ID)
-            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         caseworkerAnswerReceived.submitted(caseDetails, caseDetails);
 
@@ -207,11 +178,7 @@ class CaseworkerAnswerReceivedTest {
         caseData.setAcknowledgementOfService(
             AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE).build()
         );
-
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData)
-            .id(TEST_CASE_ID)
-            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         caseworkerAnswerReceived.submitted(caseDetails, caseDetails);
 

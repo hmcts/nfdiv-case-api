@@ -33,7 +33,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
@@ -193,56 +191,6 @@ public class SystemProgressCaseToAosOverdueIT {
         verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), anyLong());
     }
 
-    @Test
-    public void givenApplicant1IsOfflineAndIsJudicialSeparationWhenCallbackIsInvokedThenGenerateAosOverdueDocForJS()
-        throws Exception {
-
-        String responseJson = TestDataHelper.getFeeResponseAsJson();
-
-        stubForFeesLookup(responseJson, EVENT_ENFORCEMENT, SERVICE_OTHER, KEYWORD_BAILIFF);
-        stubForFeesLookup(responseJson, "general+application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
-
-        CaseData data = validCaseDataForIssueApplication();
-        data.setIsJudicialSeparation(YES);
-        data.getApplicant1().setSolicitor(null);
-        data.getApplicant1().setSolicitorRepresented(NO);
-        data.getApplicant1().setOffline(YES);
-        data.getApplicant2().setOffline(YES);
-        data.getApplicant1().setEmail(null);
-        data.getApplicant2().setEmail(null);
-        data.getApplication().setSolSignStatementOfTruth(null);
-        data.setDueDate(LOCAL_DATE);
-        data.getApplication().setIssueDate(LOCAL_DATE);
-        data.setCaseInvite(new CaseInvite(null, "1234-1234-1234-1234", null));
-
-        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_PROGRESS_TO_AOS_OVERDUE)))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(actualResponse)
-            .when(TREATING_NULL_AS_ABSENT)
-            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessOfflineJS()));
-
-        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            any(CaseData.class),
-            eq(AOS_OVERDUE_LETTER),
-            anyMap(),
-            anyLong(),
-            eq(AOS_OVERDUE_JS_TEMPLATE_ID),
-            eq(ENGLISH),
-            eq(AOS_OVERDUE_LETTER_DOCUMENT_NAME));
-
-        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), anyLong());
-
-        verifyNoInteractions(notificationService);
-    }
-
     private String expectedCcdAboutToStartCallbackSuccess() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-system-progress-case-to-aos-overdue.json");
     }
@@ -250,10 +198,5 @@ public class SystemProgressCaseToAosOverdueIT {
     private String expectedCcdAboutToStartCallbackSuccessOffline() throws IOException {
         return expectedResponse(
             "classpath:wiremock/responses/about-to-submit-system-progress-case-to-aos-overdue-offline.json");
-    }
-
-    private String expectedCcdAboutToStartCallbackSuccessOfflineJS() throws IOException {
-        return expectedResponse(
-            "classpath:wiremock/responses/about-to-submit-system-progress-case-to-aos-overdue-offline-js.json");
     }
 }

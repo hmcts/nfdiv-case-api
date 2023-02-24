@@ -44,9 +44,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
         expectedCaseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
-        assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
-        assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
 
     @Test
@@ -70,9 +68,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
         expectedCaseData.getApplication().setServiceMethod(COURT_SERVICE);
 
-        assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
-        assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
 
     @Test
@@ -96,9 +92,7 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
         expectedCaseData.getApplication().setServiceMethod(COURT_SERVICE);
 
-        assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
-        assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
 
     @Test
@@ -122,8 +116,6 @@ class SetServiceTypeTest {
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
         expectedCaseData.getApplication().setServiceMethod(COURT_SERVICE);
 
-        assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
-        assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
-        assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
 }

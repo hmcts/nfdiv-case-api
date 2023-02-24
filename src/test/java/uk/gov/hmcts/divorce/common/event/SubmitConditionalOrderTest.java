@@ -197,25 +197,6 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateToConditionalOrderPendingIfJointApplicationAndOnlyOneCODatePresentOnAboutToSubmit() {
-        setupMocks(clock);
-        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).build())
-            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).build())
-            .build());
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderPending).id(1L).build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
-    }
-
-    @Test
     void shouldSetStateToAwaitingLegalAdvisorReferralIfSoleApplicationAndOnAboutToSubmit() {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
@@ -422,7 +403,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
     }
 
     @Test
@@ -438,7 +419,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
     }
 
     @Test
@@ -455,7 +436,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
     }
 
     @Test
@@ -472,7 +453,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
+        assertThat(response.getData().getApplicant2().isOffline()).isTrue();
     }
 
     @Test
@@ -491,7 +472,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().isApplicantOffline()).isFalse();
+        assertThat(response.getData().getApplicant2().isOffline()).isFalse();
     }
 
     private CaseData caseData() {

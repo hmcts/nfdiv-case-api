@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerRetryPronounceList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_RETRY_PRONOUNCE_LIST = "caseworker-retry-pronounce-list";
-    private static final String RETRY_PRONOUNCE_LIST = "Retry Pronounce list";
 
     @Autowired
     private CasePronouncementService casePronouncementService;
@@ -36,16 +35,13 @@ public class CaseworkerRetryPronounceList implements CCDConfig<BulkActionCaseDat
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_RETRY_PRONOUNCE_LIST)
             .forStates(Pronounced)
-            .name(RETRY_PRONOUNCE_LIST)
-            .description(RETRY_PRONOUNCE_LIST)
+            .name("Retry Pronounce list")
+            .description("Retry Pronounce list")
             .showSummary()
             .showEventNotes()
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, SUPER_USER)
-            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
-            .page("retryPronounceList")
-            .pageLabel(RETRY_PRONOUNCE_LIST)
-            .mandatory(BulkActionCaseData::getPronouncementJudge, null, "District Judge");
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN));
     }
 
     public SubmittedCallbackResponse submitted(
@@ -53,7 +49,7 @@ public class CaseworkerRetryPronounceList implements CCDConfig<BulkActionCaseDat
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
         log.info("{} Retry pronounce list submitted callback invoked for Case Id: {}", CASEWORKER_RETRY_PRONOUNCE_LIST, details.getId());
-        casePronouncementService.retryPronounceCases(details);
+        casePronouncementService.pronounceCases(details);
         return SubmittedCallbackResponse.builder().build();
     }
 }
