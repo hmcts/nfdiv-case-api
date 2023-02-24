@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.util.CollectionUtils.firstElement;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 
@@ -52,9 +53,7 @@ public class FinalOrderGrantedPrinter {
     }
 
     private List<Letter> finalOrderGrantedLetters(CaseData caseData, final DocumentType coverLetterDocumentType) {
-        final List<Letter> finalOrderGrantedCoverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            coverLetterDocumentType);
+        final List<Letter> finalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(caseData, coverLetterDocumentType);
 
         final List<Letter> finalOrderGrantedCertificates = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(),

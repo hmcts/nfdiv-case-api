@@ -7,14 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendFinalOrderGrantedNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -22,16 +23,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 
 @Slf4j
 @Component
@@ -49,13 +49,16 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
 
     @Autowired
-    private SendFinalOrderGrantedNotifications sendFinalOrderGrantedNotifications;
+    private FinalOrderGrantedNotification finalOrderGrantedNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GRANT_FINAL_ORDER)
-            .forStateTransition(FinalOrderRequested, FinalOrderComplete)
+            .forStates(FinalOrderRequested, FinalOrderPending, GeneralConsiderationComplete)
             .name("Grant Final order")
             .description("Grant Final order")
             .showSummary()
@@ -93,40 +96,24 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         caseData.getFinalOrder().setGrantedDate(currentDateTime);
 
-        Long caseId = details.getId();
-
-        if (caseData.getApplicant1().isOffline()) {
-            log.info("Generating final order cover letter for Applicant 1 for case id: {} ", caseId);
-            generateFinalOrderCoverLetter.apply(
-                caseData,
-                caseId,
-                caseData.getApplicant1(),
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1
-            );
-        }
-
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isOffline()) {
-            log.info("Generating final order cover letter for Applicant 2 for case id: {} ", caseId);
-            generateFinalOrderCoverLetter.apply(
-                caseData,
-                caseId,
-                caseData.getApplicant2(),
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
-            );
-        }
-
+        generateFinalOrderCoverLetter.apply(details);
         generateFinalOrder.apply(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .state(FinalOrderComplete)
             .build();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
+
+        final Long caseId = details.getId();
+        final CaseData caseData = details.getData();
+
         log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
 
-        sendFinalOrderGrantedNotifications.apply(details);
+        notificationDispatcher.send(finalOrderGrantedNotification, caseData, caseId);
 
         return SubmittedCallbackResponse.builder().build();
     }

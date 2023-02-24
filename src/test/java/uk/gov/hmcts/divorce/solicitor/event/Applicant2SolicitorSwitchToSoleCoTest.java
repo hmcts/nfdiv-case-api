@@ -24,10 +24,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorSwitchToSoleCo.APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 public class Applicant2SolicitorSwitchToSoleCoTest {
@@ -78,6 +82,46 @@ public class Applicant2SolicitorSwitchToSoleCoTest {
 
         verify(switchToSoleService).switchUserRoles(caseData, TEST_CASE_ID);
         verify(generateConditionalOrderAnswersDocument).apply(eq(caseDetails), any());
+    }
+
+    @Test
+    void shouldKeepSameStateIfInJSAwaitingLA() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .state(JSAwaitingLA)
+            .build();
+
+        var response = applicant2SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        assertThat(response.getState()).isEqualTo(JSAwaitingLA);
+    }
+
+    @Test
+    void shouldProgressStateIfNotInStateJSAwaitingLA() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .state(ConditionalOrderPending)
+            .build();
+
+        var response = applicant2SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
+    }
+
+    @Test
+    void shouldSendEmailsInSubmittedCallback() {
+        CaseData caseData = CaseData.builder().build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        applicant2SolicitorSwitchToSoleCo.submitted(caseDetails, caseDetails);
+
         verify(notificationDispatcher).send(solicitorSwitchToSoleCoNotification, caseData, TEST_CASE_ID);
     }
 }

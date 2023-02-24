@@ -1,0 +1,42 @@
+{
+  "data": {
+    "coClaimsGranted": "No",
+    "coDecisionDate": "2021-05-10",
+    "coCourt": "birmingham",
+    "coDateAndTimeOfHearing": "2013-09-29T18:46:00.000",
+    "coCertificateOfEntitlementDocument": {
+      "documentFileName": "${json-unit.any-string}",
+      "documentType": "certificateOfEntitlement",
+      "documentLink": {
+        "document_url": "${json-unit.any-string}",
+        "document_filename": "${json-unit.any-string}",
+        "document_binary_url": "${json-unit.any-string}"
+      }
+    },
+    "coOfflineCertificateOfEntitlementDocumentSentToApplicant1": "Yes",
+    "coOfflineCertificateOfEntitlementDocumentSentToApplicant2": "Yes",
+    "confidentialDocumentsGenerated": [{
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "confidentialDocumentsReceived": "certificateOfEntitlementCoverLetter"
+      }
+    }, {
+      "id": "${json-unit.any-string}",
+      "value": {
+        "documentLink": {
+          "document_url": "${json-unit.any-string}",
+          "document_filename": "${json-unit.any-string}",
+          "document_binary_url": "${json-unit.any-string}"
+        },
+        "documentFileName": "${json-unit.any-string}",
+        "confidentialDocumentsReceived": "certificateOfEntitlementCoverLetterApp2"
+      }
+    }]
+  }
+}

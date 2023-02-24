@@ -42,6 +42,8 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-offline.json";
     private static final String OFFLINE_NOT_REPRESENTED_RESPONSE =
         "classpath:responses/response-system-pronounce-case-offline.json";
+    private static final String OFFLINE_WITH_PRIVATE_CONTACT_RESPONSE =
+        "classpath:responses/response-system-pronounce-case-offline-with-private-contract.json";
 
     private static final String OFFLINE_REPRESENTED_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-offline-represented.json";
@@ -127,8 +129,6 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        System.out.println(response.asString());
-
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
@@ -149,5 +149,41 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(OFFLINE_REPRESENTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsWhenContactIsPrivate()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
+        request.put("applicant2ContactDetailsType", "private");
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        System.out.println(response.asString());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_WITH_PRIVATE_CONTACT_RESPONSE)));
+    }
+
+    @Test
+    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsInJudicialSeparation()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
+        request.put("isJudicialSeparation", "Yes");
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(OFFLINE_NOT_REPRESENTED_RESPONSE)));
     }
 }

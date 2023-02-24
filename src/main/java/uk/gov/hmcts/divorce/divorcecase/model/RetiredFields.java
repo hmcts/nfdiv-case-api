@@ -104,6 +104,18 @@ public class RetiredFields {
             }
         }
 
+        if (data.containsKey("generalApplication") && !data.containsKey("generalApplications")) {
+            data.put(
+                "generalApplications",
+                List.of(ListValue
+                    .<GeneralApplication>builder()
+                    .id("1")
+                    .value((GeneralApplication) data.get("generalApplication"))
+                    .build()
+                )
+            );
+        }
+
         data.put("dataVersion", getVersion());
 
         return data;

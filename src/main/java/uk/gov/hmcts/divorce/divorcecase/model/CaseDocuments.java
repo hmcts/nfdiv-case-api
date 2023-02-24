@@ -19,10 +19,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSol
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +35,15 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 
 @Data
 @AllArgsConstructor
@@ -137,6 +144,41 @@ public class CaseDocuments {
     )
     private OfflineDocumentReceived typeOfDocumentAttached;
 
+    @CCD(
+        label = "Scanned Form Subtype Received?",
+        typeOverride = FixedList,
+        typeParameterOverride = "ScannedDocumentSubtypes"
+    )
+    private ScannedDocumentSubtypes scannedSubtypeReceived;
+
+    @Getter
+    @AllArgsConstructor
+    public enum ScannedDocumentSubtypes implements HasLabel {
+
+        @JsonProperty("D10")
+        D10("D10"),
+
+        @JsonProperty("D84")
+        D84("D84"),
+
+        @JsonProperty("D36")
+        D36("D36"),
+
+        @JsonProperty("D10N")
+        D10N("D10N"),
+
+        @JsonProperty("D84NV")
+        D84NV("D84NV"),
+
+        @JsonProperty("D84NVA")
+        D84NVA("D84NVA"),
+
+        @JsonProperty("D36N")
+        D36N("D36N");
+
+        private final String label;
+    }
+
     @Getter
     @AllArgsConstructor
     public enum OfflineDocumentReceived implements HasLabel {
@@ -146,6 +188,9 @@ public class CaseDocuments {
 
         @JsonProperty("D84")
         CO_D84("Application for a conditional order (D84)"),
+
+        @JsonProperty("D36")
+        FO_D36("Application for a final order (D36)"),
 
         @JsonProperty("Other")
         OTHER("Other");
@@ -245,10 +290,40 @@ public class CaseDocuments {
         }
     }
 
+    @JsonIgnore
+    public void removeConfidentialDocumentGeneratedWithType(final ConfidentialDocumentsReceived documentType) {
+        if (!isEmpty(this.getConfidentialDocumentsGenerated())) {
+            this.getConfidentialDocumentsGenerated()
+                .removeIf(document -> documentType.equals(document.getValue().getConfidentialDocumentsReceived()));
+        }
+    }
+
+    @JsonIgnore
+    public DivorceDocument mapScannedDocumentToDivorceDocument(final ScannedDocument scannedDocument,
+                                                               final DocumentType documentType,
+                                                               final Clock clock) {
+
+        return DivorceDocument.builder()
+            .documentLink(scannedDocument.getUrl())
+            .documentFileName(scannedDocument.getFileName())
+            .documentDateAdded(LocalDate.now(clock))
+            .documentType(documentType)
+            .documentComment("Reclassified scanned document")
+            .build();
+    }
+
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
         return !isEmpty(this.getDocumentsGenerated())
             ? this.getDocumentsGenerated().stream()
             .filter(document -> documentType.equals(document.getValue().getDocumentType())).findFirst()
             : Optional.empty();
+    }
+
+    public boolean isGivenDocumentUnderConfidentialList(final DocumentType documentType) {
+        return ofNullable(getConfidentialDocumentsGenerated())
+            .orElseGet(Collections::emptyList)
+            .stream().filter(Objects::nonNull)
+            .anyMatch(doc -> doc.getValue() != null && getConfidentialDocumentType(documentType)
+                .equals(doc.getValue().getConfidentialDocumentsReceived()));
     }
 }

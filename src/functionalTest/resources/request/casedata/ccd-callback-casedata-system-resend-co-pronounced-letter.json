@@ -1,0 +1,61 @@
+{
+  "applicationType":"soleApplication",
+  "divorceOrDissolution":"divorce",
+  "applicant1FirstName":"test_first_name",
+  "applicant1LastName":"test_last_name",
+  "applicant1Offline": "Yes",
+  "applicant1ContactDetailsType": "private",
+  "applicant1Gender":"female",
+  "applicant2FirstName":"test_first_name",
+  "applicant2LastName":"test_last_name",
+  "applicant2Offline": "Yes",
+  "applicant2ContactDetailsType": "public",
+  "applicant2LanguagePreferenceWelsh":"No",
+  "applicant2Gender":"female",
+  "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
+  "issueDate":"2020-05-28",
+  "coGrantedDate":"2022-01-06",
+  "coCourt":"birmingham",
+  "coDateAndTimeOfHearing":"2022-01-06T10:30:00.000",
+  "documentsGenerated":[
+    {
+      "id": "f3d5429e-342c-4689-918a-d89cbe6d7ed0",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/27ff2536-a4c5-4516-8691-676f30237d3c",
+          "document_filename": "conditionalOrderGranted.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/27ff2536-a4c5-4516-8691-676f30237d3c/binary"
+        },
+        "documentType": "conditionalOrderGranted",
+        "documentFileName": "conditionalOrderGranted.pdf"
+      }
+    },
+    {
+      "id": "592b01ad-a2f6-43d2-93b7-ddaf3db93863",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a40454de-7701-461c-9715-d4ed8df462f9",
+          "document_filename": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a40454de-7701-461c-9715-d4ed8df462f9/binary"
+        },
+        "documentType": "coGrantedCoversheetApp2",
+        "documentFileName": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf"
+      }
+    },
+    {
+      "id": "8a5af58c-8a0d-48df-b715-0671572303ee",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c",
+          "document_filename": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c/binary"
+        },
+        "documentType": "coGrantedCoversheet",
+        "documentFileName": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf"
+      }
+    }
+  ],
+  "dueDate":"2020-04-28",
+  "dataVersion":"${json-unit.any-number}",
+  "warnings":[]
+}

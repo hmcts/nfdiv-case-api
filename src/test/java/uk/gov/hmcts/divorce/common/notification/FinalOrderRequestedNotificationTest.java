@@ -144,7 +144,7 @@ class FinalOrderRequestedNotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.setFinalOrder(FinalOrder.builder()
-            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
         when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
@@ -169,7 +169,7 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.setFinalOrder(FinalOrder.builder()
-            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
         when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))

@@ -1,10 +1,14 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "applicationType": "soleApplication",
+    "isJudicialSeparation": "No",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
@@ -30,9 +34,9 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/51afe8e5-0061-42b6-83a2-4c122046901c",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002",
             "document_filename": "aosResponseLetter.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/51afe8e5-0061-42b6-83a2-4c122046901c/binary"
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002/binary"
           },
           "documentFileName": "aosResponseLetter.pdf",
           "documentType": "aosResponseLetter"

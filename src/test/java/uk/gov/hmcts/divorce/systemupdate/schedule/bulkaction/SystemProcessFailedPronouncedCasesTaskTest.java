@@ -9,9 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
+import uk.gov.hmcts.divorce.bulkaction.service.CasePronouncementService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -23,12 +22,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -48,7 +45,7 @@ class SystemProcessFailedPronouncedCasesTaskTest {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Mock
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private CasePronouncementService casePronouncementService;
 
     @InjectMocks
     private SystemProcessFailedPronouncedCasesTask systemCreateBulkCaseListTask;
@@ -80,26 +77,10 @@ class SystemProcessFailedPronouncedCasesTaskTest {
         when(ccdSearchService.searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails1, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails2, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
-
         systemCreateBulkCaseListTask.run();
 
-        verify(bulkCaseProcessingService)
-            .updateUnprocessedBulkCases(
-                caseDetails1,
-                SYSTEM_PRONOUNCE_CASE,
-                caseTask,
-                user,
-                SERVICE_AUTHORIZATION);
-        verify(bulkCaseProcessingService)
-            .updateUnprocessedBulkCases(
-                caseDetails2,
-                SYSTEM_PRONOUNCE_CASE,
-                caseTask,
-                user,
-                SERVICE_AUTHORIZATION);
+        verify(casePronouncementService).pronounceCases(caseDetails1);
+        verify(casePronouncementService).pronounceCases(caseDetails2);
     }
 
     @Test
@@ -111,6 +92,6 @@ class SystemProcessFailedPronouncedCasesTaskTest {
 
         systemCreateBulkCaseListTask.run();
 
-        verifyNoInteractions(bulkCaseProcessingService);
+        verifyNoInteractions(casePronouncementService);
     }
 }

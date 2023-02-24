@@ -63,7 +63,8 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
 
@@ -91,7 +92,8 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
 
@@ -118,7 +120,8 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2()
+                .getLanguagePreference())).thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
 

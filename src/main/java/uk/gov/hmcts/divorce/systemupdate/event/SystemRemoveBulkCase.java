@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -31,10 +30,9 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
             .event(SYSTEM_REMOVE_BULK_CASE)
             .forStateTransition(POST_SUBMISSION_STATES, AwaitingPronouncement)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .showCondition(NEVER_SHOW)
             .name("System remove bulk case")
             .description("System remove bulk case")
-            .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, SUPER_USER)
             .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 

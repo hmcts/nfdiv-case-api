@@ -5,6 +5,8 @@
     "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceOutcomes": [
       {

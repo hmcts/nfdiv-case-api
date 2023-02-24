@@ -44,14 +44,16 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"),
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
-            !caseData.getApplicant1().isOffline() ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender") : emptyList(),
+            !caseData.getApplicant1().isApplicantOffline()
+                ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender")
+                : emptyList(),
             !isBlank(caseData.getApplicant2().getEmail()) && !caseData.getApplication().isPaperCase()
                 ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender")
                 : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
-            !caseData.getApplicant1().isOffline()
+            !caseData.getApplicant1().isApplicantOffline()
                 ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
@@ -68,8 +70,12 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
             notNull(caseData.getApplicant1().getLastName(), "Applicant1LastName"),
             notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
-            !caseData.getApplicant1().isOffline() ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender") : emptyList(),
-            !isBlank(caseData.getApplicant2().getEmail()) ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender") : emptyList(),
+            !caseData.getApplicant1().isApplicantOffline()
+                ? notNull(caseData.getApplicant1().getGender(), "Applicant1Gender")
+                : emptyList(),
+            !isBlank(caseData.getApplicant2().getEmail())
+                ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender")
+                : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData)

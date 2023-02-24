@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
@@ -26,6 +28,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationUploadDocumen
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
@@ -38,11 +42,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentTo
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Slf4j
 @Component
@@ -83,6 +88,18 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_GENERAL_APPLICATION, details.getId());
+        final CaseData data = details.getData();
+
+        data.setGeneralApplication(GeneralApplication.builder().build());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -132,9 +149,21 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
         }
 
+        generalApplication.getGeneralApplicationDocument().setDocumentType(DocumentType.GENERAL_APPLICATION);
         data.getDocuments().setDocumentsUploaded(
             addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
         );
+
+        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(generalApplication)
+            .build();
+
+        if (isNull(data.getGeneralApplications())) {
+            data.setGeneralApplications(singletonList(generalApplicationListValue));
+        } else {
+            data.getGeneralApplications().add(0, generalApplicationListValue);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -153,18 +182,18 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         }
 
         String applicant1SolicitorSelectedOrgId =
-            caseData
+            Objects.requireNonNull(caseData
                 .getApplicant1()
                 .getSolicitor()
-                .getOrganisationPolicy()
+                .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
         String applicant2SolicitorSelectedOrgId =
-            caseData
+            Objects.requireNonNull(caseData
                 .getApplicant2()
                 .getSolicitor()
-                .getOrganisationPolicy()
+                .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
@@ -172,9 +201,9 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .getUserOrganisation(userAuth, authTokenGenerator.generate())
             .getOrganisationIdentifier();
 
-        if (applicant1SolicitorSelectedOrgId.equalsIgnoreCase(solicitorUserOrgId)) {
+        if (solicitorUserOrgId.equalsIgnoreCase(applicant1SolicitorSelectedOrgId)) {
             return caseData.getApplicant1().getSolicitor();
-        } else if (applicant2SolicitorSelectedOrgId.equalsIgnoreCase(solicitorUserOrgId)) {
+        } else if (solicitorUserOrgId.equalsIgnoreCase(applicant2SolicitorSelectedOrgId)) {
             return caseData.getApplicant2().getSolicitor();
         } else {
             return null;
@@ -190,8 +219,9 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .description(GENERAL_APPLICATION)
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.predicate.HasAosDraftedEventPredicate;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -18,12 +19,15 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
@@ -37,24 +41,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SetAosIsDraftedToYesMigrationTest {
@@ -79,6 +69,11 @@ class SetAosIsDraftedToYesMigrationTest {
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences", List.of(TEST_CASE_ID));
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences2", emptyList());
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences3", emptyList());
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences4", emptyList());
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences5", emptyList());
     }
 
     @Test
@@ -108,23 +103,9 @@ class SetAosIsDraftedToYesMigrationTest {
 
         when(ccdSearchService
             .searchForAllCasesWithQuery(
-                getQuery(),
+                getQuery(TEST_CASE_ID),
                 user,
-                SERVICE_AUTHORIZATION,
-                AosDrafted,
-                AosOverdue,
-                OfflineDocumentReceived,
-                AwaitingAos,
-                GeneralApplicationReceived,
-                AwaitingGeneralReferralPayment,
-                Holding,
-                AwaitingDocuments,
-                AwaitingBailiffReferral,
-                AwaitingServicePayment,
-                AwaitingServiceConsideration,
-                IssuedToBailiff,
-                AwaitingService,
-                AwaitingGeneralConsideration))
+                SERVICE_AUTHORIZATION))
             .thenReturn(searchResponse);
 
         when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION))
@@ -142,6 +123,42 @@ class SetAosIsDraftedToYesMigrationTest {
     }
 
     @Test
+    void shouldSetAosIsDraftedToYesForMultipleCombinedDistinctReferences() {
+
+        final long reference2 = TEST_CASE_ID + 1L;
+        final long reference3 = TEST_CASE_ID + 2L;
+        final long reference4 = TEST_CASE_ID + 3L;
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences2", List.of(reference2));
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences3", List.of(reference3));
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences4", List.of(reference4));
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences5", List.of(reference4));
+
+        final CaseDetails caseDetails1 = CaseDetails.builder()
+            .id(1L)
+            .data(new HashMap<>())
+            .build();
+
+        final List<CaseDetails> searchResponse1 = List.of(caseDetails1);
+
+        when(ccdSearchService
+            .searchForAllCasesWithQuery(
+                getQuery(TEST_CASE_ID, reference2, reference3, reference4),
+                user,
+                SERVICE_AUTHORIZATION))
+            .thenReturn(searchResponse1);
+
+        when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION)).thenReturn(caseDetail -> true);
+
+        setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
+
+        assertThat(caseDetails1.getData()).containsEntry("aosIsDrafted", "Yes");
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
     void shouldDoNothingAndLogErrorIfSearchFails() {
 
         setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
@@ -150,23 +167,9 @@ class SetAosIsDraftedToYesMigrationTest {
             new CcdSearchCaseException("Failed to search cases", mock(FeignException.class));
         when(ccdSearchService
             .searchForAllCasesWithQuery(
-                getQuery(),
+                getQuery(TEST_CASE_ID),
                 user,
-                SERVICE_AUTHORIZATION,
-                AosDrafted,
-                AosOverdue,
-                OfflineDocumentReceived,
-                AwaitingAos,
-                GeneralApplicationReceived,
-                AwaitingGeneralReferralPayment,
-                Holding,
-                AwaitingDocuments,
-                AwaitingBailiffReferral,
-                AwaitingServicePayment,
-                AwaitingServiceConsideration,
-                IssuedToBailiff,
-                AwaitingService,
-                AwaitingGeneralConsideration))
+                SERVICE_AUTHORIZATION))
             .thenThrow(exception);
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
@@ -198,23 +201,9 @@ class SetAosIsDraftedToYesMigrationTest {
 
         when(ccdSearchService
             .searchForAllCasesWithQuery(
-                getQuery(),
+                getQuery(TEST_CASE_ID),
                 user,
-                SERVICE_AUTHORIZATION,
-                AosDrafted,
-                AosOverdue,
-                OfflineDocumentReceived,
-                AwaitingAos,
-                GeneralApplicationReceived,
-                AwaitingGeneralReferralPayment,
-                Holding,
-                AwaitingDocuments,
-                AwaitingBailiffReferral,
-                AwaitingServicePayment,
-                AwaitingServiceConsideration,
-                IssuedToBailiff,
-                AwaitingService,
-                AwaitingGeneralConsideration))
+                SERVICE_AUTHORIZATION))
             .thenReturn(searchResponse);
 
         when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION))
@@ -254,23 +243,9 @@ class SetAosIsDraftedToYesMigrationTest {
 
         when(ccdSearchService
             .searchForAllCasesWithQuery(
-                getQuery(),
+                getQuery(TEST_CASE_ID),
                 user,
-                SERVICE_AUTHORIZATION,
-                AosDrafted,
-                AosOverdue,
-                OfflineDocumentReceived,
-                AwaitingAos,
-                GeneralApplicationReceived,
-                AwaitingGeneralReferralPayment,
-                Holding,
-                AwaitingDocuments,
-                AwaitingBailiffReferral,
-                AwaitingServicePayment,
-                AwaitingServiceConsideration,
-                IssuedToBailiff,
-                AwaitingService,
-                AwaitingGeneralConsideration))
+                SERVICE_AUTHORIZATION))
             .thenReturn(searchResponse);
 
         when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION))
@@ -289,37 +264,39 @@ class SetAosIsDraftedToYesMigrationTest {
     }
 
     @Test
-    void shouldSkipProcessingIfEnvironmentVariableIsSetToFalse() {
+    void shouldSkipProcessingIfEnvironmentSwitchIsSetToFalse() {
 
         setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", false);
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED=false");
+        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED={}, references size: {}", false, 1);
         verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
     }
 
-    private BoolQueryBuilder getQuery() {
-        final BoolQueryBuilder query =
-            boolQuery()
-                .must(
-                    boolQuery()
-                        .should(matchQuery(STATE, AosDrafted))
-                        .should(matchQuery(STATE, AosOverdue))
-                        .should(matchQuery(STATE, OfflineDocumentReceived))
-                        .should(matchQuery(STATE, AwaitingAos))
-                        .should(matchQuery(STATE, GeneralApplicationReceived))
-                        .should(matchQuery(STATE, AwaitingGeneralReferralPayment))
-                        .should(matchQuery(STATE, Holding))
-                        .should(matchQuery(STATE, AwaitingDocuments))
-                        .should(matchQuery(STATE, AwaitingBailiffReferral))
-                        .should(matchQuery(STATE, AwaitingServicePayment))
-                        .should(matchQuery(STATE, AwaitingServiceConsideration))
-                        .should(matchQuery(STATE, IssuedToBailiff))
-                        .should(matchQuery(STATE, AwaitingService))
-                        .should(matchQuery(STATE, AwaitingGeneralConsideration)))
-                .mustNot(existsQuery("data.dateAosSubmitted"))
-                .mustNot(existsQuery("data.aosIsDrafted"));
-        return query;
+    @Test
+    void shouldSkipProcessingIfEnvironmentReferencesIsEmpty() {
+
+        final List<Long> references = new ArrayList<>();
+        references.add(null);
+
+        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
+        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences", references);
+
+        setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
+
+        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED={}, references size: {}", true, 0);
+        verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
+    }
+
+    private BoolQueryBuilder getQuery(final Long... references) {
+
+        final BoolQueryBuilder referenceQuery = boolQuery();
+        Arrays.stream(references).forEach(reference -> referenceQuery.should(matchQuery("reference", reference)));
+
+        return boolQuery()
+            .must(referenceQuery)
+            .mustNot(existsQuery("data.dateAosSubmitted"))
+            .mustNot(existsQuery("data.aosIsDrafted"));
     }
 }

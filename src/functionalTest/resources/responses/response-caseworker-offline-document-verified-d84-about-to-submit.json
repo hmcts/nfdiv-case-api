@@ -23,28 +23,6 @@
       "id": "${json-unit.any-string}",
       "value": {
         "documentLink": {
-          "document_url": "${json-unit.any-string}",
-          "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "${json-unit.any-string}"
-        },
-        "documentFileName": "${json-unit.any-string}",
-        "documentType": "appliedForCoLetter"
-      }
-    }, {
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "${json-unit.any-string}",
-          "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "${json-unit.any-string}"
-        },
-        "documentFileName": "${json-unit.any-string}",
-        "documentType": "appliedForCoLetter"
-      }
-    }, {
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
           "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
           "document_filename": "doc1.pdf",
           "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
