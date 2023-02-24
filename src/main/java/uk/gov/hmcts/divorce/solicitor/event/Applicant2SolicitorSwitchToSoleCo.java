@@ -17,11 +17,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -52,14 +54,15 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
         new PageBuilder(configBuilder
             .event(APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)
-            .forStateTransition(ConditionalOrderPending, AwaitingLegalAdvisorReferral)
+            .forStates(ConditionalOrderPending, JSAwaitingLA, AwaitingLegalAdvisorReferral)
             .showCondition("coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\"")
             .name("Switch To Sole CO")
             .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR)
             .showSummary()
-            .aboutToSubmitCallback(this::aboutToSubmit))
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted))
             .page("app2SolSwitchToSoleCo")
             .pageLabel("Changing to a sole conditional order application")
             .label("app2SolSwitchToSoleLabel1", "This case is a joint application.")
@@ -95,10 +98,20 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
         // NOTE: Applicant 2 is now Applicant 1
         generateConditionalOrderAnswersDocument.apply(details, data.getApplicant1().getLanguagePreference());
-        notificationDispatcher.send(solicitorSwitchToSoleCoNotification, data, caseId);
+
+        var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(state)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Applicant 2 Solicitor SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
+
+        notificationDispatcher.send(solicitorSwitchToSoleCoNotification, details.getData(), details.getId());
+        return SubmittedCallbackResponse.builder().build();
     }
 }

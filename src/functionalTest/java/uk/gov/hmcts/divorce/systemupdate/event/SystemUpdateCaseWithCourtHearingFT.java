@@ -31,6 +31,8 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-system-update-case-with-court-hearing-represented.json";
     private static final String RESPONSE = "classpath:responses/response-system-update-case-with-court-hearing.json";
     private static final String RESPONSE_OFFLINE = "classpath:responses/response-system-update-case-with-court-hearing-offline.json";
+    private static final String RESPONSE_OFFLINE_WITH_PRIVATE_CONTACT =
+        "classpath:responses/response-system-update-case-with-court-hearing-offline-with-private-contact.json";
 
     @Test
     public void shouldSendEmailsToApplicantAndRespondentAndCreateCertificateOfEntitlementDocument() throws IOException {
@@ -92,5 +94,43 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE)));
+    }
+
+    @Test
+    public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetterWhenBothContactsArePrivate()
+        throws IOException {
+
+        Map<String, Object> request = caseData(JOINT_REQUEST);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
+        request.put("applicant1ContactDetailsType", "private");
+        request.put("applicant2ContactDetailsType", "private");
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE_WITH_PRIVATE_CONTACT)));
+    }
+
+    @Test
+    public void shouldSendLettersToOfflineRespondentInSoleApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
+        throws IOException {
+
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 }

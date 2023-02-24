@@ -20,6 +20,8 @@ import java.util.Objects;
 
 import static java.lang.String.join;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -72,7 +74,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         notificationService.sendEmail(
             caseData.getApplicant1().getCorrespondenceEmail(),
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-                solicitorTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            solicitorTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference());
     }
 
@@ -81,7 +83,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()) {
             log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
 
-            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant1());
+            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
         }
     }
@@ -109,7 +112,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         notificationService.sendEmail(
             caseData.getApplicant2().getCorrespondenceEmail(),
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-                solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference());
     }
 
@@ -118,7 +121,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
             log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
 
-            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, caseData.getApplicant2());
+            certificateOfEntitlementPrinter.sendLetter(caseData, caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
         }
     }

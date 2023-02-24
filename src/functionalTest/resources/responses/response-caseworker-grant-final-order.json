@@ -6,6 +6,8 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "private",
@@ -70,5 +72,6 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
-  }
+  },
+  "state" : "FinalOrderComplete"
 }

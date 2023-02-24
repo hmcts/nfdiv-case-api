@@ -235,7 +235,8 @@ public class Applicant2ApproveIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V3.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);

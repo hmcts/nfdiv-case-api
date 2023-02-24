@@ -19,12 +19,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.stream.Collectors.toList;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -40,16 +39,13 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
     private CaseRemovalService caseRemovalService;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
     private PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_CASES_BULK_LIST)
-            .forStates(Created, Listed)
+            .forStates(Created, Listed, Pronounced)
             .name("Remove cases from bulk list")
             .description("Remove cases from bulk list")
             .showSummary()
@@ -144,7 +140,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
 
         BulkActionCaseData caseData = details.getData();
 
-        caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved(), request.getHeader(AUTHORIZATION));
+        caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved());
 
         return SubmittedCallbackResponse.builder().build();
     }

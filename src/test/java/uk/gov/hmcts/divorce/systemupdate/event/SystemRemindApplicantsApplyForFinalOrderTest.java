@@ -16,12 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -29,9 +25,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 class SystemRemindApplicantsApplyForFinalOrderTest {
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @Mock
     private AwaitingFinalOrderReminderNotification awaitingFinalOrderReminderNotification;
@@ -59,9 +52,6 @@ class SystemRemindApplicantsApplyForFinalOrderTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRemindApplicantsApplyForFinalOrder.aboutToSubmit(details, details);

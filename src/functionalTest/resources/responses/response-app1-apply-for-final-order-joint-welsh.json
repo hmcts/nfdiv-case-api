@@ -1,0 +1,21 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Email": "app2@example.com",
+    "applicant1LanguagePreferenceWelsh": "Yes",
+    "applicant2LanguagePreferenceWelsh": "Yes",
+    "applicant2FirstName": "Olive",
+    "applicant2LastName": "Oil",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "solSignStatementOfTruth": "Yes",
+    "coGranted": "Yes",
+    "applicant1AppliedForFinalOrderFirst": "Yes",
+    "applicant2AppliedForFinalOrderFirst": "No",
+    "dateFinalOrderNoLongerEligible": "${json-unit.ignore}"
+  },
+  "state": "AwaitingJointFinalOrder"
+}

@@ -212,13 +212,13 @@ class ApplicantTest {
     @Test
     void shouldReturnTrueForIs2Offline() {
         assertThat(Applicant.builder().offline(YES).build()
-            .isOffline()).isTrue();
+            .isApplicantOffline()).isTrue();
     }
 
     @Test
     void shouldReturnFalseForIsOffline() {
         assertThat(Applicant.builder().offline(NO).build()
-            .isOffline()).isFalse();
+            .isApplicantOffline()).isFalse();
     }
 
     @Test

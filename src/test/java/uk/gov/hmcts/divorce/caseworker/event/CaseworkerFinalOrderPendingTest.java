@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerFinalOrderPending.CASEWORKER_ADD_ADMIN_CLARIFICATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerFinalOrderPending.CASEWORKER_FINAL_ORDER_PENDING;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -29,6 +29,6 @@ class CaseworkerFinalOrderPendingTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_ADD_ADMIN_CLARIFICATION);
+            .contains(CASEWORKER_FINAL_ORDER_PENDING);
     }
 }

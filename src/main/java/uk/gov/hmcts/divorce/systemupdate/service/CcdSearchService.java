@@ -22,14 +22,14 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.Lists.partition;
-import static java.util.stream.Collectors.toList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -40,6 +40,7 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
@@ -54,9 +55,9 @@ public class CcdSearchService {
     public static final String ISSUE_DATE = "data.issueDate";
     public static final String DATA = "data.%s";
     public static final String STATE = "state";
-    public static final String AOS_RESPONSE = "data.howToRespondApplication";
     public static final String FINAL_ORDER_ELIGIBLE_FROM_DATE = "data.dateFinalOrderEligibleFrom";
     public static final String FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE = "data.dateFinalOrderEligibleToRespondent";
+    public static final String FINAL_ORDER_SUBMITTED_DATE = "data.dateFinalOrderSubmitted";
     public static final String APPLICATION_TYPE = "applicationType";
     public static final String SOLE_APPLICATION = "soleApplication";
     public static final String APPLICANT2_REPRESENTED = "applicant2SolicitorRepresented";
@@ -64,6 +65,13 @@ public class CcdSearchService {
     public static final String APPLICANT2_SOL_ORG_POLICY = "applicant2SolicitorOrganisationPolicy";
     public static final String SERVICE_METHOD = "serviceMethod";
     public static final String COURT_SERVICE = "courtService";
+    public static final String APPLICANT1_OFFLINE = "applicant1Offline";
+    public static final String APPLICANT2_OFFLINE = "applicant2Offline";
+    public static final String APPLICANT1_PRIVATE_CONTACT = "applicant1ContactDetailsType";
+    public static final String APPLICANT2_PRIVATE_CONTACT = "applicant2ContactDetailsType";
+    public static final String AOS_RESPONSE = "howToRespondApplication";
+    public static final String AWAITING_JS_ANSWER_START_DATE = "awaitingJsAnswerStartDate";
+    public static final String IS_JUDICIAL_SEPARATION = "isJudicialSeparation";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
@@ -81,22 +89,25 @@ public class CcdSearchService {
     @Autowired
     private CaseDetailsListConverter caseDetailsListConverter;
 
-    public List<CaseDetails> searchForAllCasesWithQuery(
-        final BoolQueryBuilder query, User user, String serviceAuth, final State... states) {
+    public List<CaseDetails> searchForAllCasesWithQuery(final BoolQueryBuilder query,
+                                                        final User user,
+                                                        final String serviceAuth,
+                                                        final State... states) {
 
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
         int from = 0;
         int totalResults = pageSize;
 
         try {
             while (totalResults == pageSize) {
-                final SearchResult searchResult =
-                    searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
+                final SearchResult searchResult = searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
-                allCaseDetails.addAll(searchResult.getCases());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+
+                allCaseDetails.addAll(pageResults);
 
                 from += pageSize;
-                totalResults = searchResult.getTotal();
+                totalResults = pageResults.size();
             }
         } catch (final FeignException e) {
             final String message = String.format("Failed to complete search for Cases with state of %s", Arrays.toString(states));
@@ -104,7 +115,7 @@ public class CcdSearchService {
             throw new CcdSearchCaseException(message, e);
         }
 
-        return allCaseDetails;
+        return allCaseDetails.stream().toList();
     }
 
     public SearchResult searchForCasesWithQuery(final int from,
@@ -179,6 +190,23 @@ public class CcdSearchService {
         ).getCases();
     }
 
+    public uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> searchForBulkCaseById(
+        String bulkCaseId, User user, String serviceAuth) {
+
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
+
+        final CaseDetails bulkCaseDetails = coreCaseDataApi.readForCaseWorker(
+            authorization,
+            serviceAuth,
+            userId,
+            JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            bulkCaseId);
+
+        return caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(bulkCaseDetails);
+    }
+
     public Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> searchAwaitingPronouncementCasesAllPages(
         final User user,
         final String serviceAuth) {
@@ -202,59 +230,24 @@ public class CcdSearchService {
         final User user,
         final String serviceAuth) {
 
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
-        int from = 0;
-        int totalResults = pageSize;
-
         final QueryBuilder stateQuery = matchQuery(STATE, state);
-        final QueryBuilder bulkCaseDetailsExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
 
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
-                .must(boolQuery().must(bulkCaseDetailsExist))
-                .should(boolQuery().must(errorCasesExist))
-                .should(boolQuery().mustNot(processedCases)));
+                    .should(boolQuery()
+                        .must(boolQuery().mustNot(errorCasesExist))
+                        .must(boolQuery().mustNot(processedCases)))
+                    .should(boolQuery()
+                        .must(boolQuery().must(errorCasesExist))));
 
-        try {
-            while (totalResults == pageSize) {
-
-                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-                    .searchSource()
-                    .query(query)
-                    .from(from)
-                    .size(pageSize);
-
-                final SearchResult searchResult = coreCaseDataApi.searchCases(
-                    user.getAuthToken(),
-                    serviceAuth,
-                    BulkActionCaseTypeConfig.CASE_TYPE,
-                    sourceBuilder.toString());
-
-                allCaseDetails.addAll(searchResult.getCases());
-
-                from += pageSize;
-                totalResults = searchResult.getTotal();
-            }
-        } catch (final FeignException e) {
-
-            final String message = String.format("Failed to complete search for Bulk Cases with state of %s", state);
-            log.info(message, e);
-            throw new CcdSearchCaseException(message, e);
-        }
-
-        return allCaseDetails.stream()
-            .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-            .collect(toList());
+        return searchForBulkCases(user, serviceAuth, query);
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
         searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
-        int from = 0;
-        int totalResults = pageSize;
 
         final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
         final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
@@ -268,35 +261,21 @@ public class CcdSearchService {
             .should(listedStateQuery)
             .minimumShouldMatch(1);
 
+        return searchForBulkCases(user, serviceAuth, query);
+    }
+
+    public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
+        searchForBulkCases(final User user, final String serviceAuth, final QueryBuilder query) {
+
         try {
-            while (totalResults == pageSize) {
-
-                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-                    .searchSource()
-                    .query(query)
-                    .from(from)
-                    .size(pageSize);
-
-                final SearchResult searchResult = coreCaseDataApi.searchCases(
-                    user.getAuthToken(),
-                    serviceAuth,
-                    BulkActionCaseTypeConfig.CASE_TYPE,
-                    sourceBuilder.toString());
-
-                allCaseDetails.addAll(searchResult.getCases());
-
-                from += pageSize;
-                totalResults = searchResult.getTotal();
-            }
+            return searchBulkActionCases(user, serviceAuth, query).stream()
+                .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
+                .toList();
         } catch (final FeignException e) {
-            final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
+            final String message = "Failed to complete search for Bulk Cases";
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
-
-        return allCaseDetails.stream()
-            .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-            .collect(toList());
     }
 
     public List<CaseDetails> searchForCases(
@@ -341,7 +320,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search joint app with access code and issue date present {} ", sourceBuilder.toString());
+        log.info("Query to search joint app with access code and issue date present {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -374,7 +353,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search joint paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+        log.info("Query to search joint paper applications where applicant 2 offline flag should be set {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -399,7 +378,9 @@ public class CcdSearchService {
             .must(boolQuery().must(newPaperCase))
             .must(boolQuery().must(soleApplication))
             .must(boolQuery().mustNot(applicant2OfflineExist))
-            .must(boolQuery().mustNot(applicant2EmailExist));
+            .must(boolQuery().mustNot(applicant2EmailExist))
+            .mustNot(matchQuery(STATE, Withdrawn))
+            .mustNot(matchQuery(STATE, Rejected));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -407,7 +388,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search sole paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+        log.info("Query to search sole paper applications where applicant 2 offline flag should be set {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -436,7 +417,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder.toString());
+        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -448,5 +429,35 @@ public class CcdSearchService {
         log.info("Cases retrieved AwaitingAOS cases with confirmReadPetition equals Yes {}", caseDetails.size());
 
         return caseDetails;
+    }
+
+    private Set<CaseDetails> searchBulkActionCases(final User user, final String serviceAuth, final QueryBuilder query) {
+
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
+        int from = 0;
+        int totalResults = pageSize;
+
+        while (totalResults == pageSize) {
+
+            final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+                .searchSource()
+                .query(query)
+                .from(from)
+                .size(pageSize);
+
+            final SearchResult searchResult = coreCaseDataApi.searchCases(
+                user.getAuthToken(),
+                serviceAuth,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                sourceBuilder.toString());
+
+            final List<CaseDetails> pageResults = searchResult.getCases();
+            allCaseDetails.addAll(pageResults);
+
+            from += pageSize;
+            totalResults = pageResults.size();
+        }
+
+        return allCaseDetails;
     }
 }

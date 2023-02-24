@@ -21,6 +21,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
@@ -29,9 +30,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
@@ -105,12 +110,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_JUSTICE_GOV_UK_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
@@ -121,6 +126,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
@@ -335,6 +343,7 @@ public class TestDataHelper {
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .applicationType(JOINT_APPLICATION)
+            .isJudicialSeparation(NO)
             .build();
     }
 
@@ -797,14 +806,34 @@ public class TestDataHelper {
         if (ENGLISH.equals(languagePreference)) {
             basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
             basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         } else {
             basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
             basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
-            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_JUSTICE_GOV_UK_CY);
+            basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         }
+        return basicDocmosisTemplateContent;
+    }
+
+    public static Map<String, Object> getBasicDocmosisTemplateContentWithCtscContactDetails(LanguagePreference languagePreference) {
+        Map<String, Object> basicDocmosisTemplateContent = getBasicDocmosisTemplateContent(languagePreference);
+
+        var ctscContactDetails = CtscContactDetails
+                .builder()
+                .centreName("HMCTS Digital Divorce and Dissolution")
+                .serviceCentre("Courts and Tribunals Service Centre")
+                .poBox("PO Box 13226")
+                .town("Harlow")
+                .postcode("CM20 9UG")
+                .emailAddress("contactdivorce@justice.gov.uk")
+                .phoneNumber("0300 303 0642")
+                .build();
+
+        basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        basicDocmosisTemplateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+
         return basicDocmosisTemplateContent;
     }
 
@@ -1131,5 +1160,63 @@ public class TestDataHelper {
         templateVars.put(IS_CONDITIONAL_ORDER, CommonContent.NO);
         templateVars.put(IS_FINAL_ORDER, CommonContent.YES);
         return templateVars;
+    }
+
+    public static CaseData buildCaseDataCOPronounced(final YesOrNo isOffline, final ContactDetailsType app1ContactType,
+                                                     final ContactDetailsType app2ContactType) {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .addressLine1("line1")
+            .addressLine2("line2")
+            .postTown("city")
+            .postCode("postcode")
+            .build();
+
+        Applicant applicant1 = Applicant.builder()
+            .address(addressGlobalUK)
+            .firstName("Bob")
+            .lastName("Smith")
+            .offline(isOffline)
+            .contactDetailsType(app1ContactType)
+            .build();
+
+        Applicant applicant2 = Applicant.builder()
+            .firstName("Lily")
+            .lastName("Jones")
+            .address(addressGlobalUK)
+            .offline(isOffline)
+            .contactDetailsType(app2ContactType)
+            .build();
+
+        ListValue<DivorceDocument> coGrantedDoc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_GRANTED)
+                .build())
+            .build();
+
+        ListValue<DivorceDocument> coCoverLetterApp1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
+                .build())
+            .build();
+
+        ListValue<DivorceDocument> coCoverLetterApp2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
+                .build())
+            .build();
+
+        return CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .conditionalOrder(ConditionalOrder.builder()
+                .court(ConditionalOrderCourt.BIRMINGHAM)
+                .dateAndTimeOfHearing(LOCAL_DATE_TIME)
+                .grantedDate(LOCAL_DATE)
+                .build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
+                .build())
+            .build();
     }
 }

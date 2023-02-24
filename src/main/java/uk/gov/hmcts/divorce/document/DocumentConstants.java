@@ -9,7 +9,8 @@ public final class DocumentConstants {
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
     public static final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_DISPUTED";
     public static final String RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID = "NFD_RESP_RESPONDED_UNDEFENDED";
-
+    public static final String NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED";
+    public static final String NFD_NOP_APP1_JS_SOLE_DISPUTED = "NFD_NOP_APP1_JS_SOLE_DISPUTED";
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
 
@@ -28,6 +29,7 @@ public final class DocumentConstants {
 
     public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
+    public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
 
 
@@ -43,6 +45,11 @@ public final class DocumentConstants {
     public static final String NFD_NOP_AS2_SOLE_APP1_SOL_SS = "NFD_NOP_AS2_SOLE_APP1_SOL_SS";
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT = "NFD_NOP_JA1_JOINT_APP1APP2_CIT";
     public static final String NFD_NOP_AL2_SOLE_APP1_CIT_PS = "NFD_NOP_AL2_SOLE_APP1_CIT_PS";
+    public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS = "NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS";
+    public static final String NFD_NOP_APP1_JS_SOLE = "NFD_NOP_APP1_JS_SOLE";
+    public static final String NFD_NOP_APP2_JS_SOLE = "NFD_NOP_APP2_JS_SOLE";
+    public static final String NFD_NOP_APP1_SOLICITOR_JS_SOLE = "NFD_NOP_APP1_SOLICITOR_JS_SOLE";
+    public static final String NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID = "NFD_NOP_JS_SERVICE_SOLICITOR";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
@@ -50,6 +57,10 @@ public final class DocumentConstants {
 
     public static final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER";
     public static final String REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "REJECTED_REFUSAL_ORDER_COVER_LETTER";
+    public static final String JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID =
+        "JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER";
+    public static final String JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID =
+        "JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER";
 
     public static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER";
     public static final String CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID = "CLARIFICATION_REFUSAL_ORDER_COVER_LETTER";
@@ -63,6 +74,9 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_NAME = "certificateOfEntitlement";
 
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID
+        = "CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
 
     public static final String USER_ROLES = "user-roles";
@@ -102,6 +116,7 @@ public final class DocumentConstants {
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
+    public static final String AOS_OVERDUE_JS_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED_JS";
 
     public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
     public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_APPLICANT2_SOLICITOR";
@@ -114,6 +129,11 @@ public final class DocumentConstants {
 
     public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
 
+    public static final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID = "CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT";
+
+    public static final String CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED_JS";
+    public static final String CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER_JS";
+
     public static final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY";
     public static final String FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "finalOrderCanApply";
 
@@ -122,6 +142,9 @@ public final class DocumentConstants {
 
     public static final String FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "FinalOrderGrantedCoverLetter";
     public static final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID = "FINAL_ORDER_GRANTED_COVER_LETTER";
+
+    public static final String APPLICANT1 = "applicant1";
+    public static final String APPLICANT2 = "applicant2";
 
     private DocumentConstants() {
     }

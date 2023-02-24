@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
@@ -30,6 +32,9 @@ public class GenerateApplyForConditionalOrderDocument {
     private CommonContent commonContent;
 
     @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
+    @Autowired
     private Clock clock;
 
     public void generateApplyForConditionalOrder(final CaseData caseData,
@@ -39,12 +44,17 @@ public class GenerateApplyForConditionalOrderDocument {
 
         log.info("Generating apply for conditional order pdf for CaseID: {}", caseId);
 
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant.getLanguagePreference());
+
         LocalDateTime now = LocalDateTime.now(clock);
+
+        templateContent.putAll(commonContent.templateContentCanApplyForCoOrFo(caseData, caseId, applicant, partner, now.toLocalDate()));
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_CAN_APPLY,
-            commonContent.templateContentCanApplyForCoOrFo(caseData, caseId, applicant, partner, now.toLocalDate()),
+            templateContent,
             caseId,
             CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
             applicant.getLanguagePreference(),
