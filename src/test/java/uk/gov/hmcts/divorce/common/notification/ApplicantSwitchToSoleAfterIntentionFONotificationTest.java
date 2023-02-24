@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -22,10 +21,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -54,7 +56,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
     void shouldSendApplicant1SolicitorNotificationIfJointApplicationAndApplicant1IntendedToSwitchToSoleFO() {
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitorRepresented(YES);
         data.getApplicant1().setSolicitor(Solicitor.builder()
             .name("App1 Sol")
             .reference("12344")
@@ -125,7 +127,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
-        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitorRepresented(YES);
         data.getApplicant2().setSolicitor(Solicitor.builder()
             .name("App1 Sol")
             .reference("12344")
@@ -196,7 +198,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant1().setEmail(TEST_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
-        data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        data.getApplicant1().setSolicitorRepresented(NO);
         data.setFinalOrder(FinalOrder.builder()
             .dateApplicant1DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
             .applicant1IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
@@ -212,6 +214,35 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendApplicant1NotificationIfJointApplicationAndApplicant1IntendedToSwitchToSoleFOWelsh() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant1().setLanguagePreferenceWelsh(YES);
+        data.setFinalOrder(FinalOrder.builder()
+            .dateApplicant1DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
+            .applicant1IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
+            .build());
+
+        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
+            any(),
+            eq(WELSH)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -262,7 +293,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
-        data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
+        data.getApplicant2().setSolicitorRepresented(NO);
         data.setFinalOrder(FinalOrder.builder()
             .dateApplicant2DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
             .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
@@ -278,6 +309,35 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendApplicant2NotificationIfJointApplicationAndApplicant2IntendedToSwitchToSoleFOWelsh() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant2().setSolicitorRepresented(NO);
+        data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.setFinalOrder(FinalOrder.builder()
+            .dateApplicant2DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
+            .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
+            .build());
+
+        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
+            any(),
+            eq(WELSH)
         );
 
         verifyNoMoreInteractions(notificationService);
