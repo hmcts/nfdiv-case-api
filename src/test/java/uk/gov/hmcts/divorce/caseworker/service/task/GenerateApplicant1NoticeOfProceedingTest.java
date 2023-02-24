@@ -470,7 +470,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         verifyNoInteractions(noticeOfProceedingSolicitorContent);
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1_JS_SOLE_OS_PS);
 
         assertThat(result.getData()).isEqualTo(caseData);
 
