@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -85,33 +86,25 @@ public class GenerateFinalOrderCoverLetterTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference()));
+
         Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(NAME, join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
-        templateContent.put(ADDRESS, caseData.getApplicant1().getPostalAddress());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
         templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
-        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
-        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
-            caseData.getApplicant1().getLanguagePreference()));
-
-        Map<String, Object> applicant1TemplateContent = new HashMap<>();
+        Map<String, Object> applicant1TemplateContent = templateContent;
         applicant1TemplateContent.put(NAME, join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
         applicant1TemplateContent.put(ADDRESS, caseData.getApplicant1().getPostalAddress());
-        applicant1TemplateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
-        applicant1TemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        applicant1TemplateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
-        Map<String, Object> applicant2TemplateContent = new HashMap<>();
+        Map<String, Object> applicant2TemplateContent = templateContent;
         applicant2TemplateContent.put(NAME, join(" ", caseData.getApplicant2().getFirstName(), caseData.getApplicant2().getLastName()));
         applicant2TemplateContent.put(ADDRESS, caseData.getApplicant2().getPostalAddress());
-        applicant2TemplateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
-        applicant2TemplateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        applicant2TemplateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
         generateFinalOrderCoverLetter.apply(details);
 
