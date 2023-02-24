@@ -184,11 +184,11 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         final String templateId;
         final Applicant applicant1 = caseData.getApplicant1();
         final LanguagePreference languagePreference = applicant1.getLanguagePreference();
+        var isCourtService = caseData.getApplication().isCourtServiceMethod();
 
         if (applicant1.isRepresented()) {
             log.info("Generating notice of judicial separation proceedings for applicant solicitor for case id {} ", caseId);
 
-            var isCourtService = caseData.getApplication().isCourtServiceMethod();
             templateId = isCourtService
                     ? NFD_NOP_APP1_SOLICITOR_JS_SOLE
                     : NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID;
@@ -210,7 +210,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 templateContent.apply(caseData, caseId, caseData.getApplicant2(), languagePreference),
                 caseId,
-                caseData.getApplication().isCourtServiceMethod() ? NFD_NOP_APP1_JS_SOLE : NFD_NOP_APP1_JS_SOLE_OS_PS,
+                isCourtService ? NFD_NOP_APP1_JS_SOLE : NFD_NOP_APP1_JS_SOLE_OS_PS,
                 languagePreference,
                 formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
             );
