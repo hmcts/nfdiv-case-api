@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.HashMap;
@@ -61,6 +62,9 @@ class GenerateAosResponseLetterDocumentTest {
 
     @Mock
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Mock
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @InjectMocks
     private GenerateAosResponseLetterDocument generateAosResponseLetterDocument;
@@ -248,6 +252,7 @@ class GenerateAosResponseLetterDocumentTest {
 
         verify(generateD84Form).generateD84Document(caseData, TEST_CASE_ID);
         verify(generateD10Form).apply(caseDetails);
+        verify(coversheetSolicitorTemplateContent).apply(caseData, caseDetails.getId());
 
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(aosResponseLetterTemplateContent);
