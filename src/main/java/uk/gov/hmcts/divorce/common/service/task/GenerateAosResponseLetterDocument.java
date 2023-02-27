@@ -59,7 +59,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         if (caseData.getApplicant1().isApplicantOffline()) {
-            if (YES.equals(caseData.getIsJudicialSeparation())) {
+            if (caseData.isJudicialSeparationCase()) {
                 if (acknowledgementOfService.isDisputed()) {
                     generateD84Form.generateD84Document(caseData, caseId);
                     generateCoversheet.generateCoversheet(
