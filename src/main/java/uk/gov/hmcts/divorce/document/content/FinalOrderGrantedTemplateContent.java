@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.EMPTY;
