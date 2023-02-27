@@ -75,7 +75,7 @@ public class AosUndefendedResponseLetterTemplateContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CP_CASE_EMAIL);
         }
 
-        if (YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
             templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
