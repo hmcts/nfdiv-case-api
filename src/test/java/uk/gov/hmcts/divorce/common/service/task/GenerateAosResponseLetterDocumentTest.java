@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -51,6 +52,9 @@ class GenerateAosResponseLetterDocumentTest {
 
     @Mock
     private GenerateD84Form generateD84Form;
+
+    @Mock
+    private GenerateD10Form generateD10Form;
 
     @Mock
     private GenerateCoversheet generateCoversheet;
@@ -212,7 +216,7 @@ class GenerateAosResponseLetterDocumentTest {
     }
 
     @Test
-    void shouldGenerateRespondentRespondedDocWhenApplicant1SolIsOfflineAndUndisputedAndJS() {
+    void shouldGenerateRespondentRespondedDocsWhenApplicant1SolIsOfflineAndUndisputedAndJS() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setOffline(YES);
@@ -241,6 +245,9 @@ class GenerateAosResponseLetterDocumentTest {
                 caseData.getApplicant1().getLanguagePreference(),
                 AOS_RESPONSE_LETTER_DOCUMENT_NAME
             );
+
+        verify(generateD84Form).generateD84Document(caseData, TEST_CASE_ID);
+        verify(generateD10Form).apply(caseDetails);
 
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(aosResponseLetterTemplateContent);

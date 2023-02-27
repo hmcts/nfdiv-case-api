@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -40,6 +41,9 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
 
     @Autowired
     private GenerateD84Form generateD84Form;
+
+    @Autowired
+    private GenerateD10Form generateD10Form;
 
     @Autowired
     private GenerateCoversheet generateCoversheet;
@@ -92,7 +96,11 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                     }
                 } else {
                     if (caseData.getApplicant1().isRepresented()) {
-                        log.info("Generating aos response (undefended) JS letter pdf for case id: {}", caseId);
+                        log.info("Generating aos response (undefended) JS letter pdf, D10 and D84 forms for case id: {}", caseId);
+
+                        generateD10Form.apply(caseDetails);
+                        generateD84Form.generateD84Document(caseData, caseId);
+
                         caseDataDocumentService.renderDocumentAndUpdateCaseData(
                             caseData,
                             AOS_RESPONSE_LETTER,
