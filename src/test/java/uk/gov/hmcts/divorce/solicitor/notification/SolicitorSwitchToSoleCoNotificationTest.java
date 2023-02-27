@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
@@ -114,6 +115,28 @@ class SolicitorSwitchToSoleCoNotificationTest {
             eq(PARTNER_SWITCHED_TO_SOLE_CO),
             eq(templateVars),
             eq(ENGLISH)
+        );
+
+        verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2Welsh() {
+
+        final CaseData caseData = validJointApplicant1CaseData();
+        final Map<String, String> templateVars = new HashMap<>();
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(templateVars);
+
+        solicitorSwitchToSoleCoNotification.sendToApplicant2(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(PARTNER_SWITCHED_TO_SOLE_CO),
+            eq(templateVars),
+            eq(WELSH)
         );
 
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
