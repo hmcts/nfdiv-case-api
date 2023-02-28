@@ -5,9 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.ArrayList;
@@ -20,6 +22,21 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 
@@ -62,6 +79,56 @@ public class ConditionalOrderCommonContent {
             return legalAdvisorComments;
 
         }
+    }
+
+    public DocumentType getCoverLetterDocumentType(
+        final CaseData caseData,
+        final Applicant applicant,
+        final boolean isClarificationRefusal
+    ) {
+        if (caseData.isJudicialSeparationCase()) {
+            if (isClarificationRefusal) {
+                if (caseData.isDivorce()) {
+                    return applicant.isRepresented()
+                        ? JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
+                        : JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+                } else {
+                    return applicant.isRepresented()
+                        ? SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER
+                        : SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+                }
+            }
+            if (caseData.isDivorce()) {
+                return applicant.isRepresented()
+                    ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                    : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+            } else {
+                return applicant.isRepresented()
+                    ? SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
+                    : SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+            }
+        }
+        return CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+    }
+
+    public String getCoverLetterDocumentTemplateId(
+        final CaseData caseData,
+        final Applicant applicant,
+        final boolean isClarificationRefusal
+    ) {
+        if (caseData.isJudicialSeparationCase()) {
+            if (isClarificationRefusal) {
+                return applicant.isRepresented()
+                    ? JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+                    : JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+            }
+            return applicant.isRepresented()
+                ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+                : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+        }
+        return isClarificationRefusal
+            ? CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID
+            : REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
     }
 
     public String getPartner(final CaseData caseData) {
