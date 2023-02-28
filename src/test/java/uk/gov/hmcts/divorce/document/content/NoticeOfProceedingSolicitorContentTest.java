@@ -277,10 +277,16 @@ public class NoticeOfProceedingSolicitorContentTest {
     public void shouldMapTemplateContentForJudicialSeparation() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
-        applicant1.getSolicitor().setAddress(ADDRESS);
+        applicant1.setAddress(AddressGlobalUK.builder()
+                .country("UK")
+                .build());
 
         Applicant applicant2 = respondentWithDigitalSolicitor();
         applicant2.getSolicitor().setAddress(ADDRESS);
+
+        applicant2.setAddress(AddressGlobalUK.builder()
+                .country("UK")
+                .build());
 
         CaseData caseData = CaseData.builder()
                 .applicant1(applicant1)
@@ -313,7 +319,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                         entry(ISSUE_DATE, "30 March 2022"),
                         entry(IS_JOINT, true),
                         entry(IS_DIVORCE, true),
-                        entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
+                        entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
                         entry(APPLICANT_SOLICITOR_REGISTERED, true),
                         entry(SOLICITOR_NAME, "The Solicitor"),
                         entry(APPLICANT_2_SOLICITOR_ADDRESS, ADDRESS),
@@ -321,7 +327,6 @@ public class NoticeOfProceedingSolicitorContentTest {
                         entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                         entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
                         entry(APPLICANT_2_SOLICITOR_NAME, "The Solicitor"),
-                        entry(APPLICANT_1_SOLICITOR_ADDRESS, ADDRESS),
                         entry(IS_APP1_REPRESENTED, true));
 
         verifyNoInteractions(holdingPeriodService);
