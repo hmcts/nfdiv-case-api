@@ -24,6 +24,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
@@ -118,7 +120,7 @@ class ConditionalOrderCommonContentTest {
     @Test
     void shouldReturnDocumentTypeAndTemplateId() {
         CaseData caseData = CaseData.builder()
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -134,7 +136,7 @@ class ConditionalOrderCommonContentTest {
     @Test
     void shouldReturnDocumentTypeAndTemplateIdForClarification() {
         CaseData caseData = CaseData.builder()
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -152,7 +154,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationAmendment() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -169,7 +171,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForSeparationAmendment() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DISSOLUTION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -186,7 +188,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationAmendmentWhenApplicantRepresented() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -204,7 +206,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForSeparationAmendmentWhenApplicantRepresented() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DISSOLUTION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -222,7 +224,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationClarification() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -239,7 +241,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForSeparationClarification() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DISSOLUTION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -256,7 +258,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForJudicialSeparationClarificationWhenApplicantRepresented() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -275,7 +277,7 @@ class ConditionalOrderCommonContentTest {
     void shouldReturnDocumentTypeAndTemplateIdForSeparationClarificationWhenApplicantRepresented() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DISSOLUTION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
