@@ -280,7 +280,7 @@ uk:
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: 'e414d40e-de04-4aa9-b85c-fc939417f0fd' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '8fa6008b-1541-44bc-9ddd-45fa4cd3222c' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'cdee584c-db6a-4c3a-b2eb-5956940cab58' #TODO - Welsh translation needed
-            APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310' #TODO - Welsh translation needed
+            APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '7d86d77b-125e-4ea6-ac09-d9aa0b755714'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -380,6 +380,7 @@ docmosis:
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
@@ -447,6 +448,7 @@ docmosis:
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx #TODO: update welsh content
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Respondent_JS_Sole.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
