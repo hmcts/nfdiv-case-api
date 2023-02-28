@@ -34,28 +34,32 @@
     <notes>No update for apache commons yet</notes>
     <cve>CVE-2021-37533</cve>
   </suppress>
-    <suppress>
-        <notes>no updates yet for spring-boot-starter-web:2.7.1</notes>
-        <cve>CVE-2022-31569</cve>
-    </suppress>
-    <suppress>
-        <notes>com.github.hmcts:befta-fw</notes>
-        <cve>CVE-2020-11022</cve>
-        <cve>CVE-2020-11023</cve>
-    </suppress>
-    <suppress>
-      <notes>snakeyaml</notes>
-      <cve>CVE-2022-25857</cve>
-      <cve>CVE-2022-38749</cve>
-      <cve>CVE-2022-38750</cve>
-      <cve>CVE-2022-38751</cve>
-      <cve>CVE-2022-38752</cve>
-      <cve>CVE-2022-41854</cve>
-      <cve>CVE-2021-4235</cve>
-      <cve>CVE-2022-3064</cve>
-    </suppress>
-    <suppress>
-      <notes>cucumber:datatable pom contains com.googlecode.java-diff-utils:diffutils which has the CVE vulnerability, no fix has been released yet for this</notes>
-      <cve>CVE-2021-4277</cve>
-    </suppress>
+  <suppress>
+      <notes>no updates yet for spring-boot-starter-web:2.7.1</notes>
+      <cve>CVE-2022-31569</cve>
+  </suppress>
+  <suppress>
+      <notes>com.github.hmcts:befta-fw</notes>
+      <cve>CVE-2020-11022</cve>
+      <cve>CVE-2020-11023</cve>
+  </suppress>
+  <suppress>
+    <notes>snakeyaml</notes>
+    <cve>CVE-2022-25857</cve>
+    <cve>CVE-2022-38749</cve>
+    <cve>CVE-2022-38750</cve>
+    <cve>CVE-2022-38751</cve>
+    <cve>CVE-2022-38752</cve>
+    <cve>CVE-2022-41854</cve>
+    <cve>CVE-2021-4235</cve>
+    <cve>CVE-2022-3064</cve>
+  </suppress>
+  <suppress>
+    <notes>cucumber:datatable pom contains com.googlecode.java-diff-utils:diffutils which has the CVE vulnerability, no fix has been released yet for this</notes>
+    <cve>CVE-2021-4277</cve>
+  </suppress>
+  <suppress>
+    <notes>no updates for hutool or json-java_project which fixes this vulnerability</notes>
+    <cve>CVE-2020-5408</cve>
+  </suppress>
 </suppressions>
