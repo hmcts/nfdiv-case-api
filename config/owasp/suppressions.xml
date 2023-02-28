@@ -60,6 +60,6 @@
   </suppress>
   <suppress>
     <notes>no updates for hutool or json-java_project which fixes this vulnerability</notes>
-    <cve>CVE-2020-5408</cve>
+    <cve>CVE-2022-45688</cve>
   </suppress>
 </suppressions>
