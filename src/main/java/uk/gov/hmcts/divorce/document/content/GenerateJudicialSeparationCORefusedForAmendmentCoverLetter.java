@@ -33,8 +33,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -61,24 +59,31 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
 
     public void generateAndUpdateCaseData(final CaseData caseData,
                                           final Long caseId,
-                                          final String templateId,
                                           final Applicant applicant) {
 
-        log.info("Generating Judicial Separation Conditional Order Refused Cover Letter for case id {} ", caseId);
-
-        final DocumentType coverLetter = applicant.isRepresented()
-            ? JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER
-            : JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
+        if (caseData.isDivorce()) {
+            log.info("Generating Judicial Separation Order Refused Cover Letter for case id {} ", caseId);
+        } else {
+            log.info("Generating Separation Order Refused Cover Letter for case id {} ", caseId);
+        }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            coverLetter,
+            getCoverLetterDocumentType(caseData, applicant),
             templateContent(caseData, caseId, applicant),
             caseId,
-            templateId,
+            getCoverLetterDocumentTemplateId(caseData, applicant),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
+    }
+
+    public DocumentType getCoverLetterDocumentType(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+    }
+
+    public String getCoverLetterDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
+        return conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
     }
 
     private String getSolicitorName(final Applicant applicant) {
@@ -122,7 +127,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
         } else {
             templateContent.put(FIRST_NAME, applicant.getFirstName());
             templateContent.put(LAST_NAME, applicant.getLastName());
-            templateContent.put(ADDRESS, applicant.getAddress());
+            templateContent.put(ADDRESS, applicant.getPostalAddress());
 
             if (caseData.getDivorceOrDissolution().isDivorce()) {
                 templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);

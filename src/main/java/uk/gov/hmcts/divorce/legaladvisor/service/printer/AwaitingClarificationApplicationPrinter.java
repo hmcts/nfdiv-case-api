@@ -3,123 +3,71 @@ package uk.gov.hmcts.divorce.legaladvisor.service.printer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
-import uk.gov.hmcts.divorce.document.print.BulkPrintService;
-import uk.gov.hmcts.divorce.document.print.model.Letter;
-import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.legaladvisor.service.task.GenerateCoRefusedCoverLetter;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static org.springframework.util.CollectionUtils.firstElement;
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterType.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE;
 
 @Component
 @Slf4j
 public class AwaitingClarificationApplicationPrinter {
 
-    private static final String LETTER_TYPE_AWAITING_CLARIFICATION = "awaiting-clarification-application-letter";
-
     @Autowired
-    private BulkPrintService bulkPrintService;
+    private AwaitingAmendedOrClarificationApplicationCommonPrinter awaitingAmendedOrClarificationApplicationCommonPrinter;
 
-    @Autowired
-    private GenerateCoversheet generateCoversheet;
-
-    @Autowired
-    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
-
-    @Autowired
-    private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
-
-    private static final int EXPECTED_DOCUMENTS_SIZE = 3;
+    public static final String missingDocumentsMessage =
+        "Awaiting clarification Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
+    public static final String missingDocumentsJudicialSeparationMessage =
+        "Awaiting clarification JS Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
+    public static final List<DocumentType> missingDocumentsTypeList =
+        List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL);
+    public static final List<DocumentType> missingDocumentsJudicialSeparationTypeList =
+        List.of(
+            COVERSHEET,
+                JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
+            CONDITIONAL_ORDER_REFUSAL,
+            APPLICATION
+        );
+    public static final List<DocumentType> missingDocumentsJudicialSeparationRepresentedTypeList =
+        List.of(
+            COVERSHEET,
+            JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
+            CONDITIONAL_ORDER_REFUSAL,
+            APPLICATION
+        );
+    public static final int missingDocumentsExpectedDocumentsSize = 3;
+    public static final int missingDocumentsJudicialSeparationExpectedDocumentsSize = 4;
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
-        generateLetters(caseData, caseId, applicant);
-        final List<Letter> currentAwaitingClarificationApplicationLetters = awaitingClarificationApplicationLetters(caseData);
+        MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder()
+            .message(missingDocumentsMessage)
+            .documentTypeList(missingDocumentsTypeList)
+            .expectedDocumentsSize(missingDocumentsExpectedDocumentsSize)
+            .build();
 
-        if (!isEmpty(currentAwaitingClarificationApplicationLetters)
-            && currentAwaitingClarificationApplicationLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
-
-            final String caseIdString = caseId.toString();
-            final Print print = new Print(
-                currentAwaitingClarificationApplicationLetters,
-                caseIdString,
-                caseIdString,
-                LETTER_TYPE_AWAITING_CLARIFICATION
-            );
-            final UUID letterId = bulkPrintService.print(print);
-
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
-        } else {
-            log.warn(
-                "Awaiting clarification Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}",
-                List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL),
-                caseId
-            );
-        }
-    }
-
-    private List<Letter> awaitingClarificationApplicationLetters(final CaseData caseData) {
-
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET
-        );
-
-        final List<Letter> refusalCoverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_REFUSAL_COVER_LETTER
-        );
-
-        final List<Letter> refusalLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_REFUSAL
-        );
-
-        final List<Letter> awaitingClarificationLetters = new ArrayList<>();
-
-        final Letter coversheetLetter = firstElement(coversheetLetters);
-        final Letter refusalCoverLetter = firstElement(refusalCoverLetters);
-        final Letter refusalLetter = firstElement(refusalLetters);
-
-        if (coversheetLetter != null) {
-            awaitingClarificationLetters.add(coversheetLetter);
-        }
-        if (refusalCoverLetter != null) {
-            awaitingClarificationLetters.add(refusalCoverLetter);
-        }
-        if (refusalLetter != null) {
-            awaitingClarificationLetters.add(refusalLetter);
+        if (caseData.isJudicialSeparationCase()) {
+            missingDocumentsValidation.message = missingDocumentsJudicialSeparationMessage;
+            missingDocumentsValidation.documentTypeList = applicant.isRepresented()
+                ? missingDocumentsJudicialSeparationRepresentedTypeList
+                : missingDocumentsJudicialSeparationTypeList;
+            missingDocumentsValidation.expectedDocumentsSize = missingDocumentsJudicialSeparationExpectedDocumentsSize;
         }
 
-        return awaitingClarificationLetters;
-    }
-
-    private void generateLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
-        generateCoversheet.generateCoversheet(
+        awaitingAmendedOrClarificationApplicationCommonPrinter.sendLetters(
             caseData,
             caseId,
-            COVERSHEET_APPLICANT,
-            coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
-            applicant.getLanguagePreference()
-        );
-        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
-            caseData,
-            caseId,
-            CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            applicant
+            applicant,
+            missingDocumentsValidation,
+            AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE
         );
     }
 }
