@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -30,8 +31,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
@@ -57,8 +56,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -70,7 +69,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
+class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -85,7 +84,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
     private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private GenerateJudicialSeparationCORefusedForAmendmentCoverLetter generateJudicialSeparationCORefusedForAmendmentCoverLetter;
+    private GenerateJudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
 
     @Test
     void shouldGenerateAndUpdateCaseData() {
@@ -112,8 +111,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .supplementaryCaseType(JUDICIAL_SEPARATION)
-
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
                     .firstName("Bob")
@@ -138,31 +136,31 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
-            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), true))
+            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), true))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.getPartner(caseData))
             .thenReturn("wife");
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+        generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
-            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER),
+            eq(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
-            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
+            eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
             eq(ENGLISH),
             anyString()
         );
     }
 
     @Test
-    void shouldGenerateAndUpdateCaseDataForRepresentedApplicant() {
+    void shouldGenerateAndUpdateCaseDataForOfflineRepresentedApplicant() {
         setMockClock(clock);
 
         final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
@@ -189,7 +187,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
                     .solicitorRepresented(YES)
@@ -235,19 +233,19 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), true))
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), true))
             .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+        generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
-            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER),
+            eq(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
             eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
@@ -257,14 +255,14 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
     }
 
     @Test
-    void shouldGenerateAndUpdateCaseDataForRepresentedApplicantWithNoReferenceAndUnrepresentedRespondent() {
+    void shouldGenerateAndUpdateCaseDataForOfflineRepresentedApplicantWithNoReferenceAndUnrepresentedRespondent() {
         setMockClock(clock);
 
         final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
             List.of(new ConditionalOrderCommonContent.RefusalReason("Court does not have jurisdiction"));
 
         final Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(CONTACT_EMAIL, "contactdivorce@justice.gov.uk");
+        templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -284,7 +282,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(SOLE_APPLICATION)
-            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .isJudicialSeparation(YES)
             .applicant1(
                 Applicant.builder()
                     .solicitorRepresented(YES)
@@ -302,7 +300,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             )
             .applicant2(
                 Applicant.builder()
-                    .solicitorRepresented(NO)
+                    .solicitorRepresented(YesOrNo.NO)
                     .firstName("Roberta")
                     .lastName("Smith")
                     .build()
@@ -321,19 +319,19 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), true))
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), true))
             .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+        generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
-            eq(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER),
+            eq(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER),
             eq(templateContent),
             eq(TEST_CASE_ID),
             eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
