@@ -81,6 +81,34 @@ public enum DocumentType implements HasLabel {
         "Judicial Separation order refusal solicitor cover letter"
     ),
 
+    @JsonProperty("judicialSeparationOrderRefusalCoverLetter")
+    JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
+        "Judicial Separation order clarification refusal cover letter"
+    ),
+
+    @JsonProperty("judicialSeparationOrderClarificationRefusalSolicitorCoverLetter")
+    JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER(
+      "Judicial Separation order clarification refusal solicitor cover letter"
+    ),
+
+    @JsonProperty("separationOrderRefusalCoverLetter")
+    SEPARATION_ORDER_REFUSAL_COVER_LETTER("Separation order refusal cover letter"),
+
+    @JsonProperty("separationOrderRefusalSolicitorCoverLetter")
+    SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER(
+        "Separation order refusal solicitor cover letter"
+    ),
+
+    @JsonProperty("separationOrderRefusalCoverLetter")
+    SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
+        "Separation order clarification refusal cover letter"
+    ),
+
+    @JsonProperty("separationOrderClarificationRefusalSolicitorCoverLetter")
+    SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER(
+        "Separation order clarification refusal solicitor cover letter"
+    ),
+
     @JsonProperty("correspondence")
     CORRESPONDENCE("Correspondence"),
 
