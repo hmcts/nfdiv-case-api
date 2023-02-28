@@ -15,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -29,6 +30,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -367,7 +370,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingAdminClarification,
                     AwaitingClarification,
                     AwaitingAmendedApplication,
-                    ClarificationSubmitted)
+                    ClarificationSubmitted,
+                    LAReview)
             )
             .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
             .field("coDecisionDate")
@@ -404,7 +408,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition(showForState(
                 AwaitingFinalOrder,
                 AwaitingJointFinalOrder,
+                AwaitingGeneralConsideration,
                 FinalOrderRequested,
+                RespondentFinalOrderRequested,
                 FinalOrderPending,
                 FinalOrderOverdue,
                 FinalOrderComplete))

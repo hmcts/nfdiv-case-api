@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -28,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ADDRESS_BASED_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_ADDRESS;
@@ -269,6 +271,60 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(IS_JOINT, true),
                 entry(IS_DIVORCE, true));
+    }
+
+    @Test
+    public void shouldMapTemplateContentForJudicialSeparation() {
+        Applicant applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant1.getSolicitor().setAddress(ADDRESS);
+
+        Applicant applicant2 = respondentWithDigitalSolicitor();
+        applicant2.getSolicitor().setAddress(ADDRESS);
+
+        CaseData caseData = CaseData.builder()
+                .applicant1(applicant1)
+                .applicant2(applicant2)
+                .divorceOrDissolution(DIVORCE)
+                .applicationType(JOINT_APPLICATION)
+                .application(Application.builder()
+                        .issueDate(APPLICATION_ISSUE_DATE)
+                        .build())
+                .isJudicialSeparation(YES)
+                .build();
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+                caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
+
+        assertThat(templateContent)
+                .doesNotContain(
+                        entry(DUE_DATE, "15 April 2022"))
+                .contains(
+                        entry(RELATION, "husband"),
+                        entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                        entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+                        entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+                        entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
+                        entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+                        entry(ISSUE_DATE, "30 March 2022"),
+                        entry(IS_JOINT, true),
+                        entry(IS_DIVORCE, true),
+                        entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
+                        entry(APPLICANT_SOLICITOR_REGISTERED, true),
+                        entry(SOLICITOR_NAME, "The Solicitor"),
+                        entry(APPLICANT_2_SOLICITOR_ADDRESS, ADDRESS),
+                        entry(SOLICITOR_REFERENCE, "Not provided"),
+                        entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+                        entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
+                        entry(APPLICANT_2_SOLICITOR_NAME, "The Solicitor"),
+                        entry(APPLICANT_1_SOLICITOR_ADDRESS, ADDRESS),
+                        entry(IS_APP1_REPRESENTED, true));
+
+        verifyNoInteractions(holdingPeriodService);
     }
 
     @Test
