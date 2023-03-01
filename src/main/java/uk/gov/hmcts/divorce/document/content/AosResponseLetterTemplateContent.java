@@ -11,7 +11,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -104,7 +103,7 @@ public class AosResponseLetterTemplateContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, END_CP_SERVICE);
         }
 
-        if (YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
             templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
