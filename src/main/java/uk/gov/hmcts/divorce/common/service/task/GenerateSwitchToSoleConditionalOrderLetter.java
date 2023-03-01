@@ -6,14 +6,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
@@ -23,13 +22,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -53,6 +53,9 @@ public class GenerateSwitchToSoleConditionalOrderLetter {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
     public void apply(final CaseData caseData,
                       final Long caseId,
                       final Applicant applicant,
@@ -75,10 +78,12 @@ public class GenerateSwitchToSoleConditionalOrderLetter {
                                                 final Applicant applicant,
                                                 final Applicant respondent) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                        applicant.getLanguagePreference());
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
-        templateContent.put(NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateContent.put(FIRST_NAME, respondent.getFirstName());
+        templateContent.put(LAST_NAME, respondent.getLastName());
         templateContent.put(ADDRESS, respondent.getPostalAddress());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
