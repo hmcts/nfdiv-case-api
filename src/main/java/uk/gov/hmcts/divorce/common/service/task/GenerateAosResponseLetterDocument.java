@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplate
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
@@ -55,9 +54,9 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         if (caseData.getApplicant1().isApplicantOffline()) {
-            if (YES.equals(caseData.getIsJudicialSeparation())) {
+            if (caseData.isJudicialSeparationCase()) {
+                generateD84Form.generateD84Document(caseData, caseId);
                 if (acknowledgementOfService.isDisputed()) {
-                    generateD84Form.generateD84Document(caseData, caseId);
                     generateCoversheet.generateCoversheet(
                         caseData,
                         caseId,
