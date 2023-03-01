@@ -387,7 +387,7 @@ public class SwitchedToSoleCoIT {
             .build());
 
         setupMocks(false, false);
-        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc", "FL-NFD-GOR-ENG-Applied-For-JS-Switch-To-Sole.docx");
+        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc", "FL-NFD-GOR-ENG-Applied-For-JS-Switch-To-Sole_V2.docx");
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
