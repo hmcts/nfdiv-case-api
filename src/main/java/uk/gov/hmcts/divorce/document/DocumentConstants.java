@@ -31,6 +31,11 @@ public final class DocumentConstants {
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
+    public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "judicialSeparationOrderGrantedCoversheet";
+    public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
+        = "judicialSeparationOrderGrantedSolicitorCoversheet";
+    public static final String SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "separationOrderGrantedCoversheet";
+    public static final String SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME = "separationOrderGrantedSolicitorCoversheet";
 
 
     public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
@@ -131,13 +136,18 @@ public final class DocumentConstants {
 
     public static final String CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME = "conditionalOrderGranted";
     public static final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED";
+    public static final String JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME = "judicialSeparationOrderGranted";
+    public static final String SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME = "separationOrderGranted";
 
     public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
 
     public static final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID = "CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT";
 
-    public static final String CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID = "CONDITIONAL_ORDER_PRONOUNCED_JS";
-    public static final String CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER_JS";
+    public static final String JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID = "JUDICIAL_SEPARATION_ORDER_PRONOUNCED";
+    public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID
+        = "JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER";
+    public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+        = "JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER";
 
     public static final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY";
     public static final String FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "finalOrderCanApply";
