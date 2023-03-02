@@ -197,7 +197,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
-        request.put("isJudicialSeparation", "Yes");
+        request.put("supplementaryCaseType", "judicialSeparation");
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
