@@ -377,7 +377,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
 
         CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setSolicitor(getOfflineSolicitor());
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().getSolicitor().setReference(CommonContent.SOLICITOR_REFERENCE);
@@ -424,7 +424,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
 
         CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant2().setSolicitor(getOfflineSolicitor());
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
