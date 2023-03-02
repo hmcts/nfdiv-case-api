@@ -62,4 +62,8 @@
     <notes>no updates for hutool or json-java_project which fixes this vulnerability</notes>
     <cve>CVE-2022-45688</cve>
   </suppress>
+  <suppress>
+    <notes>no updates for deps which import Apache Commons FileUpload</notes>
+    <cve>CVE-2023-24998</cve>
+  </suppress>
 </suppressions>
