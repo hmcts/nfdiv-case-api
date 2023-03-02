@@ -252,7 +252,7 @@ class GenerateAosResponseLetterDocumentTest {
 
         verify(generateD84Form).generateD84Document(caseData, TEST_CASE_ID);
         verify(generateD10Form).apply(caseDetails);
-        verify(coversheetSolicitorTemplateContent).apply(caseData, caseDetails.getId());
+        verify(coversheetSolicitorTemplateContent).apply(caseDetails.getId(), caseData.getApplicant1());
 
         verifyNoMoreInteractions(caseDataDocumentService);
         verifyNoInteractions(aosResponseLetterTemplateContent);

@@ -109,7 +109,7 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                                 caseData,
                                 caseId,
                                 COVERSHEET_APPLICANT2_SOLICITOR,
-                                coversheetSolicitorTemplateContent.apply(caseData, caseId),
+                                coversheetSolicitorTemplateContent.apply(caseId, caseData.getApplicant1()),
                                 caseData.getApplicant1().getLanguagePreference()
                         );
 
