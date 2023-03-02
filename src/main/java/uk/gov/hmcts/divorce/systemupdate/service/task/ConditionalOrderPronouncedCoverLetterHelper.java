@@ -20,9 +20,18 @@ import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
@@ -30,9 +39,16 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
@@ -63,16 +79,18 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
                                                               final Applicant applicant,
                                                               final DocumentType documentType) {
 
+        final Map<String, Object> templateVars = caseData.isJudicialSeparationCase() && applicant.isRepresented()
+            ? templateVarsForJSSolicitor(caseData, caseId, applicant)
+            : templateVars(caseData, caseId, applicant);
+
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             documentType,
-            templateVars(caseData, caseId, applicant),
+            templateVars,
             caseId,
-            caseData.isJudicialSeparationCase()
-                ? CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID
-                : CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            getCoverLetterTemplateId(caseData.isJudicialSeparationCase(), applicant.isRepresented(), false),
             applicant.getLanguagePreference(),
-            formatDocumentName(caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+            formatDocumentName(caseId, getCoverLetterDocumentName(caseData, applicant.isRepresented()), now(clock))
         );
     }
 
@@ -81,22 +99,53 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
                                                               final Applicant applicant,
                                                               final Applicant partner) {
 
+        final Map<String, Object> templateVarsForOfflineRespondent = caseData.isJudicialSeparationCase() && applicant.isRepresented()
+            ? templateVarsForJSSolicitor(caseData, caseId, applicant)
+            : templateVarsForOfflineRespondent(caseData, caseId, applicant, partner);
+
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-            templateVarsForOfflineRespondent(caseData, caseId, applicant, partner),
+            templateVarsForOfflineRespondent,
             caseId,
-            caseData.isJudicialSeparationCase()
-                ? CO_GRANTED_COVER_LETTER_JS_TEMPLATE_ID
-                : CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+            getCoverLetterTemplateId(caseData.isJudicialSeparationCase(), applicant.isRepresented(), true),
             applicant.getLanguagePreference(),
-            formatDocumentName(caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME, now(clock))
+            formatDocumentName(caseId, getCoverLetterDocumentName(caseData, applicant.isRepresented()), now(clock))
         );
     }
 
-    private Map<String, Object> templateVars(final CaseData caseData,
-                                             final Long caseId,
-                                             final Applicant applicant) {
+    private String getCoverLetterTemplateId(final boolean isJudicialSeparation,
+                                            final boolean isRepresented,
+                                            final boolean isOfflineRespondent) {
+
+        if (isJudicialSeparation) {
+            return isRepresented
+                ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+                : JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
+        } else {
+            return isOfflineRespondent
+                ? CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID
+                : CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
+        }
+    }
+
+    private String getCoverLetterDocumentName(final CaseData caseData, final boolean isRepresented) {
+        if (caseData.isJudicialSeparationCase()) {
+            if (caseData.isDivorce()) {
+                return isRepresented
+                    ? JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
+                    : JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+            } else {
+                return isRepresented
+                    ? SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
+                    : SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+            }
+        }
+
+        return CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+    }
+
+    private Map<String, Object> templateVars(final CaseData caseData, final Long caseId, final Applicant applicant) {
 
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference());
@@ -124,7 +173,8 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
 
     private Map<String, Object> templateVarsForOfflineRespondent(final CaseData caseData,
                                              final Long caseId,
-                                             final Applicant applicant, final Applicant partner) {
+                                             final Applicant applicant,
+                                             final Applicant partner) {
 
         final Map<String, Object> templateContent = templateVars(caseData, caseId, applicant);
 
@@ -136,6 +186,38 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         templateContent.put(TIME_OF_HEARING, timeOfHearing);
         templateContent.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
         templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
+
+        return templateContent;
+    }
+
+    private Map<String, Object> templateVarsForJSSolicitor(final CaseData caseData,
+                                                           final Long caseId,
+                                                           final Applicant applicant) {
+
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            applicant.getLanguagePreference());
+
+        templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
+        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+        templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
+        templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
+        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor() != null
+            ? caseData.getApplicant1().getSolicitor().getName()
+            : NOT_REPRESENTED
+        );
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor() != null
+            ? caseData.getApplicant2().getSolicitor().getName()
+            : NOT_REPRESENTED
+        );
+        templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference() != null
+            ? applicant.getSolicitor().getReference()
+            : NOT_PROVIDED
+        );
+        templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
         return templateContent;
     }

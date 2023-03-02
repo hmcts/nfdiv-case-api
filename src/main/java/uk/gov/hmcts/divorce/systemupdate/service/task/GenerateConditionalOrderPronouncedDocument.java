@@ -11,8 +11,10 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 
 @Component
@@ -30,7 +32,20 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        log.info("Generating Conditional Order granted pdf for CaseID: {}", caseDetails.getId());
+        String logMsg = "Generating {} Order granted pdf for CaseID: {}";
+        String orderType = "Conditional";
+        String documentName = CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
+        if (caseData.isJudicialSeparationCase()) {
+            if (caseData.isDivorce()) {
+                orderType = "Judicial Separation";
+                documentName = JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
+            } else {
+                orderType = "Separation";
+                documentName = SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
+            }
+        }
+
+        log.info(logMsg, orderType, caseDetails.getId());
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -38,10 +53,10 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
             conditionalOrderPronouncedTemplateContent.apply(caseData, caseId, caseData.getApplicant1().getLanguagePreference()),
             caseId,
             caseData.isJudicialSeparationCase()
-                ? CONDITIONAL_ORDER_PRONOUNCED_JS_TEMPLATE_ID
+                ? JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID
                 : CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
-            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME
+            documentName
         );
 
         addConditionalOrderGrantedDocument(caseData);
