@@ -48,6 +48,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
@@ -153,6 +154,47 @@ class GenerateCertificateOfEntitlementTest {
         assertThat(certificateOfEntitlementDocument.getDocumentLink()).isSameAs(document);
         assertThat(certificateOfEntitlementDocument.getDocumentFileName()).isEqualTo("filename");
         assertThat(certificateOfEntitlementDocument.getDocumentType()).isEqualTo(CERTIFICATE_OF_ENTITLEMENT);
+    }
+
+    @Test
+    void shouldGenerateCertificateOfEntitlementAndUpdateCaseDataForJudicialSeparation() {
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .languagePreferenceWelsh(NO)
+                .build())
+            .isJudicialSeparation(YES)
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        final Document document = Document.builder()
+            .filename("filename")
+            .build();
+
+        setMockClock(clock);
+        when(certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock))))
+            .thenReturn(document);
+
+        final CaseDetails<CaseData, State> result = generateCertificateOfEntitlement.apply(caseDetails);
+
+        final DivorceDocument certificateOfEntitlementDocument = result.getData()
+            .getConditionalOrder()
+            .getCertificateOfEntitlementDocument();
+
+        assertThat(certificateOfEntitlementDocument.getDocumentLink()).isSameAs(document);
+        assertThat(certificateOfEntitlementDocument.getDocumentFileName()).isEqualTo("filename");
+        assertThat(certificateOfEntitlementDocument.getDocumentType()).isEqualTo(CERTIFICATE_OF_ENTITLEMENT);
+
+
     }
 
     @Test
