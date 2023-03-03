@@ -117,6 +117,10 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
+            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
@@ -125,7 +129,6 @@ public class GenerateCoRefusedCoverLetterTest {
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 
@@ -184,6 +187,10 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
+            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
@@ -192,7 +199,6 @@ public class GenerateCoRefusedCoverLetterTest {
         generateCoRefusedCoverLetter.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
-            REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1()
         );
 

@@ -246,7 +246,7 @@ uk:
             APPLICANT_SWITCH_TO_SOLE: '8f022f2d-0e8e-4e89-b944-7cfe74a68056'
             JOINT_APPLICATION_ENDED: '27e89abf-c793-4891-97ce-f54cd9ac0803'
             APPLICANT_APPLY_FOR_FINAL_ORDER: '9a89d8c0-55a5-4534-a9c5-77ff4ed956ad'
-            PARTNER_SWITCHED_TO_SOLE_CO: 'd5f8728e-3eba-4bc5-b3db-80f6685a4941'      #TODO: Welsh translation needed
+            PARTNER_SWITCHED_TO_SOLE_CO: '9b6ffba8-fc6f-4e57-a660-17765e8c9bd0'
             RESPONDENT_APPLY_FOR_FINAL_ORDER: '33b20df5-0967-490b-ac94-daa1569468d7'
             POST_INFORMATION_TO_COURT: 'c407bd28-fd6c-40d6-b320-dd4acb135ec0'
             GENERAL_APPLICATION_RECEIVED: '1f4cd3f9-1092-4703-826c-0685131e6dff'
@@ -272,15 +272,15 @@ uk:
             JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '83a57815-f1a2-4ac8-92b4-5597b9bd5b38'
             SOLE_APPLIED_FOR_FINAL_ORDER: '7e64d645-8973-4bac-95ca-49e54c423655'
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: '24d6bb85-82de-49a5-ae97-aec15ecc0ee8'
-            INTEND_TO_SWITCH_TO_SOLE_FO: 'b734941e-37d8-47b8-aef8-6c51412bcbc1' #TODO - Welsh translation needed
-            PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
+            INTEND_TO_SWITCH_TO_SOLE_FO: '2b44b8b2-8a2e-4029-974e-bd14458b1f0b'
+            PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: 'd5e65a52-3132-422d-ac8b-0d285650d475'
             SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'dc1a3d51-3e93-4f22-b268-ab0f86676f1f' #TODO - Welsh translation needed
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: '8de7c96b-8582-4df4-aa74-89b33ad8454d' #TODO - Welsh translation needed
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN: '360465c3-2da5-403a-8163-5487cc214aa7' #TODO - Welsh translation needed
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: 'e414d40e-de04-4aa9-b85c-fc939417f0fd' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '8fa6008b-1541-44bc-9ddd-45fa4cd3222c' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'cdee584c-db6a-4c3a-b2eb-5956940cab58' #TODO - Welsh translation needed
-            APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310' #TODO - Welsh translation needed
+            APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '7d86d77b-125e-4ea6-ac09-d9aa0b755714'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -322,7 +322,10 @@ docmosis:
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V2.docx
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
-      JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V1.docx
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
@@ -330,6 +333,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx
+      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx
@@ -342,7 +346,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx
-      SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx
+      SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole_V2.docx
       NFD_RESP_RESPONDED_DISPUTED: FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS.docx
@@ -364,17 +368,21 @@ docmosis:
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V6.docx
       NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx
       NFD_NOP_APP1_SOLICITOR_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx
+      NFD_NOP_JS_SERVICE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-NOP-Solicitor-Service.docx
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
-      CONDITIONAL_ORDER_PRONOUNCED_JS: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx
-      CO_GRANTED_COVER_LETTER_JS: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx
+      JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx
+      JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx
+      JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V1.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V2.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
+      NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
@@ -399,7 +407,7 @@ docmosis:
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Conditional_Order_Answers.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder.docx
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter.docx #TODO: add translated content
-      SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx #TODO: add translated content
+      SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole_V2.docx #TODO: add translated content
       NFD_RESP_RESPONDED_DISPUTED: FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx #TODO: add translated content
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx #TODO: add translated content
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS.docx #TODO: add translated content
@@ -412,7 +420,10 @@ docmosis:
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
-      JUDICIAL_SEPARATION_CONDITIONAL_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-WEL-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx #TODO: update welsh content
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2_CY.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3_Cy.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2.docx #TODO: add Welsh translation
@@ -431,13 +442,15 @@ docmosis:
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS-V1.docx #TODO: uodate welsh content
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V2.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
-      CONDITIONAL_ORDER_PRONOUNCED_JS: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx #TODO: update welsh content
       CO_GRANTED_COVER_LETTER_JS: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx #TODO: update welsh content
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order.docx #TODO: update welsh content
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V2.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx #TODO: update welsh content
+      NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Respondent_JS_Sole.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
