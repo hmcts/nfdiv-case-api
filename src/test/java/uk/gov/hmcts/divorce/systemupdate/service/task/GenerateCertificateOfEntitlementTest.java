@@ -165,7 +165,7 @@ class GenerateCertificateOfEntitlementTest {
             .applicant1(Applicant.builder()
                 .languagePreferenceWelsh(NO)
                 .build())
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
