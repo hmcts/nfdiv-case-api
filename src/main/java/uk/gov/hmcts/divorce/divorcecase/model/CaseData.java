@@ -324,8 +324,7 @@ public class CaseData {
         }
     }
 
-    public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
-        this.divorceOrDissolution = divorceOrDissolution;
+    private void enforceJudicialSeparationOrSeparation() {
         if (this.divorceOrDissolution == DIVORCE && this.supplementaryCaseType == SEPARATION) {
             this.setSupplementaryCaseType(JUDICIAL_SEPARATION); // prevent Separation when Divorce
         } else if (this.divorceOrDissolution == DISSOLUTION && this.supplementaryCaseType == JUDICIAL_SEPARATION) {
@@ -333,13 +332,17 @@ public class CaseData {
         }
     }
 
+    public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
+        this.divorceOrDissolution = divorceOrDissolution;
+        this.enforceJudicialSeparationOrSeparation();
+    }
+
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
         if (supplementaryCaseType == NA || supplementaryCaseType == NULLITY || this.divorceOrDissolution == null) {
             this.supplementaryCaseType = supplementaryCaseType;
-        } else if (this.divorceOrDissolution == DIVORCE) {
+        } else { // Setting JS or Sep, and divorceOrDissolution is not null
             this.supplementaryCaseType = JUDICIAL_SEPARATION;
-        } else if (this.divorceOrDissolution == DISSOLUTION) {
-            this.supplementaryCaseType = SEPARATION;
+            this.enforceJudicialSeparationOrSeparation();
         }
     }
 
