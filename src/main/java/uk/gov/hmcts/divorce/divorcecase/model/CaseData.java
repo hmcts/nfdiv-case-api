@@ -326,9 +326,9 @@ public class CaseData {
 
     private void enforceJudicialSeparationOrSeparation() {
         if (this.divorceOrDissolution == DIVORCE && this.supplementaryCaseType == SEPARATION) {
-            this.setSupplementaryCaseType(JUDICIAL_SEPARATION); // prevent Separation when Divorce
+            this.supplementaryCaseType = JUDICIAL_SEPARATION; // prevent Separation when Divorce
         } else if (this.divorceOrDissolution == DISSOLUTION && this.supplementaryCaseType == JUDICIAL_SEPARATION) {
-            this.setSupplementaryCaseType(SEPARATION); // prevent Judicial Separation when Dissolution
+            this.supplementaryCaseType = SEPARATION; // prevent Judicial Separation when Dissolution
         }
     }
 
