@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
@@ -383,6 +384,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Test
     void shouldNotGenerateJSWhenSoleAndDigitalReissue() {
+        setMockClock(clock);
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setEmail("notnull@something.com");
@@ -393,7 +395,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyNoInteractions(generateCoversheet, noticeOfProceedingContent);
+        verifyNoInteractions(coversheetSolicitorTemplateContent, noticeOfProceedingSolicitorContent);
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
@@ -471,6 +473,41 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 caseData,
                 TEST_CASE_ID,
                 COVERSHEET_APPLICANT,
+                templateContent,
+                ENGLISH,
+                formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant2", now(clock))
+            );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateJointCitizenJudicialSeparationNoticeOfProceedingsAndCoversheetForApplicant2Solicitor() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(JOINT_APPLICATION, YES, YES);
+        caseData.getApplicant2().setEmail("notnull@something.com");
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, false)).thenReturn(templateContent);
+        when(coversheetSolicitorTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_APP1APP2_SOL_JS_JOINT);
+
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                    COVERSHEET_APPLICANT2_SOLICITOR,
                 templateContent,
                 ENGLISH,
                 formatDocumentName(TEST_CASE_ID, COVERSHEET_DOCUMENT_NAME, "applicant2", now(clock))

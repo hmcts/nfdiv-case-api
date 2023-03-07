@@ -1935,7 +1935,6 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Coversheet applicant 1")
             .thenReturn("Notice of proceeding applicant 1")
             .thenReturn("Coversheet applicant 2")
             .thenReturn("Notice of proceeding applicant 2")
