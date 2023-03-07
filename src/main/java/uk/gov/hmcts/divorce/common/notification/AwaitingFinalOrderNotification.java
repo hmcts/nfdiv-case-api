@@ -111,14 +111,14 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
         log.info("Notifying offline {} that they can apply for a final order: {}",
             caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
-        applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+        applyForFinalOrderPrinter.sendLettersToApplicant1Offline(caseData, caseId, caseData.getApplicant1());
     }
 
     @Override
     public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying offline applicant 2 that they can apply for a final order: {}", caseId);
-            applyForFinalOrderPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+            applyForFinalOrderPrinter.sendLettersToApplicant2Offline(caseData, caseId, caseData.getApplicant2());
         }
     }
 

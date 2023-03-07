@@ -367,6 +367,74 @@ public class SystemUpdateCaseWithCourtHearingIT {
         assertThat(print.getLetters().size()).isEqualTo(2);
     }
 
+    @Test
+    public void givenBothApplicantsOfflineWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setIsJudicialSeparation(YES);
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setEmail(null);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setSolicitorRepresented(NO);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void givenBothApplicantsOfflineWhenJointJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setIsJudicialSeparation(YES);
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setEmail(null);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setSolicitorRepresented(NO);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+        verifyNoInteractions(notificationService);
+    }
+
     private String expectedCcdAboutToSubmitCallbackSuccess() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-system-update-case-court-hearing.json");
     }

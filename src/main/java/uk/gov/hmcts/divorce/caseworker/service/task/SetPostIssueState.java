@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
@@ -20,8 +21,11 @@ public class SetPostIssueState implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         final Application application = caseDetails.getData().getApplication();
+        final CaseData caseData = caseDetails.getData();
 
-        if (!caseDetails.getData().getApplicationType().isSole()) {
+        if (!caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase()) {
+            caseDetails.setState(AwaitingJsNullity);
+        } else if (!caseDetails.getData().getApplicationType().isSole()) {
             caseDetails.setState(Holding);
         } else if (application.isSolicitorServiceMethod() || application.isPersonalServiceMethod()) {
             caseDetails.setState(AwaitingService);

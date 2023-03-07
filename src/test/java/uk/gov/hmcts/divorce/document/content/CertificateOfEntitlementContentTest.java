@@ -35,11 +35,15 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -126,6 +130,22 @@ public class CertificateOfEntitlementContentTest {
 
         assertThat(contentMap).contains(
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP)
+        );
+    }
+
+    @Test
+    void shouldReturnTemplateContentForJointJudicialSeparation() {
+
+        final CaseData caseData = getCaseDataFor(JOINT_APPLICATION);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setIsJudicialSeparation(YES);
+
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(contentMap).contains(
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
+            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+            entry(PHONE_AND_OPENING_TIMES,PHONE_AND_OPENING_TIMES_TEXT)
         );
     }
 
@@ -232,7 +252,7 @@ public class CertificateOfEntitlementContentTest {
         final ConditionalOrderCourtDetails expectedDetails = new ConditionalOrderCourtDetails();
         expectedDetails.setName("Bury St. Edmunds Regional Divorce Centre");
         expectedDetails.setAddress("2nd Floor\nTriton House\nSt. Andrews Street North\nBury St. Edmunds\nIP33 1TR");
-        expectedDetails.setEmail("divorcecase@justice.gov.uk");
+        expectedDetails.setEmail("contactdivorce@justice.gov.uk");
         expectedDetails.setPhone("0300 303 0642");
 
         when(conditionalOrderCourtDetailsConfig.get(BURY_ST_EDMUNDS.getCourtId())).thenReturn(expectedDetails);
