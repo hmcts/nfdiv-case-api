@@ -116,7 +116,7 @@
     ],
     "dueDate": "2021-11-05",
     "dataVersion": "${json-unit.any-number}",
-    "isJudicialSeparation": "Yes",
+    "supplementaryCaseType": "judicialSeparation",
     "warnings": []
   },
   "state": "AwaitingJsNullity"

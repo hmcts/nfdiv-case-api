@@ -491,7 +491,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final CaseData caseData = caseData(JOINT_APPLICATION, YES, YES);
         caseData.getApplicant2().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setSolicitorRepresented(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
