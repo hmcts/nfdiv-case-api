@@ -120,7 +120,7 @@ docmosis:
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V2.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
-      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
+      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
@@ -180,7 +180,7 @@ docmosis:
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V2.docx
-      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx #TODO: add translated content
+      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx #TODO: add translated content
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx #TODO: update welsh content
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx #TODO: add translated content
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
