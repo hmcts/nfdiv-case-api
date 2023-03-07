@@ -31,12 +31,12 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                         + "${labelContentMarriageOrCivilPartnership} certificate?",
                     "")
                 .mandatoryWithoutDefaultValue(
-                    Applicant::getNameChangedHow,
+                    Applicant::getNameDifferentToMarriageCertificateMethod,
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"",
                     "What evidence will be provided for the name change?")
                 .mandatoryWithoutDefaultValue(
-                    Applicant::getNameChangedHowOtherDetails,
-                    "applicant2NameChangedHow=\"other\"",
+                    Applicant::getNameDifferentToMarriageCertificateOtherDetails,
+                    "applicant2NameDifferentToMarriageCertificateMethod=\"other\"",
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .done();
     }
