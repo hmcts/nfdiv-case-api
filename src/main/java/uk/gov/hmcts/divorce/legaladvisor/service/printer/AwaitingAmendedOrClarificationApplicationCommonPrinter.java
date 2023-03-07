@@ -25,7 +25,7 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
@@ -146,7 +146,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
             : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant);
 
         final String coverSheetTemplateId = applicant.isRepresented()
-            ? COVERSHEET_SOLICITOR
+            ? COVERSHEET_APPLICANT2_SOLICITOR
             : COVERSHEET_APPLICANT;
 
         generateCoversheet.generateCoversheet(

@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_SOLICITOR;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
@@ -457,7 +457,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         verify(generateCoversheet).generateCoversheet(
             eq(caseData),
             eq(TEST_CASE_ID),
-            eq(COVERSHEET_SOLICITOR),
+            eq(COVERSHEET_APPLICANT2_SOLICITOR),
             anyMap(),
             eq(ENGLISH)
         );
@@ -538,7 +538,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
         verify(generateCoversheet).generateCoversheet(
             eq(caseData),
             eq(TEST_CASE_ID),
-            eq(COVERSHEET_SOLICITOR),
+            eq(COVERSHEET_APPLICANT2_SOLICITOR),
             anyMap(),
             eq(ENGLISH)
         );
