@@ -51,6 +51,7 @@ public final class DocumentConstants {
     public static final String NFD_NOP_AS2_SOLE_APP1_SOL_SS = "NFD_NOP_AS2_SOLE_APP1_SOL_SS";
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT = "NFD_NOP_JA1_JOINT_APP1APP2_CIT";
     public static final String NFD_NOP_AL2_SOLE_APP1_CIT_PS = "NFD_NOP_AL2_SOLE_APP1_CIT_PS";
+    public static final String NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID = "NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR";
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS = "NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS";
     public static final String NFD_NOP_APP1APP2_SOL_JS_JOINT = "NFD_NOP_APP1APP2_SOL_JS_JOINT";
     public static final String NFD_NOP_APP1_JS_SOLE = "NFD_NOP_APP1_JS_SOLE";
