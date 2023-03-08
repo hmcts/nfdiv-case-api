@@ -8,9 +8,9 @@
     "coDateAndTimeOfHearing": "${json-unit.any-string}",
     "coCertificateOfEntitlementDocument": {
       "documentLink": {
-        "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+        "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b9dbf3b2-bda8-11ed-afa1-0242ac120002",
         "document_filename": "${json-unit.any-string}",
-        "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+        "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b9dbf3b2-bda8-11ed-afa1-0242ac120002/binary"
       },
       "documentFileName": "${json-unit.any-string}",
       "documentType": "certificateOfEntitlement"
@@ -18,10 +18,10 @@
     "coConditionalOrderGrantedDocument": {
       "documentLink": {
         "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/90ac37a0-b723-4722-9723-86157e4ee450",
-        "document_filename": "conditionalOrderGranted.pdf",
+        "document_filename": "judicialSeparationOrderGranted.pdf",
         "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/90ac37a0-b723-4722-9723-86157e4ee450/binary"
       },
-      "documentFileName": "conditionalOrderGranted.pdf",
+      "documentFileName": "judicialSeparationOrderGranted.pdf",
       "documentType": "conditionalOrderGranted"
     },
     "documentsGenerated": [{
@@ -84,19 +84,19 @@
       "value": {
         "documentLink": {
           "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/90ac37a0-b723-4722-9723-86157e4ee450",
-          "document_filename": "conditionalOrderGranted.pdf",
+          "document_filename": "judicialSeparationOrderGranted.pdf",
           "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/90ac37a0-b723-4722-9723-86157e4ee450/binary"
         },
-        "documentFileName": "conditionalOrderGranted.pdf",
+        "documentFileName": "judicialSeparationOrderGranted.pdf",
         "documentType": "conditionalOrderGranted"
       }
     }, {
       "id": "${json-unit.any-string}",
       "value": {
         "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/31f23884-a707-4983-9bb9-5ce33e13d8c2",
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/94e63858-bda1-11ed-afa1-0242ac120002",
           "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/31f23884-a707-4983-9bb9-5ce33e13d8c2/binary"
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/94e63858-bda1-11ed-afa1-0242ac120002/binary"
         },
         "documentFileName": "${json-unit.any-string}",
         "documentType": "coGrantedCoversheetApp2"
@@ -105,9 +105,9 @@
       "id": "${json-unit.any-string}",
       "value": {
         "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/31f23884-a707-4983-9bb9-5ce33e13d8c2",
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/94e63858-bda1-11ed-afa1-0242ac120002",
           "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/31f23884-a707-4983-9bb9-5ce33e13d8c2/binary"
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/94e63858-bda1-11ed-afa1-0242ac120002/binary"
         },
         "documentFileName": "${json-unit.any-string}",
         "documentType": "coGrantedCoversheet"
