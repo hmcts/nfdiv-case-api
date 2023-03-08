@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
@@ -99,7 +100,8 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         final Document certificateOfEntitlement = caseDataDocumentService.renderDocument(
             certificateOfEntitlementContent.apply(caseData, caseId),
             caseId,
-            CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
+            caseData.isJudicialSeparationCase() ? CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID
+            : CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_NAME, now(clock))
         );

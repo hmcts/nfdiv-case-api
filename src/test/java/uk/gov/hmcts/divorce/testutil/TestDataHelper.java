@@ -173,6 +173,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
@@ -252,6 +253,23 @@ public class TestDataHelper {
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
             .build();
+    }
+
+    public static Solicitor getOfflineSolicitor() {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .addressLine1("line1")
+            .addressLine2("line2")
+            .postTown("city")
+            .postCode("postcode")
+            .build();
+
+        final Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .firmName(TEST_SOLICITOR_FIRM_NAME)
+            .address(addressGlobalUK.toString())
+            .build();
+
+        return solicitor;
     }
 
     public static Applicant applicantRepresentedBySolicitor() {

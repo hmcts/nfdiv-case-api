@@ -21,7 +21,7 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '7.4.1'
+  id 'org.owasp.dependencycheck' version '8.0.2'
   id 'org.sonarqube' version '3.5.0.2730'
   id 'io.spring.dependency-management' version '1.1.0'
   id 'org.springframework.boot' version '2.7.5'
@@ -189,7 +189,8 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/event/CreateTestCase.java',
   '**/uk/gov/hmcts/divorce/CaseApiApplication.java',
   '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
-  '**/uk/gov/hmcts/divorce/common/config/**'
+  '**/uk/gov/hmcts/divorce/common/config/**',
+  '**/uk/gov/hmcts/divorce/divorcecase/tab/**'
 ]
 
 sonarqube {
@@ -233,7 +234,7 @@ repositories {
 def versions = [
   jackson           : '2.13.4',
   junit             : '5.9.1',
-  junitPlatform     : '1.9.1',
+  junitPlatform     : '1.9.2',
   lombok            : '1.18.22',
   springBoot        : springBoot.class.package.implementationVersion
 ]
@@ -307,7 +308,7 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.5.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.5'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
