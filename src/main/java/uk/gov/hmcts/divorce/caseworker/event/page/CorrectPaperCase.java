@@ -107,7 +107,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getLastName)
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Have they changed their name since they ${labelContentGotMarriedOrFormedCivilPartnership}?")
-                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                 "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
@@ -140,8 +140,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getLastName)
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Have they changed their name since they ${labelContentGotMarriedOrFormedCivilPartnership}?")
-                .mandatory(Applicant::getNameChangedHowOtherDetails,
-                "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
+                .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
+                    "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
                 .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
                 .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
