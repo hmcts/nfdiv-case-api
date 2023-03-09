@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
@@ -23,11 +22,15 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
@@ -45,13 +48,17 @@ public class CertificateOfEntitlementContent {
     @Autowired
     private ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
-        final Map<String, Object> templateContent = new HashMap<>();
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant1.getLanguagePreference());
 
         final ConditionalOrderCourt conditionalOrderCourt = conditionalOrder.getCourt();
         final ConditionalOrderCourtDetails conditionalOrderCourtDetails = nonNull(conditionalOrderCourt)
@@ -66,6 +73,11 @@ public class CertificateOfEntitlementContent {
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
         templateContent.put(COURT_DETAILS, conditionalOrderCourtDetails);
         templateContent.put(APPROVAL_DATE, approvalDate);
+
+        if (caseData.isJudicialSeparationCase()) {
+            templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+            templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        }
 
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
