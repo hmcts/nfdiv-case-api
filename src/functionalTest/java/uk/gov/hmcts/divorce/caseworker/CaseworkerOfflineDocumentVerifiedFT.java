@@ -35,6 +35,10 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-disputed-about-to-submit.json";
     private static final String CASEWORKER_D10_JS_DISPUTED_SUBMITTED_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-disputed-submitted.json";
+    private static final String CASEWORKER_D10_SOL_JS_UNDISPUTED_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-sol-undisputed-about-to-submit.json";
+    private static final String CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-sol-undisputed-submitted.json";
 
     @Test
     public void shouldReclassifyScannedDocumentsIfD84Selected() throws IOException {
@@ -104,6 +108,22 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
         caseData.put("dueDate", "2022-01-18");
 
+        final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendAosLetterForJSSolicitorUndisputed() throws IOException {
+        final Map<String, Object> caseData = caseData(CASEWORKER_D10_SOL_JS_UNDISPUTED_REQUEST);
+        final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendAosLetterForJSSolicitorUndisputedSubmitted() throws IOException {
+        final Map<String, Object> caseData = caseData(CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST);
         final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, SUBMITTED_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
