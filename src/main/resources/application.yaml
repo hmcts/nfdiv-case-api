@@ -383,6 +383,7 @@ docmosis:
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
     welsh:
@@ -451,6 +452,7 @@ docmosis:
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Respondent_JS_Sole.docx
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
   templateVars:
