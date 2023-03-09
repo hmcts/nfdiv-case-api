@@ -45,6 +45,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_APPLIED_HINT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_APPLIED_HINT_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_POLICY_HINT;
@@ -60,6 +62,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 
 @Component
 @Slf4j
@@ -75,7 +78,13 @@ public class DivorceApplicationSoleTemplateContent {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
+        if (caseData.isJudicialSeparationCase()) {
+            log.info("For ccd case reference {} and type(judicial separation/separation) {} ", caseId,
+                    YES.equals(caseData.getIsJudicialSeparation())
+                    ? "judicial separation" : "separation");
+        } else {
+            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
+        }
 
         final Application application = caseData.getApplication();
         final Applicant applicant1 = caseData.getApplicant1();
@@ -121,6 +130,7 @@ public class DivorceApplicationSoleTemplateContent {
             templateContent.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant1));
             templateContent.put(FINANCIAL_ORDER_POLICY_HEADER, FINANCIAL_ORDER_POLICY_HEADER_TEXT);
             templateContent.put(FINANCIAL_ORDER_POLICY_HINT, FINANCIAL_ORDER_POLICY_HINT_TEXT);
+            templateContent.put(FINANCIAL_ORDER_APPLIED_HINT, FINANCIAL_ORDER_APPLIED_HINT_TEXT);
         }
         if (null != applicant1.getLegalProceedings()) {
             templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());

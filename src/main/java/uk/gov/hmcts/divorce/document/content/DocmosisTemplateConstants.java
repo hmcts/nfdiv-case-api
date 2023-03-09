@@ -182,6 +182,11 @@ public final class DocmosisTemplateConstants {
     public static final String FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the money and "
         + "property will be divided. The application will be done separately.";
 
+    public static final String FINANCIAL_ORDER_APPLIED_HINT = "financialOrderAppliedHintText";
+    public static final String FINANCIAL_ORDER_APPLIED_HINT_TEXT = "If the applicant has told the court that they intend to apply for "
+          + "a financial order, the court will take no action at this stage"
+          + ", unless formal proceedings are issued via a separate application.";
+
     public static final String DIVORCE_AND_DISSOLUTION_HEADER = "divorceAndDissolutionHeader";
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT = "Divorce and Dissolution";
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Gwasanaeth Ysgariadau a Diddymiadau";
