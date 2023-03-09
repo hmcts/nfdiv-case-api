@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -13,12 +14,15 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
@@ -40,10 +44,16 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
     private GenerateD84Form generateD84Form;
 
     @Autowired
+    private GenerateD10Form generateD10Form;
+
+    @Autowired
     private GenerateCoversheet generateCoversheet;
 
     @Autowired
     private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+
+    @Autowired
+    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
@@ -84,6 +94,31 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                             aosResponseLetterTemplateContent.apply(caseData, caseId),
                             caseId,
                             NFD_NOP_APP1_JS_SOLE_DISPUTED,
+                            caseData.getApplicant1().getLanguagePreference(),
+                            AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                        );
+                    }
+                } else {
+                    if (caseData.getApplicant1().isRepresented()) {
+                        log.info("Generating aos response (undefended) JS letter pdf, D10 and D84 forms for case id: {}", caseId);
+
+                        generateD10Form.apply(caseDetails);
+                        generateD84Form.generateD84Document(caseData, caseId);
+
+                        generateCoversheet.generateCoversheet(
+                                caseData,
+                                caseId,
+                                COVERSHEET_APPLICANT2_SOLICITOR,
+                                coversheetSolicitorTemplateContent.apply(caseId, caseData.getApplicant1()),
+                                caseData.getApplicant1().getLanguagePreference()
+                        );
+
+                        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                            caseData,
+                            AOS_RESPONSE_LETTER,
+                            aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
+                            caseId,
+                            NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
                             caseData.getApplicant1().getLanguagePreference(),
                             AOS_RESPONSE_LETTER_DOCUMENT_NAME
                         );

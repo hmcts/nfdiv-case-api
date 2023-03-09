@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
@@ -103,23 +104,33 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
         final Applicant applicant2 = caseData.getApplicant2();
         log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
-        if (!applicant2.isRepresented()) {
-            generateNoticeOfProceedings(
-                caseData,
-                caseId,
-                NFD_NOP_APP2_JS_SOLE,
-                noticeOfProceedingContent.apply(caseData, caseId, applicant2,
-                    caseData.getApplicant2().getLanguagePreference())
-            );
-            log.info("Generating coversheet for JS respondent for sole case id {} ", caseId);
-            generateCoversheet.generateCoversheet(
-                caseData,
-                caseId,
-                COVERSHEET_APPLICANT,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2),
-                caseData.getApplicant2().getLanguagePreference()
-            );
+
+        var coverSheet = COVERSHEET_APPLICANT;
+        var templateId = NFD_NOP_APP2_JS_SOLE;
+        var templateContent = noticeOfProceedingContent.apply(caseData, caseId, applicant2,
+                caseData.getApplicant2().getLanguagePreference());
+        var coversheetContent = coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2);
+
+        if (applicant2.isRepresented()) {
+            coverSheet = COVERSHEET_APPLICANT2_SOLICITOR;
+            templateId = NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
+            templateContent = solicitorTemplateContent.apply(caseData, caseId, false);
+            coversheetContent = coversheetSolicitorTemplateContent.apply(caseData, caseId);
         }
+        generateNoticeOfProceedings(
+                caseData,
+                caseId,
+                templateId,
+                templateContent
+        );
+        log.info("Generating coversheet for JS respondent for sole case id {} ", caseId);
+        generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                coverSheet,
+                coversheetContent,
+                caseData.getApplicant2().getLanguagePreference()
+        );
     }
 
     private void generateSoleNoticeOfProceedings(final CaseData caseData, final Long caseId) {
