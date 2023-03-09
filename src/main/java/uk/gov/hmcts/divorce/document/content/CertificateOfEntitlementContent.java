@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
@@ -49,13 +48,17 @@ public class CertificateOfEntitlementContent {
     @Autowired
     private ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
-        final Map<String, Object> templateContent = new HashMap<>();
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant1.getLanguagePreference());
 
         final ConditionalOrderCourt conditionalOrderCourt = conditionalOrder.getCourt();
         final ConditionalOrderCourtDetails conditionalOrderCourtDetails = nonNull(conditionalOrderCourt)

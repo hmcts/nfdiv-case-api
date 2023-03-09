@@ -130,7 +130,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -199,7 +199,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -234,7 +234,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -281,7 +281,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
 
         CaseData data = validCaseWithCourtHearing();
@@ -329,7 +329,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae2", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905d33",
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
@@ -373,6 +373,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
@@ -407,6 +408,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
