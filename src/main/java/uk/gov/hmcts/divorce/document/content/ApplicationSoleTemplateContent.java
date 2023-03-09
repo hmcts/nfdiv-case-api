@@ -62,7 +62,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 
 @Component
 @Slf4j
@@ -78,10 +77,11 @@ public class ApplicationSoleTemplateContent {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        if (caseData.isJudicialSeparationCase()) {
+        var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
+
+        if (isJudicialSeparationCase) {
             log.info("For ccd case reference {} and type(judicial separation/separation) {} ", caseId,
-                    YES.equals(caseData.getIsJudicialSeparation())
-                    ? "judicial separation" : "separation");
+                    isJudicialSeparationCase ? "judicial separation" : "separation");
         } else {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
         }
