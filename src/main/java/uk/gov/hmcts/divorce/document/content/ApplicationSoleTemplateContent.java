@@ -78,10 +78,11 @@ public class ApplicationSoleTemplateContent {
         final Map<String, Object> templateContent = new HashMap<>();
 
         var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
+        var divorceOrCivilPartnershipJS = isJudicialSeparationCase ?  "judicial separation" : "separation";
 
         if (isJudicialSeparationCase) {
             log.info("For ccd case reference {} and type(judicial separation/separation) {} ", caseId,
-                    isJudicialSeparationCase ? "judicial separation" : "separation");
+                    divorceOrCivilPartnershipJS);
         } else {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
         }
