@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -29,13 +29,13 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 @Slf4j
-public class GenerateDivorceApplication implements CaseTask {
+public class GenerateApplication implements CaseTask {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private DivorceApplicationSoleTemplateContent divorceApplicationSoleTemplateContent;
+    private ApplicationSoleTemplateContent applicationSoleTemplateContent;
 
     @Autowired
     private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
@@ -62,7 +62,7 @@ public class GenerateDivorceApplication implements CaseTask {
         var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
 
         if (caseData.getApplicationType().isSole()) {
-            templateContent = divorceApplicationSoleTemplateContent.apply(caseData, caseId);
+            templateContent = applicationSoleTemplateContent.apply(caseData, caseId);
             templateId = isJudicialSeparationCase ? NFD_NOP_JUDICIAL_SEPARATION_SOLE_TEMPLATE_ID : DIVORCE_APPLICATION_SOLE;
             documentName = isJudicialSeparationCase ? JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME : DIVORCE_APPLICATION_DOCUMENT_NAME;
         } else {

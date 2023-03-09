@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -44,7 +44,7 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
     private DivorceApplicationRemover divorceApplicationRemover;
 
     @Autowired
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -81,7 +81,7 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
                 log.info("Regenerating divorce application");
                 caseTasks(
                     divorceApplicationRemover,
-                    generateDivorceApplication)
+                        generateApplication)
                     .run(details);
 
                 data = details.getData();
