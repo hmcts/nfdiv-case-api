@@ -26,7 +26,6 @@ public class CaseworkerAccess implements HasAccessControl {
         grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE);
         grants.putAll(LEGAL_ADVISOR, Permissions.CREATE_READ_UPDATE);
         grants.putAll(JUDGE, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(JUDGE, Permissions.CREATE_READ_UPDATE);
         grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
         return grants;
     }
