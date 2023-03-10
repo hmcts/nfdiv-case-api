@@ -15,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -34,6 +35,6 @@ public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole
             .description("HWF refused")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 }
