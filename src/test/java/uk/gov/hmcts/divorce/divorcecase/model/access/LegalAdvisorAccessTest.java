@@ -10,7 +10,6 @@ import static org.assertj.guava.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 
 class LegalAdvisorAccessTest {
