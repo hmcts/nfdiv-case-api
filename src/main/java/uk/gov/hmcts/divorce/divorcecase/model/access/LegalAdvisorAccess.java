@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 import static uk.gov.hmcts.ccd.sdk.api.Permission.CRU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 
 public class LegalAdvisorAccess implements HasAccessControl {
@@ -14,6 +15,7 @@ public class LegalAdvisorAccess implements HasAccessControl {
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(LEGAL_ADVISOR, CRU);
+        grants.putAll(JUDGE, Permissions.READ);
         return grants;
     }
 }
