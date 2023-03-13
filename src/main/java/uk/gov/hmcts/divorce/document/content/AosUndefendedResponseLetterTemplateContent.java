@@ -7,12 +7,14 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CP_CASE_EMAIL;
@@ -21,7 +23,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CP_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -34,6 +41,9 @@ public class AosUndefendedResponseLetterTemplateContent {
     private CommonContent commonContent;
 
     @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
+    @Autowired
     private HoldingPeriodService holdingPeriodService;
 
     private static final String DATE_TO_WAIT_UNTIL_APPLY_FOR_CO = "dateToWaitUntilApplyForCO";
@@ -43,7 +53,8 @@ public class AosUndefendedResponseLetterTemplateContent {
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-        Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1()
+            .getLanguagePreference());
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
@@ -61,6 +72,21 @@ public class AosUndefendedResponseLetterTemplateContent {
         } else {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, END_CP_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CP_CASE_EMAIL);
+        }
+
+        if (caseData.isJudicialSeparationCase()) {
+            templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
+                ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
+            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
+                ? caseData.getApplicant1().getSolicitor().getAddress() : caseData.getApplicant1().getPostalAddress());
+            templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
+            templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+            templateContent.put(SOLICITOR_NAME, caseData.getApplicant1().isRepresented()
+                ? caseData.getApplicant1().getSolicitor().getName() : NOT_REPRESENTED);
+            templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().isRepresented()
+                ? caseData.getApplicant2().getSolicitor().getName() : NOT_REPRESENTED);
+            templateContent.put(SOLICITOR_REFERENCE, caseData.getApplicant1().isRepresented()
+                ? caseData.getApplicant1().getSolicitor().getReference() : NOT_REPRESENTED);
         }
 
         return templateContent;
