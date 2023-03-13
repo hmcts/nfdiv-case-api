@@ -24,8 +24,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATIO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
