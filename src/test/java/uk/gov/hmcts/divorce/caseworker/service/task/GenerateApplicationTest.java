@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATIO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JUDICIAL_SEPARATION_SOLE_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -213,7 +213,7 @@ class GenerateApplicationTest {
                     APPLICATION,
                     templateContent,
                     TEST_CASE_ID,
-                    NFD_NOP_JUDICIAL_SEPARATION_SOLE_TEMPLATE_ID,
+                        JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID,
                     ENGLISH,
                     formatDocumentName(TEST_CASE_ID, JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME, now(clock))
             );
