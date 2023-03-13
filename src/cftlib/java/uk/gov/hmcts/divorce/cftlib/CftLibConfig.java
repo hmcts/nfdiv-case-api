@@ -57,6 +57,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "pui-organisation-manager",
             "pui-user-manager"
         );
+
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json")
             .getInputStream(), Charset.defaultCharset());
