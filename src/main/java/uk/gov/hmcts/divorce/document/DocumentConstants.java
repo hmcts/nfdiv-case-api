@@ -58,7 +58,7 @@ public final class DocumentConstants {
     public static final String NFD_NOP_APP2_JS_SOLE = "NFD_NOP_APP2_JS_SOLE";
     public static final String NFD_NOP_APP1_SOLICITOR_JS_SOLE = "NFD_NOP_APP1_SOLICITOR_JS_SOLE";
     public static final String NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID = "NFD_NOP_JS_SERVICE_SOLICITOR";
-    public static final String NFD_NOP_JUDICIAL_SEPARATION_SOLE_TEMPLATE_ID = "NFD_NOP_JUDICIAL_SEPARATION_SOLE";
+    public static final String JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_SOLE_APPLICATION";
     public static final String JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME = "judicial-separation-application";
 
     public static final String GENERAL_ORDER = "generalOrder";
