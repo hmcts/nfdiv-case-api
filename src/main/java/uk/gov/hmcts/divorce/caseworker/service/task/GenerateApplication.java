@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATIO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JUDICIAL_SEPARATION_JOINT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
@@ -67,7 +67,7 @@ public class GenerateApplication implements CaseTask {
             templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_SOLE;
         } else {
             templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId);
-            templateId = isJudicialSeparationCase ? NFD_NOP_JUDICIAL_SEPARATION_JOINT_TEMPLATE_ID : DIVORCE_APPLICATION_JOINT;
+            templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_JOINT;
 
             if (YES.equals(caseData.getApplicant1().getLanguagePreferenceWelsh())
                 && YES.equals(caseData.getApplicant2().getLanguagePreferenceWelsh())) {
