@@ -181,7 +181,7 @@ class GenerateAosResponseLetterDocumentTest {
             );
 
         verify(generateD84Form).generateD84Document(caseData, TEST_CASE_ID);
-        verify(coversheetApplicantTemplateContent).apply(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        verify(coversheetSolicitorTemplateContent).apply(TEST_CASE_ID, caseData.getApplicant1());
         verifyNoMoreInteractions(caseDataDocumentService);
     }
 
