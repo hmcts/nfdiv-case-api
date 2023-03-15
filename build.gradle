@@ -120,6 +120,7 @@ task integration(type: Test) {
   failFast = true
   jvmArgs += "-Xmx3g"
   environment 'ADMIN_UNLINK_APPLICANT_2_ENABLED', 'true'
+  environment 'ADMIN_UNLINK_APPLICANT_1_ENABLED', 'true'
 }
 
 // Invoked from CftLibConfig when booting with CCD.
