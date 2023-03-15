@@ -48,7 +48,7 @@ public class AdminUnlinkApplicant1FromCaseTest {
     }
 
     @Test
-    public void shouldUnlinkApplicant2() {
+    public void shouldUnlinkApplicant1() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = caseData();
         caseDetails.setData(caseData);

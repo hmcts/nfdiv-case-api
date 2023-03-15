@@ -47,7 +47,7 @@ public class AdminUnlinkApplicant1FromCase implements CCDConfig<CaseData, State,
         CaseData caseData = details.getData();
 
 
-        log.info("Admin unlinking Applicant1/Creator from case (id: {})",  details.getId());
+        log.info("Admin unlinking Creator from case (id: {})",  details.getId());
         ccdAccessService.removeUsersWithRole(details.getId(), List.of(CREATOR.getRole()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
