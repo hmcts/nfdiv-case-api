@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -66,6 +67,9 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
+
+    @Autowired
+    private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
 
     @Autowired
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
@@ -127,7 +131,18 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
-            generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            if (caseData.isJudicialSeparationCase()) {
+
+                if (caseData.getApplicant2().isRepresented()) {
+
+                    generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, caseId, caseData.getApplicant1(),
+                        caseData.getApplicant2());
+                }
+
+            } else {
+                generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            }
+
         }
 
         generateConditionalOrderAnswersDocument.apply(

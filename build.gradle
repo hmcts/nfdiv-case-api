@@ -233,7 +233,7 @@ repositories {
 
 def versions = [
   jackson           : '2.13.4',
-  junit             : '5.9.1',
+  junit             : '5.9.2',
   junitPlatform     : '1.9.2',
   lombok            : '1.18.22',
   springBoot        : springBoot.class.package.implementationVersion
@@ -312,7 +312,7 @@ dependencies {
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.5.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.5'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.10.0'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.3.0'
@@ -332,7 +332,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.28.1'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.31.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.9.1'
 }
 
