@@ -38,10 +38,10 @@ public class GenerateSwitchToSoleConditionalOrderJSLetter {
     private CommonContent commonContent;
 
     @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private Clock clock;
 
     @Autowired
-    private Clock clock;
+    private DocmosisCommonContent docmosisCommonContent;
 
     public void apply(final CaseData caseData,
                       final Long caseId,
