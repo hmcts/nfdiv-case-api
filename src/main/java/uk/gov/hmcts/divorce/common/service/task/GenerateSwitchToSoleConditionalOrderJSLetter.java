@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 public class GenerateSwitchToSoleConditionalOrderJSLetter {
 
     @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Autowired
     private CommonContent commonContent;
@@ -41,7 +41,26 @@ public class GenerateSwitchToSoleConditionalOrderJSLetter {
     private Clock clock;
 
     @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private CaseDataDocumentService caseDataDocumentService;
+
+    private Map<String, Object> templateContent(final CaseData caseData,
+                                                final Long caseId,
+                                                final Applicant applicant,
+                                                final Applicant respondent) {
+
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                respondent.getLanguagePreference());
+
+        templateContent.put(CASE_REFERENCE, formatId(caseId));
+        templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
+        templateContent.put(FIRST_NAME, respondent.getFirstName());
+        templateContent.put(LAST_NAME, respondent.getLastName());
+        templateContent.put(ADDRESS, respondent.getPostalAddress());
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
+        templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
+
+        return templateContent;
+    }
 
     public void apply(final CaseData caseData,
                       final Long caseId,
@@ -58,24 +77,5 @@ public class GenerateSwitchToSoleConditionalOrderJSLetter {
             respondent.getLanguagePreference(),
             formatDocumentName(caseId, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME, now(clock))
         );
-    }
-
-    private Map<String, Object> templateContent(final CaseData caseData,
-                                                final Long caseId,
-                                                final Applicant applicant,
-                                                final Applicant respondent) {
-
-        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-            respondent.getLanguagePreference());
-
-        templateContent.put(CASE_REFERENCE, formatId(caseId));
-        templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
-        templateContent.put(FIRST_NAME, respondent.getFirstName());
-        templateContent.put(LAST_NAME, respondent.getLastName());
-        templateContent.put(ADDRESS, respondent.getPostalAddress());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
-        templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
-
-        return templateContent;
     }
 }
