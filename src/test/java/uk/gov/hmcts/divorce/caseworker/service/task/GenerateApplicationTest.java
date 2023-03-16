@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
 
 import java.time.Clock;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ class GenerateApplicationTest {
     private ApplicationSoleTemplateContent applicationSoleTemplateContent;
 
     @Mock
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private ApplicationJointTemplateContent applicationJointTemplateContent;
 
     @Mock
     private Clock clock;
@@ -119,7 +119,7 @@ class GenerateApplicationTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(applicationJointTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplication.apply(caseDetails);
 
@@ -162,7 +162,7 @@ class GenerateApplicationTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(applicationJointTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = generateApplication.apply(caseDetails);
 

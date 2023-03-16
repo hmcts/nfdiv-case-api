@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class GenerateApplication implements CaseTask {
     private ApplicationSoleTemplateContent applicationSoleTemplateContent;
 
     @Autowired
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private ApplicationJointTemplateContent applicationJointTemplateContent;
 
     @Autowired
     private Clock clock;
@@ -66,7 +66,7 @@ public class GenerateApplication implements CaseTask {
             templateContent = applicationSoleTemplateContent.apply(caseData, caseId);
             templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_SOLE;
         } else {
-            templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId);
+            templateContent = applicationJointTemplateContent.apply(caseData, caseId);
             templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_JOINT;
 
             if (YES.equals(caseData.getApplicant1().getLanguagePreferenceWelsh())
