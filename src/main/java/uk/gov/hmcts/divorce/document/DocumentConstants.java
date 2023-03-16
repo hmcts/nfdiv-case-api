@@ -126,6 +126,7 @@ public final class DocumentConstants {
 
     public static final String SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID = "SWITCH_TO_SOLE_CO_LETTER";
     public static final String SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME = "switchToSoleCo";
+    public static final String JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID = "JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR";
 
     public static final String SWITCH_TO_SOLE_CO_JS_LETTER_TEMPLATE_ID = "SWITCH_TO_SOLE_CO_JS_LETTER";
 
