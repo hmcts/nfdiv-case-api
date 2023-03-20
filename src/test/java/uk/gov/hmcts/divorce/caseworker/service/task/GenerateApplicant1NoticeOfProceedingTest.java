@@ -378,7 +378,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("United Kingdom")
             .postCode("W1J7NT")
@@ -407,7 +407,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
             .postCode("75005")
             .build();
         caseData.getApplicant1().setAddress(addressGlobalOverseas);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -427,7 +427,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, YES, YES);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -448,7 +448,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplicant1().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
 
         final Map<String, Object> templateContent = new HashMap<>();

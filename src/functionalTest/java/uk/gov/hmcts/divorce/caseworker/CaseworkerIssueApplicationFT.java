@@ -227,7 +227,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplicationWithJSPersonalService() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
-        caseData.put("isJudicialSeparation", "Yes");
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
         caseData.put("serviceMethod", "personalService");
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
