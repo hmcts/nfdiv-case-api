@@ -69,6 +69,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AC
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
@@ -420,6 +421,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
@@ -813,6 +815,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 
@@ -898,6 +901,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "app 1 sol");
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", APPLICANT_2_LAST_NAME);
@@ -1028,6 +1032,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
 

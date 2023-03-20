@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AC
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_2_IS_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
@@ -210,7 +211,8 @@ public class NoticeOfProceedingContentTest {
                 entry(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true),
                 entry(IS_DIVORCE, true),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
-                entry(IS_OFFLINE, false)
+                entry(IS_OFFLINE, false),
+                entry(APPLICANT_2_IS_REPRESENTED, true)
             );
     }
 
