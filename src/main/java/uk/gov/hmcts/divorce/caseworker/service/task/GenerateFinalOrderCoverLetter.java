@@ -8,11 +8,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +42,9 @@ public class GenerateFinalOrderCoverLetter {
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     public void apply(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -89,7 +92,8 @@ public class GenerateFinalOrderCoverLetter {
                                                 final Long caseId,
                                                 final Applicant applicant) {
 
-        Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            applicant.getLanguagePreference());
 
         templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         templateContent.put(ADDRESS, applicant.getPostalAddress());

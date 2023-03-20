@@ -133,17 +133,21 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             )
             .build();
 
-        templateContent.put(ADDRESS, caseData.getApplicant1().getAddress());
+        templateContent.put(ADDRESS, caseData.getApplicant1().getPostalAddress());
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.getPartner(caseData))
             .thenReturn("wife");
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
@@ -230,11 +234,15 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
@@ -312,11 +320,15 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
+            .thenReturn(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER);
+        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
+            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
         generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
-            caseData, TEST_CASE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             eq(caseData),
@@ -328,5 +340,4 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             anyString()
         );
     }
-
 }
