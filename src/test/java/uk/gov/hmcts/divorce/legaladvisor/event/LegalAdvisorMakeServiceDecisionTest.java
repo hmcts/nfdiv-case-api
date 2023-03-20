@@ -42,9 +42,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISP
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
@@ -440,6 +442,53 @@ class LegalAdvisorMakeServiceDecisionTest {
             .containsExactly(deemedOrDispensedDoc);
 
         verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+    }
+
+    @Test
+    void shouldUpdateStateToServiceAdminRefusalIfApplicationIsNotGrantedAndReasonIsAdminRefusal() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .receivedServiceApplicationDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(NO)
+                    .refusalReason(ADMIN_REFUSAL)
+                    .serviceApplicationRefusalReason("Reason order refused")
+                    .alternativeServiceType(DISPENSED)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        var dispenseWithServiceRefusedDoc = new Document(
+            DOCUMENT_URL,
+            DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
+            DOCUMENT_URL + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                SERVICE_REFUSAL_TEMPLATE_ID,
+                ENGLISH,
+                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
+            ))
+            .thenReturn(dispenseWithServiceRefusedDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
     }
 
     @Test
