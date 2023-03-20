@@ -325,7 +325,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
     }
 
     @Test
-    public void shouldUpdateStateToAwaitingServiceConsiderationIfApplicationIsNotGrantedAndRefusalReasonIsAdminRefusal()
+    public void shouldUpdateStateToServiceAdminRefusalIfApplicationIsNotGrantedAndRefusalReasonIsAdminRefusal()
         throws Exception {
         setMockClock(clock);
 
