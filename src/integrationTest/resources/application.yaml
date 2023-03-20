@@ -78,7 +78,7 @@ docmosis:
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx
       SERVICE_ORDER: NFD_Service_Order_V2.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx
+      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
@@ -96,7 +96,7 @@ docmosis:
       NFD_RESP_NOT_RESPONDED: NFD_Respondent_Not_Responded.docx
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS.docx
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
-      COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
+      COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
       GENERAL_LETTER: NFD_General_Letter.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V3.docx
@@ -113,18 +113,21 @@ docmosis:
       NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V6.docx
       NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS.docx
+      NFD_NOP_APP1APP2_SOL_JS_JOINT: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Joint.docx
       NFD_NOP_APP1_SOLICITOR_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx
+      JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-Switch-To-Sole-Solicitor.docx
       NFD_NOP_JS_SERVICE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-NOP-Solicitor-Service.docx
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V3.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V2.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted.docx
-      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx
+      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
@@ -158,7 +161,7 @@ docmosis:
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS.docx #TODO: add translated content
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx #TODO: update content
       COVERSHEET_APPLICANT: NFD_Applicant_Coversheet.docx
-      COVERSHEET_APPLICANT2_SOLICITOR: NFD_Applicant2_Solicitor_Coversheet.docx
+      COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet.docx
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       GENERAL_LETTER: NFD_General_Letter.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: NFD_Notice_Of_Proceedings_Sole_Joint_Solicitor.docx
@@ -179,12 +182,13 @@ docmosis:
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced_V3.docx
-      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx #TODO: add translated content
+      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx #TODO: add translated content
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx #TODO: update welsh content
       SWITCH_TO_SOLE_CO_LETTER: FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx #TODO: add translated content
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
       NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Respondent_JS_Sole.docx
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
