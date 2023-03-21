@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
@@ -71,7 +72,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
-            .grantHistoryOnly(CASE_WORKER, SOLICITOR, SYSTEMUPDATE))
+            .grantHistoryOnly(CASE_WORKER, SOLICITOR, SYSTEMUPDATE, JUDGE))
             .page("makeBailiffDecision-1")
             .pageLabel("Make Bailiff Decision")
             .complex(CaseData::getAlternativeService)

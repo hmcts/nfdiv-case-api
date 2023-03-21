@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -54,7 +55,8 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
             .grantHistoryOnly(
                 SUPER_USER,
                 CASE_WORKER,
-                LEGAL_ADVISOR)
+                LEGAL_ADVISOR,
+                JUDGE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
