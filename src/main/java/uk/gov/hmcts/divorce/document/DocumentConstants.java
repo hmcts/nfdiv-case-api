@@ -12,6 +12,8 @@ public final class DocumentConstants {
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_JS_SOLE_DISPUTED = "NFD_NOP_APP1_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED";
+    public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
+
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
 
@@ -55,6 +57,7 @@ public final class DocumentConstants {
     public static final String NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS = "NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS";
     public static final String NFD_NOP_APP1APP2_SOL_JS_JOINT = "NFD_NOP_APP1APP2_SOL_JS_JOINT";
     public static final String NFD_NOP_APP1_JS_SOLE = "NFD_NOP_APP1_JS_SOLE";
+    public static final String NFD_NOP_APP1_JS_SOLE_OS_PS = "NFD_NOP_APP1_JS_SOLE_OS_PS";
     public static final String NFD_NOP_APP2_JS_SOLE = "NFD_NOP_APP2_JS_SOLE";
     public static final String NFD_NOP_APP1_SOLICITOR_JS_SOLE = "NFD_NOP_APP1_SOLICITOR_JS_SOLE";
     public static final String NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID = "NFD_NOP_JS_SERVICE_SOLICITOR";
@@ -94,6 +97,8 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID
         = "CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+        = "CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
 
     public static final String USER_ROLES = "user-roles";
@@ -129,6 +134,7 @@ public final class DocumentConstants {
 
     public static final String SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID = "SWITCH_TO_SOLE_CO_LETTER";
     public static final String SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME = "switchToSoleCo";
+    public static final String JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID = "JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR";
 
     public static final String AOS_RESPONSE_LETTER_DOCUMENT_NAME = "aosResponseLetter";
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";

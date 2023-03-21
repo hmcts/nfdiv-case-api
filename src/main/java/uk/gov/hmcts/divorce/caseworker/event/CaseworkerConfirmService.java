@@ -23,6 +23,7 @@ import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -51,7 +52,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("CaseworkerConfirmService", this::midEvent)
             .pageLabel("Confirm Service")
             .complex(CaseData::getDocuments)

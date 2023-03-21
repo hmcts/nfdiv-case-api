@@ -12,6 +12,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICI
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 
 class DefaultStateAccessExcludingCAATest {
 
@@ -21,12 +22,13 @@ class DefaultStateAccessExcludingCAATest {
         final SetMultimap<HasRole, Permission> grants = new DefaultStateAccessExcludingCAA().getGrants();
 
         assertThat(grants)
-            .hasSize(4)
+            .hasSize(5)
             .contains(
                 entry(CREATOR, R),
                 entry(APPLICANT_2, R),
                 entry(APPLICANT_1_SOLICITOR, R),
-                entry(APPLICANT_2_SOLICITOR, R)
+                entry(APPLICANT_2_SOLICITOR, R),
+                entry(JUDGE, R)
             );
     }
 }
