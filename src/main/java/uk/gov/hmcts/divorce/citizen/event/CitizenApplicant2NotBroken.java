@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Res
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -41,7 +42,7 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
             .name("Applicant 2 not broken")
             .description("Applicant 2 union has not broken")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

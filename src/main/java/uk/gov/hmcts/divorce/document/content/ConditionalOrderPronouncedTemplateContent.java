@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
@@ -60,7 +59,7 @@ public class ConditionalOrderPronouncedTemplateContent {
         final boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
-        Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         templateContent.put(JUDGE_NAME, conditionalOrder.getPronouncementJudge());
         templateContent.put(COURT_NAME, conditionalOrder.getCourt() != null ? conditionalOrder.getCourt().getLabel() : null);
@@ -89,8 +88,6 @@ public class ConditionalOrderPronouncedTemplateContent {
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP);
         }
-
-        templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference));
 
         return templateContent;
     }
