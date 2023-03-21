@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPendi
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -61,7 +62,8 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
-                LEGAL_ADVISOR));
+                LEGAL_ADVISOR,
+                JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

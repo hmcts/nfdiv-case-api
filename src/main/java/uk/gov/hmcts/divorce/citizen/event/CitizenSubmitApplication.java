@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -52,7 +53,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .description("Apply: divorce or dissolution")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

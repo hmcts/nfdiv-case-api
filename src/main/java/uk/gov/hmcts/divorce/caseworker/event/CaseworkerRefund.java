@@ -12,6 +12,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -35,6 +36,7 @@ public class CaseworkerRefund implements CCDConfig<CaseData, State, UserRole> {
             .grantHistoryOnly(
                 SOLICITOR,
                 CASE_WORKER,
-                LEGAL_ADVISOR));
+                LEGAL_ADVISOR,
+                JUDGE));
     }
 }
