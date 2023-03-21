@@ -14,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -35,7 +36,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
             .showSummary()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR))
+            .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR, JUDGE))
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)

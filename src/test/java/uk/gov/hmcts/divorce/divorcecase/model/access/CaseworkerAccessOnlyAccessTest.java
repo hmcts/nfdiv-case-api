@@ -13,6 +13,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -26,12 +27,13 @@ class CaseworkerAccessOnlyAccessTest {
         final SetMultimap<HasRole, Permission> grants = new CaseworkerAccessOnlyAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(11)
+            .hasSize(12)
             .contains(
                 entry(CITIZEN, R),
                 entry(SOLICITOR, R),
                 entry(SUPER_USER, R),
                 entry(LEGAL_ADVISOR, R),
+                entry(JUDGE, R),
                 entry(CASE_WORKER, C),
                 entry(CASE_WORKER, R),
                 entry(CASE_WORKER, U),
