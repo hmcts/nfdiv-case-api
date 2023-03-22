@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderJSLetter;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -80,6 +81,9 @@ class SwitchedToSoleCoTest {
 
     @Mock
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
+
+    @Mock
+    private GenerateSwitchToSoleConditionalOrderJSLetter generateSwitchToSoleCoJSLetter;
 
     @InjectMocks
     private SwitchedToSoleCo switchedToSoleCo;
@@ -324,5 +328,31 @@ class SwitchedToSoleCoTest {
         verify(generateJudicialSeparationSwitchToSoleSolicitorLetter).apply(caseData, caseId, caseData.getApplicant1(),
             caseData.getApplicant2());
         verifyNoMoreInteractions(switchToSoleCoPrinter);
+    }
+
+    @Test
+    void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setIsJudicialSeparation(YES);
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .d84WhoApplying(APPLICANT_2)
+            .build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(switchToSoleService).switchUserRoles(caseData, caseId);
+        verify(switchToSoleService).switchApplicantData(caseData);
+        verify(generateSwitchToSoleCoJSLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
+
+        verifyNoInteractions(generateSwitchToSoleCoLetter);
     }
 }
