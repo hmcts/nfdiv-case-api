@@ -14,6 +14,7 @@ public class LegalAdvisorAccess implements HasAccessControl {
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(LEGAL_ADVISOR, CRU);
+
         return grants;
     }
 }

@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJudgeClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -40,7 +41,8 @@ public class CaseworkerRequestDwpDisclosure implements CCDConfig<CaseData, State
                 SUPER_USER,
                 SOLICITOR,
                 LEGAL_ADVISOR,
-                CITIZEN));
+                CITIZEN,
+                JUDGE));
     }
 
 }
