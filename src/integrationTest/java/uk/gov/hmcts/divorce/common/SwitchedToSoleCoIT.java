@@ -403,7 +403,7 @@ public class SwitchedToSoleCoIT {
 
         CaseData data = validJointApplicant1CaseData();
         data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
-        data.setIsJudicialSeparation(YES);
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setConditionalOrder(ConditionalOrder.builder()
             .d84ApplicationType(SWITCH_TO_SOLE)
             .d84WhoApplying(APPLICANT_2)

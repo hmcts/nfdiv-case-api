@@ -334,7 +334,7 @@ class SwitchedToSoleCoTest {
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .d84ApplicationType(SWITCH_TO_SOLE)
