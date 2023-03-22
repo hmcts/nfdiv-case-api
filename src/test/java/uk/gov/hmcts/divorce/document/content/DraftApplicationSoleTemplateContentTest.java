@@ -80,7 +80,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftDivorceApplicationSoleTemplateContentTest {
+public class DraftApplicationSoleTemplateContentTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;

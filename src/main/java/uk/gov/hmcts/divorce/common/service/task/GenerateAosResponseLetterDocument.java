@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTE
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
@@ -64,17 +65,20 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
 
         if (caseData.getApplicant1().isApplicantOffline()) {
             if (caseData.isJudicialSeparationCase()) {
-                if (acknowledgementOfService.isDisputed()) {
-                    generateD84Form.generateD84Document(caseData, caseId);
-                    generateCoversheet.generateCoversheet(
+                generateD84Form.generateD84Document(caseData, caseId);
+
+                var isApplicant1Represented = caseData.getApplicant1().isRepresented();
+                generateCoversheet.generateCoversheet(
                         caseData,
                         caseId,
-                        COVERSHEET_APPLICANT,
-                        coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
+                        isApplicant1Represented ? COVERSHEET_APPLICANT2_SOLICITOR : COVERSHEET_APPLICANT,
+                        isApplicant1Represented
+                                ? coversheetSolicitorTemplateContent.apply(caseId, caseData.getApplicant1())
+                                : coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
                         caseData.getApplicant1().getLanguagePreference()
-                    );
-
-                    if (caseData.getApplicant1().isRepresented()) {
+                );
+                if (acknowledgementOfService.isDisputed()) {
+                    if (isApplicant1Represented) {
                         log.info("Generating Solicitor JS aos response (disputed) letter pdf for case id: {}", caseDetails.getId());
                         caseDataDocumentService.renderDocumentAndUpdateCaseData(
                             caseData,
@@ -99,19 +103,10 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                         );
                     }
                 } else {
-                    if (caseData.getApplicant1().isRepresented()) {
+                    if (isApplicant1Represented) {
                         log.info("Generating aos response (undefended) JS letter pdf, D10 and D84 forms for case id: {}", caseId);
 
                         generateD10Form.apply(caseDetails);
-                        generateD84Form.generateD84Document(caseData, caseId);
-
-                        generateCoversheet.generateCoversheet(
-                                caseData,
-                                caseId,
-                                COVERSHEET_APPLICANT2_SOLICITOR,
-                                coversheetSolicitorTemplateContent.apply(caseId, caseData.getApplicant1()),
-                                caseData.getApplicant1().getLanguagePreference()
-                        );
 
                         caseDataDocumentService.renderDocumentAndUpdateCaseData(
                             caseData,
@@ -119,6 +114,17 @@ public class GenerateAosResponseLetterDocument implements CaseTask {
                             aosUndefendedResponseLetterTemplateContent.apply(caseData, caseId),
                             caseId,
                             NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
+                            caseData.getApplicant1().getLanguagePreference(),
+                            AOS_RESPONSE_LETTER_DOCUMENT_NAME
+                        );
+                    } else {
+                        log.info("Generating JS aos response (undisputed) letter pdf for case id: {}", caseDetails.getId());
+                        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                            caseData,
+                            AOS_RESPONSE_LETTER,
+                            aosResponseLetterTemplateContent.apply(caseData, caseId),
+                            caseId,
+                            NFD_NOP_APP1_JS_SOLE_UNDISPUTED,
                             caseData.getApplicant1().getLanguagePreference(),
                             AOS_RESPONSE_LETTER_DOCUMENT_NAME
                         );
