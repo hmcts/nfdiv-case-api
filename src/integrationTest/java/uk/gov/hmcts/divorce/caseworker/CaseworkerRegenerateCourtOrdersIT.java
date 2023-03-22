@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -395,7 +396,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
         final CaseData caseData = CaseData
             .builder()
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
             .applicant1(Applicant.builder().offline(YES).build())
@@ -479,7 +480,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
         final CaseData caseData = CaseData
             .builder()
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
             .applicant1(Applicant.builder().offline(YES).solicitorRepresented(YES).build())

@@ -839,7 +839,7 @@ class GenerateCertificateOfEntitlementTest {
 
     private CaseData caseDataWithSolicitor() {
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         String sol1Name = "Sol1";
         String sol2Name = "Sol2";

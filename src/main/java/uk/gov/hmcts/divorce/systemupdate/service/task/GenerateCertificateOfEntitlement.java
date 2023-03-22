@@ -170,7 +170,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
             templateVars(caseData, caseId, caseData.getApplicant1()),
             caseId,
-            YesOrNo.YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
                 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
@@ -189,7 +189,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
         );
 
-        boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
+        boolean isJudicialSeparation = caseData.isJudicialSeparationCase();
 
         if (isJudicialSeparation) {
             templateVars.put(IS_RESPONDENT, true);
@@ -216,7 +216,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
             templateVars(caseData, caseId, caseData.getApplicant2()),
             caseId,
-            YesOrNo.YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
                 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant2().getLanguagePreference(),

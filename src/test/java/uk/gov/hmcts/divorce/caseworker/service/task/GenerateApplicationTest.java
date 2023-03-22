@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
@@ -193,7 +194,7 @@ class GenerateApplicationTest {
                 .application(Application.builder()
                         .solSignStatementOfTruth(YES)
                         .build())
-                .isJudicialSeparation(YES)
+                .supplementaryCaseType(JUDICIAL_SEPARATION)
                 .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

@@ -449,7 +449,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
 
         CaseData data = validCaseWithCourtHearing();
-        data.setIsJudicialSeparation(YES);
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setOffline(YES);
@@ -483,7 +483,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
 
         CaseData data = validCaseWithCourtHearing();
-        data.setIsJudicialSeparation(YES);
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setOffline(YES);
