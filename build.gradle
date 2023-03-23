@@ -270,7 +270,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.1'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.0.1'
-  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
+  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.16'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.3'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.19.0'
@@ -332,7 +332,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.28.1'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.31.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.9.1'
 }
 
