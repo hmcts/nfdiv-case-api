@@ -9,8 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATIO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
@@ -38,7 +39,7 @@ public class GenerateApplication implements CaseTask {
     private ApplicationSoleTemplateContent applicationSoleTemplateContent;
 
     @Autowired
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private ApplicationJointTemplateContent applicationJointTemplateContent;
 
     @Autowired
     private Clock clock;
@@ -48,8 +49,9 @@ public class GenerateApplication implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
+        var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
 
-        if (caseData.isJudicialSeparationCase()) {
+        if (isJudicialSeparationCase) {
             log.info("Executing handler for generating judicial separation for case id {} ", caseId);
         } else {
             log.info("Executing handler for generating divorce application for case id {} ", caseId);
@@ -57,20 +59,16 @@ public class GenerateApplication implements CaseTask {
 
         final Map<String, Object> templateContent;
         final String templateId;
-        final String documentName;
+
         LanguagePreference languagePreference = ENGLISH;
-        var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
 
         if (caseData.getApplicationType().isSole()) {
             templateContent = applicationSoleTemplateContent.apply(caseData, caseId);
             templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_SOLE;
-            documentName = isJudicialSeparationCase ? JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME : DIVORCE_APPLICATION_DOCUMENT_NAME;
         } else {
-            templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId);
-            templateId = DIVORCE_APPLICATION_JOINT;
+            templateContent = applicationJointTemplateContent.apply(caseData, caseId);
+            templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_JOINT;
 
-            // This will be changed when we do joint template ticket to get correct document name based on JS
-            documentName = DIVORCE_APPLICATION_DOCUMENT_NAME;
             if (YES.equals(caseData.getApplicant1().getLanguagePreferenceWelsh())
                 && YES.equals(caseData.getApplicant2().getLanguagePreferenceWelsh())) {
                 languagePreference = WELSH;
@@ -84,7 +82,9 @@ public class GenerateApplication implements CaseTask {
             caseId,
             templateId,
             languagePreference,
-            formatDocumentName(caseId, documentName, now(clock))
+            formatDocumentName(caseId,
+                    isJudicialSeparationCase ? JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME : DIVORCE_APPLICATION_DOCUMENT_NAME,
+                    now(clock))
         );
 
         return caseDetails;
