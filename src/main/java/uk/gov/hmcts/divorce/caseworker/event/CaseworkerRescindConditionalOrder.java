@@ -20,7 +20,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;

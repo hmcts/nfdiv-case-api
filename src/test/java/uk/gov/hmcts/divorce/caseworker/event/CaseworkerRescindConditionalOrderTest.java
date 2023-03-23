@@ -30,7 +30,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
