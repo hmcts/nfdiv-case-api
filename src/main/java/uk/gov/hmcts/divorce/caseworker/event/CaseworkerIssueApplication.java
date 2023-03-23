@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -71,7 +72,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
-                LEGAL_ADVISOR))
+                LEGAL_ADVISOR,
+                JUDGE))
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
             .complex(CaseData::getLabelContent)

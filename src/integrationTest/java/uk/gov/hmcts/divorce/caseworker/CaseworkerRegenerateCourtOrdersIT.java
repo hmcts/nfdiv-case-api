@@ -121,14 +121,22 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("81759115-d69e-4818-a0c5-a1f343d4f914", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
-        stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
-        stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3", "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx");
-        stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533", "FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx");
-        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx");
-        stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter.docx");
-        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
+        stubForDocAssemblyWith("81759115-d69e-4818-a0c5-a1f343d4f914",
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
+        stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24",
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3",
+            "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx");
+        stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
+            "FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx");
+        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
+            "FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V3.docx");
+        stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921",
+            "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
+            "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -199,9 +207,12 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
-        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx");
-        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
+            "FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V3.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
+            "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -270,9 +281,12 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
-        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa", "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-V2.docx");
-        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Granted.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
+            "FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V3.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
+            "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -336,12 +350,190 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
     }
 
+    @Test
+    public void shouldRegenerateRequiredDocsWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOfflineJudicialSeparation()
+        throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24",
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
+        stubForDocAssemblyWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002",
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+        stubForDocAssemblyWith("31f23884-a707-4983-9bb9-5ce33e13d8c2",
+            "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx");
+        stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
+            "FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx");
+        stubForDocAssemblyWith("90ac37a0-b723-4722-9723-86157e4ee450",
+            "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx");
+        stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921",
+            "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
+            "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+
+        final ListValue<DivorceDocument> coGrantedDoc =
+            getDivorceDocumentListValue(
+                "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                "co_granted.pdf",
+                CONDITIONAL_ORDER_GRANTED
+            );
+
+        final ListValue<DivorceDocument> foGrantedDoc =
+            getDivorceDocumentListValue(
+                "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                "fo_granted.pdf",
+                FINAL_ORDER_GRANTED
+            );
+
+        List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        documentsGenerated.add(coGrantedDoc);
+        documentsGenerated.add(foGrantedDoc);
+
+        final CaseData caseData = CaseData
+            .builder()
+            .isJudicialSeparation(YES)
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(Applicant.builder().offline(YES).build())
+            .applicant2(Applicant.builder().offline(YES).build())
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .court(BURY_ST_EDMUNDS)
+                    .dateAndTimeOfHearing(LocalDateTime.now())
+                    .certificateOfEntitlementDocument(
+                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
+                    )
+                    .build()
+            )
+            .documents(
+                CaseDocuments
+                    .builder()
+                    .documentsGenerated(documentsGenerated)
+                    .build()
+            )
+            .build();
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                        callbackRequest(caseData, CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess()));
+
+    }
+
+    @Test
+    public void shouldRegenerateCourtOrdersAndCoverLettersWhenOfflineJudicialSeparationAndApplicantsAreRepresented()
+        throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        stubForDocAssemblyWith("5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d",
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
+        stubForDocAssemblyWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002",
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+        stubForDocAssemblyWith("94e63858-bda1-11ed-afa1-0242ac120002",
+            "FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx");
+        stubForDocAssemblyWith("90ac37a0-b723-4722-9723-86157e4ee450",
+            "FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS.docx");
+        stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921",
+            "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
+            "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+
+        final ListValue<DivorceDocument> coGrantedDoc =
+            getDivorceDocumentListValue(
+                "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                "co_granted.pdf",
+                CONDITIONAL_ORDER_GRANTED
+            );
+
+        final ListValue<DivorceDocument> foGrantedDoc =
+            getDivorceDocumentListValue(
+                "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                "fo_granted.pdf",
+                FINAL_ORDER_GRANTED
+            );
+
+        List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        documentsGenerated.add(coGrantedDoc);
+        documentsGenerated.add(foGrantedDoc);
+
+        final CaseData caseData = CaseData
+            .builder()
+            .isJudicialSeparation(YES)
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(Applicant.builder().offline(YES).solicitorRepresented(YES).build())
+            .applicant2(Applicant.builder().offline(YES).solicitorRepresented(YES).build())
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .court(BURY_ST_EDMUNDS)
+                    .dateAndTimeOfHearing(LocalDateTime.now())
+                    .certificateOfEntitlementDocument(
+                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
+                    )
+                    .build()
+            )
+            .documents(
+                CaseDocuments
+                    .builder()
+                    .documentsGenerated(documentsGenerated)
+                    .build()
+            )
+            .build();
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                        callbackRequest(caseData, CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSolicitorJudicialSeparationSuccess()));
+
+    }
+
     private String expectedCcdAboutToSubmitCallbackSuccess() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-system-regenerate-court-orders.json");
     }
 
     private String expectedCcdAboutToSubmitCallbackOfflineSuccess() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-system-regenerate-court-orders-offline.json");
+    }
+
+    private String expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess() throws IOException {
+        return expectedResponse("classpath:wiremock/responses/about-to-submit-system-regenerate-court-orders-offline-js.json");
+    }
+
+    private String expectedCcdAboutToSubmitCallbackOfflineSolicitorJudicialSeparationSuccess() throws IOException {
+        return expectedResponse("classpath:wiremock/responses/about-to-submit-system-regenerate-court-orders-offline-solicitor-js.json");
     }
 
     private DivorceDocument divorceDocumentWithFileName(String fileName) {

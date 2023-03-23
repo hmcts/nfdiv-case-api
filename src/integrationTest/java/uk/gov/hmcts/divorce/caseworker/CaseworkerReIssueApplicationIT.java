@@ -192,6 +192,7 @@ public class CaseworkerReIssueApplicationIT {
     private static final String D84_DOCUMENT_ID = "67db1868-e917-457a-b9a7-209d1905810a";
     private static final String NFD_NOP_APP2_JS_SOLE_ID = "c35b1868-e397-457a-aa67-ac1422bb810a";
     private static final String D10_DOCUMENT_ID = "c35b1868-e397-457a-bb67-ac1422bb811a";
+    private static final String NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID = "68fd5d22-be58-11ed-afa1-0242ac120002";
 
     @Autowired
     private MockMvc mockMvc;
@@ -1934,7 +1935,6 @@ public class CaseworkerReIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId())
-            .thenReturn("Coversheet applicant 1")
             .thenReturn("Notice of proceeding applicant 1")
             .thenReturn("Coversheet applicant 2")
             .thenReturn("Notice of proceeding applicant 2")
@@ -1994,10 +1994,11 @@ public class CaseworkerReIssueApplicationIT {
             .thenReturn("Notice of proceeding applicant")
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Coversheet")
-            .thenReturn("Divorce application");
+            .thenReturn("Judicial separation application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
+        stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID,
+                "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
             "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
@@ -2022,7 +2023,7 @@ public class CaseworkerReIssueApplicationIT {
     }
 
     @Test
-    void shouldSetReIssueDateAndGenerateDocumentsForSoleSpplicantSolicitorJudicialSeparation() throws Exception {
+    void shouldSetReIssueDateAndGenerateDocumentsForSoleApplicantSolicitorJudicialSeparation() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setIsJudicialSeparation(YES);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
@@ -2043,10 +2044,11 @@ public class CaseworkerReIssueApplicationIT {
             .thenReturn("Notice of proceeding applicant solicitor")
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Coversheet")
-            .thenReturn("Divorce application");
+            .thenReturn("Judicial separation application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
+        stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID,
+                "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
             "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");

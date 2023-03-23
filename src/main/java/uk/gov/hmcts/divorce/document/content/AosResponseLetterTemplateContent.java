@@ -11,7 +11,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -46,7 +46,6 @@ public class AosResponseLetterTemplateContent {
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";
-    public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS = "divorceOrCivilPartnershipProceedings";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
     public static final String PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP = "proceedings to end your civil partnership";
@@ -104,7 +103,7 @@ public class AosResponseLetterTemplateContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, END_CP_SERVICE);
         }
 
-        if (YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
             templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
