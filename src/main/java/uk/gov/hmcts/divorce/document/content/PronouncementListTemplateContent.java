@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.stream.Stream.ofNullable;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -76,14 +77,20 @@ public class PronouncementListTemplateContent {
 
             var mainCaseData = objectMapper.convertValue(mainCase.getData(), CaseData.class);
 
+            String applicationType = null;
+            if (!isNull(mainCaseData.getDivorceOrDissolution())) {
+                applicationType = mainCaseData.hasNoSupplementaryCaseType()
+                    ? mainCaseData.getDivorceOrDissolution().getLabel()
+                    : mainCaseData.getSupplementaryCaseType().getLabel();
+            }
+
             caseLinkMap.put(CASE_REFERENCE, mainCase.getId());
             caseLinkMap.put(APPLICANT_HEADING, format("%s %s", mainCaseData.getApplicant1().getFirstName(),
                 mainCaseData.getApplicant1().getLastName()));
             caseLinkMap.put(RESPONDENT_HEADING, format("%s %s", mainCaseData.getApplicant2().getFirstName(),
                 mainCaseData.getApplicant2().getLastName()));
             caseLinkMap.put(SOLE_JOINT_HEADING, SOLE_APPLICATION.equals(mainCaseData.getApplicationType()) ? "Sole" : "Joint");
-            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, mainCaseData.getDivorceOrDissolution() != null
-                ? mainCaseData.getDivorceOrDissolution().getLabel() : null);
+            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, applicationType);
 
             bulkList.add(caseLinkMap);
         }
