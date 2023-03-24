@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -325,9 +326,9 @@ public class CaseData {
     }
 
     private void enforceJudicialSeparationOrSeparation() {
-        if (this.divorceOrDissolution == DIVORCE && this.supplementaryCaseType == SEPARATION) {
+        if (DIVORCE.equals(this.divorceOrDissolution) && SEPARATION.equals(this.supplementaryCaseType)) {
             this.supplementaryCaseType = JUDICIAL_SEPARATION; // prevent Separation when Divorce
-        } else if (this.divorceOrDissolution == DISSOLUTION && this.supplementaryCaseType == JUDICIAL_SEPARATION) {
+        } else if (DISSOLUTION.equals(this.divorceOrDissolution) && JUDICIAL_SEPARATION.equals(this.supplementaryCaseType)) {
             this.supplementaryCaseType = SEPARATION; // prevent Judicial Separation when Dissolution
         }
     }
@@ -338,7 +339,7 @@ public class CaseData {
     }
 
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-        if (supplementaryCaseType == NA || supplementaryCaseType == NULLITY || this.divorceOrDissolution == null) {
+        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType) || isNull(this.divorceOrDissolution)) {
             this.supplementaryCaseType = supplementaryCaseType;
         } else { // Setting JS or Sep, and divorceOrDissolution is not null
             this.supplementaryCaseType = JUDICIAL_SEPARATION;
@@ -358,7 +359,7 @@ public class CaseData {
 
     @JsonIgnore
     public boolean hasNoSupplementaryCaseType() {
-        return NA.equals(this.supplementaryCaseType) || this.supplementaryCaseType == null;
+        return NA.equals(this.supplementaryCaseType) || isNull(this.supplementaryCaseType);
     }
 
     @JsonIgnore
