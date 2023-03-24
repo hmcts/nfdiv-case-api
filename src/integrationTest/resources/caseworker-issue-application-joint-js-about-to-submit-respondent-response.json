@@ -81,15 +81,15 @@
         }
       },
       {
-        "id": "Divorce application",
+        "id": "Judicial separation application",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/ac0b7b52-e8db-44ef-aad6-e050ebed89f6",
+            "document_filename": "judicial-separation-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/ac0b7b52-e8db-44ef-aad6-e050ebed89f6/binary"
           },
           "documentType": "application",
-          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf"
+          "documentFileName": "judicial-separation-application-1616591401473378-2021-06-17:13:00.pdf"
         }
       },
       {

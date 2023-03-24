@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
@@ -125,62 +127,130 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         final boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
 
         if (caseData.getApplicant1().isApplicantOffline()) {
-            log.info("Generating certificate of entitlement cover letter for Applicant 1 for case id {} ", caseId);
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                templateVars(caseData, caseId, caseData.getApplicant1()),
-                caseId,
-                isJudicialSeparation
-                    ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
-                    : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
-            );
-        }
-
-        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isApplicantOffline()) {
-            log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
-
-            if (caseData.getApplicationType().isSole()) {
-                Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2());
-
-                templateVars.put(
-                    PARTNER,
-                    commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-                );
-
-                if (isJudicialSeparation) {
-                    templateVars.put(IS_RESPONDENT, true);
-                }
-
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                    templateVars,
-                    caseId,
-                    isJudicialSeparation
-                        ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
-                        : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
-                    caseData.getApplicant2().getLanguagePreference(),
-                    formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
-                );
-
+            if (caseData.getApplicant1().isRepresented() && isJudicialSeparation) {
+                generateApplicant1SolicitorCertificateOfEntitlementCoverLetter(caseData, caseId);
             } else {
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                    templateVars(caseData, caseId, caseData.getApplicant2()),
-                    caseId,
-                    isJudicialSeparation
-                        ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
-                        : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
-                    caseData.getApplicant2().getLanguagePreference(),
-                    formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
-                );
+                generateApplicant1CertificateOfEntitlementCoverLetter(caseData, caseId);
             }
         }
 
+        if (isBlank(caseData.getApplicant2EmailAddress()) || caseData.getApplicant2().isApplicantOffline()) {
+
+            if (caseData.getApplicant2().isRepresented() && isJudicialSeparation) {
+                generateApplicant2SolicitorCertificateOfEntitlementCoverLetter(caseData, caseId);
+            } else {
+                if (caseData.getApplicationType().isSole()) {
+                    generateRespondentCertificateOfEntitlementCoverLetter(caseData, caseId);
+                } else {
+                    generateApplicant2CertificateOfEntitlementCoverLetter(caseData, caseId);
+                }
+            }
+        }
+
+    }
+
+    public void removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(CaseDetails<CaseData, State> caseDetails) {
+
+        final CaseData caseData = caseDetails.getData();
+        final List<DocumentType> documentTypesToRemove =
+            List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
+        }
+
+        generateCertificateOfEntitlementCoverLetters(caseDetails);
+    }
+
+    private void generateApplicant1CertificateOfEntitlementCoverLetter(final CaseData caseData,
+                                                                        final Long caseId) {
+        log.info("Generating certificate of entitlement cover letter for Applicant / Applicant 1 for case id {} ", caseId);
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            templateVars(caseData, caseId, caseData.getApplicant1()),
+            caseId,
+            YesOrNo.YES.equals(caseData.getIsJudicialSeparation())
+                ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
+                : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
+    private void generateRespondentCertificateOfEntitlementCoverLetter(final CaseData caseData,
+                                                                       final Long caseId) {
+        log.info("Generating certificate of entitlement cover letter for Respondent for case id {} ", caseId);
+
+        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2());
+
+        templateVars.put(
+            PARTNER,
+            commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+        );
+
+        boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
+
+        if (isJudicialSeparation) {
+            templateVars.put(IS_RESPONDENT, true);
+        }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            templateVars,
+            caseId,
+            isJudicialSeparation
+                ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
+                : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+            caseData.getApplicant2().getLanguagePreference(),
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
+    private void generateApplicant2CertificateOfEntitlementCoverLetter(final CaseData caseData,
+                                                                       final Long caseId) {
+        log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            templateVars(caseData, caseId, caseData.getApplicant2()),
+            caseId,
+            YesOrNo.YES.equals(caseData.getIsJudicialSeparation())
+                ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
+                : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+            caseData.getApplicant2().getLanguagePreference(),
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
+    private void generateApplicant1SolicitorCertificateOfEntitlementCoverLetter(final CaseData caseData,
+                                                                                final Long caseId) {
+        log.info("Generating certificate of entitlement cover letter for Applicant / Applicant 1 solicitor for case id {} ", caseId);
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            getSolicitorTemplateContent(caseData, caseId, true, caseData.getApplicant1().getLanguagePreference()),
+            caseId,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
+    private void generateApplicant2SolicitorCertificateOfEntitlementCoverLetter(final CaseData caseData,
+                                                                                final Long caseId) {
+        log.info("Generating certificate of entitlement cover letter for Respondent / Applicant 2 solicitor for case id {} ", caseId);
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            getSolicitorTemplateContent(caseData, caseId, false, caseData.getApplicant2().getLanguagePreference()),
+            caseId,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            caseData.getApplicant2().getLanguagePreference(),
+            formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
     }
 
     private Map<String, Object> templateVars(final CaseData caseData,
@@ -227,17 +297,20 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         return templateContent;
     }
 
-    public void removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(CaseDetails<CaseData, State> caseDetails) {
+    private Map<String, Object> getSolicitorTemplateContent(final CaseData caseData, final Long caseId, final boolean isApplicantSolicitor,
+                                                            final LanguagePreference languagePreference) {
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicSolicitorTemplateContent(
+            caseData, caseId, isApplicantSolicitor, languagePreference);
 
-        final CaseData caseData = caseDetails.getData();
-        final List<DocumentType> documentTypesToRemove =
-            List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+        final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
+        final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
+        final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
 
-        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
-        }
+        templateContent.put(COURT_NAME, conditionalOrder.getCourt() != null ? conditionalOrder.getCourt().getLabel() : null);
+        templateContent.put(DATE_OF_HEARING, dateOfHearing);
+        templateContent.put(TIME_OF_HEARING, timeOfHearing);
 
-        generateCertificateOfEntitlementCoverLetters(caseDetails);
+        return templateContent;
     }
 }

@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -54,7 +55,8 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
             .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
-                LEGAL_ADVISOR))
+                LEGAL_ADVISOR,
+                JUDGE))
             .page("reject")
             .pageLabel(REJECT)
             .complex(CaseData::getApplication)
