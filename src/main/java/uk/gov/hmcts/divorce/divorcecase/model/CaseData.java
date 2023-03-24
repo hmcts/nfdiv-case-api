@@ -90,7 +90,7 @@ public class CaseData {
 
     @Setter(AccessLevel.NONE)
     @CCD(
-        label = "Divorce or dissolution?",
+        label = "Judicial separation, separation, or nullity?",
         access = {DefaultAccess.class},
         typeOverride = FixedRadioList,
         typeParameterOverride = "SupplementaryCaseType"
