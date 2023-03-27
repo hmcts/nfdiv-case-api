@@ -198,8 +198,7 @@ public class CcdUpdateService {
     }
 
     @Retryable(retryFor = {FeignException.class, RuntimeException.class})
-    public void updateBulkCaseWithRetries(final CaseDetails caseDetails,
-                                          final String eventId,
+    public void updateBulkCaseWithRetries(final String eventId,
                                           final User authorization,
                                           final String serviceAuth,
                                           final Long caseId) {
@@ -322,17 +321,16 @@ public class CcdUpdateService {
         };
     }
 
-    public void submitBulkActionEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,
+    public void submitBulkActionEvent(final Long caseId,
                                       final String eventId,
                                       final User user,
                                       final String serviceAuth) {
 
         updateBulkCaseWithRetries(
-            caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails),
             eventId,
             user,
             serviceAuth,
-            caseDetails.getId()
+            caseId
         );
     }
 

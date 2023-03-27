@@ -120,35 +120,4 @@ public class BulkCaseProcessingService {
             .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
             .collect(toList());
     }
-
-    public void updateCasesToBeRemoved(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                       final String eventId,
-                                       final CaseTask caseTask,
-                                       final User user,
-                                       final String serviceAuth) {
-
-        final var bulkCaseId = bulkCaseDetails.getId();
-        final var bulkActionCaseData = bulkCaseDetails.getData();
-
-        try {
-            final List<ListValue<BulkListCaseDetails>> unprocessedCases = bulkTriggerService.bulkTrigger(
-                bulkActionCaseData.getCasesToBeRemoved(),
-                eventId,
-                caseTask,
-                user,
-                serviceAuth
-            );
-
-            bulkActionCaseData.setCasesToBeRemoved(unprocessedCases);
-
-            ccdUpdateService.submitBulkActionEvent(
-                bulkCaseDetails,
-                SYSTEM_UPDATE_BULK_CASE,
-                user,
-                serviceAuth
-            );
-        } catch (final CcdManagementException e) {
-            log.error("Update failed for bulk case id {}, event id {} ", bulkCaseId, eventId, e);
-        }
-    }
 }
