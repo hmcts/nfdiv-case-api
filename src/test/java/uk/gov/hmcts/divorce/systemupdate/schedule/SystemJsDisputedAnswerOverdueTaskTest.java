@@ -36,8 +36,6 @@ import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUES
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemJsDisputedAnswerOverdue.SYSTEM_JS_DISPUTED_ANSWER_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AOS_RESPONSE;
