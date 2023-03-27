@@ -12,6 +12,9 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseTask;
+import uk.gov.hmcts.divorce.bulkaction.task.PronounceCasesTask;
+import uk.gov.hmcts.divorce.bulkaction.task.RetryPronounceCasesTask;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -36,9 +39,6 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM
 public class CasePronouncementService {
 
     @Autowired
-    private BulkTriggerService bulkTriggerService;
-
-    @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
@@ -48,71 +48,31 @@ public class CasePronouncementService {
     private IdamService idamService;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private PronounceCasesTask pronounceCasesTask;
 
     @Autowired
-    private CaseProcessingStateFilter caseProcessingStateFilter;
+    private RetryPronounceCasesTask retryPronounceCasesTask;
 
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
-        pronounceCasesWithFilter(
-            details,
-            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
-            EnumSet.of(ConditionalOrderPronounced)
-        );
+        pronounceCasesWithFilter(details, pronounceCasesTask);
     }
 
     @Async
     public void retryPronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
-        pronounceCasesWithFilter(
-            details,
-            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
-            EnumSet.noneOf(State.class)
-        );
+        pronounceCasesWithFilter(details, retryPronounceCasesTask);
     }
 
     private void pronounceCasesWithFilter(CaseDetails<BulkActionCaseData, BulkActionState> details,
-                                          EnumSet<State> awaitingPronouncement,
-                                          EnumSet<State> postStates
+                                          BulkCaseTask bulkCaseTask
     ) {
-        final BulkActionCaseData bulkActionCaseData = details.getData();
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
-        final CaseFilterProcessingState caseFilterProcessingState = caseProcessingStateFilter.filterProcessingState(
-            bulkActionCaseData.getBulkListCaseDetails(),
-            user,
-            serviceAuth,
-            awaitingPronouncement,
-            postStates);
-
-        final List<ListValue<BulkListCaseDetails>> erroredCaseDetails = caseFilterProcessingState.getErroredCases();
-        final List<ListValue<BulkListCaseDetails>> processedCaseDetails = caseFilterProcessingState.getProcessedCases();
-        final List<ListValue<BulkListCaseDetails>> unprocessedCases = caseFilterProcessingState.getUnprocessedCases();
-
-        log.info("Unprocessed bulk case details list size {} and bulk case id {}", unprocessedCases.size(), details.getId());
-
-        erroredCaseDetails.addAll(
-            bulkTriggerService.bulkTrigger(
-                unprocessedCases,
-                SYSTEM_PRONOUNCE_CASE,
-                bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_PRONOUNCE_CASE),
-                user,
-                serviceAuth));
-
-        bulkActionCaseData.setErroredCaseDetails(erroredCaseDetails);
-
-        log.info("Error bulk case details list size {} and bulk case id {}", erroredCaseDetails.size(), details.getId());
-
-        final Set<ListValue<BulkListCaseDetails>> mergeProcessedCases = new HashSet<>(processedCaseDetails);
-        mergeProcessedCases.addAll(bulkActionCaseData.calculateProcessedCases(erroredCaseDetails));
-        bulkActionCaseData.setProcessedCaseDetails(new ArrayList<>(mergeProcessedCases));
-
-        log.info("Successfully processed bulk case details list size {} and bulk case id {}", mergeProcessedCases.size(), details.getId());
-
         try {
             ccdUpdateService.submitBulkActionEvent(
-                details,
+                bulkCaseTask,
+                details.getId(),
                 SYSTEM_UPDATE_BULK_CASE,
                 user,
                 serviceAuth
