@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 
@@ -56,13 +55,25 @@ public class BaseMigration implements Migration {
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseId);
         } catch (final CcdManagementException e ) {
-            if(e.getStatus() != NOT_FOUND.value()) {
-                log.error("Submit event failed for case id: {}, setting dataVersion to highest priority. Caused by: {}", caseId, e.getMessage());
-                ccdUpdateService.submitEventWithRetry(caseId, SYSTEM_MIGRATE_CASE, setFailedMigrationVersionToZero, user, serviceAuthorization);
+            if (e.getStatus() != NOT_FOUND.value()) {
+                log.error("Submit event failed for case id: {}, setting dataVersion to highest priority. Caused by: {}",
+                    caseId, e.getMessage());
+                ccdUpdateService.submitEventWithRetry(
+                    caseId,
+                    SYSTEM_MIGRATE_CASE,
+                    setFailedMigrationVersionToZero,
+                    user,
+                    serviceAuthorization);
             }
         } catch (final IllegalArgumentException e) {
-            log.error("Submit event failed for case id: {}, setting dataVersion to highest priority. Caused by: {}", caseId, e.getMessage());
-            ccdUpdateService.submitEventWithRetry(caseId, SYSTEM_MIGRATE_CASE, setFailedMigrationVersionToZero, user, serviceAuthorization);
+            log.error("Submit event failed for case id: {}, setting dataVersion to highest priority. Caused by: {}",
+                caseId, e.getMessage());
+            ccdUpdateService.submitEventWithRetry(
+                caseId,
+                SYSTEM_MIGRATE_CASE,
+                setFailedMigrationVersionToZero,
+                user,
+                serviceAuthorization);
         }
     }
 }

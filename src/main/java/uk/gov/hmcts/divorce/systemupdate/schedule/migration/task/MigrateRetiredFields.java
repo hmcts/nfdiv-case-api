@@ -13,8 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-
 @Component
 @Slf4j
 public class MigrateRetiredFields implements CaseTask {
