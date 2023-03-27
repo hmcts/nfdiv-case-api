@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.RemoveCasesTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -26,42 +27,27 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTE
 public class CaseRemovalService {
 
     @Autowired
-    private BulkTriggerService bulkTriggerService;
+    private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
-
-    @Autowired
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
-    private IdamService idamService;
+    private RemoveCasesTask removeCasesTask;
 
     @Async
-    public void removeCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
-                            final List<ListValue<BulkListCaseDetails>> casesToRemove) {
-
-        final BulkActionCaseData bulkActionCaseData = details.getData();
+    public void removeCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
-        final List<ListValue<BulkListCaseDetails>> unprocessedCases =
-            bulkTriggerService.bulkTrigger(
-                casesToRemove,
-                SYSTEM_REMOVE_BULK_CASE,
-                bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_REMOVE_BULK_CASE),
-                user,
-                serviceAuth
-            );
-        bulkActionCaseData.setCasesToBeRemoved(unprocessedCases);
-
         try {
             ccdUpdateService.submitBulkActionEvent(
-                details,
+                removeCasesTask,
+                details.getId(),
                 SYSTEM_UPDATE_BULK_CASE,
                 user,
                 serviceAuth
