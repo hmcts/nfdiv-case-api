@@ -54,7 +54,7 @@ public class BaseMigration implements Migration {
             log.info("Migration complete for case id: {}", caseId);
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseId);
-        } catch (final CcdManagementException e ) {
+        } catch (final CcdManagementException e) {
             if (e.getStatus() != NOT_FOUND.value()) {
                 log.error("Submit event failed for case id: {}, setting dataVersion to highest priority. Caused by: {}",
                     caseId, e.getMessage());
