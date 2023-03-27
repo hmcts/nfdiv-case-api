@@ -77,20 +77,15 @@ public class PronouncementListTemplateContent {
 
             var mainCaseData = objectMapper.convertValue(mainCase.getData(), CaseData.class);
 
-            String applicationType = null;
-            if (!isNull(mainCaseData.getDivorceOrDissolution())) {
-                applicationType = mainCaseData.hasNoSupplementaryCaseType()
-                    ? mainCaseData.getDivorceOrDissolution().getLabel()
-                    : mainCaseData.getSupplementaryCaseType().getLabel();
-            }
-
             caseLinkMap.put(CASE_REFERENCE, mainCase.getId());
             caseLinkMap.put(APPLICANT_HEADING, format("%s %s", mainCaseData.getApplicant1().getFirstName(),
                 mainCaseData.getApplicant1().getLastName()));
             caseLinkMap.put(RESPONDENT_HEADING, format("%s %s", mainCaseData.getApplicant2().getFirstName(),
                 mainCaseData.getApplicant2().getLastName()));
             caseLinkMap.put(SOLE_JOINT_HEADING, SOLE_APPLICATION.equals(mainCaseData.getApplicationType()) ? "Sole" : "Joint");
-            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, applicationType);
+            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, mainCaseData.hasNoSupplementaryCaseType()
+                ? mainCaseData.getDivorceOrDissolution().getLabel()
+                : mainCaseData.getSupplementaryCaseType().getLabel());
 
             bulkList.add(caseLinkMap);
         }
