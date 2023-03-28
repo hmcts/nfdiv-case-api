@@ -6,7 +6,7 @@ Enter a description.
 
 https://tools.hmcts.net/jira/browse/NFDIV-
 
-**-- Delete everything below before raising pull request --**
+### Pull request checklist ###
 
 **Before raising**
 - [ ] tests have been updated / new tests has been added (if needed)
