@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.migration.task;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
-
-import java.util.Map;
 
 
 @ExtendWith(MockitoExtension.class)

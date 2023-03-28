@@ -94,15 +94,36 @@ class BaseMigrationTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
 
         doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails2.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails2.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
     }
 
 
@@ -125,14 +146,36 @@ class BaseMigrationTest {
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
+
         doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails2.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails2.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -150,7 +193,12 @@ class BaseMigrationTest {
 
         doThrow(new IllegalArgumentException("Failed to deserialize"), mock(FeignException.class))
             .doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
@@ -165,7 +213,8 @@ class BaseMigrationTest {
             SYSTEM_MIGRATE_CASE,
             setFailedMigrationVersionToZero,
             user,
-            SERVICE_AUTHORIZATION);    }
+            SERVICE_AUTHORIZATION);
+    }
 
     @Test
     void shouldSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEventForBaseMigration() {
@@ -182,7 +231,12 @@ class BaseMigrationTest {
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
@@ -216,7 +270,12 @@ class BaseMigrationTest {
 
         doThrow(new CcdManagementException(NOT_FOUND, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                migrateRetiredFields,
+                user,
+                SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
