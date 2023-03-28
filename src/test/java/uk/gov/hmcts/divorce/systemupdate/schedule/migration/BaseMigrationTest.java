@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.MigrateRetiredFields;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.SetFailedMigrationVersionToZero;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -20,16 +21,13 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.NOT_FOUND;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
@@ -37,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RetiredFields.getVersion;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class BaseMigrationTest {
@@ -46,6 +45,12 @@ class BaseMigrationTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private MigrateRetiredFields migrateRetiredFields;
+
+    @Mock
+    private SetFailedMigrationVersionToZero setFailedMigrationVersionToZero;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -72,43 +77,62 @@ class BaseMigrationTest {
 
     @Test
     void shouldContinueProcessingIfThereIsConflictDuringSubmissionForBaseMigration() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .id(TEST_CASE_ID)
+                .build();
+        final CaseDetails caseDetails2 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .id(1616591401473379L)
+                .build();
+
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         when(ccdSearchService.searchForCasesWithVersionLessThan(getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+
         doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
     }
+
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForBaseMigration() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .id(TEST_CASE_ID)
+                .build();
+        final CaseDetails caseDetails2 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .id(1616591401473379L)
+                .build();
 
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(ccdSearchService.searchForCasesWithVersionLessThan(getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
         doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService, times(2)).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(caseDetails2.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -116,6 +140,7 @@ class BaseMigrationTest {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
                 .data(new HashMap<>())
+                .id(TEST_CASE_ID)
                 .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -123,22 +148,31 @@ class BaseMigrationTest {
         when(ccdSearchService.searchForCasesWithVersionLessThan(getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-
-        when(objectMapper.convertValue(eq(caseDetails1.getData()), eq(CaseData.class)))
-            .thenThrow(new IllegalArgumentException("Failed to deserialize"));
+        doThrow(new IllegalArgumentException("Failed to deserialize"), mock(FeignException.class))
+            .doNothing()
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", 0));
-    }
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            setFailedMigrationVersionToZero,
+            user,
+            SERVICE_AUTHORIZATION);    }
 
     @Test
     void shouldSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEventForBaseMigration() {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
                 .data(new HashMap<>())
+                .id(TEST_CASE_ID)
                 .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -148,11 +182,22 @@ class BaseMigrationTest {
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", 0));
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            setFailedMigrationVersionToZero,
+            user,
+            SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -160,6 +205,7 @@ class BaseMigrationTest {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
                 .data(new HashMap<>())
+                .id(TEST_CASE_ID)
                 .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -170,10 +216,16 @@ class BaseMigrationTest {
 
         doThrow(new CcdManagementException(NOT_FOUND, "Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(caseDetails1.getId().toString(), SYSTEM_MIGRATE_CASE, migrateRetiredFields, user, SERVICE_AUTHORIZATION);
 
         baseMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", latestVersion));
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            migrateRetiredFields,
+            user,
+            SERVICE_AUTHORIZATION);
+        verifyNoMoreInteractions(ccdUpdateService);
     }
 }
