@@ -59,6 +59,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP_CY;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
@@ -70,7 +71,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-class DivorceApplicationJointTemplateContentTest {
+class ApplicationJointTemplateContentTest {
 
     @Mock
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -79,14 +80,14 @@ class DivorceApplicationJointTemplateContentTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @InjectMocks
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private ApplicationJointTemplateContent applicationJointTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDivorce() {
 
         CaseData caseData = buildCaseData(DIVORCE, NO, NO);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce."),
@@ -110,7 +111,8 @@ class DivorceApplicationJointTemplateContentTest {
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
             entry(APPLICANT_2_COURT_CASE_DETAILS, null),
             entry(APPLICANT_1_MARRIAGE_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name()),
-            entry(APPLICANT_2_MARRIAGE_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name())
+            entry(APPLICANT_2_MARRIAGE_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name()),
+            entry(IS_DIVORCE, true)
         );
 
         verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class), eq(false));
@@ -124,7 +126,7 @@ class DivorceApplicationJointTemplateContentTest {
 
         CaseData caseData = buildCaseData(DISSOLUTION, NO, NO);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership."),
@@ -161,7 +163,7 @@ class DivorceApplicationJointTemplateContentTest {
 
         CaseData caseData = buildCaseData(DIVORCE, YES, YES);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "am orchymyn ysgaru terfynol."),
@@ -199,7 +201,7 @@ class DivorceApplicationJointTemplateContentTest {
 
         CaseData caseData = buildCaseData(DISSOLUTION, YES, YES);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "i ddiddymu eu partneriaeth sifil."),

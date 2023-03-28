@@ -56,6 +56,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -110,6 +111,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -124,6 +126,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -149,6 +152,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -168,6 +173,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
@@ -247,6 +253,23 @@ public class TestDataHelper {
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
             .build();
+    }
+
+    public static Solicitor getOfflineSolicitor() {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .addressLine1("line1")
+            .addressLine2("line2")
+            .postTown("city")
+            .postCode("postcode")
+            .build();
+
+        final Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .firmName(TEST_SOLICITOR_FIRM_NAME)
+            .address(addressGlobalUK.toString())
+            .build();
+
+        return solicitor;
     }
 
     public static Applicant applicantRepresentedBySolicitor() {
@@ -831,10 +854,20 @@ public class TestDataHelper {
                 .phoneNumber("0300 303 0642")
                 .build();
 
-        basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         basicDocmosisTemplateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return basicDocmosisTemplateContent;
+    }
+
+    public static Map<String, Object> getSolicitorDocTemplateContent(CaseData data, Applicant applicant) {
+        Map<String, Object> templateVars = getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
+        templateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        templateVars.put(DocmosisTemplateConstants.SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference());
+        templateVars.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+        templateVars.put(IS_DIVORCE, data.isDivorce());
+        templateVars.put(IS_JOINT, !data.getApplicationType().isSole());
+        return templateVars;
     }
 
     public static GeneralOrder getGeneralOrder(Document ccdDocument) {

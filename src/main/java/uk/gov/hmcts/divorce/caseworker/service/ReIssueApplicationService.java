@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.ResetAosFields;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
@@ -38,7 +38,7 @@ public class ReIssueApplicationService {
     private SetPostIssueState setPostIssueState;
 
     @Autowired
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @Autowired
     private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
@@ -109,7 +109,7 @@ public class ReIssueApplicationService {
                 setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
-                generateDivorceApplication,
+                    generateApplication,
                 generateD10Form,
                 generateD84Form,
                 resetAosFields
@@ -122,7 +122,7 @@ public class ReIssueApplicationService {
                 setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
-                generateDivorceApplication,
+                    generateApplication,
                 generateD10Form,
                 generateD84Form,
                 resetAosFields

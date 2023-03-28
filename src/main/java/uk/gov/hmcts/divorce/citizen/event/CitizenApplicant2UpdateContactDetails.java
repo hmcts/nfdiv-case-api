@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
@@ -44,7 +45,7 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
     private DivorceApplicationRemover divorceApplicationRemover;
 
     @Autowired
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,7 +57,7 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
             .description("Contact details changed by respondent")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
@@ -81,7 +82,7 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
                 log.info("Regenerating divorce application");
                 caseTasks(
                     divorceApplicationRemover,
-                    generateDivorceApplication)
+                        generateApplication)
                     .run(details);
 
                 data = details.getData();

@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
@@ -68,7 +68,7 @@ public class CitizenApplicant2UpdateContactDetailsIT {
     private DivorceApplicationRemover divorceApplicationRemover;
 
     @MockBean
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @BeforeEach
     public void setUp() {
@@ -101,7 +101,7 @@ public class CitizenApplicant2UpdateContactDetailsIT {
             .andExpect(jsonPath("$.data.applicant2Address.Country").value("England"));
 
         verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
+        verify(generateApplication).apply(any());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class CitizenApplicant2UpdateContactDetailsIT {
             .andExpect(jsonPath("$.data.applicant2Address.Country").value("England"));
 
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     @Test
@@ -151,7 +151,7 @@ public class CitizenApplicant2UpdateContactDetailsIT {
             .andExpect(jsonPath("$.data.applicant2PhoneNumber").value("123456789"));
 
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     @Test
@@ -174,6 +174,6 @@ public class CitizenApplicant2UpdateContactDetailsIT {
             .andExpect(jsonPath("$.data.applicant2ContactDetailsType").value("private"));
 
         verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
+        verify(generateApplication).apply(any());
     }
 }

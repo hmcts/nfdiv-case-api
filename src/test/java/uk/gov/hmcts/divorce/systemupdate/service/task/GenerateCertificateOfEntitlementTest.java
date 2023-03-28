@@ -48,6 +48,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
@@ -68,6 +70,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
@@ -89,9 +94,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getSolicitorDocTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateCertificateOfEntitlementTest {
+
+    private static final String TEST_ADDRESS = "line1\nline2\ncity\npostcode";
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -156,6 +164,47 @@ class GenerateCertificateOfEntitlementTest {
     }
 
     @Test
+    void shouldGenerateCertificateOfEntitlementAndUpdateCaseDataForJudicialSeparation() {
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .languagePreferenceWelsh(NO)
+                .build())
+            .isJudicialSeparation(YES)
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        final Document document = Document.builder()
+            .filename("filename")
+            .build();
+
+        setMockClock(clock);
+        when(certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock))))
+            .thenReturn(document);
+
+        final CaseDetails<CaseData, State> result = generateCertificateOfEntitlement.apply(caseDetails);
+
+        final DivorceDocument certificateOfEntitlementDocument = result.getData()
+            .getConditionalOrder()
+            .getCertificateOfEntitlementDocument();
+
+        assertThat(certificateOfEntitlementDocument.getDocumentLink()).isSameAs(document);
+        assertThat(certificateOfEntitlementDocument.getDocumentFileName()).isEqualTo("filename");
+        assertThat(certificateOfEntitlementDocument.getDocumentType()).isEqualTo(CERTIFICATE_OF_ENTITLEMENT);
+
+
+    }
+
+    @Test
     void shouldRenderCoverLetterAddressedToApplicant1IfNotRepresented() {
 
         setMockClock(clock);
@@ -169,7 +218,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
         applicant1TemplateVars.put(NAME, "Bob Smith");
-        applicant1TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant1TemplateVars.put(ADDRESS, TEST_ADDRESS);
         applicant1TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -280,7 +329,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> applicant2TemplateVars = new HashMap<>();
         applicant2TemplateVars.put(NAME, "Julie Smith");
-        applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant2TemplateVars.put(ADDRESS, TEST_ADDRESS);
         applicant2TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -331,7 +380,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> applicant2TemplateVars = new HashMap<>();
         applicant2TemplateVars.put(NAME, "Julie Smith");
-        applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant2TemplateVars.put(ADDRESS, TEST_ADDRESS);
         applicant2TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         applicant2TemplateVars.put(PARTNER, "husband");
@@ -494,7 +543,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> applicantTemplateVars = new HashMap<>();
         applicantTemplateVars.put(NAME, "Bob Smith");
-        applicantTemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicantTemplateVars.put(ADDRESS, TEST_ADDRESS);
         applicantTemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicantTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -520,7 +569,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> respondentTemplateVars = new HashMap<>();
         respondentTemplateVars.put(NAME, "Julie Smith");
-        respondentTemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        respondentTemplateVars.put(ADDRESS, TEST_ADDRESS);
         respondentTemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         respondentTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -586,7 +635,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
         applicant1TemplateVars.put(NAME, "Bob Smith");
-        applicant1TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant1TemplateVars.put(ADDRESS, TEST_ADDRESS);
         applicant1TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -611,7 +660,7 @@ class GenerateCertificateOfEntitlementTest {
 
         Map<String, Object> applicant2TemplateVars = new HashMap<>();
         applicant2TemplateVars.put(NAME, "Julie Smith");
-        applicant2TemplateVars.put(ADDRESS, "line1\nline2\ncity\npostcode");
+        applicant2TemplateVars.put(ADDRESS, TEST_ADDRESS);
         applicant2TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -658,6 +707,157 @@ class GenerateCertificateOfEntitlementTest {
             ENGLISH,
             formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
         );
+    }
+
+    @Test
+    void shouldRenderCoverLetterAddressedToSolicitorsWhenSoleJudicialSeparationAndBothApplicantsOfflineAndRepresented() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseDataWithSolicitor();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        Map<String, Object> applicantTemplateVars = new HashMap<>();
+        applicantTemplateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        applicantTemplateVars.put(SOLICITOR_REFERENCE, caseData.getApplicant1().getSolicitor().getReference());
+        applicantTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant1().getSolicitor().getAddress());
+        applicantTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+
+        applicantTemplateVars.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
+        applicantTemplateVars.put(DATE_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
+        applicantTemplateVars.put(TIME_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
+        applicantTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        applicantTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        applicantTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        applicantTemplateVars.put(IS_DIVORCE, true);
+        applicantTemplateVars.put(IS_JOINT, false);
+
+        Map<String, Object> respondentTemplateVars = new HashMap<>(applicantTemplateVars);
+        respondentTemplateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        respondentTemplateVars.put(SOLICITOR_REFERENCE, caseData.getApplicant2().getSolicitor().getReference());
+        respondentTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+
+        when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, ENGLISH))
+            .thenReturn(getSolicitorDocTemplateContent(caseData, caseData.getApplicant1()));
+
+        when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, ENGLISH))
+            .thenReturn(getSolicitorDocTemplateContent(caseData, caseData.getApplicant2()));
+
+        generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
+
+        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            applicantTemplateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+
+        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            respondentTemplateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
+    @Test
+    void shouldRenderCoverLetterAddressedToApplicantsSolicitorWhenJointJudicialSeparationAndBothApplicantsOfflineAndRepresented() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseDataWithSolicitor();
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        Map<String, Object> applicantTemplateVars = new HashMap<>();
+        applicantTemplateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        applicantTemplateVars.put(SOLICITOR_REFERENCE, caseData.getApplicant1().getSolicitor().getReference());
+        applicantTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant1().getSolicitor().getAddress());
+        applicantTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+
+        applicantTemplateVars.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
+        applicantTemplateVars.put(DATE_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
+        applicantTemplateVars.put(TIME_OF_HEARING,
+            caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER));
+        applicantTemplateVars.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        applicantTemplateVars.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        applicantTemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        applicantTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        applicantTemplateVars.put(IS_DIVORCE, true);
+        applicantTemplateVars.put(IS_JOINT, true);
+
+        Map<String, Object> respondentTemplateVars = new HashMap<>(applicantTemplateVars);
+        respondentTemplateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        respondentTemplateVars.put(SOLICITOR_REFERENCE, caseData.getApplicant2().getSolicitor().getReference());
+        respondentTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+
+        when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, ENGLISH))
+            .thenReturn(getSolicitorDocTemplateContent(caseData, caseData.getApplicant1()));
+
+        when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, ENGLISH))
+            .thenReturn(getSolicitorDocTemplateContent(caseData, caseData.getApplicant2()));
+
+        generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
+
+        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            applicantTemplateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+
+        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            respondentTemplateVars,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            ENGLISH,
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
+        );
+    }
+
+    private CaseData caseDataWithSolicitor() {
+        final CaseData caseData = caseData();
+        caseData.setIsJudicialSeparation(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        String sol1Name = "Sol1";
+        String sol2Name = "Sol2";
+        String sol1Reference = "1234";
+        String sol2Reference = "4567";
+
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .reference(sol1Reference)
+            .name(sol1Name)
+            .address(TEST_ADDRESS)
+            .build());
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(Solicitor.builder()
+            .reference(sol2Reference)
+            .name(sol2Name)
+            .address(TEST_ADDRESS)
+            .build());
+
+        return caseData;
     }
 
     private CaseData caseData() {

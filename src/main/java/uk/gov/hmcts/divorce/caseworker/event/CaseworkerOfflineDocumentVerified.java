@@ -54,6 +54,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -106,7 +107,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
@@ -305,8 +306,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
 
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())
+        } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
 
             log.info(

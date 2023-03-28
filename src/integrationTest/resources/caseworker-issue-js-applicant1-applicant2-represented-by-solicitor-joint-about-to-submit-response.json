@@ -1,0 +1,123 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Sol1",
+    "applicant1SolicitorReference": "1234",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "No",
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
+    "applicant1Offline": "Yes",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Sol2",
+    "applicant2SolicitorReference": "4321",
+    "applicant2Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
+    },
+    "applicant2Gender": "male",
+    "applicant2FinancialOrder": "No",
+    "applicant2Offline": "Yes",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "serviceMethod": "courtService",
+    "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "2021-06-17",
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "documentsGenerated": [
+      {
+        "id": "Judicial separation application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/ac0b7b52-e8db-44ef-aad6-e050ebed89f6",
+            "document_filename": "judicial-separation-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/ac0b7b52-e8db-44ef-aad6-e050ebed89f6/binary"
+          },
+          "documentFileName": "judicial-separation-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant2 solicitor",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedingsApp2"
+        }
+      },
+      {
+        "id": "Coversheet applicant2 solicitor",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b66b90e4-156c-4090-b788-365219f0118b",
+            "document_filename": "coversheet-1616591401473378-applicant2-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b66b90e4-156c-4090-b788-365219f0118b/binary"
+          },
+          "documentFileName": "coversheet-1616591401473378-applicant2-2021-06-17:13:00.pdf",
+          "documentType": "coversheet"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant solicitor",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedings"
+        }
+      }
+    ],
+    "dueDate": "2021-11-05",
+    "dataVersion": "${json-unit.any-number}",
+    "isJudicialSeparation": "Yes",
+    "warnings": []
+  },
+  "state": "AwaitingJsNullity"
+}
