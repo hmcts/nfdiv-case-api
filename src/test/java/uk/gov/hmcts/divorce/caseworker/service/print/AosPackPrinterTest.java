@@ -363,7 +363,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldRetrieveRespondentAnswersFromDocsUploadedAndPrintAosResponseLetterForApplicant1WhenApp2IsOffline() {
+    void shouldRetrieveRespondentAnswersFromDocsUploadedAndPrintAosResponseLetterWithoutCoversheetForApplicant1WhenApp2IsOffline() {
 
         final ListValue<DivorceDocument> aosResponseDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -383,13 +383,19 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
 
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().offline(YES).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(aosResponseDoc, d84Form))
+                .documentsGenerated(List.of(aosResponseDoc, d84Form, coversheet))
                 .documentsUploaded(singletonList(respondentAnswersDoc))
                 .build())
+            .isJudicialSeparation(NO)
             .build();
 
 
@@ -408,7 +414,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldRetrieveRespondentAnswersFromDocsGeneratedAndPrintAosResponseLetterForApplicant1WhenApp2IsOnline() {
+    void shouldRetrieveRespondentAnswersFromDocsGeneratedAndPrintAosResponseLetterWithoutCoversheetForApplicant1WhenApp2IsOnline() {
 
         final ListValue<DivorceDocument> aosResponseDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -422,12 +428,18 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
 
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().offline(NO).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(aosResponseDoc, respondentAnswersDoc))
+                .documentsGenerated(List.of(aosResponseDoc, respondentAnswersDoc, coversheet))
                 .build())
+            .isJudicialSeparation(NO)
             .build();
 
 
@@ -445,7 +457,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivate() {
+    void shouldPrintAosResponseLetterWithoutCoversheetForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivateAndNotJSCase() {
 
         final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
             .value(ConfidentialDivorceDocument.builder()
@@ -459,14 +471,21 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
+
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .contactDetailsType(ContactDetailsType.PRIVATE)
                 .build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(respondentAnswersDoc))
+                .documentsGenerated(asList(respondentAnswersDoc, coversheet))
                 .confidentialDocumentsGenerated(singletonList(doc1))
                 .build())
+            .isJudicialSeparation(NO)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
