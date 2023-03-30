@@ -59,7 +59,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Submit application about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Submit application About to Submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         State state = details.getState();
