@@ -8,6 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.UpdateCourtHearingDetailsTask;
+import uk.gov.hmcts.divorce.bulkaction.task.UpdatePronouncementJudgeDetailsTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -31,6 +33,12 @@ public class ScheduleCaseService {
     @Autowired
     private BulkCaseProcessingService bulkCaseProcessingService;
 
+    @Autowired
+    private UpdateCourtHearingDetailsTask updateCourtHearingDetailsTask;
+
+    @Autowired
+    private UpdatePronouncementJudgeDetailsTask updatePronouncementJudgeDetailsTask;
+
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
     ) {
@@ -40,8 +48,7 @@ public class ScheduleCaseService {
 
         bulkCaseProcessingService.updateAllBulkCases(
             bulkCaseDetails,
-            SYSTEM_UPDATE_CASE_COURT_HEARING,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_UPDATE_CASE_COURT_HEARING),
+            updateCourtHearingDetailsTask,
             user,
             serviceAuth);
     }
@@ -55,8 +62,7 @@ public class ScheduleCaseService {
 
         bulkCaseProcessingService.updateAllBulkCases(
             bulkCaseDetails,
-            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
+            updatePronouncementJudgeDetailsTask,
             user,
             serviceAuth);
     }
