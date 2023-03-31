@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.UpdateConfirmReadPetitionFields;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
@@ -29,6 +31,7 @@ import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUES
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class ConfirmReadPetitionMigrationTest {
@@ -38,6 +41,9 @@ class ConfirmReadPetitionMigrationTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private UpdateConfirmReadPetitionFields updateConfirmReadPetitionFields;
 
     @InjectMocks
     private ConfirmReadPetitionMigration confirmReadPetitionMigration;
@@ -64,8 +70,8 @@ class ConfirmReadPetitionMigrationTest {
     @Test
     void shouldContinueProcessingIfThereIsConflictDuringSubmissionForConfirmReadPetitionMigration() throws Exception {
 
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
+        final CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(1616591401473379L).build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -73,22 +79,48 @@ class ConfirmReadPetitionMigrationTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateConfirmReadPetitionFields,
+                user,
+                SERVICE_AUTHORIZATION
+            );
+
         doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails2.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateConfirmReadPetitionFields,
+                user,
+                SERVICE_AUTHORIZATION
+            );
 
         withEnvironmentVariable("ENABLE_CONFIRM_READ_PETITION_MIGRATION", "true")
             .execute(() -> confirmReadPetitionMigration.apply(user, SERVICE_AUTHORIZATION));
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateConfirmReadPetitionFields,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails2.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateConfirmReadPetitionFields,
+            user,
+            SERVICE_AUTHORIZATION
+        );
     }
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForConfirmReadPetitionMigration() throws Exception {
 
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
+        final CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(1616591401473379L).build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -96,14 +128,33 @@ class ConfirmReadPetitionMigrationTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateConfirmReadPetitionFields,
+                user,
+                SERVICE_AUTHORIZATION
+            );
+
         doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails2.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateConfirmReadPetitionFields,
+                user,
+                SERVICE_AUTHORIZATION
+            );
 
         withEnvironmentVariable("ENABLE_CONFIRM_READ_PETITION_MIGRATION", "true")
             .execute(() -> confirmReadPetitionMigration.apply(user, SERVICE_AUTHORIZATION));
 
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails2.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateConfirmReadPetitionFields,
+            user,
+            SERVICE_AUTHORIZATION
+        );
     }
 
 
