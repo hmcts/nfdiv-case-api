@@ -143,10 +143,7 @@ public class CaseRemovalServiceIT {
             caseDataContent
         )).thenReturn(getCaseDetails());
 
-        caseRemovalService.removeCases(
-            bulkActionCaseDetails,
-            List.of(getBulkListCaseDetailsListValue("2"))
-        );
+        caseRemovalService.removeCases(bulkActionCaseDetails);
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(

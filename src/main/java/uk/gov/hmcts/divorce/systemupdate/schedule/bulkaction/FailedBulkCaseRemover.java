@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
@@ -102,6 +101,7 @@ public class FailedBulkCaseRemover {
 
         try {
             ccdUpdateService.submitBulkActionEvent(
+                bulkCaseId,
                 SYSTEM_EMPTY_CASE,
                 user,
                 serviceAuth);

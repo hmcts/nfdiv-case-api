@@ -68,7 +68,7 @@ public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkAct
 
         log.info("Unlinking bulk case started for case id {} ", bulkCaseDetails.getId());
 
-        bulkCaseProcessingService.updateAllBulkCases(
+        bulkCaseProcessingService.updateBulkCase(
             bulkCaseDetails,
             dropCaseTask,
             idamService.retrieveUser(request.getHeader(AUTHORIZATION)),

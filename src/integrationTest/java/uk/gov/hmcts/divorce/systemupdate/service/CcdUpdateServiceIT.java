@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.task.PronounceCasesTask;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -60,6 +61,9 @@ public class CcdUpdateServiceIT {
 
     @MockBean
     private CaseDetailsUpdater caseDetailsUpdater;
+
+    @MockBean
+    private PronounceCasesTask bulkCaseTask;
 
     @Test
     void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFails() {
@@ -278,7 +282,7 @@ public class CcdUpdateServiceIT {
         final CcdManagementException exception = assertThrows(
             CcdManagementException.class,
             () -> ccdUpdateService.updateBulkCaseWithRetries(
-                caseDetails,
+                bulkCaseTask,
                 SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 SERVICE_AUTHORIZATION,

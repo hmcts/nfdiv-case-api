@@ -6,5 +6,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 
 import java.util.function.Function;
 
-public interface BulkCaseTask extends Function<CaseDetails<BulkActionCaseData, BulkActionState>, CaseDetails<BulkActionCaseData, BulkActionState>> {
+public interface BulkCaseTask extends
+    Function<CaseDetails<BulkActionCaseData, BulkActionState>, CaseDetails<BulkActionCaseData, BulkActionState>> {
 }

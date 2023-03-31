@@ -14,12 +14,15 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService.getFailedBulkCases;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
 @Component
 @Slf4j
-public class UpdatePronouncementJudgeDetailsTask implements BulkCaseTask {
+public class ProcessFailedToUnlinkBulkCaseTask implements BulkCaseTask {
 
     @Autowired
     private BulkTriggerService bulkTriggerService;
@@ -33,19 +36,22 @@ public class UpdatePronouncementJudgeDetailsTask implements BulkCaseTask {
     @Autowired
     private IdamService idamService;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
 
         final Long bulkCaseId = details.getId();
         final BulkActionCaseData bulkActionCaseData = details.getData();
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
         final String serviceAuth = authTokenGenerator.generate();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedCases = bulkTriggerService.bulkTrigger(
-            bulkActionCaseData.getBulkListCaseDetails(),
-            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
-            bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
+            getFailedBulkCases(details),
+            SYSTEM_REMOVE_BULK_CASE,
+            bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_REMOVE_BULK_CASE),
             user,
             serviceAuth
         );

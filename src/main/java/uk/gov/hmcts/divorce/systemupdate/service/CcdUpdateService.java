@@ -286,21 +286,6 @@ public class CcdUpdateService {
         }
     }
 
-    public void submitBulkActionEvent(final List<Long> failedCaseIds,
-                                      final Long caseId,
-                                      final String eventId,
-                                      final User user,
-                                      final String serviceAuth) {
-
-        updateBulkCaseWithRetries(
-            removeFailedCasesFromBulkCaseListTask(failedCaseIds),
-            eventId,
-            user,
-            serviceAuth,
-            caseId
-        );
-    }
-
     private Function<CaseDetails, CaseDetails> removeFailedCasesFromBulkCaseListTask(final List<Long> failedCaseIds) {
 
         return casedetails -> {
@@ -319,6 +304,21 @@ public class CcdUpdateService {
 
             return caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(internalCaseDetails);
         };
+    }
+
+    public void submitBulkActionEvent(final List<Long> failedCaseIds,
+                                      final Long caseId,
+                                      final String eventId,
+                                      final User user,
+                                      final String serviceAuth) {
+
+        updateBulkCaseWithRetries(
+            removeFailedCasesFromBulkCaseListTask(failedCaseIds),
+            eventId,
+            user,
+            serviceAuth,
+            caseId
+        );
     }
 
     public void submitBulkActionEvent(final Long caseId,
