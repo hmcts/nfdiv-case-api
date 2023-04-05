@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
@@ -244,7 +245,7 @@ public class AosResponseLetterTemplateContentTest {
             .application(
                 Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
             )
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");

@@ -30,6 +30,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
@@ -153,7 +154,7 @@ class GenerateAosResponseLetterDocumentTest {
     void shouldGenerateRespondentRespondedDocWhenApplicant1IsOfflineSolAndDisputedAndJS() {
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
@@ -189,7 +190,7 @@ class GenerateAosResponseLetterDocumentTest {
     void shouldGenerateRespondentRespondedDocWhenApplicant1IsOfflineAndDisputedAndJS() {
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
 
@@ -224,7 +225,7 @@ class GenerateAosResponseLetterDocumentTest {
     void shouldGenerateRespondentRespondedDocWhenApplicant1IsOfflineAndUndisputedAndJS() {
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
 
@@ -255,11 +256,10 @@ class GenerateAosResponseLetterDocumentTest {
 
     @Test
     void shouldGenerateRespondentRespondedDocsWhenApplicant1SolIsOfflineAndUndisputedAndJS() {
-
         final CaseData caseData = caseData();
         caseData.getApplicant1().setOffline(YES);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setSolicitorRepresented(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -298,7 +298,6 @@ class GenerateAosResponseLetterDocumentTest {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setOffline(YES);
         caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
-        caseData.setIsJudicialSeparation(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

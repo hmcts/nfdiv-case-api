@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -21,11 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ADDRESS_BASED_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -296,7 +295,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 .application(Application.builder()
                         .issueDate(APPLICATION_ISSUE_DATE)
                         .build())
-                .isJudicialSeparation(YES)
+                .supplementaryCaseType(JUDICIAL_SEPARATION)
                 .build();
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");
@@ -402,7 +401,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 .applicant2(applicant2)
                 .divorceOrDissolution(DIVORCE)
                 .applicationType(JOINT_APPLICATION)
-                .isJudicialSeparation(YesOrNo.YES)
+                .supplementaryCaseType(JUDICIAL_SEPARATION)
                 .application(Application.builder()
                         .issueDate(APPLICATION_ISSUE_DATE)
                         .build())

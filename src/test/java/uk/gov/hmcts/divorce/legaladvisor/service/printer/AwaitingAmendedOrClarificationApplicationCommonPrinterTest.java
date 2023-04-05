@@ -39,6 +39,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -120,7 +122,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -191,7 +193,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .application(Application.builder().newPaperCase(NO).build())
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .documents(
                 CaseDocuments.builder()
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc))
@@ -276,7 +278,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -356,7 +358,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc, coRefusalDoc, applicationDoc))
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -437,7 +439,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .build()
             )
             .application(Application.builder().newPaperCase(YesOrNo.YES).build())
-            .isJudicialSeparation(YesOrNo.YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -518,7 +520,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .build()
             )
             .application(Application.builder().newPaperCase(YesOrNo.YES).build())
-            .isJudicialSeparation(YesOrNo.YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
@@ -574,7 +576,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .documentsGenerated(emptyList())
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.NO)
+            .supplementaryCaseType(NA)
             .build();
 
         awaitingAmendedOrClarificationApplicationCommonPrinter.sendLetters(
@@ -596,7 +598,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .application(Application.builder().newPaperCase(NO).build())
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .documents(
                 CaseDocuments.builder()
                     .documentsGenerated(emptyList())
@@ -642,7 +644,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc))
                     .build()
             )
-            .isJudicialSeparation(YesOrNo.NO)
+            .supplementaryCaseType(NA)
             .build();
 
         when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
@@ -696,7 +698,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .application(Application.builder().newPaperCase(NO).build())
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .documents(
                 CaseDocuments.builder()
                     .documentsGenerated(asList(coversheetDoc, coCanApplyDoc))

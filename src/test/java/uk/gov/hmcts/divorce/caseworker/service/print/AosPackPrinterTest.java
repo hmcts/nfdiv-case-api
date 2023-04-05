@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -395,7 +396,7 @@ class AosPackPrinterTest {
                 .documentsGenerated(List.of(aosResponseDoc, d84Form, coversheet))
                 .documentsUploaded(singletonList(respondentAnswersDoc))
                 .build())
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
 
 
@@ -439,7 +440,7 @@ class AosPackPrinterTest {
             .documents(CaseDocuments.builder()
                 .documentsGenerated(List.of(aosResponseDoc, respondentAnswersDoc, coversheet))
                 .build())
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
 
 
@@ -485,7 +486,7 @@ class AosPackPrinterTest {
                 .documentsGenerated(asList(respondentAnswersDoc, coversheet))
                 .confidentialDocumentsGenerated(singletonList(doc1))
                 .build())
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());

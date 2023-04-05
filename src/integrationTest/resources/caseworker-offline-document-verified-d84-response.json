@@ -22,7 +22,7 @@
     "applicant2ContactDetailsType": "public",
     "applicant2FinancialOrder": "No",
     "applicant2Offline": "Yes",
-    "isJudicialSeparation": "Yes",
+    "supplementaryCaseType": "judicialSeparation",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "coScannedD84Form": {
       "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",

@@ -71,7 +71,7 @@ public class CcdSearchService {
     public static final String APPLICANT2_PRIVATE_CONTACT = "applicant2ContactDetailsType";
     public static final String AOS_RESPONSE = "howToRespondApplication";
     public static final String AWAITING_JS_ANSWER_START_DATE = "awaitingJsAnswerStartDate";
-    public static final String IS_JUDICIAL_SEPARATION = "isJudicialSeparation";
+    public static final String SUPPLEMENTARY_CASE_TYPE = "supplementaryCaseType";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
