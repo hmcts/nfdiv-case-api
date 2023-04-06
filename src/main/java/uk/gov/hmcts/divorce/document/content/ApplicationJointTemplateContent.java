@@ -44,12 +44,13 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP_CY;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class DivorceApplicationJointTemplateContent {
+public class ApplicationJointTemplateContent {
 
     @Autowired
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -67,8 +68,9 @@ public class DivorceApplicationJointTemplateContent {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final boolean isWelsh = YES.equals(applicant1.getLanguagePreferenceWelsh()) && YES.equals(applicant2.getLanguagePreferenceWelsh());
+        final boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
 
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
+        if (isDivorce) {
             templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, isWelsh
                 ? "am orchymyn ysgaru terfynol." : "for a final order of divorce.");
             templateContent.put(DIVORCE_OR_DISSOLUTION, isWelsh ? "am ysgariad" : "divorce application");
@@ -86,6 +88,7 @@ public class DivorceApplicationJointTemplateContent {
                 ? "ddod â’r bartneriaeth sifil i ben" : "ending the civil partnership");
         }
 
+        templateContent.put(IS_DIVORCE, isDivorce);
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
         if (application.getIssueDate() != null) {
             templateContent.put(ISSUE_DATE, application.getIssueDate().format(DATE_TIME_FORMATTER));

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -124,7 +123,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-        final boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
+        final boolean isJudicialSeparation = caseData.isJudicialSeparationCase();
 
         if (caseData.getApplicant1().isApplicantOffline()) {
             if (caseData.getApplicant1().isRepresented() && isJudicialSeparation) {
@@ -171,7 +170,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
             templateVars(caseData, caseId, caseData.getApplicant1()),
             caseId,
-            YesOrNo.YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
                 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
@@ -190,7 +189,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
         );
 
-        boolean isJudicialSeparation = YesOrNo.YES.equals(caseData.getIsJudicialSeparation());
+        boolean isJudicialSeparation = caseData.isJudicialSeparationCase();
 
         if (isJudicialSeparation) {
             templateVars.put(IS_RESPONDENT, true);
@@ -217,7 +216,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
             templateVars(caseData, caseId, caseData.getApplicant2()),
             caseId,
-            YesOrNo.YES.equals(caseData.getIsJudicialSeparation())
+            caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
                 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
             caseData.getApplicant2().getLanguagePreference(),
@@ -289,7 +288,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
-        if (YesOrNo.YES.equals(caseData.getIsJudicialSeparation())) {
+        if (caseData.isJudicialSeparationCase()) {
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         }

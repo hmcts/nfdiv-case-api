@@ -96,7 +96,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Submit AoS About to Submit callback invoked for Case Id: {}", details.getId());
 
         final var caseData = details.getData();
 

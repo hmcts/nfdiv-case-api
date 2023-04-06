@@ -2,6 +2,7 @@
   "data": {
     "divorceOrDissolution": "divorce",
     "applicationType": "jointApplication",
+    "supplementaryCaseType": "notApplicable",
     "coGranted": "No",
     "solSignStatementOfTruth": "Yes",
     "applicant1FirstName": "John",

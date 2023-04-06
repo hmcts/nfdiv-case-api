@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICAN
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -273,7 +274,7 @@ class SwitchedToSoleCoTest {
 
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -298,7 +299,7 @@ class SwitchedToSoleCoTest {
     void shouldNotSwitchToSoleSwitchUserDataAndRolesIfApplicant1TriggeredD84SwitchToSoleInJudicialSeparation() {
         final long caseId = 1L;
         CaseData caseData = CaseData.builder()
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -332,7 +333,7 @@ class SwitchedToSoleCoTest {
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
         final long caseId = 1L;
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .d84ApplicationType(SWITCH_TO_SOLE)

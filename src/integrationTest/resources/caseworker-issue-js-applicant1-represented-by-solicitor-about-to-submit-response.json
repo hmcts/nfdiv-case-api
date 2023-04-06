@@ -2,6 +2,7 @@
   "data": {
     "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "judicialSeparation",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -115,7 +116,6 @@
     ],
     "dueDate": "2021-07-03",
     "dataVersion": "${json-unit.any-number}",
-    "isJudicialSeparation": "Yes",
     "warnings": []
   },
   "state": "AwaitingAos"

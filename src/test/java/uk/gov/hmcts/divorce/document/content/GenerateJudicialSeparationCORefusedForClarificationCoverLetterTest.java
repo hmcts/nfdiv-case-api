@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
@@ -111,7 +112,7 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicant1(
                 Applicant.builder()
                     .firstName("Bob")
@@ -187,7 +188,7 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicant1(
                 Applicant.builder()
                     .solicitorRepresented(YES)
@@ -282,7 +283,7 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(SOLE_APPLICATION)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicant1(
                 Applicant.builder()
                     .solicitorRepresented(YES)

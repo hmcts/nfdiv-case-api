@@ -2,6 +2,7 @@
   "data": {
     "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "applicant1KnowsApplicant2Address": "Yes",
     "applicant1FirstName": "test_first_name",
     "sentNotifications": {},
