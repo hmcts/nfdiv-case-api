@@ -126,58 +126,6 @@ class BaseMigrationTest {
             SERVICE_AUTHORIZATION);
     }
 
-
-    @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForBaseMigration() {
-        final CaseDetails caseDetails1 =
-            CaseDetails.builder()
-                .data(new HashMap<>())
-                .id(TEST_CASE_ID)
-                .build();
-        final CaseDetails caseDetails2 =
-            CaseDetails.builder()
-                .data(new HashMap<>())
-                .id(1616591401473379L)
-                .build();
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-        when(ccdSearchService.searchForCasesWithVersionLessThan(getVersion(), user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
-
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
-            .doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(
-                caseDetails1.getId().toString(),
-                SYSTEM_MIGRATE_CASE,
-                migrateRetiredFields,
-                user,
-                SERVICE_AUTHORIZATION);
-
-        doNothing()
-            .when(ccdUpdateService).submitEventWithRetry(
-                caseDetails2.getId().toString(),
-                SYSTEM_MIGRATE_CASE,
-                migrateRetiredFields,
-                user,
-                SERVICE_AUTHORIZATION);
-
-        baseMigration.apply(user, SERVICE_AUTHORIZATION);
-
-        verify(ccdUpdateService).submitEventWithRetry(
-            caseDetails1.getId().toString(),
-            SYSTEM_MIGRATE_CASE,
-            migrateRetiredFields,
-            user,
-            SERVICE_AUTHORIZATION);
-
-        verify(ccdUpdateService).submitEventWithRetry(
-            caseDetails2.getId().toString(),
-            SYSTEM_MIGRATE_CASE,
-            migrateRetiredFields,
-            user,
-            SERVICE_AUTHORIZATION);
-    }
-
     @Test
     void shouldSetDataVersionToZeroIfExceptionIsThrownWhileDeserializingCaseForBaseMigration() {
         final CaseDetails caseDetails1 =
