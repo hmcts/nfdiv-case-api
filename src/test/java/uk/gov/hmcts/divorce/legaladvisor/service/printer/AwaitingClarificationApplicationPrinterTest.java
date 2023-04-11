@@ -7,7 +7,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
@@ -17,6 +16,8 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterType.AWAITING_CLARIFICATION_APPLICATION_LETTER_TYPE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -39,7 +40,7 @@ public class AwaitingClarificationApplicationPrinterTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
-            .isJudicialSeparation(YesOrNo.NO)
+            .supplementaryCaseType(NA)
             .build();
 
         awaitingClarificationApplicationPrinter.sendLetters(
@@ -71,7 +72,7 @@ public class AwaitingClarificationApplicationPrinterTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).solicitorRepresented(NO).build())
             .applicant2(Applicant.builder().build())
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         awaitingClarificationApplicationPrinter.sendLetters(
@@ -104,7 +105,7 @@ public class AwaitingClarificationApplicationPrinterTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).solicitorRepresented(YES).build())
             .applicant2(Applicant.builder().build())
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         awaitingClarificationApplicationPrinter.sendLetters(

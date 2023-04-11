@@ -109,6 +109,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -305,6 +306,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(NA)
             .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
@@ -313,6 +315,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getInvalidApplicant())
             .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(NA)
             .build();
     }
 
@@ -366,7 +369,7 @@ public class TestDataHelper {
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .applicationType(JOINT_APPLICATION)
-            .isJudicialSeparation(NO)
+            .supplementaryCaseType(NA)
             .build();
     }
 

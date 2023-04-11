@@ -16,6 +16,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOverdue.SYSTEM_PROGRESS_TO_AOS_OVERDUE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -45,7 +46,7 @@ public class SystemProgressCaseToAosOverdueFT extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGenerateDocToApplicantAndRespondentWhenJudicialSeparation() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
-        request.put("isJudicialSeparation", "Yes");
+        request.put("supplementaryCaseType", JUDICIAL_SEPARATION);
         request.put("applicant1Offline", "Yes");
         request.put("applicant2Offline", "Yes");
         request.remove("applicant1Email");

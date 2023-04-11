@@ -1,5 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
   "applicationType": "jointApplication",
   "coGranted": "No",
   "coRefusalDecision": "moreInfo",
@@ -14,6 +15,5 @@
   "applicant2LastName": "Oil",
   "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant2LanguagePreferenceWelsh": "Yes",
-  "applicant2Gender": "female",
-  "isJudicialSeparation": "No"
+  "applicant2Gender": "female"
 }

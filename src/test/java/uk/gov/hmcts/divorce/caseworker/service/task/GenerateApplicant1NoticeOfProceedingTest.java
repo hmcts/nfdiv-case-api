@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT;
@@ -254,7 +255,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -274,7 +275,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -295,9 +296,9 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.setIsJudicialSeparation(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -317,7 +318,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, YES);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setSolicitorRepresented(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -361,7 +362,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -377,7 +378,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         setMockClock(clock);
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("United Kingdom")
             .postCode("W1J7NT")
@@ -406,7 +407,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
             .postCode("75005")
             .build();
         caseData.getApplicant1().setAddress(addressGlobalOverseas);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -426,7 +427,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, YES, YES);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -447,7 +448,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplicant1().setEmail("notnull@something.com");
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
 
         final Map<String, Object> templateContent = new HashMap<>();
