@@ -34,8 +34,11 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"dissolution\" ";
     private static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
     private static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
-    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
-    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
+    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\" AND supplementaryCaseType = \"na\"";
+    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\" AND supplementaryCaseType = \"na\"";
+    private static final String JUDICIAL_SEPARATION_APPLICATION = "supplementaryCaseType = \"judicialSeparation\"";
+    private static final String SEPARATION_APPLICATION = "supplementaryCaseType = \"separation\"";
+    private static final String NULLITY_APPLICATION = "supplementaryCaseType = \"nullity\"";
     private static final String JOINT_APPLICATION_APP2_REPRESENTED
         = "applicationType=\"jointApplication\" AND applicant2SolicitorRepresented=\"Yes\"";
 
@@ -266,6 +269,9 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .complex(Applicant::getApplicantPrayer)
                 .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, DIVORCE_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
+                .mandatory(ApplicantPrayer::getJudicialSeparation, JUDICIAL_SEPARATION_APPLICATION)
+                .mandatory(ApplicantPrayer::getSeparation, SEPARATION_APPLICATION)
+                .mandatory(ApplicantPrayer::getNullity, NULLITY_APPLICATION)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
                 .done()
