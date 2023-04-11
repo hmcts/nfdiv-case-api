@@ -29,6 +29,12 @@ public class ApplicantPrayer {
 
     private Set<EndCivilPartnership> prayerEndCivilPartnership;
 
+    private Set<JudicialSeparation> judicialSeparation;
+
+    private Set<Separation> separation;
+
+    private Set<Nullity> nullity;
+
     private Set<FinancialOrdersThemselves> prayerFinancialOrdersThemselves;
 
     private Set<FinancialOrdersChild> prayerFinancialOrdersChild;
@@ -49,6 +55,36 @@ public class ApplicantPrayer {
 
         @JsonProperty("endCivilPartnership")
         END_CIVIL_PARTNERSHIP("I confirm the applicant is applying to the court to end their civil partnership");
+
+        private final String label;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum JudicialSeparation implements HasLabel {
+
+        @JsonProperty("judicialSeparation") // Get correct text for the label
+        JUDICIAL_SEPARATION("I confirm the applicant is applying to the court to get a judicial separation");
+
+        private final String label;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Separation implements HasLabel {
+
+        @JsonProperty("separation") // Get correct text for the label
+        SEPARATION("I confirm the applicant is applying to the court to get a separation");
+
+        private final String label;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Nullity implements HasLabel {
+
+        @JsonProperty("nullity") // Get correct text for the label
+        NULLITY("I confirm the applicant is applying to the court to have their marriage/civil partnership nullified");
 
         private final String label;
     }
@@ -77,10 +113,20 @@ public class ApplicantPrayer {
     public List<String> validatePrayerApplicant1(CaseData caseData) {
         List<String> warnings = new ArrayList<>();
 
-        if (caseData.isDivorce() && isEmpty(this.getPrayerDissolveDivorce())) {
+        if (caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerDissolveDivorce())) {
             warnings.add("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
-        } else if (!caseData.isDivorce() && isEmpty(this.getPrayerEndCivilPartnership())) {
+        } else if (!caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
             warnings.add("Applicant 1 must confirm prayer to end their civil partnership");
+        }
+
+        if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getJudicialSeparation())) {
+            warnings.add("Applicant 1 must confirm prayer to get a judicial separation");
+        } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getSeparation())) {
+            warnings.add("Applicant 1 must confirm prayer to get a separation");
+        } else if (caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getNullity())) {
+            warnings.add("Applicant 1 must confirm prayer to have their marriage nullified");
+        } else if (!caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getNullity())) {
+            warnings.add("Applicant 1 must confirm prayer to have their civil partnership nullified");
         }
 
         if (caseData.getApplicant1().appliedForFinancialOrder()
@@ -99,11 +145,12 @@ public class ApplicantPrayer {
 
     public List<String> validatePrayerApplicant2(CaseData caseData) {
         List<String> warnings = new ArrayList<>();
-        if (caseData.isDivorce() && isEmpty(this.getPrayerDissolveDivorce())) {
+        if (caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerDissolveDivorce())) {
             warnings.add("Applicant 2 must confirm prayer to dissolve their marriage (get a divorce)");
-        } else if (!caseData.isDivorce() && isEmpty(this.getPrayerEndCivilPartnership())) {
+        } else if (!caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
             warnings.add("Applicant 2 must confirm prayer to end their civil partnership");
         }
+
         if (caseData.getApplicant2().appliedForFinancialOrder()
             && caseData.getApplicant2().getFinancialOrdersFor().contains(APPLICANT)
             && isEmpty(this.getPrayerFinancialOrdersThemselves())) {
