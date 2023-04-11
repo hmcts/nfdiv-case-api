@@ -29,11 +29,11 @@ public class ApplicantPrayer {
 
     private Set<EndCivilPartnership> prayerEndCivilPartnership;
 
-    private Set<JudicialSeparation> judicialSeparation;
+    private Set<JudicialSeparation> prayerJudicialSeparation;
 
-    private Set<Separation> separation;
+    private Set<Separation> prayerSeparation;
 
-    private Set<Nullity> nullity;
+    private Set<Nullity> prayerNullity;
 
     private Set<FinancialOrdersThemselves> prayerFinancialOrdersThemselves;
 
@@ -119,13 +119,13 @@ public class ApplicantPrayer {
             warnings.add("Applicant 1 must confirm prayer to end their civil partnership");
         }
 
-        if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getJudicialSeparation())) {
+        if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
             warnings.add("Applicant 1 must confirm prayer to get a judicial separation");
-        } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getSeparation())) {
+        } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
             warnings.add("Applicant 1 must confirm prayer to get a separation");
-        } else if (caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getNullity())) {
+        } else if (caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
             warnings.add("Applicant 1 must confirm prayer to have their marriage nullified");
-        } else if (!caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getNullity())) {
+        } else if (!caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
             warnings.add("Applicant 1 must confirm prayer to have their civil partnership nullified");
         }
 
