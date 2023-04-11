@@ -11,6 +11,7 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersChild.FINANCIAL_ORDERS_CHILD;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersThemselves.FINANCIAL_ORDERS_THEMSELVES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.JudicialSeparation.JUDICIAL_SEPARATION;
 
 @Component
 public class D8SPrayerTransformer implements Function<TransformationDetails, TransformationDetails> {
@@ -28,7 +29,8 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
 
         if (toBoolean(ocrDataFields.getPrayerApplicant1JudiciallySeparated())) {
-            caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
+            //caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
+            caseData.getApplicant1().getApplicantPrayer().setPrayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION));
         } else {
             transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }
