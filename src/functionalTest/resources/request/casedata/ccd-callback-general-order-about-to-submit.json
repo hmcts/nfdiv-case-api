@@ -16,5 +16,6 @@
   },
   "generalOrderJudgeOrLegalAdvisorName": "some name",
   "generalOrderJudgeOrLegalAdvisorType": "districtJudge",
-  "generalOrderRecitals": "test recitals"
+  "generalOrderRecitals": "test recitals",
+  "supplementaryCaseType": "notApplicable"
 }

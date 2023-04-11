@@ -12,6 +12,7 @@ import static uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState.ScannedReco
 import static uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState.ScannedRecordReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
@@ -30,7 +31,7 @@ public class CreateCaseFromExceptionRecord implements CCDConfig<ExceptionRecord,
             .description("Create new case from exception")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE)
-            .grantHistoryOnly(LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("createNewCase")
             .pageLabel("Correspondence")
             .mandatory(ExceptionRecord::getScannedDocuments)

@@ -32,6 +32,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +62,7 @@ class SetSubmitAosStateTest {
             AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE).build()
         );
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData)
             .state(OfflineDocumentReceived)
@@ -78,7 +80,7 @@ class SetSubmitAosStateTest {
             AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE).build()
         );
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData)
             .state(OfflineDocumentReceived)
@@ -96,7 +98,7 @@ class SetSubmitAosStateTest {
             AcknowledgementOfService.builder().howToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE).build()
         );
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData)
             .state(Draft)
@@ -112,7 +114,7 @@ class SetSubmitAosStateTest {
         final CaseData caseData = caseData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(AosDrafted);
@@ -129,7 +131,7 @@ class SetSubmitAosStateTest {
         final CaseData caseData = caseData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(AosDrafted);
@@ -145,7 +147,7 @@ class SetSubmitAosStateTest {
         final CaseData caseData = caseData();
         caseData.getApplicant2().setUsedWelshTranslationOnSubmission(YES);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(AosDrafted);
@@ -162,7 +164,7 @@ class SetSubmitAosStateTest {
         final CaseData caseData = caseData();
         caseData.getApplicant2().setUsedWelshTranslationOnSubmission(NO);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(AosDrafted);
@@ -178,7 +180,7 @@ class SetSubmitAosStateTest {
     public void shouldSetStateToHoldingIfPreviousStateIsInAnyOfTheServiceApplicationProcess(State aosValidState) {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(aosValidState);

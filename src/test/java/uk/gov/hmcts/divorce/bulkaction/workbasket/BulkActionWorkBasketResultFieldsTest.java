@@ -48,7 +48,7 @@ class BulkActionWorkBasketResultFieldsTest {
                     "Case Status",
                     null,
                     null),
-                tuple("pronouncedDate",
+                tuple("dateAndTimeOfHearing",
                     "Pronouncement date",
                     null,
                     null)

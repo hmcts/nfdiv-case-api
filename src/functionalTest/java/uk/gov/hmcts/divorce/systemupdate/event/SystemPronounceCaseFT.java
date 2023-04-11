@@ -14,6 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -179,7 +180,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
-        request.put("isJudicialSeparation", "Yes");
+        request.put("supplementaryCaseType", JUDICIAL_SEPARATION);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
@@ -196,7 +197,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
-        request.put("isJudicialSeparation", "Yes");
+        request.put("supplementaryCaseType", "judicialSeparation");
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
