@@ -2,7 +2,7 @@
   "data":{
     "applicationType":"soleApplication",
     "divorceOrDissolution":"divorce",
-    "isJudicialSeparation": "Yes",
+    "supplementaryCaseType": "judicialSeparation",
     "applicant1FirstName":"test_first_name",
     "applicant1LastName":"test_last_name",
     "applicant1Gender":"female",

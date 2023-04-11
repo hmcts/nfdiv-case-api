@@ -99,7 +99,7 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "isJudicialSeparation": "No"
+    "supplementaryCaseType": "notApplicable"
   },
   "state": "FinalOrderComplete"
 }

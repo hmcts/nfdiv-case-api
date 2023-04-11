@@ -1,6 +1,7 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicationType": "soleApplication",

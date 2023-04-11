@@ -1,7 +1,7 @@
 {
   "data": {
     "applicationType": "soleApplication",
-    "isJudicialSeparation": "Yes",
+    "supplementaryCaseType": "judicialSeparation",
     "serviceMethod": "courtService",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
