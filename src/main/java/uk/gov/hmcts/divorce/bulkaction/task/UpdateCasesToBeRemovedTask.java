@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
+@Component
 public class UpdateCasesToBeRemovedTask implements BulkCaseTask {
 
     @Autowired
