@@ -265,6 +265,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         fieldCollectionBuilder
             .label("Label-CorrectPrayerDetails-App1",
                 "### ${labelContentApplicantsOrApplicant1s} prayer details")
+            .readonly(CaseData::getSupplementaryCaseType, NEVER_SHOW)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getApplicantPrayer)
                 .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, DIVORCE_APPLICATION)
