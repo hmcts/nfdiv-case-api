@@ -10,6 +10,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 
 public class ApplicantPrayerTest {
 
@@ -54,6 +56,54 @@ public class ApplicantPrayerTest {
         assertThat(applicant1.getApplicantPrayer().validatePrayerApplicant1(caseData))
             .containsExactlyInAnyOrder(
                 "Applicant 1 must confirm prayer to end their civil partnership",
+                "Applicant 1 must confirm prayer for financial orders for themselves",
+                "Applicant 1 must confirm prayer for financial orders for the children"
+            );
+    }
+
+    @Test
+    void shouldReturnWarningsWhenJudicialSeparationApplicant1DetailsAreValidatedAndPrayerForChildrenAndApplicantAreNotConfirmed() {
+
+        var applicant1 = Applicant
+            .builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
+            .build();
+
+        var caseData = CaseData
+            .builder()
+            .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .applicant1(applicant1)
+            .build();
+
+        assertThat(applicant1.getApplicantPrayer().validatePrayerApplicant1(caseData))
+            .containsExactlyInAnyOrder(
+                "Applicant 1 must confirm prayer to get a judicial separation",
+                "Applicant 1 must confirm prayer for financial orders for themselves",
+                "Applicant 1 must confirm prayer for financial orders for the children"
+            );
+    }
+
+    @Test
+    void shouldReturnWarningsWhenSeparationApplicant1DetailsAreValidatedAndPrayerForChildrenAndApplicantAreNotConfirmed() {
+
+        var applicant1 = Applicant
+            .builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
+            .build();
+
+        var caseData = CaseData
+            .builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .supplementaryCaseType(SEPARATION)
+            .applicant1(applicant1)
+            .build();
+
+        assertThat(applicant1.getApplicantPrayer().validatePrayerApplicant1(caseData))
+            .containsExactlyInAnyOrder(
+                "Applicant 1 must confirm prayer to get a separation",
                 "Applicant 1 must confirm prayer for financial orders for themselves",
                 "Applicant 1 must confirm prayer for financial orders for the children"
             );
