@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
-//import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 
@@ -236,28 +235,6 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldSetJudicialSeparationIfSeparationIsAlreadySetWhenSettingDivorce() {
-        final CaseData caseData = CaseData.builder()
-            .supplementaryCaseType(SEPARATION)
-            .build();
-        caseData.setDivorceOrDissolution(DIVORCE);
-
-        assertThat(caseData.isDivorce()).isTrue();
-        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
-    }
-
-    @Test
-    void shouldSetSeparationIfJudicialSeparationIsAlreadySetWhenSettingDissolution() {
-        final CaseData caseData = CaseData.builder()
-            .supplementaryCaseType(JUDICIAL_SEPARATION)
-            .build();
-        caseData.setDivorceOrDissolution(DISSOLUTION);
-
-        assertThat(caseData.isDivorce()).isFalse();
-        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
-    }
-
-    @Test
     void shouldSetAnySupplementalCaseTypeIfDivorceOrDissolutionIsNull() {
         final CaseData caseData = CaseData.builder().build();
 
@@ -272,6 +249,18 @@ class CaseDataTest {
 
         caseData.setSupplementaryCaseType(SEPARATION);
         assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
+    }
+
+    @Test
+    void shouldSetNAOrNullityIfDivorceOrDissolutionIsNull() {
+        final CaseData caseData = CaseData.builder()
+            .build();
+
+        caseData.setSupplementaryCaseType(NA);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NA);
+
+        //caseData.setSupplementaryCaseType(NULLITY);
+        //assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NULLITY);
     }
 
     @Test
@@ -301,22 +290,71 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldForceJudicialSeparationIfDivorce() {
+    void shouldSetDivorceIfDivorceOrDissolutionIsNullAndSettingJudicialSeparation() {
         final CaseData caseData = CaseData.builder()
-            .divorceOrDissolution(DIVORCE)
             .build();
-        caseData.setSupplementaryCaseType(SEPARATION);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
+        assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
     }
 
     @Test
-    void shouldForceSeparationIfDissolution() {
+    void shouldSetDivorceIfDissolutionAndSettingJudicialSeparation() {
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
             .build();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
+
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
+        assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
+    }
+
+    @Test
+    void shouldEnforceDivorceAndJudicialSeparationIfDissolutionAndSeparationWhenSettingDivorceAndSeparation() {
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .supplementaryCaseType(SEPARATION)
+            .build();
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setSupplementaryCaseType(SEPARATION); // No change to JS value - it will still be submitted as is by XUI
+
+        assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(JUDICIAL_SEPARATION);
+    }
+
+    @Test
+    void shouldSetDissolutionIfDivorceOrDissolutionIsNullAndSettingSeparation() {
+        final CaseData caseData = CaseData.builder()
+            .build();
+        caseData.setSupplementaryCaseType(SEPARATION);
+
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
+        assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DISSOLUTION);
+    }
+
+    @Test
+    void shouldSetDissolutionIfDivorceAndSettingSeparation() {
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .build();
+        caseData.setSupplementaryCaseType(SEPARATION);
+
+        assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
+        assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DISSOLUTION);
+    }
+
+    @Test
+    void shouldEnforceDissolutionAndSeparationIfDivorceAndJudicialSeparationWhenSettingDissolutionAndJudicialSeparation() {
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .build();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION); // No change to JS value - it will still be submitted as is by XUI
+
+        assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DISSOLUTION);
         assertThat(caseData.getSupplementaryCaseType()).isEqualTo(SEPARATION);
     }
 
