@@ -120,13 +120,13 @@ public class ApplicantPrayer {
         }
 
         if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
-            warnings.add("Applicant 1 must confirm prayer to get a judicial separation");
+            warnings.add("Applicant 1 must confirm prayer to get a judicial separation"); // Get correct text for message
         } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
-            warnings.add("Applicant 1 must confirm prayer to get a separation");
+            warnings.add("Applicant 1 must confirm prayer to get a separation"); // Get correct text for message
         } else if (caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
-            warnings.add("Applicant 1 must confirm prayer to have their marriage nullified");
+            warnings.add("Applicant 1 must confirm prayer to have their marriage nullified"); // Get correct text for message
         } else if (!caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
-            warnings.add("Applicant 1 must confirm prayer to have their civil partnership nullified");
+            warnings.add("Applicant 1 must confirm prayer to have their civil partnership nullified"); // Get correct text for message
         }
 
         if (caseData.getApplicant1().appliedForFinancialOrder()
