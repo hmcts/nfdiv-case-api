@@ -57,7 +57,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
+//import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
@@ -351,7 +351,8 @@ public class CaseData {
     }
 
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType)) {
+//        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType)) {
+        if (NA.equals(supplementaryCaseType)) {
             this.supplementaryCaseType = supplementaryCaseType;
         } else if (isNull(this.divorceOrDissolution)) { // Setting JS or Sep, and divorceOrDissolution is null
             this.supplementaryCaseType = supplementaryCaseType;
@@ -372,7 +373,9 @@ public class CaseData {
 
     @JsonIgnore
     public boolean isNullityCase() {
-        return NULLITY.equals(this.supplementaryCaseType);
+        // return NULLITY.equals(this.supplementaryCaseType);
+        // Disable NULLITY for the time being
+        return false;
     }
 
     @JsonIgnore
