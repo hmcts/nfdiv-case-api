@@ -333,15 +333,33 @@ public class CaseData {
         }
     }
 
+    private void enforceDivorceOrDissolution() {
+        if (SEPARATION.equals(this.supplementaryCaseType)) {
+            this.divorceOrDissolution = DISSOLUTION; // set Dissolution when Separation
+        } else if (JUDICIAL_SEPARATION.equals(this.supplementaryCaseType)) {
+            this.divorceOrDissolution = DIVORCE; // set Divorce when JS
+        }
+    }
+
+    private DivorceOrDissolution prevDivorceOrDissolution;
+    private boolean hasDivorceOrDissolutionChanged() {
+        return this.prevDivorceOrDissolution != this.divorceOrDissolution;
+    }
     public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
+        this.prevDivorceOrDissolution = this.divorceOrDissolution;
         this.divorceOrDissolution = divorceOrDissolution;
-        this.enforceJudicialSeparationOrSeparation();
     }
 
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType) || isNull(this.divorceOrDissolution)) {
+        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType)) {
             this.supplementaryCaseType = supplementaryCaseType;
-        } else { // Setting JS or Sep, and divorceOrDissolution is not null
+        } else if (isNull(this.divorceOrDissolution)) { // Setting JS or Sep, and divorceOrDissolution is null
+            this.supplementaryCaseType = supplementaryCaseType;
+            this.enforceDivorceOrDissolution(); // Set divorceOrDissolution based on supplementaryCaseType
+        } else if (this.supplementaryCaseType != supplementaryCaseType) { // JS or Sep value Changing
+            this.supplementaryCaseType = supplementaryCaseType;
+            this.enforceDivorceOrDissolution(); // Set divorceOrDissolution based on supplementaryCaseType
+        } else if (this.hasDivorceOrDissolutionChanged()) { // JS or Sep not changing, but divorceOrDissolution has changed
             this.supplementaryCaseType = JUDICIAL_SEPARATION;
             this.enforceJudicialSeparationOrSeparation();
         }
