@@ -33,7 +33,7 @@ public class ApplicantPrayer {
 
     private Set<Separation> prayerSeparation;
 
-    private Set<Nullity> prayerNullity;
+    //private Set<Nullity> prayerNullity;
 
     private Set<FinancialOrdersThemselves> prayerFinancialOrdersThemselves;
 
@@ -79,15 +79,15 @@ public class ApplicantPrayer {
         private final String label;
     }
 
-    @Getter
-    @AllArgsConstructor
-    public enum Nullity implements HasLabel {
-
-        @JsonProperty("nullity") // Get correct text for the label
-        NULLITY("I confirm the applicant is applying to the court to have their marriage/civil partnership nullified");
-
-        private final String label;
-    }
+    //@Getter
+    //@AllArgsConstructor
+    //public enum Nullity implements HasLabel {
+    //
+    //    @JsonProperty("nullity") // Get correct text for the label
+    //    NULLITY("I confirm the applicant is applying to the court to have their marriage/civil partnership nullified");
+    //
+    //    private final String label;
+    //}
 
     @Getter
     @AllArgsConstructor
@@ -123,10 +123,10 @@ public class ApplicantPrayer {
             warnings.add("Applicant 1 must confirm prayer to get a judicial separation"); // Get correct text for message
         } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
             warnings.add("Applicant 1 must confirm prayer to get a separation"); // Get correct text for message
-        } else if (caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
-            warnings.add("Applicant 1 must confirm prayer to have their marriage nullified"); // Get correct text for message
-        } else if (!caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
-            warnings.add("Applicant 1 must confirm prayer to have their civil partnership nullified"); // Get correct text for message
+        //} else if (caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
+        //    warnings.add("Applicant 1 must confirm prayer to have their marriage nullified"); // Get correct text for message
+        //} else if (!caseData.isDivorce() && caseData.isNullityCase() && isEmpty(this.getPrayerNullity())) {
+        //    warnings.add("Applicant 1 must confirm prayer to have their civil partnership nullified"); // Get correct text for message
         }
 
         if (caseData.getApplicant1().appliedForFinancialOrder()

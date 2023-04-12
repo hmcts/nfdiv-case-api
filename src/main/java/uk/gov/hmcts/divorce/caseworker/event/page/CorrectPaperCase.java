@@ -272,7 +272,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerJudicialSeparation, JUDICIAL_SEPARATION_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerSeparation, SEPARATION_APPLICATION)
-                .mandatory(ApplicantPrayer::getPrayerNullity, NULLITY_APPLICATION)
+                //.mandatory(ApplicantPrayer::getPrayerNullity, NULLITY_APPLICATION)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
                 .done()
