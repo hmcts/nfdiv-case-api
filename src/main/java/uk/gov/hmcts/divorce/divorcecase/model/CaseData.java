@@ -342,16 +342,18 @@ public class CaseData {
     }
 
     private DivorceOrDissolution prevDivorceOrDissolution;
+
     private boolean hasDivorceOrDissolutionChanged() {
         return this.prevDivorceOrDissolution != this.divorceOrDissolution;
     }
+
     public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
         this.prevDivorceOrDissolution = this.divorceOrDissolution;
         this.divorceOrDissolution = divorceOrDissolution;
     }
 
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-//        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType)) {
+        // if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType)) {
         if (NA.equals(supplementaryCaseType)) {
             this.supplementaryCaseType = supplementaryCaseType;
         } else if (isNull(this.divorceOrDissolution)) { // Setting JS or Sep, and divorceOrDissolution is null

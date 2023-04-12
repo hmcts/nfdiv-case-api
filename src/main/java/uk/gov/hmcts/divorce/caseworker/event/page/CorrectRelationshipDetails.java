@@ -23,8 +23,8 @@ public class CorrectRelationshipDetails implements CcdPageConfiguration {
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
             .done()
-//            .mandatoryWithLabel(CaseData::getDivorceOrDissolution,
-//                "Divorce (Marriage/Judicial Separation) or Dissolution (Civil Partnership/Separation)?")
+            //.mandatoryWithLabel(CaseData::getDivorceOrDissolution,
+            //    "Divorce (Marriage/Judicial Separation) or Dissolution (Civil Partnership/Separation)?")
             .mandatory(CaseData::getDivorceOrDissolution, "supplementaryCaseType=\"notApplicable\"")
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplication)

@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersChild.FINANCIAL_ORDERS_CHILD;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersThemselves.FINANCIAL_ORDERS_THEMSELVES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.JudicialSeparation.JUDICIAL_SEPARATION;

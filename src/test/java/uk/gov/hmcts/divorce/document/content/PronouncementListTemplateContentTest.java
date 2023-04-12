@@ -133,7 +133,7 @@ public class PronouncementListTemplateContentTest {
             expectedValues(DISSOLUTION.getLabel()),
             expectedValues(JUDICIAL_SEPARATION.getLabel()),
             expectedValues(SEPARATION.getLabel())
-//            expectedValues(NULLITY.getLabel())
+        //    expectedValues(NULLITY.getLabel())
         );
 
         assertThat(templateContent).contains(
@@ -241,14 +241,14 @@ public class PronouncementListTemplateContentTest {
         final CaseDetails jsCaseDetails = mockCaseDetails(TEST_CASE_ID, jsCaseData);
         final CaseData sepCaseData = mockCaseData(DISSOLUTION, SEPARATION);
         final CaseDetails sepCaseDetails = mockCaseDetails(TEST_CASE_ID, sepCaseData);
-//        final CaseData nCaseData = mockCaseData(DIVORCE, NULLITY);
-//        final CaseDetails nCaseDetails = mockCaseDetails(TEST_CASE_ID, nCaseData);
+        //final CaseData nCaseData = mockCaseData(DIVORCE, NULLITY);
+        //final CaseDetails nCaseDetails = mockCaseDetails(TEST_CASE_ID, nCaseData);
 
         when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(caseData);
         when(objectMapper.convertValue(dissCaseDetails.getData(), CaseData.class)).thenReturn(dissCaseData);
         when(objectMapper.convertValue(jsCaseDetails.getData(), CaseData.class)).thenReturn(jsCaseData);
         when(objectMapper.convertValue(sepCaseDetails.getData(), CaseData.class)).thenReturn(sepCaseData);
-//        when(objectMapper.convertValue(nCaseDetails.getData(), CaseData.class)).thenReturn(nCaseData);
+        //when(objectMapper.convertValue(nCaseDetails.getData(), CaseData.class)).thenReturn(nCaseData);
 
         return List.of(caseDetails, dissCaseDetails, jsCaseDetails, sepCaseDetails);
     }

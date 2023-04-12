@@ -35,7 +35,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
     private static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
     private static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
     private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\" AND supplementaryCaseType = \"notApplicable\"";
-    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\" AND supplementaryCaseType = \"notApplicable\"";
+    private static final String DISSOLUTION_APPLICATION
+        = "divorceOrDissolution = \"dissolution\" AND supplementaryCaseType = \"notApplicable\"";
     private static final String JUDICIAL_SEPARATION_APPLICATION = "supplementaryCaseType = \"judicialSeparation\"";
     private static final String SEPARATION_APPLICATION = "supplementaryCaseType = \"separation\"";
     private static final String NULLITY_APPLICATION = "supplementaryCaseType = \"nullity\"";
