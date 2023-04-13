@@ -249,7 +249,7 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldSetNAOrNullityWithoutAlteringDivorceOrDissolution() {
+    void shouldSetNAWithoutAlteringDivorce() {
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
             .build();
@@ -257,8 +257,13 @@ class CaseDataTest {
 
         assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NA);
         assertThat(caseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
+    }
 
-        caseData.setDivorceOrDissolution(DISSOLUTION);
+    @Test
+    void shouldSetNAWithoutAlteringDissolution() {
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .build();
         caseData.setSupplementaryCaseType(NA);
 
         assertThat(caseData.getSupplementaryCaseType()).isEqualTo(NA);
@@ -306,7 +311,7 @@ class CaseDataTest {
     }
 
     @Test
-    void hasNoSupplementaryCaseTypeShouldReturnTrueIfSupplementaryCaseTypeIsNullOrNA() {
+    void hasNaOrNullSupplementaryCaseTypeShouldReturnTrueIfSupplementaryCaseTypeIsNullOrNA() {
         CaseData caseData = CaseData.builder().build();
         assertThat(caseData.hasNaOrNullSupplementaryCaseType()).isTrue();
 
@@ -315,7 +320,7 @@ class CaseDataTest {
     }
 
     @Test
-    void hasNoSupplementaryCaseTypeShouldReturnFalseIfSupplementaryCaseTypeIsNotNullOrNA() {
+    void hasNaOrNullSupplementaryCaseTypeShouldReturnFalseIfSupplementaryCaseTypeIsNotNullOrNA() {
         final CaseData caseData = CaseData.builder()
             .supplementaryCaseType(SEPARATION)
             .build();
