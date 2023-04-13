@@ -44,6 +44,9 @@
       "applicant1PrayerFinancialOrdersChild": [
         "financialOrdersChild"
       ],
+      "applicant1PrayerJudicialSeparation": [
+        "judicialSeparation"
+      ],
       "marriageFormationType": "oppositeSexCouple",
       "applicant1MiddleName": "",
       "applicant2StatementOfTruth": "Yes",
