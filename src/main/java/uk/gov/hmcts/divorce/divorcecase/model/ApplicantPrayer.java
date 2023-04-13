@@ -62,7 +62,7 @@ public class ApplicantPrayer {
     public enum JudicialSeparation implements HasLabel {
 
         @JsonProperty("judicialSeparation") // Get correct text for the label
-        JUDICIAL_SEPARATION("I confirm the applicant is applying to the court to get a judicial separation");
+        JUDICIAL_SEPARATION("I confirm the applicant is applying to the court to get a judicial separation order");
 
         private final String label;
     }
@@ -72,7 +72,7 @@ public class ApplicantPrayer {
     public enum Separation implements HasLabel {
 
         @JsonProperty("separation") // Get correct text for the label
-        SEPARATION("I confirm the applicant is applying to the court to get a separation");
+        SEPARATION("I confirm the applicant is applying to the court to get a separation order");
 
         private final String label;
     }
@@ -106,9 +106,9 @@ public class ApplicantPrayer {
         } else if (!caseData.isDivorce() && caseData.hasNaOrNullSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
             warnings.add("Applicant 1 must confirm prayer to end their civil partnership");
         } else if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
-            warnings.add("Applicant 1 must confirm prayer to get a judicial separation"); // Get correct text for message
+            warnings.add("Applicant 1 must confirm prayer to get a judicial separation order");
         } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
-            warnings.add("Applicant 1 must confirm prayer to get a separation"); // Get correct text for message
+            warnings.add("Applicant 1 must confirm prayer to get a separation order");
         }
 
         if (caseData.getApplicant1().appliedForFinancialOrder()
@@ -132,9 +132,9 @@ public class ApplicantPrayer {
         } else if (!caseData.isDivorce() && caseData.hasNaOrNullSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
             warnings.add("Applicant 2 must confirm prayer to end their civil partnership");
         } else if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
-            warnings.add("Applicant 2 must confirm prayer to get a judicial separation"); // Get correct text for message
+            warnings.add("Applicant 2 must confirm prayer to get a judicial separation order");
         } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
-            warnings.add("Applicant 2 must confirm prayer to get a separation"); // Get correct text for message
+            warnings.add("Applicant 2 must confirm prayer to get a separation order");
         }
 
         if (caseData.getApplicant2().appliedForFinancialOrder()

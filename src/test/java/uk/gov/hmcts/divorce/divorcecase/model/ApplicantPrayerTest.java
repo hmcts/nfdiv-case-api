@@ -79,7 +79,7 @@ public class ApplicantPrayerTest {
 
         assertThat(applicant1.getApplicantPrayer().validatePrayerApplicant1(caseData))
             .containsExactlyInAnyOrder(
-                "Applicant 1 must confirm prayer to get a judicial separation",
+                "Applicant 1 must confirm prayer to get a judicial separation order",
                 "Applicant 1 must confirm prayer for financial orders for themselves",
                 "Applicant 1 must confirm prayer for financial orders for the children"
             );
@@ -103,7 +103,7 @@ public class ApplicantPrayerTest {
 
         assertThat(applicant1.getApplicantPrayer().validatePrayerApplicant1(caseData))
             .containsExactlyInAnyOrder(
-                "Applicant 1 must confirm prayer to get a separation",
+                "Applicant 1 must confirm prayer to get a separation order",
                 "Applicant 1 must confirm prayer for financial orders for themselves",
                 "Applicant 1 must confirm prayer for financial orders for the children"
             );
@@ -150,6 +150,54 @@ public class ApplicantPrayerTest {
         assertThat(applicant2.getApplicantPrayer().validatePrayerApplicant2(caseData))
             .containsExactlyInAnyOrder(
                 "Applicant 2 must confirm prayer to end their civil partnership",
+                "Applicant 2 must confirm prayer for financial orders for themselves",
+                "Applicant 2 must confirm prayer for financial orders for the children"
+            );
+    }
+
+    @Test
+    void shouldReturnWarningsWhenJudicialSeparationApplicant2DetailsAreValidatedAndPrayerForChildrenAndApplicantAreNotConfirmed() {
+
+        var applicant2 = Applicant
+            .builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
+            .build();
+
+        var caseData = CaseData
+            .builder()
+            .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .applicant2(applicant2)
+            .build();
+
+        assertThat(applicant2.getApplicantPrayer().validatePrayerApplicant2(caseData))
+            .containsExactlyInAnyOrder(
+                "Applicant 2 must confirm prayer to get a judicial separation order",
+                "Applicant 2 must confirm prayer for financial orders for themselves",
+                "Applicant 2 must confirm prayer for financial orders for the children"
+            );
+    }
+
+    @Test
+    void shouldReturnWarningsWhenSeparationApplicant2DetailsAreValidatedAndPrayerForChildrenAndApplicantAreNotConfirmed() {
+
+        var applicant2 = Applicant
+            .builder()
+            .financialOrder(YES)
+            .financialOrdersFor(Set.of(APPLICANT, CHILDREN))
+            .build();
+
+        var caseData = CaseData
+            .builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .supplementaryCaseType(SEPARATION)
+            .applicant2(applicant2)
+            .build();
+
+        assertThat(applicant2.getApplicantPrayer().validatePrayerApplicant2(caseData))
+            .containsExactlyInAnyOrder(
+                "Applicant 2 must confirm prayer to get a separation order",
                 "Applicant 2 must confirm prayer for financial orders for themselves",
                 "Applicant 2 must confirm prayer for financial orders for the children"
             );
