@@ -333,7 +333,7 @@ public class CaseData {
     private void enforceDivorceOrDissolution() {
         if (SEPARATION.equals(this.supplementaryCaseType)) {
             this.divorceOrDissolution = DISSOLUTION; // set Dissolution when Separation
-        } else if (JUDICIAL_SEPARATION.equals(this.supplementaryCaseType)) {
+        } else {
             this.divorceOrDissolution = DIVORCE; // set Divorce when JS
         }
     }
