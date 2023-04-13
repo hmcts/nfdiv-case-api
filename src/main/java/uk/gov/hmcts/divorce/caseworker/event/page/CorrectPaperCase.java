@@ -39,7 +39,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
         = "divorceOrDissolution = \"dissolution\" AND supplementaryCaseType = \"notApplicable\"";
     private static final String JUDICIAL_SEPARATION_APPLICATION = "supplementaryCaseType = \"judicialSeparation\"";
     private static final String SEPARATION_APPLICATION = "supplementaryCaseType = \"separation\"";
-    private static final String NULLITY_APPLICATION = "supplementaryCaseType = \"nullity\"";
     private static final String JOINT_APPLICATION_APP2_REPRESENTED
         = "applicationType=\"jointApplication\" AND applicant2SolicitorRepresented=\"Yes\"";
 
@@ -272,7 +271,6 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerJudicialSeparation, JUDICIAL_SEPARATION_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerSeparation, SEPARATION_APPLICATION)
-                //.mandatory(ApplicantPrayer::getPrayerNullity, NULLITY_APPLICATION)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
                 .done()

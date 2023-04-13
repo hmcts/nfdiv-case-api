@@ -18,18 +18,11 @@ public enum SupplementaryCaseType implements HasLabel {
     @JsonProperty("separation")
     SEPARATION("Separation");
 
-    // @JsonProperty("nullity")
-    // NULLITY("Nullity");
-
     private final String label;
 
     public boolean isJudicialSeparation() {
         return JUDICIAL_SEPARATION.name().equalsIgnoreCase(this.name()) || SEPARATION.name().equalsIgnoreCase(this.name());
     }
-
-    // public boolean isNullity() {
-    //     return NULLITY.name().equalsIgnoreCase(this.name());
-    // }
 
     public boolean isNotApplicable() {
         return NA.name().equalsIgnoreCase(this.name());
