@@ -308,10 +308,10 @@ class CaseDataTest {
     @Test
     void hasNoSupplementaryCaseTypeShouldReturnTrueIfSupplementaryCaseTypeIsNullOrNA() {
         CaseData caseData = CaseData.builder().build();
-        assertThat(caseData.hasNoSupplementaryCaseType()).isTrue();
+        assertThat(caseData.hasNaOrNullSupplementaryCaseType()).isTrue();
 
         caseData.setSupplementaryCaseType(NA);
-        assertThat(caseData.hasNoSupplementaryCaseType()).isTrue();
+        assertThat(caseData.hasNaOrNullSupplementaryCaseType()).isTrue();
     }
 
     @Test
@@ -319,9 +319,9 @@ class CaseDataTest {
         final CaseData caseData = CaseData.builder()
             .supplementaryCaseType(SEPARATION)
             .build();
-        assertThat(caseData.hasNoSupplementaryCaseType()).isFalse();
+        assertThat(caseData.hasNaOrNullSupplementaryCaseType()).isFalse();
 
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        assertThat(caseData.hasNoSupplementaryCaseType()).isFalse();
+        assertThat(caseData.hasNaOrNullSupplementaryCaseType()).isFalse();
     }
 }

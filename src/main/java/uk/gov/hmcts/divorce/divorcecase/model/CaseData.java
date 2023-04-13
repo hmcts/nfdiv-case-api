@@ -351,7 +351,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean hasNoSupplementaryCaseType() {
+    public boolean hasNaOrNullSupplementaryCaseType() {
         return NA.equals(this.supplementaryCaseType) || isNull(this.supplementaryCaseType);
     }
 

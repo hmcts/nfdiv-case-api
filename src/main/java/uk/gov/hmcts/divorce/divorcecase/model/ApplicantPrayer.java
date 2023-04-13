@@ -101,13 +101,11 @@ public class ApplicantPrayer {
     public List<String> validatePrayerApplicant1(CaseData caseData) {
         List<String> warnings = new ArrayList<>();
 
-        if (caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerDissolveDivorce())) {
+        if (caseData.isDivorce() && caseData.hasNaOrNullSupplementaryCaseType() && isEmpty(this.getPrayerDissolveDivorce())) {
             warnings.add("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
-        } else if (!caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
+        } else if (!caseData.isDivorce() && caseData.hasNaOrNullSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
             warnings.add("Applicant 1 must confirm prayer to end their civil partnership");
-        }
-
-        if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
+        } else if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
             warnings.add("Applicant 1 must confirm prayer to get a judicial separation"); // Get correct text for message
         } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
             warnings.add("Applicant 1 must confirm prayer to get a separation"); // Get correct text for message
@@ -129,10 +127,14 @@ public class ApplicantPrayer {
 
     public List<String> validatePrayerApplicant2(CaseData caseData) {
         List<String> warnings = new ArrayList<>();
-        if (caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerDissolveDivorce())) {
+        if (caseData.isDivorce() && caseData.hasNaOrNullSupplementaryCaseType() && isEmpty(this.getPrayerDissolveDivorce())) {
             warnings.add("Applicant 2 must confirm prayer to dissolve their marriage (get a divorce)");
-        } else if (!caseData.isDivorce() && caseData.hasNoSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
+        } else if (!caseData.isDivorce() && caseData.hasNaOrNullSupplementaryCaseType() && isEmpty(this.getPrayerEndCivilPartnership())) {
             warnings.add("Applicant 2 must confirm prayer to end their civil partnership");
+        } else if (caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerJudicialSeparation())) {
+            warnings.add("Applicant 2 must confirm prayer to get a judicial separation"); // Get correct text for message
+        } else if (!caseData.isDivorce() && caseData.isJudicialSeparationCase() && isEmpty(this.getPrayerSeparation())) {
+            warnings.add("Applicant 2 must confirm prayer to get a separation"); // Get correct text for message
         }
 
         if (caseData.getApplicant2().appliedForFinancialOrder()
