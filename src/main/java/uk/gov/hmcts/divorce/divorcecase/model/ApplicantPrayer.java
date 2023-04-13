@@ -61,7 +61,7 @@ public class ApplicantPrayer {
     @AllArgsConstructor
     public enum JudicialSeparation implements HasLabel {
 
-        @JsonProperty("judicialSeparation") // Get correct text for the label
+        @JsonProperty("judicialSeparation")
         JUDICIAL_SEPARATION("I confirm the applicant is applying to the court to get a judicial separation order");
 
         private final String label;
@@ -71,7 +71,7 @@ public class ApplicantPrayer {
     @AllArgsConstructor
     public enum Separation implements HasLabel {
 
-        @JsonProperty("separation") // Get correct text for the label
+        @JsonProperty("separation")
         SEPARATION("I confirm the applicant is applying to the court to get a separation order");
 
         private final String label;

@@ -19,7 +19,7 @@ public class CorrectRelationshipDetails implements CcdPageConfiguration {
             .pageLabel("Correct paper case")
             .label("Label-CorrectYourApplication", "### Your application details")
             .mandatoryWithLabel(CaseData::getSupplementaryCaseType,
-                "Judicial Separation or Separation?")
+                "Not Applicable, Judicial Separation or Separation?")
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
             .done()
