@@ -80,7 +80,6 @@ public class CaseData {
     )
     private ApplicationType applicationType;
 
-    @Setter(AccessLevel.NONE)
     @CCD(
         label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
@@ -332,14 +331,6 @@ public class CaseData {
         }
     }
 
-    private void enforceJudicialSeparationOrSeparation() {
-        if (DIVORCE.equals(this.divorceOrDissolution) && SEPARATION.equals(this.supplementaryCaseType)) {
-            this.supplementaryCaseType = JUDICIAL_SEPARATION; // prevent Separation when Divorce
-        } else if (DISSOLUTION.equals(this.divorceOrDissolution) && JUDICIAL_SEPARATION.equals(this.supplementaryCaseType)) {
-            this.supplementaryCaseType = SEPARATION; // prevent Judicial Separation when Dissolution
-        }
-    }
-
     private void enforceDivorceOrDissolution() {
         if (SEPARATION.equals(this.supplementaryCaseType)) {
             this.divorceOrDissolution = DISSOLUTION; // set Dissolution when Separation
@@ -348,30 +339,10 @@ public class CaseData {
         }
     }
 
-    private DivorceOrDissolution prevDivorceOrDissolution;
-
-    private boolean hasDivorceOrDissolutionChanged() {
-        return this.prevDivorceOrDissolution != this.divorceOrDissolution;
-    }
-
-    public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
-        this.prevDivorceOrDissolution = this.divorceOrDissolution;
-        this.divorceOrDissolution = divorceOrDissolution;
-    }
-
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-        // if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType)) {
-        if (NA.equals(supplementaryCaseType)) {
-            this.supplementaryCaseType = supplementaryCaseType;
-        } else if (isNull(this.divorceOrDissolution)) { // Setting JS or Sep, and divorceOrDissolution is null
-            this.supplementaryCaseType = supplementaryCaseType;
+        this.supplementaryCaseType = supplementaryCaseType;
+        if (JUDICIAL_SEPARATION.equals(this.supplementaryCaseType) || SEPARATION.equals(this.supplementaryCaseType)) { // Setting JS or Sep
             this.enforceDivorceOrDissolution(); // Set divorceOrDissolution based on supplementaryCaseType
-        } else if (this.supplementaryCaseType != supplementaryCaseType) { // JS or Sep value Changing
-            this.supplementaryCaseType = supplementaryCaseType;
-            this.enforceDivorceOrDissolution(); // Set divorceOrDissolution based on supplementaryCaseType
-        } else if (this.hasDivorceOrDissolutionChanged()) { // JS or Sep not changing, but divorceOrDissolution has changed
-            this.supplementaryCaseType = JUDICIAL_SEPARATION;
-            this.enforceJudicialSeparationOrSeparation();
         }
     }
 
