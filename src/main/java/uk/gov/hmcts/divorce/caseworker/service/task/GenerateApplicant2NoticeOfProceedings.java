@@ -23,7 +23,6 @@ import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -86,7 +85,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
         if (isSoleApplication) {
             caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
-            if (YES.equals(caseDetails.getData().getIsJudicialSeparation())) {
+            if (caseData.isJudicialSeparationCase()) {
                 generateSoleJSNoticeOfProceedings(caseData, caseId);
             } else {
                 generateSoleNoticeOfProceedings(caseData, caseId);

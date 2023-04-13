@@ -33,7 +33,7 @@ public class BulkActionSearchResultFieldsTest {
                 tuple("[CREATED_DATE]", "Case created date"),
                 tuple("[LAST_MODIFIED_DATE]", "Last modified date"),
                 tuple("[STATE]", "Case Status"),
-                tuple("pronouncedDate", "Pronouncement date")
+                tuple("dateAndTimeOfHearing", "Pronouncement date")
             );
     }
 }

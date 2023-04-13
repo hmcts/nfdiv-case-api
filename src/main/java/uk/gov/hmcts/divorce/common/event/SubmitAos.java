@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceiv
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -95,7 +96,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit AoS about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Submit AoS About to Submit callback invoked for Case Id: {}", details.getId());
 
         final var caseData = details.getData();
 
@@ -194,6 +195,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .grantHistoryOnly(
                 CASE_WORKER,
                 LEGAL_ADVISOR,
-                SUPER_USER));
+                SUPER_USER,
+                JUDGE));
     }
 }

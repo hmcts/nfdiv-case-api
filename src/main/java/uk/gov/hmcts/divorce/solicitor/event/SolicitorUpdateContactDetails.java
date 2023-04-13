@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -65,6 +66,7 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
-                LEGAL_ADVISOR));
+                LEGAL_ADVISOR,
+                JUDGE));
     }
 }
