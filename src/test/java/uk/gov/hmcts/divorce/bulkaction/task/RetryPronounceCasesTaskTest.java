@@ -19,11 +19,11 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
