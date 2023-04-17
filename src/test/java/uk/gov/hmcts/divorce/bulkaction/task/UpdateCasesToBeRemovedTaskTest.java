@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 
 @ExtendWith(MockitoExtension.class)
 
-public class RemoveCasesTaskTest {
+public class UpdateCasesToBeRemovedTaskTest {
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -50,10 +50,10 @@ public class RemoveCasesTaskTest {
     private HttpServletRequest request;
 
     @InjectMocks
-    private RemoveCasesTask removeCasesTask;
+    private UpdateCasesToBeRemovedTask updateCasesToBeRemovedTask;
 
     @Test
-    void shouldRemoveCasesTask() {
+    void shouldUpdateCasesToBeRemovedTask() {
         final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
         final var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
 
@@ -65,6 +65,8 @@ public class RemoveCasesTaskTest {
         final List<ListValue<BulkListCaseDetails>> casesToRemove = List.of(
             bulkListCaseDetailsListValue1
         );
+
+        final List<ListValue<BulkListCaseDetails>> output = new ArrayList<>();
 
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
@@ -88,15 +90,15 @@ public class RemoveCasesTaskTest {
         when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_REMOVE_BULK_CASE))
             .thenReturn(caseTask);
         when(bulkTriggerService.bulkTrigger(
-            casesToRemove,
+            bulkActionCaseData.getCasesToBeRemoved(),
             SYSTEM_REMOVE_BULK_CASE,
             caseTask,
             user,
             SERVICE_AUTHORIZATION
-        )).thenReturn(new ArrayList<>());
+        )).thenReturn(output);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> result =
-            removeCasesTask.apply(bulkActionCaseDetails);
+            updateCasesToBeRemovedTask.apply(bulkActionCaseDetails);
 
         assertThat(result.getData().getCasesToBeRemoved()).hasSize(0);
     }
