@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.retry.annotation.EnableRetry;
@@ -28,7 +27,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication(
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
-            "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.document"}
+        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.document"}
 )
 @EnableFeignClients(
     clients = {
