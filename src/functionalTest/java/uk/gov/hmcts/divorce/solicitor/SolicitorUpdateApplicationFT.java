@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.testutil.CaseDocumentAMDocument;
 import uk.gov.hmcts.divorce.testutil.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.reform.document.domain.Document;
 
 import java.io.IOException;
 import java.util.List;
