@@ -15,6 +15,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -132,5 +133,44 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendLettersToOfflineApplicantsInSoleJSApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
+        throws IOException {
+
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("supplementaryCaseType", JUDICIAL_SEPARATION);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendLettersToOfflineApplicantSolicitorInJointJSApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
+        throws IOException {
+
+        Map<String, Object> request = caseData(JOINT_REQUEST);
+        request.put("supplementaryCaseType", JUDICIAL_SEPARATION);
+        request.put("applicant1SolicitorRepresented", YES);
+        request.put("applicant1Offline", YES);
+        request.put("applicant2Offline", YES);
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE)));
     }
 }

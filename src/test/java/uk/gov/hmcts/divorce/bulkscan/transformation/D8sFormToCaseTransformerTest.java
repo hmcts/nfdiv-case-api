@@ -32,12 +32,12 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.transformation.CommonFormToCaseTransformer.TRANSFORMATION_AND_OCR_WARNINGS;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.inputScannedDocuments;
@@ -86,7 +86,7 @@ class D8sFormToCaseTransformerTest {
         final var caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
         final var transformationDetails =
             TransformationDetails
@@ -126,7 +126,7 @@ class D8sFormToCaseTransformerTest {
         final CaseData captorValueCaseData = transformationDetailsCaptorValue.getCaseData();
 
         assertThat(captorValueCaseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
-        assertThat(captorValueCaseData.getIsJudicialSeparation()).isEqualTo(YES);
+        assertThat(captorValueCaseData.isJudicialSeparationCase()).isTrue();
 
         assertThat(transformedOutput.get("scannedDocuments"))
             .usingRecursiveComparison()
@@ -192,7 +192,7 @@ class D8sFormToCaseTransformerTest {
         final CaseData captorValueCaseData = transformationDetailsCaptorValue.getCaseData();
 
         assertThat(captorValueCaseData.getDivorceOrDissolution()).isEqualTo(DIVORCE);
-        assertThat(captorValueCaseData.getIsJudicialSeparation()).isEqualTo(YES);
+        assertThat(captorValueCaseData.isJudicialSeparationCase()).isTrue();
 
         assertThat(warnings)
             .extracting("value")

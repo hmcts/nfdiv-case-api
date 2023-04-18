@@ -76,6 +76,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
@@ -171,7 +172,7 @@ public class SubmitAosIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         caseData.setApplicationType(SOLE_APPLICATION);
 
         caseData.getApplicant2().setLegalProceedings(YES);
@@ -215,7 +216,7 @@ public class SubmitAosIT {
         caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         caseData.setApplicationType(SOLE_APPLICATION);
 
         caseData.getApplicant2().setLegalProceedings(YES);
@@ -253,7 +254,7 @@ public class SubmitAosIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         caseData.setApplicationType(SOLE_APPLICATION);
 
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -287,7 +288,7 @@ public class SubmitAosIT {
         data.getApplicant1().setSolicitor(null);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.setIsJudicialSeparation(NO);
+        data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -322,7 +323,7 @@ public class SubmitAosIT {
         data.getApplicant1().setSolicitor(null);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.setIsJudicialSeparation(NO);
+        data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -358,7 +359,7 @@ public class SubmitAosIT {
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
-        data.setIsJudicialSeparation(NO);
+        data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -393,7 +394,7 @@ public class SubmitAosIT {
         data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
         data.setApplicant2(applicantRepresentedBySolicitor());
         data.getApplicant2().setLegalProceedings(NO);
-        data.setIsJudicialSeparation(NO);
+        data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -430,7 +431,7 @@ public class SubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
@@ -478,7 +479,7 @@ public class SubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
@@ -526,7 +527,7 @@ public class SubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
@@ -573,7 +574,7 @@ public class SubmitAosIT {
     @Test
     public void givenValidCaseDataDisputeWhenSubmittedCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setIsJudicialSeparation(NO);
+        data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
@@ -617,7 +618,7 @@ public class SubmitAosIT {
     @Test
     public void givenValidCaseDataForRespondentRepresentedWhenSubmittedCallbackIsInvokedThenSendEmailToRespSolicitor() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setIsJudicialSeparation(NO);
+        data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitor(null);

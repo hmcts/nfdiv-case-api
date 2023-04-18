@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_JURISDICTION_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERT_TRANSLATION;
@@ -67,7 +68,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
             .granted(NO)
@@ -134,7 +135,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
     public void shouldSuccessfullyApplyContentFromCaseDataForOfflineClarificationConditionalOrderJointDocumentDivorce() {
 
         CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
             .granted(NO)
@@ -203,7 +204,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
             .granted(NO)
@@ -233,7 +234,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setIsJudicialSeparation(NO);
+        caseData.setSupplementaryCaseType(NA);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
             .granted(NO)

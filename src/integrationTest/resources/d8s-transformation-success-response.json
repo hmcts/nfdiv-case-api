@@ -110,7 +110,7 @@
       ],
       "applicant2SolicitorFirmName": "",
       "applicant1FirstName": "app1Fname",
-      "isJudicialSeparation": "Yes",
+      "supplementaryCaseType": "judicialSeparation",
       "applicant1SolicitorName": "testsolicitor",
       "applicant2SolicitorName": "",
       "applicant1LastName": "app1Lname",

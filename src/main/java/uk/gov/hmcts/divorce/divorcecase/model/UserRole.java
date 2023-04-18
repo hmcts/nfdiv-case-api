@@ -14,6 +14,7 @@ public enum UserRole implements HasRole {
     LEGAL_ADVISOR("caseworker-divorce-courtadmin-la", "CRU"),
     SUPER_USER("caseworker-divorce-superuser", "CRU"),
     SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU"),
+    JUDGE("caseworker-divorce-judge", "CRU"),
 
     SOLICITOR("caseworker-divorce-solicitor", "CRU"),
     APPLICANT_1_SOLICITOR("[APPONESOLICITOR]", "CRU"),

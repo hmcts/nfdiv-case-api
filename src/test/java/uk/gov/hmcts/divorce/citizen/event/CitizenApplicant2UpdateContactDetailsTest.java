@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
@@ -66,7 +66,7 @@ public class CitizenApplicant2UpdateContactDetailsTest {
     private DivorceApplicationRemover divorceApplicationRemover;
 
     @Mock
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @InjectMocks
     private CitizenApplicant2UpdateContactDetails citizenApplicant2UpdateContactDetails;
@@ -86,21 +86,21 @@ public class CitizenApplicant2UpdateContactDetailsTest {
     void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressWhenContactIsNotPrivateAndAwaitingAos() {
         verifyAddressUpdate(AwaitingAos);
         verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
+        verify(generateApplication).apply(any());
     }
 
     @Test
     void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressWhenContactIsNotPrivateAndAosOverdue() {
         verifyAddressUpdate(AosOverdue);
         verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
+        verify(generateApplication).apply(any());
     }
 
     @Test
     void shouldUpdateApplicant2AddressAndRegenerateDivorceApplicationWithChangedAddressWhenContactIsNotPrivateAndAosDrafted() {
         verifyAddressUpdate(AosDrafted);
         verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
+        verify(generateApplication).apply(any());
     }
 
     @Test
@@ -108,42 +108,42 @@ public class CitizenApplicant2UpdateContactDetailsTest {
     ) {
         verifyAddressUpdate(Holding);
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     @Test
     void shouldUpdateApplicant2PhoneNumberAndShouldNotRegenerateDivorceApplicationBeforeSubmittingAOSWhenContactIsNotPrivate() {
         verifyPhoneNumberUpdate(AwaitingAos);
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     @Test
     void shouldUpdateApplicant2PhoneNumberAndShouldNotRegenerateDivorceApplicationAfterSubmittingAOSWhenContactIsNotPrivate() {
         verifyPhoneNumberUpdate(Holding);
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     @Test
     void shouldRegenerateDivorceApplicationWhenContactPrivacyIsChangedBeforeSubmittingAOS() {
         verifyContactPrivacyUpdate(PRIVATE, PUBLIC, AwaitingAos);
         verify(divorceApplicationRemover).apply(any());
-        verify(generateDivorceApplication).apply(any());
+        verify(generateApplication).apply(any());
     }
 
     @Test
     void shouldNotRegenerateDivorceApplicationWhenContactPrivacyIsChangedAfterSubmittingAOS() {
         verifyContactPrivacyUpdate(PRIVATE, PUBLIC, Holding);
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     @Test
     void shouldNotRegenerateDivorceApplicationWhenContactPrivacyIsNotChanged() {
         verifyContactPrivacyUpdate(PUBLIC, PUBLIC, AwaitingAos);
         verifyNoInteractions(divorceApplicationRemover);
-        verifyNoInteractions(generateDivorceApplication);
+        verifyNoInteractions(generateApplication);
     }
 
     private void verifyAddressUpdate(State state) {
