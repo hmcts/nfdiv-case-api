@@ -44,7 +44,7 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
 
     @Value("${toggle.enable_case_document_access_management}")
-    private boolean caseDocumentAccessManagementEnabled;
+
 
     @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
@@ -77,29 +77,15 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
     }
 
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
-        if (caseDocumentAccessManagementEnabled) {
-            CaseDocumentAMDocument document = caseDocumentAccessManagement.upload(
-                "",
-                "draft-divorce-application-1234567890123456.pdf",
-                "classpath:Test.pdf"
-            );
-            return new uk.gov.hmcts.ccd.sdk.type.Document(
-                document.links.self.href,
-                document.originalDocumentName,
-                document.links.binary.href
-            );
-        } else {
-            Document document = documentManagementStore.upload(
-                "",
-                "draft-divorce-application-1234567890123456.pdf",
-                "classpath:Test.pdf"
-            );
-
-            return new uk.gov.hmcts.ccd.sdk.type.Document(
-                document.links.self.href,
-                document.originalDocumentName,
-                document.links.binary.href
-            );
-        }
+        CaseDocumentAMDocument document = caseDocumentAccessManagement.upload(
+            "",
+            "draft-divorce-application-1234567890123456.pdf",
+            "classpath:Test.pdf"
+        );
+        return new uk.gov.hmcts.ccd.sdk.type.Document(
+            document.links.self.href,
+            document.originalDocumentName,
+            document.links.binary.href
+        );
     }
 }

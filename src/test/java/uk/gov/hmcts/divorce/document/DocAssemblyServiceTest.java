@@ -82,59 +82,6 @@ public class DocAssemblyServiceTest {
                 .templateId(ENGLISH_TEMPLATE_ID)
                 .outputType("PDF")
                 .formPayload(objectMapper.valueToTree(caseDataMap))
-                .build();
-
-        String documentUuid = UUID.randomUUID().toString();
-
-        DocAssemblyResponse docAssemblyResponse = new DocAssemblyResponse(
-            DOC_STORE_BASE_URL_PATH + documentUuid
-        );
-
-        when(docAssemblyClient.generateAndStoreDraftApplication(
-            TEST_AUTHORIZATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            docAssemblyRequest
-        )).thenReturn(docAssemblyResponse);
-
-        DocumentInfo documentInfo = docAssemblyService.renderDocument(
-            templateContent,
-            TEST_CASE_ID,
-            TEST_AUTHORIZATION_TOKEN,
-            DIVORCE_DRAFT_APPLICATION,
-            ENGLISH,
-            DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
-        );
-
-        assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
-        assertThat(documentInfo.getBinaryUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid + BINARY);
-        assertThat(documentInfo.getFilename()).isEqualTo(DRAFT_APPLICATION_FILENAME);
-
-        verify(authTokenGenerator).generate();
-        verify(docAssemblyClient).generateAndStoreDraftApplication(
-            TEST_AUTHORIZATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            docAssemblyRequest
-        );
-        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient);
-    }
-
-    @Test
-    public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrlWithCdamEnabled() {
-
-        ReflectionTestUtils.setField(docAssemblyService, "caseDocumentAccessManagementEnabled", true);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        Map<String, Object> caseDataMap = expectedCaseData();
-
-        when(docmosisTemplateProvider.templateNameFor(DIVORCE_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        DocAssemblyRequest docAssemblyRequest =
-            DocAssemblyRequest
-                .builder()
-                .templateId(ENGLISH_TEMPLATE_ID)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(caseDataMap))
                 .secureDocStoreEnabled(true)
                 .caseTypeId(CASE_TYPE)
                 .jurisdictionId(JURISDICTION)
@@ -174,6 +121,8 @@ public class DocAssemblyServiceTest {
         verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient);
     }
 
+
+
     @Test
     public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
 
@@ -201,6 +150,9 @@ public class DocAssemblyServiceTest {
                 .templateId(ENGLISH_TEMPLATE_ID)
                 .outputType("PDF")
                 .formPayload(objectMapper.valueToTree(caseDataMap))
+                .secureDocStoreEnabled(true)
+                .caseTypeId(CASE_TYPE)
+                .jurisdictionId(JURISDICTION)
                 .build();
 
         doThrow(feignException)

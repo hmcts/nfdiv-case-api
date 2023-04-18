@@ -34,7 +34,7 @@ public class DocAssemblyService {
     private DocmosisTemplateProvider docmosisTemplateProvider;
 
     @Value("${toggle.enable_case_document_access_management}")
-    private boolean caseDocumentAccessManagementEnabled;
+
 
     public DocumentInfo renderDocument(final Map<String, Object> templateContent,
                                        final Long caseId,
@@ -69,23 +69,14 @@ public class DocAssemblyService {
 
     private DocAssemblyRequest getDocAssemblyRequest(final String templateName, final Map<String, Object> templateContent) {
 
-        if (caseDocumentAccessManagementEnabled) {
-            return DocAssemblyRequest
-                .builder()
-                .templateId(templateName)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateContent))
-                .secureDocStoreEnabled(true)
-                .caseTypeId(CASE_TYPE)
-                .jurisdictionId(JURISDICTION)
-                .build();
-        } else {
-            return DocAssemblyRequest
-                .builder()
-                .templateId(templateName)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateContent))
-                .build();
-        }
+        return DocAssemblyRequest
+            .builder()
+            .templateId(templateName)
+            .outputType("PDF")
+            .formPayload(objectMapper.valueToTree(templateContent))
+            .secureDocStoreEnabled(true)
+            .caseTypeId(CASE_TYPE)
+            .jurisdictionId(JURISDICTION)
+            .build();
     }
 }
