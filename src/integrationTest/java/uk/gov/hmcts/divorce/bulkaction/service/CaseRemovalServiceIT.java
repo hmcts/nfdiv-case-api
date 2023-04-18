@@ -12,13 +12,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdCaseDataContentProvider;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -31,16 +31,13 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -54,20 +51,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCaseLinkListValue;
 @ActiveProfiles("test")
 public class CaseRemovalServiceIT {
 
-    private static final String DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY = "No Fault Divorce case submission event";
-    private static final String DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION = "Submitting No Fault Divorce Case Event";
-
-    @Autowired
-    private CaseRemovalService caseRemovalService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private CoreCaseDataApi coreCaseDataApi;
-
-    @MockBean
-    private CcdCaseDataContentProvider ccdCaseDataContentProvider;
 
     @MockBean
     private IdamService idamService;
@@ -75,37 +60,60 @@ public class CaseRemovalServiceIT {
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private CaseRemovalService caseRemovalService;
+
+    // Update test name
     @Test
     void shouldSuccessfullyUpdateCourtHearingDetailsForCasesInBulk() {
 
-        final LocalDateTime dateAndTimeOfHearing = LocalDateTime.of(2021, 11, 10, 0, 0, 0);
-
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
-            .dateAndTimeOfHearing(dateAndTimeOfHearing)
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
             .court(BURY_ST_EDMUNDS)
             .bulkListCaseDetails(
                 List.of(
-                    getBulkListCaseDetailsListValue("1"),
+                    getBulkListCaseDetailsListValue("5"),
                     getBulkListCaseDetailsListValue("2")
                 )
             )
-            .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("1")))
+            .casesToBeRemoved(List.of(getBulkListCaseDetailsListValue("5")))
+            .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("5")))
             .build();
-
 
         final var bulkActionCaseDetails = CaseDetails
             .<BulkActionCaseData, BulkActionState>builder()
+            .id(2L)
             .data(bulkActionCaseData)
             .build();
 
-        var userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
-        var user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        var userDetails = UserDetails.builder().id(SYSTEM_USER_USER_ID).build();
+        var user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
 
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         final StartEventResponse startEventResponse = StartEventResponse.builder()
+            .eventId(SYSTEM_UPDATE_BULK_CASE)
+            .token("startEventToken")
+            .caseDetails(getBulkCaseDetails())
+            .build();
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                bulkActionCaseDetails.getId().toString(),
+                SYSTEM_UPDATE_BULK_CASE))
+            .thenReturn(startEventResponse);
+
+        final StartEventResponse startEventResponseNFD = StartEventResponse.builder()
             .eventId(SYSTEM_REMOVE_BULK_CASE)
             .token("startEventToken")
             .caseDetails(getCaseDetails())
@@ -113,65 +121,81 @@ public class CaseRemovalServiceIT {
 
         when(coreCaseDataApi
             .startEventForCaseWorker(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                CASEWORKER_USER_ID,
+                SYSTEM_USER_USER_ID,
                 JURISDICTION,
                 CASE_TYPE,
-                "2",
+                "5",
                 SYSTEM_REMOVE_BULK_CASE))
-            .thenReturn(startEventResponse);
-
-        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
-
-        when(ccdCaseDataContentProvider
-            .createCaseDataContent(
-                eq(startEventResponse),
-                eq(DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY),
-                eq(DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION),
-                any(CaseData.class)))
-            .thenReturn(caseDataContent);
+            .thenReturn(startEventResponseNFD);
 
         when(coreCaseDataApi.submitEventForCaseWorker(
-            SYSTEM_UPDATE_AUTH_TOKEN,
-            SERVICE_AUTHORIZATION,
-            SYSTEM_USER_USER_ID,
-            JURISDICTION,
-            CASE_TYPE,
-            "2",
-            true,
-            caseDataContent
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            eq(SYSTEM_USER_USER_ID),
+            eq(JURISDICTION),
+            eq(CASE_TYPE),
+            eq("5"),
+            eq(true),
+            any(CaseDataContent.class)
         )).thenReturn(getCaseDetails());
+
+        when(coreCaseDataApi.submitEventForCaseWorker(
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            eq(SYSTEM_USER_USER_ID),
+            eq(JURISDICTION),
+            eq(BulkActionCaseTypeConfig.CASE_TYPE),
+            eq(bulkActionCaseDetails.getId().toString()),
+            eq(true),
+            any(CaseDataContent.class)
+        )).thenReturn(getBulkCaseDetails());
 
         caseRemovalService.removeCases(bulkActionCaseDetails);
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                CASEWORKER_USER_ID,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                bulkActionCaseDetails.getId().toString(),
+                SYSTEM_UPDATE_BULK_CASE
+            );
+
+        verify(coreCaseDataApi)
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                SYSTEM_USER_USER_ID,
                 JURISDICTION,
                 CASE_TYPE,
-                "2",
+                "5",
                 SYSTEM_REMOVE_BULK_CASE
             );
 
-        verify(ccdCaseDataContentProvider)
-            .createCaseDataContent(
-                eq(startEventResponse),
-                eq(DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY),
-                eq(DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION),
-                any(CaseData.class));
+        verify(coreCaseDataApi).submitEventForCaseWorker(
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            eq(SYSTEM_USER_USER_ID),
+            eq(JURISDICTION),
+            eq(CASE_TYPE),
+            eq("5"),
+            eq(true),
+            any(CaseDataContent.class)
+        );
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
-            CASEWORKER_AUTH_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            CASEWORKER_USER_ID,
-            JURISDICTION,
-            CASE_TYPE,
-            "2",
-            true,
-            caseDataContent
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            eq(SYSTEM_USER_USER_ID),
+            eq(JURISDICTION),
+            eq(BulkActionCaseTypeConfig.CASE_TYPE),
+            eq(bulkActionCaseDetails.getId().toString()),
+            eq(true),
+            any(CaseDataContent.class)
         );
     }
 
@@ -186,6 +210,30 @@ public class CaseRemovalServiceIT {
         return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
             .data(objectMapper.convertValue(caseData, new TypeReference<>() {
             }))
+            .id(5L)
+            .build();
+    }
+
+    private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getBulkCaseDetails() {
+
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
+            .court(BURY_ST_EDMUNDS)
+            .bulkListCaseDetails(
+                List.of(
+                    getBulkListCaseDetailsListValue("5"),
+                    getBulkListCaseDetailsListValue("2")
+                )
+            )
+            .casesToBeRemoved(List.of(getBulkListCaseDetailsListValue("5")))
+            .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("5")))
+            .build();
+
+        return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+            .data(objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
+            }))
+            .id(2L)
             .build();
     }
 }
