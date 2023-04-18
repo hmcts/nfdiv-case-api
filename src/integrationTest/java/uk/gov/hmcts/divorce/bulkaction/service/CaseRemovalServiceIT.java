@@ -68,7 +68,7 @@ public class CaseRemovalServiceIT {
 
     // Update test name
     @Test
-    void shouldSuccessfullyUpdateCourtHearingDetailsForCasesInBulk() {
+    void shouldSuccessfullyCasesInBulkList() {
 
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
