@@ -27,9 +27,11 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -96,6 +98,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .showCondition("serviceApplicationGranted=\"No\"")
             .pageLabel("Reason for refusal")
                 .complex(CaseData::getAlternativeService)
+                .mandatory(AlternativeService::getRefusalReason)
                 .mandatory(AlternativeService::getServiceApplicationRefusalReason)
                 .done();
     }
@@ -160,7 +163,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_REFUSAL_TEMPLATE_ID);
             }
 
-            endState = AwaitingAos;
+            endState = ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason()) ? ServiceAdminRefusal : AwaitingAos;
         }
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
