@@ -291,7 +291,7 @@ dependencies {
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.19.0-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
-  implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.5'
+  implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.6'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
@@ -316,7 +316,7 @@ dependencies {
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.3.0'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.27'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.28'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
