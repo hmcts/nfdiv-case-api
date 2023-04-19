@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
@@ -32,9 +31,6 @@ public class DocAssemblyService {
 
     @Autowired
     private DocmosisTemplateProvider docmosisTemplateProvider;
-
-    @Value("${toggle.enable_case_document_access_management}")
-    private boolean caseDocumentAccessManagementEnabled;
 
 
     public DocumentInfo renderDocument(final Map<String, Object> templateContent,

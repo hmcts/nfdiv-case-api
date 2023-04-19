@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.solicitor;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -38,8 +37,6 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
-
-    @Value("${toggle.enable_case_document_access_management}")
 
 
     @Test
