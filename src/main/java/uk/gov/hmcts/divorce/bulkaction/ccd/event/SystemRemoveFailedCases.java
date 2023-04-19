@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -23,7 +22,7 @@ public class SystemRemoveFailedCases implements CCDConfig<BulkActionCaseData, Bu
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(SYSTEM_REMOVE_FAILED_CASES)
-            .initialState(Created)
+            .forAllStates() // Move to all states as a fix for this event failing to remove cases from bulk due to incorrect state error.
             .name("Remove failed case links")
             .description("Removed failed case links")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));
