@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.task.PronounceCasesTask;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -34,6 +37,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BU
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
@@ -46,9 +50,6 @@ public class CcdUpdateServiceIT {
 
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY = "No Fault Divorce case submission event";
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION = "Submitting No Fault Divorce Case Event";
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
 
     @MockBean
     private CoreCaseDataApi coreCaseDataApi;
@@ -63,7 +64,16 @@ public class CcdUpdateServiceIT {
     private CaseDetailsUpdater caseDetailsUpdater;
 
     @MockBean
+    private BulkCaseDetailsUpdater bulkCaseDetailsUpdater;
+
+    @MockBean
     private PronounceCasesTask bulkCaseTask;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
     @Test
     void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFails() {
@@ -242,7 +252,6 @@ public class CcdUpdateServiceIT {
     void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFailsForUpdateBulkCase() {
         final User user = systemUpdateUser();
         final Map<String, Object> caseData = new HashMap<>();
-        final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
@@ -258,12 +267,21 @@ public class CcdUpdateServiceIT {
             )
         ).thenReturn(startEventResponse);
 
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails =
+            new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .court(BIRMINGHAM)
+            .build();
+        bulkCaseDetails.setData(bulkActionCaseData);
+        when(bulkCaseDetailsUpdater.updateCaseData(bulkCaseTask, startEventResponse)).thenReturn(bulkCaseDetails);
+
         when(ccdCaseDataContentProvider
             .createCaseDataContent(
                 startEventResponse,
                 DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
                 DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-                caseData
+                bulkActionCaseData
             )
         ).thenReturn(caseDataContent);
 
@@ -295,7 +313,7 @@ public class CcdUpdateServiceIT {
                 startEventResponse,
                 DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
                 DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-                caseData);
+                bulkActionCaseData);
     }
 
     private CaseDetails getCaseDetails(final Map<String, Object> caseData) {
