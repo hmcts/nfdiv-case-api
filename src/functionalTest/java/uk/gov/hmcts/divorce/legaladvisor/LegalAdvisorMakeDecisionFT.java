@@ -72,8 +72,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     private static final String CO_REJECTED_MID_EVENT_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-rejected-mid-event.json";
 
-    @Autowired
-    private DocumentManagementStore documentManagementStore;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;

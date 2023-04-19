@@ -36,8 +36,6 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-update.json";
 
-    @Autowired
-    private DocumentManagementStore documentManagementStore;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
