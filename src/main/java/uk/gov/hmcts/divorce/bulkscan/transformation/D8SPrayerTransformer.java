@@ -28,7 +28,7 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
         CaseData caseData = transformationDetails.getCaseData();
         OcrDataFields ocrDataFields = transformationDetails.getOcrDataFields();
 
-        if (toBoolean(ocrDataFields.getPrayerApplicant1JudiciallySeparated())) {
+        if (toBoolean(ocrDataFields.getPrayerMarriageDissolved())) {
             caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
             caseData.getApplicant1().getApplicantPrayer().setPrayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION));
         } else {
