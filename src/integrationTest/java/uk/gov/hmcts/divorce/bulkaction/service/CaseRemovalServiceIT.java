@@ -66,9 +66,8 @@ public class CaseRemovalServiceIT {
     @Autowired
     private CaseRemovalService caseRemovalService;
 
-    // Update test name
     @Test
-    void shouldSuccessfullyCasesInBulkList() {
+    void shouldSuccessfullyRemoveCasesInBulkList() {
 
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
