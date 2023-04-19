@@ -34,6 +34,7 @@ public class DocAssemblyService {
     private DocmosisTemplateProvider docmosisTemplateProvider;
 
     @Value("${toggle.enable_case_document_access_management}")
+    private boolean caseDocumentAccessManagementEnabled;
 
 
     public DocumentInfo renderDocument(final Map<String, Object> templateContent,
