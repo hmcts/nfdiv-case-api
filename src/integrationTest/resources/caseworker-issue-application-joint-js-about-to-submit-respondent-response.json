@@ -1,0 +1,137 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "serviceMethod":"courtService",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1SolicitorRepresented": "No",
+    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "No",
+    "supplementaryCaseType": "judicialSeparation",
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
+    "applicant1Offline": "Yes",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "test@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2Address": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode",
+      "Country": "UK"
+    },
+    "applicant2Gender": "male",
+    "applicant2SolicitorRepresented": "No",
+    "applicant2FinancialOrder": "No",
+    "applicant2Offline": "Yes",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "2021-06-17",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "noticeOfProceedingsEmail": "test@test.com",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/67db1868-e917-457a-b9a7-209d1905810a",
+            "document_filename": "D84.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/67db1868-e917-457a-b9a7-209d1905810a/binary"
+          },
+          "documentType": "d84",
+          "documentFileName": "D84.pdf"
+        }
+      },
+      {
+        "id": "Judicial separation application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/ac0b7b52-e8db-44ef-aad6-e050ebed89f6",
+            "document_filename": "judicial-separation-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/ac0b7b52-e8db-44ef-aad6-e050ebed89f6/binary"
+          },
+          "documentType": "application",
+          "documentFileName": "judicial-separation-application-1616591401473378-2021-06-17:13:00.pdf"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant 2",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentType": "noticeOfProceedingsApp2",
+          "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf"
+        }
+      },
+      {
+        "id": "Coversheet applicant 2",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "coversheet-1616591401473378-applicant2-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/af678800-4c5c-491c-9b7f-22056412ff94/binary"
+          },
+          "documentType": "coversheet",
+          "documentFileName": "coversheet-1616591401473378-applicant2-2021-06-17:13:00.pdf"
+        }
+      },
+      {
+        "id": "Notice of proceeding applicant 1",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentType": "noticeOfProceedings",
+          "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf"
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
+    "warnings": []
+  },
+  "state": "AwaitingJsNullity"
+}

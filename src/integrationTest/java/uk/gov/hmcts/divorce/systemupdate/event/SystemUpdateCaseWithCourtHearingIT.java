@@ -52,6 +52,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
@@ -130,7 +131,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -199,7 +200,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -234,7 +235,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -281,7 +282,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
 
         CaseData data = validCaseWithCourtHearing();
@@ -329,7 +330,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae2", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905d33",
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
@@ -365,6 +366,144 @@ public class SystemUpdateCaseWithCourtHearingIT {
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT);
         assertThat(print.getLetters().size()).isEqualTo(2);
+    }
+
+    @Test
+    public void givenBothApplicantsOfflineWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setEmail(null);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setSolicitorRepresented(NO);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void givenBothApplicantsOfflineWhenJointJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setEmail(null);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
+        data.getApplicant1().setSolicitorRepresented(NO);
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setSolicitorRepresented(NO);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void givenBothApplicantsOfflineAndRepresentedWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1",
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setEmail(null);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
+        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setSolicitorRepresented(YES);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void givenBothApplicantsOfflineAndRepresentedWhenJointJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1",
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
+
+        CaseData data = validCaseWithCourtHearing();
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setEmail(null);
+        data.getApplicant1().setContactDetailsType(PUBLIC);
+        data.getApplicant1().setSolicitorRepresented(YES);
+        data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setSolicitorRepresented(YES);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
+        verifyNoInteractions(notificationService);
     }
 
     private String expectedCcdAboutToSubmitCallbackSuccess() throws IOException {

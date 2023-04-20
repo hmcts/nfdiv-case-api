@@ -1,5 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
   "applicationType": "soleApplication",
   "coGranted": "No",
   "coRefusalDecision": "reject",

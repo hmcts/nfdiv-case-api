@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
@@ -49,9 +51,15 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
@@ -72,6 +80,7 @@ public class CaseData {
     )
     private ApplicationType applicationType;
 
+    @Setter(AccessLevel.NONE)
     @CCD(
         label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
@@ -79,6 +88,16 @@ public class CaseData {
         typeParameterOverride = "DivorceOrDissolution"
     )
     private DivorceOrDissolution divorceOrDissolution;
+
+    @Setter(AccessLevel.NONE)
+    @CCD(
+        label = "Judicial separation, separation, or nullity?",
+        access = {DefaultAccess.class},
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "SupplementaryCaseType"
+    )
+    @Builder.Default
+    private SupplementaryCaseType supplementaryCaseType = NA;
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
@@ -154,6 +173,12 @@ public class CaseData {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<GeneralReferral>> generalReferrals;
+
+    @CCD(
+        label = "Is case judicial separation?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo isJudicialSeparation;
 
     @CCD(
         label = "Previous Service Applications",
@@ -241,12 +266,6 @@ public class CaseData {
     private PaperFormDetails paperFormDetails = new PaperFormDetails();
 
     @CCD(
-        label = "Is case judicial separation?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo isJudicialSeparation;
-
-    @CCD(
         label = "General emails",
         typeOverride = Collection,
         typeParameterOverride = "GeneralEmailDetails",
@@ -313,6 +332,43 @@ public class CaseData {
         }
     }
 
+    private void enforceJudicialSeparationOrSeparation() {
+        if (DIVORCE.equals(this.divorceOrDissolution) && SEPARATION.equals(this.supplementaryCaseType)) {
+            this.supplementaryCaseType = JUDICIAL_SEPARATION; // prevent Separation when Divorce
+        } else if (DISSOLUTION.equals(this.divorceOrDissolution) && JUDICIAL_SEPARATION.equals(this.supplementaryCaseType)) {
+            this.supplementaryCaseType = SEPARATION; // prevent Judicial Separation when Dissolution
+        }
+    }
+
+    public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
+        this.divorceOrDissolution = divorceOrDissolution;
+        this.enforceJudicialSeparationOrSeparation();
+    }
+
+    public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
+        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType) || isNull(this.divorceOrDissolution)) {
+            this.supplementaryCaseType = supplementaryCaseType;
+        } else { // Setting JS or Sep, and divorceOrDissolution is not null
+            this.supplementaryCaseType = JUDICIAL_SEPARATION;
+            this.enforceJudicialSeparationOrSeparation();
+        }
+    }
+
+    @JsonIgnore
+    public boolean isJudicialSeparationCase() {
+        return JUDICIAL_SEPARATION.equals(this.supplementaryCaseType) || SEPARATION.equals(this.supplementaryCaseType);
+    }
+
+    @JsonIgnore
+    public boolean isNullityCase() {
+        return NULLITY.equals(this.supplementaryCaseType);
+    }
+
+    @JsonIgnore
+    public boolean hasNoSupplementaryCaseType() {
+        return NA.equals(this.supplementaryCaseType) || isNull(this.supplementaryCaseType);
+    }
+
     @JsonIgnore
     public String getApplicant2EmailAddress() {
         final String applicant2Email = applicant2.getEmail();
@@ -372,11 +428,6 @@ public class CaseData {
     @JsonIgnore
     public boolean isDivorce() {
         return divorceOrDissolution.isDivorce();
-    }
-
-    @JsonIgnore
-    public boolean isJudicialSeparationCase() {
-        return !isNull(isJudicialSeparation) && isJudicialSeparation == YES;
     }
 
     @JsonIgnore

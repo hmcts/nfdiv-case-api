@@ -3,6 +3,7 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "marriageFormationType": "oppositeSexCouple",

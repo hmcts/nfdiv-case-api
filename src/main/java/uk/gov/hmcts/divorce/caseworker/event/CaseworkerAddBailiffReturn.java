@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -72,7 +73,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, LEGAL_ADVISOR)
-            .grantHistoryOnly(SUPER_USER, SOLICITOR, CITIZEN))
+            .grantHistoryOnly(SUPER_USER, JUDGE, SOLICITOR, CITIZEN))
             .page("addBailiffReturn")
             .pageLabel("Add Bailiff Return")
             .complex(CaseData::getAlternativeService)

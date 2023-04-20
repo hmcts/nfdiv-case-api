@@ -3,6 +3,7 @@
     "case_type_id": "NFD",
     "event_id": "create-paper-case",
     "case_data": {
+      "supplementaryCaseType": "notApplicable",
       "applicationType": "soleApplication",
       "applicant1ContactDetailsType": "private",
       "sentNotifications": {},
@@ -132,7 +133,7 @@
         "A"
       ],
       "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-      "applicant1NameChangedHowOtherDetails": "some reason",
+      "applicant1NameDifferentToMarriageCertificateOtherDetails": "some reason",
       "applicant2FinancialOrder": "Yes",
       "applicant1Email": "app1test@dummy.com",
       "applicant2Email": "app2test@dummy.com",
@@ -140,7 +141,7 @@
       "applicant1HWFNeedHelp": "No",
       "applicant2PhoneNumber": "",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",
-      "applicant2NameChangedHowOtherDetails": "",
+      "applicant2NameDifferentToMarriageCertificateOtherDetails": "",
       "marriageMarriageCertificateIsIncorrectDetails": "",
       "paperFormChequeOrPostalOrderPayment": "No",
       "paperFormDebitCreditCardPaymentPhone": "No"

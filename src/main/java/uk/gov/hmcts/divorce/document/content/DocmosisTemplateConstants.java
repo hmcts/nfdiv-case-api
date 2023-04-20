@@ -77,6 +77,9 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_1_COURT_CASE_DETAILS = "applicant1CourtCaseDetails";
     public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
     public static final String APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS = "applicant1HasEnteredRespondentsSolicitorDetails";
+    public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
+    public static final String APPLICANT_1_SOLICITOR_FIRM_NAME = "applicant1SolicitorFirmName";
+    public static final String APPLICANT_1_SOLICITOR_ADDRESS = "applicant1SolicitorAddress";
     public static final String APPLICANT_2_SOLICITOR_NAME = "applicant2SolicitorName";
     public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
     public static final String APPLICANT_2_SOLICITOR_FIRM_NAME = "applicant2SolicitorFirmName";
@@ -91,8 +94,13 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONDENT_SOLICITOR_ADDRESS = "respondentSolicitorAddress";
     public static final String NOT_GIVEN = "not given";
     public static final String REFUSAL_REASON = "refusalReasons";
+    public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "divorcecase@justice.gov.uk";
+    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "divorcecase@justice.gov.uk";
+    public static final String CONTACT_JUSTICE_GOV_UK_CY = "ymholiadaucymraeg@justice.gov.uk";
+    public static final String IS_JUDICIAL_SEPARATION = "isJudicialSeparation";
 
     public static final String SOLICITOR_NAME = "solicitorName";
+    public static final String SOLICITOR_FIRM = "solicitorFirm";
     public static final String SOLICITOR_ADDRESS = "solicitorAddress";
     public static final String SOLICITOR_REFERENCE = "solicitorReference";
     public static final String SOLICITOR_NAME_WITH_DEFAULT_VALUE = "solicitorNameWithDefaultValue";
@@ -174,6 +182,11 @@ public final class DocmosisTemplateConstants {
     public static final String FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the money and "
         + "property will be divided. The application will be done separately.";
 
+    public static final String FINANCIAL_ORDER_APPLIED_HINT = "financialOrderAppliedHintText";
+    public static final String FINANCIAL_ORDER_APPLIED_HINT_TEXT = "If the applicant has told the court that they intend to apply for "
+          + "a financial order, the court will take no action at this stage"
+          + ", unless formal proceedings are issued via a separate application.";
+
     public static final String DIVORCE_AND_DISSOLUTION_HEADER = "divorceAndDissolutionHeader";
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT = "Divorce and Dissolution";
     public static final String DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY = "Gwasanaeth Ysgariadau a Diddymiadau";
@@ -191,6 +204,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";
+    public static final String ADDRESS_BASED_OVERSEAS = "isBasedOverseas";
 
     private DocmosisTemplateConstants() {
     }

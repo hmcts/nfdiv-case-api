@@ -105,6 +105,7 @@ public class NoticeOfProceedingContent {
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String APPLICANT_2_ADDRESS = "applicant2Address";
     public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
+    public static final String APPLICANT_2_IS_REPRESENTED = "applicant2IsRepresented";
     public static final String DISPLAY_EMAIL_CONFIRMATION = "displayEmailConfirmation";
     public static final String HAS_CASE_BEEN_REISSUED = "hasCaseBeenReissued";
     public static final String REISSUE_DATE = "reissueDate";
@@ -122,7 +123,7 @@ public class NoticeOfProceedingContent {
     public static final String CIVIL_PARTNERSHIP_DOCUMENTS = "documents to end your civil partnership";
 
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
-    private static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
+    public static final int RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS = 16;
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
@@ -319,6 +320,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, applicant2Solicitor.hasOrgId() ? "Yes" : "No");
+        templateContent.put(APPLICANT_2_IS_REPRESENTED, caseData.getApplicant2().isRepresented());
 
         if (personalServiceMethod) {
             if (WELSH.equals(languagePreference)) {

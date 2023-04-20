@@ -18,10 +18,10 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForFinalOrder
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -56,7 +56,7 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -92,14 +92,14 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
             log.info("Generating applicant 1 offline final order documents for CaseID: {}", caseId);
 
             generateD36Form.generateD36Document(caseData, caseId);
-            generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant1, applicant2);
+            generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant1, applicant2, true);
         }
 
-        if (caseData.getApplicant2().isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())) {
+        if (!caseData.getApplicationType().isSole() && caseData.getApplicant2().isApplicantOffline()) {
             log.info("Generating applicant 2 offline final order documents for CaseID: {}", caseId);
 
             generateD36Form.generateD36Document(caseData, caseId);
-            generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant2, applicant1);
+            generateApplyForFinalOrderDocument.generateApplyForFinalOrder(caseData, caseId, applicant2, applicant1, false);
         }
     }
 }

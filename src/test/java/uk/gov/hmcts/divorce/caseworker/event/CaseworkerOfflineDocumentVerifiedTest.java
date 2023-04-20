@@ -71,6 +71,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorR
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -434,7 +435,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().build())
             .conditionalOrder(ConditionalOrder.builder().build())
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .documents(
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)
@@ -1091,5 +1092,25 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 .subtype("aos")
                 .build()
             ).build();
+    }
+
+    @Test
+    void shouldNotTriggerSwitchToSoleEventIfD36OrFOD36AndNotSwitchToSoleSelected() {
+        final CaseData caseData = CaseData.builder()
+                .documents(CaseDocuments.builder()
+                        .typeOfDocumentAttached(FO_D36)
+                        .build())
+                .finalOrder(FinalOrder.builder().d36ApplicationType(JOINT).build())
+                .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(ccdUpdateService);
     }
 }

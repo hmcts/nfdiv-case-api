@@ -30,7 +30,7 @@ public class DocumentUploadDFormsMocker {
         doc.links.self = new Document.Link();
         doc.links.self.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId;
         doc.links.binary = new Document.Link();
-        doc.links.binary.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId + "/binaryUrl";
+        doc.links.binary.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId + "/binary";
         doc.originalDocumentName = docType.getLabel() + ".pdf";
         List<Document> formDocList = asList(doc);
         when(embedded.getDocuments()).thenReturn(formDocList);

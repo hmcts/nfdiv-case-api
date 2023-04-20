@@ -14,6 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -42,6 +43,10 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-offline.json";
     private static final String OFFLINE_NOT_REPRESENTED_RESPONSE =
         "classpath:responses/response-system-pronounce-case-offline.json";
+    private static final String JUDICIAL_SEPARATION_NOT_REPRESENTED_RESPONSE =
+        "classpath:responses/response-system-pronounce-case-judicial-separation.json";
+    private static final String JUDICIAL_SEPARATION_REPRESENTED_RESPONSE =
+        "classpath:responses/response-system-pronounce-case-judicial-separation-represented.json";
     private static final String OFFLINE_WITH_PRIVATE_CONTACT_RESPONSE =
         "classpath:responses/response-system-pronounce-case-offline-with-private-contract.json";
 
@@ -171,11 +176,11 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsInJudicialSeparation()
+    public void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
-        request.put("isJudicialSeparation", "Yes");
+        request.put("supplementaryCaseType", JUDICIAL_SEPARATION);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
@@ -184,6 +189,23 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(OFFLINE_NOT_REPRESENTED_RESPONSE)));
+            .isEqualTo(json(expectedResponse(JUDICIAL_SEPARATION_NOT_REPRESENTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitors()
+        throws IOException {
+
+        Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
+        request.put("supplementaryCaseType", "judicialSeparation");
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(JUDICIAL_SEPARATION_REPRESENTED_RESPONSE)));
     }
 }

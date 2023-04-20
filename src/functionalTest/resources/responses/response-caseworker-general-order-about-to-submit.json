@@ -1,6 +1,7 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "dataVersion": "${json-unit.any-number}",
     "applicant1FirstName": "John",
     "sentNotifications": {},

@@ -15,8 +15,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 
 @ExtendWith(MockitoExtension.class)
 class SetPostIssueStateTest {
@@ -92,5 +94,21 @@ class SetPostIssueStateTest {
         final CaseDetails<CaseData, State> result = setPostIssueState.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(Holding);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingJsNullityWhenJointApplicationJudicialSeparation() {
+        final CaseData caseData = CaseData.builder()
+            .application(Application.builder().build())
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> result = setPostIssueState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingJsNullity);
     }
 }

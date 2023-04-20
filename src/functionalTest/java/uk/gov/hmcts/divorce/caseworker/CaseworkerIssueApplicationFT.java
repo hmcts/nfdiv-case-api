@@ -18,6 +18,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
@@ -165,7 +166,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForOfflineSoleJudicialSeparation() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
-        caseData.put("isJudicialSeparation", "Yes");
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
         caseData.remove("applicant1Email");
         caseData.remove("applicant2Email");
         caseData.put("applicant1Offline", "Yes");
@@ -180,7 +181,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplicationWithJudicialSeparation()
         throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
-        caseData.put("isJudicialSeparation", "Yes");
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
@@ -192,7 +193,42 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
         throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
         caseData.put("applicant2LanguagePreferenceWelsh", "Yes");
-        caseData.put("isJudicialSeparation", "Yes");
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForJointJudicialSeparation() throws Exception {
+        final Map<String, Object> caseData = caseData(JOINT_CITIZEN_REQUEST);
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleJudicialSeparationApp1Represented() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST);
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
+        caseData.remove("applicant1Email");
+        caseData.remove("applicant2Email");
+        caseData.put("applicant1Offline", "Yes");
+        caseData.put("applicant2Offline", "Yes");
+
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplicationWithJSPersonalService() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
+        caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
+        caseData.put("serviceMethod", "personalService");
 
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 

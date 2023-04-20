@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
@@ -35,7 +36,7 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
             .showSummary(false)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR))
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("uploadConfidentialDocuments")
             .pageLabel("Upload Confidential Documents")
             .complex(CaseData::getDocuments)

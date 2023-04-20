@@ -26,10 +26,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -54,7 +56,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .event(CASEWORKER_REISSUE_APPLICATION)
             .forStates(
                 AwaitingAos, AosDrafted, AosOverdue, ConditionalOrderRefused,
-                Holding, AwaitingDocuments, AwaitingService, AwaitingDwpResponse)
+                Holding, AwaitingDocuments, AwaitingService, AwaitingDwpResponse, AwaitingJsNullity)
             .name("Reissue")
             .description("Application reissued")
             .showSummary()
@@ -67,7 +69,8 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 SOLICITOR,
                 SUPER_USER,
                 LEGAL_ADVISOR,
-                SYSTEMUPDATE))
+                SYSTEMUPDATE,
+                JUDGE))
             .page("reissueApplication")
             .pageLabel("Reissue Application")
             .complex(CaseData::getApplication)
