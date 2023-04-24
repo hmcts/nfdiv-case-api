@@ -26,7 +26,7 @@ plugins {
   id 'org.springframework.boot' version '3.0.5'
   id 'com.github.ben-manes.versions' version '0.44.0'
   id 'hmcts.ccd.sdk' version '5.3.5'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.653'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.658'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -267,7 +267,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v4.9.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.1'
   implementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.0'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.0.1'
@@ -275,8 +275,8 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.19.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.19.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.7'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.7'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.8'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.8'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.0.0'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.6'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -330,7 +330,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.31.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.32.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.9.1'
 }
 
