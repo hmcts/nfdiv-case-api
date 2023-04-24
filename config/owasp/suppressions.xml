@@ -98,4 +98,12 @@
     <notes>spring framework will be upgraded as a tech debt</notes>
     <cve>CVE-2023-20860</cve>
   </suppress>
+  <suppress>
+    <notes>No fix is yet avaialble for this vulnerability</notes>
+    <cve>CVE-2020-8908</cve>
+  </suppress>
+  <suppress>
+    <notes>No fix is yet avaialble for this vulnerability</notes>
+    <cve>CVE-2016-9878</cve>
+  </suppress>
 </suppressions>
