@@ -43,7 +43,7 @@ public class GeneralOrderTemplateContent {
     private static final String AN_ASSISTANT_JUDGES_CLERK = "an %s";
     private static final String A_PROPER_OFFICER_OF_THE_COURT = "a %s";
 
-    private static final String A_RECORDER = "a %s";
+    private static final String RECORDER_NAME = "%s %s";
 
     @Autowired
     private Clock clock;
@@ -88,7 +88,8 @@ public class GeneralOrderTemplateContent {
                 String.format(A_PROPER_OFFICER_OF_THE_COURT, PROPER_OFFICER_OF_THE_COURT.getLabel()));
         } else if (RECORDER.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
             templateContent.put(GENERAL_ORDER_MADE_BY,
-                String.format(A_RECORDER, RECORDER.getLabel()));
+                String.format(RECORDER_NAME, generalOrder.getGeneralOrderJudgeOrLegalAdvisorType().getLabel(),
+                    generalOrder.getGeneralOrderJudgeOrLegalAdvisorName()));
         }
 
         if (caseData.getApplicationType().isSole()) {
