@@ -31,6 +31,8 @@ public class D8SPrayerTransformer implements Function<TransformationDetails, Tra
         if (toBoolean(ocrDataFields.getPrayerApplicant1JudiciallySeparated())) {
             caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
             caseData.getApplicant1().getApplicantPrayer().setPrayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION));
+            caseData.getApplicant2().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
+            caseData.getApplicant2().getApplicantPrayer().setPrayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION));
         } else {
             transformationDetails.getTransformationWarnings().add("Please review prayer in the scanned form");
         }
