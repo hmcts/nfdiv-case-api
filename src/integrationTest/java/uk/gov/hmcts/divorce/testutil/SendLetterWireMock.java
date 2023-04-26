@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -19,8 +18,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 
 public final class SendLetterWireMock {
 
-    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
-    private static final WireMockServer SEND_LETTER_SERVER = new WireMockServer(wireMockConfig.portNumber());
+    private static final WireMockServer SEND_LETTER_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     private SendLetterWireMock() {
     }
@@ -59,7 +57,7 @@ public final class SendLetterWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("send-letter.url=" + "http://localhost:" + wireMockConfig.portNumber())
+                .of("send-letter.url=" + "http://localhost:" + SEND_LETTER_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

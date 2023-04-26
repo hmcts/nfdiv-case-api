@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -21,8 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISAT
 
 public final class DocManagementStoreWireMock {
 
-    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
-    private static final WireMockServer DM_STORE_SERVER = new WireMockServer(wireMockConfig.portNumber());
+    private static final WireMockServer DM_STORE_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     private DocManagementStoreWireMock() {
     }
@@ -72,7 +70,7 @@ public final class DocManagementStoreWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("document_management.url=" + "http://localhost:" + wireMockConfig.portNumber())
+                .of("document_management.url=" + "http://localhost:" + DM_STORE_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

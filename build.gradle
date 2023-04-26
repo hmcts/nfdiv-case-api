@@ -281,7 +281,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.0.0'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.6'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.15'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -479,6 +479,10 @@ task installChromium(type: JavaExec) {
   classpath = sourceSets.cftlibTest.runtimeClasspath
   main = 'com.microsoft.playwright.CLI'
   args = ['install', 'chromium']
+}
+
+configurations.all {
+  exclude group: 'com.vaadin.external.google', module: 'android-json'
 }
 
 tasks.cftlibTest.dependsOn(installChromium)

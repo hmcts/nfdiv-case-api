@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -16,8 +15,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public final class FeesWireMock {
 
-    private static final WireMockConfiguration wireMockConfig = wireMockConfig().dynamicPort();
-    private static final WireMockServer FEES_SERVER = new WireMockServer(wireMockConfig.portNumber());
+    private static final WireMockServer FEES_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     private FeesWireMock() {
     }
@@ -37,7 +35,7 @@ public final class FeesWireMock {
 
     public static void stubForFeesLookup(final String feeResponse) {
         FEES_SERVER.stubFor(get("/fees-register/fees/lookup"
-            + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family+court&service=divorce&keyword=DivorceCivPart")
+            + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family%20court&service=divorce&keyword=DivorceCivPart")
             .willReturn(aResponse()
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .withBody(feeResponse)));
@@ -45,7 +43,7 @@ public final class FeesWireMock {
 
     public static void stubForFeesLookup(final String feeResponse, final String event, final String service, final String keyword) {
         String url = String.format("/fees-register/fees/lookup"
-            + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family+court&service=%s&keyword=%s",
+            + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family%%20court&service=%s&keyword=%s",
             event, service, keyword);
 
         FEES_SERVER.stubFor(get(url)
@@ -57,7 +55,7 @@ public final class FeesWireMock {
     public static void stubForFeesNotFound() {
         FEES_SERVER.stubFor(get(urlEqualTo(
             "/fees-register/fees/lookup"
-                + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family+court&service=divorce&keyword=DivorceCivPart"))
+                + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family%20court&service=divorce&keyword=DivorceCivPart"))
             .willReturn(aResponse()
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .withStatus(HttpStatus.NOT_FOUND.value())
@@ -68,7 +66,7 @@ public final class FeesWireMock {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
-                .of("fee.api.baseUrl=" + "http://localhost:" + wireMockConfig.portNumber())
+                .of("fee.api.baseUrl=" + "http://localhost:" + FEES_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
     }
