@@ -47,7 +47,8 @@ public class SuperuserRemoveCaseFromBulkList implements CCDConfig<BulkActionCase
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, SUPER_USER))
+            //.grant(CREATE_READ_UPDATE, SUPER_USER)
+            )
             .page("removeCaseFromBulkList", this::midEvent)
             .pageLabel("Remove case from bulk list")
             .mandatoryNoSummary(BulkActionCaseData::getCasesAcceptedToListForHearing);
