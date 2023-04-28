@@ -58,6 +58,7 @@ sourceSets {
 }
 
 sourceCompatibility = 17
+targetCompatibility = 17
 
 java {
   toolchain {
