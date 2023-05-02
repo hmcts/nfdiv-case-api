@@ -80,8 +80,7 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
                     .addressLine2(ocrDataFields.getRespondentOrApplicant2SecondLineOfAddress())
                     .postTown(ocrDataFields.getRespondentOrApplicant2TownOrCity())
                     .county(ocrDataFields.getRespondentOrApplicant2County())
-                    // set country to UK if not overseas
-                    .country(toBoolean(ocrDataFields.getServeOutOfUK()) ? ocrDataFields.getRespondentOrApplicant2Country() : "UK")
+                    .country(ocrDataFields.getRespondentOrApplicant2Country())
                     .postCode(ocrDataFields.getRespondentOrApplicant2Postcode())
                     .build()
             )
