@@ -81,7 +81,7 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
                     .postTown(ocrDataFields.getRespondentOrApplicant2TownOrCity())
                     .county(ocrDataFields.getRespondentOrApplicant2County())
                     // set country to UK if not overseas
-                    .country(toBoolean(ocrDataFields.getServeOutOfUK()) ? "UK" : ocrDataFields.getRespondentOrApplicant2Country())
+                    .country(toBoolean(ocrDataFields.getServeOutOfUK()) ? ocrDataFields.getRespondentOrApplicant2Country() : "UK")
                     .postCode(ocrDataFields.getRespondentOrApplicant2Postcode())
                     .build()
             )
