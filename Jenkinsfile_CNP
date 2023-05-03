@@ -218,6 +218,14 @@ withPipeline(type, product, component) {
       env.FEE_API_URL = "http://fees-register-api-demo.service.core-compute-demo.internal"
     }
 
+  onIthc {
+    env.ENVIRONMENT="ithc"
+    env.CASE_API_URL = "http://nfdiv-case-api-ithc.service.core-compute-demo.internal"
+    env.CCD_DEF_NAME = "ithc"
+    env.IDAM_API_URL_BASE = "https://idam-api.ithc.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-ithc.service.core-compute-demo.internal"
+  }
+
     before('functionalTest:preview') {
       // Only for preview upload the definitions via script as high level data set up relies on an existing environment
       uploadCoreCaseDataDefinitions()
