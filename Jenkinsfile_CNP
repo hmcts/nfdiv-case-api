@@ -215,15 +215,16 @@ withPipeline(type, product, component) {
       env.CCD_DEF_NAME = "perftest"
       env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
-      env.FEE_API_URL = "http://fees-register-api-demo.service.core-compute-demo.internal"
+      env.FEE_API_URL = "http://fees-register-api-perftest.service.core-compute-perftest.internal"
     }
 
   onIthc {
     env.ENVIRONMENT="ithc"
-    env.CASE_API_URL = "http://nfdiv-case-api-ithc.service.core-compute-demo.internal"
+    env.CASE_API_URL = "http://nfdiv-case-api-ithc.service.core-compute-ithc.internal"
     env.CCD_DEF_NAME = "ithc"
     env.IDAM_API_URL_BASE = "https://idam-api.ithc.platform.hmcts.net"
-    env.S2S_URL_BASE = "http://rpe-service-auth-provider-ithc.service.core-compute-demo.internal"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-ithc.service.core-compute-ithc.internal"
+    env.FEE_API_URL = "http://fees-register-api-ithc.service.core-compute-ithc.internal"
   }
 
     before('functionalTest:preview') {
