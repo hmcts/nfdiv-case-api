@@ -19,9 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Empty;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 
 @Component
@@ -37,7 +35,7 @@ public class SuperuserRemoveCaseFromBulkList implements CCDConfig<BulkActionCase
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(SUPERUSER_REMOVE_CASE_BULK_LIST)
-            .forStates(Created, Listed, Pronounced)
+            .forStates(Empty)
             .name("Super remove case from list")
             .description("Superuser remove case from bulk list")
             .showSummary()
