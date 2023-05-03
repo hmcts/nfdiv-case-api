@@ -65,6 +65,12 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
             warnings.add("Please review respondent/applicant2 name different to marriage certificate in the scanned form");
         }
 
+        String applicant2Country = ocrDataFields.getRespondentOrApplicant2Country();
+        if (!toBoolean(ocrDataFields.getServeOutOfUK())) {
+            applicant2Country = "UK";
+            warnings.add("Please review respondent/applicant2 Address.  Country changed to UK.");
+        }
+
         var applicant2 = Applicant
             .builder()
             .firstName(ocrDataFields.getRespondentOrApplicant2FirstName())
@@ -80,7 +86,7 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
                     .addressLine2(ocrDataFields.getRespondentOrApplicant2SecondLineOfAddress())
                     .postTown(ocrDataFields.getRespondentOrApplicant2TownOrCity())
                     .county(ocrDataFields.getRespondentOrApplicant2County())
-                    .country(ocrDataFields.getRespondentOrApplicant2Country())
+                    .country(applicant2Country)
                     .postCode(ocrDataFields.getRespondentOrApplicant2Postcode())
                     .build()
             )
