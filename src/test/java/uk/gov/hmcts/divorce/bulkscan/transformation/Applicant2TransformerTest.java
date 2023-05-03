@@ -47,7 +47,8 @@ public class Applicant2TransformerTest {
 
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getTransformationWarnings()).containsExactly("Please review respondent/applicant2 Address.  Country changed to UK.");
+        assertThat(transformedOutput.getTransformationWarnings())
+            .containsExactly("Please review respondent/applicant2 Address.  Country changed to UK.");
 
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
