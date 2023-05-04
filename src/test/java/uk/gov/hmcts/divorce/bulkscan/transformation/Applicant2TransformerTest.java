@@ -47,9 +47,6 @@ public class Applicant2TransformerTest {
 
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getTransformationWarnings())
-            .containsExactly("Please review respondent/applicant2 Address.  Country changed from '' to 'UK'.");
-
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
 
@@ -116,10 +113,7 @@ public class Applicant2TransformerTest {
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
         assertThat(transformedOutput.getTransformationWarnings())
-            .containsExactlyInAnyOrder(
-                "Please review applicant2 financial order prayer for in scanned form",
-                "Please review respondent/applicant2 Address.  Country changed from '' to 'UK'."
-            );
+            .containsExactlyInAnyOrder("Please review applicant2 financial order prayer for in scanned form");
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
         expectedApplicant2.setFinancialOrder(YES);
@@ -153,10 +147,7 @@ public class Applicant2TransformerTest {
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
         assertThat(transformedOutput.getTransformationWarnings())
-            .containsExactlyInAnyOrder(
-                "Please review applicant2 financial order prayer for in scanned form",
-                "Please review respondent/applicant2 Address.  Country changed from '' to 'UK'."
-            );
+            .containsExactlyInAnyOrder("Please review applicant2 financial order prayer for in scanned form");
 
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);

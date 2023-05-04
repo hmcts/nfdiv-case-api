@@ -66,11 +66,12 @@ public class Applicant2Transformer implements Function<TransformationDetails, Tr
         }
 
         String applicant2Country = ocrDataFields.getRespondentOrApplicant2Country();
-        if (!toBoolean(ocrDataFields.getServeOutOfUK())) {
-            applicant2Country = "UK";
+        String countryUK = "UK";
+        if (!toBoolean(ocrDataFields.getServeOutOfUK()) && !applicant2Country.equals(countryUK)) {
+            applicant2Country = countryUK;
             warnings.add(String.format(
-                "Please review respondent/applicant2 Address.  Country changed from '%s' to 'UK'.",
-                ocrDataFields.getRespondentOrApplicant2Country()
+                "Please review respondent/applicant2 Address.  Country changed from '%s' to '%s'.",
+                ocrDataFields.getRespondentOrApplicant2Country(), countryUK
             ));
         }
 
