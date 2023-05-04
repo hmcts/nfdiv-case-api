@@ -333,7 +333,7 @@ dependencies {
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
   cftlibTestImplementation 'com.microsoft.playwright:playwright:1.32.0'
-  cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:1.9.1'
+  cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.0.1'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
