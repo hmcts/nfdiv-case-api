@@ -138,7 +138,13 @@ public class CaseworkerRescindConditionalOrderTest {
             .anyMatch(doc -> CONDITIONAL_ORDER_GRANTED.equals(doc.getValue().getDocumentType())))
             .isFalse();
         assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
-        verify(ccdUpdateService).submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitBulkActionEvent(
+                Long.parseLong(BULK_CASE_REFERENCE),
+                CASEWORKER_REMOVE_CASES_BULK_LIST,
+                user,
+                SERVICE_AUTHORIZATION
+            );
     }
 
     @Test
@@ -203,7 +209,13 @@ public class CaseworkerRescindConditionalOrderTest {
             .isFalse();
 
         assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
-        verify(ccdUpdateService).submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitBulkActionEvent(
+                Long.parseLong(BULK_CASE_REFERENCE),
+                CASEWORKER_REMOVE_CASES_BULK_LIST,
+                user,
+                SERVICE_AUTHORIZATION
+            );
     }
 
     @Test

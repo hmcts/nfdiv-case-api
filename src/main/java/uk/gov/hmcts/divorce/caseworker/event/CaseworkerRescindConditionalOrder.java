@@ -131,7 +131,12 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
 
             if (caseRemovedFromCasesAcceptedToListForHearing) {
                 log.info("Submitting {} event for case id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
-                ccdUpdateService.submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, serviceAuthorization);
+                ccdUpdateService.submitBulkActionEvent(
+                    bulkCaseDetails.getId(),
+                    CASEWORKER_REMOVE_CASES_BULK_LIST,
+                    user,
+                    serviceAuthorization
+                );
             }
         }
 

@@ -9,12 +9,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.bulkaction.task.UpdateCasesToBeRemovedTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
@@ -23,11 +22,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
@@ -39,16 +37,16 @@ public class SystemProcessCasesToBeRemovedTaskTest {
     private CcdSearchService ccdSearchService;
 
     @Mock
+    private CcdUpdateService ccdUpdateService;
+
+    @Mock
     private IdamService idamService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
-
-    @Mock
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private UpdateCasesToBeRemovedTask updateCasesToBeRemovedTask;
 
     @InjectMocks
     private SystemProcessCasesToBeRemovedTask systemProcessCasesToBeRemovedTask;
@@ -82,26 +80,23 @@ public class SystemProcessCasesToBeRemovedTaskTest {
         when(ccdSearchService.searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails1, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails2, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
-
         systemProcessCasesToBeRemovedTask.run();
 
-        verify(bulkCaseProcessingService)
-            .updateCasesToBeRemoved(
-                caseDetails1,
-                SYSTEM_REMOVE_BULK_CASE,
-                caseTask,
-                user,
-                SERVICE_AUTHORIZATION);
-        verify(bulkCaseProcessingService)
-            .updateCasesToBeRemoved(
-                caseDetails2,
-                SYSTEM_REMOVE_BULK_CASE,
-                caseTask,
-                user,
-                SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitBulkActionEvent(
+            updateCasesToBeRemovedTask,
+            1L,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            updateCasesToBeRemovedTask,
+            2L,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION
+        );
     }
 
     @Test
@@ -113,6 +108,6 @@ public class SystemProcessCasesToBeRemovedTaskTest {
 
         systemProcessCasesToBeRemovedTask.run();
 
-        verifyNoInteractions(bulkCaseProcessingService);
+        verifyNoInteractions(ccdUpdateService);
     }
 }
