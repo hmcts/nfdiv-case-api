@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.bulkaction.util.BulkCaseTaskUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
@@ -34,8 +34,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-
 public class ProcessFailedToUnlinkBulkCaseTaskTest {
+
+    @Mock
+    private BulkCaseTaskUtil bulkCaseTaskUtil;
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -69,8 +71,6 @@ public class ProcessFailedToUnlinkBulkCaseTaskTest {
             bulkListCaseDetailsListValue1
         );
 
-        final List<ListValue<BulkListCaseDetails>> output = new ArrayList<>();
-
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
@@ -85,27 +85,19 @@ public class ProcessFailedToUnlinkBulkCaseTaskTest {
             .data(bulkActionCaseData)
             .build();
 
-        final var caseTask = mock(CaseTask.class);
         final var user = mock(User.class);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_REMOVE_BULK_CASE))
-            .thenReturn(caseTask);
-        when(bulkTriggerService.bulkTrigger(
-            BulkCaseProcessingService.getFailedBulkCases(bulkActionCaseDetails),
-            SYSTEM_REMOVE_BULK_CASE,
-            caseTask,
-            user,
-            SERVICE_AUTHORIZATION
-        )).thenReturn(output);
+
+        when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, BulkCaseProcessingService.getFailedBulkCases(bulkActionCaseDetails),
+                SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> result =
             processFailedToUnlinkBulkCaseTask.apply(bulkActionCaseDetails);
 
-        assertThat(result.getData().getBulkListCaseDetails()).hasSize(2);
-        assertThat(result.getData().getErroredCaseDetails()).hasSize(0);
-        assertThat(result.getData().getProcessedCaseDetails()).hasSize(2);
+        verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, BulkCaseProcessingService.getFailedBulkCases(bulkActionCaseDetails),
+                SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION);
     }
 }

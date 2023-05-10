@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.bulkaction.util.BulkCaseTaskUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -19,11 +19,10 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
@@ -38,6 +37,9 @@ public class UpdatePronouncementJudgeDetailsTaskTest {
     private BulkTriggerService bulkTriggerService;
 
     @Mock
+    private BulkCaseTaskUtil bulkCaseTaskUtil;
+
+    @Mock
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Mock
@@ -45,9 +47,6 @@ public class UpdatePronouncementJudgeDetailsTaskTest {
 
     @Mock
     private IdamService idamService;
-
-    @Mock
-    private HttpServletRequest request;
 
     @InjectMocks
     private UpdatePronouncementJudgeDetailsTask updatePronouncementJudgeDetailsTask;
@@ -62,8 +61,6 @@ public class UpdatePronouncementJudgeDetailsTaskTest {
             bulkListCaseDetailsListValue2
         );
 
-        final List<ListValue<BulkListCaseDetails>> output = new ArrayList<>();
-
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
@@ -77,25 +74,18 @@ public class UpdatePronouncementJudgeDetailsTaskTest {
             .data(bulkActionCaseData)
             .build();
 
-        final var caseTask = mock(CaseTask.class);
         final var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
-            .thenReturn(caseTask);
-        when(bulkTriggerService.bulkTrigger(
-            bulkListCaseDetails,
-            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
-            caseTask,
-            user,
-            SERVICE_AUTHORIZATION
-        )).thenReturn(output);
+
+        when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
+                SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> result =
             updatePronouncementJudgeDetailsTask.apply(bulkActionCaseDetails);
 
-        assertThat(result.getData().getBulkListCaseDetails()).hasSize(2);
-        assertThat(result.getData().getProcessedCaseDetails()).hasSize(2);
+        verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, bulkListCaseDetails,
+                SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE, user, SERVICE_AUTHORIZATION);
     }
 }
