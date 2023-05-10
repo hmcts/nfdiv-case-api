@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.util.BulkCaseTaskUtil;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
