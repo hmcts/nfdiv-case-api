@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
+import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
+import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -40,6 +42,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 
 @ExtendWith(MockitoExtension.class)
 class BulkCaseTaskUtilTest {
+
+    @Mock
+    private CaseProcessingStateFilter caseProcessingStateFilter;
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -113,7 +118,8 @@ class BulkCaseTaskUtilTest {
     }
 
     @Test
-    void shouldRetryPronounceCasesTest() {
+    void shouldPronounceCasesTest() {
+
         final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced);
         final EnumSet<State> postStates = EnumSet.noneOf(State.class);
 
@@ -146,6 +152,20 @@ class BulkCaseTaskUtilTest {
                 .<BulkActionCaseData, BulkActionState>builder()
                 .data(bulkActionCaseData)
                 .build();
+
+        final CaseFilterProcessingState caseFilterProcessingState = new CaseFilterProcessingState(
+                bulkListCaseDetails,
+                erroredCaseList,
+                processedCaseList
+        );
+
+        when(caseProcessingStateFilter.filterProcessingState(
+                bulkListCaseDetails,
+                user,
+                SERVICE_AUTHORIZATION,
+                awaitingPronouncement,
+                postStates
+        )).thenReturn(caseFilterProcessingState);
 
         when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE))
                 .thenReturn(caseTask);
