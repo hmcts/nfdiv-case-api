@@ -21,16 +21,16 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtH
 public class ProcessFailedScheduledCasesTask implements BulkCaseTask {
 
     @Autowired
-    private BulkCaseTaskUtil bulkCaseTaskUtil;
+    private HttpServletRequest request;
 
     @Autowired
-    private HttpServletRequest request;
+    protected IdamService idamService;
 
     @Autowired
     protected AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    protected IdamService idamService;
+    private BulkCaseTaskUtil bulkCaseTaskUtil;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

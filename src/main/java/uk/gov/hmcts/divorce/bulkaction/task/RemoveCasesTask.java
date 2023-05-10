@@ -23,13 +23,13 @@ public class RemoveCasesTask implements BulkCaseTask {
     private BulkTriggerService bulkTriggerService;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private IdamService idamService;
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
