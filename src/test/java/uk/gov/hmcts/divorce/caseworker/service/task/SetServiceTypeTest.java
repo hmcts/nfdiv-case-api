@@ -24,10 +24,9 @@ class SetServiceTypeTest {
     private SetServiceType setServiceType;
 
     @Test
-    void shouldSetServiceTypeToPersonalServiceIfApplicant1AndApplicant2NotRepresentedAndApplicant2IsOverseas() {
+    void shouldSetServiceTypeToPersonalServiceIfApplicant2NotRepresentedAndApplicant2IsOverseas() {
 
         final CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
 
@@ -39,12 +38,10 @@ class SetServiceTypeTest {
         final CaseDetails<CaseData, State> response = setServiceType.apply(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplicant1().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
         expectedCaseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
         expectedCaseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
-        assertThat(response.getData().getApplicant1()).isEqualTo(expectedCaseData.getApplicant1());
         assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
         assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
     }
