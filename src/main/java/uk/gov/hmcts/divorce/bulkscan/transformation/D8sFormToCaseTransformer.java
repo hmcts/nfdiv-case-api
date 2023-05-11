@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
@@ -90,6 +91,8 @@ public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
                 .andThen(paperFormDetailsTransformer)
                 .apply(transformationDetails);
 
+            caseData.getApplicant1().setOffline(YES);
+            caseData.getApplicant2().setOffline(YES);
             caseData = commonFormToCaseTransformer.setDefaultValues(caseData);
             transformationWarnings = commonFormToCaseTransformer.verifyFields(transformationDetails, transformationWarnings);
 
