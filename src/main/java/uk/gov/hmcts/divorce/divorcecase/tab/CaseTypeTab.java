@@ -103,7 +103,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicationType=\"soleApplication\" AND coSwitchedToSole!=\"Yes\" AND "
                 + notShowForState(
                 Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
-                AwaitingAos, AosDrafted, AosOverdue, AwaitingService) )
+                AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .field("applicant2Offline", NEVER_SHOW)
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
             .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
