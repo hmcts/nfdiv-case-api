@@ -127,7 +127,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetApplicant2OfflineWhenJudicialSeparation() {
+    public void shouldSetBothApplicantsOfflineWhenJudicialSeparation() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -139,11 +139,12 @@ public class CaseworkerCreatePaperCaseTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
+        assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
         assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
     }
 
     @Test
-    public void shouldSetApplicant2OfflineWhenSeparation() {
+    public void shouldSetBothApplicantsOfflineWhenSeparation() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setSupplementaryCaseType(SupplementaryCaseType.SEPARATION);
@@ -155,6 +156,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
+        assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
         assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
     }
 }

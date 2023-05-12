@@ -54,9 +54,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
         var applicant2 = data.getApplicant2();
-        if (data.isJudicialSeparationCase()) {
-            applicant2.setOffline(YES);
-        } else if (JOINT_APPLICATION.equals(data.getApplicationType())) {
+        if (data.isJudicialSeparationCase() || JOINT_APPLICATION.equals(data.getApplicationType())) {
             applicant2.setOffline(YES);
         } else if (SOLE_APPLICATION.equals(data.getApplicationType()) && isBlank(applicant2.getEmail())) {
             applicant2.setOffline(YES);
