@@ -102,7 +102,6 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     }
 
     private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
-        final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
 
@@ -110,34 +109,27 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         var templateId = NFD_NOP_APP2_JS_SOLE;
         var templateContent = noticeOfProceedingContent.apply(caseData, caseId, applicant2,
                 caseData.getApplicant2().getLanguagePreference());
-        var coversheetContent = applicant2.isBasedOverseas()
-            ? coversheetApplicantTemplateContent.apply(caseData, caseId, applicant1)
-            : coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2);
-        var logMsg = applicant2.isBasedOverseas()
-            ? String.format("Generating coversheet for overseas JS respondent for sole case id %s ", caseId)
-            : String.format("Generating coversheet for JS respondent for sole case id %s ", caseId);
+        var coversheetContent = coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2);
 
         if (applicant2.isRepresented()) {
             coverSheet = COVERSHEET_APPLICANT2_SOLICITOR;
             templateId = NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
             templateContent = solicitorTemplateContent.apply(caseData, caseId, false);
             coversheetContent = coversheetSolicitorTemplateContent.apply(caseData, caseId);
-            logMsg = String.format("Generating coversheet for JS respondent solicitor for sole case id %s ", caseId);
         }
-
         generateNoticeOfProceedings(
                 caseData,
                 caseId,
                 templateId,
                 templateContent
         );
-        log.info(logMsg);
+        log.info("Generating coversheet for JS respondent for sole case id {} ", caseId);
         generateCoversheet.generateCoversheet(
                 caseData,
                 caseId,
                 coverSheet,
                 coversheetContent,
-                applicant2.getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference()
         );
     }
 
