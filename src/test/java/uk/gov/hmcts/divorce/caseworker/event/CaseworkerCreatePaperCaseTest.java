@@ -139,7 +139,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
-        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(NO);
+        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
     }
 
     @Test
@@ -155,6 +155,6 @@ public class CaseworkerCreatePaperCaseTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
-        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(NO);
+        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
     }
 }
