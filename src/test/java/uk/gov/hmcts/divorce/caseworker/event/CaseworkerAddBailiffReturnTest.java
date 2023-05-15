@@ -30,7 +30,9 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAddBailiffReturn.CASEWORKER_ADD_BAILIFF_RETURN;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -127,6 +129,41 @@ class CaseworkerAddBailiffReturnTest {
         verify(notificationDispatcher).send(successfulNotification, expectedCaseData, 12345L);
     }
 
+    @Test
+    void shouldSetStateToAwaitingJsNullityIfSuccessfullyServed() {
+
+        final LocalDate issueDate = getExpectedLocalDate();
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .serviceApplicationGranted(YES)
+                    .alternativeServiceType(BAILIFF)
+                    .bailiff(
+                        Bailiff
+                            .builder()
+                            .successfulServedByBailiff(YES)
+                            .build()
+                    )
+                    .build())
+            .application(
+                Application.builder()
+                    .issueDate(issueDate)
+                    .build()
+            )
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(12345L);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAddBailiffReturn.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getState()).isEqualTo(AwaitingJsNullity);
+        verify(notificationDispatcher).send(successfulNotification, caseData, 12345L);
+    }
     @Test
     void shouldSetStateToAwaitingAosIfNotSuccessfullyServed() {
 
