@@ -95,7 +95,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
         log.info("Caseworker add bailiff return about to submit callback invoked for case id: {}", caseId);
 
         if (YES == caseData.getAlternativeService().getBailiff().getSuccessfulServedByBailiff()) {
-            if (caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase()) {
+            if (caseData.isJudicialSeparationCase()) {
                 log.info("Setting state to AwaitingJsNullity for case id: {}", caseId);
                 state = AwaitingJsNullity;
             } else {
