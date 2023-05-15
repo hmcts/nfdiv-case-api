@@ -115,8 +115,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
 
         confirmService.addToDocumentsUploaded(updateDetails);
 
-        State state = updateDetails.getData().getApplicationType().isSole()
-            && updateDetails.getData().isJudicialSeparationCase()
+        State state = updateDetails.getData().isJudicialSeparationCase()
             && !isEmpty(updateDetails.getData().getApplication().getSolicitorService().getServiceProcessedByProcessServer())
             ? AwaitingJsNullity
             : updateDetails.getState();
