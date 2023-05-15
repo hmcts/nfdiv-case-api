@@ -164,6 +164,7 @@ class CaseworkerAddBailiffReturnTest {
         assertThat(response.getState()).isEqualTo(AwaitingJsNullity);
         verify(notificationDispatcher).send(successfulNotification, caseData, 12345L);
     }
+
     @Test
     void shouldSetStateToAwaitingAosIfNotSuccessfullyServed() {
 

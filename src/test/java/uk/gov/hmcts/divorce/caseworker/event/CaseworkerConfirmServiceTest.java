@@ -128,6 +128,7 @@ public class CaseworkerConfirmServiceTest {
 
         verify(confirmService).addToDocumentsUploaded(caseDetails);
     }
+
     @Test
     public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedList() {
         final CaseData caseData = caseData();
