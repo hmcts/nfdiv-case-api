@@ -63,8 +63,7 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
 
         final CaseDetails<CaseData, State> updatedDetails = caseTasks(setHoldingDueDate, setServiceConfirmed).run(details);
         final CaseData updatedData = updatedDetails.getData();
-        final State endState = updatedData.getApplicationType().isSole()
-            && updatedData.isJudicialSeparationCase() ? AwaitingJsNullity : Holding;
+        final State endState = updatedData.isJudicialSeparationCase() ? AwaitingJsNullity : Holding;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedData)
