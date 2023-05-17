@@ -44,6 +44,12 @@
       "applicant1PrayerFinancialOrdersChild": [
         "financialOrdersChild"
       ],
+      "applicant1PrayerJudicialSeparation": [
+        "applyJudicialSeparation"
+      ],
+      "applicant2PrayerJudicialSeparation": [
+        "applyJudicialSeparation"
+      ],
       "marriageFormationType": "oppositeSexCouple",
       "applicant1MiddleName": "",
       "applicant2StatementOfTruth": "Yes",
@@ -79,6 +85,7 @@
       "applicant2HWFNeedHelp": "Yes",
       "applicant1ScreenHasMarriageBroken": "Yes",
       "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+      "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
       "jurisdictionConnections": [
         "A"
       ],

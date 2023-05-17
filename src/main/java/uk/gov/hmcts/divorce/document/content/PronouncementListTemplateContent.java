@@ -82,7 +82,7 @@ public class PronouncementListTemplateContent {
             caseLinkMap.put(RESPONDENT_HEADING, format("%s %s", mainCaseData.getApplicant2().getFirstName(),
                 mainCaseData.getApplicant2().getLastName()));
             caseLinkMap.put(SOLE_JOINT_HEADING, SOLE_APPLICATION.equals(mainCaseData.getApplicationType()) ? "Sole" : "Joint");
-            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, mainCaseData.hasNoSupplementaryCaseType()
+            caseLinkMap.put(DIVORCE_OR_DISSOLUTION, mainCaseData.hasNaOrNullSupplementaryCaseType()
                 ? mainCaseData.getDivorceOrDissolution().getLabel()
                 : mainCaseData.getSupplementaryCaseType().getLabel());
 
