@@ -128,8 +128,7 @@ class CaseworkerNoticeOfChangeTest {
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
+                CREATOR.getRole()
             )
         ));
     }
@@ -157,8 +156,7 @@ class CaseworkerNoticeOfChangeTest {
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
+                CREATOR.getRole()
             )
         ));
     }
@@ -236,8 +234,7 @@ class CaseworkerNoticeOfChangeTest {
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
+                UserRole.APPLICANT_2.getRole()
             )
         ));
     }
@@ -266,8 +263,7 @@ class CaseworkerNoticeOfChangeTest {
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
+                UserRole.APPLICANT_2.getRole()
             )
         ));
     }

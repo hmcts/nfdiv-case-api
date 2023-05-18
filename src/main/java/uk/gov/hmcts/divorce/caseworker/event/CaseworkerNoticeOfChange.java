@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -108,27 +109,50 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     ) {
         log.info("Caseworker notice of change aboutToSubmit callback started for Case Id: {}", details.getId());
 
+        List<String> roles = new ArrayList<>();
+
         final var data = details.getData();
         final var applicant = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
             ? data.getApplicant1()
             : data.getApplicant2();
 
-        if (!data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) {
+        if (!data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) { // equivalent to saying if they are not represented
             applicant.setSolicitor(null);
             applicant.setSolicitorRepresented(NO);
             applicant.setOffline(YES);
+
+            if (data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1) {
+                roles.add(CREATOR.getRole());
+                roles.add(APPLICANT_1_SOLICITOR.getRole());
+            } else {
+                roles.add(APPLICANT_2.getRole());
+                roles.add(APPLICANT_2_SOLICITOR.getRole());
+            }
         } else if (data.getNoticeOfChange().getAreTheyDigital() == null || !data.getNoticeOfChange().getAreTheyDigital().toBoolean()) {
             applicant.getSolicitor().setOrganisationPolicy(null);
             applicant.setSolicitorRepresented(YES);
             applicant.setOffline(YES);
+
+            if (data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1) {
+                roles.add(CREATOR.getRole());
+                roles.add(APPLICANT_1_SOLICITOR.getRole());
+            } else {
+                roles.add(APPLICANT_2.getRole());
+                roles.add(APPLICANT_2_SOLICITOR.getRole());
+            }
         } else {
             applicant.setSolicitorRepresented(YES);
             applicant.setOffline(NO);
+            // here we are only removing the app1 and app2 roles and keeping the solicitor roles
+            // if either app1 or app 2 is represented and the solicitors are online
+
+            if (data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1) {
+                roles.add(CREATOR.getRole());
+            } else {
+                roles.add(APPLICANT_2.getRole());
+            }
         }
 
-        final var roles = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
-            ? List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole())
-            : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
 
         caseAccessService.removeUsersWithRole(details.getId(), roles);
 
