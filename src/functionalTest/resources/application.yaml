@@ -136,7 +136,6 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
 toggle:
-  enable_case_document_access_management: ${ENABLE_CDAM:true}
   enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
 
 logging:
