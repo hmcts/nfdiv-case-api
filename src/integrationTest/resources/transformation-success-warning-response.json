@@ -3,6 +3,7 @@
     "case_type_id": "NFD",
     "event_id": "create-paper-case",
     "case_data": {
+      "supplementaryCaseType": "notApplicable",
       "applicationType": "soleApplication",
       "applicant1ContactDetailsType": "private",
       "paperFormApplicantWillServeApplication": "No",
@@ -121,7 +122,7 @@
         "AddressLine2": "second line of address",
         "PostTown": "",
         "PostCode": "",
-        "Country": ""
+        "Country": "UK"
       },
       "applicant1ScreenHasMarriageBroken": "Yes",
       "paperFormApplicant2LegalRepSigningSOT": "No",
@@ -129,6 +130,10 @@
         {
           "id": "${json-unit.any-string}",
           "value": "Please review divorce type in the scanned form"
+        },
+        {
+          "id": "${json-unit.any-string}",
+          "value": "Please review respondent/applicant2 Address.  Country changed from '' to 'UK'."
         }
       ],
       "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
@@ -153,6 +158,7 @@
     }
   },
   "warnings": [
-    "Please review divorce type in the scanned form"
+    "Please review divorce type in the scanned form",
+    "Please review respondent/applicant2 Address.  Country changed from '' to 'UK'."
   ]
 }

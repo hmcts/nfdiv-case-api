@@ -56,7 +56,7 @@ withPipeline(type, product, component) {
     enableAksStagingDeployment()
     disableLegacyDeployment()
     loadVaultSecrets(secrets)
-    syncBranchesWithMaster(['demo', 'perftest', 'ithc'])
+    syncBranchesWithMaster(['perftest', 'ithc'])
     enableSlackNotifications('#no-fault-divorce-builds')
     MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component)
     approvedEnvironmentRepository(params.environment, metricsPublisher) {
@@ -163,8 +163,8 @@ withPipeline(type, product, component) {
       env.ENVIRONMENT="preview"
       env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}-java"
       env.CCD_DEF_NAME = "preview"
-      env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-      env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
+      env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
       env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
       env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
@@ -215,8 +215,17 @@ withPipeline(type, product, component) {
       env.CCD_DEF_NAME = "perftest"
       env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
-      env.FEE_API_URL = "http://fees-register-api-demo.service.core-compute-demo.internal"
+      env.FEE_API_URL = "http://fees-register-api-perftest.service.core-compute-perftest.internal"
     }
+
+  onIthc {
+    env.ENVIRONMENT="ithc"
+    env.CASE_API_URL = "http://nfdiv-case-api-ithc.service.core-compute-ithc.internal"
+    env.CCD_DEF_NAME = "ithc"
+    env.IDAM_API_URL_BASE = "https://idam-api.ithc.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-ithc.service.core-compute-ithc.internal"
+    env.FEE_API_URL = "http://fees-register-api-ithc.service.core-compute-ithc.internal"
+  }
 
     before('functionalTest:preview') {
       // Only for preview upload the definitions via script as high level data set up relies on an existing environment

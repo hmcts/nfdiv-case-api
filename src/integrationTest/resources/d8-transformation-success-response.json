@@ -3,6 +3,7 @@
     "case_type_id": "NFD",
     "event_id": "create-paper-case",
     "case_data": {
+      "supplementaryCaseType": "notApplicable",
       "applicationType": "soleApplication",
       "applicant1ContactDetailsType": "private",
       "sentNotifications": {},
@@ -120,7 +121,7 @@
         "AddressLine2": "second line of address",
         "PostTown": "",
         "PostCode": "",
-        "Country": ""
+        "Country": "UK"
       },
       "applicant1ScreenHasMarriageBroken": "Yes",
       "paperFormApplicant2LegalRepSigningSOT": "No",

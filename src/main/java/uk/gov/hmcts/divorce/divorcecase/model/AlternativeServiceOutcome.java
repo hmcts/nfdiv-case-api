@@ -17,6 +17,7 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
@@ -71,22 +72,30 @@ public class AlternativeServiceOutcome {
     Deemed or Dispensed Fields
      */
     @CCD(
+        label = "Refusal reason",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "ServiceApplicationRefusalReason",
+        displayOrder = 7
+    )
+    private ServiceApplicationRefusalReason refusalReason;
+
+    @CCD(
         label = "Reason for refusal",
         typeOverride = TextArea,
-        displayOrder = 7
+        displayOrder = 8
     )
     private String serviceApplicationRefusalReason;
 
     @CCD(
         label = "Service Application Decision date",
-        displayOrder = 8
+        displayOrder = 9
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate serviceApplicationDecisionDate;
 
     @CCD(
         label = "Deemed service date",
-        displayOrder = 9
+        displayOrder = 10
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate deemedServiceDate;
@@ -96,40 +105,40 @@ public class AlternativeServiceOutcome {
      */
     @CCD(
         label = "Court name",
-        displayOrder = 10
+        displayOrder = 11
     )
     private String localCourtName;
 
     @CCD(
         label = "Email address",
         typeOverride = Email,
-        displayOrder = 11
+        displayOrder = 12
     )
     private String localCourtEmail;
 
     @CCD(
         label = "Certificate of Service",
-        displayOrder = 12
+        displayOrder = 13
     )
     private DivorceDocument certificateOfServiceDocument;
 
     @CCD(
         label = "Certificate of service date",
-        displayOrder = 13
+        displayOrder = 14
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate certificateOfServiceDate;
 
     @CCD(
         label = "Did bailiff serve successfully?",
-        displayOrder = 14
+        displayOrder = 15
     )
     private YesOrNo successfulServedByBailiff;
 
     @CCD(
         label = "Reason for failure to serve",
         typeOverride = TextArea,
-        displayOrder = 15
+        displayOrder = 16
     )
     private String reasonFailureToServeByBailiff;
 

@@ -1,5 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
   "applicationType": "soleApplication",
   "reissueOption": "offlineAos",
   "issueDate": "2022-01-01",

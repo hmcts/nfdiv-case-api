@@ -1,5 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
   "applicant1FirstName": "John",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1LastName": "Smith",

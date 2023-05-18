@@ -41,6 +41,7 @@
       }
     ],
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "dueDate": "${json-unit.any-string}"
   },
   "state": "AwaitingAos"
