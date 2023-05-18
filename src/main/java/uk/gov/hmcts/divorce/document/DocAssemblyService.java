@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
@@ -33,8 +32,6 @@ public class DocAssemblyService {
     @Autowired
     private DocmosisTemplateProvider docmosisTemplateProvider;
 
-    @Value("${toggle.enable_case_document_access_management}")
-    private boolean caseDocumentAccessManagementEnabled;
 
     public DocumentInfo renderDocument(final Map<String, Object> templateContent,
                                        final Long caseId,
@@ -69,23 +66,14 @@ public class DocAssemblyService {
 
     private DocAssemblyRequest getDocAssemblyRequest(final String templateName, final Map<String, Object> templateContent) {
 
-        if (caseDocumentAccessManagementEnabled) {
-            return DocAssemblyRequest
-                .builder()
-                .templateId(templateName)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateContent))
-                .secureDocStoreEnabled(true)
-                .caseTypeId(CASE_TYPE)
-                .jurisdictionId(JURISDICTION)
-                .build();
-        } else {
-            return DocAssemblyRequest
-                .builder()
-                .templateId(templateName)
-                .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateContent))
-                .build();
-        }
+        return DocAssemblyRequest
+            .builder()
+            .templateId(templateName)
+            .outputType("PDF")
+            .formPayload(objectMapper.valueToTree(templateContent))
+            .secureDocStoreEnabled(true)
+            .caseTypeId(CASE_TYPE)
+            .jurisdictionId(JURISDICTION)
+            .build();
     }
 }
