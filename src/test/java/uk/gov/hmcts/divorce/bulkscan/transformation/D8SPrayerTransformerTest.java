@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transf
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersChild.FINANCIAL_ORDERS_CHILD;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.FinancialOrdersThemselves.FINANCIAL_ORDERS_THEMSELVES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.JudicialSeparation.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -121,6 +122,7 @@ public class D8SPrayerTransformerTest {
             .builder()
             .prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE))
             .prayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES))
+            .prayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION))
             .build();
 
         assertThat(transformedOutput.getCaseData().getApplicant1().getApplicantPrayer())
@@ -163,6 +165,7 @@ public class D8SPrayerTransformerTest {
             .builder()
             .prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE))
             .prayerFinancialOrdersChild(Set.of(FINANCIAL_ORDERS_CHILD))
+            .prayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION))
             .build();
 
         assertThat(transformedOutput.getCaseData().getApplicant1().getApplicantPrayer())
@@ -206,6 +209,7 @@ public class D8SPrayerTransformerTest {
             .prayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE))
             .prayerFinancialOrdersThemselves(Set.of(FINANCIAL_ORDERS_THEMSELVES))
             .prayerFinancialOrdersChild(Set.of(FINANCIAL_ORDERS_CHILD))
+            .prayerJudicialSeparation(Set.of(JUDICIAL_SEPARATION))
             .build();
 
         assertThat(transformedOutput.getCaseData().getApplicant1().getApplicantPrayer())

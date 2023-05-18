@@ -19,14 +19,14 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LAST_M
 public class BulkActionSearchResultFields implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CREATED_DATE = "[CREATED_DATE]";
-    public static final String PRONOUNCEMENT_DATE = "pronouncedDate";
+    public static final String SCHEDULED_PRONOUNCEMENT_DATE = "dateAndTimeOfHearing";
 
     public static final List<SearchField<UserRole>> SEARCH_RESULT_FIELD_LIST = of(
         SearchField.<UserRole>builder().id(CCD_REFERENCE).label("Case Reference").build(),
         SearchField.<UserRole>builder().id(CREATED_DATE).label("Case created date").build(),
         SearchField.<UserRole>builder().id(LAST_MODIFIED_DATE).label("Last modified date").build(),
         SearchField.<UserRole>builder().id(CASE_STATE).label("Case Status").build(),
-        SearchField.<UserRole>builder().id(PRONOUNCEMENT_DATE).label("Pronouncement date").build()
+        SearchField.<UserRole>builder().id(SCHEDULED_PRONOUNCEMENT_DATE).label("Pronouncement date").build()
     );
 
     @Override

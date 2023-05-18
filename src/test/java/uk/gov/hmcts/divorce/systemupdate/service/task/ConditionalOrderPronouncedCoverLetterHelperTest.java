@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
@@ -287,7 +288,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         setMockClock(clock);
 
         CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.setApplicationType(JOINT_APPLICATION);
 
         Map<String, Object> applicant1TemplateVars = new HashMap<>();
@@ -328,7 +329,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         setMockClock(clock);
 
         CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant2().setSolicitorRepresented(NO);
 
@@ -376,7 +377,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
 
         CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setSolicitor(getOfflineSolicitor());
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().getSolicitor().setReference(CommonContent.SOLICITOR_REFERENCE);
@@ -423,7 +424,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
 
         CaseData caseData = buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE);
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant2().setSolicitor(getOfflineSolicitor());
         caseData.getApplicant2().setSolicitorRepresented(YES);
 

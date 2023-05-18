@@ -1,5 +1,6 @@
 {
   "data": {
+    "supplementaryCaseType": "notApplicable",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1SolicitorOrganisationPolicy": {

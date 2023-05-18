@@ -1,5 +1,6 @@
 {
   "data": {
+    "supplementaryCaseType": "notApplicable",
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
