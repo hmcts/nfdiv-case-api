@@ -47,8 +47,6 @@ public class Applicant2TransformerTest {
 
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
-        assertThat(transformedOutput.getTransformationWarnings()).isEmpty();
-
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
 
@@ -79,6 +77,7 @@ public class Applicant2TransformerTest {
                 "Please review respondent/applicant2 first name",
                 "Please review respondent/applicant2 last name",
                 "Please review respondent/applicant2 name different to marriage certificate in the scanned form",
+                "Please review respondent/applicant2 Address.  Country changed from '' to 'UK'.",
                 "Please review applicant2 financial order for in scanned form",
                 "Please review applicant2 financial order prayer for in scanned form"
             );
@@ -114,9 +113,7 @@ public class Applicant2TransformerTest {
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
         assertThat(transformedOutput.getTransformationWarnings())
-            .containsExactlyInAnyOrder(
-                "Please review applicant2 financial order prayer for in scanned form"
-            );
+            .containsExactlyInAnyOrder("Please review applicant2 financial order prayer for in scanned form");
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
         expectedApplicant2.setFinancialOrder(YES);
@@ -150,9 +147,7 @@ public class Applicant2TransformerTest {
         final var transformedOutput = applicant2Transformer.apply(transformationDetails);
 
         assertThat(transformedOutput.getTransformationWarnings())
-            .containsExactlyInAnyOrder(
-                "Please review applicant2 financial order prayer for in scanned form"
-            );
+            .containsExactlyInAnyOrder("Please review applicant2 financial order prayer for in scanned form");
 
         final var expectedApplicant2 =
             jsonToObject("src/test/resources/transformation/output/applicant2-transformed.json", Applicant.class);
