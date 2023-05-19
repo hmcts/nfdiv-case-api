@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -189,7 +190,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             serviceOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,
             templateId,
-            caseDataCopy.getApplicant1().getLanguagePreference(),
+            caseDataCopy.isJudicialSeparationCase() ? ENGLISH : caseDataCopy.getApplicant1().getLanguagePreference(),
             fileName
         );
 
