@@ -2,15 +2,16 @@ package uk.gov.hmcts.divorce.document.content;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -18,10 +19,15 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -50,11 +56,13 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class ServiceOrderTemplateContentTest {
 
-    @Autowired
+    @Mock
+    private CommonContent commonContent;
+
+    @InjectMocks
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Test
@@ -201,6 +209,8 @@ public class ServiceOrderTemplateContentTest {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
+
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
@@ -226,6 +236,8 @@ public class ServiceOrderTemplateContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
+
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
@@ -249,6 +261,8 @@ public class ServiceOrderTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDeemedServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
@@ -275,6 +289,8 @@ public class ServiceOrderTemplateContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
+
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
@@ -300,6 +316,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("priod");
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
@@ -317,6 +334,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
@@ -333,6 +351,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("partner sifil");
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
@@ -350,6 +369,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
@@ -383,8 +403,6 @@ public class ServiceOrderTemplateContentTest {
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
             .builder()
-            .emailAddress("contactdivorce@justice.gov.uk")
-            .phoneNumber("0300 303 0642")
             .build();
     }
 }
