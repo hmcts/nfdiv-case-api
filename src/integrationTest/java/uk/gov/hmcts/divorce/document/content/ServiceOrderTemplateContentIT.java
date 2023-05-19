@@ -22,7 +22,10 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
@@ -30,11 +33,15 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ORDER_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REFUSAL_REASON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SEPARATION_ORDER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SEPARATION_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_DECISION_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -64,6 +71,54 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
+        expectedEntries.put("dueDateString", ". You can apply from 20 June 2021.");
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingJudicialSeparationDispensedWithServiceGrantedDocument() {
+        CaseData caseData = buildCaseData(YES, DISPENSED);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION_PROCESS);
+        expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
+        expectedEntries.put("dueDateString", ".");
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingSeparationDispensedWithServiceGrantedDocument() {
+        CaseData caseData = buildCaseData(YES, DISPENSED);
+        caseData.setSupplementaryCaseType(SEPARATION);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, SEPARATION_PROCESS);
+        expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
+        expectedEntries.put("dueDateString", ".");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -85,6 +140,56 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
+        expectedEntries.put("dueDateString", " on 20 June 2021.");
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingJudicialSeparationDeemedWithServiceGrantedDocument() {
+        CaseData caseData = buildCaseData(YES, DEEMED);
+        caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION_PROCESS);
+        expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
+        expectedEntries.put("dueDateString", ".");
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingSeparationDeemedWithServiceGrantedDocument() {
+        CaseData caseData = buildCaseData(YES, DEEMED);
+        caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
+        caseData.setSupplementaryCaseType(SEPARATION);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, SEPARATION_PROCESS);
+        expectedEntries.put(DUE_DATE, "20 June 2021");
+        expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
+        expectedEntries.put("dueDateString", ".");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -108,6 +213,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -132,6 +238,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -154,6 +261,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -178,6 +286,7 @@ public class ServiceOrderTemplateContentIT {
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
@@ -201,6 +310,23 @@ public class ServiceOrderTemplateContentIT {
     }
 
     @Test
+    public void shouldApplyEnglishContentIfApplicant1LanguagePreferenceIsWelshOnJudicialSeparation() {
+        CaseData caseData = buildCaseData(NO, DEEMED);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(
+            entry(PARTNER, "spouse"),
+            entry(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION_PROCESS),
+            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
+        );
+    }
+
+    @Test
     public void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
@@ -212,6 +338,23 @@ public class ServiceOrderTemplateContentIT {
         assertThat(templateContent).contains(
             entry(PARTNER, "partner sifil"),
             entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY),
+            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
+        );
+    }
+
+    @Test
+    public void shouldApplyEnglishContentIfApplicant1LanguagePreferenceIsWelshOnSeparation() {
+        CaseData caseData = buildCaseData(NO, DEEMED);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.setSupplementaryCaseType(SEPARATION);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateContent).contains(
+            entry(PARTNER, "civil partner"),
+            entry(DIVORCE_OR_DISSOLUTION, SEPARATION_PROCESS),
             entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
         );
     }
