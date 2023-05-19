@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentTo
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
@@ -125,6 +126,11 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
             if (application.getIssueDate() == null) {
                 endState = Submitted;
+            } else if (caseDataCopy.getApplicationType().isSole()
+                && caseDataCopy.isJudicialSeparationCase()
+                && (DEEMED.equals(serviceApplication.getAlternativeServiceType())
+                    || DISPENSED.equals(serviceApplication.getAlternativeServiceType()))) {
+                endState = AwaitingJsNullity;
             } else {
                 endState = Holding;
                 if (caseDataCopy.getApplicationType().isSole()) {
