@@ -5,15 +5,12 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.CaseDocumentAMDocument;
 import uk.gov.hmcts.divorce.testutil.CaseDocumentAccessManagement;
-import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.reform.document.domain.Document;
 
 import java.io.IOException;
 import java.util.Map;
@@ -73,14 +70,10 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     private static final String CO_REJECTED_MID_EVENT_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-rejected-mid-event.json";
 
-    @Autowired
-    private DocumentManagementStore documentManagementStore;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
 
-    @Value("${toggle.enable_case_document_access_management}")
-    private boolean caseDocumentAccessManagementEnabled;
 
     @Test
     public void shouldSendEmailToApp1SolicitorAndGenerateRefusalOrderWhenMoreInfoSelected() throws IOException {
@@ -300,29 +293,15 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
-        if (caseDocumentAccessManagementEnabled) {
-            CaseDocumentAMDocument document = caseDocumentAccessManagement.upload(
-                "",
-                "draft-divorce-application-1234567890123456.pdf",
-                "classpath:Test.pdf"
-            );
-            return new uk.gov.hmcts.ccd.sdk.type.Document(
-                document.links.self.href,
-                document.originalDocumentName,
-                document.links.binary.href
-            );
-        } else {
-            Document document = documentManagementStore.upload(
-                "",
-                "draft-divorce-application-1234567890123456.pdf",
-                "classpath:Test.pdf"
-            );
-
-            return new uk.gov.hmcts.ccd.sdk.type.Document(
-                document.links.self.href,
-                document.originalDocumentName,
-                document.links.binary.href
-            );
-        }
+        CaseDocumentAMDocument document = caseDocumentAccessManagement.upload(
+            "",
+            "draft-divorce-application-1234567890123456.pdf",
+            "classpath:Test.pdf"
+        );
+        return new uk.gov.hmcts.ccd.sdk.type.Document(
+            document.links.self.href,
+            document.originalDocumentName,
+            document.links.binary.href
+        );
     }
 }
