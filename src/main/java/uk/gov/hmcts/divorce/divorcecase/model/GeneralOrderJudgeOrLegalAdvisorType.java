@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum GeneralOrderJudgeOrLegalAdvisorType implements HasLabel {
     @JsonProperty("districtJudge")
-    @JsonAlias({"recorder"})
     DISTRICT_JUDGE("District Judge"),
 
     @JsonProperty("deputyDistrictJudge")
@@ -26,7 +24,10 @@ public enum GeneralOrderJudgeOrLegalAdvisorType implements HasLabel {
     ASSISTANT_JUSTICES_CLERK("Assistant Justice's Clerk"),
 
     @JsonProperty("properOfficerOfTheCourt")
-    PROPER_OFFICER_OF_THE_COURT("Proper Officer of the Court");
+    PROPER_OFFICER_OF_THE_COURT("Proper Officer of the Court"),
+
+    @JsonProperty("recorder")
+    RECORDER("Recorder");
 
     private final String label;
 }
