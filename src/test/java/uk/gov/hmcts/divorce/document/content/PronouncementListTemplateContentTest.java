@@ -42,7 +42,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BULK_LIST;
@@ -132,8 +131,7 @@ public class PronouncementListTemplateContentTest {
             expectedValues(DIVORCE.getLabel()),
             expectedValues(DISSOLUTION.getLabel()),
             expectedValues(JUDICIAL_SEPARATION.getLabel()),
-            expectedValues(SEPARATION.getLabel()),
-            expectedValues(NULLITY.getLabel())
+            expectedValues(SEPARATION.getLabel())
         );
 
         assertThat(templateContent).contains(
@@ -241,16 +239,13 @@ public class PronouncementListTemplateContentTest {
         final CaseDetails jsCaseDetails = mockCaseDetails(TEST_CASE_ID, jsCaseData);
         final CaseData sepCaseData = mockCaseData(DISSOLUTION, SEPARATION);
         final CaseDetails sepCaseDetails = mockCaseDetails(TEST_CASE_ID, sepCaseData);
-        final CaseData nCaseData = mockCaseData(DIVORCE, NULLITY);
-        final CaseDetails nCaseDetails = mockCaseDetails(TEST_CASE_ID, nCaseData);
 
         when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(caseData);
         when(objectMapper.convertValue(dissCaseDetails.getData(), CaseData.class)).thenReturn(dissCaseData);
         when(objectMapper.convertValue(jsCaseDetails.getData(), CaseData.class)).thenReturn(jsCaseData);
         when(objectMapper.convertValue(sepCaseDetails.getData(), CaseData.class)).thenReturn(sepCaseData);
-        when(objectMapper.convertValue(nCaseDetails.getData(), CaseData.class)).thenReturn(nCaseData);
 
-        return List.of(caseDetails, dissCaseDetails, jsCaseDetails, sepCaseDetails, nCaseDetails);
+        return List.of(caseDetails, dissCaseDetails, jsCaseDetails, sepCaseDetails);
     }
 
     private CaseData mockCaseData(DivorceOrDissolution divorceOrDissolution, SupplementaryCaseType supplementaryCaseType) {
