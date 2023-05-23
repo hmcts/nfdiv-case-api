@@ -8,6 +8,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
+import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
+
 @Component
 public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
@@ -76,7 +79,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("createdDate")
             .field("dateSubmitted")
             .field("issueDate")
-            .field("dueDate")
+            .field("dueDate", notShowForState(SeparationOrderGranted))
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution, NOT_JS_OR_NULLITY_CASE)
             .field(CaseData::getSupplementaryCaseType, JS_OR_NULLITY_CASE)
