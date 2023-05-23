@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -327,6 +328,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     ConditionalOrderDrafted,
                     ConditionalOrderPending,
                     AwaitingLegalAdvisorReferral,
+                    AwaitingPronouncement,
                     JSAwaitingLA,
                     SeparationOrderGranted
                 )
@@ -379,6 +381,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingAdminClarification,
                     AwaitingClarification,
                     AwaitingAmendedApplication,
+                    AwaitingPronouncement,
                     ClarificationSubmitted,
                     LAReview,
                     SeparationOrderGranted
