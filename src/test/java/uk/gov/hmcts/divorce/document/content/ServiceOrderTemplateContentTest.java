@@ -325,24 +325,6 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldApplyEnglishContentIfApplicant1LanguagePreferenceIsWelshOnJudicialSeparation() {
-        CaseData caseData = buildCaseData(NO, DEEMED);
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
-        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-
-        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
-
-        assertThat(templateContent).contains(
-            entry(PARTNER, "spouse"),
-            entry(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION_PROCESS),
-            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
-        );
-    }
-
-    @Test
     public void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
@@ -355,24 +337,6 @@ public class ServiceOrderTemplateContentTest {
         assertThat(templateContent).contains(
             entry(PARTNER, "partner sifil"),
             entry(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY),
-            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
-        );
-    }
-
-    @Test
-    public void shouldApplyEnglishContentIfApplicant1LanguagePreferenceIsWelshOnSeparation() {
-        CaseData caseData = buildCaseData(NO, DEEMED);
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        caseData.setSupplementaryCaseType(SEPARATION);
-        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-
-        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
-        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
-
-        assertThat(templateContent).contains(
-            entry(PARTNER, "civil partner"),
-            entry(DIVORCE_OR_DISSOLUTION, SEPARATION_PROCESS),
             entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
         );
     }

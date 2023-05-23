@@ -196,7 +196,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             serviceOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,
             templateId,
-            caseDataCopy.isJudicialSeparationCase() ? ENGLISH : caseDataCopy.getApplicant1().getLanguagePreference(),
+            caseDataCopy.getApplicant1().getLanguagePreference(),
             fileName
         );
 

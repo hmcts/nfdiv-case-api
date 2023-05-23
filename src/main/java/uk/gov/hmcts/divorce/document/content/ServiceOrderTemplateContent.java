@@ -81,7 +81,7 @@ public class ServiceOrderTemplateContent {
             : caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.isJudicialSeparationCase()) {
-            templateContent.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION == caseData.getSupplementaryCaseType()
+            templateContent.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION.equals(caseData.getSupplementaryCaseType())
                 ? JUDICIAL_SEPARATION_PROCESS
                 : SEPARATION_PROCESS
             );
