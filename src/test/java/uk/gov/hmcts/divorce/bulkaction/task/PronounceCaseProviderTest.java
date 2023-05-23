@@ -88,7 +88,6 @@ class PronounceCaseProviderTest {
 
         final var caseData = CaseData.builder()
             .supplementaryCaseType(JUDICIAL_SEPARATION)
-            .dueDate(expectedGrantedDate)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
