@@ -52,7 +52,9 @@ public class PronounceCaseProvider implements BulkActionCaseTaskProvider {
             conditionalOrder.setPronouncementJudge(bulkActionCaseData.getPronouncementJudge());
             conditionalOrder.setOutcomeCase(YES);
             conditionalOrder.setGrantedDate(dateAndTimeOfHearing.toLocalDate());
-            if (!mainCaseDetails.getData().isJudicialSeparationCase()) {
+            if (mainCaseDetails.getData().isJudicialSeparationCase()) {
+                mainCaseDetails.getData().setDueDate(null);
+            } else {
                 mainCaseDetails.getData().setDueDate(dateFinalOrderEligibleFrom);
                 finalOrder.setDateFinalOrderEligibleFrom(dateFinalOrderEligibleFrom);
                 finalOrder.setDateFinalOrderNoLongerEligible(

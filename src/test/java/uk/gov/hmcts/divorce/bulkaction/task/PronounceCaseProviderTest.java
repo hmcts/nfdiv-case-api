@@ -101,6 +101,7 @@ class PronounceCaseProviderTest {
 
         assertThat(resultConditionalOrder.getOutcomeCase()).isEqualTo(YES);
         assertThat(resultConditionalOrder.getGrantedDate()).isEqualTo(expectedGrantedDate);
+        assertThat(resultCaseData.getDueDate()).isNull();
         final FinalOrder resultFinalOrder = resultCaseData.getFinalOrder();
         assertThat(resultFinalOrder.getDateFinalOrderEligibleFrom()).isNull();
         assertThat(resultFinalOrder.getDateFinalOrderNoLongerEligible()).isNull();
