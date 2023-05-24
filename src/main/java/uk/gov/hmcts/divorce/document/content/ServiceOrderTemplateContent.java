@@ -76,9 +76,7 @@ public class ServiceOrderTemplateContent {
 
         templateContent.put(CASE_REFERENCE, caseData.formatCaseRef(ccdCaseReference));
 
-        final LanguagePreference applicantLanguagePreference = caseData.isJudicialSeparationCase()
-            ? ENGLISH
-            : caseData.getApplicant1().getLanguagePreference();
+        final LanguagePreference applicantLanguagePreference = caseData.getApplicant1().getLanguagePreference();
 
         if (caseData.isJudicialSeparationCase()) {
             templateContent.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION.equals(caseData.getSupplementaryCaseType())
