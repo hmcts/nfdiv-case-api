@@ -14,6 +14,8 @@ import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -44,8 +46,14 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         log.info("Caseworker Amend Application Type about to submit callback invoked for case id: {}", details.getId());
         CaseData caseData = details.getData();
 
-        if (!isNull(caseData.getDivorceOrDissolution())) {
-            if (caseData.getDivorceOrDissolution().equals(DIVORCE)) {
+        if (caseData.isJudicialSeparationCase()) {
+            if (caseData.isDivorce()) {
+                caseData.setSupplementaryCaseType(SEPARATION);
+            } else {
+                caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+            }
+        } else {
+            if (caseData.isDivorce()) {
                 caseData.setDivorceOrDissolution(DISSOLUTION);
             } else {
                 caseData.setDivorceOrDissolution(DIVORCE);
