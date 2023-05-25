@@ -470,7 +470,6 @@ public enum State {
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
-        AwaitingPronouncement,
         Withdrawn,
         Rejected
     ));
