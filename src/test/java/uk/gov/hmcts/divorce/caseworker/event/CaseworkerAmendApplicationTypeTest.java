@@ -112,7 +112,7 @@ class CaseworkerAmendApplicationTypeTest {
             .aboutToSubmit(caseDetails, caseDetails);
 
         assertNull(response.getData().getDivorceOrDissolution());
-        assertThat(response.getErrors()).contains("divorceOrDissolution is null");
+        assertThat(response.getErrors()).contains("divorceOrDissolution is null, cannot continue submitting event");
     }
 
     @Test

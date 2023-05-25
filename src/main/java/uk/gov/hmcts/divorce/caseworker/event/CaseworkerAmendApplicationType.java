@@ -10,9 +10,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
@@ -48,10 +48,11 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         log.info("Caseworker Amend Application Type about to submit callback invoked for case id: {}", details.getId());
         CaseData caseData = details.getData();
 
-        List<String> validationErrors = new ArrayList<>();
-
-        if (caseData.getDivorceOrDissolution() == null) {
-            validationErrors.add("divorceOrDissolution is null");
+        if (isNull(caseData.getDivorceOrDissolution())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("divorceOrDissolution is null, cannot continue submitting event"))
+                .build();
         } else if (caseData.isJudicialSeparationCase()) {
             if (caseData.isDivorce()) {
                 caseData.setSupplementaryCaseType(SEPARATION);
@@ -67,15 +68,8 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         }
         caseData.getLabelContent().setUnionType(caseData.getDivorceOrDissolution());
 
-        if (!validationErrors.isEmpty()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(validationErrors)
-                .build();
-        } else {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .build();
-        }
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 }
