@@ -20,6 +20,9 @@ public class SetDueDateAfterIssue implements CaseTask {
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
+    @Value("${aos_pack.due_date_offset_days_js_disputed}")
+    private long dueDateOffsetDaysJudicialSeparationDisputed;
+
     @Autowired
     private HoldingPeriodService holdingPeriodService;
 
@@ -41,9 +44,15 @@ public class SetDueDateAfterIssue implements CaseTask {
         } else if (caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
             caseDetails.getData().setDueDate(null);
         } else {
-            caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
+            caseDetails.getData().setDueDate(isJudicialSeparationAndDisputed(caseDetails.getData())
+                    ? LocalDate.now(clock).plusDays(dueDateOffsetDaysJudicialSeparationDisputed)
+                    : LocalDate.now(clock).plusDays(dueDateOffsetDays));
         }
 
         return caseDetails;
+    }
+
+    private boolean  isJudicialSeparationAndDisputed(CaseData caseData) {
+        return caseData.isJudicialSeparationCase() && caseData.getAcknowledgementOfService().isDisputed();
     }
 }

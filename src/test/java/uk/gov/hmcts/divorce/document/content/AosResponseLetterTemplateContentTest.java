@@ -125,7 +125,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("waitUntilDate", "21 May 2020");
         expectedEntries.put("divorceOrEndCivilPartnershipProcess", "divorce process");
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
-        expectedEntries.put("dueDate", "26 May 2020");
+        expectedEntries.put("dueDate", "21 May 2020");
         expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
@@ -195,7 +195,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("waitUntilDate", "21 May 2020");
         expectedEntries.put("divorceOrEndCivilPartnershipProcess", "process to end your civil partnership");
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "proceedings to end your civil partnership");
-        expectedEntries.put("dueDate", "26 May 2020");
+        expectedEntries.put("dueDate", "21 May 2020");
         expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
@@ -271,7 +271,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("waitUntilDate", "21 May 2020");
         expectedEntries.put("divorceOrEndCivilPartnershipProcess", "divorce process");
         expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
-        expectedEntries.put("dueDate", "26 May 2020");
+        expectedEntries.put("dueDate", "21 May 2020");
         expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
         expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
