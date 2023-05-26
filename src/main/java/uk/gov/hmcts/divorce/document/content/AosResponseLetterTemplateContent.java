@@ -40,8 +40,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class AosResponseLetterTemplateContent {
 
-    private static final int DATE_PLUS_FIVE_DAYS = 5;
-
     public static final String RELATION = "relation";
     public static final String CIVIL_PARTNER = "civil partner";
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";

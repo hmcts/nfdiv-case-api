@@ -490,6 +490,7 @@ send-letter:
 
 aos_pack:
   due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:16}
+  due_date_offset_days_disputed: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:21}
 
 case_progression:
   holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
