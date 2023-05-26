@@ -40,6 +40,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class AosResponseLetterTemplateContent {
 
+    private static final int DATE_PLUS_FIVE_DAYS = 5;
+
     public static final String RELATION = "relation";
     public static final String CIVIL_PARTNER = "civil partner";
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";
@@ -81,7 +83,7 @@ public class AosResponseLetterTemplateContent {
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
-        templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(DUE_DATE, caseData.getDueDate().plusDays(DATE_PLUS_FIVE_DAYS).format(DATE_TIME_FORMATTER));
         templateContent.put(
             WAIT_UNTIL_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
