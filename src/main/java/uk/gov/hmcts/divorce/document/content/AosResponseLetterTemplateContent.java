@@ -83,7 +83,7 @@ public class AosResponseLetterTemplateContent {
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
-        templateContent.put(DUE_DATE, caseData.getDueDate().plusDays(DATE_PLUS_FIVE_DAYS).format(DATE_TIME_FORMATTER));
+        templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(
             WAIT_UNTIL_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
@@ -120,6 +120,10 @@ public class AosResponseLetterTemplateContent {
                 ? caseData.getApplicant2().getSolicitor().getName() : NOT_REPRESENTED);
             templateContent.put(SOLICITOR_REFERENCE, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getReference() : NOT_REPRESENTED);
+            templateContent.put(DUE_DATE,
+                    caseData.getAcknowledgementOfService().isDisputed() ?
+                            caseData.getDueDate().plusDays(DATE_PLUS_FIVE_DAYS).format(DATE_TIME_FORMATTER) :
+                            templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER)));
         }
 
         return templateContent;
