@@ -20,8 +20,8 @@ public class SetDueDateAfterIssue implements CaseTask {
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
-    @Value("${aos_pack.due_date_offset_days_js_disputed}")
-    private long dueDateOffsetDaysJudicialSeparationDisputed;
+    @Value("${aos_pack.due_date_offset_days_disputed}")
+    private long dueDateOffsetDaysDisputed;
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
@@ -39,20 +39,19 @@ public class SetDueDateAfterIssue implements CaseTask {
 
         log.info("Setting due date.  Case ID: {}", caseDetails.getId());
 
-        if (!caseDetails.getData().getApplicationType().isSole()) {
-            caseDetails.getData().setDueDate(holdingPeriodService.getDueDateFor(caseDetails.getData().getApplication().getIssueDate()));
-        } else if (caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
-            caseDetails.getData().setDueDate(null);
+        CaseData caseData = caseDetails.getData();
+
+        if (!caseData.getApplicationType().isSole()) {
+            caseData.setDueDate(holdingPeriodService.getDueDateFor(caseDetails.getData().getApplication().getIssueDate()));
+        } else if (caseData.getApplication().isSolicitorServiceMethod()) {
+            caseData.setDueDate(null);
         } else {
-            caseDetails.getData().setDueDate(isJudicialSeparationAndDisputed(caseDetails.getData())
-                    ? LocalDate.now(clock).plusDays(dueDateOffsetDaysJudicialSeparationDisputed)
+            caseData.setDueDate(caseData.getAcknowledgementOfService().isDisputed()
+                    ? LocalDate.now(clock).plusDays(dueDateOffsetDaysDisputed)
                     : LocalDate.now(clock).plusDays(dueDateOffsetDays));
         }
 
+        caseDetails.setData(caseData);
         return caseDetails;
-    }
-
-    private boolean  isJudicialSeparationAndDisputed(CaseData caseData) {
-        return caseData.isJudicialSeparationCase() && caseData.getAcknowledgementOfService().isDisputed();
     }
 }
