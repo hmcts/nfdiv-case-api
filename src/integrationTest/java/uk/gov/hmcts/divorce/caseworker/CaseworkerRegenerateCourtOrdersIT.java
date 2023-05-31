@@ -364,7 +364,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24",
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
         stubForDocAssemblyWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002",
-            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V2.docx");
         stubForDocAssemblyWith("31f23884-a707-4983-9bb9-5ce33e13d8c2",
             "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx");
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
@@ -450,7 +450,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForDocAssemblyWith("5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d",
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
         stubForDocAssemblyWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002",
-            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation.docx");
+            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V2.docx");
         stubForDocAssemblyWith("94e63858-bda1-11ed-afa1-0242ac120002",
             "FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx");
         stubForDocAssemblyWith("90ac37a0-b723-4722-9723-86157e4ee450",
