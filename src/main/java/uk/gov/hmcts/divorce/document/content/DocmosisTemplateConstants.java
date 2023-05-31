@@ -87,6 +87,9 @@ public final class DocmosisTemplateConstants {
     public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
+    public static final String ORDER_TYPE = "orderType";
+    public static final String CONDITIONAL_ORDER = "conditional order";
+    public static final String SEPARATION_ORDER = "separation order";
     public static final String DOCUMENTS_ISSUED_ON = "documentIssuedOn";
     public static final String RESPONDENT_SOLICITOR_NAME = "respondentSolicitorName";
     public static final String RESPONDENT_SOLICITOR_EMAIL = "respondentSolicitorEmail";
@@ -160,7 +163,8 @@ public final class DocmosisTemplateConstants {
     public static final String DIVORCE_PROCESS_CY = "broses o ysgaru";
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY = "broses o ddod â’ch partneriaeth sifil i ben";
-
+    public static final String JUDICIAL_SEPARATION_PROCESS = "judicial separation process";
+    public static final String SEPARATION_PROCESS = "separation process";
     public static final String DUE_DATE = "dueDate";
     public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
     public static final String APPLICANT_SOLICITOR_LABEL = "applicantSolicitorLabel";
