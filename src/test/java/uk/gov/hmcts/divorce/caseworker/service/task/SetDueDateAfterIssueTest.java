@@ -9,11 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
-import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.Clock;
@@ -33,7 +31,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class SetDueDateAfterIssueTest {
 
     private static final long DUE_DATE_OFFSET_DAYS = 16L;
-    private static final long DUE_DATE_OFFSET_DAYS_DISPUTED = 21L;
     private static final int HOLDING_PERIOD_IN_DAYS = 141;
 
     @Mock
@@ -48,7 +45,6 @@ class SetDueDateAfterIssueTest {
     @BeforeEach
     void setPageSize() {
         ReflectionTestUtils.setField(setDueDateAfterIssue, "dueDateOffsetDays", DUE_DATE_OFFSET_DAYS);
-        ReflectionTestUtils.setField(setDueDateAfterIssue, "dueDateOffsetDaysDisputed", DUE_DATE_OFFSET_DAYS_DISPUTED);
     }
 
     @Test
@@ -84,29 +80,6 @@ class SetDueDateAfterIssueTest {
         final CaseDetails<CaseData, State> result = setDueDateAfterIssue.apply(caseDetails);
 
         final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(DUE_DATE_OFFSET_DAYS);
-
-        assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
-    }
-
-    @Test
-    void shouldSetDueDateIfSoleApplicationAndCourtServiceAndDisputed() {
-        setMockClock(clock);
-        final var caseData = caseData();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        caseData.setAcknowledgementOfService(
-                AcknowledgementOfService.builder()
-                .howToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE)
-                .build());
-
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        final CaseDetails<CaseData, State> result = setDueDateAfterIssue.apply(caseDetails);
-
-        final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(DUE_DATE_OFFSET_DAYS_DISPUTED);
 
         assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
     }
