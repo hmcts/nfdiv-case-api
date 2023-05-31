@@ -47,7 +47,7 @@ class SetSubmissionAndDueDateTest {
     private SetSubmissionAndDueDate setSubmissionAndDueDate;
 
     @BeforeEach
-    void setPageSize() {
+    void setup() {
         ReflectionTestUtils.setField(setSubmissionAndDueDate, "dueDateOffsetDaysDisputed", DUE_DATE_OFFSET_DAYS_DISPUTED);
     }
 
