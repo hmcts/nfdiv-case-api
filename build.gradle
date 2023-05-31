@@ -145,7 +145,7 @@ task highLevelDataSetup(type: JavaExec) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '9.3'
+  toolVersion = '10.12.0'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
