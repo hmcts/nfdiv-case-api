@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -68,6 +69,42 @@ class PronounceCaseProviderTest {
         assertThat(resultFinalOrder.getDateFinalOrderEligibleFrom()).isEqualTo(expectedFinalOrderEligibleFrom);
         assertThat(resultFinalOrder.getDateFinalOrderNoLongerEligible()).isEqualTo(expectedFinalOrderNoLongerEligible);
         assertThat(resultFinalOrder.getDateFinalOrderEligibleToRespondent()).isEqualTo(expectedFinalOrderEligibleToRespondent);
+        assertThat(resultConditionalOrder.getPronouncementJudge()).isEqualTo("District Judge Adam");
+    }
+
+    @Test
+    void shouldReturnSystemPronounceCaseTaskForJS() {
+
+        final var localDateTime = getExpectedLocalDateTime();
+        final var expectedGrantedDate = getExpectedLocalDate();
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(localDateTime)
+            .pronouncementJudge("District Judge Adam")
+            .build();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setData(bulkActionCaseData);
+
+        final var caseData = CaseData.builder()
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseTask caseTask = pronounceCaseProvider.getCaseTask(bulkCaseDetails);
+
+        final CaseDetails<CaseData, State> resultCaseDetails = caseTask.apply(caseDetails);
+        final CaseData resultCaseData = resultCaseDetails.getData();
+        final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
+
+        assertThat(resultConditionalOrder.getOutcomeCase()).isEqualTo(YES);
+        assertThat(resultConditionalOrder.getGrantedDate()).isEqualTo(expectedGrantedDate);
+        final FinalOrder resultFinalOrder = resultCaseData.getFinalOrder();
+        assertThat(resultFinalOrder.getDateFinalOrderEligibleFrom()).isNull();
+        assertThat(resultFinalOrder.getDateFinalOrderNoLongerEligible()).isNull();
+        assertThat(resultFinalOrder.getDateFinalOrderEligibleToRespondent()).isNull();
         assertThat(resultConditionalOrder.getPronouncementJudge()).isEqualTo("District Judge Adam");
     }
 
