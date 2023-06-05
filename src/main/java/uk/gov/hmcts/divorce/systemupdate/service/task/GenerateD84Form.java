@@ -16,8 +16,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 @Slf4j
 public class GenerateD84Form implements CaseTask {
 
-    private static final String D84_FILE_LOCATION = "/D84.pdf";
-    private static final String D84_FILENAME = "D84.pdf";
+    private static final String D84_FILE_LOCATION = "/D84_V2.pdf";
+    private static final String D84_FILENAME = "D84_V2.pdf";
     private static final String D84_DISPLAY_NAME = "D84";
 
     @Autowired

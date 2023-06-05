@@ -424,7 +424,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84.pdf")
+                    .fileName("D84_V2.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -446,7 +446,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                             .value(
                                 DynamicListElement
                                     .builder()
-                                    .label("D84.pdf")
+                                    .label("D84_V2.pdf")
                                     .build()
                             )
                             .build()
@@ -482,7 +482,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84.pdf")
+                    .fileName("D84_V2.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -503,7 +503,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                             .value(
                                 DynamicListElement
                                     .builder()
-                                    .label("D84.pdf")
+                                    .label("D84_V2.pdf")
                                     .build()
                             )
                             .build()
@@ -539,7 +539,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .scannedDate(now(clock))
-                    .fileName("D84.pdf")
+                    .fileName("D84_V2.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -561,7 +561,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                             .value(
                                 DynamicListElement
                                     .builder()
-                                    .label("D84.pdf")
+                                    .label("D84_V2.pdf")
                                     .build()
                             )
                             .build()
@@ -598,7 +598,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .subtype("D84")
-                    .fileName("D84.pdf")
+                    .fileName("D84_V2.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -609,13 +609,13 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(CONDITIONAL_ORDER_APPLICATION)
-                .documentFileName("d84.pdf")
+                .documentFileName("D84_V2.pdf")
                 .documentComment("Reclassified scanned document")
                 .documentDateAdded(getExpectedLocalDate())
                 .documentLink(Document
                     .builder()
                     .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                    .filename("d84.pdf")
+                    .filename("D84_V2.pdf")
                     .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
                     .build()
                 )
@@ -661,7 +661,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .value(
                 ScannedDocument.builder()
                     .subtype("D84")
-                    .fileName("D84.pdf")
+                    .fileName("D84_V2.pdf")
                     .type(FORM)
                     .url(document)
                     .build()
@@ -672,13 +672,13 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(CONDITIONAL_ORDER_APPLICATION)
-                .documentFileName("d84.pdf")
+                .documentFileName("D84_V2.pdf")
                 .documentComment("Reclassified scanned document")
                 .documentDateAdded(getExpectedLocalDate())
                 .documentLink(Document
                     .builder()
                     .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                    .filename("d84.pdf")
+                    .filename("D84_V2.pdf")
                     .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
                     .build()
                 )
