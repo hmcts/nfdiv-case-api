@@ -43,7 +43,7 @@ class SetDueDateAfterIssueTest {
     private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @BeforeEach
-    void setPageSize() {
+    void setup() {
         ReflectionTestUtils.setField(setDueDateAfterIssue, "dueDateOffsetDays", DUE_DATE_OFFSET_DAYS);
     }
 
