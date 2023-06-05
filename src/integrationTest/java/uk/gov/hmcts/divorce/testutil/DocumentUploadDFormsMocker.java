@@ -14,6 +14,7 @@ import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 
 @Component
 public class DocumentUploadDFormsMocker {
@@ -31,7 +32,7 @@ public class DocumentUploadDFormsMocker {
         doc.links.self.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId;
         doc.links.binary = new Document.Link();
         doc.links.binary.href = "http://dm-store-aat.service.core-compute-aat.internal/documents/" + docTemplateId + "/binary";
-        doc.originalDocumentName = docType.getLabel() + ".pdf";
+        doc.originalDocumentName = docType == D84 ? "D84_V2.pdf" : docType.getLabel() + ".pdf";
         List<Document> formDocList = asList(doc);
         when(embedded.getDocuments()).thenReturn(formDocList);
         when(documentUploadClientApi.upload(anyString(),
