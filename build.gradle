@@ -232,7 +232,7 @@ repositories {
 }
 
 def versions = [
-  jackson           : '2.15.2',
+  jackson           : '2.15.1',
   junit             : '5.9.3',
   junitPlatform     : '1.9.3',
   lombok            : '1.18.28',
