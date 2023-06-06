@@ -144,13 +144,13 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                 }
             } else {
                 generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-
-                generateConditionalOrderAnswersDocument.apply(
-                        details,
-                        caseData.getApplicant1().getLanguagePreference()
-                );
             }
         }
+
+        generateConditionalOrderAnswersDocument.apply(
+                details,
+                caseData.getApplicant1().getLanguagePreference()
+        );
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
