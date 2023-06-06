@@ -133,7 +133,8 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private void generateSwitchToSoleDocuments(CaseDetails<CaseData, State> details,
                                                CaseData caseData,
                                                Long caseId) {
-        if ((CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached()) || D84.equals(caseData.getDocuments().getScannedSubtypeReceived()))
+        if ((CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
             if (caseData.isJudicialSeparationCase()) {
