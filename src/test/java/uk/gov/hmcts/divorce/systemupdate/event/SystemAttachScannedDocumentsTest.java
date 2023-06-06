@@ -318,7 +318,7 @@ public class SystemAttachScannedDocumentsTest {
             .value(
                 ScannedDocument.builder()
                     .subtype("d84")
-                    .fileName("D84_V2.pdf")
+                    .fileName("D84.pdf")
                     .type(FORM)
                     .url(d84Document)
                     .build()

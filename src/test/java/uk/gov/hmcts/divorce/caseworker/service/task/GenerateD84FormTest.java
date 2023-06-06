@@ -63,8 +63,8 @@ public class GenerateD84FormTest {
             caseData,
             D84,
             "D84",
-            "D84_V2.pdf",
-            "/D84_V2.pdf");
+            "D84.pdf",
+            "/D84.pdf");
     }
 
     @Test
@@ -72,11 +72,11 @@ public class GenerateD84FormTest {
         final ListValue<DivorceDocument> d84Document = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(D84)
-                .documentFileName("D84_V2.pdf")
+                .documentFileName("D84.pdf")
                 .documentLink(
                     new uk.gov.hmcts.ccd.sdk.type.Document(
                         "/",
-                        "D84_V2.pdf",
+                        "D84.pdf",
                         "/binary"
                     )
                 )
