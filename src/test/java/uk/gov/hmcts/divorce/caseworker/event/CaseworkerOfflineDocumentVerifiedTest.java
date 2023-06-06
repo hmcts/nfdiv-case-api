@@ -1118,7 +1118,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
     void shouldNotSendOfflineNotificationsForConditionalOrderWhenJudicialSeparation() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
-                .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
+                .documents(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build())
                 .supplementaryCaseType(JUDICIAL_SEPARATION)
                 .application(Application.builder()
                         .issueDate(LocalDate.of(2022, 01, 01))
