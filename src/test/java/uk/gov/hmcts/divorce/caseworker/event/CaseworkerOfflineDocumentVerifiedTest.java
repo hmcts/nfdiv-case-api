@@ -1113,4 +1113,23 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         verifyNoInteractions(ccdUpdateService);
     }
+
+    @Test
+    void shouldNotSendOfflineNotificationsForConditionalOrderWhenJudicialSeparation() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+                .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
+                .supplementaryCaseType(JUDICIAL_SEPARATION)
+                .application(Application.builder()
+                        .issueDate(LocalDate.of(2022, 01, 01))
+                        .stateToTransitionApplicationTo(Holding)
+                        .build())
+                .build();
+        details.setData(caseData);
+
+        SubmittedCallbackResponse response =
+                caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
 }
