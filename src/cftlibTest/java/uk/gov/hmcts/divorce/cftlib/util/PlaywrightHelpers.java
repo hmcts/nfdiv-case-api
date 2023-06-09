@@ -5,7 +5,7 @@ import com.microsoft.playwright.options.SelectOption;
 
 public class PlaywrightHelpers {
     public static final Page.WaitForURLOptions LONG_WAIT = new Page.WaitForURLOptions().setTimeout(30000);
-    public static final int RETRIES = 20;
+    public static final int RETRIES = 5;
 
     private PlaywrightHelpers() {
     }
