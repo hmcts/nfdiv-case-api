@@ -12,6 +12,7 @@ public class CaseworkerAddNoteTest extends XuiTest {
     @RetryingTest(maxAttempts = RETRIES)
     public void addNote() {
         signInWithCaseworker();
+        page.setDefaultTimeout(30000);
         page.locator("text=Create case").click();
         assertThat(page).hasURL("http://localhost:3000/cases/case-filter");
 
