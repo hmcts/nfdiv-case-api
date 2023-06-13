@@ -166,18 +166,10 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
                                                                         final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Applicant / Applicant 1 for case id {} ", caseId);
 
-        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant1());
-
-        if (caseData.isJudicialSeparationCase()) {
-            templateVars.put(
-                PARTNER,
-                commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
-            );
-        }
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-            templateVars,
+            templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
@@ -191,17 +183,17 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
                                                                        final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Respondent for case id {} ", caseId);
 
-        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2());
-
-        templateVars.put(
-            PARTNER,
-            commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        );
+        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
 
         boolean isJudicialSeparation = caseData.isJudicialSeparationCase();
 
         if (isJudicialSeparation) {
             templateVars.put(IS_RESPONDENT, true);
+        } else {
+            templateVars.put(
+                PARTNER,
+                commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+            );
         }
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
@@ -221,19 +213,10 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
                                                                        final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
 
-        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2());
-
-        if (caseData.isJudicialSeparationCase()) {
-            templateVars.put(
-                PARTNER,
-                commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-            );
-        }
-
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-            templateVars,
+            templateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
@@ -273,7 +256,8 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
     private Map<String, Object> templateVars(final CaseData caseData,
                                              final Long caseId,
-                                             final Applicant applicant) {
+                                             final Applicant applicant,
+                                             final Applicant partner) {
 
         Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference());
@@ -310,6 +294,10 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         if (caseData.isJudicialSeparationCase()) {
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+            templateContent.put(
+                PARTNER,
+                commonContent.getPartner(caseData, partner, applicant.getLanguagePreference())
+            );
         }
 
         return templateContent;
