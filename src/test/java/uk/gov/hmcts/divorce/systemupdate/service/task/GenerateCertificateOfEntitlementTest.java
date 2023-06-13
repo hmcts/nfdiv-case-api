@@ -600,7 +600,8 @@ class GenerateCertificateOfEntitlementTest {
 
         generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
 
-        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+        // This should happen exactly ONCE, not atLeastOnce, which allows it to never be called
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
             applicantTemplateVars,
@@ -610,7 +611,8 @@ class GenerateCertificateOfEntitlementTest {
             formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME, now(clock))
         );
 
-        verify(caseDataDocumentService, atMostOnce()).renderDocumentAndUpdateCaseData(
+        // This should happen exactly ONCE, not atLeastOnce, which allows it to never be called
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
             respondentTemplateVars,
