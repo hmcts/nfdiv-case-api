@@ -291,10 +291,6 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         if (caseData.isJudicialSeparationCase()) {
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-            templateContent.put(
-                PARTNER,
-                commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-            );
         }
 
         return templateContent;
