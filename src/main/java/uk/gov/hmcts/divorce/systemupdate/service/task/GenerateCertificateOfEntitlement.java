@@ -165,19 +165,10 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
     private void generateApplicant1CertificateOfEntitlementCoverLetter(final CaseData caseData,
                                                                         final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Applicant / Applicant 1 for case id {} ", caseId);
-
-        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant1());
-
-        if (caseData.isJudicialSeparationCase()) {
-            templateVars.put(
-                PARTNER,
-                commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference())
-            );
-        }
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-            templateVars,
+            templateVars(caseData, caseId, caseData.getApplicant1()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
@@ -220,20 +211,10 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
     private void generateApplicant2CertificateOfEntitlementCoverLetter(final CaseData caseData,
                                                                        final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
-
-        Map<String, Object> templateVars = templateVars(caseData, caseId, caseData.getApplicant2());
-
-        if (caseData.isJudicialSeparationCase()) {
-            templateVars.put(
-                PARTNER,
-                commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-            );
-        }
-
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-            templateVars,
+            templateVars(caseData, caseId, caseData.getApplicant2()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
