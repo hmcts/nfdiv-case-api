@@ -111,16 +111,14 @@ public final class ValidationUtil {
 
         if (marriageDate == null) {
             return List.of(field + EMPTY);
+        } else if (isOverOneHundredYearsAgo(marriageDate)) {
+            return List.of(field + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
+        } else if (isInTheFuture(marriageDate)) {
+            return List.of(field + IN_THE_FUTURE);
         }
 
-        if (!caseData.isJudicialSeparationCase()) {
-            if (isLessThanOneYearAgo(marriageDate)) {
-                return List.of(field + LESS_THAN_ONE_YEAR_AGO);
-            } else if (isOverOneHundredYearsAgo(marriageDate)) {
-                return List.of(field + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
-            } else if (isInTheFuture(marriageDate)) {
-                return List.of(field + IN_THE_FUTURE);
-            }
+        if (!caseData.isJudicialSeparationCase() && isLessThanOneYearAgo(marriageDate)) {
+            return List.of(field + LESS_THAN_ONE_YEAR_AGO);
         }
 
         return emptyList();
