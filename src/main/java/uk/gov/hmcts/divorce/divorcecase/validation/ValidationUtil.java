@@ -56,7 +56,7 @@ public final class ValidationUtil {
             !caseData.getApplicant1().isApplicantOffline()
                 ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
-            validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
+            validateMarriageDate(caseData, "MarriageDate"),
             validateJurisdictionConnections(caseData)
         );
     }
@@ -77,7 +77,7 @@ public final class ValidationUtil {
                 ? notNull(caseData.getApplicant2().getGender(), "Applicant2Gender")
                 : emptyList(),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
-            validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
+            validateMarriageDate(caseData, "MarriageDate"),
             validateJurisdictionConnections(caseData)
         );
     }
@@ -105,16 +105,24 @@ public final class ValidationUtil {
         return value == null ? List.of(field + EMPTY) : emptyList();
     }
 
-    public static List<String> validateMarriageDate(LocalDate localDate, String field) {
-        if (localDate == null) {
+    public static List<String> validateMarriageDate(CaseData caseData, String field) {
+
+        LocalDate marriageDate = caseData.getApplication().getMarriageDetails().getDate();
+
+        if (marriageDate == null) {
             return List.of(field + EMPTY);
-        } else if (isLessThanOneYearAgo(localDate)) {
-            return List.of(field + LESS_THAN_ONE_YEAR_AGO);
-        } else if (isOverOneHundredYearsAgo(localDate)) {
-            return List.of(field + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
-        } else if (isInTheFuture(localDate)) {
-            return List.of(field + IN_THE_FUTURE);
         }
+
+        if (!caseData.isJudicialSeparationCase()) {
+            if (isLessThanOneYearAgo(marriageDate)) {
+                return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+            } else if (isOverOneHundredYearsAgo(marriageDate)) {
+                return List.of(field + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
+            } else if (isInTheFuture(marriageDate)) {
+                return List.of(field + IN_THE_FUTURE);
+            }
+        }
+
         return emptyList();
     }
 
