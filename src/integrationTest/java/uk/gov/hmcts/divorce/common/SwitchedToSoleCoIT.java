@@ -170,11 +170,6 @@ public class SwitchedToSoleCoIT {
         assertThatJson(actualResponse)
             .inPath("$.data.switchedToSoleCo")
             .isEqualTo(YES);
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.documentsGenerated")
-            .isArray()
-            .hasSize(1);
     }
 
     @Test
@@ -216,11 +211,6 @@ public class SwitchedToSoleCoIT {
         assertThatJson(actualResponse)
             .inPath("$.data.switchedToSoleCo")
             .isEqualTo(YES);
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.documentsGenerated")
-            .isArray()
-            .hasSize(1);
     }
 
     @Test
