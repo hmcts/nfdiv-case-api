@@ -58,7 +58,8 @@ public class GenerateCertificateOfEntitlementHelper {
 
     public Map<String, Object> getTemplateContent(final CaseData caseData,
                                                   final Long caseId,
-                                                  final Applicant applicant) {
+                                                  final Applicant applicant,
+                                                  final Applicant partner) {
 
         Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference());
@@ -95,6 +96,7 @@ public class GenerateCertificateOfEntitlementHelper {
         if (caseData.isJudicialSeparationCase()) {
             templateContent.put(IS_DIVORCE, caseData.isDivorce());
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+            templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
         }
 
         return templateContent;
@@ -102,17 +104,16 @@ public class GenerateCertificateOfEntitlementHelper {
 
     public Map<String, Object> getRespondentTemplateContent(final CaseData caseData,
                                                             final Long caseId) {
-        Map<String, Object> respondentTemplateContent = getTemplateContent(caseData, caseId, caseData.getApplicant2());
+        Map<String, Object> respondentTemplateContent = getTemplateContent(
+            caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
 
-        respondentTemplateContent.put(
-            PARTNER,
-            commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
-        );
-
-        boolean isJudicialSeparation = caseData.isJudicialSeparationCase();
-
-        if (isJudicialSeparation) {
+        if (caseData.isJudicialSeparationCase()) {
             respondentTemplateContent.put(IS_RESPONDENT, true);
+        } else {
+            respondentTemplateContent.put(
+                PARTNER,
+                commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
+            );
         }
 
         return respondentTemplateContent;

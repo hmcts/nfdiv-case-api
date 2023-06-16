@@ -112,7 +112,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         Map<String, Object> results = generateCertificateOfEntitlementHelper.getTemplateContent(
-            caseData, TEST_CASE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
 
         assertThat(results).containsExactlyInAnyOrderEntriesOf(applicant1TemplateVars);
     }
@@ -146,12 +146,16 @@ public class GenerateCertificateOfEntitlementHelperTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(IS_DIVORCE, true);
         applicant1TemplateVars.put(IS_JOINT, false);
+        applicant1TemplateVars.put(PARTNER, "Wife");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH))
+            .thenReturn("Wife");
+
         Map<String, Object> results = generateCertificateOfEntitlementHelper.getTemplateContent(
-            caseData, TEST_CASE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
 
         assertThat(results).containsExactlyInAnyOrderEntriesOf(applicant1TemplateVars);
     }
@@ -185,7 +189,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         Map<String, Object> results = generateCertificateOfEntitlementHelper.getTemplateContent(
-            caseData, TEST_CASE_ID, caseData.getApplicant1());
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
 
         assertThat(results).containsExactlyInAnyOrderEntriesOf(applicant1TemplateVars);
     }
@@ -328,7 +332,6 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(IS_JOINT, false);
         respondentTemplateVars.put(PARTNER, "Husband");
 
-
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
@@ -401,7 +404,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         Map<String, Object> results = generateCertificateOfEntitlementHelper.getTemplateContent(
-            caseData, TEST_CASE_ID, caseData.getApplicant2());
+            caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
 
         assertThat(results).containsExactlyInAnyOrderEntriesOf(applicant2TemplateVars);
     }
@@ -436,7 +439,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
         Map<String, Object> results = generateCertificateOfEntitlementHelper.getTemplateContent(
-            caseData, TEST_CASE_ID, caseData.getApplicant2());
+            caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
 
         assertThat(results).containsExactlyInAnyOrderEntriesOf(applicant2TemplateVars);
     }
@@ -471,12 +474,16 @@ public class GenerateCertificateOfEntitlementHelperTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(IS_DIVORCE, true);
         applicant2TemplateVars.put(IS_JOINT, true);
+        applicant2TemplateVars.put(PARTNER, "Husband");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()))
+            .thenReturn("Husband");
+
         Map<String, Object> results = generateCertificateOfEntitlementHelper.getTemplateContent(
-            caseData, TEST_CASE_ID, caseData.getApplicant2());
+            caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
 
         assertThat(results).containsExactlyInAnyOrderEntriesOf(applicant2TemplateVars);
     }

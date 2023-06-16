@@ -127,7 +127,8 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-            generateCertificateOfEntitlementHelper.getTemplateContent(caseData, caseId, caseData.getApplicant1()),
+            generateCertificateOfEntitlementHelper.getTemplateContent(
+                caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
@@ -160,7 +161,8 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-            generateCertificateOfEntitlementHelper.getTemplateContent(caseData, caseId, caseData.getApplicant2()),
+            generateCertificateOfEntitlementHelper.getTemplateContent(
+                caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID
