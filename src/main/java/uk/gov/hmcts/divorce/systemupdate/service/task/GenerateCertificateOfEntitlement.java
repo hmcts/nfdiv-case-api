@@ -124,6 +124,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
     private void generateApplicant1CertificateOfEntitlementCoverLetter(final CaseData caseData,
                                                                         final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Applicant / Applicant 1 for case id {} ", caseId);
+
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
@@ -158,6 +159,7 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
     private void generateApplicant2CertificateOfEntitlementCoverLetter(final CaseData caseData,
                                                                        final Long caseId) {
         log.info("Generating certificate of entitlement cover letter for Applicant 2 for case id {} ", caseId);
+
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
