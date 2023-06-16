@@ -38,8 +38,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
@@ -112,7 +110,6 @@ class SwitchedToSoleCoTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, WELSH);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
     }
@@ -137,7 +134,6 @@ class SwitchedToSoleCoTest {
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
@@ -160,7 +156,6 @@ class SwitchedToSoleCoTest {
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
         verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
     }
 
     @Test
@@ -351,7 +346,6 @@ class SwitchedToSoleCoTest {
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
         verify(generateSwitchToSoleCoJSLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
 
         verifyNoInteractions(generateSwitchToSoleCoLetter);
     }
