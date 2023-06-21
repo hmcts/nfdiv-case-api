@@ -304,10 +304,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 final User user = idamService.retrieveSystemUpdateUserDetails();
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
-            } else if (!caseData.isJudicialSeparationCase()) {
-                notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
             }
-
         } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
