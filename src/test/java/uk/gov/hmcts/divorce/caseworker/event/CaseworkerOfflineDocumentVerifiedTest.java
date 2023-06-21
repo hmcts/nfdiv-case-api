@@ -1112,6 +1112,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
                 .documents(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build())
+                .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(SWITCH_TO_SOLE).build())
                 .supplementaryCaseType(JUDICIAL_SEPARATION)
                 .application(Application.builder()
                         .issueDate(LocalDate.of(2022, 1, 1))
