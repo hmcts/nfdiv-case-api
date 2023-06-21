@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -21,6 +22,7 @@ import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -96,7 +98,17 @@ public class CaseValidationTest {
 
     @Test
     public void shouldReturnErrorWhenDateIsInTheFuture() {
-        List<String> response = validateMarriageDate(LocalDate.now().plus(2, YEARS), "field");
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().plus(2, YEARS))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field");
         assertThat(response).isEqualTo(List.of("field" + IN_THE_FUTURE));
     }
 
@@ -106,16 +118,57 @@ public class CaseValidationTest {
             .minus(100, YEARS)
             .minus(1, DAYS);
 
-        List<String> response = validateMarriageDate(oneHundredYearsAndOneDayAgo, "field");
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(oneHundredYearsAndOneDayAgo)
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field");
 
         assertThat(response).isEqualTo(List.of("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
-        List<String> response = validateMarriageDate(LocalDate.now().minus(360, DAYS), "field");
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minus(360, DAYS))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field");
 
         assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_AGO));
+    }
+
+    @Test
+    public void shouldReturnNoErrorsWhenDateIsLessThanOneYearAgoAndJudicialSeparationCase() {
+
+        CaseData caseData = CaseData.builder()
+            .supplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION)
+            .divorceOrDissolution(DIVORCE)
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minus(360, DAYS))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field");
+
+        assertThat(response).isEqualTo(emptyList());
     }
 
     @Test
