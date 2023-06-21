@@ -150,8 +150,8 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         }
 
         generateConditionalOrderAnswersDocument.apply(
-                details,
-                caseData.getApplicant1().getLanguagePreference()
+            details,
+            caseData.getApplicant1().getLanguagePreference()
         );
     }
 
