@@ -1576,13 +1576,6 @@ public class CaseworkerReIssueApplicationIT {
                 anyMap(),
                 eq(ENGLISH));
 
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_APPLICANT_2_USER_EMAIL),
-                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-                anyMap(),
-                eq(ENGLISH));
-
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -1706,13 +1699,6 @@ public class CaseworkerReIssueApplicationIT {
                 eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
                 eq(WELSH));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_APPLICANT_2_USER_EMAIL),
-                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-                anyMap(),
-                eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
