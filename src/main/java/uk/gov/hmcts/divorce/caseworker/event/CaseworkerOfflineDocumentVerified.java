@@ -285,14 +285,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         final CaseData caseData = details.getData();
 
+        if (!caseData.isJudicialSeparationCase()) {
+            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+        }
+
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
             if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
-
-                if (!caseData.isJudicialSeparationCase()) {
-                    notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
-                }
 
                 log.info(
                     "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
