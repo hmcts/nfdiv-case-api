@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -33,10 +34,11 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
-            .forStates(Submitted, AwaitingDocuments, AwaitingHWFDecision)
+            .forStates(Submitted, AwaitingAos,AwaitingDocuments, AwaitingHWFDecision)
             .name("Change service request")
             .description("Change service request")
             .showSummary()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE,
                 SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
@@ -54,6 +56,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
         if (caseData.getApplication().getServiceMethod().equals(PERSONAL_SERVICE)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
                 .errors(singletonList("You may not select Personal Service. Please select Solicitor or Court Service."))
                 .build();
         }
