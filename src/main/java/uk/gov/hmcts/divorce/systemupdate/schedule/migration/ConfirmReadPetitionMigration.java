@@ -51,6 +51,7 @@ public class ConfirmReadPetitionMigration implements Migration {
             caseDetails.getData().put("aosIsDrafted", YesOrNo.NO);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
             log.info("Reset AOS fields successfully for case id: {}", caseId);
+
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseId);
         } catch (final CcdManagementException e) {

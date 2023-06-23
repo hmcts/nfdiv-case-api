@@ -35,6 +35,9 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CAS
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorService.ServiceProcessedByProcessServer.CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -109,6 +112,24 @@ public class CaseworkerConfirmServiceTest {
     }
 
     @Test
+    void shouldSetStateToAwaitingJsNullityWhenJSandServedByProcessServer() {
+        final CaseData caseData = caseData();
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        caseData.getApplication().getSolicitorService()
+            .setServiceProcessedByProcessServer(Set.of(SolicitorService.ServiceProcessedByProcessServer.CONFIRM));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingJsNullity);
+
+        verify(confirmService).addToDocumentsUploaded(caseDetails);
+    }
+
+    @Test
     public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedList() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -145,7 +166,7 @@ public class CaseworkerConfirmServiceTest {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplication().setSolicitorService(SolicitorService.builder()
-            .serviceProcessedByProcessServer(Set.of(SolicitorService.ServiceProcessedByProcessServer.CONFIRM))
+            .serviceProcessedByProcessServer(Set.of(CONFIRM))
             .build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -172,7 +193,7 @@ public class CaseworkerConfirmServiceTest {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplication().setSolicitorService(SolicitorService.builder()
-                .serviceProcessedByProcessServer(Set.of(SolicitorService.ServiceProcessedByProcessServer.CONFIRM))
+                .serviceProcessedByProcessServer(Set.of(CONFIRM))
             .build());
 
         final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()

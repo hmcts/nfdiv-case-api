@@ -58,7 +58,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NULLITY;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
@@ -80,7 +79,6 @@ public class CaseData {
     )
     private ApplicationType applicationType;
 
-    @Setter(AccessLevel.NONE)
     @CCD(
         label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
@@ -332,25 +330,18 @@ public class CaseData {
         }
     }
 
-    private void enforceJudicialSeparationOrSeparation() {
-        if (DIVORCE.equals(this.divorceOrDissolution) && SEPARATION.equals(this.supplementaryCaseType)) {
-            this.supplementaryCaseType = JUDICIAL_SEPARATION; // prevent Separation when Divorce
-        } else if (DISSOLUTION.equals(this.divorceOrDissolution) && JUDICIAL_SEPARATION.equals(this.supplementaryCaseType)) {
-            this.supplementaryCaseType = SEPARATION; // prevent Judicial Separation when Dissolution
+    private void enforceDivorceOrDissolution() {
+        if (SEPARATION.equals(this.supplementaryCaseType)) {
+            this.divorceOrDissolution = DISSOLUTION; // set Dissolution when Separation
+        } else {
+            this.divorceOrDissolution = DIVORCE; // set Divorce when JS
         }
     }
 
-    public void setDivorceOrDissolution(DivorceOrDissolution divorceOrDissolution) {
-        this.divorceOrDissolution = divorceOrDissolution;
-        this.enforceJudicialSeparationOrSeparation();
-    }
-
     public void setSupplementaryCaseType(SupplementaryCaseType supplementaryCaseType) {
-        if (NA.equals(supplementaryCaseType) || NULLITY.equals(supplementaryCaseType) || isNull(this.divorceOrDissolution)) {
-            this.supplementaryCaseType = supplementaryCaseType;
-        } else { // Setting JS or Sep, and divorceOrDissolution is not null
-            this.supplementaryCaseType = JUDICIAL_SEPARATION;
-            this.enforceJudicialSeparationOrSeparation();
+        this.supplementaryCaseType = supplementaryCaseType;
+        if (JUDICIAL_SEPARATION.equals(this.supplementaryCaseType) || SEPARATION.equals(this.supplementaryCaseType)) { // Setting JS or Sep
+            this.enforceDivorceOrDissolution(); // Set divorceOrDissolution based on supplementaryCaseType
         }
     }
 
@@ -360,12 +351,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean isNullityCase() {
-        return NULLITY.equals(this.supplementaryCaseType);
-    }
-
-    @JsonIgnore
-    public boolean hasNoSupplementaryCaseType() {
+    public boolean hasNaOrNullSupplementaryCaseType() {
         return NA.equals(this.supplementaryCaseType) || isNull(this.supplementaryCaseType);
     }
 

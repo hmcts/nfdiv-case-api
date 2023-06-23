@@ -29,13 +29,21 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
     private static final String TITLE = "Correct paper case";
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
-    private static final String JOINT_DIVORCE_APPLICATION = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"divorce\"";
+    private static final String JOINT_DIVORCE_APPLICATION
+        = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"divorce\" AND supplementaryCaseType = \"notApplicable\"";
     private static final String JOINT_DISSOLUTION_APPLICATION
-        = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"dissolution\" ";
+        = "applicationType=\"jointApplication\" AND divorceOrDissolution = \"dissolution\" AND supplementaryCaseType = \"notApplicable\"";
     private static final String APPLICANT_1_SOLICITOR_REPRESENTED_YES = "applicant1SolicitorRepresented=\"Yes\"";
     private static final String APPLICANT_2_SOLICITOR_REPRESENTED_YES = "applicant2SolicitorRepresented=\"Yes\"";
-    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\"";
-    private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
+    private static final String DIVORCE_APPLICATION = "divorceOrDissolution = \"divorce\" AND supplementaryCaseType = \"notApplicable\"";
+    private static final String DISSOLUTION_APPLICATION
+        = "divorceOrDissolution = \"dissolution\" AND supplementaryCaseType = \"notApplicable\"";
+    private static final String JUDICIAL_SEPARATION_APPLICATION = "supplementaryCaseType = \"judicialSeparation\"";
+    private static final String JOINT_JUDICIAL_SEPARATION_APPLICATION
+        = "supplementaryCaseType = \"judicialSeparation\" AND applicationType=\"jointApplication\"";
+    private static final String SEPARATION_APPLICATION = "supplementaryCaseType = \"separation\"";
+    private static final String JOINT_SEPARATION_APPLICATION
+        = "supplementaryCaseType = \"separation\" AND applicationType=\"jointApplication\"";
     private static final String JOINT_APPLICATION_APP2_REPRESENTED
         = "applicationType=\"jointApplication\" AND applicant2SolicitorRepresented=\"Yes\"";
 
@@ -266,6 +274,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .complex(Applicant::getApplicantPrayer)
                 .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, DIVORCE_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, DISSOLUTION_APPLICATION)
+                .mandatory(ApplicantPrayer::getPrayerJudicialSeparation, JUDICIAL_SEPARATION_APPLICATION)
+                .mandatory(ApplicantPrayer::getPrayerSeparation, SEPARATION_APPLICATION)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
                 .done()
@@ -277,6 +287,8 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .complex(Applicant::getApplicantPrayer)
                 .mandatory(ApplicantPrayer::getPrayerDissolveDivorce, JOINT_DIVORCE_APPLICATION)
                 .mandatory(ApplicantPrayer::getPrayerEndCivilPartnership, JOINT_DISSOLUTION_APPLICATION)
+                .mandatory(ApplicantPrayer::getPrayerJudicialSeparation, JOINT_JUDICIAL_SEPARATION_APPLICATION)
+                .mandatory(ApplicantPrayer::getPrayerSeparation, JOINT_SEPARATION_APPLICATION)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves, JOINT_APPLICATION)
                 .optional(ApplicantPrayer::getPrayerFinancialOrdersChild, JOINT_APPLICATION)
                 .done()
