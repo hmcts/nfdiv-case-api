@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -17,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERV
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_PRE_AWAITING_CO_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -34,7 +36,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
-            .forStates(Submitted, AwaitingAos,AwaitingDocuments, AwaitingHWFDecision)
+            .forStates(ArrayUtils.addAll(POST_SUBMISSION_PRE_AWAITING_CO_STATES))
             .name("Change service request")
             .description("Change service request")
             .showSummary()
