@@ -419,7 +419,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildFinalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("finalOrder", "Final Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition(showForState(
+            .showCondition("doesApplicant1WantToApplyForFinalOrder=\"Yes\" OR doesApplicant2WantToApplyForFinalOrder=\"Yes\" OR "
+                + showForState(
                 AwaitingFinalOrder,
                 AwaitingJointFinalOrder,
                 AwaitingGeneralConsideration,
