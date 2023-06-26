@@ -13,7 +13,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorChangeServiceRequest.SOLICITOR_CHANGE_SERVICE_REQUEST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -53,5 +57,43 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).contains("You may not select Personal Service. Please select Solicitor or Court Service.");
+    }
+
+    @Test
+    void shouldChangeStateToAwaitingAosForCourtService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingAos);
+    }
+
+    @Test
+    void shouldChangeStateToAwaitingServiceForSolicitorService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingService);
     }
 }
