@@ -49,7 +49,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -634,5 +633,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .getContentAsString();
 
         verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
-        verifyNoMoreInteractions(appliedForCoPrinter);    }
+        verifyNoMoreInteractions(appliedForCoPrinter);
+    }
 }
