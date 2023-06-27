@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -24,7 +25,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.System.getenv;
 import static java.util.Collections.singletonList;
