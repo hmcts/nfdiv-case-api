@@ -8,7 +8,6 @@ buildscript {
         excludeGroup "com.github.ben-manes.versions"
       }
     }
-
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '3.2.1263'
@@ -24,10 +23,10 @@ plugins {
   id 'org.owasp.dependencycheck' version '8.2.1'
   id 'org.sonarqube' version '4.2.0.3129'
   id 'io.spring.dependency-management' version '1.1.0'
-  id 'org.springframework.boot' version '2.7.12'
+  id 'org.springframework.boot' version '3.1.0'
   id 'com.github.ben-manes.versions' version '0.46.0'
   id 'hmcts.ccd.sdk' version '5.3.9'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.705'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.727'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -57,7 +56,6 @@ sourceSets {
     }
   }
 }
-
 
 java {
   toolchain {
@@ -239,8 +237,6 @@ def versions = [
   springBoot        : springBoot.class.package.implementationVersion
 ]
 
-ext["rest-assured.version"] = '4.5.0'
-
 ext.libraries = [
   junit5: [
     "org.junit.jupiter:junit-jupiter-api:${versions.junit}",
@@ -254,6 +250,11 @@ ext.libraries = [
 dependencies {
 // uncomment for local version
 // implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.19.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.19.0'
+  implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '3.1.0'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -268,18 +269,18 @@ dependencies {
   }
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.1'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.1'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.0.1'
-  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.23'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.3'
-  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.3'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.20.0'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.20.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.75'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.9'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch'
+  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.0'
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.19.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.19.0'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.8'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.8'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.0.0'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.6'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.7.0'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -287,8 +288,8 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: versions.springBoot
   implementation group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.1'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.6'
-  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '4.1.0-RELEASE'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.0.1'
+  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.19.0-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.6'
@@ -296,27 +297,24 @@ dependencies {
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
-    exclude group: 'junit', module: 'junit'
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
-
   testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
     exclude(module: 'commons-logging')
     exclude(module: 'android-json')
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
-  testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.24.2'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.7'
+  testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.5.0'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.0.1'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.3'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.simplify4u', name: 'slf4j-mock', version: '2.3.0'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.28'
+  testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
@@ -328,7 +326,7 @@ dependencies {
 
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.7.3'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.0'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
@@ -465,6 +463,8 @@ cftlibTest {
 
 tasks.withType(Test).configureEach {
   maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
+  jvmArgs(["--add-opens=java.base/java.lang=ALL-UNNAMED",
+           "--add-opens=java.base/java.util=ALL-UNNAMED"])
 }
 
 // exclude the logback binding is coming in via cftlib
@@ -478,6 +478,10 @@ task installChromium(type: JavaExec) {
   classpath = sourceSets.cftlibTest.runtimeClasspath
   main = 'com.microsoft.playwright.CLI'
   args = ['install', 'chromium']
+}
+
+configurations.all {
+  exclude group: 'com.vaadin.external.google', module: 'android-json'
 }
 
 tasks.cftlibTest.dependsOn(installChromium)
