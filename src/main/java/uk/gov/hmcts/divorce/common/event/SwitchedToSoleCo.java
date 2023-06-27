@@ -164,6 +164,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(data.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             switchToSoleCoPrinter.print(data, details.getId());
