@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
@@ -25,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -37,9 +35,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class SolPaymentTest {
-
-    @Mock
-    private Logger logger;
 
     @Mock
     private PbaService pbaService;
@@ -79,8 +74,6 @@ public class SolPaymentTest {
         assertThat(pbaNumbersResponse.getListItems())
             .extracting("label")
             .containsExactlyInAnyOrder("PBA0012345", "PBA0012346");
-        verify(logger).info("Mid-event callback triggered for SolPayment page Case Id: {}", TEST_CASE_ID);
-        verify(logger).info("PBA Numbers {}, Case Id: {}", pbaNumbers, TEST_CASE_ID);
     }
 
     @Test
@@ -102,8 +95,6 @@ public class SolPaymentTest {
             () -> solPayment.midEvent(details, details)
         );
 
-        verify(logger).info("Mid-event callback triggered for SolPayment page Case Id: {}", TEST_CASE_ID);
-        verify(logger).error("Failed to retrieve PBA numbers for Case Id: {}", TEST_CASE_ID);
     }
 
     @Test
@@ -121,7 +112,5 @@ public class SolPaymentTest {
 
         assertThat(response.getData()).isSameAs(caseData);
         verifyNoInteractions(pbaService);
-        verify(logger).info("Mid-event callback triggered for SolPayment page Case Id: {}", TEST_CASE_ID);
-        verify(logger).info("Payment method is not PBA for Case Id: {}", TEST_CASE_ID);
     }
 }

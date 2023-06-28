@@ -18,7 +18,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
