@@ -35,7 +35,7 @@ public final class FeesWireMock {
 
     public static void stubForFeesLookup(final String feeResponse) {
         FEES_SERVER.stubFor(get("/fees-register/fees/lookup"
-            + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family+court&service=divorce&keyword=DivorceCivPart")
+            + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family%20court&service=divorce&keyword=DivorceCivPart")
             .willReturn(aResponse()
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .withBody(feeResponse)));
@@ -43,7 +43,7 @@ public final class FeesWireMock {
 
     public static void stubForFeesLookup(final String feeResponse, final String event, final String service, final String keyword) {
         String url = String.format("/fees-register/fees/lookup"
-            + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family+court&service=%s&keyword=%s",
+            + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family%%20court&service=%s&keyword=%s",
             event, service, keyword);
 
         FEES_SERVER.stubFor(get(url)
@@ -55,7 +55,7 @@ public final class FeesWireMock {
     public static void stubForFeesNotFound() {
         FEES_SERVER.stubFor(get(urlEqualTo(
             "/fees-register/fees/lookup"
-                + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family+court&service=divorce&keyword=DivorceCivPart"))
+                + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family%20court&service=divorce&keyword=DivorceCivPart"))
             .willReturn(aResponse()
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .withStatus(HttpStatus.NOT_FOUND.value())

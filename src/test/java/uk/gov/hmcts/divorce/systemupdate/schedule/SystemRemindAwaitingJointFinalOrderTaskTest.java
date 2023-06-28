@@ -37,7 +37,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindAwaitingJointFinalOrder.SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRemindAwaitingJointFinalOrderTask.DATE_FINAL_ORDER_SUBMITTED;
@@ -134,7 +134,7 @@ class SystemRemindAwaitingJointFinalOrderTaskTest {
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
             .thenReturn(caseDetailsList);
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         remindAwaitingJointFinalOrderTask.run();

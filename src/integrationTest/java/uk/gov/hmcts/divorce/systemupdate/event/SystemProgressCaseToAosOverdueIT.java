@@ -151,7 +151,7 @@ public class SystemProgressCaseToAosOverdueIT {
         String responseJson = TestDataHelper.getFeeResponseAsJson();
 
         stubForFeesLookup(responseJson, EVENT_ENFORCEMENT, SERVICE_OTHER, KEYWORD_BAILIFF);
-        stubForFeesLookup(responseJson, "general+application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
+        stubForFeesLookup(responseJson, "general%20application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
 
         CaseData data = validCaseDataForIssueApplication();
         data.getApplicant1().setSolicitor(null);
@@ -201,7 +201,7 @@ public class SystemProgressCaseToAosOverdueIT {
         String responseJson = TestDataHelper.getFeeResponseAsJson();
 
         stubForFeesLookup(responseJson, EVENT_ENFORCEMENT, SERVICE_OTHER, KEYWORD_BAILIFF);
-        stubForFeesLookup(responseJson, "general+application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
+        stubForFeesLookup(responseJson, "general%20application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
 
         CaseData data = validCaseDataForIssueApplication();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);

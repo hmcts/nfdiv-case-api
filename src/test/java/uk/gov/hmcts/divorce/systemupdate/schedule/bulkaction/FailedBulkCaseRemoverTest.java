@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -122,7 +122,7 @@ class FailedBulkCaseRemoverTest {
         bulkCaseDetails.setId(1L);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Message", null))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Message", null))
             .when(ccdUpdateService).submitBulkActionEvent(
                 bulkCaseDetails,
                 SYSTEM_REMOVE_FAILED_CASES,
@@ -157,7 +157,7 @@ class FailedBulkCaseRemoverTest {
                 user,
                 SERVICE_AUTHORIZATION);
 
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Message", null))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Message", null))
             .when(ccdUpdateService).submitBulkActionEvent(
                 bulkCaseDetails,
                 SYSTEM_EMPTY_CASE,
