@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -108,9 +109,10 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
-    void shouldChangeStateToAwaitingServiceForSolicitorServiceAndRegenerateNOP() {
+    void shouldChangeStateToAwaitingServiceForSolicitorServiceAndRegenerateNOPWhenApplicationIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(now());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
@@ -123,6 +125,25 @@ class SolicitorChangeServiceRequestTest {
 
         verify(generateApplicant1NoticeOfProceeding).apply(caseDetails);
         verify(generateApplicant2NoticeOfProceedings).apply(caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingService);
+    }
+
+    @Test
+    void shouldChangeStateToAwaitingServiceForSolicitorServiceAndNotRegenerateNOPWhenApplicationNotYetIssued() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            caseDetails, caseDetails);
+
+        verifyNoInteractions(generateApplicant1NoticeOfProceeding);
+        verifyNoInteractions(generateApplicant2NoticeOfProceedings);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
