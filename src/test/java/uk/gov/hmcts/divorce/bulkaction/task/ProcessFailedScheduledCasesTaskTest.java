@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +20,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
