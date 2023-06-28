@@ -81,6 +81,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
+        log.info("Solicitor change service request about to submit callback invoked with Case Id: {}", details.getId());
+
         CaseData caseData = details.getData();
         ServiceMethod serviceMethod = caseData.getApplication().getServiceMethod();
 
@@ -91,7 +93,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .build();
         }
 
-        if (serviceMethod.equals(SOLICITOR_SERVICE)) {
+        if (serviceMethod.equals(SOLICITOR_SERVICE) && caseData.getApplication().getIssueDate() != null) {
             log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
             final CaseDetails<CaseData, State> updatedDetails = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings).run(details);
