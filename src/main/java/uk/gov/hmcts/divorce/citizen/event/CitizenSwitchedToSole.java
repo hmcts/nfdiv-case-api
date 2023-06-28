@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,8 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
