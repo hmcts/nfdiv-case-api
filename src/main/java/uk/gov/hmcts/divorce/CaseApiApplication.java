@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -20,15 +21,13 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.CaseEventsApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 import java.util.TimeZone;
-import javax.annotation.PostConstruct;
 
 @SpringBootApplication(
-    exclude = {CoreCaseDataClientAutoConfiguration.class},
-    scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce"}
+    scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
+        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.document"}
 )
 @EnableFeignClients(
     clients = {
