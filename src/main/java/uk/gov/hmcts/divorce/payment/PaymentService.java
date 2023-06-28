@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -130,7 +130,7 @@ public class PaymentService {
             );
 
             if (paymentResponseEntity != null) {
-                return new PbaResponse(paymentResponseEntity.getStatusCode(), null, paymentReference);
+                return new PbaResponse(HttpStatus.resolve(paymentResponseEntity.getStatusCode().value()), null, paymentReference);
             }
 
         } catch (FeignException exception) {
