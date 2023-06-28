@@ -74,7 +74,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getServiceMethod);
+            .mandatory(Application::getServiceMethod)
+            .showCondition("applicationType=\"soleApplication\"");
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
