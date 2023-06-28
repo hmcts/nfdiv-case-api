@@ -164,11 +164,25 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
-    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
+    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorServiceWhenApplicationIssued() {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(now());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingService);
+
+        solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
+
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorServiceWhenApplicationNotIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -177,6 +191,6 @@ class SolicitorChangeServiceRequestTest {
 
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+        verifyNoInteractions(ccdUpdateService);
     }
 }
