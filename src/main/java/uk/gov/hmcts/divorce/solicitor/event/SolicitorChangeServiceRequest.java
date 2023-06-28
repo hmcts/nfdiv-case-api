@@ -115,7 +115,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
         log.info("Solicitor change service request submitted callback invoked for case id: {}", details.getId());
 
-        if (details.getData().getApplication().isSolicitorServiceMethod()) {
+        if (details.getData().getApplication().isSolicitorServiceMethod() && details.getData().getApplication().getIssueDate() != null) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
 
