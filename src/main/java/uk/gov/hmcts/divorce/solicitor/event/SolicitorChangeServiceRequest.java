@@ -62,7 +62,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
-            .forStates(ArrayUtils.addAll(POST_SUBMISSION_PRE_AWAITING_CO_STATES))
+            .forStates(POST_SUBMISSION_PRE_AWAITING_CO_STATES)
             .name("Change service request")
             .description("Change service request")
             .showSummary()
