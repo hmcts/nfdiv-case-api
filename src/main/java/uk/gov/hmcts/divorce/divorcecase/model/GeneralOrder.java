@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -73,7 +72,8 @@ public class GeneralOrder {
         label = "Fast Track Final Order?",
         access = {CaseworkerAccessOnlyAccess.class}
     )
-    private YesOrNo generalOrderFastTrackFinalOrder;
+    @Builder.Default
+    private YesOrNo generalOrderFastTrackFinalOrder = YesOrNo.NO;
 
     @CCD(
         label = "General Order Draft",
