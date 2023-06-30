@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServic
 @Slf4j
 public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_CHANGE_SERVICE_REQUEST = "caseworker-change-service-request";
+    public static final String SOLICITOR_CHANGE_SERVICE_REQUEST = "solicitor-change-service-request";
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
