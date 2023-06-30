@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -82,6 +83,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         CaseData caseData = details.getData();
 
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
 
         if (!caseData.getGeneralOrder().getGeneralOrderFastTrackFinalOrder().toBoolean()) {
