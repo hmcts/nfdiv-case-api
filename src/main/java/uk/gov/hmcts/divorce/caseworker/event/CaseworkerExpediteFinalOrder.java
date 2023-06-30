@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
@@ -82,6 +83,13 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         CaseData caseData = details.getData();
 
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+
+        if (!caseData.getGeneralOrder().getGeneralOrderFastTrackFinalOrder().toBoolean()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("No general order authorising FO fast track found.  Unable to continue."))
+                .build();
+        }
 
         generateFinalOrderCoverLetter.apply(details);
         generateFinalOrder.apply(details);
