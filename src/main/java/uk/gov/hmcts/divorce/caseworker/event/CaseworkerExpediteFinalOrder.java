@@ -7,11 +7,13 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -22,7 +24,9 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -86,7 +90,11 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
 
-        if (!caseData.getGeneralOrder().getGeneralOrderFastTrackFinalOrder().toBoolean()) {
+        final List<ListValue<DivorceGeneralOrder>> generalOrderList = caseData.getGeneralOrders();
+        boolean generalOrderToExpediteFO = generalOrderList.stream()
+            .anyMatch(g -> g.getValue().getGeneralOrderFastTrackFinalOrder().equals(YES));
+
+        if (!generalOrderToExpediteFO) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(Collections.singletonList("No general order authorising FO fast track found.  Unable to continue."))
