@@ -45,6 +45,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
                 .optional(GeneralOrder::getGeneralOrderRecitals)
                 .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorType)
                 .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorName)
+                .mandatory(GeneralOrder::getGeneralOrderFastTrackFinalOrder)
                 .mandatory(GeneralOrder::getGeneralOrderDetails)
             .done();
     }
