@@ -14,6 +14,10 @@
     <cve>CVE-2022-31690</cve>
   </suppress>
   <suppress>
+    <notes>waiting for newer version of com.google.guava (32.0.1-jre currently latest with CVE)</notes>
+    <cve>CVE-2023-2976</cve>
+  </suppress>
+  <suppress>
     <notes>jackson-databind false positive CVE - suppressing until they remove it</notes>
     <cve>CVE-2023-35116</cve>
   </suppress>
