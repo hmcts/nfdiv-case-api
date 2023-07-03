@@ -7,6 +7,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
@@ -25,7 +27,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
@@ -69,6 +75,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Submit")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
@@ -78,6 +85,38 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .complex(CaseData::getFinalOrder)
             .mandatory(FinalOrder::getGranted)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
+        var caseData = details.getData();
+        final var generalOrderDocs = caseData.getGeneralOrders()
+            .stream().map(doc -> doc.getValue().getGeneralOrderDocument()).collect(toList());
+
+        if (!isEmpty(generalOrderDocs)) {
+            List<DynamicListElement> scannedDocumentNames =
+                emptyIfNull(caseData.getDocuments().getScannedDocuments())
+                    .stream()
+                    .map(scannedDocListValue ->
+                        DynamicListElement
+                            .builder()
+                            .label(scannedDocListValue.getValue().getFileName())
+                            .code(UUID.randomUUID()).build()
+                    )
+                    .collect(toList());
+
+            DynamicList scannedDocNamesDynamicList = DynamicList
+                .builder()
+                .value(DynamicListElement.builder().label("scannedDocumentName").code(UUID.randomUUID()).build())
+                .listItems(scannedDocumentNames)
+                .build();
+
+            caseData.getDocuments().setScannedDocumentNames(scannedDocNamesDynamicList);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
