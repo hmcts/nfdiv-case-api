@@ -69,13 +69,6 @@ public class GeneralOrder {
     private String generalOrderDetails;
 
     @CCD(
-        label = "Fast Track Final Order?",
-        access = {CaseworkerAccessOnlyAccess.class}
-    )
-    @Builder.Default
-    private YesOrNo generalOrderFastTrackFinalOrder = YesOrNo.NO;
-
-    @CCD(
         label = "General Order Draft",
         access = {CaseworkerAccessOnlyAccess.class}
     )

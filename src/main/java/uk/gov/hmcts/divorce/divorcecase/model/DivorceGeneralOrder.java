@@ -25,9 +25,4 @@ public class DivorceGeneralOrder {
         label = "General Order Parties"
     )
     private Set<GeneralOrderDivorceParties> generalOrderDivorceParties;
-
-    @CCD(
-        label = "General Order To Fast Track Final Order?"
-    )
-    private YesOrNo generalOrderFastTrackFinalOrder;
 }

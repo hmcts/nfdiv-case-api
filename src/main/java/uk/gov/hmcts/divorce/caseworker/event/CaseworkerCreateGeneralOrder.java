@@ -94,7 +94,6 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
             .builder()
             .generalOrderDocument(generalOrderDocument)
             .generalOrderDivorceParties(generalOrder.getGeneralOrderDivorceParties())
-            .generalOrderFastTrackFinalOrder(details.getData().getGeneralOrder().getGeneralOrderFastTrackFinalOrder())
             .build();
 
         ListValue<DivorceGeneralOrder> divorceGeneralOrderListValue =
