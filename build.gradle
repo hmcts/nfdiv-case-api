@@ -330,7 +330,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.34.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.35.1'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.0.1'
 }
 
