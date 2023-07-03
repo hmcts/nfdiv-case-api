@@ -15,7 +15,9 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -27,12 +29,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -82,37 +83,51 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("expediteFinalOrder")
             .pageLabel("Expedite Final Order")
+            .complex(CaseData::getDocuments)
+                .mandatory(CaseDocuments::getGeneralOrderDocumentNames)
+            .done()
             .complex(CaseData::getFinalOrder)
-            .mandatory(FinalOrder::getGranted)
+                .complex(FinalOrder::getExpeditedFinalOrderAuthorisation)
+                    .mandatory(ExpeditedFinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
+                .done()
+                .mandatory(FinalOrder::getGranted)
             .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
         var caseData = details.getData();
-        final var generalOrderDocs = caseData.getGeneralOrders()
-            .stream().map(doc -> doc.getValue().getGeneralOrderDocument()).collect(toList());
 
-        if (!isEmpty(generalOrderDocs)) {
-            List<DynamicListElement> scannedDocumentNames =
-                emptyIfNull(caseData.getDocuments().getScannedDocuments())
-                    .stream()
-                    .map(scannedDocListValue ->
-                        DynamicListElement
-                            .builder()
-                            .label(scannedDocListValue.getValue().getFileName())
-                            .code(UUID.randomUUID()).build()
-                    )
-                    .collect(toList());
-
-            DynamicList scannedDocNamesDynamicList = DynamicList
-                .builder()
-                .value(DynamicListElement.builder().label("scannedDocumentName").code(UUID.randomUUID()).build())
-                .listItems(scannedDocumentNames)
+        if (caseData.getGeneralOrders() == null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("No general order documents found.  Unable to continue."))
                 .build();
-
-            caseData.getDocuments().setScannedDocumentNames(scannedDocNamesDynamicList);
         }
+
+        final var generalOrderDocuments = caseData.getGeneralOrders()
+            .stream()
+            .map(doc -> doc.getValue().getGeneralOrderDocument())
+            .collect(toList());
+
+        List<DynamicListElement> generalOrderDocumentNames =
+            emptyIfNull(generalOrderDocuments)
+                .stream()
+                .map(generalOrderDocument ->
+                    DynamicListElement
+                        .builder()
+                        .label(generalOrderDocument.getDocumentFileName())
+                        .code(UUID.randomUUID()).build()
+                )
+                .collect(toList());
+
+        DynamicList generalOrderDocumentNamesDynamicList = DynamicList
+            .builder()
+            .value(DynamicListElement.builder().label("generalOrderDocumentName").code(UUID.randomUUID()).build())
+            .listItems(generalOrderDocumentNames)
+            .build();
+
+        caseData.getDocuments().setGeneralOrderDocumentNames(generalOrderDocumentNamesDynamicList);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -128,17 +143,23 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+        final String expeditedFinalOrderGeneralOrderDocumentName = caseData.getDocuments()
+            .getGeneralOrderDocumentNames().getValue().getLabel();
 
         final List<ListValue<DivorceGeneralOrder>> generalOrderList = caseData.getGeneralOrders();
-        boolean generalOrderToExpediteFO = generalOrderList.stream()
-            .anyMatch(g -> g.getValue().getGeneralOrderFastTrackFinalOrder().equals(YES));
+        Optional<ListValue<DivorceGeneralOrder>> generalOrderToExpediteFinancialOrder = generalOrderList.stream()
+            .filter(g -> g.getValue().getGeneralOrderDocument().getDocumentFileName().equals(expeditedFinalOrderGeneralOrderDocumentName))
+            .findFirst();
 
-        if (!generalOrderToExpediteFO) {
+        if (generalOrderToExpediteFinancialOrder.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("No general order authorising FO fast track found.  Unable to continue."))
+                .errors(Collections.singletonList("Cannot locate selected general order.  Unable to continue."))
                 .build();
         }
+
+        caseData.getFinalOrder().getExpeditedFinalOrderAuthorisation()
+            .setExpeditedFinalOrderGeneralOrder(generalOrderToExpediteFinancialOrder.get().getValue());
 
         generateFinalOrderCoverLetter.apply(details);
         generateFinalOrder.apply(details);
@@ -155,7 +176,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         final Long caseId = details.getId();
         final CaseData caseData = details.getData();
 
-        log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
+        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
 
         notificationDispatcher.send(finalOrderGrantedNotification, caseData, caseId);
 
