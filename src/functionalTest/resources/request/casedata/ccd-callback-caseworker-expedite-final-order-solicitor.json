@@ -1,0 +1,34 @@
+{
+  "applicationType": "soleApplication",
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "Bob",
+  "applicant1LastName": "Smith",
+  "applicant1Gender": "male",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant1SolicitorName": "App1 Sol",
+  "applicant1SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1SolicitorReference": "App1 Sol Reference",
+  "applicant2FirstName": "Julie",
+  "applicant2LastName": "Smith",
+  "applicant2Gender": "female",
+  "applicant2SolicitorRepresented": "Yes",
+  "applicant2SolicitorName": "App2 Sol",
+  "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
+  "issueDate": "2021-04-28",
+  "generalOrders": [
+    {
+      "value": {
+        "generalOrderDocument": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524",
+            "document_filename": "generalOrder2023-07-03 17:17:30.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524/binary"
+          },
+          "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
+          "documentType": "generalOrder"
+        }
+      }
+    }
+  ]
+}
+
