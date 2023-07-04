@@ -154,7 +154,14 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         if (generalOrderToExpediteFinancialOrder.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("Cannot locate selected general order.  Unable to continue."))
+                .errors(
+                    Collections.singletonList(
+                        String.format(
+                            "Cannot locate selected general order document (%s).  Unable to continue.",
+                            expeditedFinalOrderGeneralOrderDocumentName
+                        )
+                    )
+                )
                 .build();
         }
 
