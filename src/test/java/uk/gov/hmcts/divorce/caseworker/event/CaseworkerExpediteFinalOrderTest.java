@@ -96,7 +96,8 @@ class CaseworkerExpediteFinalOrderTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getListItems().size()).isEqualTo(1);
-        assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getValue().getLabel()).isEqualTo("generalOrderDocumentName");
+        assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getValue().getLabel())
+            .isEqualTo("generalOrderDocumentName");
     }
 
     @Test
@@ -152,8 +153,15 @@ class CaseworkerExpediteFinalOrderTest {
 
     CaseDetails<CaseData, State> getCaseDetails() {
         final CaseData caseData = caseData();
-        final DivorceDocument generalOrderDoc = getDivorceDocumentListValue("http://localhost:8080/1234","generalOrderDocumentName", GENERAL_ORDER).getValue();
-        final ListValue<DivorceGeneralOrder> generalOrder = getDivorceGeneralOrderListValue(generalOrderDoc.getDocumentLink(), UUID.randomUUID().toString());
+        final DivorceDocument generalOrderDoc = getDivorceDocumentListValue(
+            "http://localhost:8080/1234",
+            "generalOrderDocumentName",
+            GENERAL_ORDER
+        ).getValue();
+        final ListValue<DivorceGeneralOrder> generalOrder = getDivorceGeneralOrderListValue(
+            generalOrderDoc.getDocumentLink(),
+            UUID.randomUUID().toString()
+        );
         caseData.setGeneralOrders(singletonList(generalOrder));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
