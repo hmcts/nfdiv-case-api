@@ -142,6 +142,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         CaseData caseData = details.getData();
 
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now(clock));
+        caseData.getFinalOrder().setDateFinalOrderEligibleToRespondent(LocalDate.now(clock));
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
         final String expeditedFinalOrderGeneralOrderDocumentName = caseData.getDocuments()
             .getGeneralOrderDocumentNames().getValue().getLabel();
