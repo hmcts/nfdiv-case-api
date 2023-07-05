@@ -111,7 +111,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class CaseworkerExpediteFinalOrderIT {
 
     public static final String EXPEDITE_FINAL_ORDER_RESPONSE_JSON = "classpath:caseworker-expedite-final-order-response.json";
-    public static final String EXPEDITE_FINAL_ORDER_OFFLINE_RESPONSE_JSON = "classpath:caseworker-expedite-final-order-offline-response.json";
+    public static final String EXPEDITE_FINAL_ORDER_OFFLINE_RESPONSE_JSON
+        = "classpath:caseworker-expedite-final-order-offline-response.json";
 
     @Autowired
     private MockMvc mockMvc;
