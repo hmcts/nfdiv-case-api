@@ -48,7 +48,7 @@
     "coDateAndTimeOfHearing": "2021-11-08T14:56:00.000",
     "dateFinalOrderEligibleFrom": "${json-unit.any-string}",
     "grantedDate": "${json-unit.any-string}",
-    "dateFinalOrderEligibleToRespondent": "2022-03-21",
+    "dateFinalOrderEligibleToRespondent": "${json-unit.any-string}",
     "confidentialDocumentsGenerated" : [
       {
         "id": "${json-unit.any-string}",
