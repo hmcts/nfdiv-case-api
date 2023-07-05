@@ -45,6 +45,7 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(AosDrafted, AosOverdue, AwaitingService)
             .name("Update AoS")
             .description("Update Acknowledgement of Service")
+            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted=\"Yes\"")
             .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .endButtonLabel("Save Updated AoS Response")
