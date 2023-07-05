@@ -52,19 +52,19 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
     public static final String CASEWORKER_EXPEDITE_FINAL_ORDER = "caseworker-expedite-final-order";
 
     @Autowired
-    private Clock clock;
-
+    private NotificationDispatcher notificationDispatcher;
+    
     @Autowired
-    private GenerateFinalOrder generateFinalOrder;
+    private FinalOrderGrantedNotification finalOrderGrantedNotification;
 
     @Autowired
     private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
 
     @Autowired
-    private FinalOrderGrantedNotification finalOrderGrantedNotification;
+    private GenerateFinalOrder generateFinalOrder;
 
     @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
