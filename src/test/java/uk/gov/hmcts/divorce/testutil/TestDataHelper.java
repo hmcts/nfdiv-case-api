@@ -154,7 +154,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement.IS_JOINT;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlementHelper.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -229,6 +229,23 @@ public class TestDataHelper {
             .build();
     }
 
+    public static Applicant getApplicant2WithAddress() {
+        return Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .middleName(TEST_APP2_MIDDLE_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .email(TEST_APPLICANT_2_USER_EMAIL)
+            .gender(FEMALE)
+            .languagePreferenceWelsh(NO)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("line 1")
+                .postTown("town")
+                .postCode("postcode")
+                .country("UK")
+                .build())
+            .build();
+    }
+
     public static Applicant getApplicant2(Gender gender) {
         return Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -258,19 +275,17 @@ public class TestDataHelper {
 
     public static Solicitor getOfflineSolicitor() {
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
-            .addressLine1("line1")
-            .addressLine2("line2")
-            .postTown("city")
-            .postCode("postcode")
+            .addressLine1("sol line1")
+            .addressLine2("sol line2")
+            .postTown("sol city")
+            .postCode("sol postcode")
             .build();
 
-        final Solicitor solicitor = Solicitor.builder()
+        return Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)
             .firmName(TEST_SOLICITOR_FIRM_NAME)
             .address(addressGlobalUK.toString())
             .build();
-
-        return solicitor;
     }
 
     public static Applicant applicantRepresentedBySolicitor() {
@@ -843,21 +858,23 @@ public class TestDataHelper {
         return basicDocmosisTemplateContent;
     }
 
+    public static CtscContactDetails getCtscContactDetails() {
+        return CtscContactDetails
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .emailAddress("contactdivorce@justice.gov.uk")
+            .phoneNumber("0300 303 0642")
+            .build();
+    }
+
     public static Map<String, Object> getBasicDocmosisTemplateContentWithCtscContactDetails(LanguagePreference languagePreference) {
         Map<String, Object> basicDocmosisTemplateContent = getBasicDocmosisTemplateContent(languagePreference);
 
-        var ctscContactDetails = CtscContactDetails
-                .builder()
-                .centreName("HMCTS Digital Divorce and Dissolution")
-                .serviceCentre("Courts and Tribunals Service Centre")
-                .poBox("PO Box 13226")
-                .town("Harlow")
-                .postcode("CM20 9UG")
-                .emailAddress("contactdivorce@justice.gov.uk")
-                .phoneNumber("0300 303 0642")
-                .build();
-
-        basicDocmosisTemplateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        basicDocmosisTemplateContent.put(CTSC_CONTACT_DETAILS, getCtscContactDetails());
 
         return basicDocmosisTemplateContent;
     }

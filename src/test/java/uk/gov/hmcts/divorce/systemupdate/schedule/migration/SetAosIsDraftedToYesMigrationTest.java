@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.predicate.HasAosDraftedEventPredicate;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -39,7 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -48,9 +47,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SetAosIsDraftedToYesMigrationTest {
-
-    @Mock
-    private Logger logger;
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -174,8 +170,6 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(logger)
-            .error("Case schedule task(SetAosIsDraftedToYesMigration) stopped after search error", exception);
         verifyNoInteractions(ccdUpdateService);
     }
 
@@ -251,7 +245,7 @@ class SetAosIsDraftedToYesMigrationTest {
         when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetail -> predicateValues.get(predicateIndex.getAndAdd(1)));
 
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         doNothing()
             .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
@@ -270,7 +264,6 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED={}, references size: {}", false, 1);
         verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
     }
 
@@ -285,7 +278,6 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED={}, references size: {}", true, 0);
         verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
     }
 

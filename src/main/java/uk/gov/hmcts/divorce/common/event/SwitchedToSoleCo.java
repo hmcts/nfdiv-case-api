@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,6 @@ import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolic
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -155,6 +154,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(data.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             switchToSoleCoPrinter.print(data, details.getId());

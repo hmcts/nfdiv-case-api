@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.endpoint;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 
 import java.nio.charset.StandardCharsets;
-import javax.validation.Valid;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
