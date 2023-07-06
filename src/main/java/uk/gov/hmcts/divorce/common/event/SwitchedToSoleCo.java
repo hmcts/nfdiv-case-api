@@ -27,6 +27,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -131,7 +132,8 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private void generateSwitchToSoleDocuments(CaseDetails<CaseData, State> details,
                                                CaseData caseData,
                                                Long caseId) {
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+        if ((CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
             if (caseData.isJudicialSeparationCase()) {
@@ -161,6 +163,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(data.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             switchToSoleCoPrinter.print(data, details.getId());

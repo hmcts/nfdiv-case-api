@@ -290,7 +290,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            if (!caseData.isJudicialSeparationCase()) {
+                notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            }
 
             if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
