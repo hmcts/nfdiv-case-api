@@ -95,7 +95,7 @@ class CaseworkerExpediteFinalOrderTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getListItems().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getListItems()).hasSize(1);
         assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getValue().getLabel())
             .isEqualTo("generalOrderDocumentName");
     }
