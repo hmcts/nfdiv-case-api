@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 
 @ExtendWith(MockitoExtension.class)
 class SetPostIssueStateTest {
@@ -101,7 +101,7 @@ class SetPostIssueStateTest {
         final CaseData caseData = CaseData.builder()
             .application(Application.builder().build())
             .applicationType(ApplicationType.JOINT_APPLICATION)
-            .isJudicialSeparation(YesOrNo.YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

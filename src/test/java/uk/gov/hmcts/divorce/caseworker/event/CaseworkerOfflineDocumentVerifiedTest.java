@@ -32,7 +32,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
@@ -63,6 +62,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84NVA;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
@@ -71,6 +71,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorR
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -85,7 +86,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerOfflineDocumentVerifiedTest {
+class CaseworkerOfflineDocumentVerifiedTest {
 
     @Mock
     private SubmitAosService submitAosService;
@@ -391,7 +392,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().typeOfDocumentAttached(OTHER).build())
             .application(Application.builder()
-                .issueDate(LocalDate.of(2022, 01, 01))
+                .issueDate(LocalDate.of(2022, 1, 1))
                 .stateToTransitionApplicationTo(Holding)
                 .build())
             .acknowledgementOfService(AcknowledgementOfService.builder()
@@ -399,7 +400,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .build();
         details.setData(caseData);
 
-        when(holdingPeriodService.getDueDateFor(LocalDate.of(2022, 01, 01))).thenReturn(LocalDate.of(2022, 05, 22));
+        when(holdingPeriodService.getDueDateFor(LocalDate.of(2022, 1, 1))).thenReturn(LocalDate.of(2022, 5, 22));
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -434,7 +435,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder().build())
             .conditionalOrder(ConditionalOrder.builder().build())
-            .isJudicialSeparation(YES)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .documents(
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(CO_D84)
@@ -461,7 +462,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getState()).isEqualTo(JSAwaitingLA);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
-        assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
     }
@@ -518,7 +519,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
-        assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
     }
@@ -577,7 +578,7 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
-        assertThat(response.getData().getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
     }
@@ -969,14 +970,13 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
             .application(Application.builder()
-                    .issueDate(LocalDate.of(2022, 01, 01))
+                    .issueDate(LocalDate.of(2022, 1, 1))
                     .stateToTransitionApplicationTo(Holding)
                     .build())
             .build();
         details.setData(caseData);
 
-        SubmittedCallbackResponse response =
-                caseworkerOfflineDocumentVerified.submitted(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(submitAosService).submitAosNotifications(details);
         verifyNoMoreInteractions(submitAosService);
@@ -1021,9 +1021,6 @@ public class CaseworkerOfflineDocumentVerifiedTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
-
-        verify(notificationDispatcher)
-                .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
         verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
@@ -1091,5 +1088,61 @@ public class CaseworkerOfflineDocumentVerifiedTest {
                 .subtype("aos")
                 .build()
             ).build();
+    }
+
+    @Test
+    void shouldNotTriggerSwitchToSoleEventIfD36OrFOD36AndNotSwitchToSoleSelected() {
+        final CaseData caseData = CaseData.builder()
+                .documents(CaseDocuments.builder()
+                        .typeOfDocumentAttached(FO_D36)
+                        .build())
+                .finalOrder(FinalOrder.builder().d36ApplicationType(JOINT).build())
+                .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldNotSendOfflineNotificationsForConditionalOrderWhenJudicialSeparation() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+                .documents(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build())
+                .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(SWITCH_TO_SOLE).build())
+                .supplementaryCaseType(JUDICIAL_SEPARATION)
+                .application(Application.builder()
+                        .issueDate(LocalDate.of(2022, 1, 1))
+                        .stateToTransitionApplicationTo(Holding)
+                        .build())
+                .build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldOnlySendNotificationWhenNotSwitchToSoleAndNotJudicialSeparation() {
+        final CaseData caseData = CaseData.builder()
+                .documents(CaseDocuments.builder()
+                        .typeOfDocumentAttached(CO_D84)
+                        .build())
+                .divorceOrDissolution(DIVORCE)
+                .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(notificationDispatcher)
+                .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
+        verifyNoInteractions(ccdUpdateService);
     }
 }

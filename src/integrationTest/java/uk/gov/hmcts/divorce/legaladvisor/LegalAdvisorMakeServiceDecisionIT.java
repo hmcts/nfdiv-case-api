@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -48,6 +49,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -319,6 +322,51 @@ public class LegalAdvisorMakeServiceDecisionIT {
             )));
 
         verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH));
+    }
+
+    @Test
+    public void shouldUpdateStateToServiceAdminRefusalIfApplicationIsNotGrantedAndRefusalReasonIsAdminRefusal()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(getApplicant())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(DEEMED)
+                    .serviceApplicationGranted(NO)
+                    .refusalReason(ADMIN_REFUSAL)
+                    .serviceApplicationRefusalReason("refusal reasons")
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .dueDate(LocalDate.of(2021, 6, 20))
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    LEGAL_ADVISOR_SERVICE_DECISION)
+                )
+            )
+            .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(ServiceAdminRefusal.name()));
     }
 
     @Test

@@ -399,13 +399,19 @@ public enum State {
     )
     RespondentFinalOrderRequested,
 
-
     @CCD(
         label = "Separation order granted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
     SeparationOrderGranted,
+
+    @CCD(
+        label = "Service Admin Refusal",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    ServiceAdminRefusal,
 
     @CCD(
         label = "Submitted",
@@ -464,7 +470,6 @@ public enum State {
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
-        AwaitingPronouncement,
         Withdrawn,
         Rejected
     ));

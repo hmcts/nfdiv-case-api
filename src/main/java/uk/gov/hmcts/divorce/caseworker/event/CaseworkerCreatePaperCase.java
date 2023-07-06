@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -38,7 +39,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             .name("Create paper case")
             .description("Create paper case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
-            .grantHistoryOnly(SUPER_USER));
+            .grantHistoryOnly(SUPER_USER, JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -53,7 +54,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
         var applicant2 = data.getApplicant2();
-        if (JOINT_APPLICATION.equals(data.getApplicationType())) {
+        if (data.isJudicialSeparationCase() || JOINT_APPLICATION.equals(data.getApplicationType())) {
             applicant2.setOffline(YES);
         } else if (SOLE_APPLICATION.equals(data.getApplicationType()) && isBlank(applicant2.getEmail())) {
             applicant2.setOffline(YES);

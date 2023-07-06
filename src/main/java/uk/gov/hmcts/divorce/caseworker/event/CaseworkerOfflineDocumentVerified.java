@@ -33,7 +33,6 @@ import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -54,6 +53,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -106,7 +106,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
@@ -162,8 +162,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                             .builder()
                             .label(scannedDocListValue.getValue().getFileName())
                             .code(UUID.randomUUID()).build()
-                    )
-                    .collect(toList());
+                    ).toList();
 
             DynamicList scannedDocNamesDynamicList = DynamicList
                 .builder()
@@ -221,7 +220,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            var state = YES.equals(caseData.getIsJudicialSeparation())
+            var state = caseData.isJudicialSeparationCase()
                 ? JSAwaitingLA
                 : AwaitingLegalAdvisorReferral;
 
@@ -289,7 +288,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            if (!caseData.isJudicialSeparationCase()) {
+                notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            }
 
             if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
@@ -304,9 +305,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
-
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())
+        } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
 
             log.info(

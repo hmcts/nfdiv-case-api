@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_JS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_TEMPLATE_ID;
@@ -150,7 +151,7 @@ public class SystemProgressCaseToAosOverdueIT {
         String responseJson = TestDataHelper.getFeeResponseAsJson();
 
         stubForFeesLookup(responseJson, EVENT_ENFORCEMENT, SERVICE_OTHER, KEYWORD_BAILIFF);
-        stubForFeesLookup(responseJson, "general+application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
+        stubForFeesLookup(responseJson, "general%20application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
 
         CaseData data = validCaseDataForIssueApplication();
         data.getApplicant1().setSolicitor(null);
@@ -200,10 +201,10 @@ public class SystemProgressCaseToAosOverdueIT {
         String responseJson = TestDataHelper.getFeeResponseAsJson();
 
         stubForFeesLookup(responseJson, EVENT_ENFORCEMENT, SERVICE_OTHER, KEYWORD_BAILIFF);
-        stubForFeesLookup(responseJson, "general+application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
+        stubForFeesLookup(responseJson, "general%20application", SERVICE_OTHER, KEYWORD_WITHOUT_NOTICE);
 
         CaseData data = validCaseDataForIssueApplication();
-        data.setIsJudicialSeparation(YES);
+        data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.getApplicant1().setSolicitor(null);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant1().setOffline(YES);

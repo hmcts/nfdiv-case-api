@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -26,6 +27,6 @@ public class CreateBulkList implements CCDConfig<BulkActionCaseData, BulkActionS
             .name("Create bulk list")
             .description("Create bulk list")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
-            .grantHistoryOnly(LEGAL_ADVISOR));
+            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE));
     }
 }

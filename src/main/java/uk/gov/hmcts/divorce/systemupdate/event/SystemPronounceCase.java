@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderProno
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -68,7 +69,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                 .name("System pronounce case")
                 .description("System pronounce case")
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
-                .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR)
+                .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR, JUDGE)
                 .aboutToSubmitCallback(this::aboutToSubmit)
                 .submittedCallback(this::submitted)
         );

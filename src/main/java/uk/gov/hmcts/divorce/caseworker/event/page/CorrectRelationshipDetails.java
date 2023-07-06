@@ -18,10 +18,12 @@ public class CorrectRelationshipDetails implements CcdPageConfiguration {
             .page("correctPaperCaseDetails", this::midEvent)
             .pageLabel("Correct paper case")
             .label("Label-CorrectYourApplication", "### Your application details")
+            .mandatoryWithLabel(CaseData::getSupplementaryCaseType,
+                "Not Applicable, Judicial Separation or Separation?")
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getApplicantOrApplicant1UC, NEVER_SHOW)
             .done()
-            .mandatory(CaseData::getDivorceOrDissolution)
+            .mandatory(CaseData::getDivorceOrDissolution, "supplementaryCaseType=\"notApplicable\"")
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getScreenHasMarriageCert,

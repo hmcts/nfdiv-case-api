@@ -9,6 +9,8 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 
+import java.time.Duration;
+
 @Configuration
 public class AuthConfiguration {
     @Bean
@@ -22,6 +24,6 @@ public class AuthConfiguration {
         @Value("${idam.s2s-auth.microservice}") final String microService,
         final ServiceAuthorisationApi serviceAuthorisationApi
     ) {
-        return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
+        return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi, Duration.ofMinutes(5));
     }
 }

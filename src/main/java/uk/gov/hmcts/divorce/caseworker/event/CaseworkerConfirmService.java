@@ -20,8 +20,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -50,7 +53,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("CaseworkerConfirmService", this::midEvent)
             .pageLabel("Confirm Service")
             .complex(CaseData::getDocuments)
@@ -111,9 +114,14 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
 
         confirmService.addToDocumentsUploaded(updateDetails);
 
+        State state = updateDetails.getData().isJudicialSeparationCase()
+            && !isEmpty(updateDetails.getData().getApplication().getSolicitorService().getServiceProcessedByProcessServer())
+            ? AwaitingJsNullity
+            : updateDetails.getState();
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
-            .state(updateDetails.getState())
+            .state(state)
             .build();
     }
 }

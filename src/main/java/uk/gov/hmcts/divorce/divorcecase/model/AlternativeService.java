@@ -15,6 +15,7 @@ import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -50,6 +51,13 @@ public class AlternativeService {
         label = "Service Application Granted"
     )
     private YesOrNo serviceApplicationGranted;
+
+    @CCD(
+        label = "Refusal reason",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "ServiceApplicationRefusalReason"
+    )
+    private ServiceApplicationRefusalReason refusalReason;
 
     @CCD(
         label = "Reason for refusal",
@@ -95,6 +103,7 @@ public class AlternativeService {
             .receivedServiceAddedDate(receivedServiceAddedDate)
             .paymentMethod(servicePaymentFee.getPaymentMethod())
             .serviceApplicationGranted(serviceApplicationGranted)
+            .refusalReason(refusalReason)
             .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
             .serviceApplicationDecisionDate(serviceApplicationDecisionDate)
             .deemedServiceDate(deemedServiceDate)

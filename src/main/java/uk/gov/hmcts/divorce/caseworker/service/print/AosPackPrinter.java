@@ -125,10 +125,12 @@ public class AosPackPrinter {
 
         final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
 
-        Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
-        if (null != coversheetLetter) {
+        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+
+        if (null != coversheetLetter && caseData.isJudicialSeparationCase()) {
             aosResponseLetterWithAos.add(coversheetLetter);
         }
+
         if (null != aosResponseLetter) {
             aosResponseLetterWithAos.add(aosResponseLetter);
         }

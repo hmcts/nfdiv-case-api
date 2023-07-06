@@ -18,6 +18,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_RETURN_TO_PREVIOUS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -42,7 +43,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("returnToPreviousState", this::midEvent)
             .pageLabel("Return to previous state")
             .complex(CaseData::getApplication)

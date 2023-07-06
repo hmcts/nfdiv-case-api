@@ -23,7 +23,7 @@ public class SystemRemoveFailedCases implements CCDConfig<BulkActionCaseData, Bu
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(SYSTEM_REMOVE_FAILED_CASES)
-            .initialState(Created)
+            .forState(Created)
             .name("Remove failed case links")
             .description("Removed failed case links")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));

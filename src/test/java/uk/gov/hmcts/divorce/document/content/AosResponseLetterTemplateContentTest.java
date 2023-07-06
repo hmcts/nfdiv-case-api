@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -24,6 +25,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
@@ -32,6 +35,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -195,6 +202,87 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyDivorceApp1SolicitorJSContent() {
+        setMockClock(clock);
+        final Applicant applicant1 = Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .offline(YES)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("Correspondence Address")
+                .addressLine2("Line 2")
+                .addressLine3("Line 3")
+                .postTown("Post Town")
+                .county("County")
+                .postCode("Post Code")
+                .country("UK")
+                .build()
+            )
+            .solicitorRepresented(YES)
+            .solicitor(Solicitor.builder()
+                .name("App1Sol Name")
+                .address("App1Sol Address")
+                .reference("App1Sol Ref")
+                .build())
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .offline(YES)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .dueDate(LocalDate.of(2020, 5, 21))
+            .application(
+                Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
+            )
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .build();
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
+        when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
+            .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
+        expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
+        expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
+        expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
+        expectedEntries.put("isDivorce", true);
+        expectedEntries.put("applicant1Address", "App1Sol Address");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
+        expectedEntries.put("issueDate", "1 January 2020");
+        expectedEntries.put("relation", "husband");
+        expectedEntries.put("waitUntilDate", "21 May 2020");
+        expectedEntries.put("divorceOrEndCivilPartnershipProcess", "divorce process");
+        expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
+        expectedEntries.put("dueDate", "21 May 2020");
+        expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
+        expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(RECIPIENT_NAME, "App1Sol Name");
+        expectedEntries.put(RECIPIENT_ADDRESS, "App1Sol Address");
+        expectedEntries.put(SOLICITOR_NAME, "App1Sol Name");
+        expectedEntries.put(APPLICANT_2_SOLICITOR_NAME, "Not represented");
+        expectedEntries.put(SOLICITOR_REFERENCE, "App1Sol Ref");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }

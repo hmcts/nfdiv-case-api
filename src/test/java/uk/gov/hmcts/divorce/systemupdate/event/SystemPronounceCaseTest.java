@@ -1,10 +1,10 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.slf4j.Logger;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,9 +33,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class SystemPronounceCaseTest {
 
     @Mock
-    private Logger logger;
+    private HttpServletRequest httpServletRequest;
 
     @Mock
     private ConditionalOrderPronouncedNotification notification;
@@ -96,7 +96,7 @@ public class SystemPronounceCaseTest {
     @Test
     void shouldGenerateConditionalOrderGrantedDocAndSetStateToSeparationOrderGranted() {
         final CaseData caseData = caseData();
-        caseData.setIsJudicialSeparation(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(1L)
@@ -139,13 +139,6 @@ public class SystemPronounceCaseTest {
 
         underTest.submitted(details, details);
 
-        verify(logger)
-            .info("SystemPronounceCase submitted callback invoked for case id: {}", 1L);
-
-        verify(logger)
-            .error("Notification failed with message: {}", "Message", notificationTemplateException);
-
-        verifyNoMoreInteractions(logger);
     }
 
     @Test
