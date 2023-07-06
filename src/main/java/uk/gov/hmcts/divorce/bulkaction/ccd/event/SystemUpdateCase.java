@@ -31,6 +31,13 @@ public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActio
             .name("System update case")
             .description("System update case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
-            .grantHistoryOnly(LEGAL_ADVISOR));
+            .grantHistoryOnly(LEGAL_ADVISOR))
+            .page("EDIT")
+            .pageLabel("SYSTEM EDIT")
+            .mandatory(BulkActionCaseData::getBulkListCaseDetails)
+            .mandatory(BulkActionCaseData::getErroredCaseDetails)
+            .mandatory(BulkActionCaseData::getProcessedCaseDetails)
+            .mandatory(BulkActionCaseData::getCasesToBeRemoved)
+            .mandatory(BulkActionCaseData::getCasesAcceptedToListForHearing);
     }
 }
