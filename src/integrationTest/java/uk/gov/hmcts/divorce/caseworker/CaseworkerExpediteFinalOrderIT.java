@@ -294,36 +294,6 @@ public class CaseworkerExpediteFinalOrderIT {
     }
 
     @Test
-    public void shouldFailValidationWhenAboutToSubmitCallbackIsInvokedAndUnableToLocateSelectedGeneralOrderDoc() throws Exception {
-        final CaseData caseData = buildCaseData(SOLE_APPLICATION, DIVORCE);
-        caseData.getDocuments().getGeneralOrderDocumentNames().getValue().setLabel("NA");
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_EXPEDITE_FINAL_ORDER)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk())
-            .andExpect(
-                jsonPath("$.errors").value("Cannot locate selected general order document (NA).  Unable to continue."));
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldReturn401UnauthorizedWhenAboutToSubmitCallbackIsInvokedAndAuthorizationFailsForDocAssembly() throws Exception {
         final CaseData caseData = buildCaseData(SOLE_APPLICATION, DIVORCE);
 

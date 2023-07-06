@@ -101,20 +101,6 @@ class CaseworkerExpediteFinalOrderTest {
     }
 
     @Test
-    void shouldReturnErrorIfGeneralOrderDocumentNotFound() {
-        final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
-        final CaseData caseData = details.getData();
-
-        caseData.getDocuments().getGeneralOrderDocumentNames().getValue().setLabel("NA");
-
-        setMockClock(clock);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
-
-        assertThat(response.getErrors()).isNotNull();
-    }
-
-    @Test
     void shouldPopulateFinalOrderGrantedDateAndSendEmail() {
         final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
 

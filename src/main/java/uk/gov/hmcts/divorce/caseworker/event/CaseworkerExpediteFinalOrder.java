@@ -53,7 +53,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
-    
+
     @Autowired
     private FinalOrderGrantedNotification finalOrderGrantedNotification;
 
@@ -150,20 +150,6 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         Optional<ListValue<DivorceGeneralOrder>> generalOrderToExpediteFinancialOrder = generalOrderList.stream()
             .filter(g -> g.getValue().getGeneralOrderDocument().getDocumentFileName().equals(expeditedFinalOrderGeneralOrderDocumentName))
             .findFirst();
-
-        if (generalOrderToExpediteFinancialOrder.isEmpty()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(
-                    Collections.singletonList(
-                        String.format(
-                            "Cannot locate selected general order document (%s).  Unable to continue.",
-                            expeditedFinalOrderGeneralOrderDocumentName
-                        )
-                    )
-                )
-                .build();
-        }
 
         caseData.getFinalOrder().getExpeditedFinalOrderAuthorisation()
             .setExpeditedFinalOrderGeneralOrder(generalOrderToExpediteFinancialOrder.get().getValue());
