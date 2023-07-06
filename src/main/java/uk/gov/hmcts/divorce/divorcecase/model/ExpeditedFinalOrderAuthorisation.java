@@ -17,7 +17,7 @@ public class ExpeditedFinalOrderAuthorisation {
     private DivorceGeneralOrder expeditedFinalOrderGeneralOrder;
 
     @CCD(
-        label = "Authorising Judge Name"
+        label = "Expedited Final Order Authorising Judge Name"
     )
     private String expeditedFinalOrderJudgeName;
 }
