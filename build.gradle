@@ -419,6 +419,14 @@ ccd {
 }
 
 bootWithCCD {
+  group = 'ccd tasks'
+  authMode = uk.gov.hmcts.rse.AuthMode.Local
+  doFirst() {
+    environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+  }
+}
+
+/*bootWithCCD {
     group = 'ccd tasks'
     dependsOn(loadEnvSecrets)
 
@@ -431,7 +439,7 @@ bootWithCCD {
         }
         environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
     }
-}
+}*/
 
 cftlibTest {
   // IDAM simulator will be started on port 5000,
