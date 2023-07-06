@@ -33,7 +33,6 @@ import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -163,8 +162,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                             .builder()
                             .label(scannedDocListValue.getValue().getFileName())
                             .code(UUID.randomUUID()).build()
-                    )
-                    .collect(toList());
+                    ).toList();
 
             DynamicList scannedDocNamesDynamicList = DynamicList
                 .builder()
@@ -290,7 +288,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            if (!caseData.isJudicialSeparationCase()) {
+                notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            }
 
             if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
@@ -305,7 +305,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
-
         } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
