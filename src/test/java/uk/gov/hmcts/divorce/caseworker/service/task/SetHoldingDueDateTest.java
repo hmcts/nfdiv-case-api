@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -24,9 +23,6 @@ class SetHoldingDueDateTest {
 
     @Mock
     private HoldingPeriodService holdingPeriodService;
-
-    @Mock
-    private Logger logger;
 
     @InjectMocks
     private SetHoldingDueDate setHoldingDueDate;
@@ -51,6 +47,5 @@ class SetHoldingDueDateTest {
 
         assertThat(result.getData().getDueDate()).isEqualTo(holdingDueDate);
         verify(holdingPeriodService).getDueDateFor(issueDate);
-        verify(logger).info("Setting dueDate of {}, for CaseId: {}, State: Holding", holdingDueDate, caseId);
     }
 }

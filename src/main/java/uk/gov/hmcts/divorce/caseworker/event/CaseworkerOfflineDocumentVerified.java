@@ -33,7 +33,6 @@ import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -50,9 +49,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -105,9 +106,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
             .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+
             .complex(CaseData::getDocuments)
                 .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
                 .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"")
@@ -125,21 +127,21 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
-                .mandatory(ConditionalOrder::getD84WhoApplying,
-                    "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\" AND coD84ApplicationType=\"switchToSole\"")
+                .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
                 .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36ApplicationType,
                     "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
-                .mandatory(FinalOrder::getD36WhoApplying,
-                    "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\" AND d36ApplicationType=\"switchToSole\"")
+                .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getStateToTransitionApplicationTo)
             .done()
+
+
             .page("stateToTransitionToJoint")
             .showCondition("applicationType=\"jointApplication\" AND typeOfDocumentAttached!=\"D84\" OR scannedSubtypeReceived!=\"D84\"")
             .complex(CaseData::getApplication)
@@ -160,8 +162,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                             .builder()
                             .label(scannedDocListValue.getValue().getFileName())
                             .code(UUID.randomUUID()).build()
-                    )
-                    .collect(toList());
+                    ).toList();
 
             DynamicList scannedDocNamesDynamicList = DynamicList
                 .builder()
@@ -219,9 +220,13 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
+            var state = caseData.isJudicialSeparationCase()
+                ? JSAwaitingLA
+                : AwaitingLegalAdvisorReferral;
+
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(AwaitingLegalAdvisorReferral)
+                .state(state)
                 .build();
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
@@ -283,7 +288,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            if (!caseData.isJudicialSeparationCase()) {
+                notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
+            }
 
             if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
@@ -298,9 +305,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
-
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())
+        } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
 
             log.info(

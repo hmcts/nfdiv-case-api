@@ -36,14 +36,17 @@ public class SetDueDateAfterIssue implements CaseTask {
 
         log.info("Setting due date.  Case ID: {}", caseDetails.getId());
 
-        if (!caseDetails.getData().getApplicationType().isSole()) {
-            caseDetails.getData().setDueDate(holdingPeriodService.getDueDateFor(caseDetails.getData().getApplication().getIssueDate()));
-        } else if (caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
-            caseDetails.getData().setDueDate(null);
+        CaseData caseData = caseDetails.getData();
+
+        if (!caseData.getApplicationType().isSole()) {
+            caseData.setDueDate(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()));
+        } else if (caseData.getApplication().isSolicitorServiceMethod()) {
+            caseData.setDueDate(null);
         } else {
-            caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
+            caseData.setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
         }
 
+        caseDetails.setData(caseData);
         return caseDetails;
     }
 }

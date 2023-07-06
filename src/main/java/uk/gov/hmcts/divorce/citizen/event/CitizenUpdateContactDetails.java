@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,12 +13,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -43,7 +43,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
             .description("Patch a case contact details for correct applicant")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

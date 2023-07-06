@@ -81,7 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class DivorceApplicationSoleTemplateContentTest {
+public class ApplicationSoleTemplateContentTest {
 
     @Mock
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -90,7 +90,7 @@ public class DivorceApplicationSoleTemplateContentTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @InjectMocks
-    private DivorceApplicationSoleTemplateContent templateContent;
+    private ApplicationSoleTemplateContent templateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDivorce() {

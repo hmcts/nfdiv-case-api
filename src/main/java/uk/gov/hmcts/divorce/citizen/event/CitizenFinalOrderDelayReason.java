@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,14 +17,13 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -58,7 +58,7 @@ public class CitizenFinalOrderDelayReason implements CCDConfig<CaseData, State, 
             .name("Citizen FO delay reason")
             .description("Citizen final order delay reason")
             .grant(CREATE_READ_UPDATE, CREATOR)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted);
     }

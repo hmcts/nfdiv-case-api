@@ -34,7 +34,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -68,7 +68,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, Holding))
-            .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
+            .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
             .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(DISPUTE_DUE_DATE_OFFSET_DAYS, DAYS)))
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
 
@@ -124,7 +124,7 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(caseDetailsList);
-        doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         underTest.run();

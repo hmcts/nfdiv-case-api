@@ -18,6 +18,8 @@ import static org.junit.Assert.assertNull;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAmendApplicationType.CASEWORKER_AMEND_APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -47,7 +49,24 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertNull(response.getErrors());
         assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
+        assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("civil partnership"));
+    }
+
+    @Test
+    void shouldSetApplicationTypeFromJudicialSeparationToSeparationOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertNull(response.getErrors());
+        assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
+        assertThat(response.getData().getSupplementaryCaseType().equals(SEPARATION));
         assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("civil partnership"));
     }
 
@@ -61,8 +80,25 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertNull(response.getErrors());
         assertNotNull(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE));
+        assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("marriage"));
+    }
+
+    @Test
+    void shouldSetApplicationTypeFromSeparationToJudicialSeparationOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setSupplementaryCaseType(SEPARATION);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertNull(response.getErrors());
+        assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE));
+        assertThat(response.getData().getSupplementaryCaseType().equals(JUDICIAL_SEPARATION));
         assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("marriage"));
     }
 
@@ -76,6 +112,7 @@ class CaseworkerAmendApplicationTypeTest {
             .aboutToSubmit(caseDetails, caseDetails);
 
         assertNull(response.getData().getDivorceOrDissolution());
+        assertThat(response.getErrors()).contains("divorceOrDissolution is null, cannot continue submitting event");
     }
 
     @Test
@@ -88,12 +125,9 @@ class CaseworkerAmendApplicationTypeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendApplicationType
             .aboutToSubmit(caseDetails, caseDetails);
 
+        assertNull(response.getErrors());
         assertNotNull(response.getData().getDivorceOrDissolution());
         assertThat(response.getData().getDivorceOrDissolution().equals(DIVORCE)
             || response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
-
-
     }
-
-
 }

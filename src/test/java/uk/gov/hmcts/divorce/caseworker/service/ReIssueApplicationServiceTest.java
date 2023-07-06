@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.ResetAosFields;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,7 +46,7 @@ class ReIssueApplicationServiceTest {
     private SetPostIssueState setPostIssueState;
 
     @Mock
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @Mock
     private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
@@ -70,6 +71,9 @@ class ReIssueApplicationServiceTest {
 
     @Mock
     private GenerateD10Form generateD10Form;
+
+    @Mock
+    private GenerateD84Form generateD84Form;
 
     @Mock
     private ResetAosFields resetAosFields;
@@ -125,8 +129,9 @@ class ReIssueApplicationServiceTest {
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -158,8 +163,9 @@ class ReIssueApplicationServiceTest {
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -244,8 +250,9 @@ class ReIssueApplicationServiceTest {
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
@@ -290,8 +297,9 @@ class ReIssueApplicationServiceTest {
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);

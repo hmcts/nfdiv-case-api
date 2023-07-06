@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -36,7 +37,7 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .showSummary(false)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("uploadDocument")
             .pageLabel("Upload document")
             .complex(CaseData::getDocuments)

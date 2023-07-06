@@ -9,8 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
-import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -23,20 +23,23 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 @Slf4j
-public class GenerateDivorceApplication implements CaseTask {
+public class GenerateApplication implements CaseTask {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private DivorceApplicationSoleTemplateContent divorceApplicationSoleTemplateContent;
+    private ApplicationSoleTemplateContent applicationSoleTemplateContent;
 
     @Autowired
-    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+    private ApplicationJointTemplateContent applicationJointTemplateContent;
 
     @Autowired
     private Clock clock;
@@ -46,19 +49,26 @@ public class GenerateDivorceApplication implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
+        var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
 
-        log.info("Executing handler for generating divorce application for case id {} ", caseId);
+        if (isJudicialSeparationCase) {
+            log.info("Executing handler for generating judicial separation for case id {} ", caseId);
+        } else {
+            log.info("Executing handler for generating divorce application for case id {} ", caseId);
+        }
 
         final Map<String, Object> templateContent;
         final String templateId;
+
         LanguagePreference languagePreference = ENGLISH;
 
         if (caseData.getApplicationType().isSole()) {
-            templateContent = divorceApplicationSoleTemplateContent.apply(caseData, caseId);
-            templateId = DIVORCE_APPLICATION_SOLE;
+            templateContent = applicationSoleTemplateContent.apply(caseData, caseId);
+            templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_SOLE;
         } else {
-            templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId);
-            templateId = DIVORCE_APPLICATION_JOINT;
+            templateContent = applicationJointTemplateContent.apply(caseData, caseId);
+            templateId = isJudicialSeparationCase ? JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID : DIVORCE_APPLICATION_JOINT;
+
             if (YES.equals(caseData.getApplicant1().getLanguagePreferenceWelsh())
                 && YES.equals(caseData.getApplicant2().getLanguagePreferenceWelsh())) {
                 languagePreference = WELSH;
@@ -72,7 +82,9 @@ public class GenerateDivorceApplication implements CaseTask {
             caseId,
             templateId,
             languagePreference,
-            formatDocumentName(caseId, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
+            formatDocumentName(caseId,
+                    isJudicialSeparationCase ? JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME : DIVORCE_APPLICATION_DOCUMENT_NAME,
+                    now(clock))
         );
 
         return caseDetails;

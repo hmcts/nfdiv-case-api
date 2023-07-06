@@ -1,36 +1,30 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -51,6 +45,7 @@ class GenerateConditionalOrderPronouncedDocumentTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
             .applicant1(Applicant.builder()
                 .languagePreferenceWelsh(NO)
                 .build())
@@ -76,80 +71,15 @@ class GenerateConditionalOrderPronouncedDocumentTest {
     }
 
     @Test
-    public void shouldReturnConditionalOrderDocWhenExists() {
+    void shouldGenerateConditionalOrderGrantedDocAndUpdateCaseDataForJudicialSeparation() {
 
-        ListValue<DivorceDocument> divorceDocumentListValue = ListValue
-            .<DivorceDocument>builder()
-            .id(APPLICATION.getLabel())
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        ListValue<DivorceDocument> coDocumentListValue = ListValue
-            .<DivorceDocument>builder()
-            .id(CONDITIONAL_ORDER_GRANTED.getLabel())
-            .value(DivorceDocument.builder()
-                .documentType(CONDITIONAL_ORDER_GRANTED)
-                .build())
-            .build();
-
-        CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(divorceDocumentListValue, coDocumentListValue))
-                .build())
-            .build();
-
-        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
-            generateConditionalOrderPronouncedDocument.getConditionalOrderGrantedDoc(caseData);
-
-        assertTrue(conditionalOrderGrantedDoc.isPresent());
-    }
-
-    @Test
-    public void shouldNotReturnConditionalOrderDocWhenDoesNotExists() {
-        ListValue<DivorceDocument> divorceDocumentListValue = ListValue
-            .<DivorceDocument>builder()
-            .id(APPLICATION.getLabel())
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(divorceDocumentListValue))
-                .build())
-            .build();
-
-        Optional<ListValue<DivorceDocument>> conditionalOrderGrantedDoc =
-            generateConditionalOrderPronouncedDocument.getConditionalOrderGrantedDoc(caseData);
-
-        assertTrue(conditionalOrderGrantedDoc.isEmpty());
-    }
-
-    @Test
-    public void shouldRemoveConditionalOrderGrantedDoc() {
         final Map<String, Object> templateContent = new HashMap<>();
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
             .applicant1(Applicant.builder()
                 .languagePreferenceWelsh(NO)
                 .build())
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(Lists.newArrayList(
-                    ListValue.<DivorceDocument>builder()
-                        .id("1")
-                        .value(DivorceDocument.builder()
-                            .documentType(CONDITIONAL_ORDER_GRANTED)
-                            .build())
-                        .build(),
-                    ListValue.<DivorceDocument>builder()
-                        .id("2")
-                        .value(DivorceDocument.builder()
-                            .documentType(APPLICATION)
-                            .build()).build()
-                ))
-                .build())
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -159,19 +89,15 @@ class GenerateConditionalOrderPronouncedDocumentTest {
         when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH))
             .thenReturn(templateContent);
 
-        generateConditionalOrderPronouncedDocument
-            .removeExistingAndGenerateNewConditionalOrderGrantedDoc(caseDetails);
+        generateConditionalOrderPronouncedDocument.apply(caseDetails);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_GRANTED,
             templateContent,
             TEST_CASE_ID,
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID,
             ENGLISH,
-            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME);
-
-        assertEquals(1, caseData.getDocuments().getDocumentsGenerated().size());
-        assertEquals(APPLICATION, caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType());
+            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME);
     }
 }

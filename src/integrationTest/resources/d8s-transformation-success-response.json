@@ -44,6 +44,12 @@
       "applicant1PrayerFinancialOrdersChild": [
         "financialOrdersChild"
       ],
+      "applicant1PrayerJudicialSeparation": [
+        "applyJudicialSeparation"
+      ],
+      "applicant2PrayerJudicialSeparation": [
+        "applyJudicialSeparation"
+      ],
       "marriageFormationType": "oppositeSexCouple",
       "applicant1MiddleName": "",
       "applicant2StatementOfTruth": "Yes",
@@ -79,15 +85,16 @@
       "applicant2HWFNeedHelp": "Yes",
       "applicant1ScreenHasMarriageBroken": "Yes",
       "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+      "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
       "jurisdictionConnections": [
         "A"
       ],
       "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-      "applicant1NameChangedHowOtherDetails": "some reason",
+      "applicant1NameDifferentToMarriageCertificateOtherDetails": "some reason",
       "applicant2FinancialOrder": "Yes",
       "applicant1HWFNeedHelp": "No",
       "applicant2PhoneNumber": "",
-      "applicant2NameChangedHowOtherDetails": "",
+      "applicant2NameDifferentToMarriageCertificateOtherDetails": "",
       "marriageMarriageCertificateIsIncorrectDetails": "",
       "applicant1ContactDetailsType": "private",
       "solStatementOfReconciliationFirm": "",
@@ -110,7 +117,7 @@
       ],
       "applicant2SolicitorFirmName": "",
       "applicant1FirstName": "app1Fname",
-      "isJudicialSeparation": "Yes",
+      "supplementaryCaseType": "judicialSeparation",
       "applicant1SolicitorName": "testsolicitor",
       "applicant2SolicitorName": "",
       "applicant1LastName": "app1Lname",
@@ -132,7 +139,7 @@
         "AddressLine2": "second line of address",
         "PostTown": "",
         "PostCode": "",
-        "Country": ""
+        "Country": "UK"
       },
       "paperFormApplicant2LegalRepSigningSOT": "No",
       "warnings": [],

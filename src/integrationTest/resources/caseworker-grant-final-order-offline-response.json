@@ -98,7 +98,8 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": []
+    "warnings": [],
+    "supplementaryCaseType": "notApplicable"
   },
   "state": "FinalOrderComplete"
 }

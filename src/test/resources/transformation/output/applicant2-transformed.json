@@ -9,7 +9,7 @@
   "LastNameChangedWhenMarried": null,
   "NameDifferentToMarriageCertificate": "Yes",
   "NameChangedHow": null,
-  "NameChangedHowOtherDetails": "",
+  "NameDifferentToMarriageCertificateOtherDetails": "",
   "Address": {
     "AddressLine1": "some street",
     "AddressLine2": "second line of address",
@@ -17,7 +17,7 @@
     "PostTown": "",
     "County": null,
     "PostCode": "",
-    "Country": ""
+    "Country": "UK"
   },
   "PhoneNumber": "",
   "Gender": null,

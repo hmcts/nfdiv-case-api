@@ -15,9 +15,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAlternativeService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -40,7 +42,7 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CONFIRM_ALTERNATIVE_SERVICE)
-            .forStateTransition(AwaitingAlternativeService, Holding)
+            .forStates(AwaitingAlternativeService)
             .name("Confirm alternative service")
             .description("Confirm alternative service")
             .showEventNotes()
@@ -50,7 +52,8 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
                 SUPER_USER,
                 SOLICITOR,
                 LEGAL_ADVISOR,
-                CITIZEN));
+                CITIZEN,
+                JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -59,9 +62,12 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
         log.info("Caseworker confirm alternative service about to submit callback invoked with Case Id: {}", details.getId());
 
         final CaseDetails<CaseData, State> updatedDetails = caseTasks(setHoldingDueDate, setServiceConfirmed).run(details);
+        final CaseData updatedData = updatedDetails.getData();
+        final State endState = updatedData.isJudicialSeparationCase() ? AwaitingJsNullity : Holding;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(updatedDetails.getData())
+            .data(updatedData)
+            .state(endState)
             .build();
     }
 }

@@ -27,11 +27,14 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -69,7 +72,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_ADD_ANSWER)
-            .forStates(EnumSet.of(Holding, AwaitingAos, AosOverdue, AwaitingConditionalOrder, AwaitingPronouncement))
+            .forStates(EnumSet.of(Holding, AwaitingAos, AosOverdue, AwaitingConditionalOrder, AwaitingPronouncement, AwaitingAnswer))
             .name("Answer received")
             .description("Answer received")
             .showSummary()
@@ -78,7 +81,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR));
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -97,8 +100,8 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("CASEWORKER_ADD_ANSWER aboutToSubmit-callback invoked for case id: {}", details.getId());
-        final CaseData caseData = details.getData();
 
+        final CaseData caseData = details.getData();
         caseData.getDocuments().getAnswerReceivedSupportingDocuments()
             .forEach(documentListValue ->
                 caseData.getDocuments().setDocumentsUploaded(
@@ -107,6 +110,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .state(details.getState().equals(AwaitingAnswer) ? AwaitingJsNullity : details.getState())
             .build();
     }
 

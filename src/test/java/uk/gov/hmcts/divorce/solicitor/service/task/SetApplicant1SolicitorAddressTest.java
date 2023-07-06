@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.service.task;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,8 +13,6 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;

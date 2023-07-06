@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -32,7 +33,7 @@ public class SystemIssueSolicitorServicePack implements CCDConfig<CaseData, Stat
             .name("Issue solicitor service pack")
             .description("Issue solicitor service pack to applicant's solicitor (if service method = Solicitor Service)")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
             .retries(120, 120));
     }
 }

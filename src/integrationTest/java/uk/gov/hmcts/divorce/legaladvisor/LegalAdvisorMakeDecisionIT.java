@@ -64,6 +64,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarific
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -101,7 +102,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @DirtiesContext
 public class LegalAdvisorMakeDecisionIT {
 
-    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order.docx";
+    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V2.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME =
         "FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME =
@@ -371,6 +372,7 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -414,7 +416,7 @@ public class LegalAdvisorMakeDecisionIT {
     }
 
     @Test
-    public void shouldSetStateToAwaitingAmendedApplicationAnsSendNotificationToBothApplicantsIfConditionalOrderIsRejectedForAmendment()
+    public void shouldSetStateToAwaitingAmendedApplicationAndSendNotificationToBothApplicantsIfConditionalOrderIsRejectedForAmendment()
         throws Exception {
 
         setMockClock(clock);

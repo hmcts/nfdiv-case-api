@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -106,10 +107,11 @@ public class AosPackPrinter {
         final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
 
         List<Letter> aosLetters;
+        List<Letter> d84FormLetters = null;
         if (caseData.getApplicant2().isApplicantOffline()) {
             // When respondent is offline respondent answers doc is reclassified and added to docs uploaded list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
-
+            d84FormLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
         } else {
             // When respondent is online respondent answers doc is generated and added to docs generated list
             aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), RESPONDENT_ANSWERS);
@@ -119,7 +121,15 @@ public class AosPackPrinter {
 
         final Letter aosLetter = firstElement(aosLetters);
 
+        final Letter d84FormLetter = firstElement(d84FormLetters);
+
         final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
+
+        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+
+        if (null != coversheetLetter && caseData.isJudicialSeparationCase()) {
+            aosResponseLetterWithAos.add(coversheetLetter);
+        }
 
         if (null != aosResponseLetter) {
             aosResponseLetterWithAos.add(aosResponseLetter);
@@ -128,13 +138,18 @@ public class AosPackPrinter {
             aosResponseLetterWithAos.add(aosLetter);
         }
 
-        if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() == AOS_RESPONSE_LETTERS_COUNT) {
+        if (null != d84FormLetter) {
+            aosResponseLetterWithAos.add(d84FormLetter);
+        }
 
+        if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
+
+            log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
             final String caseIdString = caseId.toString();
             final Print print = new Print(aosResponseLetterWithAos, caseIdString, caseIdString, LETTER_TYPE_AOS_RESPONSE_PACK);
             final UUID letterId = bulkPrintService.print(print);
 
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+            log.info("Letter service responded with letter Id {}, size {}, for case {}", letterId, aosResponseLetterWithAos.size(), caseId);
         } else {
             log.warn(
                 "Aos response letter for applicant has missing documents. Expected documents with type {} , for case id: {}",

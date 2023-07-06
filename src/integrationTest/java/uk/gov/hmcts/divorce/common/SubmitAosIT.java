@@ -66,6 +66,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -75,6 +76,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
@@ -170,6 +172,8 @@ public class SubmitAosIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setSupplementaryCaseType(NA);
+        caseData.setApplicationType(SOLE_APPLICATION);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
@@ -212,6 +216,8 @@ public class SubmitAosIT {
         caseData.getApplicant2().setLegalProceedings(NO);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setSupplementaryCaseType(NA);
+        caseData.setApplicationType(SOLE_APPLICATION);
 
         caseData.getApplicant2().setLegalProceedings(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
@@ -248,6 +254,8 @@ public class SubmitAosIT {
         final CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setSupplementaryCaseType(NA);
+        caseData.setApplicationType(SOLE_APPLICATION);
 
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
@@ -280,6 +288,8 @@ public class SubmitAosIT {
         data.getApplicant1().setSolicitor(null);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setSupplementaryCaseType(NA);
+        data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -313,6 +323,8 @@ public class SubmitAosIT {
         data.getApplicant1().setSolicitor(null);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setSupplementaryCaseType(NA);
+        data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -347,6 +359,8 @@ public class SubmitAosIT {
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
+        data.setSupplementaryCaseType(NA);
+        data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -380,6 +394,8 @@ public class SubmitAosIT {
         data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
         data.setApplicant2(applicantRepresentedBySolicitor());
         data.getApplicant2().setLegalProceedings(NO);
+        data.setSupplementaryCaseType(NA);
+        data.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -415,6 +431,8 @@ public class SubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.setSupplementaryCaseType(NA);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
         caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
@@ -461,6 +479,8 @@ public class SubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.setSupplementaryCaseType(NA);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
         caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
@@ -507,6 +527,8 @@ public class SubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.setSupplementaryCaseType(NA);
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
         caseData.getDocuments().setScannedDocuments(singletonList(aosScannedDocument()));
@@ -552,6 +574,8 @@ public class SubmitAosIT {
     @Test
     public void givenValidCaseDataDisputeWhenSubmittedCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
+        data.setSupplementaryCaseType(NA);
+        data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
         data.getApplicant1().setSolicitor(null);
@@ -594,6 +618,8 @@ public class SubmitAosIT {
     @Test
     public void givenValidCaseDataForRespondentRepresentedWhenSubmittedCallbackIsInvokedThenSendEmailToRespSolicitor() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
+        data.setSupplementaryCaseType(NA);
+        data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getApplicant1().setSolicitor(null);
         data.getApplicant1().setSolicitorRepresented(NO);

@@ -8,6 +8,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
+import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
+
 @Component
 public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
@@ -17,6 +20,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
     private static final String SOLE_APPLICATION = "applicationType=\"soleApplication\"";
     private static final String NOT_NEW_PAPER_CASE = "newPaperCase!=\"Yes\"";
+    private static final String NOT_JS_OR_NULLITY_CASE = "supplementaryCaseType=\"notApplicable\"";
+    private static final String JS_OR_NULLITY_CASE = "supplementaryCaseType!=\"notApplicable\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -74,9 +79,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("createdDate")
             .field("dateSubmitted")
             .field("issueDate")
-            .field("dueDate")
+            .field("dueDate", notShowForState(SeparationOrderGranted))
             .field(CaseData::getApplicationType)
-            .field(CaseData::getDivorceOrDissolution)
+            .field(CaseData::getDivorceOrDissolution, NOT_JS_OR_NULLITY_CASE)
+            .field(CaseData::getSupplementaryCaseType, JS_OR_NULLITY_CASE)
             .field(CaseData::getDivorceUnit)
             .field(CaseData::getBulkListCaseReferenceLink)
             .field(CaseData::getHyphenatedCaseRef, NEVER_SHOW);
@@ -92,7 +98,11 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("newPaperCase", NEVER_SHOW)
             .field("marriageFormationType", NOT_NEW_PAPER_CASE)
             .field("applicant1LastNameChangedWhenMarried")
+            .field("applicant1LastNameChangedWhenMarriedMethod")
+            .field("applicant1LastNameChangedWhenMarriedOtherDetails")
             .field("applicant1NameDifferentToMarriageCertificate")
+            .field("applicant1NameDifferentToMarriageCertificateMethod")
+            .field("applicant1NameDifferentToMarriageCertificateOtherDetails")
             .field("applicant1NameChangedHow")
             .field("applicant1NameChangedHowOtherDetails")
             .field("applicant1ContactDetailsType", NEVER_SHOW)
@@ -146,7 +156,11 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LastName")
             .field("applicant2Gender")
             .field("applicant2LastNameChangedWhenMarried")
+            .field("applicant2LastNameChangedWhenMarriedMethod")
+            .field("applicant2LastNameChangedWhenMarriedOtherDetails")
             .field("applicant2NameDifferentToMarriageCertificate")
+            .field("applicant2NameDifferentToMarriageCertificateMethod")
+            .field("applicant2NameDifferentToMarriageCertificateOtherDetails")
             .field("applicant2NameChangedHow")
             .field("applicant2NameChangedHowOtherDetails")
             .field("applicant2ContactDetailsType", NEVER_SHOW)
