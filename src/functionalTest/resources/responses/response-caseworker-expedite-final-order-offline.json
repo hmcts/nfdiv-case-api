@@ -103,28 +103,19 @@
         }
       }
     ],
-    "generalOrderDocumentNames": {
-      "value": {
-        "label": "generalOrder2023-07-03 17:17:30.pdf"
-      },
-      "list_items": [
-        {
-          "label": "generalOrder2023-07-03 17:17:30.pdf"
+    "expeditedFinalOrderAuthorisation" : {
+      "expeditedFinalOrderGeneralOrder": {
+        "generalOrderDocument": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524",
+            "document_filename": "generalOrder2023-07-03 17:17:30.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524/binary"
+          },
+          "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
+          "documentType": "generalOrder"
         }
-      ],
-      "valueLabel": "generalOrder2023-07-03 17:17:30.pdf"
-    },
-    "expeditedFinalOrderGeneralOrder": {
-      "generalOrderDocument": {
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524",
-          "document_filename": "generalOrder2023-07-03 17:17:30.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524/binary"
-        },
-        "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
-        "documentType": "generalOrder"
-      }
-    },
-    "expeditedFinalOrderJudgeName": "JudgeName"
+      },
+      "expeditedFinalOrderJudgeName": "JudgeName"
+    }
   }
 }

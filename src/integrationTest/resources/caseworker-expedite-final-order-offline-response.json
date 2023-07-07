@@ -116,19 +116,21 @@
         "id": "${json-unit.any-string}"
       }
     ],
-    "expeditedFinalOrderGeneralOrder": {
-      "generalOrderDocument": {
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524",
-          "document_filename": "generalOrder2023-07-03 17:17:30.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524/binary"
+    "expeditedFinalOrderAuthorisation" : {
+      "expeditedFinalOrderGeneralOrder": {
+        "generalOrderDocument": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524",
+            "document_filename": "generalOrder2023-07-03 17:17:30.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524/binary"
+          },
+          "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
+          "documentType": "generalOrder"
         },
-        "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
-        "documentType": "generalOrder"
+        "generalOrderDivorceParties": ["respondent"]
       },
-      "generalOrderDivorceParties": ["respondent"]
+      "expeditedFinalOrderJudgeName": "JudgeName"
     },
-    "expeditedFinalOrderJudgeName": "JudgeName",
     "granted": ["Yes"]
   },
   "state": "FinalOrderComplete"

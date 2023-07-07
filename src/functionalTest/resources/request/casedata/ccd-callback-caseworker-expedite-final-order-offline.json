@@ -73,5 +73,7 @@
     ],
     "valueLabel": "generalOrder2023-07-03 17:17:30.pdf"
   },
-  "expeditedFinalOrderJudgeName": "JudgeName"
-}
+  "expeditedFinalOrderAuthorisation" : {
+    "expeditedFinalOrderJudgeName": "JudgeName"
+  }
+},

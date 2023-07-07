@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -272,7 +271,6 @@ public class FinalOrder {
         label = "Expedited Final Order Authorisation",
         access = {DefaultAccess.class}
     )
-    @JsonUnwrapped
     private ExpeditedFinalOrderAuthorisation expeditedFinalOrderAuthorisation;
 
     @JsonIgnore
