@@ -37,18 +37,6 @@
     "coD84WhoApplying": "applicant2",
     "coSwitchedToSole": "Yes",
     "documentsGenerated": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentFileName": "conditionalOrderAnswers.pdf",
-        "documentType": "conditionalOrderAnswers",
-        "documentLink": {
-          "document_url": "${json-unit.any-string}",
-          "document_filename": "conditionalOrderAnswers.pdf",
-          "document_binary_url": "${json-unit.any-string}"
-        }
-      }
-    },
-      {
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
