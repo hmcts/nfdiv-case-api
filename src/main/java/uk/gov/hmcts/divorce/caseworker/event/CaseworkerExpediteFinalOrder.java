@@ -111,7 +111,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .collect(toList());
 
         List<DynamicListElement> generalOrderDocumentNames =
-            emptyIfNull(generalOrderDocuments)
+            generalOrderDocuments
                 .stream()
                 .map(generalOrderDocument ->
                     DynamicListElement
@@ -156,6 +156,8 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         generateFinalOrderCoverLetter.apply(details);
         generateFinalOrder.apply(details);
+
+        caseData.getDocuments().setGeneralOrderDocumentNames(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
