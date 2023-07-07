@@ -85,20 +85,6 @@
         "id": "${json-unit.any-string}"
       }
     ],
-    "generalOrderDocumentNames": {
-      "value": {
-        "label": "generalOrder2023-07-03 17:17:30.pdf",
-        "code": "${json-unit.any-string}"
-      },
-      "list_items": [
-        {
-          "label": "generalOrder2023-07-03 17:17:30.pdf",
-          "code": "${json-unit.any-string}"
-        }
-      ],
-      "valueLabel": "generalOrder2023-07-03 17:17:30.pdf",
-      "valueCode": "${json-unit.any-string}"
-    },
     "expeditedFinalOrderGeneralOrder": {
       "generalOrderDocument": {
         "documentLink": {
