@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CT
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_OFFLINE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
@@ -107,6 +108,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("judicialSeparation", caseData.isJudicialSeparationCase());
+        expectedEntries.put(IS_OFFLINE, caseData.getApplication().isPaperCase());
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
 
@@ -174,6 +176,7 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put("isSole", caseData.getApplicationType().isSole());
         expectedEntries.put("isJoint", !caseData.getApplicationType().isSole());
         expectedEntries.put("judicialSeparation", caseData.isJudicialSeparationCase());
+        expectedEntries.put(IS_OFFLINE, caseData.getApplication().isPaperCase());
 
         final Set<ClarificationReason> clarificationReasons = caseData.getConditionalOrder().getRefusalClarificationReason();
 
