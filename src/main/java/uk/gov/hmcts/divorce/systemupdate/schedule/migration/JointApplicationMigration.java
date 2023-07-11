@@ -29,15 +29,20 @@ public class JointApplicationMigration implements Migration {
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
-        log.info("Started migrating cases joint application");
-        try {
-            ccdSearchService
-                .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
-                .parallelStream()
-                .forEach(details -> removeAccessCode(details, user, serviceAuthorization));
+        var jointApplicationMigrationEnabled =
+            Boolean.parseBoolean(System.getenv().get("ENABLE_JOINT_APPLICATION_MIGRATION"));
 
-        } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task(migration joint application) stopped after search error", e);
+        if (jointApplicationMigrationEnabled) {
+            log.info("Started migrating cases joint application");
+            try {
+                ccdSearchService
+                    .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
+                    .parallelStream()
+                    .forEach(details -> removeAccessCode(details, user, serviceAuthorization));
+
+            } catch (final CcdSearchCaseException e) {
+                log.error("Case schedule task(migration joint application) stopped after search error", e);
+            }
         }
     }
 

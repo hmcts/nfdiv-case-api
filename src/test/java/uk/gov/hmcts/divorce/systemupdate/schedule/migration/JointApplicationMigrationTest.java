@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -55,18 +56,19 @@ class JointApplicationMigrationTest {
     }
 
     @Test
-    void shouldNotRemoveAccessCodeWhenSearchFailsForJointAppMigration() {
+    void shouldNotRemoveAccessCodeWhenSearchFailsForJointAppMigration() throws Exception {
 
         when(ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION);
+        withEnvironmentVariable("ENABLE_JOINT_APPLICATION_MIGRATION", "true")
+            .execute(() -> jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
-    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointAppMigration() {
+    void shouldContinueProcessingIfThereIsConflictDuringSubmissionForJointAppMigration() throws Exception {
 
         final CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
         final CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(1616591401473379L).build();
@@ -94,7 +96,8 @@ class JointApplicationMigrationTest {
                 SERVICE_AUTHORIZATION
             );
 
-        jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION);
+        withEnvironmentVariable("ENABLE_JOINT_APPLICATION_MIGRATION", "true")
+            .execute(() -> jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEventWithRetry(
             caseDetails1.getId().toString(),
@@ -114,7 +117,7 @@ class JointApplicationMigrationTest {
     }
 
     @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointAppMigration() {
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCaseForJointAppMigration() throws Exception {
 
         final CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
         final CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(1616591401473379L).build();
@@ -143,7 +146,8 @@ class JointApplicationMigrationTest {
             );
 
 
-        jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION);
+        withEnvironmentVariable("ENABLE_JOINT_APPLICATION_MIGRATION", "true")
+            .execute(() -> jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
 
         verify(ccdUpdateService).submitEventWithRetry(
             caseDetails2.getId().toString(),
@@ -152,5 +156,13 @@ class JointApplicationMigrationTest {
             user,
             SERVICE_AUTHORIZATION
         );
+    }
+
+    @Test
+    void shouldNotRemoveAccessCodeWhenMigrationDisabled() throws Exception {
+        withEnvironmentVariable("ENABLE_JOINT_APPLICATION_MIGRATION", "false")
+            .execute(() -> jointApplicationMigration.apply(user, SERVICE_AUTHORIZATION));
+
+        verifyNoInteractions(ccdUpdateService);
     }
 }
