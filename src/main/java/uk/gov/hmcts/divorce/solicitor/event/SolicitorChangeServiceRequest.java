@@ -129,7 +129,6 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
             ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
 
-            applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
