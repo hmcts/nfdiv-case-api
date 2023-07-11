@@ -166,7 +166,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             DynamicList scannedDocNamesDynamicList = DynamicList
                 .builder()
-                .value(DynamicListElement.builder().label("scannedDocumentName").code(UUID.randomUUID()).build())
                 .listItems(scannedDocumentNames)
                 .build();
 
