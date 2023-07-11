@@ -9,10 +9,11 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -22,9 +23,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_PRE_AWAITING_CO_STATES;
@@ -42,8 +40,15 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
     public static final String SOLICITOR_CHANGE_SERVICE_REQUEST = "solicitor-change-service-request";
 
+
+    @Autowired
+    private ApplicationIssuedNotification applicationIssuedNotification;
+
     @Autowired
     private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
     @Autowired
     private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
@@ -84,16 +89,17 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         log.info("Solicitor change service request about to submit callback invoked with Case Id: {}", details.getId());
 
         CaseData caseData = details.getData();
-        ServiceMethod serviceMethod = caseData.getApplication().getServiceMethod();
+        final Application application = caseData.getApplication();
+        final boolean isIssued = application.getIssueDate() != null;
 
-        if (serviceMethod.equals(PERSONAL_SERVICE)) {
+        if (application.isPersonalServiceMethod()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Personal Service. Please select Solicitor or Court Service."))
                 .build();
         }
 
-        if (serviceMethod.equals(SOLICITOR_SERVICE) && caseData.getApplication().getIssueDate() != null) {
+        if (application.isSolicitorServiceMethod() && isIssued) {
             log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
             final CaseDetails<CaseData, State> updatedDetails = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings).run(details);
@@ -101,7 +107,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             caseData = updatedDetails.getData();
         }
 
-        State state = serviceMethod.equals(COURT_SERVICE) ? AwaitingAos : AwaitingService;
+        final State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -113,13 +119,17 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Solicitor change service request submitted callback invoked for case id: {}", details.getId());
+        final Application application = details.getData().getApplication();
+        final boolean isIssued = details.getData().getApplication().getIssueDate() != null;
 
-        if (details.getData().getApplication().isSolicitorServiceMethod() && details.getData().getApplication().getIssueDate() != null) {
+        if (application.isSolicitorServiceMethod() && isIssued) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
 
             log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
             ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
+
+            applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
