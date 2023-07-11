@@ -34,9 +34,7 @@
           "code": "${json-unit.any-string}",
           "label": "PBA0023444"
         }
-      ],
-      "valueLabel": "pbaNumber",
-      "valueCode": "${json-unit.any-string}"
+      ]
     },
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
