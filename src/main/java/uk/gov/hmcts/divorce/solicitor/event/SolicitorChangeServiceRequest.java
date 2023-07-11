@@ -105,6 +105,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 generateApplicant2NoticeOfProceedings).run(details);
 
             caseData = updatedDetails.getData();
+        } else if (application.isCourtServiceMethod() && isIssued) {
+            log.info("Regenerate court service pack??");
         }
 
         final State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
@@ -131,6 +133,9 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
             log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
             applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
+
+        } else if (application.isCourtServiceMethod() && isIssued) {
+            log.info("Send court service pack??");
         }
 
         return SubmittedCallbackResponse.builder().build();
