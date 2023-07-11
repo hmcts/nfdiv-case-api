@@ -122,7 +122,6 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         DynamicList generalOrderDocumentNamesDynamicList = DynamicList
             .builder()
-            .value(DynamicListElement.builder().label("generalOrderDocumentName").code(UUID.randomUUID()).build())
             .listItems(generalOrderDocumentNames)
             .build();
 
