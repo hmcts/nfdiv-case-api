@@ -294,6 +294,6 @@ public class CaseworkerRemoveCasesFromBulkListTest {
         SubmittedCallbackResponse submittedCallbackResponse = caseworkerRemoveCasesFromBulkList.submitted(details, details);
 
         assertThat(submittedCallbackResponse).isNotNull();
-        verify(caseRemovalService).removeCases(details, casesToRemove);
+        verify(caseRemovalService).removeCases(details);
     }
 }
