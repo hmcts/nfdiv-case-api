@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
@@ -17,7 +18,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -57,10 +60,19 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Autowired
+    private GenerateD10Form generateD10Form;
+
+    @Autowired
+    private GenerateD84Form generateD84Form;
+
+    @Autowired
     private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -101,12 +113,16 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
         if (application.isSolicitorServiceMethod() && isIssued) {
             log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
-            final CaseDetails<CaseData, State> updatedDetails = caseTasks(generateApplicant1NoticeOfProceeding,
+            final CaseDetails<CaseData, State> solicitorServiceDetails = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings).run(details);
 
-            caseData = updatedDetails.getData();
+            caseData = solicitorServiceDetails.getData();
         } else if (application.isCourtServiceMethod() && isIssued) {
-            log.info("Regenerate court service pack??");
+            log.info("Regenerate NOP for App and Respondent, D10, and D84 for case id: {}", details.getId());
+            final CaseDetails<CaseData, State> courtServiceDetails = caseTasks(generateApplicant1NoticeOfProceeding,
+                generateApplicant2NoticeOfProceedings, generateD10Form, generateD84Form).run(details);
+
+            caseData = courtServiceDetails.getData();
         }
 
         final State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
@@ -135,7 +151,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
 
         } else if (application.isCourtServiceMethod() && isIssued) {
-            log.info("Send court service pack??");
+            log.info("Send Notifications for case id: {}", details.getId());
+            notificationDispatcher.send(applicationIssuedNotification, details.getData(), details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
