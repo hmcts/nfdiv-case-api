@@ -10,8 +10,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.bulkaction.task.UpdateCourtHearingDetailsTask;
+import uk.gov.hmcts.divorce.bulkaction.task.UpdatePronouncementJudgeDetailsTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -23,8 +23,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
@@ -38,10 +36,13 @@ class ScheduleCaseServiceTest {
     private IdamService idamService;
 
     @Mock
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Mock
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private UpdateCourtHearingDetailsTask updateCourtHearingDetailsTask;
+
+    @Mock
+    private UpdatePronouncementJudgeDetailsTask updatePronouncementJudgeDetailsTask;
 
     @InjectMocks
     private ScheduleCaseService scheduleCaseService;
@@ -58,7 +59,6 @@ class ScheduleCaseServiceTest {
             .build();
 
         final var user = mock(User.class);
-        final CaseTask caseTask = caseDetails -> caseDetails;
         final var bulkActionCaseDetails = CaseDetails
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
@@ -66,15 +66,12 @@ class ScheduleCaseServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_COURT_HEARING))
-            .thenReturn(caseTask);
 
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
 
-        verify(bulkCaseProcessingService).updateAllBulkCases(
+        verify(bulkCaseProcessingService).updateBulkCase(
             bulkActionCaseDetails,
-            SYSTEM_UPDATE_CASE_COURT_HEARING,
-            caseTask,
+            updateCourtHearingDetailsTask,
             user,
             SERVICE_AUTHORIZATION
         );
@@ -91,7 +88,6 @@ class ScheduleCaseServiceTest {
             .build();
 
         final var user = mock(User.class);
-        final CaseTask caseTask = caseDetails -> caseDetails;
         final var bulkActionCaseDetails = CaseDetails
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
@@ -99,15 +95,12 @@ class ScheduleCaseServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
-            .thenReturn(caseTask);
 
         scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails);
 
-        verify(bulkCaseProcessingService).updateAllBulkCases(
+        verify(bulkCaseProcessingService).updateBulkCase(
             bulkActionCaseDetails,
-            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
-            caseTask,
+            updatePronouncementJudgeDetailsTask,
             user,
             SERVICE_AUTHORIZATION
         );
