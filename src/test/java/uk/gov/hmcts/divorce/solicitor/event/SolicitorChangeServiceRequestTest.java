@@ -11,11 +11,15 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
@@ -37,6 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +61,18 @@ class SolicitorChangeServiceRequestTest {
 
     @Mock
     GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
+
+    @Mock
+    GenerateD10Form generateD10Form;
+
+    @Mock
+    GenerateD84Form generateD84Form;
+
+    @Mock
+    ApplicationIssuedNotification applicationIssuedNotification;
+
+    @Mock
+    NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SolicitorChangeServiceRequest solicitorChangeServiceRequest;
@@ -90,18 +107,26 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
-    void shouldChangeStateToAwaitingAosForCourtServiceAndDoNotRegenerateNOP() {
+    void shouldChangeStateToAwaitingAosForCourtServiceAndRegenerateNOPD10AndD84WhenApplicationIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setIssueDate(now());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
 
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
 
-        verifyNoInteractions(generateApplicant1NoticeOfProceeding);
-        verifyNoInteractions(generateApplicant2NoticeOfProceedings);
+        verify(generateApplicant1NoticeOfProceeding).apply(caseDetails);
+        verify(generateApplicant2NoticeOfProceedings).apply(caseDetails);
+        verify(generateD10Form).apply(caseDetails);
+        verify(generateD84Form).apply(caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -132,6 +157,27 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
+    void shouldChangeStateToAwaitingAoSForCourtServiceAndNotRegenerateNOPD10OrD84WhenApplicationNotYetIssued() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            caseDetails, caseDetails);
+
+        verifyNoInteractions(generateApplicant1NoticeOfProceeding);
+        verifyNoInteractions(generateApplicant2NoticeOfProceedings);
+        verifyNoInteractions(generateD10Form);
+        verifyNoInteractions(generateD84Form);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingAos);
+    }
+
+    @Test
     void shouldChangeStateToAwaitingServiceForSolicitorServiceAndNotRegenerateNOPWhenApplicationNotYetIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -151,7 +197,20 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
-    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfCourtService() {
+    void shouldNotNotifyOnSubmittedCallbackIfSolicitorService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingService);
+
+        solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOrNotifyOnSubmittedCallbackIfCourtService() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -161,10 +220,25 @@ class SolicitorChangeServiceRequestTest {
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(ccdUpdateService);
+        verifyNoInteractions(applicationIssuedNotification);
     }
 
     @Test
-    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorServiceWhenApplicationIssued() {
+    void shouldNotifyOnSubmittedCallbackIfCourtServiceWhenApplicationIssued() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setIssueDate(now());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingAos);
+
+        solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseDetails.getData(), caseDetails.getId());
+    }
+
+    @Test
+    void shouldSubmitCcdSystemIssueSolicitorServicePackEventAndNotifyOnSubmittedCallbackIfSolicitorServiceWhenApplicationIssued() {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
@@ -179,10 +253,24 @@ class SolicitorChangeServiceRequestTest {
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
         verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+        verify(applicationIssuedNotification).sendToApplicant1Solicitor(caseDetails.getData(), caseDetails.getId());
     }
 
     @Test
-    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorServiceWhenApplicationNotIssued() {
+    void shouldNotNotifyOnSubmittedCallbackIfCourtServiceWhenApplicationNotIssued() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingAos);
+
+        solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOrNotifyOnSubmittedCallbackIfSolicitorServiceWhenApplicationNotIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -192,5 +280,6 @@ class SolicitorChangeServiceRequestTest {
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(ccdUpdateService);
+        verifyNoInteractions(applicationIssuedNotification);
     }
 }
