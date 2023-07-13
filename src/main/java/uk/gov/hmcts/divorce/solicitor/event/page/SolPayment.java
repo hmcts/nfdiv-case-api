@@ -14,8 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
-import java.util.List;
-
 @Component
 @Slf4j
 public class SolPayment implements CcdPageConfiguration {
@@ -66,10 +64,7 @@ public class SolPayment implements CcdPageConfiguration {
                 .build();
         } catch (final FeignException e) {
             log.error("Failed to retrieve PBA numbers for Case Id: {}", caseId);
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(List.of("No PBA numbers associated with the provided email address"))
-                .build();
+            throw e;
         }
     }
 }
