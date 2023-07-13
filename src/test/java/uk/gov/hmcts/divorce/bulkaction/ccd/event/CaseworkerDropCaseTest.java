@@ -12,9 +12,8 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.DropCaseTask;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerDropCase.CASEWORKER_DROP_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
@@ -44,10 +42,10 @@ public class CaseworkerDropCaseTest {
     private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Mock
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private HttpServletRequest httpServletRequest;
 
     @Mock
-    private HttpServletRequest httpServletRequest;
+    private DropCaseTask dropCaseTask;
 
     @InjectMocks
     private CaseworkerDropCase caseworkerDropCase;
@@ -69,27 +67,23 @@ public class CaseworkerDropCaseTest {
         details.setId(1L);
 
         final var user = mock(User.class);
-        final var caseTask = mock(CaseTask.class);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
         when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
-        doNothing().when(bulkCaseProcessingService).updateAllBulkCases(
+        doNothing().when(bulkCaseProcessingService).updateBulkCase(
             details,
-            SYSTEM_REMOVE_BULK_CASE,
-            caseTask,
+            dropCaseTask,
             user,
             TEST_SERVICE_AUTH_TOKEN
         );
 
         caseworkerDropCase.submitted(details, details);
 
-        verify(bulkCaseProcessingService).updateAllBulkCases(
+        verify(bulkCaseProcessingService).updateBulkCase(
             details,
-            SYSTEM_REMOVE_BULK_CASE,
-            caseTask,
+            dropCaseTask,
             user,
             TEST_SERVICE_AUTH_TOKEN
         );

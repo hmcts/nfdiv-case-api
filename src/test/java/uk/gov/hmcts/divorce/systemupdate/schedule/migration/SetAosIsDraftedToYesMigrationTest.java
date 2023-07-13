@@ -8,9 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.predicate.HasAosDraftedEventPredicate;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.UpdateAosIsDrafted;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -24,10 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -49,6 +47,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 class SetAosIsDraftedToYesMigrationTest {
 
     @Mock
+    private Logger logger;
+
+    @Mock
     private CcdSearchService ccdSearchService;
 
     @Mock
@@ -56,6 +57,9 @@ class SetAosIsDraftedToYesMigrationTest {
 
     @Mock
     private HasAosDraftedEventPredicate hasAosDraftedEventPredicate;
+
+    @Mock
+    private UpdateAosIsDrafted updateAosIsDrafted;
 
     @InjectMocks
     private SetAosIsDraftedToYesMigration setAosIsDraftedToYesMigration;
@@ -70,88 +74,6 @@ class SetAosIsDraftedToYesMigrationTest {
         setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences3", emptyList());
         setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences4", emptyList());
         setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences5", emptyList());
-    }
-
-    @Test
-    void shouldSetAosIsDraftedToYesToSelectedCases() {
-
-        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
-
-        final AtomicInteger predicateIndex = new AtomicInteger(0);
-        final List<Boolean> predicateValues = List.of(TRUE, FALSE, TRUE);
-
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .id(1L)
-            .data(new HashMap<>())
-            .build();
-
-        final CaseDetails caseDetails2 = CaseDetails.builder()
-            .id(2L)
-            .data(new HashMap<>())
-            .build();
-
-        final CaseDetails caseDetails3 = CaseDetails.builder()
-            .id(3L)
-            .data(new HashMap<>())
-            .build();
-
-        final List<CaseDetails> searchResponse = List.of(caseDetails1, caseDetails2, caseDetails3);
-
-        when(ccdSearchService
-            .searchForAllCasesWithQuery(
-                getQuery(TEST_CASE_ID),
-                user,
-                SERVICE_AUTHORIZATION))
-            .thenReturn(searchResponse);
-
-        when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetail -> predicateValues.get(predicateIndex.getAndAdd(1)));
-
-        setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
-
-        assertThat(caseDetails1.getData().get("aosIsDrafted")).isEqualTo("Yes");
-        assertThat(caseDetails2.getData().get("aosIsDrafted")).isNull();
-        assertThat(caseDetails3.getData().get("aosIsDrafted")).isEqualTo("Yes");
-
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails3, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdSearchService);
-    }
-
-    @Test
-    void shouldSetAosIsDraftedToYesForMultipleCombinedDistinctReferences() {
-
-        final long reference2 = TEST_CASE_ID + 1L;
-        final long reference3 = TEST_CASE_ID + 2L;
-        final long reference4 = TEST_CASE_ID + 3L;
-        setField(setAosIsDraftedToYesMigration, "migrateAosIsDrafted", true);
-        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences2", List.of(reference2));
-        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences3", List.of(reference3));
-        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences4", List.of(reference4));
-        setField(setAosIsDraftedToYesMigration, "aosIsDraftedReferences5", List.of(reference4));
-
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .id(1L)
-            .data(new HashMap<>())
-            .build();
-
-        final List<CaseDetails> searchResponse1 = List.of(caseDetails1);
-
-        when(ccdSearchService
-            .searchForAllCasesWithQuery(
-                getQuery(TEST_CASE_ID, reference2, reference3, reference4),
-                user,
-                SERVICE_AUTHORIZATION))
-            .thenReturn(searchResponse1);
-
-        when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION)).thenReturn(caseDetail -> true);
-
-        setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
-
-        assertThat(caseDetails1.getData()).containsEntry("aosIsDrafted", "Yes");
-
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdSearchService);
     }
 
     @Test
@@ -170,6 +92,8 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
+        verify(logger)
+            .error("Case schedule task(SetAosIsDraftedToYesMigration) stopped after search error", exception);
         verifyNoInteractions(ccdUpdateService);
     }
 
@@ -204,14 +128,41 @@ class SetAosIsDraftedToYesMigrationTest {
             .thenReturn(caseDetail -> predicateValues.get(predicateIndex.getAndAdd(1)));
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateAosIsDrafted,
+                user,
+                SERVICE_AUTHORIZATION
+            );
+
         doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails2.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateAosIsDrafted,
+                user,
+                SERVICE_AUTHORIZATION
+            );
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateAosIsDrafted,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails2.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateAosIsDrafted,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
         verifyNoMoreInteractions(ccdSearchService);
     }
 
@@ -245,15 +196,43 @@ class SetAosIsDraftedToYesMigrationTest {
         when(hasAosDraftedEventPredicate.hasAosDraftedEvent(user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetail -> predicateValues.get(predicateIndex.getAndAdd(1)));
 
-        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails1.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateAosIsDrafted,
+                user,
+                SERVICE_AUTHORIZATION
+            );
+
         doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEventWithRetry(
+                caseDetails2.getId().toString(),
+                SYSTEM_MIGRATE_CASE,
+                updateAosIsDrafted,
+                user,
+                SERVICE_AUTHORIZATION
+            );
+
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails1.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateAosIsDrafted,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
+        verify(ccdUpdateService).submitEventWithRetry(
+            caseDetails2.getId().toString(),
+            SYSTEM_MIGRATE_CASE,
+            updateAosIsDrafted,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
         verifyNoMoreInteractions(ccdSearchService);
     }
 
@@ -264,6 +243,7 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
+        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED={}, references size: {}", false, 1);
         verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
     }
 
@@ -278,6 +258,7 @@ class SetAosIsDraftedToYesMigrationTest {
 
         setAosIsDraftedToYesMigration.apply(user, SERVICE_AUTHORIZATION);
 
+        verify(logger).info("Skipping SetAosIsDraftedToYesMigration, MIGRATE_AOS_IS_DRAFTED={}, references size: {}", true, 0);
         verifyNoInteractions(ccdSearchService, ccdUpdateService, hasAosDraftedEventPredicate);
     }
 

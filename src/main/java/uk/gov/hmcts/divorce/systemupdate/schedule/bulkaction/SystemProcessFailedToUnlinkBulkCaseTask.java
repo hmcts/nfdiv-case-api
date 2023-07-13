@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.ProcessFailedToUnlinkBulkCaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
 @Component
 @Slf4j
@@ -33,10 +32,10 @@ public class SystemProcessFailedToUnlinkBulkCaseTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Autowired
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private ProcessFailedToUnlinkBulkCaseTask processFailedToUnlinkBulkCaseTask;
 
     @Override
     public void run() {
@@ -56,10 +55,9 @@ public class SystemProcessFailedToUnlinkBulkCaseTask implements Runnable {
 
             droppedCasesWithErrorsOrUnprocessedCases
                 .forEach(caseDetailsBulkCase -> bulkCaseProcessingService
-                    .updateUnprocessedBulkCases(
+                    .updateBulkCase(
                         caseDetailsBulkCase,
-                        SYSTEM_REMOVE_BULK_CASE,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_REMOVE_BULK_CASE),
+                        processFailedToUnlinkBulkCaseTask,
                         user,
                         serviceAuth));
 
