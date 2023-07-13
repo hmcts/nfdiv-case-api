@@ -95,7 +95,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
-        final CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
         log.info("Solicitor change service request about to submit callback invoked with Case Id: {}", details.getId());
@@ -113,16 +113,12 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
         if (application.isSolicitorServiceMethod() && isIssued) {
             log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
-            final CaseDetails<CaseData, State> solicitorServiceDetails = caseTasks(generateApplicant1NoticeOfProceeding,
+            details = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings).run(details);
-
-            caseData = solicitorServiceDetails.getData();
         } else if (application.isCourtServiceMethod() && isIssued) {
             log.info("Regenerate NOP for App and Respondent, D10, and D84 for case id: {}", details.getId());
-            final CaseDetails<CaseData, State> courtServiceDetails = caseTasks(generateApplicant1NoticeOfProceeding,
+            details = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings, generateD10Form, generateD84Form).run(details);
-
-            caseData = courtServiceDetails.getData();
         }
 
         final State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
