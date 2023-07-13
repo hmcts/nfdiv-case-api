@@ -42,7 +42,6 @@ public class PbaService {
 
         return DynamicList
             .builder()
-            .value(DynamicListElement.builder().label("pbaNumber").code(UUID.randomUUID()).build())
             .listItems(pbaAccountNumbers)
             .build();
     }
