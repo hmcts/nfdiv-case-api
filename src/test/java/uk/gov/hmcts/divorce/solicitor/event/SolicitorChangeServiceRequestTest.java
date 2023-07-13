@@ -41,7 +41,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
 @ExtendWith(MockitoExtension.class)
@@ -99,7 +98,7 @@ class SolicitorChangeServiceRequestTest {
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         updatedCaseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
@@ -120,7 +119,7 @@ class SolicitorChangeServiceRequestTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
 
         verify(generateApplicant1NoticeOfProceeding).apply(caseDetails);
@@ -145,7 +144,7 @@ class SolicitorChangeServiceRequestTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
 
         verify(generateApplicant1NoticeOfProceeding).apply(caseDetails);
@@ -164,7 +163,7 @@ class SolicitorChangeServiceRequestTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
 
         verifyNoInteractions(generateApplicant1NoticeOfProceeding);
@@ -185,7 +184,7 @@ class SolicitorChangeServiceRequestTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
 
         verifyNoInteractions(generateApplicant1NoticeOfProceeding);
