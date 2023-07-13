@@ -26,7 +26,7 @@ plugins {
   id 'org.springframework.boot' version '3.1.1'
   id 'com.github.ben-manes.versions' version '0.47.0'
   id 'hmcts.ccd.sdk' version '5.4.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.743'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.747'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -275,8 +275,8 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.4'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.20.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.20.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.10'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.10'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.11'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.11'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.0'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.11'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok

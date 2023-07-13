@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.ProcessFailedScheduledCasesTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
 @Component
 @Slf4j
@@ -33,10 +32,10 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Autowired
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private ProcessFailedScheduledCasesTask processFailedScheduledCasesTask;
 
     @Override
     public void run() {
@@ -53,10 +52,9 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
 
             listedCasesWithErrorsOrUnprocessedCases
                 .forEach(caseDetailsBulkCase -> bulkCaseProcessingService
-                    .updateUnprocessedBulkCases(
+                    .updateBulkCase(
                         caseDetailsBulkCase,
-                        SYSTEM_UPDATE_CASE_COURT_HEARING,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_UPDATE_CASE_COURT_HEARING),
+                        processFailedScheduledCasesTask,
                         user,
                         serviceAuth));
 

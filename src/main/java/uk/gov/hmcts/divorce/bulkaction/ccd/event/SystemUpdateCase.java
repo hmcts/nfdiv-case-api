@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
@@ -27,10 +28,17 @@ public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActio
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(SYSTEM_UPDATE_BULK_CASE)
-            .forStates(Listed, Pronounced, Dropped)
+            .forStates(Created, Listed, Pronounced, Dropped)
             .name("System update case")
             .description("System update case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
-            .grantHistoryOnly(LEGAL_ADVISOR));
+            .grantHistoryOnly(LEGAL_ADVISOR))
+            .page("EDIT")
+            .pageLabel("SYSTEM EDIT")
+            .mandatory(BulkActionCaseData::getBulkListCaseDetails)
+            .mandatory(BulkActionCaseData::getErroredCaseDetails)
+            .mandatory(BulkActionCaseData::getProcessedCaseDetails)
+            .mandatory(BulkActionCaseData::getCasesToBeRemoved)
+            .mandatory(BulkActionCaseData::getCasesAcceptedToListForHearing);
     }
 }

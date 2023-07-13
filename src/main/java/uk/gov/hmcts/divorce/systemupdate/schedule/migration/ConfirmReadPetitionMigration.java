@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.UpdateConfirmReadPetitionFields;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -23,6 +23,9 @@ public class ConfirmReadPetitionMigration implements Migration {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private UpdateConfirmReadPetitionFields updateConfirmReadPetitionFields;
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {
@@ -44,12 +47,16 @@ public class ConfirmReadPetitionMigration implements Migration {
     }
 
     private void resetAosFields(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
-        final Long caseId = caseDetails.getId();
-
+        String caseId = caseDetails.getId().toString();
         try {
-            caseDetails.getData().put("confirmReadPetition", YesOrNo.NO);
-            caseDetails.getData().put("aosIsDrafted", YesOrNo.NO);
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
+            ccdUpdateService.submitEventWithRetry(
+                caseId,
+                SYSTEM_MIGRATE_CASE,
+                updateConfirmReadPetitionFields,
+                user,
+                serviceAuthorization
+            );
+
             log.info("Reset AOS fields successfully for case id: {}", caseId);
 
         } catch (final CcdConflictException e) {
