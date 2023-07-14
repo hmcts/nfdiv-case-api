@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
@@ -106,6 +107,17 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(correctRepresentationDetails(details.getData(), beforeDetails.getData()))
+            .build();
+    }
+
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitTwo(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
         log.info("Caseworker notice of change aboutToSubmit callback started for Case Id: {}", details.getId());
 
         final var data = details.getData();
@@ -173,5 +185,13 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
         }
+    }
+
+    private void setDefaultOrganisationPolicy(Applicant applicant, UserRole role) {
+        OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
+            .orgPolicyCaseAssignedRole(role)
+            .build();
+
+        applicant.getSolicitor().setOrganisationPolicy(defaultOrgPolicy);
     }
 }
