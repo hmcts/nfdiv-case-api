@@ -13,10 +13,6 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "solPaymentHowToPay": "feePayByAccount",
     "pbaNumbers": {
-      "value": {
-        "code": "${json-unit.any-string}",
-        "label": "pbaNumber"
-      },
       "list_items": [
         {
           "code": "${json-unit.any-string}",
@@ -38,9 +34,7 @@
           "code": "${json-unit.any-string}",
           "label": "PBA0023444"
         }
-      ],
-      "valueLabel": "pbaNumber",
-      "valueCode": "${json-unit.any-string}"
+      ]
     },
     "dataVersion": "${json-unit.any-number}",
     "warnings": []

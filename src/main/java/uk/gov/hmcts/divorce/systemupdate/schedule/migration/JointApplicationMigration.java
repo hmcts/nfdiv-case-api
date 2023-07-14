@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.RemoveAccessCode;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -23,26 +24,40 @@ public class JointApplicationMigration implements Migration {
     @Autowired
     private CcdUpdateService ccdUpdateService;
 
+    @Autowired
+    private RemoveAccessCode removeAccessCodeTask;
+
     @Override
     public void apply(final User user, final String serviceAuthorization) {
-        log.info("Started migrating cases joint application");
-        try {
-            ccdSearchService
-                .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
-                .parallelStream()
-                .forEach(details -> removeAccessCode(details, user, serviceAuthorization));
+        var jointApplicationMigrationEnabled =
+            Boolean.parseBoolean(System.getenv().get("ENABLE_JOINT_APPLICATION_MIGRATION"));
 
-        } catch (final CcdSearchCaseException e) {
-            log.error("Case schedule task(migration joint application) stopped after search error", e);
+        if (jointApplicationMigrationEnabled) {
+            log.info("Started migrating cases joint application");
+            try {
+                ccdSearchService
+                    .searchJointApplicationsWithAccessCodePostIssueApplication(user, serviceAuthorization)
+                    .parallelStream()
+                    .forEach(details -> removeAccessCode(details, user, serviceAuthorization));
+
+            } catch (final CcdSearchCaseException e) {
+                log.error("Case schedule task(migration joint application) stopped after search error", e);
+            }
         }
     }
 
     private void removeAccessCode(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
-        final Long caseId = caseDetails.getId();
+        final String caseId = caseDetails.getId().toString();
 
         try {
-            caseDetails.getData().put("accessCode", "");
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
+            ccdUpdateService.submitEventWithRetry(
+                caseId,
+                SYSTEM_MIGRATE_CASE,
+                removeAccessCodeTask,
+                user,
+                serviceAuthorization
+            );
+
             log.info("Removed access code successfully for case id: {}", caseId);
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseId);

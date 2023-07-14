@@ -21,7 +21,6 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -58,7 +57,8 @@ class FailedBulkCaseRemoverTest {
             SERVICE_AUTHORIZATION);
 
         verify(ccdUpdateService).submitBulkActionEvent(
-            bulkCaseDetails,
+            List.of(2L, 4L),
+            1L,
             SYSTEM_REMOVE_FAILED_CASES,
             user,
             SERVICE_AUTHORIZATION);
@@ -83,13 +83,7 @@ class FailedBulkCaseRemoverTest {
             SERVICE_AUTHORIZATION);
 
         verify(ccdUpdateService).submitBulkActionEvent(
-            bulkCaseDetails,
-            SYSTEM_REMOVE_FAILED_CASES,
-            user,
-            SERVICE_AUTHORIZATION);
-
-        verify(ccdUpdateService).submitBulkActionEvent(
-            bulkCaseDetails,
+            1L,
             SYSTEM_EMPTY_CASE,
             user,
             SERVICE_AUTHORIZATION);
@@ -124,7 +118,8 @@ class FailedBulkCaseRemoverTest {
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Message", null))
             .when(ccdUpdateService).submitBulkActionEvent(
-                bulkCaseDetails,
+                List.of(2L, 4L),
+                1L,
                 SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 SERVICE_AUTHORIZATION);
@@ -150,16 +145,9 @@ class FailedBulkCaseRemoverTest {
         bulkCaseDetails.setId(1L);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
-        doNothing()
-            .when(ccdUpdateService).submitBulkActionEvent(
-                bulkCaseDetails,
-                SYSTEM_REMOVE_FAILED_CASES,
-                user,
-                SERVICE_AUTHORIZATION);
-
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Message", null))
             .when(ccdUpdateService).submitBulkActionEvent(
-                bulkCaseDetails,
+                1L,
                 SYSTEM_EMPTY_CASE,
                 user,
                 SERVICE_AUTHORIZATION);

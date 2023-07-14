@@ -138,9 +138,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
 
         log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
 
-        BulkActionCaseData caseData = details.getData();
-
-        caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved());
+        caseRemovalService.removeCases(details);
 
         return SubmittedCallbackResponse.builder().build();
     }

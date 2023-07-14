@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -90,10 +89,9 @@ public class SolPaymentTest {
         doThrow(new FeignException.NotFound("No PBAs associated with given email", mock(Request.class), null, null))
             .when(pbaService).populatePbaDynamicList();
 
-        assertThrows(
-            FeignException.class,
-            () -> solPayment.midEvent(details, details)
-        );
+        var response = solPayment.midEvent(details, details);
+
+        assertThat(response.getErrors()).isEqualTo(List.of("No PBA numbers associated with the provided email address"));
 
     }
 
