@@ -111,14 +111,16 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .build();
         }
 
-        if (application.isSolicitorServiceMethod() && isIssued) {
-            log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
-            details = caseTasks(generateApplicant1NoticeOfProceeding,
-                generateApplicant2NoticeOfProceedings).run(details);
-        } else if (application.isCourtServiceMethod() && isIssued) {
-            log.info("Regenerate NOP for App and Respondent, D10, and D84 for case id: {}", details.getId());
-            details = caseTasks(generateApplicant1NoticeOfProceeding,
-                generateApplicant2NoticeOfProceedings, generateD10Form, generateD84Form).run(details);
+        if (isIssued) {
+            if (application.isSolicitorServiceMethod()) {
+                log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
+                details = caseTasks(generateApplicant1NoticeOfProceeding,
+                    generateApplicant2NoticeOfProceedings).run(details);
+            } else if (application.isCourtServiceMethod()) {
+                log.info("Regenerate NOP for App and Respondent, D10, and D84 for case id: {}", details.getId());
+                details = caseTasks(generateApplicant1NoticeOfProceeding,
+                    generateApplicant2NoticeOfProceedings, generateD10Form, generateD84Form).run(details);
+            }
         }
 
         final State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
@@ -134,21 +136,23 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
         log.info("Solicitor change service request submitted callback invoked for case id: {}", details.getId());
         final Application application = details.getData().getApplication();
-        final boolean isIssued = details.getData().getApplication().getIssueDate() != null;
+        final boolean isIssued = application.getIssueDate() != null;
 
-        if (application.isSolicitorServiceMethod() && isIssued) {
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuthorization = authTokenGenerator.generate();
+        if (isIssued) {
+            if (application.isSolicitorServiceMethod()) {
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuthorization = authTokenGenerator.generate();
 
-            log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
-            ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
+                log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+                ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
 
-            log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
-            applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
+                log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
+                applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
 
-        } else if (application.isCourtServiceMethod() && isIssued) {
-            log.info("Send Notifications for case id: {}", details.getId());
-            notificationDispatcher.send(applicationIssuedNotification, details.getData(), details.getId());
+            } else if (application.isCourtServiceMethod()) {
+                log.info("Send Notifications for case id: {}", details.getId());
+                notificationDispatcher.send(applicationIssuedNotification, details.getData(), details.getId());
+            }
         }
 
         return SubmittedCallbackResponse.builder().build();
