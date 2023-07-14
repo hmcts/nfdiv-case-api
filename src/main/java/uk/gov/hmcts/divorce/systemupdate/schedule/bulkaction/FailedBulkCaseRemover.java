@@ -48,10 +48,10 @@ public class FailedBulkCaseRemover {
             final List<ListValue<BulkListCaseDetails>> bulkCaseDetailsListValues =
                 removeFailedCasesFromBulkCaseList(failedCaseIds, caseDetailsBulkCase);
 
-            updateBulkCaseToRemoveCases(caseDetailsBulkCase, user, serviceAuth, bulkCaseId);
-
             if (bulkCaseDetailsListValues.isEmpty()) {
                 setBulkCaseToEmptyState(caseDetailsBulkCase, user, serviceAuth, bulkCaseId);
+            } else {
+                updateBulkCaseToRemoveCases(failedCaseIds, user, serviceAuth, bulkCaseId);
             }
 
         } else {
@@ -74,7 +74,7 @@ public class FailedBulkCaseRemover {
         return bulkCaseDetailsListValues;
     }
 
-    private void updateBulkCaseToRemoveCases(final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,
+    private void updateBulkCaseToRemoveCases(final List<Long> failedCaseIds,
                                              final User user,
                                              final String serviceAuth,
                                              final Long bulkCaseId) {
@@ -82,7 +82,8 @@ public class FailedBulkCaseRemover {
 
         try {
             ccdUpdateService.submitBulkActionEvent(
-                caseDetailsBulkCase,
+                failedCaseIds,
+                bulkCaseId,
                 SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 serviceAuth);
@@ -100,7 +101,7 @@ public class FailedBulkCaseRemover {
 
         try {
             ccdUpdateService.submitBulkActionEvent(
-                caseDetailsBulkCase,
+                bulkCaseId,
                 SYSTEM_EMPTY_CASE,
                 user,
                 serviceAuth);

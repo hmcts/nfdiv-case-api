@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseTask;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -18,7 +18,7 @@ import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 
 @Service
@@ -26,81 +26,26 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_
 public class BulkCaseProcessingService {
 
     @Autowired
-    private BulkTriggerService bulkTriggerService;
-
-    @Autowired
     private CcdUpdateService ccdUpdateService;
 
-    public void updateAllBulkCases(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                   final String eventId,
-                                   final CaseTask caseTask,
-                                   final User user,
-                                   final String serviceAuth) {
-
-        updateBulkCase(
-            bulkCaseDetails,
-            bulkCaseDetails.getData().getBulkListCaseDetails(),
-            eventId,
-            caseTask,
-            user,
-            serviceAuth);
-    }
-
-    public void updateUnprocessedBulkCases(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                           final String eventId,
-                                           final CaseTask caseTask,
-                                           final User user,
-                                           final String serviceAuth) {
-
-        updateBulkCase(
-            bulkCaseDetails,
-            getFailedBulkCases(bulkCaseDetails),
-            eventId,
-            caseTask,
-            user,
-            serviceAuth);
-    }
-
-    private void updateBulkCase(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                final List<ListValue<BulkListCaseDetails>> casesToProcess,
-                                final String eventId,
-                                final CaseTask caseTask,
+    public void updateBulkCase(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                final BulkCaseTask bulkCaseTask,
                                 final User user,
                                 final String serviceAuth) {
-
-        final var bulkCaseId = bulkCaseDetails.getId();
-        final var bulkActionCaseData = bulkCaseDetails.getData();
-
         try {
-            final List<ListValue<BulkListCaseDetails>> unprocessedCases = bulkTriggerService.bulkTrigger(
-                casesToProcess,
-                eventId,
-                caseTask,
-                user,
-                serviceAuth
-            );
-
-            log.info("Error bulk case details list size {} for case id {} ", unprocessedCases.size(), bulkCaseId);
-
-            final List<ListValue<BulkListCaseDetails>> processedCases = bulkActionCaseData.calculateProcessedCases(unprocessedCases);
-
-            log.info("Successfully processed bulk case details list size {} for case id {}", processedCases.size(), bulkCaseId);
-
-            bulkActionCaseData.setErroredCaseDetails(unprocessedCases);
-            bulkActionCaseData.setProcessedCaseDetails(processedCases);
-
             ccdUpdateService.submitBulkActionEvent(
-                bulkCaseDetails,
+                bulkCaseTask,
+                bulkCaseDetails.getId(),
                 SYSTEM_UPDATE_BULK_CASE,
                 user,
                 serviceAuth
             );
         } catch (final CcdManagementException e) {
-            log.error("Update failed for bulk case id {}, event id {} ", bulkCaseId, eventId, e);
+            log.error("Update failed for bulk case id {}, event id {} ", bulkCaseDetails.getId(), SYSTEM_UPDATE_BULK_CASE, e);
         }
     }
 
-    private List<ListValue<BulkListCaseDetails>> getFailedBulkCases(
+    public static List<ListValue<BulkListCaseDetails>> getFailedBulkCases(
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
 
         final var bulkCaseId = bulkCaseDetails.getId();
@@ -119,36 +64,5 @@ public class BulkCaseProcessingService {
         return bulkActionCaseData.getErroredCaseDetails().stream()
             .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
             .collect(toList());
-    }
-
-    public void updateCasesToBeRemoved(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                       final String eventId,
-                                       final CaseTask caseTask,
-                                       final User user,
-                                       final String serviceAuth) {
-
-        final var bulkCaseId = bulkCaseDetails.getId();
-        final var bulkActionCaseData = bulkCaseDetails.getData();
-
-        try {
-            final List<ListValue<BulkListCaseDetails>> unprocessedCases = bulkTriggerService.bulkTrigger(
-                bulkActionCaseData.getCasesToBeRemoved(),
-                eventId,
-                caseTask,
-                user,
-                serviceAuth
-            );
-
-            bulkActionCaseData.setCasesToBeRemoved(unprocessedCases);
-
-            ccdUpdateService.submitBulkActionEvent(
-                bulkCaseDetails,
-                SYSTEM_UPDATE_BULK_CASE,
-                user,
-                serviceAuth
-            );
-        } catch (final CcdManagementException e) {
-            log.error("Update failed for bulk case id {}, event id {} ", bulkCaseId, eventId, e);
-        }
     }
 }
