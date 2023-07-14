@@ -116,7 +116,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 log.info("Regenerate NOP for App and Respondent for case id: {}", details.getId());
                 details = caseTasks(generateApplicant1NoticeOfProceeding,
                     generateApplicant2NoticeOfProceedings).run(details);
-            } else if (application.isCourtServiceMethod()) {
+            } else {
                 log.info("Regenerate NOP for App and Respondent, D10, and D84 for case id: {}", details.getId());
                 details = caseTasks(generateApplicant1NoticeOfProceeding,
                     generateApplicant2NoticeOfProceedings, generateD10Form, generateD84Form).run(details);
@@ -149,7 +149,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
                 applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
 
-            } else if (application.isCourtServiceMethod()) {
+            } else {
                 log.info("Send Notifications for case id: {}", details.getId());
                 notificationDispatcher.send(applicationIssuedNotification, details.getData(), details.getId());
             }
