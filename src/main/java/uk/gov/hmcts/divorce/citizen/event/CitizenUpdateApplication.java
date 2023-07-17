@@ -26,7 +26,8 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
 
         configBuilder
             .event(CITIZEN_UPDATE)
-            .forStates(Draft, AwaitingApplicant1Response, ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification, FinalOrderOverdue)
+            .forStates(Draft, AwaitingApplicant1Response, ConditionalOrderDrafted, ConditionalOrderPending,
+                AwaitingClarification, FinalOrderOverdue)
             .name("Patch case")
             .description("Patch a divorce or dissolution")
             .grant(CREATE_READ_UPDATE, CREATOR);
