@@ -15,6 +15,7 @@ uk:
         key: dummy
         baseUrl: https://api.notifications.service.gov.uk
       email:
+        replyToId: cbfaf301-e882-4b91-b7d4-70f22d81cddd
         templateVars:
           signInDivorceUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net}
           applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
