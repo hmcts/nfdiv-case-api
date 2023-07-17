@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -49,7 +50,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR))
+            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
             .page("uploadDocument")
             .pageLabel("Upload document")
             .complex(CaseData::getDocuments)

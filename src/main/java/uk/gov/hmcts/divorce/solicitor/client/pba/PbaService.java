@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.client.pba;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -42,7 +42,6 @@ public class PbaService {
 
         return DynamicList
             .builder()
-            .value(DynamicListElement.builder().label("pbaNumber").code(UUID.randomUUID()).build())
             .listItems(pbaAccountNumbers)
             .build();
     }

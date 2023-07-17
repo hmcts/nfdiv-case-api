@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,26 +11,26 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
+import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderJSLetter;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
-
-import java.util.EnumSet;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -62,10 +63,13 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private SwitchToSoleService switchToSoleService;
 
     @Autowired
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
 
     @Autowired
-    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
+    private GenerateSwitchToSoleConditionalOrderJSLetter generateSwitchToSoleJSLetter;
+
+    @Autowired
+    private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
 
     @Autowired
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
@@ -75,7 +79,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder
             .event(SWITCH_TO_SOLE_CO)
-            .forStateTransition(EnumSet.of(ConditionalOrderPending, AwaitingLegalAdvisorReferral), AwaitingLegalAdvisorReferral)
+            .forStates(ConditionalOrderPending, AwaitingLegalAdvisorReferral, JSAwaitingLA)
             .name("SwitchedToSoleCO")
             .description("Application type switched to sole post CO submission")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
@@ -113,24 +117,32 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
         generateSwitchToSoleDocuments(details, data, caseId);
 
+        var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(state)
             .build();
     }
 
     private void generateSwitchToSoleDocuments(CaseDetails<CaseData, State> details,
                                                CaseData caseData,
                                                Long caseId) {
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+        if ((CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
-            generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            if (caseData.isJudicialSeparationCase()) {
+                if (caseData.getApplicant2().isRepresented()) {
+                    generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, caseId, caseData.getApplicant1(),
+                            caseData.getApplicant2());
+                } else {
+                    generateSwitchToSoleJSLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+                }
+            } else {
+                generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            }
         }
-
-        generateConditionalOrderAnswersDocument.apply(
-            details,
-            caseData.getApplicant1().getLanguagePreference()
-        );
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
@@ -142,6 +154,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+                || D84.equals(data.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             switchToSoleCoPrinter.print(data, details.getId());

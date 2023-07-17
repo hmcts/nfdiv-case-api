@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,14 +11,13 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.bulkaction.task.DropCaseTask;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -26,11 +26,11 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
 @Component
 @Slf4j
 public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
+
     public static final String CASEWORKER_DROP_CASE = "caseworker-drop-case";
 
     @Autowired
@@ -43,10 +43,10 @@ public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkAct
     private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private HttpServletRequest request;
 
     @Autowired
-    private HttpServletRequest request;
+    private DropCaseTask dropCaseTask;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -68,10 +68,9 @@ public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkAct
 
         log.info("Unlinking bulk case started for case id {} ", bulkCaseDetails.getId());
 
-        bulkCaseProcessingService.updateAllBulkCases(
+        bulkCaseProcessingService.updateBulkCase(
             bulkCaseDetails,
-            SYSTEM_REMOVE_BULK_CASE,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_REMOVE_BULK_CASE),
+            dropCaseTask,
             idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
             authTokenGenerator.generate()
         );

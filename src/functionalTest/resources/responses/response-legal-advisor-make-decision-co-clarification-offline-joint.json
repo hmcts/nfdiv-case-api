@@ -2,6 +2,7 @@
   "data": {
     "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1LanguagePreferenceWelsh": "No",

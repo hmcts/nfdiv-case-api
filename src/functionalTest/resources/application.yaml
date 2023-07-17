@@ -17,7 +17,8 @@ uk:
       api:
         key: dummy
         baseUrl: https://api.notifications.service.gov.uk
-
+      email:
+        replyToId: cbfaf301-e882-4b91-b7d4-70f22d81cddd
 s2s:
   name: ccd_data
 
@@ -73,6 +74,7 @@ send-letter:
 
 aos_pack:
   due_date_offset_days: 16
+  due_date_offset_days_disputed: 21
 
 case_progression:
   holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
@@ -103,6 +105,9 @@ applicant_2:
 respondent_solicitor:
   response_offset_days: ${RESPONDENT_SOLICITOR_RESPOND_BY_OFFSET_DAYS:10}
 
+judicial_separation_answer_overdue:
+  offset_days: ${JS_ANSWER_OVERDUE_BY_OFFSET_DAYS:14}
+
 court:
   locations:
     serviceCentre:
@@ -111,7 +116,7 @@ court:
       town: 'Harlow'
       poBox: 'PO Box 13226'
       postCode: 'CM20 9UG'
-      email: 'divorcecase@justice.gov.uk'
+      email: 'contactdivorce@justice.gov.uk'
       phoneNumber: '0300 303 0642'
 
 pba:
@@ -133,7 +138,6 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
 toggle:
-  enable_case_document_access_management: ${ENABLE_CDAM:true}
   enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
 
 logging:

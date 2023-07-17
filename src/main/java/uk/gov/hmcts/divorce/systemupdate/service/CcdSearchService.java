@@ -55,7 +55,6 @@ public class CcdSearchService {
     public static final String ISSUE_DATE = "data.issueDate";
     public static final String DATA = "data.%s";
     public static final String STATE = "state";
-    public static final String AOS_RESPONSE = "data.howToRespondApplication";
     public static final String FINAL_ORDER_ELIGIBLE_FROM_DATE = "data.dateFinalOrderEligibleFrom";
     public static final String FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE = "data.dateFinalOrderEligibleToRespondent";
     public static final String FINAL_ORDER_SUBMITTED_DATE = "data.dateFinalOrderSubmitted";
@@ -70,6 +69,9 @@ public class CcdSearchService {
     public static final String APPLICANT2_OFFLINE = "applicant2Offline";
     public static final String APPLICANT1_PRIVATE_CONTACT = "applicant1ContactDetailsType";
     public static final String APPLICANT2_PRIVATE_CONTACT = "applicant2ContactDetailsType";
+    public static final String AOS_RESPONSE = "howToRespondApplication";
+    public static final String AWAITING_JS_ANSWER_START_DATE = "awaitingJsAnswerStartDate";
+    public static final String SUPPLEMENTARY_CASE_TYPE = "supplementaryCaseType";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
@@ -241,16 +243,7 @@ public class CcdSearchService {
                     .should(boolQuery()
                         .must(boolQuery().must(errorCasesExist))));
 
-        try {
-            return searchBulkActionCases(user, serviceAuth, query).stream()
-                .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
-                .toList();
-        } catch (final FeignException e) {
-
-            final String message = String.format("Failed to complete search for Bulk Cases with state of %s", state);
-            log.info(message, e);
-            throw new CcdSearchCaseException(message, e);
-        }
+        return searchForBulkCases(user, serviceAuth, query);
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
@@ -268,12 +261,18 @@ public class CcdSearchService {
             .should(listedStateQuery)
             .minimumShouldMatch(1);
 
+        return searchForBulkCases(user, serviceAuth, query);
+    }
+
+    public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
+        searchForBulkCases(final User user, final String serviceAuth, final QueryBuilder query) {
+
         try {
             return searchBulkActionCases(user, serviceAuth, query).stream()
                 .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
                 .toList();
         } catch (final FeignException e) {
-            final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
+            final String message = "Failed to complete search for Bulk Cases";
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
@@ -321,7 +320,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search joint app with access code and issue date present {} ", sourceBuilder.toString());
+        log.info("Query to search joint app with access code and issue date present {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -354,7 +353,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search joint paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+        log.info("Query to search joint paper applications where applicant 2 offline flag should be set {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -389,7 +388,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search sole paper applications where applicant 2 offline flag should be set {} ", sourceBuilder.toString());
+        log.info("Query to search sole paper applications where applicant 2 offline flag should be set {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -418,7 +417,7 @@ public class CcdSearchService {
             .from(0)
             .size(500);
 
-        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder.toString());
+        log.info("Query to search AwaitingAOS cases with confirmReadPetition equals Yes {} ", sourceBuilder);
 
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),

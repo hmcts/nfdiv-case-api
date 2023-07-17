@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderProno
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -77,7 +78,7 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN);
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -130,7 +131,12 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
 
             if (caseRemovedFromCasesAcceptedToListForHearing) {
                 log.info("Submitting {} event for case id: {}", CASEWORKER_REMOVE_CASES_BULK_LIST, details.getId());
-                ccdUpdateService.submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, serviceAuthorization);
+                ccdUpdateService.submitBulkActionEvent(
+                    bulkCaseDetails.getId(),
+                    CASEWORKER_REMOVE_CASES_BULK_LIST,
+                    user,
+                    serviceAuthorization
+                );
             }
         }
 

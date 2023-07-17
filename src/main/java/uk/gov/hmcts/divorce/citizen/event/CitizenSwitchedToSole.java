@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -31,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -64,7 +64,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .name("Application switched to sole")
             .description("Application type switched to sole")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

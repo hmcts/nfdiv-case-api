@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -95,7 +96,8 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
                 APPLICANT_1_SOLICITOR,
                 CASE_WORKER,
                 SUPER_USER,
-                LEGAL_ADVISOR));
+                LEGAL_ADVISOR,
+                JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {

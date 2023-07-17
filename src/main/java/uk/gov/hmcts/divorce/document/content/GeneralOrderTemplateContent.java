@@ -3,14 +3,11 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.ASSISTANT_JUSTICES_CLERK;
@@ -19,9 +16,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdv
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.HER_HONOUR_JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.HIS_HONOUR_JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.PROPER_OFFICER_OF_THE_COURT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType.RECORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
@@ -46,25 +43,19 @@ public class GeneralOrderTemplateContent {
     private static final String AN_ASSISTANT_JUDGES_CLERK = "an %s";
     private static final String A_PROPER_OFFICER_OF_THE_COURT = "a %s";
 
+    private static final String RECORDER_NAME = "%s %s";
+
     @Autowired
     private Clock clock;
 
-    @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
-
-    @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
-
-    @Value("${court.locations.serviceCentre.email}")
-    private String email;
-
-    @Value("${court.locations.serviceCentre.phoneNumber}")
-    private String phoneNumber;
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
 
-        Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent
+                .getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -95,6 +86,10 @@ public class GeneralOrderTemplateContent {
         } else if (PROPER_OFFICER_OF_THE_COURT.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
             templateContent.put(GENERAL_ORDER_MADE_BY,
                 String.format(A_PROPER_OFFICER_OF_THE_COURT, PROPER_OFFICER_OF_THE_COURT.getLabel()));
+        } else if (RECORDER.equals(generalOrder.getGeneralOrderJudgeOrLegalAdvisorType())) {
+            templateContent.put(GENERAL_ORDER_MADE_BY,
+                String.format(RECORDER_NAME, generalOrder.getGeneralOrderJudgeOrLegalAdvisorType().getLabel(),
+                    generalOrder.getGeneralOrderJudgeOrLegalAdvisorName()));
         }
 
         if (caseData.getApplicationType().isSole()) {
@@ -104,16 +99,6 @@ public class GeneralOrderTemplateContent {
             templateContent.put(APPLICANT_HEADING, APPLICANT_1);
             templateContent.put(RESPONDENT_HEADING, APPLICANT_2);
         }
-
-        var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName(centreName)
-            .emailAddress(email)
-            .serviceCentre(serviceCentre)
-            .phoneNumber(phoneNumber)
-            .build();
-
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
 
         return templateContent;
     }

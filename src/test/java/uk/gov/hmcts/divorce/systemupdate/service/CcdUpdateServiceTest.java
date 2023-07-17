@@ -104,7 +104,6 @@ class CcdUpdateServiceTest {
 
         final User user = systemUpdateUser();
         final Map<String, Object> caseData = new HashMap<>();
-        final CaseDetails reformCaseDetails = getCaseDetails(caseData);
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails =
             new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -113,7 +112,6 @@ class CcdUpdateServiceTest {
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
-        when(caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails)).thenReturn(reformCaseDetails);
         when(coreCaseDataApi
             .startEventForCaseWorker(
                 SYSTEM_UPDATE_AUTH_TOKEN,
@@ -134,7 +132,7 @@ class CcdUpdateServiceTest {
                 caseData))
             .thenReturn(caseDataContent);
 
-        ccdUpdateService.submitBulkActionEvent(caseDetails, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION);
+        ccdUpdateService.submitBulkActionEvent(TEST_CASE_ID, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION);
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -152,7 +150,6 @@ class CcdUpdateServiceTest {
 
         final User user = systemUpdateUser();
         final Map<String, Object> caseData = new HashMap<>();
-        final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
@@ -176,7 +173,7 @@ class CcdUpdateServiceTest {
                 caseData))
             .thenReturn(caseDataContent);
 
-        ccdUpdateService.updateBulkCaseWithRetries(caseDetails, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION, TEST_CASE_ID);
+        ccdUpdateService.updateBulkCaseWithRetries(SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION, TEST_CASE_ID);
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -213,7 +210,7 @@ class CcdUpdateServiceTest {
                 startEventResponse,
                 DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
                 DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-                caseData);
+                startEventResponse.getCaseDetails().getData());
 
         final CcdManagementException exception = assertThrows(
             CcdManagementException.class,
@@ -306,7 +303,6 @@ class CcdUpdateServiceTest {
     void shouldSubmitBulkActionEvent() {
         final User user = systemUpdateUser();
         final Map<String, Object> caseData = new HashMap<>();
-        final CaseDetails reformCaseDetails = getCaseDetails(caseData);
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails =
             new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -315,7 +311,6 @@ class CcdUpdateServiceTest {
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
-        when(caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails)).thenReturn(reformCaseDetails);
         when(coreCaseDataApi
             .startEventForCaseWorker(
                 SYSTEM_UPDATE_AUTH_TOKEN,
@@ -336,7 +331,7 @@ class CcdUpdateServiceTest {
                 caseData))
             .thenReturn(caseDataContent);
 
-        ccdUpdateService.submitBulkActionEvent(caseDetails, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION);
+        ccdUpdateService.submitBulkActionEvent(TEST_CASE_ID, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION);
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -439,6 +434,7 @@ class CcdUpdateServiceTest {
         return StartEventResponse.builder()
             .eventId(SYSTEM_PROGRESS_HELD_CASE)
             .token("startEventToken")
+            .caseDetails(getCaseDetails(new HashMap<>()))
             .build();
     }
 

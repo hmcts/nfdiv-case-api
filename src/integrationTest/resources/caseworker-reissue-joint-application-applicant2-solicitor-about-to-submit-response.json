@@ -3,6 +3,7 @@
     "applicationType": "jointApplication",
     "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1FirstName": "test_first_name",

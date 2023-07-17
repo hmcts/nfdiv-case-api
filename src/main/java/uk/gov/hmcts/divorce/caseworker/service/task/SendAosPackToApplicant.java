@@ -22,7 +22,7 @@ public class SendAosPackToApplicant implements CaseTask {
         final CaseData caseData = caseDetails.getData();
 
         if (caseData.getApplication().isCourtServiceMethod()) {
-            log.info("Sending NOP and application pack to bulk print as applicant 1 is not represented. Case id: {}:", caseId);
+            log.info("Sending AOS pack to applicant for sole case with id: {}", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
         } else {
             log.info("Bulk printing NOP and application pack. Case id: {}:", caseId);

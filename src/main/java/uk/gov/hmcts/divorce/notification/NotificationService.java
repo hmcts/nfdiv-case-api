@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -24,6 +25,9 @@ public class NotificationService {
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
 
+    @Value("${uk.gov.notify.email.replyToId}")
+    private String replyToId;
+
     public void sendEmail(
         String destinationAddress,
         EmailTemplateName template,
@@ -42,7 +46,8 @@ public class NotificationService {
                     templateId,
                     destinationAddress,
                     templateVars,
-                    referenceId
+                    referenceId,
+                    replyToId
                 );
 
             log.info("Successfully sent email with notification id {} and reference {}",

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
@@ -24,7 +24,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -38,7 +37,7 @@ public class GenerateCoRefusedCoverLetter {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
     private Clock clock;
@@ -48,17 +47,23 @@ public class GenerateCoRefusedCoverLetter {
 
     public void generateAndUpdateCaseData(final CaseData caseData,
                                           final Long caseId,
-                                          final String templateId,
                                           final Applicant applicant) {
+        this.generateAndUpdateCaseData(caseData, caseId, applicant, false);
+    }
+
+    public void generateAndUpdateCaseData(final CaseData caseData,
+                                          final Long caseId,
+                                          final Applicant applicant,
+                                          final Boolean isClarificationRefusal) {
 
         log.info("Generating Conditional Order Refused Cover Letter for case id {} ", caseId);
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            CONDITIONAL_ORDER_REFUSAL_COVER_LETTER,
+            conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, isClarificationRefusal),
             templateContent(caseData, caseId, applicant),
             caseId,
-            templateId,
+            conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, isClarificationRefusal),
             applicant.getLanguagePreference(),
             formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
         );
@@ -82,7 +87,7 @@ public class GenerateCoRefusedCoverLetter {
 
         templateContent.put(
             LEGAL_ADVISOR_COMMENTS,
-            conditionalOrderRefusedForAmendmentContent.generateLegalAdvisorComments(caseData.getConditionalOrder())
+            conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder())
         );
 
         templateContent.put(

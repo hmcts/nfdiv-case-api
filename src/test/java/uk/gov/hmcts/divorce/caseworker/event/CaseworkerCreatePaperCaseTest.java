@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
@@ -123,5 +124,39 @@ public class CaseworkerCreatePaperCaseTest {
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
         assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(NO);
+    }
+
+    @Test
+    public void shouldSetBothApplicantsOfflineWhenJudicialSeparation() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
+        caseData.getApplicant2().setEmail("testapp2@test.com");
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(1L);
+
+        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
+
+        assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
+        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    public void shouldSetBothApplicantsOfflineWhenSeparation() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.SEPARATION);
+        caseData.getApplicant2().setEmail("testapp2@test.com");
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(1L);
+
+        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
+
+        assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
+        assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
     }
 }

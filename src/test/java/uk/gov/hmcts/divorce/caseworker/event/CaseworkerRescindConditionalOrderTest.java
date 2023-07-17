@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -138,7 +138,13 @@ public class CaseworkerRescindConditionalOrderTest {
             .anyMatch(doc -> CONDITIONAL_ORDER_GRANTED.equals(doc.getValue().getDocumentType())))
             .isFalse();
         assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
-        verify(ccdUpdateService).submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitBulkActionEvent(
+                Long.parseLong(BULK_CASE_REFERENCE),
+                CASEWORKER_REMOVE_CASES_BULK_LIST,
+                user,
+                SERVICE_AUTHORIZATION
+            );
     }
 
     @Test
@@ -203,7 +209,13 @@ public class CaseworkerRescindConditionalOrderTest {
             .isFalse();
 
         assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
-        verify(ccdUpdateService).submitBulkActionEvent(bulkCaseDetails, CASEWORKER_REMOVE_CASES_BULK_LIST, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitBulkActionEvent(
+                Long.parseLong(BULK_CASE_REFERENCE),
+                CASEWORKER_REMOVE_CASES_BULK_LIST,
+                user,
+                SERVICE_AUTHORIZATION
+            );
     }
 
     @Test

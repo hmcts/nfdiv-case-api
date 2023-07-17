@@ -1,0 +1,217 @@
+{
+  "dueDate": "2020-10-16",
+  "warnings": [],
+  "issueDate": "2020-05-28",
+  "dataVersion": 5,
+  "marriageDate": "1990-06-10",
+  "previousState": "Holding",
+  "applicant1Email": "TEST_SOLICITOR@mailinator.com",
+  "applicant2Email": "applicant2@example.com",
+  "applicationType": "soleApplication",
+  "evidenceHandled": "Yes",
+  "applicant1Gender": "female",
+  "applicant2Gender": "female",
+  "applicant2UserId": "93b108b7-4b26-41bf-ae8f-6e356efb11b3",
+  "dateAosSubmitted": "2022-12-08T15:08:50.497",
+  "scannedDocuments": [
+    {
+      "id": "06a6f3bf-d790-40f2-a13a-2934b074c6b3",
+      "value": {
+        "url": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a3641377-97c0-48c0-aad7-805fd3c18430",
+          "document_filename": "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a3641377-97c0-48c0-aad7-805fd3c18430/binary"
+        },
+        "type": "form",
+        "subtype": "D10",
+        "fileName": "AOS2.pdf",
+        "scannedDate": "2022-01-01T00:00:00.000",
+        "deliveryDate": "2022-01-02T00:00:00.000",
+        "controlNumber": "1234",
+        "exceptionRecordReference": "1233"
+      }
+    }
+  ],
+  "scannedDocumentNames": {
+    "value": {
+      "label": "AOS2.pdf"
+    },
+    "list_items": [
+      {
+        "label": "AOS2.pdf"
+      }
+    ],
+    "valueLabel": "AOS2.pdf"
+  },
+  "statementOfTruth": "Yes",
+  "applicant1Address": {
+    "County": "Greater London",
+    "Country": "United Kingdom",
+    "PostCode": "NW1 6XE",
+    "PostTown": "London",
+    "AddressLine1": "App 1 221a Baker Street"
+  },
+  "applicant1Offline": "Yes",
+  "applicant2Address": {
+    "County": "Greater London",
+    "Country": "France",
+    "PostCode": "NW1 6XE",
+    "PostTown": "London",
+    "AddressLine1": "App 2 221a Baker Street"
+  },
+  "applicant2Offline": "Yes",
+  "documentsUploaded": [
+    {
+      "id": "9270f90f-10fb-4a6d-9ca0-b4db08406ed0",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a3641377-97c0-48c0-aad7-805fd3c18430",
+          "document_filename": "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a3641377-97c0-48c0-aad7-805fd3c18430/binary"
+        },
+        "documentType": "respondentAnswers",
+        "documentComment": "Reclassified scanned document",
+        "documentFileName": "AOS2.pdf",
+        "documentDateAdded": "2022-12-08"
+      }
+    },
+    {
+      "id": "f478e284-5594-4987-9e08-50e16d220c67",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a3641377-97c0-48c0-aad7-805fd3c18430",
+          "document_filename": "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a3641377-97c0-48c0-aad7-805fd3c18430/binary"
+        },
+        "documentType": "respondentAnswers",
+        "documentComment": "Reclassified scanned document",
+        "documentFileName": "AOS.pdf",
+        "documentDateAdded": "2022-12-08"
+      }
+    },
+    {
+      "id": "6f60924d-d0e0-43c5-8797-a10fd195958e",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c6ed3ce3-7f69-4987-949c-0c53339845fb",
+          "document_filename": "screenshot-xui-nfdiv-case-api-pr-2650.service.core-compute-preview.internal-2022.12.07-11_55_01.png",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c6ed3ce3-7f69-4987-949c-0c53339845fb/binary"
+        },
+        "documentType": "respondentAnswers",
+        "documentComment": "Reclassified scanned document",
+        "documentFileName": "AOS",
+        "documentDateAdded": "2022-12-08"
+      }
+    }
+  ],
+  "hyphenatedCaseRef": "1670-5090-3479-9475",
+  "progressPaperCase": "submitted",
+  "applicant1LastName": "app1_last_name",
+  "applicant2LastName": "app2_last_name",
+  "documentsGenerated": [
+    {
+      "id": "614fbd5a-bd90-4926-b316-eed9f7ec3b99",
+      "value": {
+        "documentLink": {
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/81217e2f-eb53-4e1d-bba4-358d69dd5113",
+          "document_filename": "aosResponseLetter.pdf",
+          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/81217e2f-eb53-4e1d-bba4-358d69dd5113/binary"
+        },
+        "documentType": "aosResponseLetter",
+        "documentFileName": "aosResponseLetter.pdf"
+      }
+    }
+  ],
+  "applicant1FirstName": "app1_first_name",
+  "applicant2FirstName": "app2_first_name",
+  "applicationPayments": [
+    {
+      "id": "58be103a-baa4-4bd5-a390-4748a37ef45b",
+      "value": {
+        "amount": 55000,
+        "status": "success",
+        "channel": "online",
+        "feeCode": "FEE0001",
+        "reference": "paymentRef",
+        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+      }
+    }
+  ],
+  "applicant1MiddleName": "app1_middle_name",
+  "applicant2MiddleName": "app2_middle_name",
+  "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "judicialSeparation",
+  "coApplicant1IsDrafted": "No",
+  "labelContentUnionType": "divorce",
+  "documentUploadComplete": "Yes",
+  "labelContentApplicant2": "respondent",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "marriageApplicant2Name": "test_first_name test_last_name",
+  "scannedSubtypeReceived": "D10",
+  "applicant1SolicitorName": "Applicant 1 Solicitor",
+  "applicant2SolicitorName": "Applicant 2 Solicitor",
+  "coApplicant1IsSubmitted": "No",
+  "howToRespondApplication": "disputeDivorce",
+  "jurisdictionConnections": [
+    "A"
+  ],
+  "labelContentUnionTypeUC": "Divorce",
+  "marriagePlaceOfMarriage": "Somewhere",
+  "applicant1FinancialOrder": "No",
+  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+  "applicant2FinancialOrder": "No",
+  "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+  "labelContentApplicant2UC": "The respondent",
+  "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+  "labelContentTheApplicant2": "the respondent",
+  "applicant1LegalProceedings": "Yes",
+  "applicant1SolicitorAddress": "App 1 Solicitor 221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+  "applicant1StatementOfTruth": "Yes",
+  "applicant2SolicitorAddress": "App 2 Solicitor 221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+  "applicant2StatementOfTruth": "Yes",
+  "applicationFeeOrderSummary": {
+    "PaymentTotal": "55000"
+  },
+  "labelContentTheApplicant2UC": "Respondent",
+  "applicant1ContactDetailsType": "public",
+  "applicant2ContactDetailsType": "public",
+  "applicant1SolicitorRepresented": "Yes",
+  "applicant2SolicitorRepresented": "No",
+  "applicant1PrayerDissolveDivorce": [
+    "dissolveDivorce"
+  ],
+  "applicant2PrayerDissolveDivorce": [
+    "dissolveDivorce"
+  ],
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "labelContentDivorceOrLegallyEnd": "get a divorce",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "labelContentApplicantOrApplicant1": "the applicant’s",
+  "labelContentApplicantsOrApplicant1s": "Applicant’s",
+  "labelContentRespondentsOrApplicant2s": "Respondents",
+  "labelContentTheApplicantOrApplicant1": "the applicant",
+  "applicant1SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationID": "0FA7S8S",
+      "OrganisationName": "Test 1 Organisation"
+    }
+  },
+  "applicant2SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationID": "N5AFUXG",
+      "OrganisationName": "Test 2 Organisation"
+    }
+  },
+  "labelContentDivorceOrCivilPartnership": "divorce",
+  "labelContentMarriageOrCivilPartnership": "marriage",
+  "labelContentTheApplicantOrApplicant1UC": "The applicant",
+  "labelContentDivorceOrEndCivilPartnership": "for divorce",
+  "labelContentMarriageOrCivilPartnershipUC": "Marriage",
+  "labelContentDivorceOrEndingCivilPartnership": "divorce",
+  "labelContentGotMarriedOrFormedCivilPartnership": "got married",
+  "labelContentDivorceOrCivilPartnershipApplication": "divorce application",
+  "labelContentFinaliseDivorceOrEndCivilPartnership": "finalise the divorce",
+  "labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership": "finalise the divorce"
+}

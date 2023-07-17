@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -24,9 +25,11 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,15 +37,28 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BULK_LIST;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PRONOUNCEMENT_JUDGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLE_JOINT_HEADING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
@@ -111,6 +127,17 @@ public class PronouncementListTemplateContentTest {
 
         assertThat(templateContent).containsKey(BULK_LIST);
 
+        List<Map<String, Object>> expectedBulkList = List.of(
+            expectedValues(DIVORCE.getLabel()),
+            expectedValues(DISSOLUTION.getLabel()),
+            expectedValues(JUDICIAL_SEPARATION.getLabel()),
+            expectedValues(SEPARATION.getLabel())
+        );
+
+        assertThat(templateContent).contains(
+            entry(BULK_LIST, expectedBulkList)
+        );
+
     }
 
     @Test
@@ -140,9 +167,9 @@ public class PronouncementListTemplateContentTest {
                 .build();
 
         final List<CaseDetails> bulkListCases = Lists.newArrayList(
-            mockCaseDetails(1L),
-            mockCaseDetails(2L),
-            mockCaseDetails(3L)
+            mockCaseDetails(1L, mockCaseData(DIVORCE, NA)),
+            mockCaseDetails(2L, mockCaseData(DIVORCE, NA)),
+            mockCaseDetails(3L, mockCaseData(DIVORCE, NA))
         );
 
         when(ccdSearchService.searchForAllCasesWithQuery(
@@ -178,9 +205,9 @@ public class PronouncementListTemplateContentTest {
                 .build();
 
         final List<CaseDetails> bulkListCases = Lists.newArrayList(
-            mockCaseDetails(1L),
-            mockCaseDetails(2L),
-            mockCaseDetails(3L)
+            mockCaseDetails(1L, mockCaseData(DIVORCE, NA)),
+            mockCaseDetails(2L, mockCaseData(DIVORCE, NA)),
+            mockCaseDetails(3L, mockCaseData(DIVORCE, NA))
         );
 
         when(ccdSearchService.searchForAllCasesWithQuery(
@@ -192,44 +219,50 @@ public class PronouncementListTemplateContentTest {
         assertThat(caseDetails.stream().map(CaseDetails::getId)).containsExactlyInAnyOrder(1L, 2L, 3L);
     }
 
-    private List<CaseDetails> mockCaseDetailsList() {
+    private Map<String, Object> expectedValues(String applicationType) {
+        Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put(CASE_REFERENCE, TEST_CASE_ID);
+        expectedValues.put(APPLICANT_HEADING, format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
+        expectedValues.put(RESPONDENT_HEADING, format("%s %s", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME));
+        expectedValues.put(SOLE_JOINT_HEADING, "Sole");
+        expectedValues.put(DIVORCE_OR_DISSOLUTION, applicationType);
 
-        final CaseData caseData = CaseData.builder()
-            .applicant1(getApplicant())
-            .applicant2(respondent())
-            .applicationType(ApplicationType.SOLE_APPLICATION)
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .conditionalOrder(
-                ConditionalOrder.builder()
-                    .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
-                    .build())
-            .build();
-
-        final CaseDetails mainCaseDetails =
-            CaseDetails
-                .builder()
-                .caseTypeId(NoFaultDivorce.CASE_TYPE)
-                .data(Map.of("", caseData))
-                .build();
-
-        when(objectMapper.convertValue(mainCaseDetails.getData(), CaseData.class)).thenReturn(caseData);
-
-        return List.of(mainCaseDetails);
+        return expectedValues;
     }
 
-    private CaseDetails mockCaseDetails(Long id) {
+    private List<CaseDetails> mockCaseDetailsList() {
+        final CaseData caseData = mockCaseData(DIVORCE, NA);
+        final CaseDetails caseDetails = mockCaseDetails(TEST_CASE_ID, caseData);
+        final CaseData dissCaseData = mockCaseData(DISSOLUTION, NA);
+        final CaseDetails dissCaseDetails = mockCaseDetails(TEST_CASE_ID, dissCaseData);
+        final CaseData jsCaseData = mockCaseData(DIVORCE, JUDICIAL_SEPARATION);
+        final CaseDetails jsCaseDetails = mockCaseDetails(TEST_CASE_ID, jsCaseData);
+        final CaseData sepCaseData = mockCaseData(DISSOLUTION, SEPARATION);
+        final CaseDetails sepCaseDetails = mockCaseDetails(TEST_CASE_ID, sepCaseData);
 
-        final CaseData caseData = CaseData.builder()
+        when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(caseData);
+        when(objectMapper.convertValue(dissCaseDetails.getData(), CaseData.class)).thenReturn(dissCaseData);
+        when(objectMapper.convertValue(jsCaseDetails.getData(), CaseData.class)).thenReturn(jsCaseData);
+        when(objectMapper.convertValue(sepCaseDetails.getData(), CaseData.class)).thenReturn(sepCaseData);
+
+        return List.of(caseDetails, dissCaseDetails, jsCaseDetails, sepCaseDetails);
+    }
+
+    private CaseData mockCaseData(DivorceOrDissolution divorceOrDissolution, SupplementaryCaseType supplementaryCaseType) {
+        return CaseData.builder()
             .applicant1(getApplicant())
             .applicant2(respondent())
             .applicationType(ApplicationType.SOLE_APPLICATION)
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceOrDissolution(divorceOrDissolution)
+            .supplementaryCaseType(supplementaryCaseType)
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
                     .build())
             .build();
+    }
 
+    private CaseDetails mockCaseDetails(Long id, CaseData caseData) {
         return CaseDetails
             .builder()
             .id(id)

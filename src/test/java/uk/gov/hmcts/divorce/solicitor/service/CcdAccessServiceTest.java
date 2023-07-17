@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -297,6 +298,12 @@ public class CcdAccessServiceTest {
             )
         ).thenReturn(response);
 
+        when(caseAssignmentApi.removeCaseUserRoles(
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            any(CaseAssignmentUserRolesRequest.class)
+        )).thenReturn(CaseAssignmentUserRolesResponse.builder().build());
+
         assertThatCode(() -> ccdAccessService.removeUsersWithRole(TEST_CASE_ID, List.of("[CREATOR]")))
             .doesNotThrowAnyException();
 
@@ -310,7 +317,7 @@ public class CcdAccessServiceTest {
                     .build()))
             .build();
 
-        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(idamService, times(2)).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(caseAssignmentApi)
             .getUserRoles(

@@ -140,7 +140,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
         if (caseData.getApplicationType().isSole()) {
-            if (isNotBlank(email) && !caseData.getApplication().isSolicitorServiceMethod() && !caseData.getApplicant2().isBasedOverseas()) {
+            if (isNotBlank(email) && caseData.getApplication().isCourtServiceMethod() && !caseData.getApplicant2().isBasedOverseas()) {
                 log.info("Sending sole application issued notification to respondent for case : {}", caseId);
 
                 notificationService.sendEmail(
@@ -167,9 +167,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
 
-        if (caseData.getApplicationType().isSole()
-            && !caseData.getApplication().isSolicitorServiceMethod()
-            && isNotBlank(email)) {
+        if (caseData.getApplicationType().isSole() && caseData.getApplication().isCourtServiceMethod() && isNotBlank(email)) {
 
             log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
             notificationService.sendEmail(

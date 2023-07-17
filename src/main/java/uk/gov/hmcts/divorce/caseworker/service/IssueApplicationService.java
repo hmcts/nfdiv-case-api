@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -33,7 +34,7 @@ public class IssueApplicationService {
     private DivorceApplicationRemover divorceApplicationRemover;
 
     @Autowired
-    private GenerateDivorceApplication generateDivorceApplication;
+    private GenerateApplication generateApplication;
 
     @Autowired
     private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
@@ -60,6 +61,9 @@ public class IssueApplicationService {
     private GenerateD10Form generateD10Form;
 
     @Autowired
+    private GenerateD84Form generateD84Form;
+
+    @Autowired
     private SetServiceType setServiceType;
 
     @Autowired
@@ -75,8 +79,9 @@ public class IssueApplicationService {
             generateApplicant1NoticeOfProceeding,
             generateApplicant2NoticeOfProceedings,
             divorceApplicationRemover,
-            generateDivorceApplication,
-            generateD10Form
+                generateApplication,
+            generateD10Form,
+            generateD84Form
         ).run(caseDetails);
     }
 

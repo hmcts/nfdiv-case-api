@@ -23,12 +23,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -72,7 +74,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, LEGAL_ADVISOR)
-            .grantHistoryOnly(SUPER_USER, SOLICITOR, CITIZEN))
+            .grantHistoryOnly(SUPER_USER, JUDGE, SOLICITOR, CITIZEN))
             .page("addBailiffReturn")
             .pageLabel("Add Bailiff Return")
             .complex(CaseData::getAlternativeService)
@@ -93,9 +95,14 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
         log.info("Caseworker add bailiff return about to submit callback invoked for case id: {}", caseId);
 
         if (YES == caseData.getAlternativeService().getBailiff().getSuccessfulServedByBailiff()) {
-            log.info("Setting state to Holding and due date for case id: {}", caseId);
-            state = Holding;
-            caseData = caseTasks(setHoldingDueDate).run(details).getData();
+            if (caseData.isJudicialSeparationCase()) {
+                log.info("Setting state to AwaitingJsNullity for case id: {}", caseId);
+                state = AwaitingJsNullity;
+            } else {
+                log.info("Setting state to Holding and due date for case id: {}", caseId);
+                state = Holding;
+                caseData = caseTasks(setHoldingDueDate).run(details).getData();
+            }
             notificationDispatcher.send(successfulNotification, caseData, caseId);
         } else {
             log.info("Setting state to AwaitingAos for case id: {}", caseId);

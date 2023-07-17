@@ -31,9 +31,11 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -362,11 +364,17 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldRetrieveRespondentAnswersFromDocsUploadedAndPrintAosResponseLetterForApplicant1WhenApp2IsOffline() {
+    void shouldRetrieveRespondentAnswersFromDocsUploadedAndPrintAosResponseLetterWithoutCoversheetForApplicant1WhenApp2IsOffline() {
 
         final ListValue<DivorceDocument> aosResponseDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(AOS_RESPONSE_LETTER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> d84Form = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(D84)
                 .build())
             .build();
 
@@ -376,13 +384,19 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
 
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().offline(YES).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(aosResponseDoc))
+                .documentsGenerated(List.of(aosResponseDoc, d84Form, coversheet))
                 .documentsUploaded(singletonList(respondentAnswersDoc))
                 .build())
+            .supplementaryCaseType(NA)
             .build();
 
 
@@ -394,13 +408,14 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("aos-response-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().size()).isEqualTo(3);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(aosResponseDoc.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(respondentAnswersDoc.getValue());
+        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(d84Form.getValue());
     }
 
     @Test
-    void shouldRetrieveRespondentAnswersFromDocsGeneratedAndPrintAosResponseLetterForApplicant1WhenApp2IsOnline() {
+    void shouldRetrieveRespondentAnswersFromDocsGeneratedAndPrintAosResponseLetterWithoutCoversheetForApplicant1WhenApp2IsOnline() {
 
         final ListValue<DivorceDocument> aosResponseDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -414,12 +429,18 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
 
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().offline(NO).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(List.of(aosResponseDoc, respondentAnswersDoc))
+                .documentsGenerated(List.of(aosResponseDoc, respondentAnswersDoc, coversheet))
                 .build())
+            .supplementaryCaseType(NA)
             .build();
 
 
@@ -437,7 +458,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosResponseLetterForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivate() {
+    void shouldPrintAosResponseLetterWithoutCoversheetForApplicantIfRequiredDocumentsArePresentAndApplicantContactIsPrivateAndNotJSCase() {
 
         final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
             .value(ConfidentialDivorceDocument.builder()
@@ -451,14 +472,21 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(COVERSHEET)
+                .build())
+            .build();
+
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .contactDetailsType(ContactDetailsType.PRIVATE)
                 .build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(singletonList(respondentAnswersDoc))
+                .documentsGenerated(asList(respondentAnswersDoc, coversheet))
                 .confidentialDocumentsGenerated(singletonList(doc1))
                 .build())
+            .supplementaryCaseType(NA)
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());

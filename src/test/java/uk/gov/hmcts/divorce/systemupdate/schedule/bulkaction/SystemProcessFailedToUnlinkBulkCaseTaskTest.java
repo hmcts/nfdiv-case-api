@@ -10,8 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
-import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
-import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.bulkaction.task.ProcessFailedToUnlinkBulkCaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -23,12 +22,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -44,10 +41,10 @@ public class SystemProcessFailedToUnlinkBulkCaseTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Mock
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private ProcessFailedToUnlinkBulkCaseTask bulkCaseTask;
 
     @InjectMocks
     private SystemProcessFailedToUnlinkBulkCaseTask processFailedToUnlinkBulkCaseTask;
@@ -79,24 +76,18 @@ public class SystemProcessFailedToUnlinkBulkCaseTaskTest {
         when(ccdSearchService.searchForUnprocessedOrErroredBulkCases(Dropped, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails1, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails2, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
-
         processFailedToUnlinkBulkCaseTask.run();
 
         verify(bulkCaseProcessingService)
-            .updateUnprocessedBulkCases(
+            .updateBulkCase(
                 caseDetails1,
-                SYSTEM_REMOVE_BULK_CASE,
-                caseTask,
+                bulkCaseTask,
                 user,
                 SERVICE_AUTHORIZATION);
         verify(bulkCaseProcessingService)
-            .updateUnprocessedBulkCases(
+            .updateBulkCase(
                 caseDetails2,
-                SYSTEM_REMOVE_BULK_CASE,
-                caseTask,
+                bulkCaseTask,
                 user,
                 SERVICE_AUTHORIZATION);
     }
@@ -111,5 +102,3 @@ public class SystemProcessFailedToUnlinkBulkCaseTaskTest {
         verifyNoInteractions(bulkCaseProcessingService);
     }
 }
-
-

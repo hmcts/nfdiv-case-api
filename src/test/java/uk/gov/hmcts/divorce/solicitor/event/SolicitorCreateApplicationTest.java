@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +26,6 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -36,6 +36,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -101,6 +102,7 @@ class SolicitorCreateApplicationTest {
             .put(SYSTEMUPDATE, U)
             .put(SUPER_USER, R)
             .put(CASE_WORKER, R)
+            .put(JUDGE, R)
             .put(LEGAL_ADVISOR, R)
             .build();
 

@@ -1,17 +1,14 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +18,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_OFFLINE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -45,26 +42,16 @@ public class ConditionalOrderRefusedForClarificationContent {
     private Clock clock;
 
     @Autowired
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    @Value("${court.locations.serviceCentre.serviceCentreName}")
-    private String serviceCentre;
-
-    @Value("${court.locations.serviceCentre.centreName}")
-    private String centreName;
-
-    @Value("${court.locations.serviceCentre.poBox}")
-    private String poBox;
-
-    @Value("${court.locations.serviceCentre.town}")
-    private String town;
-
-    @Value("${court.locations.serviceCentre.postCode}")
-    private String postcode;
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        Map<String, Object> templateContent = new HashMap<>();
+        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final Set<ClarificationReason> clarificationReasons = conditionalOrder.getRefusalClarificationReason();
@@ -78,8 +65,7 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        templateContent.put(JUDICIAL_SEPARATION,
-            caseData.getIsJudicialSeparation() != null && caseData.getIsJudicialSeparation().toBoolean());
+        templateContent.put(JUDICIAL_SEPARATION, caseData.isJudicialSeparationCase());
 
         templateContent.put(REASON_JURISDICTION_DETAILS,
             clarificationReasons.contains(ClarificationReason.JURISDICTION_DETAILS));
@@ -90,10 +76,7 @@ public class ConditionalOrderRefusedForClarificationContent {
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
 
-        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderRefusedForAmendmentContent
-            .generateLegalAdvisorComments(conditionalOrder));
-
-        LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+        templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(conditionalOrder));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
@@ -101,15 +84,7 @@ public class ConditionalOrderRefusedForClarificationContent {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
         }
 
-        final var ctscContactDetails = CtscContactDetails
-            .builder()
-            .centreName(centreName)
-            .serviceCentre(serviceCentre)
-            .poBox(poBox)
-            .town(town)
-            .postcode(postcode)
-            .build();
-        templateContent.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
+        templateContent.put(IS_OFFLINE, caseData.getApplication().isPaperCase());
 
         return templateContent;
     }

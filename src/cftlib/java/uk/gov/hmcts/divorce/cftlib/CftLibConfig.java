@@ -26,6 +26,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_CASE_WORKER_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_SOLICITOR@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"),
+            "TEST_JUDGE@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-judge"),
             "dummysystemupdate@test.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-systemupdate"),
             "role.assignment.admin@gmail.com", List.of("caseworker"),
             "data.store.idam.system.user@gmail.com", List.of("caseworker"),
@@ -42,6 +43,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "caseworker-divorce-courtadmin-la",
             "caseworker-divorce-courtadmin",
             "caseworker-divorce-solicitor",
+            "caseworker-divorce-judge",
             "caseworker-divorce-pcqextractor",
             "caseworker-divorce-systemupdate",
             "caseworker-divorce-bulkscan",
@@ -55,6 +57,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "pui-organisation-manager",
             "pui-user-manager"
         );
+
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json")
             .getInputStream(), Charset.defaultCharset());

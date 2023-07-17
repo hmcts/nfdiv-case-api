@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -28,7 +28,7 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_REMOVE_BULK_CASE)
-            .forStateTransition(POST_SUBMISSION_STATES, AwaitingPronouncement)
+            .forStateTransition(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED, AwaitingPronouncement)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name("System remove bulk case")
             .description("System remove bulk case")
