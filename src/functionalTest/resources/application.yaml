@@ -17,7 +17,8 @@ uk:
       api:
         key: dummy
         baseUrl: https://api.notifications.service.gov.uk
-
+      email:
+        replyToId: cbfaf301-e882-4b91-b7d4-70f22d81cddd
 s2s:
   name: ccd_data
 
