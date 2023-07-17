@@ -1,9 +1,11 @@
 package uk.gov.hmcts.divorce.solicitor.client.organisation;
 
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 
@@ -28,5 +30,12 @@ public interface OrganisationClient {
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(CoreCaseDataApi.SERVICE_AUTHORIZATION) String serviceAuthorization,
         @RequestHeader("UserEmail") final String email
+    );
+
+    @GetMapping("/refdata/internal/v1/organisations/{orgId}/users?returnRoles=false")
+    FindUsersByOrganisationResponse getOrganisationUsers(
+        @RequestHeader(AUTHORIZATION) String authorisation,
+        @RequestHeader(CoreCaseDataApi.SERVICE_AUTHORIZATION) String serviceAuthorization,
+        @PathVariable("orgId") @NotBlank String organisationIdentifier
     );
 }

@@ -8,11 +8,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
 import java.util.List;
 
@@ -41,6 +44,9 @@ class CaseworkerNoticeOfChangeTest {
     @Mock
     private CcdAccessService caseAccessService;
 
+    @Mock
+    private SolicitorValidationService solicitorValidationService;
+
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
 
@@ -67,7 +73,9 @@ class CaseworkerNoticeOfChangeTest {
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
-        assertThat(result.getData().getApplicant1().getSolicitor()).isNull();
+        assertThat(result.getData().getApplicant1().getSolicitor()).isEqualTo(Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR).build())
+            .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
@@ -174,7 +182,9 @@ class CaseworkerNoticeOfChangeTest {
         var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
-        assertThat(result.getData().getApplicant2().getSolicitor()).isNull();
+        assertThat(result.getData().getApplicant2().getSolicitor()).isEqualTo(Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_2_SOLICITOR).build())
+            .build());
         assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(NO);
 
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
