@@ -36,6 +36,7 @@ uk:
         key: ${UK_GOV_NOTIFY_API_KEY:dummy}
         baseUrl: https://api.notifications.service.gov.uk
       email:
+        replyToId: cbfaf301-e882-4b91-b7d4-70f22d81cddd
         templateVars:
           signInDivorceUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/}
           applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
@@ -90,11 +91,11 @@ uk:
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS: 'e872dbc4-e1f9-454c-830c-3e86ccb03251'
             APPLICANT_NOTICE_OF_PROCEEDINGS: '2d79f93a-aabc-470a-b5f5-333059787a8a'
             APPLICANT_SOLICITOR_SERVICE: '1fb44d0d-c743-4bff-9e5c-6a62d3711517'
-            GENERAL_EMAIL_PETITIONER: '48a1dd7e-1a46-4c1b-be4c-c7e733c8334e'
-            GENERAL_EMAIL_PETITIONER_SOLICITOR: 'ca22e5be-7460-48af-b781-ef1564a63a29'
-            GENERAL_EMAIL_RESPONDENT: 'fccb96fb-7d6a-41f3-9d63-bebfc76829ef'
-            GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'ac9a9948-25d8-4e59-8025-89860c251d3a'
-            GENERAL_EMAIL_OTHER_PARTY: '2c188c63-db80-46b4-a1e2-53fdc510d5b9'
+            GENERAL_EMAIL_PETITIONER: '83592af9-52ad-4592-a8e2-7aea0ffc7069'
+            GENERAL_EMAIL_PETITIONER_SOLICITOR: '239fc7ea-c717-40b6-8e6b-483e12af493c'
+            GENERAL_EMAIL_RESPONDENT: '8415ea9a-fc60-4eb2-82fe-0925731342ba'
+            GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'd64630fa-42a0-4a8e-9d9d-903549a0207f'
+            GENERAL_EMAIL_OTHER_PARTY: '57f59d4a-6332-4361-bf41-5092cafb8047'
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             JOINT_SOLICITOR_BOTH_APPLIED_CO_FO: '355c1651-7909-4886-80aa-1cc59f9e888d'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
@@ -207,11 +208,11 @@ uk:
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS: 'e872dbc4-e1f9-454c-830c-3e86ccb03251'
             APPLICANT_NOTICE_OF_PROCEEDINGS: '2d79f93a-aabc-470a-b5f5-333059787a8a'
             APPLICANT_SOLICITOR_SERVICE: 'f2371067-a968-43bd-93b8-a490165b2e9a'
-            GENERAL_EMAIL_PETITIONER: '48a1dd7e-1a46-4c1b-be4c-c7e733c8334e'
-            GENERAL_EMAIL_PETITIONER_SOLICITOR: 'ca22e5be-7460-48af-b781-ef1564a63a29'
-            GENERAL_EMAIL_RESPONDENT: 'fccb96fb-7d6a-41f3-9d63-bebfc76829ef'
-            GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'ac9a9948-25d8-4e59-8025-89860c251d3a'
-            GENERAL_EMAIL_OTHER_PARTY: '2c188c63-db80-46b4-a1e2-53fdc510d5b9'
+            GENERAL_EMAIL_PETITIONER: '83592af9-52ad-4592-a8e2-7aea0ffc7069'
+            GENERAL_EMAIL_PETITIONER_SOLICITOR: '239fc7ea-c717-40b6-8e6b-483e12af493c'
+            GENERAL_EMAIL_RESPONDENT: '8415ea9a-fc60-4eb2-82fe-0925731342ba'
+            GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'd64630fa-42a0-4a8e-9d9d-903549a0207f'
+            GENERAL_EMAIL_OTHER_PARTY: '57f59d4a-6332-4361-bf41-5092cafb8047'
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '9bd841f2-0989-45c5-a08b-348ecd09711f'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             JOINT_SOLICITOR_BOTH_APPLIED_CO_FO: '355c1651-7909-4886-80aa-1cc59f9e888d'
@@ -320,7 +321,7 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V2.docx
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline.docx
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V2.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
       JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
       JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx

@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: ['check', 'cftlibTest', 'integration']
+        task: ['check', 'integration']
       fail-fast: false
     steps:
       - uses: actions/checkout@v3

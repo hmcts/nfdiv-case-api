@@ -102,6 +102,7 @@ public final class DocmosisTemplateConstants {
     public static final String CONTACT_JUSTICE_GOV_UK_CY = "ymholiadaucymraeg@justice.gov.uk";
     public static final String IS_JUDICIAL_SEPARATION = "isJudicialSeparation";
     public static final String IS_DIVORCE = "isDivorce";
+    public static final String IS_OFFLINE = "isOffline";
 
     public static final String SOLICITOR_NAME = "solicitorName";
     public static final String SOLICITOR_FIRM = "solicitorFirm";
