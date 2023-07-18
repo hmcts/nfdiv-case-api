@@ -45,7 +45,11 @@ def secrets = [
                 secret('idam-solicitor-username', 'IDAM_SOLICITOR_USERNAME'),
                 secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
                 secret('idam-systemupdate-username', 'IDAM_SYSTEM_UPDATE_USERNAME'),
-                secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD')
+                secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD'),
+                secret('idam-caa-username', 'IDAM_CAA_USERNAME'),
+                secret('idam-caa-password', 'IDAM_CAA_PASSWORD'),
+                secret('idam-mca-client-secret', 'IDAM_MCA_CLIENT_SECRET'),
+                secret('manage-case-s2s-key', 'MANAGE_CASE_S2S_KEY')
         ]
 ]
 
