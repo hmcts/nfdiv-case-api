@@ -146,6 +146,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 solicitorValidationService.isSolicitorInOrganisation(userIdOption.get(), orgId);
             } else {
                 log.error("No user exists with given ID");
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(data)
+                    .errors(List.of("No user exists with provided email address"))
+                    .build();
             }
         }
 
