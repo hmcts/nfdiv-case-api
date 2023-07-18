@@ -118,7 +118,7 @@ public class BulkPrintService {
                         LETTER_TYPE_KEY, print.getLetterType(),
                         CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
                         CASE_IDENTIFIER_KEY, print.getCaseId(),
-                        RECIPIENTS, recipientsContent
+                        RECIPIENTS, List.of(recipientsContent)
                     )))
                 .letterId;
         } catch (FeignException.Conflict e) { // TODO: Remove once bulk print service returns 200 + UUID of request for duplicate requests.
