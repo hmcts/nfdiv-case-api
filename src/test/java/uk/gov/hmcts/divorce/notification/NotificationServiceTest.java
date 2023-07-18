@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.notification;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.service.notify.NotificationClient;
@@ -17,6 +19,7 @@ import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -45,6 +48,13 @@ class NotificationServiceTest {
     @Mock
     private SendEmailResponse sendEmailResponse;
 
+    final String replyToId = UUID.randomUUID().toString();
+
+    @BeforeEach
+    void setup() {
+        ReflectionTestUtils.setField(notificationService, "replyToId", replyToId);
+    }
+
     @Test
     void shouldInvokeNotificationClientToSendEmailInEnglish() throws NotificationClientException {
         String templateId = UUID.randomUUID().toString();
@@ -60,7 +70,8 @@ class NotificationServiceTest {
             eq(templateId),
             eq(EMAIL_ADDRESS),
             isNull(),
-            anyString()
+            anyString(),
+            any()
         )).thenReturn(sendEmailResponse);
 
         notificationService.sendEmail(
@@ -74,7 +85,8 @@ class NotificationServiceTest {
             eq(templateId),
             eq(EMAIL_ADDRESS),
             isNull(),
-            anyString());
+            anyString(),
+            eq(replyToId));
 
         verify(sendEmailResponse).getReference();
         verify(sendEmailResponse).getNotificationId();
@@ -97,7 +109,8 @@ class NotificationServiceTest {
             eq(templateId),
             eq(EMAIL_ADDRESS),
             isNull(),
-            anyString()
+            anyString(),
+            any()
         )).thenReturn(sendEmailResponse);
 
         notificationService.sendEmail(
@@ -111,7 +124,8 @@ class NotificationServiceTest {
             eq(templateId),
             eq(EMAIL_ADDRESS),
             isNull(),
-            anyString());
+            anyString(),
+            eq(replyToId));
 
         verify(sendEmailResponse).getReference();
         verify(sendEmailResponse).getNotificationId();
@@ -125,7 +139,7 @@ class NotificationServiceTest {
         String templateId = UUID.randomUUID().toString();
 
         doThrow(new NotificationClientException("some message"))
-            .when(notificationClient).sendEmail(anyString(), anyString(), eq(null), anyString());
+            .when(notificationClient).sendEmail(anyString(), anyString(), eq(null), anyString(), any());
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
@@ -147,6 +161,7 @@ class NotificationServiceTest {
             eq(templateId),
             eq(EMAIL_ADDRESS),
             isNull(),
-            anyString());
+            anyString(),
+            eq(replyToId));
     }
 }
