@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.print;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -33,6 +34,7 @@ public class BulkPrintService {
     private static final String LETTER_TYPE_KEY = "letterType";
     private static final String CASE_REFERENCE_NUMBER_KEY = "caseReferenceNumber";
     private static final String CASE_IDENTIFIER_KEY = "caseIdentifier";
+    private static final String RECIPIENTS = "recipients";
 
     @Autowired
     private SendLetterApi sendLetterApi;
@@ -103,17 +105,26 @@ public class BulkPrintService {
     }
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
-        return sendLetterApi.sendLetter(
-            authToken,
-            new LetterV3(
-                XEROX_TYPE_PARAMETER,
-                documents,
-                Map.of(
-                    LETTER_TYPE_KEY, print.getLetterType(),
-                    CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
-                    CASE_IDENTIFIER_KEY, print.getCaseId()
-                )))
-            .letterId;
+        StringBuilder recipientsContent = new StringBuilder();
+        documents.forEach(d -> recipientsContent.append(d.content));
+
+        try {
+            return sendLetterApi.sendLetter(
+                authToken,
+                new LetterV3(
+                    XEROX_TYPE_PARAMETER,
+                    documents,
+                    Map.of(
+                        LETTER_TYPE_KEY, print.getLetterType(),
+                        CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
+                        CASE_IDENTIFIER_KEY, print.getCaseId(),
+                        RECIPIENTS, recipientsContent
+                    )))
+                .letterId;
+        } catch (FeignException.Conflict e) { // TODO: Remove once bulk print service returns 200 + UUID of request for duplicate requests.
+            log.error("Conflict found during call to send letter:" + e.getMessage());
+            return UUID.randomUUID();
+        }
     }
 
     private byte[] getDocumentBytes(final Letter letter,
