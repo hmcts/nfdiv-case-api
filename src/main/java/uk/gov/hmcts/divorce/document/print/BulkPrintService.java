@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.print;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -28,11 +30,13 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
+// TODO: NFDIV-3567 - Unit tests for this class remain unchanged. These also need to be updated once all changes have been complete.
 public class BulkPrintService {
     private static final String XEROX_TYPE_PARAMETER = "NFDIV001";
     private static final String LETTER_TYPE_KEY = "letterType";
     private static final String CASE_REFERENCE_NUMBER_KEY = "caseReferenceNumber";
     private static final String CASE_IDENTIFIER_KEY = "caseIdentifier";
+    private static final String RECIPIENTS = "recipients";
 
     @Autowired
     private SendLetterApi sendLetterApi;
@@ -46,21 +50,25 @@ public class BulkPrintService {
     @Autowired
     private IdamService idamService;
 
-    public UUID print(final Print print) {
+    // TODO: NFDIV-3567 - Find all uses of the original print method and rework so it passes in the recipient of the letters
+    //  as an Applicant variable.
+    public UUID print(final Print print /*, Applicant recipient */) {
         final String authToken = authTokenGenerator.generate();
-        return triggerPrintRequest(print, authToken, documentRequestForPrint(print, authToken));
+        return triggerPrintRequest(print, authToken, recipient, documentRequestForPrint(print, authToken));
     }
 
-    public UUID printWithD10Form(final Print print) {
+    // TODO: NFDIV-3567 - Same as above. Find all uses of this and migrate it to pass in an Applicant who is the recipient of the letters.
+    public UUID printWithD10Form(final Print print /*, Applicant recipient */) {
         final String authToken = authTokenGenerator.generate();
         final List<Document> documents = documentRequestForPrint(print, authToken);
 
         addD10FormTo(documents);
 
-        return triggerPrintRequest(print, authToken, documents);
+        return triggerPrintRequest(print, authToken, recipient, documents);
     }
 
-    public UUID printAosRespondentPack(final Print print, final boolean includeD10Document) {
+    // TODO: NFDIV-3567 - Same as above. Find all uses of it and pass in the Applicant who is the recipient of the letters.
+    public UUID printAosRespondentPack(final Print print, final boolean includeD10Document /*, Applicant recipient */) {
         final String authToken = authTokenGenerator.generate();
         List<Document> documents = documentRequestForPrint(print, authToken);
 
@@ -102,18 +110,33 @@ public class BulkPrintService {
             .collect(toList());
     }
 
-    private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
-        return sendLetterApi.sendLetter(
-            authToken,
-            new LetterV3(
-                XEROX_TYPE_PARAMETER,
-                documents,
-                Map.of(
-                    LETTER_TYPE_KEY, print.getLetterType(),
-                    CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
-                    CASE_IDENTIFIER_KEY, print.getCaseId()
-                )))
-            .letterId;
+    // TODO: NFDIV-3567 - New change to include the a 'recipients' key, setting the value to:
+    //  applicant/recipient's full name + the letter pack type as a List<String>. E.g. Map("recipients": ['John Smith', 'aos-overdue']).
+    //  This needs to be unique per request but repeatable. Bulk print team will use this signature to check for duplicate
+    //  requests and if any duplicates are found within an hour of the original request, they're rejected.
+    private UUID triggerPrintRequest(Print print, String authToken, Applicant recipient, List<Document> documents) {
+
+        try {
+            return sendLetterApi.sendLetter(
+                authToken,
+                new LetterV3(
+                    XEROX_TYPE_PARAMETER,
+                    documents,
+                    Map.of(
+                        LETTER_TYPE_KEY, print.getLetterType(),
+                        CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
+                        CASE_IDENTIFIER_KEY, print.getCaseId(),
+                        RECIPIENTS, List.of(recipient.getFullName(), print.getLetterType())
+                    )))
+                .letterId;
+
+        // TODO: NFDIV-3567 - As per bulk prints team suggestion, for now they return a conflict exception which needs to be handled. At the
+        //  end of July when they release their change, they will change to return a 200 response + the ID of the duplicate request.
+        //  So for now, handle the exception until it's removed.
+        } catch (FeignException.Conflict e) {
+            log.info("Duplicate request found: " + e.getMessage());
+            return UUID.randomUUID();
+        }
     }
 
     private byte[] getDocumentBytes(final Letter letter,
