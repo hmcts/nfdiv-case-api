@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_OFFLINE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -82,6 +83,8 @@ public class ConditionalOrderRefusedForClarificationContent {
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
         }
+
+        templateContent.put(IS_OFFLINE, caseData.getApplication().isPaperCase());
 
         return templateContent;
     }
