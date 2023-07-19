@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.print;
 
 import feign.FeignException;
+import jakarta.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -19,6 +21,10 @@ import uk.gov.hmcts.reform.sendletter.api.model.v3.Document;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.LetterV3;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -105,9 +111,6 @@ public class BulkPrintService {
     }
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
-        StringBuilder recipientsContent = new StringBuilder();
-        documents.forEach(d -> recipientsContent.append(d.content));
-
         try {
             return sendLetterApi.sendLetter(
                 authToken,
@@ -118,13 +121,40 @@ public class BulkPrintService {
                         LETTER_TYPE_KEY, print.getLetterType(),
                         CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
                         CASE_IDENTIFIER_KEY, print.getCaseId(),
-                        RECIPIENTS, List.of(recipientsContent)
+                        RECIPIENTS, getRecipients(documents)
                     )))
                 .letterId;
         } catch (FeignException.Conflict e) { // TODO: Remove once bulk print service returns 200 + UUID of request for duplicate requests.
-            log.error("Conflict found during call to send letter:" + e.getMessage());
+            log.info("Conflict found during call to send letter:" + e.getMessage());
+            return UUID.randomUUID();
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Error while trying to convert document content to MD5: " + e.getMessage());
             return UUID.randomUUID();
         }
+    }
+
+    //  getRecipients will generate and return a List of String MD5 hash's for a given list of documents.
+    //  Recipients is a unique, repeatable value per request that is used on the bulk print service to identify and
+    //  stop duplicate requests from being sent out multiple times.
+    private List<String> getRecipients(List<Document> documents) throws NoSuchAlgorithmException {
+
+        List<String> recipients = new ArrayList<>();
+        MessageDigest md = MessageDigest.getInstance("MD5");
+
+        for (Document d : documents) {
+            //md.update(d.content.getBytes(StandardCharsets.UTF_8));
+
+
+
+            // Convert to MD5 String here.
+            byte[] digest = md.digest();
+            var docMD5 = DatatypeConverter
+                .printHexBinary(digest);
+
+            recipients.add(docMD5);
+        }
+
+        return recipients;
     }
 
     private byte[] getDocumentBytes(final Letter letter,
