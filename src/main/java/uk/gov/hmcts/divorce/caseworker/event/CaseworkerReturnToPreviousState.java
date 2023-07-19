@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_RETURN_TO_PREVIOUS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -58,7 +57,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
         List<String> validationErrors = new ArrayList<>();
 
         State state = caseData.getApplication().getStateToTransitionApplicationTo();
-        if (!POST_SUBMISSION_STATES.contains(state)) {
+        if (!PRE_RETURN_TO_PREVIOUS_STATES.contains(state)) {
             validationErrors.add(INVALID_STATE_ERROR);
         }
 
