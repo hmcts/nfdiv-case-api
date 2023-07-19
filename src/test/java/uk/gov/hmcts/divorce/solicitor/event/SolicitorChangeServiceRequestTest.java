@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
@@ -17,9 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
@@ -29,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -65,13 +65,10 @@ class SolicitorChangeServiceRequestTest {
     GenerateD10Form generateD10Form;
 
     @Mock
-    GenerateD84Form generateD84Form;
-
-    @Mock
     ApplicationIssuedNotification applicationIssuedNotification;
 
     @Mock
-    NotificationDispatcher notificationDispatcher;
+    ReIssueApplicationService reIssueApplicationService;
 
     @InjectMocks
     private SolicitorChangeServiceRequest solicitorChangeServiceRequest;
@@ -117,7 +114,6 @@ class SolicitorChangeServiceRequestTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
@@ -125,7 +121,6 @@ class SolicitorChangeServiceRequestTest {
         verify(generateApplicant1NoticeOfProceeding).apply(caseDetails);
         verify(generateApplicant2NoticeOfProceedings).apply(caseDetails);
         verify(generateD10Form).apply(caseDetails);
-        verify(generateD84Form).apply(caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -169,7 +164,6 @@ class SolicitorChangeServiceRequestTest {
         verifyNoInteractions(generateApplicant1NoticeOfProceeding);
         verifyNoInteractions(generateApplicant2NoticeOfProceedings);
         verifyNoInteractions(generateD10Form);
-        verifyNoInteractions(generateD84Form);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -205,7 +199,7 @@ class SolicitorChangeServiceRequestTest {
 
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
-        verifyNoInteractions(notificationDispatcher);
+        verifyNoInteractions(reIssueApplicationService);
     }
 
     @Test
@@ -233,7 +227,7 @@ class SolicitorChangeServiceRequestTest {
 
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(applicationIssuedNotification, caseDetails.getData(), caseDetails.getId());
+        verify(reIssueApplicationService).sendNotifications(caseDetails, REISSUE_CASE);
     }
 
     @Test
@@ -265,7 +259,7 @@ class SolicitorChangeServiceRequestTest {
 
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
-        verifyNoInteractions(notificationDispatcher);
+        verifyNoInteractions(reIssueApplicationService);
     }
 
     @Test
