@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -64,7 +65,7 @@ class AosOverduePrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        aosOverduePrinter.sendLetterToApplicant(caseData, TEST_CASE_ID);
+        aosOverduePrinter.sendLetterToApplicant(caseData, caseData.getApplicant1(), TEST_CASE_ID);
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -72,6 +73,7 @@ class AosOverduePrinterTest {
         assertThat(print.getLetterType()).isEqualTo("aos-overdue");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getRecipients()).isEqualTo(List.of(caseData.getApplicant1().getFullName(), "aos-overdue"));
     }
 
     @Test
@@ -95,7 +97,7 @@ class AosOverduePrinterTest {
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2)).build())
             .build();
 
-        aosOverduePrinter.sendLetterToApplicant(caseData, TEST_CASE_ID);
+        aosOverduePrinter.sendLetterToApplicant(caseData, caseData.getApplicant1(), TEST_CASE_ID);
 
         verifyNoInteractions(bulkPrintService);
     }

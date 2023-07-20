@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service.print;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -25,7 +26,7 @@ public class AosOverduePrinter {
     @Autowired
     private BulkPrintService bulkPrintService;
 
-    public void sendLetterToApplicant(final CaseData caseData, final Long caseId) {
+    public void sendLetterToApplicant(final CaseData caseData, final Applicant recipient, final Long caseId) {
 
         final List<Letter> letters = lettersWithDocumentType(
             caseData.getDocuments().getDocumentsGenerated(), AOS_OVERDUE_LETTER);
@@ -35,8 +36,16 @@ public class AosOverduePrinter {
         if (aosOverdueLetter != null) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(Collections.singletonList(aosOverdueLetter),
-                caseIdString, caseIdString, LETTER_TYPE_AOS_OVERDUE);
+
+            final Print print =
+                new Print(
+                    Collections.singletonList(aosOverdueLetter),
+                    caseIdString,
+                    caseIdString,
+                    LETTER_TYPE_AOS_OVERDUE,
+                    List.of(recipient.getFullName(), LETTER_TYPE_AOS_OVERDUE)
+                );
+
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
