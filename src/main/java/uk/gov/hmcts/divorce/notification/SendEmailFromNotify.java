@@ -69,7 +69,7 @@ public final class SendEmailFromNotify {
         return new NotificationClient(apiKey);
     }
 
-    private static void sendEmail(String notifyTemplateId, Map templateVars){
+    private static void sendEmail(String notifyTemplateId, Map<String,?> templateVars){
         NotificationClient client = getNotificationClient();
 
         try {
