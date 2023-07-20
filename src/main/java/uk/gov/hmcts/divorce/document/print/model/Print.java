@@ -1,9 +1,7 @@
 package uk.gov.hmcts.divorce.document.print.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
