@@ -7,6 +7,8 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
+// TODO: NFDIV-3567 - Find all uses of this Print. Constructor now includes a List<String> recipients field. All constructor calls
+//  will need to be updated to set this new field.
 public class Print {
     private final List<Letter> letters;
     private final String caseId;

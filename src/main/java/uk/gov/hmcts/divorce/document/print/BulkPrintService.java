@@ -49,14 +49,11 @@ public class BulkPrintService {
     @Autowired
     private IdamService idamService;
 
-    // TODO: NFDIV-3567 - Find all uses of this method. Print now includes a List<String> recipients field and all constructors will need
-    //  to be updated to include it.
     public UUID print(final Print print) {
         final String authToken = authTokenGenerator.generate();
         return triggerPrintRequest(print, authToken, documentRequestForPrint(print, authToken));
     }
 
-    // TODO: NFDIV-3567 - Same as above.
     public UUID printWithD10Form(final Print print) {
         final String authToken = authTokenGenerator.generate();
         final List<Document> documents = documentRequestForPrint(print, authToken);
@@ -66,7 +63,6 @@ public class BulkPrintService {
         return triggerPrintRequest(print, authToken, documents);
     }
 
-    // TODO: NFDIV-3567 - Same as above.
     public UUID printAosRespondentPack(final Print print, final boolean includeD10Document) {
         final String authToken = authTokenGenerator.generate();
         List<Document> documents = documentRequestForPrint(print, authToken);
@@ -128,7 +124,7 @@ public class BulkPrintService {
                     )))
                 .letterId;
 
-        // TODO: NFDIV-3567 - As per bulk prints team suggestion, for now they return a conflict exception which needs to be handled. At the
+        // TODO: NFDIV-3567 - For now bulk print service return a conflict exception which needs to be handled. At the
         //  end of July when they release their change, they will change to return a 200 response + the ID of the duplicate request.
         //  So for now, handle the exception until it's removed.
         } catch (FeignException.Conflict e) {
