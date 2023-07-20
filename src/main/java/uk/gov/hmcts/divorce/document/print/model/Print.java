@@ -2,9 +2,9 @@ package uk.gov.hmcts.divorce.document.print.model;
 
 import lombok.Getter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
+import java.util.Random;
 
 @Getter
 // TODO: NFDIV-3567 - Find all uses of this Print. Constructor now includes a List<String> recipients field. All constructor calls
@@ -35,6 +35,13 @@ public class Print {
         this.caseId = caseId;
         this.caseRef = caseRef;
         this.letterType = letterType;
-        this.recipients = emptyList();
+
+        // TODO: NFDIV-3567 - Setting recipients to a random string to avoid duplicate requests while branch is being worked on.
+        //  As an empty array would be marked as duplicate.
+        byte[] array = new byte[7];
+        new Random().nextBytes(array);
+        String generatedString = new String(array, StandardCharsets.UTF_8);
+
+        this.recipients = List.of(generatedString);
     }
 }
