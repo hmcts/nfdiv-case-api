@@ -3,9 +3,11 @@ package uk.gov.hmcts.divorce.document.print.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.List;
 
-@AllArgsConstructor
+import static java.util.Collections.emptyList;
+
 @Getter
 // TODO: NFDIV-3567 - Find all uses of this Print. Constructor now includes a List<String> recipients field. All constructor calls
 //  will need to be updated to set this new field.
@@ -18,4 +20,20 @@ public class Print {
     // TODO: NFDIV-3567 recipients will have a value of applicant/recipient's full name + the letter pack type as a List<String>.
     //  E.g. "recipients": ['John Smith', 'aos-overdue']).
     private final List<String> recipients;
+
+    public Print(List<Letter> letters, String caseId, String caseRef, String letterType, List<String> recipients) {
+        this.letters = letters;
+        this.caseId = caseId;
+        this.caseRef = caseRef;
+        this.letterType = letterType;
+        this.recipients = recipients;
+    }
+
+    public Print(List<Letter> letters, String caseId, String caseRef, String letterType) {
+        this.letters = letters;
+        this.caseId = caseId;
+        this.caseRef = caseRef;
+        this.letterType = letterType;
+        this.recipients = emptyList();
+    }
 }
