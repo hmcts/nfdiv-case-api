@@ -73,7 +73,7 @@ class AosOverduePrinterTest {
         assertThat(print.getLetterType()).isEqualTo("aos-overdue");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
-        assertThat(print.getRecipients()).isEqualTo(List.of(caseData.getApplicant1().getFullName(), "aos-overdue"));
+        assertThat(print.getRecipients()).isEqualTo(List.of(TEST_CASE_ID.toString(), caseData.getApplicant1().getFullName(), "aos-overdue"));
     }
 
     @Test

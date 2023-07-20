@@ -123,7 +123,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -144,7 +144,7 @@ class BulkPrintServiceTest {
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
                 entry(CASE_IDENTIFIER_KEY, "1234"),
-                entry(RECIPIENTS, List.of("Test User", "letterType"))
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -202,7 +202,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
@@ -223,7 +223,7 @@ class BulkPrintServiceTest {
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
                 entry(CASE_IDENTIFIER_KEY, "1234"),
-                entry(RECIPIENTS, List.of("Test User", "letterType"))
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -282,7 +282,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
@@ -307,7 +307,7 @@ class BulkPrintServiceTest {
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
                 entry(CASE_IDENTIFIER_KEY, "1234"),
-                entry(RECIPIENTS, List.of("Test User", "letterType"))
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -368,7 +368,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         final UUID letterId = bulkPrintService.printWithD10Form(print);
@@ -390,7 +390,7 @@ class BulkPrintServiceTest {
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
                 entry(CASE_IDENTIFIER_KEY, "1234"),
-                entry(RECIPIENTS, List.of("Test User", "letterType"))
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -425,7 +425,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         given(resource.getInputStream()).willThrow(new IOException("Corrupt data"));
@@ -454,7 +454,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -483,7 +483,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -541,7 +541,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -564,7 +564,7 @@ class BulkPrintServiceTest {
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
                 entry(CASE_IDENTIFIER_KEY, "1234"),
-                entry(RECIPIENTS, List.of("Test User", "letterType"))
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -598,7 +598,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("Test User", "letterType")
+            List.of("1234","Test User", "letterType")
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))

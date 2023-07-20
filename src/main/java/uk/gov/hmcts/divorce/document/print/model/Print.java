@@ -15,8 +15,9 @@ public class Print {
     private final String caseRef;
     private final String letterType;
 
-    // TODO: NFDIV-3567 recipients will have a value of applicant/recipient's full name + the letter pack type as a List<String>.
-    //  E.g. "recipients": ['John Smith', 'aos-overdue']).
+    // TODO: NFDIV-3567 - recipients will have a value of case reference + applicant/recipient's full name + the letter pack type as a List<String>.
+    //  E.g. "recipients": ['123412341234', 'John Smith', 'aos-overdue']).
+    //  Which is unique per request & repeatable as required.
     private final List<String> recipients;
 
     public Print(List<Letter> letters, String caseId, String caseRef, String letterType, List<String> recipients) {
@@ -27,6 +28,8 @@ public class Print {
         this.recipients = recipients;
     }
 
+    // TODO: NFDIV-3567 - Remove this constructor and use an AllArgsConstructor annotation once you have converted all calls to use new
+    //  constructor.
     public Print(List<Letter> letters, String caseId, String caseRef, String letterType) {
         this.letters = letters;
         this.caseId = caseId;
