@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.document.print;
 
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -126,7 +126,7 @@ public class BulkPrintService {
         // TODO: NFDIV-3567 - For now bulk print service return a conflict exception which needs to be handled. At the
         //  end of July when they release their change, they will change to return a 200 response + the ID of the duplicate request.
         //  So for now, handle the exception until it's removed.
-        } catch (FeignException.Conflict e) {
+        } catch (HttpClientErrorException e) {
             log.info("Duplicate request found: " + e.getMessage());
             return UUID.randomUUID();
         }
