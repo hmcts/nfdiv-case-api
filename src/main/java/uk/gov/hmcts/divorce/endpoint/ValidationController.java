@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.endpoint;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +32,7 @@ public class ValidationController {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OcrValidationResponse> validate(@PathVariable("form-type") final String formType,
-                                                          @Valid @RequestBody final OcrDataValidationRequest requestBody) {
+                                                          @RequestBody final OcrDataValidationRequest requestBody) {
 
         String encodedFormType = UriUtils.encode(formType, StandardCharsets.UTF_8);
         if (!isValidEnum(FormType.class, encodedFormType)) {

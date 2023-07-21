@@ -103,4 +103,32 @@ public class ValidationControllerIT {
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-error-response.json")));
     }
+
+    @Test
+    public void shouldAcceptEmptyList() throws Exception {
+        mockMvc.perform(post("/forms/D8/validate-ocr")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    OcrDataValidationRequest.builder()
+                        .ocrDataFields(
+                            List.of()
+                        )
+                        .build()))
+                .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().is(200));
+    }
+
+    @Test
+    public void shouldAcceptEmptyBody() throws Exception {
+        mockMvc.perform(post("/forms/D8/validate-ocr")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    OcrDataValidationRequest.builder().build()))
+                .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().is(200));
+    }
 }
