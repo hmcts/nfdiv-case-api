@@ -31,7 +31,6 @@ public class ApplyForFinalOrderService {
     @Autowired
     private ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
 
-
     @Autowired
     private ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
 
