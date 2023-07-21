@@ -493,5 +493,18 @@ public enum State {
         GeneralApplicationReceived, PendingHearingOutcome
     };
 
+    public static final EnumSet<State> POST_SUBMISSION_PRE_AWAITING_CO_STATES = EnumSet.of(
+        Submitted,
+        AwaitingService,
+        AwaitingAos,
+        AwaitingServicePayment,
+        AwaitingServiceConsideration,
+        AwaitingBailiffReferral,
+        AosOverdue,
+        AosDrafted,
+        AwaitingBailiffService,
+        IssuedToBailiff
+    );
+
 }
 
