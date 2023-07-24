@@ -30,7 +30,7 @@ public class CaseworkerWithAacSystemUserAccess implements HasAccessControl {
         grants.putAll(LEGAL_ADVISOR, READ);
         grants.putAll(JUDGE, READ);
 
-        grants.putAll(CREATOR, CREATE_READ_UPDATE);
+        grants.putAll(CREATOR, READ);
         grants.putAll(CASE_WORKER, CREATE_READ_UPDATE);
         grants.putAll(SYSTEMUPDATE, CREATE_READ_UPDATE_DELETE);
         grants.putAll(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, CREATE_READ_UPDATE_DELETE);
