@@ -7,6 +7,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -19,6 +21,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +51,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
     @Autowired
     private SolicitorValidationService solicitorValidationService;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -149,45 +156,19 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             }
         }
 
+        /*final var organisationToAdd = applicant.getSolicitor().getOrganisationPolicy().getOrganisation();
+        final var beforeApplicant = isApplicant1 ? beforeDetails.getData().getApplicant1() : beforeDetails.getData().getApplicant2();
+
+        final var organisationToRemove = beforeApplicant.getSolicitor().getOrganisationPolicy().getOrganisation();
+
+        ChangeOrganisationRequest<UserRole> request = generateChangeOrganisationRequest(organisationToAdd,
+            organisationToRemove,
+            orgPolicyCaseAssignedRole);*/
+
+
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(correctRepresentationDetails(details.getData(), beforeDetails.getData()))
-            .build();
-    }
-
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitTwo(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
-        log.info("Caseworker notice of change aboutToSubmit callback started for Case Id: {}", details.getId());
-
-        final var data = details.getData();
-        final var applicant = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
-            ? data.getApplicant1()
-            : data.getApplicant2();
-
-        if (!data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) {
-            applicant.setSolicitor(null);
-            applicant.setSolicitorRepresented(NO);
-            applicant.setOffline(YES);
-        } else if (data.getNoticeOfChange().getAreTheyDigital() == null || !data.getNoticeOfChange().getAreTheyDigital().toBoolean()) {
-            applicant.getSolicitor().setOrganisationPolicy(null);
-            applicant.setSolicitorRepresented(YES);
-            applicant.setOffline(YES);
-        } else {
-            applicant.setSolicitorRepresented(YES);
-            applicant.setOffline(NO);
-        }
-
-        final var roles = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
-            ? List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole())
-            : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
-
-        caseAccessService.removeUsersWithRole(details.getId(), roles);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(correctRepresentationDetails(data, beforeDetails.getData()))
             .build();
     }
 
@@ -238,15 +219,15 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         return solicitor;
     }
 
-    private enum NoticeType {
-        ADD_DIGITAL, //add APP_SOL_ONE / APP_SOL_TWO && REMOVE CREATOR
-        ADD_OFFLINE, //add APP_SOL
-        REPLACE_FROM_OFFLINE_TO_DIGITAL,
-        REPLACE_FROM_DIGITAL_DIGITAL,
-        REPLACE_FROM_OFFLINE_TO_OFFLINE,
-        REPLACE_FROM_DIGITAL_TO_OFFLINE,
-        REMOVE_DIGITAL,
-        REMOVE_OFFLINE
-
+    private ChangeOrganisationRequest<UserRole> generateChangeOrganisationRequest(Organisation organisationToAdd,
+                                                                                  Organisation organisationToRemove,
+                                                                                  UserRole caseRoleId) {
+        return ChangeOrganisationRequest.<UserRole>builder()
+            .approvalStatus(ChangeOrganisationApprovalStatus.APPROVED)
+            .organisationToAdd(organisationToAdd)
+            .organisationToRemove(organisationToRemove)
+            .caseRoleId(caseRoleId)
+            .requestTimestamp(LocalDateTime.now(clock))
+            .build();
     }
 }
