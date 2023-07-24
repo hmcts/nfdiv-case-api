@@ -15,7 +15,6 @@ public enum UserRole implements HasRole {
     SUPER_USER("caseworker-divorce-superuser", "CRU"),
     SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU"),
     JUDGE("caseworker-divorce-judge", "CRU"),
-    CAA("caseworker-caa", "CRU"),
     NOC_APPROVER("caseworker-approver", "CRU"),
 
     SOLICITOR("caseworker-divorce-solicitor", "CRU"),
