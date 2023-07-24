@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 class FinalOrderTest {
@@ -49,5 +51,44 @@ class FinalOrderTest {
             .build();
 
         assertThat(finalOrder.hasFinalOrderReminderSentApplicant1()).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicant1FinalOrderLateExplanation() {
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .applicant1FinalOrderLateExplanation("Some explanation")
+            .build();
+        assertTrue(finalOrder.hasFinalOrderLateExplanation());
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicant1FinalOrderLateExplanationTranslated() {
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .applicant1FinalOrderLateExplanationTranslated("Some explanation")
+            .build();
+        assertTrue(finalOrder.hasFinalOrderLateExplanation());
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicant2FinalOrderLateExplanation() {
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .applicant2FinalOrderLateExplanation("Some explanation")
+            .build();
+        assertTrue(finalOrder.hasFinalOrderLateExplanation());
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicant2FinalOrderLateExplanationTranslated() {
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .applicant2FinalOrderLateExplanationTranslated("Some explanation")
+            .build();
+        assertTrue(finalOrder.hasFinalOrderLateExplanation());
+    }
+
+    @Test
+    void shouldReturnFalseIfNoFinalOrderLateExplanation() {
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .build();
+        assertFalse(finalOrder.hasFinalOrderLateExplanation());
     }
 }

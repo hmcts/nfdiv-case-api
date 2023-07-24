@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
@@ -326,5 +327,13 @@ public class FinalOrder {
     @JsonIgnore
     public boolean hasApplicant2BeenNotifiedTheyCanContinueSwitchToSoleFO() {
         return YES.equals(finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention);
+    }
+
+    @JsonIgnore
+    public boolean hasFinalOrderLateExplanation() {
+        return nonNull(applicant1FinalOrderLateExplanation)
+            || nonNull(applicant2FinalOrderLateExplanation)
+            || nonNull(applicant1FinalOrderLateExplanationTranslated)
+            || nonNull(applicant2FinalOrderLateExplanationTranslated);
     }
 }

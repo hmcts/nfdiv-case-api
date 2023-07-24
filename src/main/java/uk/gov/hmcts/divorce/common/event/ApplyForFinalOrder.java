@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -54,6 +55,9 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     @Autowired
     private ApplyForFinalOrderService applyForFinalOrderService;
+
+    @Autowired
+    private GeneralReferralService generalReferralService;
 
     private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails()
@@ -128,6 +132,8 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             log.info("Sending Apply for Final Order notifications as case in FinalOrderRequested state for Case Id: {}", details.getId());
             notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
+
+        generalReferralService.caseWorkerGeneralReferral(details);
 
         return SubmittedCallbackResponse.builder().build();
     }
