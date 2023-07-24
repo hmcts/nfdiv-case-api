@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +68,7 @@ class SetFinalOrderFieldsAsApplicant2Test {
     void shouldNotUpdateFinalOrderFieldsIfNotAwaitingFinalOrder() {
         final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(FinalOrderOverdue).id(1L).data(caseData)
+            .state(AwaitingJointFinalOrder).id(1L).data(caseData)
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
