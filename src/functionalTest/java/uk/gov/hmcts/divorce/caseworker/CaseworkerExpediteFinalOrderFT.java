@@ -120,6 +120,7 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
     @Test
     public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForCP() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
+
         caseData.put("divorceOrDissolution", "dissolution");
         caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
 
