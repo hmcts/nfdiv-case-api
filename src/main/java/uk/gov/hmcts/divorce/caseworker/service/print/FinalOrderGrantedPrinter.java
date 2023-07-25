@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service.print;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -31,7 +32,8 @@ public class FinalOrderGrantedPrinter {
 
     public void print(final CaseData caseData,
                       final Long caseId,
-                      final DocumentType coverLetterDocumentType) {
+                      final DocumentType coverLetterDocumentType,
+                      final Applicant applicant) {
 
         final List<Letter> finalOrderGrantedLetters = finalOrderGrantedLetters(caseData, coverLetterDocumentType);
 
@@ -39,7 +41,13 @@ public class FinalOrderGrantedPrinter {
 
             final String caseIdString = caseId.toString();
             final Print print =
-                new Print(finalOrderGrantedLetters, caseIdString, caseIdString, LETTER_TYPE_FINAL_ORDER_GRANTED);
+                new Print(
+                    finalOrderGrantedLetters,
+                    caseIdString,
+                    caseIdString,
+                    LETTER_TYPE_FINAL_ORDER_GRANTED,
+                    List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_FINAL_ORDER_GRANTED)
+                );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);

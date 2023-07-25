@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.service.print;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -30,14 +31,20 @@ public class CertificateOfEntitlementPrinter {
     @Autowired
     private BulkPrintService bulkPrintService;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coverLetterDocumentType) {
+    public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coverLetterDocumentType, final Applicant applicant) {
 
         final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, coverLetterDocumentType);
 
         if (!isEmpty(certificateOfEntitlementLetters) && certificateOfEntitlementLetters.size() == EXPECTED_DOCUMENTS_SIZE) {
             final String caseIdString = caseId.toString();
             final Print print =
-                new Print(certificateOfEntitlementLetters, caseIdString, caseIdString, LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT);
+                new Print(
+                    certificateOfEntitlementLetters,
+                    caseIdString,
+                    caseIdString,
+                    LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT,
+                    List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT)
+                );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);

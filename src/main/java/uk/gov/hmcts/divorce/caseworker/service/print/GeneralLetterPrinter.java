@@ -46,7 +46,14 @@ public class GeneralLetterPrinter {
 
             final String caseIdString = caseId.toString();
 
-            final Print print = new Print(mapToLetters(documents, GENERAL_LETTER), caseIdString, caseIdString, LETTER_TYPE_GENERAL_LETTER);
+//            TODO Last one to change
+            final Print print = new Print(
+                mapToLetters(documents, GENERAL_LETTER),
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_GENERAL_LETTER,
+                List.of(caseIdString, LETTER_TYPE_GENERAL_LETTER)
+            );
 
             final UUID letterId = bulkPrintService.print(print);
 

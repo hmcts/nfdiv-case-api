@@ -56,10 +56,18 @@ public class RegenerateCourtOrdersPrinter {
         final List<Letter> regeneratedCourtOrderLetters = regeneratedCourtOrderLetters(caseData, isApplicant1);
 
         if (!isEmpty(regeneratedCourtOrderLetters)) {
+            final String recipientName = isApplicant1 ? caseData.getApplicant1().getFullName() :
+                caseData.getApplicant2().getFullName();
 
             final String caseIdString = caseId.toString();
             final Print print =
-                new Print(regeneratedCourtOrderLetters, caseIdString, caseIdString, LETTER_TYPE_REGENERATE_COURT_ORDERS);
+                new Print(
+                    regeneratedCourtOrderLetters,
+                    caseIdString,
+                    caseIdString,
+                    LETTER_TYPE_REGENERATE_COURT_ORDERS,
+                    List.of(caseIdString, recipientName, LETTER_TYPE_REGENERATE_COURT_ORDERS)
+                );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
