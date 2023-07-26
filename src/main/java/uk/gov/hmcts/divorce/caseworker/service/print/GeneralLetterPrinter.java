@@ -46,13 +46,18 @@ public class GeneralLetterPrinter {
 
             final String caseIdString = caseId.toString();
 
-//            TODO Last one to change
+            var recipientName = switch(caseData.getGeneralLetter().getGeneralLetterParties()) {
+                case RESPONDENT -> caseData.getApplicant2().getFullName();
+                case APPLICANT -> caseData.getApplicant1().getFullName();
+                case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
+            };
+
             final Print print = new Print(
                 mapToLetters(documents, GENERAL_LETTER),
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_GENERAL_LETTER,
-                List.of(caseIdString, LETTER_TYPE_GENERAL_LETTER)
+                List.of(caseIdString, recipientName, LETTER_TYPE_GENERAL_LETTER)
             );
 
             final UUID letterId = bulkPrintService.print(print);
