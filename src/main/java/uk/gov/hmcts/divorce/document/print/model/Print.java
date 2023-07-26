@@ -3,9 +3,7 @@ package uk.gov.hmcts.divorce.document.print.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Random;
 
 @Getter
 @AllArgsConstructor
