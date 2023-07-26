@@ -287,6 +287,12 @@ public class FinalOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateApplicant2DeclaredIntentionToSwitchToSoleFo;
 
+    @CCD(
+        label = "Expedited Final Order Authorisation",
+        access = {DefaultAccess.class}
+    )
+    private ExpeditedFinalOrderAuthorisation expeditedFinalOrderAuthorisation;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);

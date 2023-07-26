@@ -434,6 +434,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1FinalOrderLateExplanation")
             .field("granted")
             .field("grantedDate")
+            .field("expeditedFinalOrderAuthorisation")
             .field("dateFinalOrderNoLongerEligible")
             .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
             .field("doesApplicant1IntendToSwitchToSole")
