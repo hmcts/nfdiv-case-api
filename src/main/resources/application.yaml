@@ -310,7 +310,7 @@ s2s:
 
 aac:
   api:
-    url: ${AAC_MANAGE_CASE_ASSIGNMENT_BASEURL:}
+    url: ${AAC_MANAGE_CASE_ASSIGNMENT_BASEURL:http://aac-manage-case-assignment-aat.service.core-compute-aat.internal}
 
 core_case_data:
   api:
