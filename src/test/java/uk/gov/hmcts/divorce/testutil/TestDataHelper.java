@@ -261,6 +261,9 @@ public class TestDataHelper {
             .firstName(TEST_APP2_FIRST_NAME)
             .middleName(TEST_APP2_MIDDLE_NAME)
             .lastName(TEST_APP2_LAST_NAME)
+            .solicitor(
+                Solicitor.builder().build()
+            )
             .build();
     }
 
