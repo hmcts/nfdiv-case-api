@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,6 +78,7 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
 
         DocumentContext jsonDocument = JsonPath.parse(expectedResponse(SUBMIT_CONFIRM_SERVICE_JSON));
         jsonDocument.set("data.dueDate", caseData.getApplication().getIssueDate().plusDays(141).toString());
+        jsonDocument.set("state", State.Holding);
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
@@ -122,5 +125,23 @@ public class SolicitorConfirmServiceFT extends FunctionalTestSuite {
             json -> json.inPath("errors[0]")
                 .isEqualTo(SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR)
         );
+    }
+
+    @Test
+    public void shouldNotChangeStateWhenSoleAndAoSSubmitted() throws IOException {
+        final var caseData = getConfirmServiceCaseData();
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().dateAosSubmitted(LocalDateTime.now()).build());
+
+        Map<String, Object> caseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
+
+        Response response = triggerCallback(caseDataMap, SOLICITOR_CONFIRM_SERVICE, ABOUT_TO_SUBMIT_URL, State.Holding);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        final String expectedStateJSON = String.format("{state: '%s'}", State.Holding);
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(expectedStateJSON);
     }
 }
