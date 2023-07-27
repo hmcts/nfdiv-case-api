@@ -122,6 +122,12 @@ public class CaseDocuments {
     private DynamicList scannedDocumentNames;
 
     @CCD(
+        label = "Select general order document name",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private DynamicList generalOrderDocumentNames;
+
+    @CCD(
         label = "Amended applications",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
