@@ -127,7 +127,7 @@ public class BulkPrintService {
         //  end of July when they release their change, they will change to return a 200 response + the ID of the duplicate request.
         //  So for now, handle the exception until it's removed.
         } catch (HttpClientErrorException e) {
-            log.info("Duplicate request found: " + e.getMessage());
+            log.error("Duplicate request found: " + e.getMessage());
             return UUID.randomUUID();
         }
     }
