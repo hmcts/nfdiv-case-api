@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.service.print;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -8,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
@@ -23,6 +25,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
 public class SwitchToSoleCoPrinterTest {
@@ -52,11 +56,17 @@ public class SwitchToSoleCoPrinterTest {
                     .documentsGenerated(singletonList(switchToSoleCoLetter))
                     .build()
             )
+            .applicant2(
+                Applicant.builder()
+                    .firstName(TEST_APP2_FIRST_NAME)
+                    .lastName(TEST_APP2_LAST_NAME)
+                    .build()
+            )
             .build();
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        printer.print(caseData, TEST_CASE_ID);
+        printer.print(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -64,6 +74,10 @@ public class SwitchToSoleCoPrinterTest {
         assertThat(print.getLetterType()).isEqualTo("switch-to-sole-co-letter");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(switchToSoleCoLetter.getValue());
+
+        var expectedRecipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), "switch-to-sole-co-letter");
+        assertThat(print.getRecipients().equals(expectedRecipient));
+
     }
 
     @Test
@@ -86,7 +100,7 @@ public class SwitchToSoleCoPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        printer.print(caseData, TEST_CASE_ID);
+        printer.print(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -94,6 +108,9 @@ public class SwitchToSoleCoPrinterTest {
         assertThat(print.getLetterType()).isEqualTo("switch-to-sole-co-letter");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(switchToSoleCoLetter.getValue());
+
+        final List recipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), "switch-to-sole-co-letter");
+        assertThat(print.getRecipients().equals(recipient));
     }
 
     @Test
@@ -104,7 +121,7 @@ public class SwitchToSoleCoPrinterTest {
             .documents(CaseDocuments.builder().build())
             .build();
 
-        printer.print(caseData, TEST_CASE_ID);
+        printer.print(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         verifyNoInteractions(bulkPrintService);
     }

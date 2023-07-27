@@ -132,7 +132,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         verifyNoInteractions(notificationService);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, data.getApplicant2());
     }
 
     @Test
@@ -286,7 +286,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, data.getApplicant1());
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isTrue();
     }
 
@@ -306,7 +306,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+        verify(certificateOfEntitlementPrinter).sendLetter(data, 1234567890123456L, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, data.getApplicant2());
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isTrue();
     }
 
