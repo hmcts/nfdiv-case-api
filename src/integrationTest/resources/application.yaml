@@ -55,6 +55,10 @@ fee:
 s2s:
   stub: true
 
+aac:
+  api:
+    url: http://localhost:4454
+
 core_case_data:
   api:
     url: http://localhost:4012
