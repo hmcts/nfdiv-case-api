@@ -20,7 +20,6 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 @Service
 public class SolicitorValidationService {
 
-    private final CcdAccessService ccdAccessService;
     private final OrganisationClient organisationClient;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
