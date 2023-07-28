@@ -123,7 +123,7 @@ public class ConditionalOrderPronouncedPrinterTest {
         );
 
         final Print print = printCaptor.getValue();
-        var recipient = List.of(TEST_CASE_ID, caseData.getApplicant2(), LETTER_TYPE_CO_PRONOUNCED);
+        var recipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), LETTER_TYPE_CO_PRONOUNCED);
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
