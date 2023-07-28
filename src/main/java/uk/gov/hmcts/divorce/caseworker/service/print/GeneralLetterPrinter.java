@@ -46,7 +46,7 @@ public class GeneralLetterPrinter {
 
             final String caseIdString = caseId.toString();
 
-            var recipientName = switch(caseData.getGeneralLetter().getGeneralLetterParties()) {
+            var recipientName = switch (caseData.getGeneralLetter().getGeneralLetterParties()) {
                 case RESPONDENT -> caseData.getApplicant2().getFullName();
                 case APPLICANT -> caseData.getApplicant1().getFullName();
                 case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();

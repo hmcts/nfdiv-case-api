@@ -31,7 +31,10 @@ public class CertificateOfEntitlementPrinter {
     @Autowired
     private BulkPrintService bulkPrintService;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coverLetterDocumentType, final Applicant applicant) {
+    public void sendLetter(final CaseData caseData,
+                           final Long caseId,
+                           final DocumentType coverLetterDocumentType,
+                           final Applicant applicant) {
 
         final List<Letter> certificateOfEntitlementLetters = certificateOfEntitlementLetters(caseData, coverLetterDocumentType);
 

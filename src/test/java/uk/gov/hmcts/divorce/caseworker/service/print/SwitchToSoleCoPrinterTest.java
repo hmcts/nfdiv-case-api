@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.service.print;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +17,7 @@ import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.util.UUID;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,14 +69,13 @@ public class SwitchToSoleCoPrinterTest {
         printer.print(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         final Print print = printCaptor.getValue();
+        var expectedRecipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), "switch-to-sole-co-letter");
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("switch-to-sole-co-letter");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(switchToSoleCoLetter.getValue());
-
-        var expectedRecipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), "switch-to-sole-co-letter");
-        assertThat(print.getRecipients().equals(expectedRecipient));
+        assertThat(print.getRecipients()).isEqualTo(expectedRecipient);
 
     }
 
@@ -103,14 +102,13 @@ public class SwitchToSoleCoPrinterTest {
         printer.print(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         final Print print = printCaptor.getValue();
+        var recipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), "switch-to-sole-co-letter");
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("switch-to-sole-co-letter");
         assertThat(print.getLetters().size()).isEqualTo(1);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(switchToSoleCoLetter.getValue());
-
-        final List recipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), "switch-to-sole-co-letter");
-        assertThat(print.getRecipients().equals(recipient));
+        assertThat(print.getRecipients()).isEqualTo(recipient);
     }
 
     @Test

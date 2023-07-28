@@ -29,9 +29,15 @@ public class ConditionalOrderPronouncedPrinter {
     @Autowired
     private BulkPrintService bulkPrintService;
 
-    public void sendLetter(final CaseData caseData, final Long caseId, final DocumentType coversheetDocumentType, final Applicant applicant) {
+    public void sendLetter(final CaseData caseData,
+                           final Long caseId,
+                           final DocumentType coversheetDocumentType,
+                           final Applicant applicant) {
 
-        final List<Letter> conditionalOrderPronouncedLetters = conditionalOrderPronouncedLetters(caseData, coversheetDocumentType);
+        final List<Letter> conditionalOrderPronouncedLetters = conditionalOrderPronouncedLetters(
+            caseData,
+            coversheetDocumentType
+        );
 
         if (!isEmpty(conditionalOrderPronouncedLetters)) {
             final String caseIdString = caseId.toString();

@@ -20,28 +20,4 @@ public class Print {
     //  Which is unique per request & repeatable as required.
     private final List<String> recipients;
 
-//    public Print(List<Letter> letters, String caseId, String caseRef, String letterType, List<String> recipients) {
-//        this.letters = letters;
-//        this.caseId = caseId;
-//        this.caseRef = caseRef;
-//        this.letterType = letterType;
-//        this.recipients = recipients;
-//    }
-//
-//    // TODO: NFDIV-3567 - Remove this constructor and use an AllArgsConstructor annotation once you have converted all calls to use new
-//    //  constructor.
-//    public Print(List<Letter> letters, String caseId, String caseRef, String letterType) {
-//        this.letters = letters;
-//        this.caseId = caseId;
-//        this.caseRef = caseRef;
-//        this.letterType = letterType;
-//
-//        // TODO: NFDIV-3567 - Setting recipients to a random string to avoid duplicate requests while branch is being worked on.
-//        //  As an empty array would be marked as duplicate.
-//        byte[] array = new byte[7];
-//        new Random().nextBytes(array);
-//        String generatedString = new String(array, StandardCharsets.UTF_8);
-//
-//        this.recipients = List.of(generatedString);
-//    }
 }

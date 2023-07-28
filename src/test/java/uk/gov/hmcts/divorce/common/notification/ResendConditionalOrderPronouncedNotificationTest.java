@@ -33,7 +33,12 @@ public class ResendConditionalOrderPronouncedNotificationTest {
 
         underTest.sendToApplicant1Offline(data, caseId);
 
-        verify(conditionalOrderPronouncedPrinter).sendLetter(data, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, data.getApplicant1());
+        verify(conditionalOrderPronouncedPrinter).sendLetter(
+            data,
+            caseId,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            data.getApplicant1()
+        );
     }
 
     @Test
@@ -57,7 +62,12 @@ public class ResendConditionalOrderPronouncedNotificationTest {
 
         underTest.sendToApplicant2Offline(data, caseId);
 
-        verify(conditionalOrderPronouncedPrinter).sendLetter(data, caseId, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, data.getApplicant2());
+        verify(conditionalOrderPronouncedPrinter).sendLetter(
+            data,
+            caseId,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            data.getApplicant2()
+        );
     }
 
     @Test

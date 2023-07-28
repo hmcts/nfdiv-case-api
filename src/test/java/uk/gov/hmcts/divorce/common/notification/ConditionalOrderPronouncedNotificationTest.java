@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
