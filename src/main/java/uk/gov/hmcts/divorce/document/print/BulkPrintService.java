@@ -104,9 +104,6 @@ public class BulkPrintService {
             .collect(toList());
     }
 
-    // TODO: NFDIV-3567 - New change to include the a 'recipients' key.
-    //  This needs to be unique per request & repeatable. Bulk print team will use this signature to check for duplicate
-    //  requests and if any duplicates are found within an hour of the original request, they're rejected.
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
 
         try {
