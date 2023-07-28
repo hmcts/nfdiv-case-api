@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -19,8 +20,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_PRE_AWAITING_CO_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -111,7 +112,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CONFIRM_SERVICE)
-            .forStateTransition(AwaitingService, AwaitingAos)
+            .forStates(ArrayUtils.addAll(POST_SUBMISSION_PRE_AWAITING_CO_STATES, Holding))
             .name("Solicitor confirm service")
             .description("Solicitor confirm service")
             .showSummary()

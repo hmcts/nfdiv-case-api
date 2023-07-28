@@ -493,5 +493,17 @@ public enum State {
         GeneralApplicationReceived, PendingHearingOutcome
     };
 
+    public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
+        Submitted,
+        AwaitingService,
+        AwaitingAos,
+        AwaitingServicePayment,
+        AwaitingServiceConsideration,
+        AwaitingBailiffReferral,
+        AosOverdue,
+        AosDrafted,
+        AwaitingBailiffService,
+        IssuedToBailiff
+    };
 }
 

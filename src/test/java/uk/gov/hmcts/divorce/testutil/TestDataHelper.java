@@ -1199,6 +1199,7 @@ public class TestDataHelper {
             .addressServed("address served")
             .documentsServed("docs served")
             .build());
+        caseData.setApplicationType(SOLE_APPLICATION);
 
         final ListValue<DivorceDocument> confirmServiceAttachments = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()

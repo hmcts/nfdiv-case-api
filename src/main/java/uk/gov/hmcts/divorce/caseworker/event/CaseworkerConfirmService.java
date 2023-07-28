@@ -21,7 +21,6 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -47,7 +46,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CONFIRM_SERVICE)
-            .forStateTransition(POST_SUBMISSION_STATES, AwaitingAos)
+            .forStates(POST_SUBMISSION_STATES)
             .name("Confirm service")
             .description("Confirm service")
             .showSummary()
