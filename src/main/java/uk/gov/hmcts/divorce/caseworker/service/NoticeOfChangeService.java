@@ -8,13 +8,15 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.model.NoticeOfChangeRequest;
 import uk.gov.hmcts.divorce.common.DecisionRequest;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ChangeOrganisationRequest;
+import uk.gov.hmcts.divorce.divorcecase.model.NocDynamicList;
+import uk.gov.hmcts.divorce.divorcecase.model.NocDynamicListElement;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -120,11 +122,12 @@ public class NoticeOfChangeService {
 
     public AboutToStartOrSubmitResponse<CaseData, State> applyNocDecisionAndGrantAccessToNewSol(NoticeOfChangeRequest nocRequest) {
 
+        log.info("Applying Notice of Change Decision and granting access to new sol");
         final String solicitorId = getSolicitorId(nocRequest.getDetails().getId(), nocRequest.getApplicant().getSolicitor());
 
         Set<String> nonSolRolesToUpdate = Sets.difference(new HashSet<>(nocRequest.getRoles()), Set.of(nocRequest.getSolicitorRole()));
         Optional<UserRole> solicitorRole = Optional.ofNullable(
-            UserRole.fromString(nonSolRolesToUpdate.stream().findFirst().orElse(StringUtils.EMPTY))
+            UserRole.fromString(nocRequest.getSolicitorRole())
         );
 
         if (solicitorRole.isEmpty()) {
@@ -160,7 +163,7 @@ public class NoticeOfChangeService {
                 .map(OrganisationPolicy::getOrganisation)
                 .orElse(null);
 
-        ChangeOrganisationRequest<UserRole> changeOrganisationRequest = generateChangeOrganisationRequest(
+        ChangeOrganisationRequest changeOrganisationRequest = generateChangeOrganisationRequest(
             organisationToAdd,
             organisationToRemove,
             solicitorRole
@@ -183,14 +186,27 @@ public class NoticeOfChangeService {
         return callbackResponseConverter.convertResponseFromCcdModel(response);
     }
 
-    private ChangeOrganisationRequest<UserRole> generateChangeOrganisationRequest(Organisation organisationToAdd,
-                                                                                  Organisation organisationToRemove,
-                                                                                  UserRole caseRoleId) {
-        return ChangeOrganisationRequest.<UserRole>builder()
+    private ChangeOrganisationRequest generateChangeOrganisationRequest(Organisation organisationToAdd,
+                                                                        Organisation organisationToRemove,
+                                                                        UserRole caseRoleId) {
+        NocDynamicList caseRole = NocDynamicList.builder()
+            .value(NocDynamicListElement.builder()
+                .label(caseRoleId.getRole())
+                .code(caseRoleId.getRole())
+                .build())
+            .listItems(List.of(
+                NocDynamicListElement.builder()
+                    .code(caseRoleId.getRole())
+                    .label(caseRoleId.getRole())
+                    .build()
+            ))
+            .build();
+
+        return ChangeOrganisationRequest.builder()
             .approvalStatus(ChangeOrganisationApprovalStatus.APPROVED)
             .organisationToAdd(organisationToAdd)
             .organisationToRemove(organisationToRemove)
-            .caseRoleId(caseRoleId)
+            .caseRoleId(caseRole)
             .requestTimestamp(LocalDateTime.now(clock))
             .build();
     }

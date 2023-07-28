@@ -109,6 +109,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
+        log.info("About to start submitting Notice of Change");
 
         final var data = details.getData();
         final var beforeData = beforeDetails.getData();
@@ -179,7 +180,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         OrganisationPolicy<UserRole> beforeOrgPolicy = beforeApplicant.getSolicitor().getOrganisationPolicy();
 
         if (beforeOrgPolicy.getOrganisation() != null && orgPolicy.getOrganisation() == null) {
-
             return NoticeType.ORG_REMOVED;
         } else if (beforeOrgPolicy.getOrganisation() != null
             && beforeOrgPolicy.getOrganisation().equals(orgPolicy.getOrganisation())
