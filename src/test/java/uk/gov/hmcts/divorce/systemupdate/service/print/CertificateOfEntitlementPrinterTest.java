@@ -74,7 +74,12 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, caseData.getApplicant1());
+        certificateOfEntitlementPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            caseData.getApplicant1()
+        );
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -94,7 +99,12 @@ public class CertificateOfEntitlementPrinterTest {
         final CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, caseData.getApplicant1());
+        certificateOfEntitlementPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            caseData.getApplicant1()
+        );
 
         verifyNoInteractions(bulkPrintService);
     }
