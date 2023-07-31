@@ -80,6 +80,32 @@ public class CcdUpdateService {
         }
     }
 
+    public void submitEvent(final Long caseId,
+                            final String eventId,
+                            final User user,
+                            final String serviceAuth) {
+
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
+
+        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+
+        try {
+            startAndSubmitEventForCaseworkers(eventId, serviceAuth, caseId.toString(), userId, authorization);
+        } catch (final FeignException e) {
+
+            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            log.info(message, e);
+            log.info(e.contentUTF8());
+
+            if (e.status() == CONFLICT.value()) {
+                throw new CcdConflictException(message, e);
+            }
+
+            throw new CcdManagementException(e.status(), message, e);
+        }
+    }
+
     // TODO: AJ - rework. Only allow caseId passed in.
     public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                             final String eventId,

@@ -20,13 +20,13 @@ public abstract class AbstractTaskEventSubmit implements Runnable {
 
     public abstract void run();
 
-    public void submitEvent(CaseDetails caseDetails, String eventId, User systemUser, String serviceAuth) {
+    public void submitEvent(Long caseId, String eventId, User systemUser, String serviceAuth) {
         try {
-            ccdUpdateService.submitEvent(caseDetails, eventId, systemUser, serviceAuth);
+            ccdUpdateService.submitEvent(caseId, eventId, systemUser, serviceAuth);
         } catch (final CcdManagementException e) {
-            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId());
+            log.error(SUBMIT_EVENT_ERROR, caseId);
         } catch (final IllegalArgumentException e) {
-            log.error(DESERIALIZATION_ERROR, caseDetails.getId());
+            log.error(DESERIALIZATION_ERROR, caseId);
         }
     }
 }

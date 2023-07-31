@@ -66,7 +66,7 @@ public class SystemRemindAwaitingJointFinalOrderTask implements Runnable {
                     .mustNot(matchQuery(NOTIFICATION_SENT_FLAG, YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingJointFinalOrder)
-                .forEach(caseDetails -> triggerJointFinalOrderReminder(user, serviceAuth, caseDetails));
+                .forEach(caseDetails -> triggerJointFinalOrderReminder(user, serviceAuth, caseDetails.getId()));
 
             log.info("SystemRemindAwaitingJointFinalOrderTask complete.");
         } catch (final CcdSearchCaseException e) {
@@ -78,15 +78,14 @@ public class SystemRemindAwaitingJointFinalOrderTask implements Runnable {
         }
     }
 
-    private void triggerJointFinalOrderReminder(User user, String serviceAuth, CaseDetails caseDetails) {
+    private void triggerJointFinalOrderReminder(User user, String serviceAuth, Long caseId) {
         try {
-            log.info("Submitting Remind Awaiting Joint Final Order Event for Case {}", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER, user, serviceAuth);
+            log.info("Submitting Remind Awaiting Joint Final Order Event for Case {}", caseId);
+            ccdUpdateService.submitEvent(caseId, SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER, user, serviceAuth);
         } catch (final CcdManagementException e) {
-            log.error("Submit event Remind Awaiting Joint Final Order failed for case id: {}, continuing to next case",
-                caseDetails.getId());
+            log.error("Submit event Remind Awaiting Joint Final Order failed for case id: {}, continuing to next case", caseId);
         } catch (final IllegalArgumentException e) {
-            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseId);
         }
     }
 }

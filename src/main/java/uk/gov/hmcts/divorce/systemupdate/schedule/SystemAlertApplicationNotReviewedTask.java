@@ -111,6 +111,6 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
             caseDetails.getId()
         );
 
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, serviceAuth);
+        ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_APPLICATION_NOT_REVIEWED, user, serviceAuth);
     }
 }

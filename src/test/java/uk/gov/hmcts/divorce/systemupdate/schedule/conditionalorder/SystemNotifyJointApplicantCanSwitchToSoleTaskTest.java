@@ -120,7 +120,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdUpdateService);
     }
@@ -158,7 +158,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdUpdateService);
     }
@@ -278,13 +278,13 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -335,11 +335,11 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
     }
 }

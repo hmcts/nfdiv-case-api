@@ -99,7 +99,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                 applicantCanApplyFromDate);
 
             log.info("Sending notification to respondent to let them know to apply to final order. Case ID: {}", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
 
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());

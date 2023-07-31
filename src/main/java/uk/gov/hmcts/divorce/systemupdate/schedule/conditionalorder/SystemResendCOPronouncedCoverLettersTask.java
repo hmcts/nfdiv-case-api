@@ -110,7 +110,7 @@ public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
 
             if (isCaseEligibleToResendTheCoverLetters(caseData)) {
                 log.info("Submitting Resend CO Pronounced letter for Case {}", caseDetails.getId());
-                ccdUpdateService.submitEvent(caseDetails, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
+                ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
             }
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
