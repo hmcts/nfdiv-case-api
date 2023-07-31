@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.caseworker.model.NoticeOfChangeRequest;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -21,7 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.List;
-import java.util.Optional;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -128,50 +126,33 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         NoticeType noticeType = calculateNoticeType(applicant, beforeApplicant);
 
-        NoticeOfChangeRequest request = NoticeOfChangeRequest.builder()
-            .roles(roles)
-            .solicitorRole(orgPolicyCaseAssignedRole.getRole())
-            .applicant(applicant)
-            .applicantBefore(beforeApplicant)
-            .details(details)
-            .detailsBefore(beforeDetails)
+        switch (noticeType) {
+            case NEW_DIGITAL_SOLICITOR_NEW_ORG -> noticeOfChangeService.applyNocDecisionAndGrantAccessToNewSol(
+                details.getId(),
+                applicant,
+                beforeApplicant,
+                roles,
+                orgPolicyCaseAssignedRole.getRole());
+            case ORG_REMOVED -> noticeOfChangeService.revokeCaseAccessForOrganisation(
+                details.getId(),
+                beforeApplicant,
+                roles);
+            case NEW_DIGITAL_SOLICITOR_EXISTING_ORG -> noticeOfChangeService.changeAccessWithinOrganisation(
+                applicant.getSolicitor(),
+                roles,
+                orgPolicyCaseAssignedRole.getRole(),
+                details.getId());
+            case SOL_REMOVED_ORG_RETAINED -> noticeOfChangeService.revokeAccessForSolAndReturnToUnassignedCases(
+                details.getId(),
+                applicant,
+                roles);
+            case OFFLINE_NOC -> {
+            }
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(correctRepresentationDetails(details.getData(), beforeDetails.getData()))
             .build();
-
-        Optional<AboutToStartOrSubmitResponse<CaseData, State>> response = switch (noticeType) {
-            case NEW_DIGITAL_SOLICITOR_NEW_ORG ->
-                Optional.of(
-                    noticeOfChangeService.applyNocDecisionAndGrantAccessToNewSol(request)
-                );
-            case ORG_REMOVED ->
-                Optional.of(
-                    noticeOfChangeService.revokeCaseAccessForOrganisation(request)
-                );
-            case NEW_DIGITAL_SOLICITOR_EXISTING_ORG -> {
-                noticeOfChangeService.changeAccessWithinOrganisation(
-                    applicant.getSolicitor(),
-                    roles,
-                    orgPolicyCaseAssignedRole.getRole(),
-                    details.getId());
-
-                yield  Optional.empty();
-            }
-            case SOL_REMOVED_ORG_RETAINED -> {
-                noticeOfChangeService.revokeAccessForSolAndReturnToUnassignedCases(applicant, details.getId(), roles);
-                yield Optional.empty();
-            }
-            case OFFLINE_NOC -> Optional.empty();
-        };
-
-        return response.map(
-            resp -> {
-                resp.setData(correctRepresentationDetails(resp.getData(), beforeDetails.getData()));
-                return resp;
-            })
-            .orElse(
-                AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(correctRepresentationDetails(details.getData(), beforeDetails.getData()))
-                    .build()
-            );
     }
 
     private NoticeType calculateNoticeType(Applicant applicant,

@@ -1,42 +1,21 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
-import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.caseworker.model.NoticeOfChangeRequest;
-import uk.gov.hmcts.divorce.common.DecisionRequest;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ChangeOrganisationRequest;
-import uk.gov.hmcts.divorce.divorcecase.model.NocDynamicList;
-import uk.gov.hmcts.divorce.divorcecase.model.NocDynamicListElement;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.solicitor.client.ManageCaseAssignmentClient;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
-import uk.gov.hmcts.divorce.systemupdate.convert.CallbackResponseConverter;
-import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -46,41 +25,39 @@ public class NoticeOfChangeService {
     private final CcdUpdateService ccdUpdateService;
     private final CcdAccessService ccdAccessService;
     private final SolicitorValidationService solicitorValidationService;
-    private final ManageCaseAssignmentClient manageCaseAssignmentClient;
-    private final CaseDetailsConverter caseDetailsConverter;
-    private final CallbackResponseConverter callbackResponseConverter;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
-    private final Clock clock;
 
-    public AboutToStartOrSubmitResponse<CaseData, State> revokeCaseAccessForOrganisation(NoticeOfChangeRequest nocRequest) {
+    public void revokeCaseAccessForOrganisation(Long caseId, Applicant applicant, List<String> roles) {
 
-        Set<String> nonSolRolesToRemove = Sets.difference(new HashSet<>(nocRequest.getRoles()), Set.of(nocRequest.getSolicitorRole()));
+        log.info("Revoking case access for roles {} for case {}", roles, caseId);
 
-        Optional<UserRole> roleToRemove = Optional.ofNullable(
-            UserRole.fromString(nonSolRolesToRemove.stream().findFirst().orElse(StringUtils.EMPTY))
+        ccdAccessService.removeUsersWithRole(caseId, roles);
+
+        String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+
+        log.info("Resetting supplementary data for org {} on case {}", orgId, caseId);
+
+        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
+
+        ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
+            caseId.toString(),
+            sysUserToken,
+            s2sToken,
+            orgId
         );
-
-        if (roleToRemove.isEmpty()) {
-            throw new IllegalStateException(String.format("Could not find role to remove for case %s", nocRequest.getDetails().getId()));
-        }
-
-        ccdAccessService.removeUsersWithRole(nocRequest.getDetails().getId(), nonSolRolesToRemove.stream().toList());
-
-        setChangeOrganisationRequestOnCaseData(nocRequest, roleToRemove.get());
-
-        String sysUserAuthToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-
-        return applyNoticeOfChangeDecision(sysUserAuthToken, nocRequest.getDetails());
     }
 
     public void changeAccessWithinOrganisation(Solicitor newSolicitor,
                                                List<String> roles,
                                                String solicitorRole,
-                                               long caseId) {
+                                               Long caseId) {
 
         final String solicitorId = getSolicitorId(caseId, newSolicitor);
         final String orgId = newSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationId();
+
+        log.info("Re-assigning cases access for users in organisation {} on case {}", orgId, caseId);
 
         ccdAccessService.removeUsersWithRole(caseId, roles);
 
@@ -96,21 +73,31 @@ public class NoticeOfChangeService {
         //If there's no id found for new solicitor and we reach here, then move to unassigned cases list, else set assigned users to one
         String newOrgAssignedUsersValue = StringUtils.isNotBlank(solicitorId) ? "1" : "0";
 
+        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
+
+        log.info("Updating orgsAssignedUsers supplementary data to {} for org {} on case {}", newOrgAssignedUsersValue, orgId, caseId);
+
         ccdUpdateService.setOrgAssignedUsersSupplementaryData(
-            String.valueOf(caseId),
-            idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-            authTokenGenerator.generate(),
+            caseId.toString(),
+            sysUserToken,
+            s2sToken,
             orgId,
             newOrgAssignedUsersValue
         );
     }
 
-    public void revokeAccessForSolAndReturnToUnassignedCases(Applicant applicant,
-                                                             long caseId,
+    public void revokeAccessForSolAndReturnToUnassignedCases(Long caseId,
+                                                             Applicant applicant,
                                                              List<String> roles) {
+
         final var orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
 
+        log.info("Revoking access for sol and returning case to unassigned list for org {} on case {}", orgId, caseId);
+
         ccdAccessService.removeUsersWithRole(caseId, roles);
+
+        log.info("Resetting orgsAssignedUsers supplementary data for org {} on case {}", orgId, caseId);
 
         ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
             String.valueOf(caseId),
@@ -120,113 +107,58 @@ public class NoticeOfChangeService {
         );
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> applyNocDecisionAndGrantAccessToNewSol(NoticeOfChangeRequest nocRequest) {
+    public void applyNocDecisionAndGrantAccessToNewSol(Long caseId,
+                                                       Applicant applicant,
+                                                       Applicant applicantBefore,
+                                                       List<String> roles,
+                                                       String solicitorRole) {
 
-        log.info("Applying Notice of Change Decision and granting access to new sol");
-        final String solicitorId = getSolicitorId(nocRequest.getDetails().getId(), nocRequest.getApplicant().getSolicitor());
+        log.info("Applying Notice of Change Decision and granting access to new sol for case {}", caseId);
+        final String solicitorId = getSolicitorId(caseId, applicant.getSolicitor());
+        final boolean wasPreviousRepresentationDigital = ccdAccessService.getCaseAssignmentUserRoles(caseId).stream()
+            .anyMatch(userRole -> userRole.getCaseRole().equals(solicitorRole));
 
-        Set<String> nonSolRolesToUpdate = Sets.difference(new HashSet<>(nocRequest.getRoles()), Set.of(nocRequest.getSolicitorRole()));
-        Optional<UserRole> solicitorRole = Optional.ofNullable(
-            UserRole.fromString(nocRequest.getSolicitorRole())
-        );
 
-        if (solicitorRole.isEmpty()) {
-            throw new IllegalStateException(String.format("Could not find role to update for case %s", nocRequest.getDetails().getId()));
+        if (wasPreviousRepresentationDigital) {
+            log.info("Previous solicitor was digital, revoking access for role {} on case {}", solicitorRole, caseId);
+
+            ccdAccessService.removeUsersWithRole(caseId, roles);
+
+            ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
+                caseId.toString(),
+                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+                authTokenGenerator.generate(),
+                applicantBefore.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId());
         }
 
-        //revoke creator (and citizen) roles if present, else MCA will have a fit and reject the apply-decision call
-        ccdAccessService.removeUsersWithRole(nocRequest.getDetails().getId(), nonSolRolesToUpdate.stream().toList());
-
-        setChangeOrganisationRequestOnCaseData(nocRequest, solicitorRole.get());
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = applyNoticeOfChangeDecision(
-            idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-            nocRequest.getDetails()
-        );
 
         if (StringUtils.isNotBlank(solicitorId)) {
-            grantCaseAccessForNewSol(nocRequest, solicitorId, solicitorRole.get());
+            grantCaseAccessForNewSol(caseId, applicant, solicitorId, UserRole.fromString(solicitorRole));
         }
-
-        return response;
-
     }
 
-    private void setChangeOrganisationRequestOnCaseData(NoticeOfChangeRequest nocRequest,
-                                                        UserRole solicitorRole) {
-
-        final var organisationToAdd = Optional.ofNullable(nocRequest.getApplicant().getSolicitor().getOrganisationPolicy())
-                .map(OrganisationPolicy::getOrganisation)
-                .orElse(null);
-
-        final var organisationToRemove = Optional.ofNullable(nocRequest.getApplicantBefore().getSolicitor().getOrganisationPolicy())
-                .map(OrganisationPolicy::getOrganisation)
-                .orElse(null);
-
-        ChangeOrganisationRequest changeOrganisationRequest = generateChangeOrganisationRequest(
-            organisationToAdd,
-            organisationToRemove,
-            solicitorRole
-        );
-
-        nocRequest.getDetails().getData().getNoticeOfChange().setChangeOrganisationRequest(changeOrganisationRequest);
-    }
-
-    private AboutToStartOrSubmitResponse<CaseData, State> applyNoticeOfChangeDecision(String authToken,
-                                                                                      CaseDetails<CaseData, State> details) {
-
-        AboutToStartOrSubmitCallbackResponse response = manageCaseAssignmentClient.applyDecision(authToken,
-            authTokenGenerator.generate(),
-            DecisionRequest.decisionRequest(
-                caseDetailsConverter.convertToReformModelFromCaseDetails(details)
-            )
-        );
-
-
-        return callbackResponseConverter.convertResponseFromCcdModel(response);
-    }
-
-    private ChangeOrganisationRequest generateChangeOrganisationRequest(Organisation organisationToAdd,
-                                                                        Organisation organisationToRemove,
-                                                                        UserRole caseRoleId) {
-        NocDynamicList caseRole = NocDynamicList.builder()
-            .value(NocDynamicListElement.builder()
-                .label(caseRoleId.getRole())
-                .code(caseRoleId.getRole())
-                .build())
-            .listItems(List.of(
-                NocDynamicListElement.builder()
-                    .code(caseRoleId.getRole())
-                    .label(caseRoleId.getRole())
-                    .build()
-            ))
-            .build();
-
-        return ChangeOrganisationRequest.builder()
-            .approvalStatus(ChangeOrganisationApprovalStatus.APPROVED)
-            .organisationToAdd(organisationToAdd)
-            .organisationToRemove(organisationToRemove)
-            .caseRoleId(caseRole)
-            .requestTimestamp(LocalDateTime.now(clock))
-            .build();
-    }
-
-    private void grantCaseAccessForNewSol(NoticeOfChangeRequest nocRequest,
+    private void grantCaseAccessForNewSol(Long caseId,
+                                          Applicant applicant,
                                           String solicitorId,
                                           UserRole solicitorRole) {
-        String orgId = nocRequest.getApplicant().getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+
+        log.info("Granting case access for new solicitor on case {}", caseId);
+        String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
 
         ccdAccessService.addRoleToCase(
             solicitorId,
-            nocRequest.getDetails().getId(),
+            caseId,
             orgId,
             solicitorRole);
 
-        ccdUpdateService.incrementOrgAssignedUsersSupplementaryData(
-            String.valueOf(nocRequest.getDetails().getId()),
+        log.info("Setting orgAssignedusers Supplementary Data to 1 for org {} on case {}", orgId, caseId);
+
+        ccdUpdateService.setOrgAssignedUsersSupplementaryData(
+            caseId.toString(),
             idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
             authTokenGenerator.generate(),
-            orgId
+            orgId,
+            "1"
         );
     }
 
@@ -238,7 +170,7 @@ public class NoticeOfChangeService {
             String orgId = newSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationId();
 
             if (userIdOption.isEmpty()) {
-                throw new NoSuchElementException("Generic Error");
+                throw new NoSuchElementException(String.format("No userId found for user with email %s", newSolicitor.getEmail()));
             }
 
             if (!solicitorValidationService.isSolicitorInOrganisation(userIdOption.get(), orgId)) {
