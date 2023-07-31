@@ -70,6 +70,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -1564,7 +1565,7 @@ public class CaseworkerIssueApplicationIT {
 
         verify(ccdUpdateService)
             .submitEvent(
-                Mockito.<CaseDetails<CaseData, State>>any(),
+                anyLong(),
                 eq(SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK),
                 any(),
                 eq(TEST_SERVICE_AUTH_TOKEN));

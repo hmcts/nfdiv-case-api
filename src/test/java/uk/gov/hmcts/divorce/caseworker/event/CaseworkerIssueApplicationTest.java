@@ -147,10 +147,11 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
 
         caseDetails.setData(caseData);
+        caseDetails.setId(1L);
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
 
         verify(issueApplicationService).sendNotifications(caseDetails);
     }

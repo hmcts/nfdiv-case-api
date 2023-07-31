@@ -42,6 +42,6 @@ public class SolicitorSubmitJointApplicationService {
 
         log.info("Submitting event id {} for case id: {}", eventId, details.getId());
 
-        ccdUpdateService.submitEvent(details, eventId, solUser, serviceAuthorization);
+        ccdUpdateService.submitEvent(details.getId(), eventId, solUser, serviceAuthorization);
     }
 }

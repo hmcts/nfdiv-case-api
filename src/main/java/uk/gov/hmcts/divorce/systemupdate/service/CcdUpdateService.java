@@ -52,34 +52,6 @@ public class CcdUpdateService {
     @Autowired
     private BulkCaseDetailsUpdater bulkCaseDetailsUpdater;
 
-    // TODO: AJ - rework. Only allow caseId passed in.
-    public void submitEvent(final CaseDetails caseDetails,
-                            final String eventId,
-                            final User user,
-                            final String serviceAuth) {
-
-        final String caseId = caseDetails.getId().toString();
-        final String userId = user.getUserDetails().getId();
-        final String authorization = user.getAuthToken();
-
-        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
-
-        try {
-            startAndSubmitEventForCaseworkers(eventId, serviceAuth, caseId, userId, authorization);
-        } catch (final FeignException e) {
-
-            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
-            log.info(message, e);
-            log.info(e.contentUTF8());
-
-            if (e.status() == CONFLICT.value()) {
-                throw new CcdConflictException(message, e);
-            }
-
-            throw new CcdManagementException(e.status(), message, e);
-        }
-    }
-
     public void submitEvent(final Long caseId,
                             final String eventId,
                             final User user,
@@ -112,7 +84,7 @@ public class CcdUpdateService {
                             final User user,
                             final String serviceAuth) {
 
-        submitEvent(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails), eventId, user, serviceAuth);
+        submitEvent(caseDetails.getId(), eventId, user, serviceAuth);
     }
 
     @Retryable(retryFor = {CcdManagementException.class})
