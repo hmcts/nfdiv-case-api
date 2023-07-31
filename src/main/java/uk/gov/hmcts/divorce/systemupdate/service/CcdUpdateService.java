@@ -52,6 +52,7 @@ public class CcdUpdateService {
     @Autowired
     private BulkCaseDetailsUpdater bulkCaseDetailsUpdater;
 
+    // TODO: AJ - rework. Only allow caseId passed in.
     public void submitEvent(final CaseDetails caseDetails,
                             final String eventId,
                             final User user,
@@ -79,30 +80,13 @@ public class CcdUpdateService {
         }
     }
 
+    // TODO: AJ - rework. Only allow caseId passed in.
     public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                             final String eventId,
                             final User user,
                             final String serviceAuth) {
 
         submitEvent(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails), eventId, user, serviceAuth);
-    }
-
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
-    public void submitEventWithRetry(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                                     final String eventId,
-                                     final User user,
-                                     final String serviceAuth) {
-
-        submitEvent(caseDetails, eventId, user, serviceAuth);
-    }
-
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
-    public void submitEventWithRetry(final CaseDetails caseDetails,
-                                     final String eventId,
-                                     final User user,
-                                     final String serviceAuth) {
-
-        submitEvent(caseDetails, eventId, user, serviceAuth);
     }
 
     @Retryable(retryFor = {CcdManagementException.class})
