@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -168,27 +169,31 @@ public class OcrDataFields {
 
     public static OcrDataFields transformData(List<KeyValue> ocrDataFields) {
         final ObjectMapper mapper = new ObjectMapper();
-        final Map<String, String> map = ocrDataFields
-            .stream()
-            .collect(
-                toMap(
-                    entry -> entry.getKey(),
-                    entry -> Optional.ofNullable(entry.getValue()).orElse("")
-                )
-            );
+        final Map<String, String> map =
+            Optional.ofNullable(ocrDataFields)
+                .orElse(emptyList())
+                .stream()
+                .collect(
+                    toMap(
+                        entry -> entry.getKey(),
+                        entry -> Optional.ofNullable(entry.getValue()).orElse("")
+                    )
+                );
         return mapper.convertValue(map, OcrDataFields.class);
     }
 
     public static OcrDataFields transformOcrMapToObject(List<OcrDataField> ocrDataFields) {
         final ObjectMapper mapper = new ObjectMapper();
-        final Map<String, String> map = ocrDataFields
-            .stream()
-            .collect(
-                toMap(
-                    OcrDataField::getName,
-                    entry -> Optional.ofNullable(entry.getValue()).orElse("")
-                )
-            );
+        final Map<String, String> map =
+            Optional.ofNullable(ocrDataFields)
+                .orElse(emptyList())
+                .stream()
+                .collect(
+                    toMap(
+                        OcrDataField::getName,
+                        entry -> Optional.ofNullable(entry.getValue()).orElse("")
+                    )
+                );
         return mapper.convertValue(map, OcrDataFields.class);
     }
 }
