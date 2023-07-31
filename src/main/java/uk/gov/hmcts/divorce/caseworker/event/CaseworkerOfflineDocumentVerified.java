@@ -297,9 +297,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
                     details.getId());
 
-                //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
-                caseData.getDocuments().setScannedSubtypeReceived(null);
-
                 final User user = idamService.retrieveSystemUpdateUserDetails();
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
@@ -311,9 +308,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             log.info(
                 "CaseworkerOfflineDocumentVerified submitted callback triggering Switched To Sole FO event for case id: {}",
                 details.getId());
-
-            //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
-            caseData.getDocuments().setScannedSubtypeReceived(null);
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
