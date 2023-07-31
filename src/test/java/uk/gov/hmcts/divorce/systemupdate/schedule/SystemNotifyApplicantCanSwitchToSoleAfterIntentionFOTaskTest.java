@@ -166,7 +166,11 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
         task.run();
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(1616591401473377L, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1616591401473377L,
+            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
+            user,
+            SERVICE_AUTHORIZATION
+        );
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -277,7 +281,12 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(1616591401473379L, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(
+            1616591401473379L,
+            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
+            user,
+            SERVICE_AUTHORIZATION
+        );
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
