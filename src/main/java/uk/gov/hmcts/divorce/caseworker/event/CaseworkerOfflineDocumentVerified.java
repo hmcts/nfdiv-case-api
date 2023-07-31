@@ -302,7 +302,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
                 final User user = idamService.retrieveSystemUpdateUserDetails();
                 final String serviceAuth = authTokenGenerator.generate();
-                ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_CO, user, serviceAuth);
+                ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
         } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
@@ -317,7 +317,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details, SWITCH_TO_SOLE_FO, user, serviceAuth);
+            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
         } else if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             log.info(
                 "CaseworkerOfflineDocumentVerified submitted callback triggering submit aos notifications: {}",

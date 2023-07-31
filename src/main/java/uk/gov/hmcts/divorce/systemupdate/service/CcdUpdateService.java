@@ -78,15 +78,6 @@ public class CcdUpdateService {
         }
     }
 
-    // TODO: AJ - rework. Only allow caseId passed in.
-    public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                            final String eventId,
-                            final User user,
-                            final String serviceAuth) {
-
-        submitEvent(caseDetails.getId(), eventId, user, serviceAuth);
-    }
-
     @Retryable(retryFor = {CcdManagementException.class})
     public void submitEventWithRetry(final String caseId,
                                      final String eventId,
