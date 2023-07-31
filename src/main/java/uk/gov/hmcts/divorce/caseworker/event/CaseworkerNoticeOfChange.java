@@ -133,7 +133,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 beforeApplicant,
                 roles,
                 orgPolicyCaseAssignedRole.getRole());
-            case ORG_REMOVED -> noticeOfChangeService.revokeCaseAccessForOrganisation(
+            case ORG_REMOVED, SOL_REMOVED_ORG_RETAINED -> noticeOfChangeService.revokeCaseAccess(
                 details.getId(),
                 beforeApplicant,
                 roles);
@@ -142,13 +142,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 roles,
                 orgPolicyCaseAssignedRole.getRole(),
                 details.getId());
-            case SOL_REMOVED_ORG_RETAINED -> noticeOfChangeService.revokeAccessForSolAndReturnToUnassignedCases(
-                details.getId(),
-                applicant,
-                roles);
-            default -> {
-
-            }
+            default -> {}
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

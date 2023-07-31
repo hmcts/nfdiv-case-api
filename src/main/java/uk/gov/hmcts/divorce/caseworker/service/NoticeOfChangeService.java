@@ -28,7 +28,7 @@ public class NoticeOfChangeService {
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
 
-    public void revokeCaseAccessForOrganisation(Long caseId, Applicant applicant, List<String> roles) {
+    public void revokeCaseAccess(Long caseId, Applicant applicant, List<String> roles) {
 
         log.info("Revoking case access for roles {} for case {}", roles, caseId);
 
@@ -87,26 +87,6 @@ public class NoticeOfChangeService {
         );
     }
 
-    public void revokeAccessForSolAndReturnToUnassignedCases(Long caseId,
-                                                             Applicant applicant,
-                                                             List<String> roles) {
-
-        final var orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
-
-        log.info("Revoking access for sol and returning case to unassigned list for org {} on case {}", orgId, caseId);
-
-        ccdAccessService.removeUsersWithRole(caseId, roles);
-
-        log.info("Resetting orgsAssignedUsers supplementary data for org {} on case {}", orgId, caseId);
-
-        ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
-            String.valueOf(caseId),
-            idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-            authTokenGenerator.generate(),
-            orgId
-        );
-    }
-
     public void applyNocDecisionAndGrantAccessToNewSol(Long caseId,
                                                        Applicant applicant,
                                                        Applicant applicantBefore,
@@ -114,23 +94,15 @@ public class NoticeOfChangeService {
                                                        String solicitorRole) {
 
         log.info("Applying Notice of Change Decision and granting access to new sol for case {}", caseId);
+
         final String solicitorId = getSolicitorId(caseId, applicant.getSolicitor());
         final boolean wasPreviousRepresentationDigital = ccdAccessService.getCaseAssignmentUserRoles(caseId).stream()
             .anyMatch(userRole -> userRole.getCaseRole().equals(solicitorRole));
 
-
         if (wasPreviousRepresentationDigital) {
             log.info("Previous solicitor was digital, revoking access for role {} on case {}", solicitorRole, caseId);
-
-            ccdAccessService.removeUsersWithRole(caseId, roles);
-
-            ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
-                caseId.toString(),
-                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-                authTokenGenerator.generate(),
-                applicantBefore.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId());
+            revokeCaseAccess(caseId, applicantBefore, roles);
         }
-
 
         if (StringUtils.isNotBlank(solicitorId)) {
             grantCaseAccessForNewSol(caseId, applicant, solicitorId, UserRole.fromString(solicitorRole));
