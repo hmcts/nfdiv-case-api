@@ -146,7 +146,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 details.getId(),
                 applicant,
                 roles);
-            case OFFLINE_NOC -> {
+            default -> {
+
             }
         }
 
