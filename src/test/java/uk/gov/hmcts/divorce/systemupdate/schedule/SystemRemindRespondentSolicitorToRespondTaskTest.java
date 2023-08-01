@@ -115,6 +115,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         CaseDetails details1 = CaseDetails.builder()
             .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
                 "applicant2SolicitorEmail", "abc@gm.com"))
+            .id(1L)
             .build();
 
         List<CaseDetails> caseDetailsList = List.of(details1);
@@ -127,7 +128,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         remindRespondentSolicitorToRespondTask.run();
 
         verify(ccdUpdateService, times(1))
-            .submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -173,12 +174,12 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
 
         remindRespondentSolicitorToRespondTask.run();
 
-        verify(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(details2, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -203,12 +204,12 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new IllegalArgumentException())
-            .when(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
 
         remindRespondentSolicitorToRespondTask.run();
 
-        verify(ccdUpdateService).submitEvent(details1, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(details2, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 
     private OrganisationPolicy<UserRole> organisationPolicy() {

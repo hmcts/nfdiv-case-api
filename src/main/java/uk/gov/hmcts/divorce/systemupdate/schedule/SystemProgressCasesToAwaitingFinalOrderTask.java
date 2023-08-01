@@ -87,7 +87,7 @@ public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
                 LocalDate parsedDateFinalOrderEligibleFrom = LocalDate.parse(dateFinalOrderEligibleFrom);
 
                 if (!parsedDateFinalOrderEligibleFrom.isAfter(LocalDate.now())) {
-                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, serviceAuth);
+                    ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, serviceAuth);
                 }
             }
         } catch (final CcdManagementException e) {

@@ -83,13 +83,16 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -107,7 +110,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         task.run();
 
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -145,15 +148,17 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
         verify(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -169,12 +174,15 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 }

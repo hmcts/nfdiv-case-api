@@ -124,7 +124,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             final String serviceAuthorization = authTokenGenerator.generate();
 
             log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
-            ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
+            ccdUpdateService.submitEvent(details.getId(), SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
         }
 
         issueApplicationService.sendNotifications(details);

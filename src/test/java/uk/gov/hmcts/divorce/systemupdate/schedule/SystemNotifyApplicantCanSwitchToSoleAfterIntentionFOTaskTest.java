@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
@@ -111,6 +112,9 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
         when(caseDetails2.getData()).thenReturn(caseDataMap1);
         when(caseDetails3.getData()).thenReturn(caseDataMap2);
 
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
+        when(caseDetails2.getId()).thenReturn(1616591401473377L);
+
         when(objectMapper.convertValue(caseDataMap1, CaseData.class)).thenReturn(caseData1);
         when(objectMapper.convertValue(caseDataMap2, CaseData.class)).thenReturn(caseData2);
 
@@ -121,8 +125,12 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1616591401473377L,
+            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
+            user,
+            SERVICE_AUTHORIZATION
+        );
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -144,6 +152,9 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
         when(caseDetails2.getData()).thenReturn(caseDataMap1);
         when(caseDetails3.getData()).thenReturn(caseDataMap2);
 
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
+        when(caseDetails2.getId()).thenReturn(1616591401473377L);
+
         when(objectMapper.convertValue(caseDataMap1, CaseData.class)).thenReturn(caseData1);
         when(objectMapper.convertValue(caseDataMap2, CaseData.class)).thenReturn(caseData2);
 
@@ -154,8 +165,12 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1616591401473377L,
+            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
+            user,
+            SERVICE_AUTHORIZATION
+        );
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -218,20 +233,22 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
 
         when(caseDetails1.getData()).thenReturn(caseDataMap);
 
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
+
         when(objectMapper.convertValue(caseDataMap, CaseData.class)).thenReturn(getCaseDataForApp1(date));
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
         verify(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1616591401473377L, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -248,8 +265,10 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
         Map<String, Object> caseDataMap = getCaseDataMapForApp1(date);
 
         when(caseDetails1.getData()).thenReturn(caseDataMap);
-
         when(caseDetails2.getData()).thenReturn(caseDataMap);
+
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
+        when(caseDetails2.getId()).thenReturn(1616591401473379L);
 
         when(objectMapper.convertValue(caseDataMap, CaseData.class)).thenReturn(getCaseDataForApp1(date));
 
@@ -258,11 +277,16 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(
+            1616591401473379L,
+            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
+            user,
+            SERVICE_AUTHORIZATION
+        );
         verifyNoMoreInteractions(ccdUpdateService);
     }
 

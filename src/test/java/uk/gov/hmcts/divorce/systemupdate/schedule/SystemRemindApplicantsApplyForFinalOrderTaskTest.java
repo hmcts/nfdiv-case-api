@@ -92,6 +92,7 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .data(caseData)
+            .id(1L)
             .build();
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
@@ -99,7 +100,7 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
 
         systemRemindApplicantsApplyForFinalOrderTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -119,13 +120,13 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(List.of(caseDetails1, caseDetails2));
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         systemRemindApplicantsApplyForFinalOrderTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -136,12 +137,12 @@ class SystemRemindApplicantsApplyForFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         systemRemindApplicantsApplyForFinalOrderTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test

@@ -129,6 +129,9 @@ public class SystemNotifyApplicantThatPartnerNotAppliedForFOTaskTest {
             )
         );
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         when(objectMapper.convertValue(Map.of(
             "dateFinalOrderSubmitted", dateTimePast14Days,
             "finalOrderFirstInTimeNotifiedOtherApplicantNotApplied", NO), CaseData.class)).thenReturn(caseData1);
@@ -144,8 +147,8 @@ public class SystemNotifyApplicantThatPartnerNotAppliedForFOTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -220,15 +223,17 @@ public class SystemNotifyApplicantThatPartnerNotAppliedForFOTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
         verify(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -272,12 +277,15 @@ public class SystemNotifyApplicantThatPartnerNotAppliedForFOTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingJointFinalOrder))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 }

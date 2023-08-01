@@ -92,7 +92,7 @@ public class SystemFinalOrderOverdueTask implements Runnable {
 
                 if (finalOrderOverdueDate.isBefore(LocalDate.now())) {
                     log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
-                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_FINAL_ORDER_OVERDUE, user, serviceAuth);
+                    ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_FINAL_ORDER_OVERDUE, user, serviceAuth);
                 }
             }
         } catch (final CcdManagementException e) {

@@ -116,6 +116,6 @@ public class SystemNotifyApplicantThatPartnerNotAppliedForFOTask implements Runn
             caseDetails.getId()
         );
 
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, serviceAuth);
+        ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER, user, serviceAuth);
     }
 }
