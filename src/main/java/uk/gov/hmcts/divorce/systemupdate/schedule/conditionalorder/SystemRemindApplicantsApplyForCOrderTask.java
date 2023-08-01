@@ -131,7 +131,7 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
                 "20Week holding period +14days elapsed for Case({}) - reminding Joint Applicants they can apply for a Conditional Order",
                 caseDetails.getId()
             );
-            triggerEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
+            triggerEvent(caseDetails.getId(), SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
 
         } catch (NotificationException | HttpServerErrorException exception) {
             log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
@@ -146,12 +146,12 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
                     caseDetails.getState());
 
                 caseDetails.setData(objectMapper.convertValue(caseData, new TypeReference<>() {}));
-                triggerEvent(caseDetails, SYSTEM_UPDATE_CASE, user, serviceAuth);
+                triggerEvent(caseDetails.getId(), SYSTEM_UPDATE_CASE, user, serviceAuth);
             }
         }
     }
 
-    private void triggerEvent(CaseDetails caseDetails, String eventId, User user, String serviceAuth) {
-        submitEvent(caseDetails, eventId, user, serviceAuth);
+    private void triggerEvent(Long caseId, String eventId, User user, String serviceAuth) {
+        submitEvent(caseId, eventId, user, serviceAuth);
     }
 }

@@ -79,6 +79,9 @@ class SystemFinalOrderOverdueTaskTest {
         when(caseDetails2.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusWeeks(53).toString()));
         when(caseDetails3.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusDays(364).toString()));
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2, caseDetails3);
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
@@ -86,9 +89,9 @@ class SystemFinalOrderOverdueTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService,never()).submitEvent(caseDetails3, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService,never()).submitEvent(3L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -106,7 +109,7 @@ class SystemFinalOrderOverdueTaskTest {
         task.run();
 
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -127,18 +130,20 @@ class SystemFinalOrderOverdueTaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(13).toString()));
 
+        when(caseDetails1.getId()).thenReturn(1L);
+
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
         verify(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -149,18 +154,21 @@ class SystemFinalOrderOverdueTaskTest {
         when(caseDetails1.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(13).toString()));
         when(caseDetails2.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(14).toString()));
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
 }

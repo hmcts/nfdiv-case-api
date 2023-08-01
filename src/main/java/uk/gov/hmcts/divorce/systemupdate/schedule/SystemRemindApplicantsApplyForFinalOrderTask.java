@@ -71,7 +71,7 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, AwaitingFinalOrder);
 
             for (final CaseDetails caseDetails : casesInAwaitingFinalOrderNeedingReminder) {
-                sendReminderToApplicantsIfEligible(caseDetails, user, serviceAuthorization);
+                sendReminderToApplicantsIfEligible(caseDetails.getId(), user, serviceAuthorization);
             }
         } catch (final CcdSearchCaseException e) {
             log.error("SystemRemindApplicantToApplyForFinalOrder schedule task stopped after search error", e);
@@ -82,14 +82,14 @@ public class SystemRemindApplicantsApplyForFinalOrderTask implements Runnable {
         }
     }
 
-    private void sendReminderToApplicantsIfEligible(CaseDetails caseDetails, User user, String serviceAuthorization) {
+    private void sendReminderToApplicantsIfEligible(Long caseId, User user, String serviceAuthorization) {
         try {
             log.info("Submitting system-remind-applicants-final-order event...");
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, serviceAuthorization);
+            ccdUpdateService.submitEvent(caseId, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, serviceAuthorization);
         } catch (final CcdManagementException e) {
-            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Submit event failed for case id: {}, continuing to next case", caseId);
         } catch (final IllegalArgumentException e) {
-            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseId);
         }
     }
 }

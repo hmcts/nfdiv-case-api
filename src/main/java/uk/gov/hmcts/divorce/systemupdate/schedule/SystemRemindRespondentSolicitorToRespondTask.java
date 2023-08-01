@@ -91,7 +91,7 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
             emptyIfNull(result)
                 .stream()
                 .filter(this::filterOnlineCases)
-                .forEach(caseDetails -> sendReminderToRespondentSolicitor(caseDetails, user, serviceAuthorization));
+                .forEach(caseDetails -> sendReminderToRespondentSolicitor(caseDetails.getId(), user, serviceAuthorization));
 
             log.info("Remind respondent solicitor to respond task completed");
 
@@ -114,14 +114,14 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
             && StringUtils.isNotBlank(caseData.getApplicant2().getSolicitor().getEmail());
     }
 
-    private void sendReminderToRespondentSolicitor(CaseDetails caseDetails, User user, String serviceAuthorization) {
+    private void sendReminderToRespondentSolicitor(Long caseId, User user, String serviceAuthorization) {
         try {
             log.info("Submitting system-remind-respondent-solicitor-to-respond event...");
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, serviceAuthorization);
+            ccdUpdateService.submitEvent(caseId, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, serviceAuthorization);
         } catch (final CcdManagementException e) {
-            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Submit event failed for case id: {}, continuing to next case", caseId);
         } catch (final IllegalArgumentException e) {
-            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseId);
         }
     }
 }

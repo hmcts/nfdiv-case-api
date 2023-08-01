@@ -593,7 +593,7 @@ public class SubmitAosIT {
 
         User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
 
-        doNothing().when(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+        doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
                         .contentType(APPLICATION_JSON)
@@ -638,7 +638,7 @@ public class SubmitAosIT {
 
         User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
 
-        doNothing().when(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+        doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
                         .contentType(APPLICATION_JSON)

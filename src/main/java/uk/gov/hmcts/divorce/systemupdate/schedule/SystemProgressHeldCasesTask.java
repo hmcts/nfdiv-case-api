@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
@@ -60,7 +59,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
 
             ccdSearchService
                 .searchForAllCasesWithQuery(query, user, serviceAuth, Holding)
-                .forEach(caseDetails -> submitEvent(caseDetails, user, serviceAuth));
+                .forEach(caseDetails -> submitEvent(caseDetails.getId(), user, serviceAuth));
 
             log.info("SystemProgressHeldCasesTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -71,15 +70,15 @@ public class SystemProgressHeldCasesTask implements Runnable {
         }
     }
 
-    private void submitEvent(CaseDetails caseDetails, User user, String serviceAuth) {
+    private void submitEvent(Long caseId, User user, String serviceAuth) {
         try {
             log.info("Case id {} has been in holding state for > {} days hence moving state to AwaitingConditionalOrder",
-                caseDetails.getId(), holdingPeriodService.getHoldingPeriodInDays());
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
+                caseId.toString(), holdingPeriodService.getHoldingPeriodInDays());
+            ccdUpdateService.submitEvent(caseId, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
         } catch (final CcdManagementException e) {
-            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Submit event failed for case id: {}, continuing to next case", caseId);
         } catch (final IllegalArgumentException e) {
-            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseId);
         }
     }
 }

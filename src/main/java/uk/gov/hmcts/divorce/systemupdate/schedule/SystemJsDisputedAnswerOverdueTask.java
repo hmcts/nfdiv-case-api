@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
@@ -71,7 +70,7 @@ public class SystemJsDisputedAnswerOverdueTask extends AbstractTaskEventSubmit {
                         .lte(LocalDate.now().minusDays(answerOverdueOffsetDays)));
 
             ccdSearchService.searchForAllCasesWithQuery(query, systemUser, serviceAuth, AwaitingAnswer)
-                .forEach(caseDetails -> updateState(caseDetails, systemUser, serviceAuth));
+                .forEach(caseDetails -> updateState(caseDetails.getId(), systemUser, serviceAuth));
 
             log.info("JsDisputedAnswerOverdue scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -81,8 +80,8 @@ public class SystemJsDisputedAnswerOverdueTask extends AbstractTaskEventSubmit {
         }
     }
 
-    private void updateState(CaseDetails caseDetails, User user, String serviceAuth) {
-        log.info("Answer Overdue for Disputed JS Case (id={}), setting state to AwaitingJS/Nullity", caseDetails.getId());
-        submitEvent(caseDetails, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, user, serviceAuth);
+    private void updateState(Long caseId, User user, String serviceAuth) {
+        log.info("Answer Overdue for Disputed JS Case (id={}), setting state to AwaitingJS/Nullity", caseId);
+        submitEvent(caseId, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, user, serviceAuth);
     }
 }

@@ -138,12 +138,11 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 final User user = idamService.retrieveSystemUpdateUserDetails();
                 final String serviceAuthorization = authTokenGenerator.generate();
 
-                log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
-                ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
-
                 log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
                 applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
 
+                log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+                ccdUpdateService.submitEvent(details.getId(), SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
             } else {
                 log.info("Send Notifications for case id: {}", details.getId());
                 reIssueApplicationService.sendNotifications(details, REISSUE_CASE);
