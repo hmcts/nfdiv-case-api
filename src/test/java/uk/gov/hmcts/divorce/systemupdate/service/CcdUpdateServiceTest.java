@@ -19,11 +19,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,7 +33,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
 class CcdUpdateServiceTest {
@@ -200,7 +195,11 @@ class CcdUpdateServiceTest {
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             TEST_CASE_ID.toString(),
-            Map.of("supplementary_data_updates", Map.of("$set", singletonMap("orgs_assigned_users." + TEST_ORG_ID, "0")))
+            Map.of("supplementary_data_updates",
+                Map.of("$set",
+                    Map.of(
+                        "orgs_assigned_users." + TEST_ORG_ID, "0",
+                        "processed", true)))
         );
     }
 
@@ -216,7 +215,10 @@ class CcdUpdateServiceTest {
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             TEST_CASE_ID.toString(),
-            Map.of("supplementary_data_updates", Map.of("$set", singletonMap("orgs_assigned_users." + TEST_ORG_ID, "1")))
+            Map.of("supplementary_data_updates",
+                Map.of("$set", Map.of(
+                    "orgs_assigned_users." + TEST_ORG_ID, "1",
+                    "processed", true)))
         );
     }
 
@@ -231,7 +233,7 @@ class CcdUpdateServiceTest {
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             TEST_CASE_ID.toString(),
-            Map.of("supplementary_data_updates", Map.of("$inc", singletonMap("orgs_assigned_users." + TEST_ORG_ID, "+1")))
+            Map.of("supplementary_data_updates", Map.of("$inc", singletonMap("orgs_assigned_users." + TEST_ORG_ID, "1")))
         );
     }
 
