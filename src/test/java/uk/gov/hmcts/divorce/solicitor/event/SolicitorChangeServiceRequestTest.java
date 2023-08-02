@@ -242,10 +242,11 @@ class SolicitorChangeServiceRequestTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingService);
+        caseDetails.setId(1L);
 
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
         verify(applicationIssuedNotification).sendToApplicant1Solicitor(caseDetails.getData(), caseDetails.getId());
     }
 

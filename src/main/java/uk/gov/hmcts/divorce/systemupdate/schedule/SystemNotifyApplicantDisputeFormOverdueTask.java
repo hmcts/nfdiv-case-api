@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
@@ -64,7 +63,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEve
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, Holding)
-                .forEach(caseDetails -> notifyApplicant(caseDetails, user, serviceAuth));
+                .forEach(caseDetails -> notifyApplicant(caseDetails.getId(), user, serviceAuth));
 
             log.info("NotifyApplicantDisputeFormOverdue scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -74,8 +73,8 @@ public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEve
         }
     }
 
-    private void notifyApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
-        log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseDetails.getId());
-        submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
+    private void notifyApplicant(Long caseId, User user, String serviceAuth) {
+        log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseId);
+        submitEvent(caseId, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
     }
 }

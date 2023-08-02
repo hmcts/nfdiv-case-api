@@ -114,7 +114,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -159,7 +159,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(1L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -202,17 +202,18 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         data.put("dueDate", LocalDate.now());
 
         when(caseDetails1.getData()).thenReturn(data);
+        when(caseDetails1.getId()).thenReturn(1L);
         when(mapper.convertValue(data, CaseData.class)).thenReturn(caseData1);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(2L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -230,6 +231,8 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails1.getData()).thenReturn(data1);
         when(caseDetails2.getData()).thenReturn(data2);
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
         when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
         when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
 
@@ -239,11 +242,11 @@ public class SystemAlertApplicationNotReviewedTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 }

@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseTask;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -55,19 +53,18 @@ public class CcdUpdateService {
     @Autowired
     private BulkCaseDetailsUpdater bulkCaseDetailsUpdater;
 
-    public void submitEvent(final CaseDetails caseDetails,
+    public void submitEvent(final Long caseId,
                             final String eventId,
                             final User user,
                             final String serviceAuth) {
 
-        final String caseId = caseDetails.getId().toString();
         final String userId = user.getUserDetails().getId();
         final String authorization = user.getAuthToken();
 
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
 
         try {
-            startAndSubmitEventForCaseworkers(eventId, serviceAuth, caseId, userId, authorization);
+            startAndSubmitEventForCaseworkers(eventId, serviceAuth, caseId.toString(), userId, authorization);
         } catch (final FeignException e) {
 
             final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
@@ -80,32 +77,6 @@ public class CcdUpdateService {
 
             throw new CcdManagementException(e.status(), message, e);
         }
-    }
-
-    public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                            final String eventId,
-                            final User user,
-                            final String serviceAuth) {
-
-        submitEvent(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails), eventId, user, serviceAuth);
-    }
-
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
-    public void submitEventWithRetry(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                                     final String eventId,
-                                     final User user,
-                                     final String serviceAuth) {
-
-        submitEvent(caseDetails, eventId, user, serviceAuth);
-    }
-
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
-    public void submitEventWithRetry(final CaseDetails caseDetails,
-                                     final String eventId,
-                                     final User user,
-                                     final String serviceAuth) {
-
-        submitEvent(caseDetails, eventId, user, serviceAuth);
     }
 
     @Retryable(retryFor = {CcdManagementException.class})
