@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Data
@@ -117,8 +118,17 @@ public class FinalOrder {
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
-        label = "${labelContentApplicantsOrApplicant1s} final order late explanation",
+        label = "Is Final Order overdue?",
         access = {DefaultAccess.class}
+    )
+    private YesOrNo isFinalOrderOverdue;
+
+    @CCD(
+        label = "${labelContentApplicantsOrApplicant1s} final order late explanation",
+        hint = "You are making this application for a final order over one year from when the conditional order was made. "
+           + "Explain to the court why you did not apply for a final order earlier. Your answer will be reviewed as part of your application",
+        access = {DefaultAccess.class},
+        typeOverride = TextArea
     )
     private String applicant1FinalOrderLateExplanation;
 
