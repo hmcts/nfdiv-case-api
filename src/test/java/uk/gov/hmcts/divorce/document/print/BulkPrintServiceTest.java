@@ -123,7 +123,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -202,7 +202,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
@@ -282,7 +282,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
@@ -368,7 +368,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.printWithD10Form(print);
@@ -425,7 +425,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         given(resource.getInputStream()).willThrow(new IOException("Corrupt data"));
@@ -454,7 +454,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -483,7 +483,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -541,7 +541,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -598,7 +598,7 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            List.of("1234","Test User", "letterType")
+            "Test User"
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
