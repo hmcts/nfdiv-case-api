@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.document.print.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
@@ -13,12 +12,18 @@ public class Print {
     private final String letterType;
     private final List<String> recipients;
 
-    public Print(final List<Letter> letters, final String caseId, final String caseRef, final String letterType, final String recipientName) {
-        this.letters = letters;
-        this.caseId = caseId;
-        this.caseRef = caseRef;
-        this.letterType = letterType;
-        this.recipients = List.of(caseId, recipientName, letterType);
-    }
+    public Print(
+            final List<Letter> letters,
+            final String caseId,
+            final String caseRef,
+            final String letterType,
+            final String recipientName
+        ) {
+            this.letters = letters;
+            this.caseId = caseId;
+            this.caseRef = caseRef;
+            this.letterType = letterType;
+            this.recipients = List.of(caseId, recipientName, letterType);
+        }
 
 }
