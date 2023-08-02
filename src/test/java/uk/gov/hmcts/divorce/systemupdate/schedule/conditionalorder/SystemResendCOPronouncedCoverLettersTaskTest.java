@@ -120,7 +120,7 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -139,7 +139,7 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -226,13 +226,13 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
             .thenReturn(buildCaseDataCOPronounced(YES, PRIVATE, PUBLIC));
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -255,12 +255,12 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
             .thenReturn(buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE));
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
     }
 }

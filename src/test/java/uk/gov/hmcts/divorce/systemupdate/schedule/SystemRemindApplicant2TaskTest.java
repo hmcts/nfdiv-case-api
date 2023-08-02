@@ -131,7 +131,7 @@ public class SystemRemindApplicant2TaskTest {
 
         systemRemindApplicant2Task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -219,13 +219,15 @@ public class SystemRemindApplicant2TaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
 
         systemRemindApplicant2Task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(2L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -263,12 +265,15 @@ public class SystemRemindApplicant2TaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
 
         systemRemindApplicant2Task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 }

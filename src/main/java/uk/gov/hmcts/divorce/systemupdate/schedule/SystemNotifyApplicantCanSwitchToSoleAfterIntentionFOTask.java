@@ -89,7 +89,7 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
                         );
 
                         ccdUpdateService.submitEvent(
-                            caseDetails,
+                            caseDetails.getId(),
                             SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION,
                             user,
                             serviceAuthorization);

@@ -94,9 +94,11 @@ class SystemProgressCasesToAosOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos, AosDrafted))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails2.getId()).thenReturn(2L);
+
         progressCasesToAosOverdueTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -112,9 +114,11 @@ class SystemProgressCasesToAosOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos, AosDrafted))
             .thenReturn(List.of(caseDetails));
 
+        when(caseDetails.getId()).thenReturn(1L);
+
         progressCasesToAosOverdueTask.run();
 
-        verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(1L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -152,13 +156,15 @@ class SystemProgressCasesToAosOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos, AosDrafted))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         progressCasesToAosOverdueTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(2L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -174,12 +180,14 @@ class SystemProgressCasesToAosOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos, AosDrafted))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails2.getId()).thenReturn(2L);
+
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         progressCasesToAosOverdueTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 }

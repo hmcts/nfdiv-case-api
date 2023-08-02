@@ -134,7 +134,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         log.info("Submitting event id {} for case id {}", eventId, details.getId());
-        ccdUpdateService.submitEvent(details, eventId, user, serviceAuthorization);
+        ccdUpdateService.submitEvent(details.getId(), eventId, user, serviceAuthorization);
 
         return SubmittedCallbackResponse.builder().build();
     }

@@ -26,7 +26,7 @@ plugins {
   id 'org.springframework.boot' version '3.1.2'
   id 'com.github.ben-manes.versions' version '0.47.0'
   id 'hmcts.ccd.sdk' version '5.4.3'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.763'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.771'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -143,7 +143,7 @@ task highLevelDataSetup(type: JavaExec) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '10.12.1'
+  toolVersion = '10.12.2'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
@@ -216,10 +216,6 @@ dependencyUpdates {
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
-    // CVE-2018-10237 - Unbounded memory allocation
-    dependencySet(group: 'com.google.guava', version: '32.1.1-jre') {
-      entry 'guava'
-    }
   }
 }
 
@@ -230,11 +226,11 @@ repositories {
 }
 
 def versions = [
-  jackson           : '2.15.2',
-  junit             : '5.10.0',
-  junitPlatform     : '1.10.0',
-  lombok            : '1.18.28',
-  springBoot        : springBoot.class.package.implementationVersion
+  jackson      : '2.15.2',
+  junit        : '5.10.0',
+  junitPlatform: '1.10.0',
+  lombok       : '1.18.28',
+  springBoot   : springBoot.class.package.implementationVersion
 ]
 
 ext.libraries = [
@@ -253,14 +249,14 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.4'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.20.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.20.0'
-  implementation group: 'com.google.guava', name: 'guava', version: '32.1.1-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '32.1.2-jre'
   implementation group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '3.1.2'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
-  implementation (group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11') {
+  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.poi', module: 'poi-ooxml'
@@ -419,18 +415,18 @@ ccd {
 }
 
 bootWithCCD {
-    group = 'ccd tasks'
-    dependsOn(loadEnvSecrets)
+  group = 'ccd tasks'
+  dependsOn(loadEnvSecrets)
 
-    doFirst() {
-        project.file('./.aat-env').readLines().each() {
-            def index = it.indexOf("=")
-            def key = it.substring(0, index)
-            def value = it.substring(index + 1)
-            environment key, value
-        }
-        environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+  doFirst() {
+    project.file('./.aat-env').readLines().each() {
+      def index = it.indexOf("=")
+      def key = it.substring(0, index)
+      def value = it.substring(index + 1)
+      environment key, value
     }
+    environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+  }
 }
 
 cftlibTest {
@@ -441,8 +437,8 @@ cftlibTest {
 
   systemProperties([
     // Configuration parameters to execute top-level classes in parallel but methods in same thread
-    'junit.jupiter.execution.parallel.enabled': 'false',
-    'junit.jupiter.execution.parallel.mode.default': 'same_thread',
+    'junit.jupiter.execution.parallel.enabled'             : 'false',
+    'junit.jupiter.execution.parallel.mode.default'        : 'same_thread',
     'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
   ])
 
