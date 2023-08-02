@@ -134,6 +134,7 @@ public class NoticeOfChangeService {
             grantCaseAccessForNewSol(caseId, applicant, solicitorId, UserRole.fromString(solicitorRole));
         } else if (applicant.getSolicitor().getOrganisationPolicy().getOrganisation() != null) {
             String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+            log.info("Resetting supplementary data for org {} on case {}", orgId, caseId);
             ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
                 caseId.toString(),
                 idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
