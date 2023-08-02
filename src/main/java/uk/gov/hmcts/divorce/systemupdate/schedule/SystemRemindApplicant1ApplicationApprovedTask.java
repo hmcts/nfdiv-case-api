@@ -76,7 +76,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                     if (!reminderDate.isAfter(LocalDate.now())
                         && !caseData.getApplication().hasApplicant1ReminderBeenSent()
                     ) {
-                        notifyApplicant1(caseDetails, reminderDate, user, serviceAuthorization);
+                        notifyApplicant1(caseDetails.getId(), reminderDate, user, serviceAuthorization);
                     } else {
                         log.info("Case id {} not eligible for SystemRemindApplicant1ApplicationApprovedTask as Reminder Date is: {}",
                             caseDetails.getId(), reminderDate);
@@ -98,12 +98,12 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         }
     }
 
-    private void notifyApplicant1(CaseDetails caseDetails, LocalDate reminderDate, User user, String serviceAuth) {
+    private void notifyApplicant1(Long caseId, LocalDate reminderDate, User user, String serviceAuth) {
         log.info("Reminder date {} for Case id {} is on/before current date - sending reminder to Applicant 1",
             reminderDate,
-            caseDetails.getId()
+            caseId
         );
 
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, serviceAuth);
+        ccdUpdateService.submitEvent(caseId, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, serviceAuth);
     }
 }

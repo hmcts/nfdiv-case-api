@@ -170,17 +170,18 @@ class SubmitAosTest {
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(1L);
 
         var user = mock(User.class);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        doNothing().when(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+        doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
         submitAos.submitted(caseDetails, beforeDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test
@@ -198,17 +199,18 @@ class SubmitAosTest {
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(1L);
 
         var user = mock(User.class);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        doNothing().when(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+        doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
         submitAos.submitted(caseDetails, beforeDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test

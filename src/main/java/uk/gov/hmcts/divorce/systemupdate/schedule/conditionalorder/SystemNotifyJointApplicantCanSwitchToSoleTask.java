@@ -71,7 +71,7 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask extends AbstractTaskE
             ofNullable(ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization, ConditionalOrderPending))
                 .flatMap(Collection::stream)
                 .filter(this::isJointConditionalOrderOverdue)
-                .forEach(caseDetails -> remindJointApplicant(caseDetails, user, serviceAuthorization));
+                .forEach(caseDetails -> remindJointApplicant(caseDetails.getId(), user, serviceAuthorization));
 
             log.info("SystemNotifyJointApplicantCanSwitchToSoleTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -81,12 +81,12 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask extends AbstractTaskE
         }
     }
 
-    private void remindJointApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
+    private void remindJointApplicant(Long caseId, User user, String serviceAuth) {
         log.info(
             "Conditional order application +{}days elapsed for Case({}) - reminding Joint Applicant they can switch to sole",
-            submitCOrderReminderOffsetDays, caseDetails.getId()
+            submitCOrderReminderOffsetDays, caseId
         );
-        submitEvent(caseDetails, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, serviceAuth);
+        submitEvent(caseId, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, serviceAuth);
     }
 
     private boolean isJointConditionalOrderOverdue(final CaseDetails caseDetails) {

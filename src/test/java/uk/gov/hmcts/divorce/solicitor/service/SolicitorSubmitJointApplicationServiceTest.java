@@ -51,10 +51,11 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(1L);
 
         solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -69,9 +70,10 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(1L);
 
         solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_APPROVE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, APPLICANT_2_APPROVE, user, SERVICE_AUTHORIZATION);
     }
 }

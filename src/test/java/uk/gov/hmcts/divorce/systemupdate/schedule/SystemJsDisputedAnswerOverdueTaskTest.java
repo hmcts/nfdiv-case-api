@@ -95,10 +95,12 @@ class SystemJsDisputedAnswerOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(List.of(caseDetails));
 
+        when(caseDetails.getId()).thenReturn(1L);
+
         answerOverdueTask.run();
 
         verify(ccdUpdateService)
-            .submitEvent(caseDetails, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -131,15 +133,17 @@ class SystemJsDisputedAnswerOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
 
         answerOverdueTask.run();
 
         verify(ccdUpdateService)
-            .submitEvent(caseDetails1, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+            .submitEvent(1L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+            .submitEvent(2L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -152,12 +156,15 @@ class SystemJsDisputedAnswerOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(caseDetailsList);
 
+        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails2.getId()).thenReturn(2L);
+
         doThrow(new CcdManagementException(REQUEST_TIMEOUT, "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(1L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
 
         answerOverdueTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(1L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_JS_DISPUTED_ANSWER_OVERDUE, systemUser, SERVICE_AUTHORIZATION);
     }
 }

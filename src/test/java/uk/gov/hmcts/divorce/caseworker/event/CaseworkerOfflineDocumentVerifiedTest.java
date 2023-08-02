@@ -1021,7 +1021,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
-        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test
@@ -1049,6 +1049,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
         details.setData(caseData);
+        details.setId(TEST_CASE_ID);
 
         final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
@@ -1057,7 +1058,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
-        verify(ccdUpdateService).submitEvent(details, SWITCH_TO_SOLE_FO, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_FO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test
