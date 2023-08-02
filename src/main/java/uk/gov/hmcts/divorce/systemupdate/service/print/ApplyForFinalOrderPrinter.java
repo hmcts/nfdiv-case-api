@@ -53,7 +53,7 @@ public class ApplyForFinalOrderPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK,
-                List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK)
+                applicant.getFullName()
             );
 
             final UUID letterId = bulkPrintService.print(print);
@@ -77,7 +77,7 @@ public class ApplyForFinalOrderPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK,
-                List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_APPLY_FOR_FINAL_ORDER_PACK)
+                applicant.getFullName()
             );
 
             final UUID letterId = bulkPrintService.print(print);

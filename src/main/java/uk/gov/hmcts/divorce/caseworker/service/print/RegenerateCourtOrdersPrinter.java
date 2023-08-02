@@ -66,7 +66,7 @@ public class RegenerateCourtOrdersPrinter {
                     caseIdString,
                     caseIdString,
                     LETTER_TYPE_REGENERATE_COURT_ORDERS,
-                    List.of(caseIdString, recipientName, LETTER_TYPE_REGENERATE_COURT_ORDERS)
+                    recipientName
                 );
             final UUID letterId = bulkPrintService.print(print);
 

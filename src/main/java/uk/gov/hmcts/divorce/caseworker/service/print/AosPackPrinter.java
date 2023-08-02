@@ -50,7 +50,7 @@ public class AosPackPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_RESPONDENT_PACK,
-                List.of(caseIdString, app2.getFullName(), LETTER_TYPE_RESPONDENT_PACK)
+                app2.getFullName()
             );
 
             var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
@@ -80,7 +80,7 @@ public class AosPackPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_APPLICANT_PACK,
-                List.of(caseIdString, caseData.getApplicant1().getFullName(), LETTER_TYPE_APPLICANT_PACK)
+                caseData.getApplicant1().getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 
@@ -106,7 +106,7 @@ public class AosPackPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_APPLICANT_PACK,
-                List.of(caseIdString, caseData.getApplicant1().getFullName(), LETTER_TYPE_APPLICANT_PACK)
+                caseData.getApplicant1().getFullName()
             );
             final UUID letterId = bulkPrintService.printWithD10Form(print);
 
@@ -169,7 +169,7 @@ public class AosPackPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_AOS_RESPONSE_PACK,
-                List.of(caseIdString, caseData.getApplicant1().getFullName(), LETTER_TYPE_AOS_RESPONSE_PACK)
+                caseData.getApplicant1().getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 

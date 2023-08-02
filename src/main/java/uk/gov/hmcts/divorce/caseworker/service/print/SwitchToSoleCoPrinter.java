@@ -43,7 +43,7 @@ public class SwitchToSoleCoPrinter {
                     singletonList(switchToSoleCoLetter),
                     caseIdString,
                     caseIdString, LETTER_TYPE_SWITCH_TO_SOLE_CO,
-                    List.of(caseIdString, respondent.getFullName(), LETTER_TYPE_SWITCH_TO_SOLE_CO)
+                    respondent.getFullName()
                 );
             final UUID letterId = bulkPrintService.print(print);
 

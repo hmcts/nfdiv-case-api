@@ -57,7 +57,7 @@ public class GeneralLetterPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_GENERAL_LETTER,
-                List.of(caseIdString, recipientName, LETTER_TYPE_GENERAL_LETTER)
+                recipientName
             );
 
             final UUID letterId = bulkPrintService.print(print);

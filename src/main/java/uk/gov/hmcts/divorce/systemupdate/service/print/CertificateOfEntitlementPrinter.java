@@ -46,7 +46,7 @@ public class CertificateOfEntitlementPrinter {
                     caseIdString,
                     caseIdString,
                     LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT,
-                    List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT)
+                    applicant.getFullName()
                 );
             final UUID letterId = bulkPrintService.print(print);
 

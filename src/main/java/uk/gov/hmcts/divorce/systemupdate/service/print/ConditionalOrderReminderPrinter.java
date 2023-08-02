@@ -40,7 +40,7 @@ public class ConditionalOrderReminderPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_CONDITIONAL_ORDER_REMINDER_PACK,
-                List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_CONDITIONAL_ORDER_REMINDER_PACK)
+                applicant.getFullName()
             );
 
             final UUID letterId = bulkPrintService.print(print);

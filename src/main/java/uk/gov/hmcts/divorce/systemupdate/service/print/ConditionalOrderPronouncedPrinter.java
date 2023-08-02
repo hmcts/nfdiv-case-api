@@ -46,7 +46,7 @@ public class ConditionalOrderPronouncedPrinter {
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_CO_PRONOUNCED,
-                List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_CO_PRONOUNCED)
+                applicant.getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 

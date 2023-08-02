@@ -43,7 +43,7 @@ public class AosOverduePrinter {
                     caseIdString,
                     caseIdString,
                     LETTER_TYPE_AOS_OVERDUE,
-                    List.of(caseIdString, recipient.getFullName(), LETTER_TYPE_AOS_OVERDUE)
+                    recipient.getFullName()
                 );
 
             final UUID letterId = bulkPrintService.print(print);

@@ -46,7 +46,7 @@ public class FinalOrderGrantedPrinter {
                     caseIdString,
                     caseIdString,
                     LETTER_TYPE_FINAL_ORDER_GRANTED,
-                    List.of(caseIdString, applicant.getFullName(), LETTER_TYPE_FINAL_ORDER_GRANTED)
+                    applicant.getFullName()
                 );
             final UUID letterId = bulkPrintService.print(print);
 
