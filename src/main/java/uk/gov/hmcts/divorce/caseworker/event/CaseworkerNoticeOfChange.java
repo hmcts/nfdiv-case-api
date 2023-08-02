@@ -142,7 +142,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 roles,
                 orgPolicyCaseAssignedRole.getRole(),
                 details.getId());
-            default -> {}
+            default -> {
+
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

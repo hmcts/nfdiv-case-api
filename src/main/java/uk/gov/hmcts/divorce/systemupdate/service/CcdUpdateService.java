@@ -368,7 +368,8 @@ public class CcdUpdateService {
         Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
         supplementaryData.put("supplementary_data_updates",
             singletonMap("$set",
-                singletonMap("orgs_assigned_users." + orgId, newValue)));
+                Map.of("orgs_assigned_users." + orgId, newValue,
+                    "processed", true)));
 
         submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
     }
@@ -380,7 +381,7 @@ public class CcdUpdateService {
         Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
         supplementaryData.put("supplementary_data_updates",
             singletonMap("$inc",
-                singletonMap("orgs_assigned_users." + orgId, "+1")));
+                singletonMap("orgs_assigned_users." + orgId, "1")));
 
         submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
     }

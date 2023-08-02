@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,6 +30,8 @@ public class NoticeOfChangeService {
     private final AuthTokenGenerator authTokenGenerator;
 
     public void revokeCaseAccess(Long caseId, Applicant applicant, List<String> roles) {
+        List<CaseAssignmentUserRole> currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
 
         log.info("Revoking case access for roles {} for case {}", roles, caseId);
 
@@ -41,18 +44,28 @@ public class NoticeOfChangeService {
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
+        currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
+
         ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
             caseId.toString(),
             sysUserToken,
             s2sToken,
             orgId
         );
+
+        currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
+
     }
 
     public void changeAccessWithinOrganisation(Solicitor newSolicitor,
                                                List<String> roles,
                                                String solicitorRole,
                                                Long caseId) {
+        List<CaseAssignmentUserRole> currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
+
 
         final String solicitorId = getSolicitorId(caseId, newSolicitor);
         final String orgId = newSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationId();
@@ -60,6 +73,9 @@ public class NoticeOfChangeService {
         log.info("Re-assigning cases access for users in organisation {} on case {}", orgId, caseId);
 
         ccdAccessService.removeUsersWithRole(caseId, roles);
+
+        currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
 
         if (StringUtils.isNotBlank(solicitorId)) {
             ccdAccessService.addRoleToCase(
@@ -69,6 +85,9 @@ public class NoticeOfChangeService {
                 UserRole.fromString(solicitorRole)
             );
         }
+
+        currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
 
         //If there's no id found for new solicitor and we reach here, then move to unassigned cases list, else set assigned users to one
         String newOrgAssignedUsersValue = StringUtils.isNotBlank(solicitorId) ? "1" : "0";
@@ -92,6 +111,9 @@ public class NoticeOfChangeService {
                                                        Applicant applicantBefore,
                                                        List<String> roles,
                                                        String solicitorRole) {
+        List<CaseAssignmentUserRole> currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
+
 
         log.info("Applying Notice of Change Decision and granting access to new sol for case {}", caseId);
 
@@ -104,9 +126,24 @@ public class NoticeOfChangeService {
             revokeCaseAccess(caseId, applicantBefore, roles);
         }
 
+        currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
+
+
         if (StringUtils.isNotBlank(solicitorId)) {
             grantCaseAccessForNewSol(caseId, applicant, solicitorId, UserRole.fromString(solicitorRole));
+        } else if (applicant.getSolicitor().getOrganisationPolicy().getOrganisation() != null) {
+            String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+            ccdUpdateService.resetOrgAssignedUsersSupplementaryData(
+                caseId.toString(),
+                idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+                authTokenGenerator.generate(),
+                orgId
+            );
         }
+
+        currentRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+        log.info("Role assignments for case {} :: {} ", caseId, currentRoles);
     }
 
     private void grantCaseAccessForNewSol(Long caseId,
