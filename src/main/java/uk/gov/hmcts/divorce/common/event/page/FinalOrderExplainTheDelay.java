@@ -27,6 +27,7 @@ public class FinalOrderExplainTheDelay implements CcdPageConfiguration {
                 .complex(Applicant::getSolicitor)
                 .mandatory(Solicitor::getName)
                 .mandatory(Solicitor::getFirmName)
-                .done();
+                .done()
+            .done();
     }
 }
