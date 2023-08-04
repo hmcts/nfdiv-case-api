@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -48,6 +50,9 @@ class ApplyForFinalOrderTest {
 
     @Mock
     private ApplyForFinalOrderService applyForFinalOrderService;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private ApplyForFinalOrder applyForFinalOrder;
@@ -147,5 +152,15 @@ class ApplyForFinalOrderTest {
             applyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(aboutToSubmitResponse.getErrors()).isNotEmpty();
+    }
+
+    @Test
+    void shouldPassCaseDetailsToGeneralReferralService() {
+        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+
+        applyForFinalOrder.submitted(caseDetails, null);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
     }
 }
