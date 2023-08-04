@@ -37,11 +37,7 @@ public class IdamService {
     public User retrieveSystemUpdateUserDetails() {
         String clusterName = System.getenv().getOrDefault("CLUSTER_NAME", null);
 
-        if (clusterName == null) {
-            return retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
-        }
-
-        if (!clusterName.contains("prod")) {
+        if (clusterName == null || !clusterName.contains("prod")) {
             return retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
         }
 
