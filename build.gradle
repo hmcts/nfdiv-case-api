@@ -189,12 +189,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
-  '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
-  '**/uk/gov/hmcts/divorce/common/DecisionRequest.java',
-  '**/uk/gov/hmcts/divorce/caseworker/model/NoticeOfChangeRequest.java',
-  '**/uk/gov/hmcts/divorce/caseworker/service/NoticeOfChangeService.java',
-  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerNoticeOfChange.java',
-  '**/uk/gov/hmcts/divorce/systemupdate/convert/CallbackResponseConverter.java'
+  '**/uk/gov/hmcts/divorce/divorcecase/tab/**'
 ]
 
 sonarqube {

@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -67,36 +66,36 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 .done()
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .optional(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"")
                     .mandatory(Solicitor::getAddress,
-                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
+                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"")
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
-                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant1\"", true)
+                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant1\"")
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR, true)
-                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
-                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
+                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"")
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .optional(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"")
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"")
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant2\"")
-                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant2\"", true)
+                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant2\"")
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR, true)
-                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"")
@@ -133,7 +132,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 beforeApplicant,
                 roles,
                 orgPolicyCaseAssignedRole.getRole());
-            case ORG_REMOVED, SOL_REMOVED_ORG_RETAINED -> noticeOfChangeService.revokeCaseAccess(
+            case ORG_REMOVED -> noticeOfChangeService.revokeCaseAccess(
                 details.getId(),
                 beforeApplicant,
                 roles);
@@ -159,16 +158,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         if (beforeOrgPolicy.getOrganisation() != null && orgPolicy.getOrganisation() == null) {
             return NoticeType.ORG_REMOVED;
-        } else if (beforeOrgPolicy.getOrganisation() != null
-            && beforeOrgPolicy.getOrganisation().equals(orgPolicy.getOrganisation())
-            && StringUtils.isBlank(applicant.getSolicitor().getEmail())) {
-
-            return NoticeType.SOL_REMOVED_ORG_RETAINED;
         } else if (orgPolicy.getOrganisation() != null && orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
-
             return NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG;
         } else if (orgPolicy.getOrganisation() != null && !orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
-
             return NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
         }
 
@@ -201,21 +193,13 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
             data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
             data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
-            if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-                data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
-                setConditionalOrderDefaultValues(data);
-            } else {
-                data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
-            }
         } else {
             data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
             data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
-            if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-                data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
-                setConditionalOrderDefaultValues(data);
-            } else {
-                data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
-            }
+        }
+
+        if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
+            setConditionalOrderDefaultValues(data);
         }
 
         return data;
@@ -242,7 +226,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private enum NoticeType {
         NEW_DIGITAL_SOLICITOR_NEW_ORG,
         NEW_DIGITAL_SOLICITOR_EXISTING_ORG,
-        SOL_REMOVED_ORG_RETAINED,
         ORG_REMOVED,
         OFFLINE_NOC
 
