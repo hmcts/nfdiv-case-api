@@ -32,7 +32,7 @@ public class ValidationController {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OcrValidationResponse> validate(@PathVariable("form-type") final String formType,
-                                                          @RequestBody final OcrDataValidationRequest requestBody) {
+                                                          @RequestBody(required = false) final OcrDataValidationRequest requestBody) {
 
         String encodedFormType = UriUtils.encode(formType, StandardCharsets.UTF_8);
         if (!isValidEnum(FormType.class, encodedFormType)) {

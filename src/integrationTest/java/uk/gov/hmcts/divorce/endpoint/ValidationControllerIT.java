@@ -131,4 +131,14 @@ public class ValidationControllerIT {
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().is(200));
     }
+
+    @Test
+    public void shouldAcceptEmptyRequest() throws Exception {
+        mockMvc.perform(post("/forms/D8/validate-ocr")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().is(200));
+    }
 }
