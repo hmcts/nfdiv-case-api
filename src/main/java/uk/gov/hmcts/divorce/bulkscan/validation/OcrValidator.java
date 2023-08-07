@@ -36,7 +36,8 @@ public class OcrValidator {
 
     public OcrValidationResponse validateExceptionRecord(String formType, OcrDataValidationRequest ocrDataValidationRequest) {
         if (D8.getName().equals(formType) || D8S.getName().equals(formType)) {
-            OcrDataFields ocrDataFields = transformData(ocrDataValidationRequest.getOcrDataFields());
+            OcrDataFields ocrDataFields = transformData(ocrDataValidationRequest == null ? null
+                : ocrDataValidationRequest.getOcrDataFields());
             return validateOcrData(formType, ocrDataFields);
         }
 
