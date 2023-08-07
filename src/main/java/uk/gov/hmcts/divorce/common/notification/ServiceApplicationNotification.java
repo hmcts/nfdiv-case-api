@@ -68,11 +68,12 @@ public class ServiceApplicationNotification implements ApplicantNotification {
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "serviceApplicationGranted", caseId));
         }
 
+        final AlternativeServiceType alternativeServiceType = alternativeService.getAlternativeServiceType();
         if (alternativeService.isApplicationGranted()) {
-            log.info(LOGGER_MESSAGE, alternativeService.getAlternativeServiceType().getLabel(), "granted");
+            log.info(LOGGER_MESSAGE, alternativeServiceType == null ? "" : alternativeServiceType.getLabel(), "granted");
             return SERVICE_APPLICATION_GRANTED;
         } else {
-            log.info(LOGGER_MESSAGE, alternativeService.getAlternativeServiceType().getLabel(), "rejected");
+            log.info(LOGGER_MESSAGE, alternativeServiceType == null ? "" : alternativeServiceType.getLabel(), "rejected");
             return SERVICE_APPLICATION_REJECTED;
         }
     }
