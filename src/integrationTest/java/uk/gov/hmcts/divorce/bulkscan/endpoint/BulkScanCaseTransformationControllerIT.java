@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint;
+package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,10 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.TransformationInput;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
-import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
 
 import java.util.List;
 
@@ -27,9 +27,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8S;
 import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.inputScannedDocuments;

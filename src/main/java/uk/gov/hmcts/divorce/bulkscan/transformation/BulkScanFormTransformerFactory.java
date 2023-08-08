@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.common.exception.UnsupportedFormTypeException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8S;
 
 @Component
 public class BulkScanFormTransformerFactory {

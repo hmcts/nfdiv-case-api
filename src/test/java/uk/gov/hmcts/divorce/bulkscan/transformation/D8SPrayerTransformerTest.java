@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
 
 import java.util.List;
 import java.util.Set;
