@@ -218,6 +218,12 @@ public class FinalOrder {
     private YesOrNo finalOrderReminderSentApplicant2;
 
     @CCD(
+        label = "Respondent requested",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respondentRequested;
+
+    @CCD(
         label = "What application type is the D36?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "OfflineApplicationType",
