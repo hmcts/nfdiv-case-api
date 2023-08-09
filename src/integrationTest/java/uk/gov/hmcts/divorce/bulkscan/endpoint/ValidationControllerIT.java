@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint;
+package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -12,9 +12,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 
 import java.util.List;
 
@@ -127,6 +127,16 @@ public class ValidationControllerIT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(
                     OcrDataValidationRequest.builder().build()))
+                .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().is(200));
+    }
+
+    @Test
+    public void shouldAcceptEmptyRequest() throws Exception {
+        mockMvc.perform(post("/forms/D8/validate-ocr")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .accept(APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().is(200));

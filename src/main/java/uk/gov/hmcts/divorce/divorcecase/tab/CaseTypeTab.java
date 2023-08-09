@@ -433,6 +433,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dateFinalOrderSubmitted")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
+            .field("applicant1FinalOrderStatementOfTruth")
             .field("granted")
             .field("grantedDate")
             .field("expeditedFinalOrderAuthorisation")
@@ -448,7 +449,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Respondent")
             .field("doesApplicant2WantToApplyForFinalOrder", IS_JOINT)
             .field("applicant2FinalOrderExplanation", IS_JOINT)
-            .field("applicant2FinalOrderLateExplanation", IS_JOINT);
+            .field("applicant2FinalOrderLateExplanation", IS_JOINT)
+            .field("applicant2FinalOrderStatementOfTruth");
+
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

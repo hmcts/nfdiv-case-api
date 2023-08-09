@@ -179,6 +179,12 @@ public class FinalOrder {
     private YesOrNo applicant1FinalOrderStatementOfTruth;
 
     @CCD(
+        label = "${labelContentRespondentsOrApplicant2s} believes that the facts stated in this application are true.",
+        access = {Applicant2Access.class}
+    )
+    private YesOrNo applicant2FinalOrderStatementOfTruth;
+
+    @CCD(
         label = "Final date to apply for Final Order",
         access = {DefaultAccess.class}
     )
