@@ -113,43 +113,43 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
             .complex(CaseData::getDocuments)
-                .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
-                .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"")
+            .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
+            .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"")
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-                .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
-                .mandatory(AcknowledgementOfService::getHowToRespondApplication,
-                    "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
+            .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
+            .mandatory(AcknowledgementOfService::getHowToRespondApplication,
+                "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getScannedDocumentNames,
-                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\"")
+            .mandatory(CaseDocuments::getScannedDocumentNames,
+                "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\"")
             .done()
             .complex(CaseData::getConditionalOrder)
-                .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
-                .mandatory(ConditionalOrder::getD84ApplicationType,
-                    "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
-                .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
+            .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
+            .mandatory(ConditionalOrder::getD84ApplicationType,
+                "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
+            .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
-                .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
-                .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
-                .mandatory(FinalOrder::getD36ApplicationType,
-                    "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
-                .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\"")
-                .mandatory(FinalOrder::getRespondentRequested, "d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\"")
+            .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
+            .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
+            .mandatory(FinalOrder::getD36ApplicationType,
+                "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
+            .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\"")
+            .mandatory(FinalOrder::getRespondentRequested, "d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\"")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getStateToTransitionApplicationTo)
+            .mandatory(Application::getStateToTransitionApplicationTo)
             .done()
 
 
             .page("stateToTransitionToJoint")
             .showCondition("applicationType=\"jointApplication\" AND typeOfDocumentAttached!=\"D84\" OR scannedSubtypeReceived!=\"D84\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getStateToTransitionApplicationTo)
+            .mandatory(Application::getStateToTransitionApplicationTo)
             .done();
     }
 
@@ -242,14 +242,18 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getDocuments().setScannedSubtypeReceived(null);
             }
 
+            final YesOrNo respondentRequested = caseData.getFinalOrder().getRespondentRequested();
             if (caseData.getApplicationType().isSole()) {
-                caseData.getApplicant1().setOffline(YES);
+                if (respondentRequested == YesOrNo.YES) {
+                    caseData.getApplicant2().setOffline(YES);
+                } else {
+                    caseData.getApplicant1().setOffline(YES);
+                }
             } else {
                 caseData.getApplicant1().setOffline(YES);
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            final YesOrNo respondentRequested = caseData.getFinalOrder().getRespondentRequested();
             final State state = respondentRequested == YesOrNo.YES ? RespondentFinalOrderRequested : FinalOrderRequested;
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
