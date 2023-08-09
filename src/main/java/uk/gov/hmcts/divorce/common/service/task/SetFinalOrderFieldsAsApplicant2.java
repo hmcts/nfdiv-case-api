@@ -37,7 +37,13 @@ public class SetFinalOrderFieldsAsApplicant2 implements CaseTask {
                 && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
                 finalOrder.setApplicant2AppliedForFinalOrderFirst(YES);
                 finalOrder.setApplicant1AppliedForFinalOrderFirst(NO);
-                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+                if (details.getData().getApplicationType().isSole()) {
+                    finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+                }
+            } else {
+                if (!details.getData().getApplicationType().isSole()) {
+                    finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+                }
             }
         }
 
