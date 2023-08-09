@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint;
+package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,18 +6,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
-import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
-import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.ERRORS;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.SUCCESS;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8S;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.ERRORS;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.ocrDataValidationRequest;
 
 @ExtendWith(MockitoExtension.class)
