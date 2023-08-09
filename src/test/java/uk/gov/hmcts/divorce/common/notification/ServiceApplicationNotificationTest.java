@@ -18,6 +18,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -260,6 +261,13 @@ class ServiceApplicationNotificationTest {
         assertThatExceptionOfType(NotificationTemplateException.class)
             .isThrownBy(() -> sendNotification(BAILIFF, DIVORCE, null))
             .withMessage("Notification failed with missing field 'serviceApplicationGranted' for Case Id: 1234567890123456");
+    }
+
+    @Test
+    void shouldNotThrowExceptionWhenAlternativeServiceTypeIsNull() {
+        assertDoesNotThrow(
+            () ->   sendNotification(null, DIVORCE, GRANTED)
+        );
     }
 
     private void sendNotification(AlternativeServiceType alternativeServiceType, DivorceOrDissolution divorceOrDissolution,

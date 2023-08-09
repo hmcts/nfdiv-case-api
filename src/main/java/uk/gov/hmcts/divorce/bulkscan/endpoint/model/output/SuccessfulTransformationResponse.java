@@ -1,9 +1,9 @@
-package uk.gov.hmcts.divorce.endpoint.model.output;
+package uk.gov.hmcts.divorce.bulkscan.endpoint.model.output;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import uk.gov.hmcts.divorce.endpoint.model.CaseCreationDetails;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.CaseCreationDetails;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -45,7 +46,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .showSummary(false)
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE))
             .page("generalReferral")
             .pageLabel("General referral")

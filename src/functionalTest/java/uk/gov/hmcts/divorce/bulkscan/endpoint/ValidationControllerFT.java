@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint;
+package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.testutil.ServiceAuthenticationGenerator;
 
 import java.io.IOException;

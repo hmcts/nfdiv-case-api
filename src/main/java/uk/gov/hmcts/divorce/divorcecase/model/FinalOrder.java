@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -172,6 +173,12 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1FinalOrderStatementOfTruth;
+
+    @CCD(
+        label = "${labelContentRespondentsOrApplicant2s} believes that the facts stated in this application are true.",
+        access = {Applicant2Access.class}
+    )
+    private YesOrNo applicant2FinalOrderStatementOfTruth;
 
     @CCD(
         label = "Final date to apply for Final Order",
@@ -337,5 +344,13 @@ public class FinalOrder {
     @JsonIgnore
     public boolean hasApplicant2BeenNotifiedTheyCanContinueSwitchToSoleFO() {
         return YES.equals(finalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention);
+    }
+
+    @JsonIgnore
+    public boolean hasFinalOrderLateExplanation() {
+        return nonNull(applicant1FinalOrderLateExplanation)
+            || nonNull(applicant2FinalOrderLateExplanation)
+            || nonNull(applicant1FinalOrderLateExplanationTranslated)
+            || nonNull(applicant2FinalOrderLateExplanationTranslated);
     }
 }

@@ -6,8 +6,8 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
-import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
-import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.TransformationInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
