@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
@@ -222,6 +223,11 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private YesOrNo respondentRequested;
+
+    @CCD(
+        label = "Link to scanned d36 form"
+    )
+    private Document scannedD36Form;
 
     @CCD(
         label = "What application type is the D36?",
