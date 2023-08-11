@@ -167,7 +167,7 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isNotEqualTo(AwaitingAos);
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -186,7 +186,7 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isNotEqualTo(AwaitingService);
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
