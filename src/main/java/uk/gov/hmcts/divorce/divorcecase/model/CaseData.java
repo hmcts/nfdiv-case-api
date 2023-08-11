@@ -539,6 +539,7 @@ public class CaseData {
 
         if (FINAL_ORDER_APPLICATION.equals(documentType)) {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
+            finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
         }
     }
 }

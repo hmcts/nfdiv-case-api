@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplyingSole;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -787,7 +788,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
-            .finalOrder(FinalOrder.builder().respondentRequested(YES).build())
+            .finalOrder(FinalOrder.builder().respondentRequested(OfflineWhoApplyingSole.RESPONDENT).build())
             .documents(
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(FO_D36)
@@ -840,7 +841,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
-            .finalOrder(FinalOrder.builder().respondentRequested(YES).build())
+            .finalOrder(FinalOrder.builder().respondentRequested(OfflineWhoApplyingSole.RESPONDENT).build())
             .documents(
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(FO_D36)

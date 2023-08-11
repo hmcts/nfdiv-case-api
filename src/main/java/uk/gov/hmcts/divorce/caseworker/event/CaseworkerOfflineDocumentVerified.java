@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -20,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplyingSole;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -242,9 +242,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getDocuments().setScannedSubtypeReceived(null);
             }
 
-            final YesOrNo respondentRequested = caseData.getFinalOrder().getRespondentRequested();
+            final boolean respondentRequested = OfflineWhoApplyingSole.RESPONDENT.equals(caseData.getFinalOrder().getRespondentRequested());
+
             if (caseData.getApplicationType().isSole()) {
-                if (respondentRequested == YesOrNo.YES) {
+                if (respondentRequested) {
                     caseData.getApplicant2().setOffline(YES);
                 } else {
                     caseData.getApplicant1().setOffline(YES);
@@ -254,7 +255,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getApplicant2().setOffline(YES);
             }
 
-            final State state = respondentRequested == YesOrNo.YES ? RespondentFinalOrderRequested : FinalOrderRequested;
+            final State state = respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)

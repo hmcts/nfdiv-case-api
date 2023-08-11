@@ -219,15 +219,24 @@ public class FinalOrder {
     private YesOrNo finalOrderReminderSentApplicant2;
 
     @CCD(
-        label = "Respondent requested",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo respondentRequested;
-
-    @CCD(
         label = "Link to scanned d36 form"
     )
     private Document scannedD36Form;
+
+    @CCD(
+        label = "Date D36 form was scanned"
+    )
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime dateD36FormScanned;
+
+    @CCD(
+        label = "Who is submitting the D36?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "OfflineWhoApplyingSole",
+        access = {DefaultAccess.class}
+    )
+    private OfflineWhoApplyingSole respondentRequested;
 
     @CCD(
         label = "What application type is the D36?",
