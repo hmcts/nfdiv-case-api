@@ -2,9 +2,9 @@ package uk.gov.hmcts.divorce.bulkscan.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
-import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
-import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,11 +19,11 @@ import java.util.Objects;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8S;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.ERRORS;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.getValidationStatus;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformData;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.ERRORS;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.getValidationStatus;
 
 @Component
 @Slf4j
