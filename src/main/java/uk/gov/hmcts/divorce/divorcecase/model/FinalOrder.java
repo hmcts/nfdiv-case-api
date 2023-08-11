@@ -153,7 +153,7 @@ public class FinalOrder {
             hint = "You are making this application for a final order over one year from when the conditional order was made. "
                     + "Explain to the court why you did not apply for a final order earlier. "
                     + "Your answer will be reviewed as part of your application",
-            access = {DefaultAccess.class},
+            access = {Applicant2Access.class},
             typeOverride = TextArea
     )
     private String applicant2FinalOrderLateExplanation;
