@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint;
+package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.CaseCreationDetails;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.TransformationInput;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.output.SuccessfulTransformationResponse;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
-import uk.gov.hmcts.divorce.endpoint.model.CaseCreationDetails;
-import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
-import uk.gov.hmcts.divorce.endpoint.model.output.SuccessfulTransformationResponse;
 
 import java.util.List;
 import java.util.Map;

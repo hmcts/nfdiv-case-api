@@ -5,21 +5,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.KeyValue;
-import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
-import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrValidationResponse;
 
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8S;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.ERRORS;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELDS_CANNOT_MATCH;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING_ERROR;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING_WARNING;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_APPLYING_FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
-import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.ERRORS;
-import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 
