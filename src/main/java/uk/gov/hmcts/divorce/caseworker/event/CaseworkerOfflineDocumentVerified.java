@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
@@ -91,6 +92,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private GeneralReferralService generalReferralService;
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
     private static final String ALWAYS_HIDE = "typeOfDocumentAttached=\"ALWAYS_HIDE\"";
@@ -313,17 +317,20 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
-        } else if ((FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived()))
-            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
 
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering Switched To Sole FO event for case id: {}",
-                details.getId());
+            generalReferralService.caseWorkerGeneralReferral(details);
 
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
+            if (SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering Switched To Sole FO event for case id: {}",
+                    details.getId());
+
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
+                ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
+            }
         } else if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             log.info(
                 "CaseworkerOfflineDocumentVerified submitted callback triggering submit aos notifications: {}",

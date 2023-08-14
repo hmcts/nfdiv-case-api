@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
@@ -113,6 +114,10 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
+
 
     @InjectMocks
     private CaseworkerOfflineDocumentVerified caseworkerOfflineDocumentVerified;
@@ -1072,6 +1077,33 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldInvokeGeneralReferralServiceFO_D36() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build())
+            .build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(details);
+    }
+
+    @Test
+    void shouldInvokeGeneralReferralServiceD36() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedSubtypeReceived(D36).build())
+            .build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(details);
+    }
+
+
+    @Test
     void shouldSendOfflineNotifications() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
@@ -1171,7 +1203,9 @@ class CaseworkerOfflineDocumentVerifiedTest {
     @Test
     void shouldNotTriggerSwitchToSoleEventIfD36AndSwitchToSoleNotSelected() {
         final CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().build())
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .build())
             .finalOrder(FinalOrder.builder().build())
             .build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
