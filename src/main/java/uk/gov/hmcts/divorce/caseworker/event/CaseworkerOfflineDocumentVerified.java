@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplyingSole;
+import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -136,8 +136,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
             .mandatory(FinalOrder::getD36ApplicationType,
                 "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
-            .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\"")
-            .mandatory(FinalOrder::getRespondentRequested, "d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\"")
+            .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
+                + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
@@ -242,7 +242,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 caseData.getDocuments().setScannedSubtypeReceived(null);
             }
 
-            final boolean respondentRequested = OfflineWhoApplyingSole.RESPONDENT.equals(caseData.getFinalOrder().getRespondentRequested());
+            final boolean respondentRequested = OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying());
 
             if (caseData.getApplicationType().isSole()) {
                 if (respondentRequested) {

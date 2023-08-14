@@ -231,14 +231,6 @@ public class FinalOrder {
     private LocalDateTime dateD36FormScanned;
 
     @CCD(
-        label = "Who is submitting the D36?",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "OfflineWhoApplyingSole",
-        access = {DefaultAccess.class}
-    )
-    private OfflineWhoApplyingSole respondentRequested;
-
-    @CCD(
         label = "What application type is the D36?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "OfflineApplicationType",
