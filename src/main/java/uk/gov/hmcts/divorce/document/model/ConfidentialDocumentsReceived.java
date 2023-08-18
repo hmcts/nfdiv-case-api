@@ -125,6 +125,24 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     @JsonProperty("finalOrderGrantedCoverLetterApp1")
     FINAL_ORDER_GRANTED_COVER_LETTER_APP_1("Applicant 1 Final order granted cover letter"),
 
+    @JsonProperty("conditionalOrderCanApply")
+    CONDITIONAL_ORDER_CAN_APPLY("Conditional order can apply"),
+
+    @JsonProperty("finalOrderCanApplyApp1")
+    FINAL_ORDER_CAN_APPLY_APP1("Final order can apply - Applicant 1"),
+
+    @JsonProperty("finalOrderCanApplyApp2")
+    FINAL_ORDER_CAN_APPLY_APP2("Final order can apply - Applicant 2"),
+
+    @JsonProperty("conditionalOrderReminder")
+    CONDITIONAL_ORDER_REMINDER("Conditional order reminder"),
+
+    @JsonProperty("coversheet")
+    COVERSHEET("Coversheet"),
+
+    @JsonProperty("finalOrderCanApply")
+    FINAL_ORDER_CAN_APPLY("Final order can apply"),
+
     @JsonProperty("finalOrderGrantedCoverLetterApp2")
     FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter");
 
