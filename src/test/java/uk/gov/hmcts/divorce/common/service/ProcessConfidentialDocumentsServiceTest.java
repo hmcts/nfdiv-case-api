@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
@@ -134,13 +135,12 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(1, nonConfidentialDocuments.size());
-        assertEquals(2, confidentialDocuments.size());
+        assertEquals(2, nonConfidentialDocuments.size());
+        assertEquals(1, confidentialDocuments.size());
 
         assertThat(confidentialDocuments.stream()
             .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-            .collect(Collectors.toList()),  containsInAnyOrder(ConfidentialDocumentsReceived.APPLICATION,
-            ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+            .collect(Collectors.toList()),  containsInAnyOrder(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
         );
     }
 
@@ -250,13 +250,13 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(1, nonConfidentialDocuments.size());
-        assertEquals(5, confidentialDocuments.size());
+        assertEquals(2, nonConfidentialDocuments.size());
+        assertEquals(4, confidentialDocuments.size());
 
         assertThat(nonConfidentialDocuments.stream()
             .map(doc -> doc.getValue().getDocumentType())
             .collect(Collectors.toList()),
-            containsInAnyOrder(BAILIFF_SERVICE_REFUSED));
+            containsInAnyOrder(BAILIFF_SERVICE_REFUSED, APPLICATION));
 
         assertThat(
             confidentialDocuments.stream()
@@ -266,8 +266,7 @@ public class ProcessConfidentialDocumentsServiceTest {
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
                 ConfidentialDocumentsReceived.GENERAL_LETTER,
-                ConfidentialDocumentsReceived.GENERAL_LETTER,
-                ConfidentialDocumentsReceived.APPLICATION)
+                ConfidentialDocumentsReceived.GENERAL_LETTER)
         );
 
         assertThat(

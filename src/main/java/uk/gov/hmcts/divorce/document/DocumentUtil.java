@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REMINDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
@@ -171,6 +172,8 @@ public final class DocumentUtil {
             case CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2 -> ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
             case FINAL_ORDER_GRANTED_COVER_LETTER_APP_1 -> ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
             case FINAL_ORDER_GRANTED_COVER_LETTER_APP_2 -> ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
+            case FINAL_ORDER_CAN_APPLY_APP1 -> ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1;
+            case FINAL_ORDER_CAN_APPLY_APP2 -> ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2;
             default -> DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING.get(documentType);
         };
     }
@@ -194,6 +197,7 @@ public final class DocumentUtil {
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 GENERAL_LETTER,
                 AOS_RESPONSE_LETTER,
+                CONDITIONAL_ORDER_REMINDER,
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
                 FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
@@ -216,9 +220,7 @@ public final class DocumentUtil {
                 DocumentType.ACKNOWLEDGEMENT_OF_SERVICE, ConfidentialDocumentsReceived.AOS,
                 DocumentType.ANNEX_A, ConfidentialDocumentsReceived.ANNEX_A,
                 DocumentType.OTHER, ConfidentialDocumentsReceived.OTHER,
-                DocumentType.APPLICATION, ConfidentialDocumentsReceived.APPLICATION,
                 DocumentType.BAILIFF_SERVICE, ConfidentialDocumentsReceived.BAILIFF_SERVICE,
-                DocumentType.CONDITIONAL_ORDER_ANSWERS, ConfidentialDocumentsReceived.CO_ANSWERS,
                 DocumentType.CONDITIONAL_ORDER_APPLICATION, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_APPLICATION,
                 DocumentType.CONDITIONAL_ORDER_REFUSAL, ConfidentialDocumentsReceived.CO_REFUSAL_CLARIFICATION_RESP,
                 DocumentType.CORRESPONDENCE, ConfidentialDocumentsReceived.CORRESPONDENCE,
@@ -247,7 +249,6 @@ public final class DocumentUtil {
                 DocumentType.AOS_RESPONSE_LETTER, ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER,
                 DocumentType.NAME_CHANGE_EVIDENCE, ConfidentialDocumentsReceived.NAME_CHANGE,
                 DocumentType.NOTICE_OF_REFUSAL_OF_ENTITLEMENT, ConfidentialDocumentsReceived.NOTICE_OF_REFUSAL_OF_ENTITLEMENT,
-                DocumentType.RESPONDENT_ANSWERS, ConfidentialDocumentsReceived.RESPONDENT_ANSWERS,
                 DocumentType.SOLICITOR_SERVICE, ConfidentialDocumentsReceived.SOLICITOR_SERVICE,
                 DocumentType.CONDITIONAL_ORDER_REMINDER, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_REMINDER,
                 DocumentType.COVERSHEET, ConfidentialDocumentsReceived.COVERSHEET
