@@ -7,12 +7,14 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.GeneralLetterService;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Collection;
 
@@ -36,7 +38,10 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     private static final String CREATE_GENERAL_LETTER_TITLE = "Create general letter";
 
     @Autowired
-    private GeneralLetterService generalLetterService;
+    private GenerateGeneralLetter generateGeneralLetter;
+
+    @Autowired
+    private SendGeneralLetter sendGeneralLetter;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -48,6 +53,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, JUDGE, CITIZEN))
             .page("createGeneralLetter", this::midEvent)
@@ -85,13 +91,24 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
         final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
-        generalLetterService.processGeneralLetter(details);
+        generateGeneralLetter.apply(details);
 
         //clear general letter field so that on next general letter old data is not shown
         details.getData().setGeneralLetter(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .build();
+    }
+
+    public SubmittedCallbackResponse submitted(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
+
+        sendGeneralLetter.apply(details);
+
+        return SubmittedCallbackResponse.builder()
             .build();
     }
 }

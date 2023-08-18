@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.type.KeyValue;
-import uk.gov.hmcts.divorce.endpoint.model.input.OcrDataField;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 
 import java.util.List;
 import java.util.Map;

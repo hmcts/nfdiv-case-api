@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint.model;
+package uk.gov.hmcts.divorce.bulkscan.endpoint.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

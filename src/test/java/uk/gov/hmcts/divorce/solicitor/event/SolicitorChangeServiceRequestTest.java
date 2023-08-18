@@ -151,7 +151,7 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
-    void shouldChangeStateToAwaitingAoSForCourtServiceAndNotRegenerateNOPD10OrD84WhenApplicationNotYetIssued() {
+    void shouldNotChangeStateToAwaitingAoSForCourtServiceAndNotRegenerateNOPD10OrD84WhenApplicationNotYetIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -167,11 +167,11 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingAos);
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
-    void shouldChangeStateToAwaitingServiceForSolicitorServiceAndNotRegenerateNOPWhenApplicationNotYetIssued() {
+    void shouldNotChangeStateToAwaitingServiceForSolicitorServiceAndNotRegenerateNOPWhenApplicationNotYetIssued() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -186,7 +186,7 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingService);
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test

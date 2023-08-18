@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.endpoint;
+package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
 
 import org.junit.jupiter.api.Test;
@@ -7,10 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.CaseCreationDetails;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.TransformationInput;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.output.SuccessfulTransformationResponse;
 import uk.gov.hmcts.divorce.bulkscan.transformation.BulkScanService;
-import uk.gov.hmcts.divorce.endpoint.model.CaseCreationDetails;
-import uk.gov.hmcts.divorce.endpoint.model.input.TransformationInput;
-import uk.gov.hmcts.divorce.endpoint.model.output.SuccessfulTransformationResponse;
 
 import java.util.Map;
 
