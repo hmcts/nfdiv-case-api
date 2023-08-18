@@ -11,13 +11,15 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.service.GeneralLetterService;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +34,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class CaseworkerGeneralLetterTest {
 
     @Mock
-    private GeneralLetterService generalLetterService;
+    private GenerateGeneralLetter generateGeneralLetter;
+
+    @Mock
+    private SendGeneralLetter sendGeneralLetter;
 
     @InjectMocks
     private CaseworkerGeneralLetter generalLetter;
@@ -106,7 +111,7 @@ public class CaseworkerGeneralLetterTest {
     }
 
     @Test
-    void shouldProcessGeneralLetter() {
+    void shouldGenerateGeneralLetter() {
 
         final CaseData caseData = caseData();
         caseData.setGeneralLetter(
@@ -122,7 +127,27 @@ public class CaseworkerGeneralLetterTest {
         details.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalLetter.aboutToSubmit(details, details);
-        verify(generalLetterService).processGeneralLetter(details);
+        verify(generateGeneralLetter).apply(details);
         assertThat(response.getData().getGeneralLetter()).isNull();
+    }
+
+    @Test
+    void shouldSendGeneratedGeneralLetter() {
+
+        final CaseData caseData = caseData();
+        caseData.setGeneralLetter(
+            GeneralLetter
+                .builder()
+                .generalLetterParties(APPLICANT)
+                .generalLetterDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        SubmittedCallbackResponse response = generalLetter.submitted(details, details);
+        verify(sendGeneralLetter).apply(details);
     }
 }

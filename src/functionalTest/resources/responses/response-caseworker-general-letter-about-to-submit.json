@@ -83,6 +83,30 @@
         }
       }
     ],
+    "generalLetters": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "generalLetterDateTime": "${json-unit.any-string}",
+          "generalLetterParties": "applicant",
+          "generalLetterLink": {
+            "document_url" : "${json-unit.any-string}",
+            "document_filename" : "${json-unit.any-string}",
+            "document_binary_url" : "${json-unit.any-string}"
+          },
+          "generalLetterAttachmentLinks": [
+            {
+              "id" : "${json-unit.any-string}",
+              "value" : {
+                "document_url" : "${json-unit.any-string}",
+                "document_filename" : "${json-unit.any-string}",
+                "document_binary_url" : "${json-unit.any-string}"
+              }
+            }
+          ]
+        }
+      }
+    ],
     "dueDate": "2020-04-28",
     "dataVersion": 5,
     "warnings": []
