@@ -121,6 +121,15 @@ public class SystemAttachScannedDocumentsTest {
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
 
+    @Test
+    void shouldIgnoreCcdIdsWhenComparingDocuments() {
+        final List<ListValue<ScannedDocument>> scannedDocuments = scannedDocuments(asList(D10.getLabel(), D84.getLabel()));
+        final CaseDetails<CaseData, State> details = getCaseDetails(scannedDocuments);
+        AboutToStartOrSubmitResponse<CaseData, State> response = systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
+    }
+
     private CaseDetails<CaseData, State> getCaseDetails(final List<ListValue<ScannedDocument>> scannedDocuments) {
         return CaseDetails.<CaseData, State>builder()
             .data(CaseData.builder()
