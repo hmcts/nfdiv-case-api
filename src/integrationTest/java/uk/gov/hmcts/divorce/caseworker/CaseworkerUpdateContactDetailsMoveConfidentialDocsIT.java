@@ -220,8 +220,8 @@ public class CaseworkerUpdateContactDetailsMoveConfidentialDocsIT {
     }
 
     private <T> List<ListValue<T>> convertDocs(AboutToStartOrSubmitCallbackResponse response,
-                                    String documentFieldName,
-                                    Class<T> documentType) {
+                                               String documentFieldName,
+                                               Class<T> documentType) {
         return objectMapper.convertValue(response.getData().get(documentFieldName),
             TypeFactory.defaultInstance().constructCollectionType(ArrayList.class,
                 TypeFactory.defaultInstance().constructParametricType(ListValue.class, documentType)));
