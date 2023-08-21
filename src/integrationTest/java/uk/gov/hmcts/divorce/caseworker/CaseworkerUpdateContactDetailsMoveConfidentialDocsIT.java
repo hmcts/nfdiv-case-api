@@ -219,9 +219,9 @@ public class CaseworkerUpdateContactDetailsMoveConfidentialDocsIT {
         assertThat(regularDocs.get(0).getValue().getDocumentType()).isEqualTo(DocumentType.FINAL_ORDER_CAN_APPLY_APP1);
     }
 
-    private <T> List<T> convertDocs(AboutToStartOrSubmitCallbackResponse response,
+    private <T> List<ListValue<T>> convertDocs(AboutToStartOrSubmitCallbackResponse response,
                                     String documentFieldName,
-                                    Class<?> documentType) {
+                                    Class<T> documentType) {
         return objectMapper.convertValue(response.getData().get(documentFieldName),
             TypeFactory.defaultInstance().constructCollectionType(ArrayList.class,
                 TypeFactory.defaultInstance().constructParametricType(ListValue.class, documentType)));
