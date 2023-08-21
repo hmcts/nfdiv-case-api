@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
@@ -174,7 +175,8 @@ public final class DocumentUtil {
             case FINAL_ORDER_GRANTED_COVER_LETTER_APP_2 -> ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
             case FINAL_ORDER_CAN_APPLY_APP1 -> ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1;
             case FINAL_ORDER_CAN_APPLY_APP2 -> ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2;
-            default -> DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING.get(documentType);
+            default -> Optional.ofNullable(DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING.get(documentType))
+                .orElse(ConfidentialDocumentsReceived.OTHER);
         };
     }
 
