@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
+import uk.gov.hmcts.divorce.common.event.page.FinalOrderExplainTheDelay;
 import uk.gov.hmcts.divorce.common.notification.Applicant1AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
@@ -60,7 +61,8 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     private GeneralReferralService generalReferralService;
 
     private static final List<CcdPageConfiguration> pages = List.of(
-        new ApplyForFinalOrderDetails()
+        new ApplyForFinalOrderDetails(),
+        new FinalOrderExplainTheDelay()
     );
 
     @Override
