@@ -25,8 +25,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -611,7 +611,7 @@ public class CaseworkerExpediteFinalOrderIT {
             FinalOrder.builder()
                 .granted(Set.of(FinalOrder.Granted.YES))
                 .dateFinalOrderEligibleFrom(LocalDate.now(clock))
-                .expeditedFinalOrderAuthorisation(ExpeditedFinalOrderAuthorisation.builder()
+                .expeditedFinalOrderAuthorisation(FinalOrderAuthorisation.builder()
                     .expeditedFinalOrderJudgeName("JudgeName")
                     .build())
                 .build()

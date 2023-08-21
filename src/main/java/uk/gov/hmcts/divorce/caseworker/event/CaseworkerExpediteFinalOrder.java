@@ -17,8 +17,8 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -87,7 +87,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .done()
             .complex(CaseData::getFinalOrder)
                 .complex(FinalOrder::getExpeditedFinalOrderAuthorisation)
-                    .mandatory(ExpeditedFinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
+                    .mandatory(FinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
                 .done()
                 .mandatory(FinalOrder::getGranted)
             .done();
@@ -107,7 +107,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         final var generalOrderDocuments = caseData.getGeneralOrders()
             .stream()
             .map(doc -> doc.getValue().getGeneralOrderDocument())
-            .collect(toList());
+            .toList();
 
         List<DynamicListElement> generalOrderDocumentNames =
             generalOrderDocuments

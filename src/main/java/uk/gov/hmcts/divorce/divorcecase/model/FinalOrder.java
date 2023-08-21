@@ -309,7 +309,13 @@ public class FinalOrder {
         label = "Expedited Final Order Authorisation",
         access = {DefaultAccess.class}
     )
-    private ExpeditedFinalOrderAuthorisation expeditedFinalOrderAuthorisation;
+    private FinalOrderAuthorisation expeditedFinalOrderAuthorisation;
+
+    @CCD(
+        label = "Overdue Final Order Authorisation",
+        access = {DefaultAccess.class}
+    )
+    private FinalOrderAuthorisation overdueFinalOrderAuthorisation;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
