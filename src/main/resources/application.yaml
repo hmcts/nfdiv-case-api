@@ -1,5 +1,6 @@
 server:
   port: 4013
+  shutdown: graceful
 
 management:
   endpoint:
@@ -20,6 +21,8 @@ spring:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
   main:
     allow-bean-definition-overriding: true
+  lifecycle:
+    timeout-per-shutdown-phase: 2m
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
@@ -566,5 +569,3 @@ bulk-action:
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
-toggle:
-  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}

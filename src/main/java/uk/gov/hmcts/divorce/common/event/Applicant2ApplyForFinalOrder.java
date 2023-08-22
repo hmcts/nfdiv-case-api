@@ -10,9 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2ApplyForFinalOrderDetails;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2FinalOrderExplainTheDelay;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -54,8 +56,12 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
     @Autowired
     private ApplyForFinalOrderService applyForFinalOrderService;
 
+    @Autowired
+    private GeneralReferralService generalReferralService;
+
     private static final List<CcdPageConfiguration> pages = List.of(
-        new Applicant2ApplyForFinalOrderDetails()
+        new Applicant2ApplyForFinalOrderDetails(),
+        new Applicant2FinalOrderExplainTheDelay()
     );
 
     @Override
@@ -77,10 +83,10 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grantHistoryOnly(
-                    CASE_WORKER,
-                    SUPER_USER,
-                    LEGAL_ADVISOR,
-                    APPLICANT_1_SOLICITOR));
+                CASE_WORKER,
+                SUPER_USER,
+                LEGAL_ADVISOR,
+                APPLICANT_1_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -132,6 +138,8 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
             );
             notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
+
+        generalReferralService.caseWorkerGeneralReferral(details);
 
         return SubmittedCallbackResponse.builder().build();
     }

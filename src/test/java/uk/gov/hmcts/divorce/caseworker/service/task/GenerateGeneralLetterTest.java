@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -132,6 +133,34 @@ public class GenerateGeneralLetterTest {
             TEST_CASE_ID,
             GENERAL_LETTER_TEMPLATE_ID,
             WELSH,
+            FILE_NAME
+        );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    public void testGenerateLetterToConfidentialApplicant() {
+        CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+            .thenReturn(templateContent);
+
+        final var result = generateLetter.apply(caseDetails);
+
+        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
+            caseData,
+            DocumentType.GENERAL_LETTER,
+            templateContent,
+            TEST_CASE_ID,
+            GENERAL_LETTER_TEMPLATE_ID,
+            ENGLISH,
             FILE_NAME
         );
 
