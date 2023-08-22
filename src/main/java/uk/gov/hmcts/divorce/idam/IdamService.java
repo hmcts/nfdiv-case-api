@@ -35,13 +35,7 @@ public class IdamService {
     }
 
     public User retrieveSystemUpdateUserDetails() {
-        String clusterName = System.getenv().getOrDefault("CLUSTER_NAME", null);
-
-        if (clusterName == null || !clusterName.contains("prod")) {
-            return retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
-        }
-
-        return retrieveUser(getIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
+        return retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
     }
 
     private String getCachedIdamOauth2Token(String username, String password) {
@@ -51,10 +45,6 @@ public class IdamService {
             cache.put(username, userToken);
         }
         return userToken;
-    }
-
-    private String getIdamOauth2Token(String username, String password) {
-        return idamClient.getAccessToken(username, password);
     }
 
     private String getBearerToken(String token) {
