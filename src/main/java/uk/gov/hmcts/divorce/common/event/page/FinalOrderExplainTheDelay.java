@@ -11,12 +11,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 @Slf4j
 public class FinalOrderExplainTheDelay implements CcdPageConfiguration {
 
+    private static final String ALWAYS_HIDE = "FOExplainDelayStatementOfTruth=\"ALWAYS_HIDE\"";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
             .page("SolicitorExplainTheDelay")
-            .complex(CaseData::getFinalOrder)
             .showCondition("isFinalOrderOverdue=\"Yes\"")
+            .complex(CaseData::getFinalOrder)
+                .readonlyNoSummary(FinalOrder::getIsFinalOrderOverdue, ALWAYS_HIDE)
+                .done()
+            .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant1FinalOrderLateExplanation)
                 .done()
             .label(
