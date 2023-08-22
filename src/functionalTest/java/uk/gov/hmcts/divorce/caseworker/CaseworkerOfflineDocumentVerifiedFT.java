@@ -43,7 +43,6 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     private static final String CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-sol-undisputed-submitted.json";
 
-
     @Test
     public void shouldReclassifyScannedDocumentsIfD84Selected() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D84_REQUEST);

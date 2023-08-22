@@ -95,7 +95,6 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
         caseData.put("accessCode", "123456");
