@@ -20,7 +20,7 @@ public class FinalOrderExplainTheDelay implements CcdPageConfiguration {
                 .mandatory(FinalOrder::getApplicant1FinalOrderLateExplanation)
                 .done()
             .label(
-                "StatementOfTruth",
+                "FOExplainDelayStatementOfTruth",
                 "The applicant believes that the facts stated in the application are true."
             )
             .complex(CaseData::getApplicant1)
