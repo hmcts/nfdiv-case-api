@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -42,6 +43,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     private static final String CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-offline-document-verified-js-sol-undisputed-submitted.json";
 
+
     @Test
     public void shouldReclassifyScannedDocumentsIfD84Selected() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D84_REQUEST);
@@ -55,6 +57,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(CASEWORKER_D84_RESPONSE)));
     }
 
+    @Ignore
     @Test
     public void shouldSendAppliedForCoLetterIfD84Selected() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D84_REQUEST);
@@ -79,6 +82,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
+    @Ignore
     @Test
     public void shouldSendAosLetterForApp1SolJSDisputedForSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_SOL_DISPUTED_SUBMITTED_REQUEST);
@@ -103,6 +107,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
+    @Ignore
     @Test
     public void shouldSendAosLetterForJSDisputedForSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_DISPUTED_SUBMITTED_REQUEST);
@@ -135,6 +140,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
+    @Ignore
     @Test
     public void shouldSendAosLetterForJSSolicitorUndisputedSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST);

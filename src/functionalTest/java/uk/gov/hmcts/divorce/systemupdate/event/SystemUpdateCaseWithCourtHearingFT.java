@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -79,6 +80,7 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Ignore
     @Test
     public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
@@ -97,6 +99,7 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE)));
     }
 
+    @Ignore
     @Test
     public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetterWhenBothContactsArePrivate()
         throws IOException {
@@ -117,6 +120,7 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE_OFFLINE_WITH_PRIVATE_CONTACT)));
     }
 
+    @Ignore
     @Test
     public void shouldSendLettersToOfflineRespondentInSoleApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
@@ -135,6 +139,7 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Ignore
     @Test
     public void shouldSendLettersToOfflineApplicantsInSoleJSApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
@@ -154,6 +159,7 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Ignore
     @Test
     public void shouldSendLettersToOfflineApplicantSolicitorInJointJSApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {

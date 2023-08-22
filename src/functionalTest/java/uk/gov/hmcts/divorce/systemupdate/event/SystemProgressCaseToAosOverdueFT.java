@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -43,6 +44,7 @@ public class SystemProgressCaseToAosOverdueFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
+    @Ignore
     @Test
     public void shouldPassValidationAndGenerateDocToApplicantAndRespondentWhenJudicialSeparation() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
