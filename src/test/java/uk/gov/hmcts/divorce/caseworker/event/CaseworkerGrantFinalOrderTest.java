@@ -18,8 +18,8 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -240,7 +240,7 @@ class CaseworkerGrantFinalOrderTest {
         );
 
         caseData.getFinalOrder().setOverdueFinalOrderAuthorisation(
-            FinalOrderAuthorisation.builder()
+            ExpeditedFinalOrderAuthorisation.builder()
                 .expeditedFinalOrderJudgeName("The Judge")
                 .build()
         );

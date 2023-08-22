@@ -19,8 +19,8 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -94,7 +94,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .done()
             .complex(CaseData::getFinalOrder)
                 .complex(FinalOrder::getOverdueFinalOrderAuthorisation)
-                    .mandatory(FinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
+                    .mandatory(ExpeditedFinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
                 .done()
             .done()
             .page("grantFinalOrder")

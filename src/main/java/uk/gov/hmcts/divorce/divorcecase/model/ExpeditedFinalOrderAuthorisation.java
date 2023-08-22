@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FinalOrderAuthorisation {
+public class ExpeditedFinalOrderAuthorisation {
     @CCD(
         label = "General Order Authorising Expedited Final Order"
     )
