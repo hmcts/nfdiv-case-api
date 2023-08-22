@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -27,8 +28,8 @@ public class SystemResendCOPronouncedCoverLetterFT extends FunctionalTestSuite {
 
     private static final String RESPONSE = "classpath:responses/response-system-resend-co-pronounced-cover-letter.json";
 
-    @Ignore
     @Test
+    @Disabled
     public void shouldMoveApp1COPronouncedCoverLetterToConfidentialListWhenApp1OfflineAndContactIsPrivate() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 

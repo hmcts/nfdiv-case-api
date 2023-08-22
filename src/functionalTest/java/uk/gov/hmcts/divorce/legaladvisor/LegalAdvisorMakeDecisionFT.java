@@ -4,6 +4,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -117,8 +118,8 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
-    @Ignore
     @Test
+    @Disabled
     public void shouldSendAwaitingAmendedApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -141,8 +142,8 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(OFFLINE_CO_REJECTED_SOLE_RESPONSE)));
     }
 
-    @Ignore
     @Test
+    @Disabled
     public void shouldSendAwaitingAmendedApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -166,7 +167,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(OFFLINE_CO_REJECTED_JOINT_RESPONSE)));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldSendAwaitingClarificationApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_CLARIFICATION_REQUEST);
@@ -181,8 +182,8 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(OFFLINE_CO_CLARIFICATION_SOLE_RESPONSE)));
     }
 
-    @Ignore
     @Test
+    @Disabled
     public void shouldSendAwaitingClarificationApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_CLARIFICATION_REQUEST);
 
