@@ -569,5 +569,3 @@ bulk-action:
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
-toggle:
-  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
