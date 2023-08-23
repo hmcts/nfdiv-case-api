@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
@@ -376,6 +377,28 @@ public class CcdAccessServiceTest {
         boolean expected = ccdAccessService.isApplicant2(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID);
 
         assertThat(expected).isTrue();
+    }
+
+    @Test
+    public void shouldReturnCaseAssignmentUserRoles() {
+        List<CaseAssignmentUserRole> expectedRoles = List.of(
+            CaseAssignmentUserRole.builder().caseRole("[APPSOLICITORONE]")
+                .userId("2").build(),
+            CaseAssignmentUserRole.builder().caseRole("[APPSOLICITORTWO]")
+                .userId("4").build()
+        );
+        Long caseId = 123456L;
+        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().id("id").email("email").build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(caseAssignmentApi.getUserRoles(SYSTEM_UPDATE_AUTH_TOKEN, SERVICE_AUTHORIZATION, List.of(caseId.toString())))
+            .thenReturn(CaseAssignmentUserRolesResource.builder()
+                .caseAssignmentUserRoles(expectedRoles)
+                .build());
+
+        List<CaseAssignmentUserRole> actualRoles = ccdAccessService.getCaseAssignmentUserRoles(caseId);
+
+        assertThat(actualRoles).isEqualTo(expectedRoles);
     }
 
     private User getIdamUser(String authToken, String userId, String email) {

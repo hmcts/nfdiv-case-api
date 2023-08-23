@@ -8,30 +8,30 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
-import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class CaseworkerNoticeOfChangeTest {
 
     @Mock
-    private CcdAccessService caseAccessService;
+    private NoticeOfChangeService noticeOfChangeService;
 
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
@@ -55,221 +55,124 @@ class CaseworkerNoticeOfChangeTest {
             .contains(CASEWORKER_NOTICE_OF_CHANGE);
     }
 
-
     @Test
-    public void testApp1NowCitizen() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_1)
-            .areTheyRepresented(NO)
+    public void shouldProcessOfflineNoticeOfChangeWithoutInvokingNocService() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+                .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+                .areTheyDigital(NO)
+                .areTheyRepresented(NO)
             .build());
 
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
-        assertThat(result.getData().getApplicant1().getSolicitor()).isNull();
+        assertThat(result.getData().getApplicant1().getSolicitor().getOrganisationPolicy())
+            .isEqualTo(
+                OrganisationPolicy.<UserRole>builder()
+                    .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                    .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
-            )
-        ));
+        verify(noticeOfChangeService, never()).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
     }
 
     @Test
-    public void testSoleApplicationApp1NowOfflineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_1)
-            .areTheyRepresented(YES)
-            .areTheyDigital(NO)
+    public void shouldMoveCaseOfflineAndRevokeDigitalSolicitorAccess() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        beforeDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
             .build());
-
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
-        assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
-            )
-        ));
-    }
-
-    @Test
-    public void testSoleApplicationApp1NowOnlineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_1)
-            .areTheyRepresented(YES)
-            .areTheyDigital(YES)
-            .build());
-
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
-        assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
-            )
-        ));
-    }
-
-    @Test
-    public void testJointApplicationApp1NowOnlineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setApplicationType(JOINT_APPLICATION);
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_1)
-            .areTheyRepresented(YES)
-            .areTheyDigital(YES)
-            .build());
-
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
-        assertThat(result.getData().getApplicant1().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isEqualTo(NO);
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                CREATOR.getRole(),
-                APPLICANT_1_SOLICITOR.getRole()
-            )
-        ));
-    }
-
-    @Test
-    public void testApp2NowCitizen() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_2)
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
             .areTheyRepresented(NO)
             .build());
 
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
-        assertThat(result.getData().getApplicant2().getSolicitor()).isNull();
-        assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(NO);
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
-            )
-        ));
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(result.getData().getApplicant1().getSolicitor().getOrganisationPolicy())
+            .isEqualTo(
+                OrganisationPolicy.<UserRole>builder()
+                    .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                    .build());
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
+
+        verify(noticeOfChangeService).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
     }
 
     @Test
-    public void testSoleApp2NowOfflineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_2)
-            .areTheyRepresented(YES)
-            .areTheyDigital(NO)
+    public void shouldReplaceAccessWithinOrganisation() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
             .build());
-
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isTrue();
-        assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
-
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
-            )
-        ));
-    }
-
-    @Test
-    public void testSoleApplicationApp2NowOnlineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_2)
+        beforeDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
 
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isFalse();
-        assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isNull();
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isNull();
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
+        Solicitor newSolicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder()
+                    .organisationId(TEST_ORG_ID)
+                    .build())
+                .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                .build())
+            .build();
 
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
-            )
-        ));
+        verify(noticeOfChangeService).changeAccessWithinOrganisation(newSolicitor, roles, APPLICANT_1_SOLICITOR.getRole(), details.getId());
     }
 
     @Test
-    public void testJointApplicationApp2NowOnlineSolicitor() {
-        var caseDetails = getCaseDetails();
-        caseDetails.getData().setApplicationType(JOINT_APPLICATION);
-        caseDetails.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(APPLICANT_2)
+    public void shouldApplyNoticeOfChangeDecision() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+        beforeDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId("SECOND_ORG_ID")
+            .build());
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
 
-        var result = noticeOfChange.aboutToSubmit(caseDetails, caseDetails);
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
-        assertThat(result.getData().getApplicant2().isApplicantOffline()).isFalse();
-        assertThat(result.getData().getApplicant2().getSolicitor()).isNotNull();
-        assertThat(result.getData().getApplicant2().getSolicitorRepresented()).isEqualTo(YES);
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()).isEqualTo(NO);
-        assertThat(result.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()).isEqualTo(NO);
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
-
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
-                UserRole.APPLICANT_2.getRole(),
-                APPLICANT_2_SOLICITOR.getRole()
-            )
-        ));
+        verify(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(
+            details.getId(),
+            details.getData().getApplicant1(),
+            beforeDetails.getData().getApplicant1(),
+            roles,
+            APPLICANT_1_SOLICITOR.getRole());
     }
 
     private CaseDetails<CaseData, State> getCaseDetails() {
@@ -280,9 +183,16 @@ class CaseworkerNoticeOfChangeTest {
         data.setApplicant2(applicantRepresentedBySolicitor());
         data.getApplicant1().setOffline(NO);
         data.getApplicant2().setOffline(NO);
+        data.getApplicant1().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+            .build());
+        data.getApplicant2().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .orgPolicyCaseAssignedRole(UserRole.APPLICANT_2_SOLICITOR)
+            .build());
         details.setData(data);
         details.setId(1L);
 
         return details;
     }
+
 }

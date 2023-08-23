@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
@@ -35,13 +35,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_NOTICE_OF_CHANGE = "caseworker-notice-of-change";
     private static final String NEVER_SHOW = "nocWhichApplicant=\"never\"";
 
-    @Autowired
-    private CcdAccessService caseAccessService;
+    private final NoticeOfChangeService noticeOfChangeService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -76,7 +76,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
                             .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant1\"")
                             .done()
-                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR)
+                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR, true)
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
@@ -94,7 +94,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant2\"")
                             .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant2\"")
                             .done()
-                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR)
+                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR, true)
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
@@ -106,35 +106,68 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker notice of change aboutToSubmit callback started for Case Id: {}", details.getId());
+        log.info("About to start submitting Notice of Change");
 
         final var data = details.getData();
-        final var applicant = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
-            ? data.getApplicant1()
-            : data.getApplicant2();
+        final var beforeData = beforeDetails.getData();
 
+        final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
+        final var orgPolicyCaseAssignedRole = isApplicant1 ? APPLICANT_1_SOLICITOR : APPLICANT_2_SOLICITOR;
+
+        final var applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        final var beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
+
+        updateSolicitorInformation(data, orgPolicyCaseAssignedRole, applicant);
+
+        final var roles = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
+            ? List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole())
+            : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
+
+        NoticeType noticeType = calculateNoticeType(applicant, beforeApplicant);
+
+        noticeType.applyNoticeOfChange(applicant,
+            beforeApplicant,
+            roles,
+            orgPolicyCaseAssignedRole.getRole(),
+            details,
+            noticeOfChangeService);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(correctRepresentationDetails(details.getData(), beforeDetails.getData()))
+            .build();
+    }
+
+    private NoticeType calculateNoticeType(Applicant applicant,
+                                           Applicant beforeApplicant) {
+        OrganisationPolicy<UserRole> orgPolicy = applicant.getSolicitor().getOrganisationPolicy();
+        OrganisationPolicy<UserRole> beforeOrgPolicy = beforeApplicant.getSolicitor().getOrganisationPolicy();
+
+        if (beforeOrgPolicy.getOrganisation() != null && orgPolicy.getOrganisation() == null) {
+            return NoticeType.ORG_REMOVED;
+        } else if (orgPolicy.getOrganisation() != null && orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
+            return NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG;
+        } else if (orgPolicy.getOrganisation() != null && !orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
+            return NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+        }
+
+        return NoticeType.OFFLINE_NOC;
+    }
+
+    private void updateSolicitorInformation(CaseData data, UserRole orgPolicyCaseAssignedRole, Applicant applicant) {
         if (!data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) {
-            applicant.setSolicitor(null);
+            Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(new Solicitor(), orgPolicyCaseAssignedRole);
+            applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(NO);
             applicant.setOffline(YES);
         } else if (data.getNoticeOfChange().getAreTheyDigital() == null || !data.getNoticeOfChange().getAreTheyDigital().toBoolean()) {
-            applicant.getSolicitor().setOrganisationPolicy(null);
+            Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(applicant.getSolicitor(), orgPolicyCaseAssignedRole);
+            applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(YES);
             applicant.setOffline(YES);
         } else {
             applicant.setSolicitorRepresented(YES);
             applicant.setOffline(NO);
         }
-
-        final var roles = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1
-            ? List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole())
-            : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
-
-        caseAccessService.removeUsersWithRole(details.getId(), roles);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(correctRepresentationDetails(data, beforeDetails.getData()))
-            .build();
     }
 
     /** On NOC event, CCD is somehow removing solicitor details for the applicant other than the one selected for NOC.
@@ -146,21 +179,13 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
             data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
             data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
-            if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-                data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
-                setConditionalOrderDefaultValues(data);
-            } else {
-                data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
-            }
         } else {
             data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
             data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
-            if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-                data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
-                setConditionalOrderDefaultValues(data);
-            } else {
-                data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
-            }
+        }
+
+        if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
+            setConditionalOrderDefaultValues(data);
         }
 
         return data;
@@ -173,5 +198,81 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
         }
+    }
+
+    private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
+        OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
+            .orgPolicyCaseAssignedRole(role)
+            .build();
+
+        solicitor.setOrganisationPolicy(defaultOrgPolicy);
+        return solicitor;
+    }
+
+    private enum NoticeType {
+        NEW_DIGITAL_SOLICITOR_NEW_ORG() {
+            @Override
+            public void applyNoticeOfChange(Applicant applicant,
+                                            Applicant applicantBefore,
+                                            List<String> roles,
+                                            String solicitorRole,
+                                            CaseDetails<CaseData, State> details,
+                                            NoticeOfChangeService noticeOfChangeService) {
+
+                noticeOfChangeService.applyNocDecisionAndGrantAccessToNewSol(
+                    details.getId(),
+                    applicant,
+                    applicantBefore,
+                    roles,
+                    solicitorRole);
+            }
+        },
+        NEW_DIGITAL_SOLICITOR_EXISTING_ORG() {
+            @Override
+            public void applyNoticeOfChange(Applicant applicant,
+                                            Applicant applicantBefore,
+                                            List<String> roles,
+                                            String solicitorRole,
+                                            CaseDetails<CaseData, State> details,
+                                            NoticeOfChangeService noticeOfChangeService) {
+
+                noticeOfChangeService.changeAccessWithinOrganisation(
+                    applicant.getSolicitor(),
+                    roles,
+                    solicitorRole,
+                    details.getId());
+            }
+        },
+        ORG_REMOVED() {
+            @Override
+            public void applyNoticeOfChange(Applicant applicant,
+                                            Applicant applicantBefore,
+                                            List<String> roles,
+                                            String solicitorRole,
+                                            CaseDetails<CaseData, State> details,
+                                            NoticeOfChangeService noticeOfChangeService) {
+
+                noticeOfChangeService.revokeCaseAccess(details.getId(), applicantBefore, roles);
+            }
+        },
+        OFFLINE_NOC() {
+            @Override
+            public void applyNoticeOfChange(Applicant applicant,
+                                            Applicant applicantBefore,
+                                            List<String> roles,
+                                            String solicitorRole,
+                                            CaseDetails<CaseData, State> details,
+                                            NoticeOfChangeService noticeOfChangeService) {
+
+            }
+        };
+
+        public abstract void applyNoticeOfChange(Applicant applicant,
+                                                 Applicant applicantBefore,
+                                                 List<String> roles,
+                                                 String solicitorRole,
+                                                 CaseDetails<CaseData, State> details,
+                                                 NoticeOfChangeService noticeOfChangeService);
+
     }
 }

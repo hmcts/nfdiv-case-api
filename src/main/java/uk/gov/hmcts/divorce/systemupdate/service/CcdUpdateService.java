@@ -19,11 +19,14 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
@@ -318,6 +321,56 @@ public class CcdUpdateService {
             serviceAuth,
             caseId
         );
+    }
+
+    public void resetOrgAssignedUsersSupplementaryData(final String caseId,
+                                                       final String authorisation,
+                                                       final String serviceAuth,
+                                                       final String orgId) {
+        setOrgAssignedUsersSupplementaryData(caseId, authorisation, serviceAuth, orgId, "0");
+    }
+
+    public void setOrgAssignedUsersSupplementaryData(final String caseId,
+                                                     final String authorisation,
+                                                     final String serviceAuth,
+                                                     final String orgId,
+                                                     final String newValue) {
+
+        Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
+        supplementaryData.put("supplementary_data_updates",
+            singletonMap("$set",
+                Map.of("orgs_assigned_users." + orgId, newValue,
+                    "processed", true)));
+
+        submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
+    }
+
+    public void incrementOrgAssignedUsersSupplementaryData(final String caseId,
+                                                           final String authorisation,
+                                                           final String serviceAuth,
+                                                           final String orgId) {
+        Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
+        supplementaryData.put("supplementary_data_updates",
+            singletonMap("$inc",
+                singletonMap("orgs_assigned_users." + orgId, "1")));
+
+        submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
+    }
+
+    private void submitSupplementaryDataUpdateToCcd(final String caseId,
+                                                    final String authorisation,
+                                                    final String serviceAuth,
+                                                    final Map<String, Map<String, Map<String, Object>>> supplementaryData) {
+
+        try {
+            coreCaseDataApi.submitSupplementaryData(authorisation,
+                serviceAuth,
+                caseId,
+                supplementaryData);
+        } catch (FeignException e) {
+            log.error("Endpoint threw exception with status: {} \n cause: {}\n and message: {}\n ",
+                e.status(), e.getCause(), e.getMessage());
+        }
     }
 
     private void startAndSubmitEventForCaseworkers(final String eventId,
