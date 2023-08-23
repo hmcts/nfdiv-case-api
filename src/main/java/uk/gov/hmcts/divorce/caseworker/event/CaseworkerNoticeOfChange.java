@@ -142,6 +142,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         OrganisationPolicy<UserRole> orgPolicy = applicant.getSolicitor().getOrganisationPolicy();
         OrganisationPolicy<UserRole> beforeOrgPolicy = beforeApplicant.getSolicitor().getOrganisationPolicy();
 
+        if (beforeOrgPolicy == null) {
+            return orgPolicy.getOrganisation() != null ? NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG : NoticeType.OFFLINE_NOC;
+        }
+
         if (beforeOrgPolicy.getOrganisation() != null && orgPolicy.getOrganisation() == null) {
             return NoticeType.ORG_REMOVED;
         } else if (orgPolicy.getOrganisation() != null && orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {

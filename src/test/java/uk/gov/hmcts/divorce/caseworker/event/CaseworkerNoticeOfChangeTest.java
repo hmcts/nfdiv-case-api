@@ -175,6 +175,35 @@ class CaseworkerNoticeOfChangeTest {
             APPLICANT_1_SOLICITOR.getRole());
     }
 
+    @Test
+    public void shouldHandleNullBeforeOrgPolicyGracefully() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+        beforeDetails.getData().getApplicant1().getSolicitor().setOrganisationPolicy(null);
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyRepresented(YES)
+            .areTheyDigital(YES)
+            .build());
+
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+
+        verify(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(
+            details.getId(),
+            details.getData().getApplicant1(),
+            beforeDetails.getData().getApplicant1(),
+            roles,
+            APPLICANT_1_SOLICITOR.getRole());
+    }
+
     private CaseDetails<CaseData, State> getCaseDetails() {
         final var details = new CaseDetails<CaseData, State>();
         final var data = caseData();
