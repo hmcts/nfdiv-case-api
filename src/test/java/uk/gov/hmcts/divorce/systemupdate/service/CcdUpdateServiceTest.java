@@ -19,6 +19,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.singletonMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CcdUpdateServiceTest {
@@ -180,6 +182,59 @@ class CcdUpdateServiceTest {
             TEST_CASE_ID.toString(),
             true,
             caseDataContent);
+    }
+
+    @Test
+    public void shouldResetOrgsAssignedUsersToZeroSupplementaryDataOnCase() {
+        ccdUpdateService.resetOrgAssignedUsersSupplementaryData(TEST_CASE_ID.toString(),
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_ORG_ID);
+
+        verify(coreCaseDataApi).submitSupplementaryData(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_CASE_ID.toString(),
+            Map.of("supplementary_data_updates",
+                Map.of("$set",
+                    Map.of(
+                        "orgs_assigned_users." + TEST_ORG_ID, "0",
+                        "processed", true)))
+        );
+    }
+
+    @Test
+    public void shouldSetOrgsAssignedUsersSupplementaryDataOnCaseToNewValue() {
+        ccdUpdateService.setOrgAssignedUsersSupplementaryData(TEST_CASE_ID.toString(),
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_ORG_ID,
+            "1");
+
+        verify(coreCaseDataApi).submitSupplementaryData(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_CASE_ID.toString(),
+            Map.of("supplementary_data_updates",
+                Map.of("$set", Map.of(
+                    "orgs_assigned_users." + TEST_ORG_ID, "1",
+                    "processed", true)))
+        );
+    }
+
+    @Test
+    public void shouldIncrementOrgsAssignedUsersSupplementaryDataOnCaseToNewValue() {
+        ccdUpdateService.incrementOrgAssignedUsersSupplementaryData(TEST_CASE_ID.toString(),
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_ORG_ID);
+
+        verify(coreCaseDataApi).submitSupplementaryData(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_CASE_ID.toString(),
+            Map.of("supplementary_data_updates", Map.of("$inc", singletonMap("orgs_assigned_users." + TEST_ORG_ID, "1")))
+        );
     }
 
     private StartEventResponse getStartEventResponse() {

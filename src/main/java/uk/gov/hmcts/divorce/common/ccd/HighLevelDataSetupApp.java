@@ -26,6 +26,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
         new CcdRoleConfig("caseworker-divorce-systemupdate", "PUBLIC"),
         new CcdRoleConfig("caseworker-divorce-bulkscan", "PUBLIC"),
         new CcdRoleConfig("caseworker-caa", "PUBLIC"),
+        new CcdRoleConfig("caseworker-approver", "PUBLIC"),
         new CcdRoleConfig("citizen", "PUBLIC"),
         new CcdRoleConfig("payments", "PUBLIC")
     };
@@ -54,7 +55,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
                 addCcdRole(roleConfig);
                 logger.info("\n\nAdded CCD Role {}.", roleConfig);
             } catch (Exception e) {
-                logger.error("\n\nCouldn't add CCD Role {} - Exception: {}.\n\n", roleConfig, e);
+                logger.error("\n\nCouldn't add CCD Role {} - Exception: {} .\n\n", roleConfig, e);
                 if (!shouldTolerateDataSetupFailure()) {
                     throw e;
                 }
