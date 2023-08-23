@@ -110,8 +110,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     ) {
         CaseData data = details.getData();
 
-        if (NO.equals(data.getNoticeOfChange().getAreTheyRepresented())
-            || !YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
+        if (data.getNoticeOfChange().isNotAddingNewDigitalSolicitor()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .build();
@@ -128,11 +127,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 .errors(errors)
                 .data(data)
                 .build();
-
-//        if (!errors.isEmpty()) {
-//            responseBuilder = responseBuilder.errors(errors);
-//        }
-//        return responseBuilder.build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
