@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.test.context.SpringBootTest;
