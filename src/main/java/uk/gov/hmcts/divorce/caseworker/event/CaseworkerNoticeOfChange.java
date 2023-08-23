@@ -124,14 +124,15 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(email, details.getId(), orgId);
 
-        AboutToStartOrSubmitResponse.AboutToStartOrSubmitResponseBuilder<CaseData, State> responseBuilder =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(data);
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(errors)
+                .data(data)
+                .build();
 
-        if (!errors.isEmpty()) {
-            responseBuilder = responseBuilder.errors(errors);
-        }
-        return responseBuilder.build();
+//        if (!errors.isEmpty()) {
+//            responseBuilder = responseBuilder.errors(errors);
+//        }
+//        return responseBuilder.build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
