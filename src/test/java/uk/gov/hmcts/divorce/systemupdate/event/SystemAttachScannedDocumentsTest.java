@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -56,7 +55,6 @@ public class SystemAttachScannedDocumentsTest {
     @BeforeEach
     void setUp() {
         setMockClock(clock);
-        ReflectionTestUtils.setField(systemAttachScannedDocuments, "qrCodeReadingEnabled", true);
         beforeDetails = getCaseDetails(BEFORE_SCANNED_DOCUMENTS);
     }
 
