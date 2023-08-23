@@ -28,7 +28,6 @@ public class SystemResendCOPronouncedCoverLetterFT extends FunctionalTestSuite {
     private static final String RESPONSE = "classpath:responses/response-system-resend-co-pronounced-cover-letter.json";
 
     @Test
-    @Disabled
     public void shouldMoveApp1COPronouncedCoverLetterToConfidentialListWhenApp1OfflineAndContactIsPrivate() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 

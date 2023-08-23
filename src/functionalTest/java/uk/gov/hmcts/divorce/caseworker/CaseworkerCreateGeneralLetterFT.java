@@ -42,7 +42,6 @@ public class CaseworkerCreateGeneralLetterFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-letter-submitted.json");
 

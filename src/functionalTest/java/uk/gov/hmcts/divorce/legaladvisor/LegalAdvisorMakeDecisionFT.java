@@ -118,7 +118,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendAwaitingAmendedApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -142,7 +141,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendAwaitingAmendedApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -166,7 +164,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(OFFLINE_CO_REJECTED_JOINT_RESPONSE)));
     }
 
-    @Disabled
     @Test
     public void shouldSendAwaitingClarificationApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_CLARIFICATION_REQUEST);
@@ -182,7 +179,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendAwaitingClarificationApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_CLARIFICATION_REQUEST);
 

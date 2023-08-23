@@ -51,7 +51,6 @@ public class SystemProgressHeldCasesFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldPassValidationAndSendLettersToOfflineApplicants() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_REQUEST);
 

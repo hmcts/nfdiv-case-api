@@ -45,7 +45,6 @@ public class SystemProgressCaseToAosOverdueFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldPassValidationAndGenerateDocToApplicantAndRespondentWhenJudicialSeparation() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("supplementaryCaseType", JUDICIAL_SEPARATION);
