@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private static final String NEVER_SHOW = "nocWhichApplicant=\"never\"";
 
     private final NoticeOfChangeService noticeOfChangeService;
+    private final SolicitorValidationService solicitorValidationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -55,7 +57,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("changeRepresentation-1")
+            .page("changeRepresentation-1", this::midEvent)
             .pageLabel("Which applicant")
             .complex(CaseData::getNoticeOfChange)
                 .mandatory(NoticeOfChange::getWhichApplicant)
@@ -100,6 +102,31 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"")
                 .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> detailsBefore
+    ) {
+        CaseData data = details.getData();
+
+        if (data.getNoticeOfChange().isNotAddingNewDigitalSolicitor()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .build();
+        }
+
+        final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
+        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        String email = applicant.getSolicitor().getEmail();
+        String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+
+        List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(email, details.getId(), orgId);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(errors)
+                .data(data)
+                .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
