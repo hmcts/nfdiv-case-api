@@ -110,30 +110,28 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     ) {
         CaseData data = details.getData();
 
-        if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())
-            && YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
-
-            final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
-            final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
-            String email = applicant.getSolicitor().getEmail();
-            String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
-
-            List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(email, details.getId(), orgId);
-
-            if (!errors.isEmpty()) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(errors)
-                    .build();
-            } else {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(data)
-                    .build();
-            }
+        if (NO.equals(data.getNoticeOfChange().getAreTheyRepresented())
+            || !YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .build();
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .build();
+        final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
+        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        String email = applicant.getSolicitor().getEmail();
+        String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+
+        List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(email, details.getId(), orgId);
+
+        AboutToStartOrSubmitResponse.AboutToStartOrSubmitResponseBuilder<CaseData, State> responseBuilder =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data);
+
+        if (!errors.isEmpty()) {
+            responseBuilder = responseBuilder.errors(errors);
+        }
+        return responseBuilder.build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
