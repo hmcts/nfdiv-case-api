@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -21,16 +22,13 @@ import java.util.Map;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyFinalOrderOverdue.SYSTEM_FINAL_ORDER_OVERDUE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-/**
- * Any cases which are in 'Awaiting Final Order' state and where the current date is greater than 12 months after the
- * 'conditional order has been pronounced date' should be moved to the state 'Final Order Overdue'.
- * Conditional Order Granted Date is set to the Pronouncement Date in PronounceCaseProvider
- */
 public class SystemFinalOrderOverdueTask implements Runnable {
 
     @Autowired
@@ -47,6 +45,8 @@ public class SystemFinalOrderOverdueTask implements Runnable {
 
     private static final String PRONOUNCED_DATE = "coGrantedDate";
 
+    private static final String FINAL_ORDER_OVERDUE_FLAG = "isFinalOrderOverdue";
+
     @Override
     public void run() {
         log.info("Final Order overdue scheduled task started");
@@ -57,10 +57,17 @@ public class SystemFinalOrderOverdueTask implements Runnable {
         try {
             final BoolQueryBuilder query =
                 boolQuery()
-                    .must(matchQuery(STATE, AwaitingFinalOrder));
+                    .must(
+                        boolQuery()
+                            .should(matchQuery(STATE, AwaitingFinalOrder))
+                            .should(matchQuery(STATE, AwaitingJointFinalOrder))
+                            .minimumShouldMatch(1)
+                    )
+                    .mustNot(matchQuery(String.format(DATA, FINAL_ORDER_OVERDUE_FLAG), YesOrNo.YES));
+
 
             final List<CaseDetails> casesInAwaitingFinalOrderState =
-                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingFinalOrder);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingFinalOrder, AwaitingJointFinalOrder);
 
             for (final CaseDetails caseDetails : casesInAwaitingFinalOrderState) {
                 triggerFinalOrderEventForEligibleCases(user, serviceAuth, caseDetails);
