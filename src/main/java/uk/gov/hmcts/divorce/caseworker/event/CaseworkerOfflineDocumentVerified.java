@@ -118,7 +118,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             .complex(CaseData::getDocuments)
             .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
-                .mandatory(CaseDocuments::getTypeOfDocumentAttached)
+                .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"", true)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
             .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
