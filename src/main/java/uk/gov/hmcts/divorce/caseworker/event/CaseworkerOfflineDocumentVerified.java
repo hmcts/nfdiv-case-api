@@ -118,7 +118,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             .complex(CaseData::getDocuments)
             .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
-            .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"")
+                .mandatory(CaseDocuments::getTypeOfDocumentAttached)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
             .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
@@ -127,7 +127,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .done()
             .complex(CaseData::getDocuments)
             .mandatory(CaseDocuments::getScannedDocumentNames,
-                "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\"")
+                    "scannedSubtypeReceived!=\"*\" "
+                        + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")")
             .done()
             .complex(CaseData::getConditionalOrder)
             .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
@@ -160,6 +161,15 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         var caseData = details.getData();
+        CaseDocuments.ScannedDocumentSubtypes scannedSubtypeReceived = caseData.getDocuments().getScannedSubtypeReceived();
+
+        if (D10.equals(scannedSubtypeReceived)) {
+            caseData.getDocuments().setTypeOfDocumentAttached(AOS_D10);
+        } else if (D84.equals(scannedSubtypeReceived)) {
+            caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
+        } else if (D36.equals(scannedSubtypeReceived)) {
+            caseData.getDocuments().setTypeOfDocumentAttached(FO_D36);
+        }
 
         if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
             List<DynamicListElement> scannedDocumentNames =
@@ -191,8 +201,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         var caseData = details.getData();
 
-        if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D10.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
+        if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
 
@@ -210,8 +219,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .state(response.getState())
                 .build();
 
-        } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
+        } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
@@ -236,8 +244,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .state(state)
                 .build();
 
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
 
@@ -300,8 +307,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         final CaseData caseData = details.getData();
 
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D84.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
             if (!caseData.isJudicialSeparationCase()) {
                 notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
@@ -317,8 +323,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 final String serviceAuth = authTokenGenerator.generate();
                 ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
             }
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            || D36.equals(caseData.getDocuments().getScannedSubtypeReceived())) {
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
 
             generalReferralService.caseWorkerGeneralReferral(details);
 
