@@ -55,6 +55,10 @@ fee:
 s2s:
   stub: true
 
+aac:
+  api:
+    url: http://localhost:4454
+
 core_case_data:
   api:
     url: http://localhost:4012
@@ -300,6 +304,3 @@ bulk-action:
   page-size: 50
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
-
-toggle:
-  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}

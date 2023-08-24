@@ -112,13 +112,14 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .build();
         }
 
+        State state = details.getState();
+
         if (isIssued) {
             log.info("Regenerate NOP for App and Respondent, and D10 for case id: {}", details.getId());
             details = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings, generateD10Form).run(details);
+            state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
         }
-
-        final State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
