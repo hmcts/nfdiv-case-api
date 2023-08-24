@@ -120,7 +120,7 @@ public abstract class FunctionalTestSuite {
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url) throws IOException {
 
         // Add random Long generation of 16 digits to avoid duplicate case id
-        long caseId = new Random().nextLong();
+        long caseId = Math.abs(new Random().nextLong());
 
         return triggerCallback(caseData, eventId, url, caseId);
     }
