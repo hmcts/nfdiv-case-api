@@ -50,7 +50,7 @@ public class GeneralLetterPrinter {
 
             GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
                 .map(element -> element.getValue().getGeneralLetterParties())
-                .orElseThrow();
+                .orElse(GeneralParties.OTHER);
 
             var recipientName = switch (parties) {
                 case RESPONDENT -> caseData.getApplicant2().getFullName();
