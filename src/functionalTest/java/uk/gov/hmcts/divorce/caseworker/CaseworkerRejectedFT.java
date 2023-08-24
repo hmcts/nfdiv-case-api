@@ -8,8 +8,6 @@ import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
-import java.util.Random;
-
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
@@ -29,8 +27,6 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
     @Ignore
     public void shouldSetPreviousStateWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
-        final long caseId = new Random().nextLong();
-
         // This caseId will need to be updated if the cases in AAT are cleared
         CallbackRequest request = CallbackRequest
             .builder()
@@ -38,7 +34,7 @@ public class CaseworkerRejectedFT extends FunctionalTestSuite {
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .id(caseId)
+                    .id(1652969232164603L)
                     .data(caseData(REQUEST))
                     .caseTypeId(CASE_TYPE)
                     .state("Submitted")
