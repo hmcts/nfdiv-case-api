@@ -107,7 +107,11 @@ public class BulkPrintService {
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
 
         try {
-            return sendLetterApi.sendLetter(
+            log.info("Recipients:");
+            for (String recipient : print.getRecipients()) {
+                log.error(recipient);
+            }
+            UUID sendLetterUUID = sendLetterApi.sendLetter(
                 authToken,
                 new LetterV3(
                     XEROX_TYPE_PARAMETER,
@@ -119,6 +123,8 @@ public class BulkPrintService {
                         RECIPIENTS, print.getRecipients()
                     )))
                 .letterId;
+            log.info("Bulk print request sent with letterId: " + sendLetterUUID);
+            return sendLetterUUID;
 
         // TODO: NFDIV-3567 - For now bulk print service return a conflict exception which needs to be handled. At the
         //  end of July when they release their change, they will change to return a 200 response + the ID of the duplicate request.
