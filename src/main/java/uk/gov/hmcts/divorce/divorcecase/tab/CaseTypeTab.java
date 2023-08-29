@@ -449,7 +449,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("doesApplicant2WantToApplyForFinalOrder")
             .field("applicant2FinalOrderExplanation")
             .field("applicant2FinalOrderLateExplanation")
-            .field("applicant2FinalOrderStatementOfTruth");
+            .field("applicant2FinalOrderStatementOfTruth")
+            .field("scannedD36Form");
 
     }
 

@@ -1,13 +1,18 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -19,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 
 class CaseDataTest {
@@ -328,5 +334,18 @@ class CaseDataTest {
 
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         assertThat(caseData.hasNaOrNullSupplementaryCaseType()).isFalse();
+    }
+
+    @Test
+    void shouldSetScannedD36FormOnFinalOrder() {
+        final CaseData caseData = new CaseData();
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+        final Document document = Document.builder().build();
+        ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
+
+        caseData.reclassifyScannedDocumentToChosenDocumentType(DocumentType.FINAL_ORDER_APPLICATION, clock, scannedDocument);
+
+        assertThat(caseData.getFinalOrder().getScannedD36Form()).isEqualTo(document);
     }
 }

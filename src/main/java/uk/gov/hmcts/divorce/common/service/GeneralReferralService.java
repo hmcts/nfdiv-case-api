@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.SetGeneralReferralDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 
 @Service
 @Slf4j
@@ -33,7 +34,7 @@ public class GeneralReferralService {
     private SetGeneralReferralDetails setGeneralReferralDetails;
 
     public void caseWorkerGeneralReferral(final CaseDetails<CaseData, State> details) {
-        if (FinalOrderRequested.equals(details.getState()) && hasOrderLateExplanation(details)) {
+        if (finalOrderRequestedAndOverdue(details)) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
             final String caseId = details.getId().toString();
@@ -43,8 +44,10 @@ public class GeneralReferralService {
         }
     }
 
-    private boolean hasOrderLateExplanation(final CaseDetails<CaseData, State> details) {
-        final FinalOrder finalOrder = details.getData().getFinalOrder();
-        return null != finalOrder && finalOrder.hasFinalOrderLateExplanation();
+    private boolean finalOrderRequestedAndOverdue(final CaseDetails<CaseData, State> details) {
+        final State state = details.getState();
+        final boolean requestedState = FinalOrderRequested.equals(state) || RespondentFinalOrderRequested.equals(state);
+        final boolean finalOrderOverdue = YesOrNo.YES.equals(details.getData().getFinalOrder().getIsFinalOrderOverdue());
+        return requestedState && finalOrderOverdue;
     }
 }
