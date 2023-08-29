@@ -10,7 +10,9 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
@@ -49,5 +51,22 @@ public class SolicitorValidationService {
         return organisationUsers.stream()
             .map(ProfessionalUser::getUserIdentifier)
             .anyMatch(userId::equals);
+    }
+
+    public List<String> validateEmailBelongsToOrgUser(String email,
+                                                      Long caseId,
+                                                      String organisationId) {
+        List<String> errors = new ArrayList<>();
+
+        Optional<String> userId = findSolicitorByEmail(email, caseId);
+
+        if (userId.isEmpty()) {
+            errors.add("No user found with provided email. Please check the email address and try again");
+        } else if (!isSolicitorInOrganisation(userId.get(), organisationId)) {
+            errors.add("The email address provided does not belong to a user in the selected organisation. "
+                + "Please ensure the user is in the selected organisation.");
+        }
+
+        return errors;
     }
 }

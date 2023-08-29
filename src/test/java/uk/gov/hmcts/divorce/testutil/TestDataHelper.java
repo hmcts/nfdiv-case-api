@@ -34,7 +34,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
@@ -82,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
@@ -99,6 +99,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.builder;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
@@ -739,7 +740,7 @@ public class TestDataHelper {
     }
 
     public static ListValue<ConfidentialDivorceDocument> confidentialDocumentWithType(final ConfidentialDocumentsReceived documentType,
-                                                              final String documentId) {
+                                                                                      final String documentId) {
         String documentUrl = "http://localhost:8080/" + documentId;
 
         Document ccdDocument = new Document(
@@ -1103,6 +1104,18 @@ public class TestDataHelper {
     }
 
     public static List<ListValue<ScannedDocument>> scannedDocuments(FormType formType) {
+        return scannedDocuments(formType.getName());
+    }
+
+    public static List<ListValue<ScannedDocument>> scannedDocuments(List<String> scannedDocumentSubtypes) {
+        return scannedDocumentSubtypes
+            .stream()
+            .map(TestDataHelper::scannedDocuments)
+            .flatMap(java.util.Collection::stream)
+            .collect(Collectors.toList());
+    }
+
+    private static List<ListValue<ScannedDocument>> scannedDocuments(String subtype) {
         var scannedDocListValue = ListValue.<ScannedDocument>builder()
             .value(ScannedDocument
                 .builder()
@@ -1110,7 +1123,7 @@ public class TestDataHelper {
                 .deliveryDate(DOC_SCANNED_DATE_META_INFO)
                 .scannedDate(DOC_SCANNED_DATE_META_INFO)
                 .type(FORM)
-                .subtype(formType.getName())
+                .subtype(subtype)
                 .fileName(FILE_NAME)
                 .url(
                     Document
@@ -1271,7 +1284,7 @@ public class TestDataHelper {
                 .dateAndTimeOfHearing(LOCAL_DATE_TIME)
                 .grantedDate(LOCAL_DATE)
                 .build())
-            .documents(CaseDocuments.builder()
+            .documents(builder()
                 .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
                 .build())
             .build();

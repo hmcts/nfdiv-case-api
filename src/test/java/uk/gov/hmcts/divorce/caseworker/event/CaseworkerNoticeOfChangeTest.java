@@ -16,12 +16,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
@@ -41,6 +45,9 @@ class CaseworkerNoticeOfChangeTest {
     @Mock
     private NoticeOfChangeService noticeOfChangeService;
 
+    @Mock
+    private SolicitorValidationService solicitorValidationService;
+
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
 
@@ -53,6 +60,83 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_NOTICE_OF_CHANGE);
+    }
+
+    @Test
+    public void shouldReturnValidationErrorWhenUserDoesNotExist() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyDigital(YES)
+            .areTheyRepresented(YES)
+            .build());
+
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+
+        when(solicitorValidationService.validateEmailBelongsToOrgUser(TEST_SOLICITOR_EMAIL, details.getId(), TEST_ORG_ID))
+            .thenReturn(List.of("Error"));
+
+        var result = noticeOfChange.midEvent(details, details);
+
+        assertThat(result.getErrors()).hasSize(1);
+        assertThat(result.getErrors()).contains("Error");
+    }
+
+    @Test
+    public void shouldNotReturnValidationErrorWhenUserDoesExist() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyDigital(YES)
+            .areTheyRepresented(YES)
+            .build());
+
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+
+        when(solicitorValidationService.validateEmailBelongsToOrgUser(TEST_SOLICITOR_EMAIL, details.getId(), TEST_ORG_ID))
+            .thenReturn(Collections.emptyList());
+
+        var result = noticeOfChange.midEvent(details, details);
+
+        assertThat(result.getErrors()).isNullOrEmpty();
+    }
+
+    @Test
+    public void shouldNotValidateWhenOfflineCitizen() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyDigital(NO)
+            .areTheyRepresented(NO)
+            .build());
+
+
+        var result = noticeOfChange.midEvent(details, details);
+
+        assertThat(result.getErrors()).isNullOrEmpty();
+
+        verifyNoInteractions(solicitorValidationService);
+    }
+
+    @Test
+    public void shouldNotValidateWhenOfflineSolicitor() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyDigital(NO)
+            .areTheyRepresented(YES)
+            .build());
+
+
+        var result = noticeOfChange.midEvent(details, details);
+
+        assertThat(result.getErrors()).isNullOrEmpty();
+
+        verifyNoInteractions(solicitorValidationService);
     }
 
     @Test
@@ -154,6 +238,35 @@ class CaseworkerNoticeOfChangeTest {
         beforeDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
             .organisationId("SECOND_ORG_ID")
             .build());
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyRepresented(YES)
+            .areTheyDigital(YES)
+            .build());
+
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+
+        verify(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(
+            details.getId(),
+            details.getData().getApplicant1(),
+            beforeDetails.getData().getApplicant1(),
+            roles,
+            APPLICANT_1_SOLICITOR.getRole());
+    }
+
+    @Test
+    public void shouldHandleNullBeforeOrgPolicyGracefully() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+        beforeDetails.getData().getApplicant1().getSolicitor().setOrganisationPolicy(null);
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
             .areTheyRepresented(YES)

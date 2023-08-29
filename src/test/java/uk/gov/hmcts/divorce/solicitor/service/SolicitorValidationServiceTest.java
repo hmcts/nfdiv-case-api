@@ -105,4 +105,63 @@ class SolicitorValidationServiceTest {
 
         assertThat(result).isFalse();
     }
+
+    @Test
+    public void shouldReturnErrorWhenUserNotExists() {
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(AUTH_TOKEN, null));
+        when(authTokenGenerator.generate()).thenReturn(S2S_TOKEN);
+        when(organisationClient.findUserByEmail(AUTH_TOKEN, S2S_TOKEN, SOL_EMAIL)).thenThrow(FeignException.NotFound.class);
+
+        List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(SOL_EMAIL, null, ORG_ID);
+
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).isEqualTo("No user found with provided email. Please check the email address and try again");
+    }
+
+    @Test
+    public void shouldReturnErrorWhenUserNotInOrg() {
+        when(authTokenGenerator.generate()).thenReturn(S2S_TOKEN);
+        when(organisationClient.findUserByEmail(AUTH_TOKEN, S2S_TOKEN, SOL_EMAIL)).thenReturn(new OrganisationUser(USER_ID));
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(AUTH_TOKEN, null));
+
+        FindUsersByOrganisationResponse expectedResponse = FindUsersByOrganisationResponse.builder()
+            .users(List.of(ProfessionalUser.builder()
+                    .userIdentifier("RANDOM_USER")
+                    .build(),
+                ProfessionalUser.builder()
+                    .userIdentifier("SOME_OTHER_ID")
+                    .build()))
+            .build();
+
+        when(organisationClient.getOrganisationUsers(AUTH_TOKEN, S2S_TOKEN, ORG_ID)).thenReturn(expectedResponse);
+
+        List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(SOL_EMAIL, null, ORG_ID);
+
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).isEqualTo(
+            "The email address provided does not belong to a user in the selected organisation. Please ensure the user is in the "
+            + "selected organisation.");
+    }
+
+    @Test
+    public void shouldNotReturnErrorWhenValidUser() {
+        when(authTokenGenerator.generate()).thenReturn(S2S_TOKEN);
+        when(organisationClient.findUserByEmail(AUTH_TOKEN, S2S_TOKEN, SOL_EMAIL)).thenReturn(new OrganisationUser(USER_ID));
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(AUTH_TOKEN, null));
+
+        FindUsersByOrganisationResponse expectedResponse = FindUsersByOrganisationResponse.builder()
+            .users(List.of(ProfessionalUser.builder()
+                    .userIdentifier(USER_ID)
+                    .build(),
+                ProfessionalUser.builder()
+                    .userIdentifier("SOME_OTHER_ID")
+                    .build()))
+            .build();
+
+        when(organisationClient.getOrganisationUsers(AUTH_TOKEN, S2S_TOKEN, ORG_ID)).thenReturn(expectedResponse);
+
+        List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(SOL_EMAIL, null, ORG_ID);
+
+        assertThat(errors).hasSize(0);
+    }
 }
