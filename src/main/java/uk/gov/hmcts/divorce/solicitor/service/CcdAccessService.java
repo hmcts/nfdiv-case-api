@@ -12,10 +12,13 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -188,6 +191,15 @@ public class CcdAccessService {
             CaseAssignmentUserRolesResponse response1 = caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, caseAssignmentUserRolesReq);
             log.info("removeUsersWithRole status: {}", response1.getStatusMessage());
         }
+    }
+
+    public List<CaseAssignmentUserRole> getCaseAssignmentUserRoles(Long caseId) {
+        final var auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        final var s2sToken = authTokenGenerator.generate();
+
+        return Optional.ofNullable(caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString())))
+            .map(CaseAssignmentUserRolesResource::getCaseAssignmentUserRoles)
+            .orElse(Collections.emptyList());
     }
 
     public CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, UserRole role) {
