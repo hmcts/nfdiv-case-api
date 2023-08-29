@@ -13,7 +13,7 @@ public enum OfflineWhoApplying implements HasLabel {
     APPLICANT_1("Applicant 1"),
 
     @JsonProperty("applicant2")
-    APPLICANT_2("Applicant 2");
+    APPLICANT_2("Applicant 2 / Respondent");
 
     private final String label;
 }
