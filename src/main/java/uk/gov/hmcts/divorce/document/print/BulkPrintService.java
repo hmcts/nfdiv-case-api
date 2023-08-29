@@ -106,33 +106,24 @@ public class BulkPrintService {
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
 
-        try {
-            log.info("Recipients:");
-            for (String recipient : print.getRecipients()) {
-                log.error(recipient);
-            }
-            UUID sendLetterUUID = sendLetterApi.sendLetter(
-                authToken,
-                new LetterV3(
-                    XEROX_TYPE_PARAMETER,
-                    documents,
-                    Map.of(
-                        LETTER_TYPE_KEY, print.getLetterType(),
-                        CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
-                        CASE_IDENTIFIER_KEY, print.getCaseId(),
-                        RECIPIENTS, print.getRecipients()
-                    )))
-                .letterId;
-            log.info("Bulk print request sent with letterId: " + sendLetterUUID);
-            return sendLetterUUID;
-
-        // TODO: NFDIV-3567 - For now bulk print service return a conflict exception which needs to be handled. At the
-        //  end of July when they release their change, they will change to return a 200 response + the ID of the duplicate request.
-        //  So for now, handle the exception until it's removed.
-        } catch (HttpClientErrorException e) {
-            log.error("Duplicate request found: " + e.getMessage());
-            return UUID.randomUUID();
+        log.debug("Recipients:");
+        for (String recipient : print.getRecipients()) {
+            log.debug(recipient);
         }
+        UUID sendLetterUUID = sendLetterApi.sendLetter(
+            authToken,
+            new LetterV3(
+                XEROX_TYPE_PARAMETER,
+                documents,
+                Map.of(
+                    LETTER_TYPE_KEY, print.getLetterType(),
+                    CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
+                    CASE_IDENTIFIER_KEY, print.getCaseId(),
+                    RECIPIENTS, print.getRecipients()
+                )))
+            .letterId;
+        log.info("Bulk print request sent with letterId: " + sendLetterUUID);
+        return sendLetterUUID;
     }
 
     private byte[] getDocumentBytes(final Letter letter,
