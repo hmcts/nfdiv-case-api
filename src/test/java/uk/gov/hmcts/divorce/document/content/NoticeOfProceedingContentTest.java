@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
+import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -321,12 +322,12 @@ public class NoticeOfProceedingContentTest {
     }
 
     @Test
-    public void shouldThrowRuntimeExceptionOnCasesNotIssued() {
+    void shouldThrowRuntimeExceptionOnCasesNotIssued() {
         CaseData caseData = caseData();
         caseData.getApplication().setIssueDate(null);
 
         assertThatThrownBy(() -> noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH))
-            .isInstanceOf(RuntimeException.class)
+            .isInstanceOf(InvalidCcdCaseDataException.class)
             .hasMessage("Cannot generate notice of proceeding without issue date. Case ID: 1616591401473378");
     }
 

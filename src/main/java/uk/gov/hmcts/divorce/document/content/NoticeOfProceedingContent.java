@@ -5,6 +5,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
+import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -158,7 +159,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
         if (caseData.getApplication().getIssueDate() == null) {
-            throw new RuntimeException("Cannot generate notice of proceeding without issue date. Case ID: " + ccdCaseReference);
+            throw new InvalidCcdCaseDataException("Cannot generate notice of proceeding without issue date. Case ID: " + ccdCaseReference);
         }
 
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
