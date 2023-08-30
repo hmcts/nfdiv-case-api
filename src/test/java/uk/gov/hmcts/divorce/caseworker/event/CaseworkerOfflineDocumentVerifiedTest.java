@@ -1137,7 +1137,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldInvokeGeneralReferralServiceD36() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().scannedSubtypeReceived(D36).build())
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build())
             .build();
         details.setData(caseData);
 
