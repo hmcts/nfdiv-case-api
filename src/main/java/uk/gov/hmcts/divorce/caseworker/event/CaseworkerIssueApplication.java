@@ -23,6 +23,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
@@ -94,6 +95,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData caseData = details.getData();
+        final Application application = caseData.getApplication();
 
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
@@ -103,6 +105,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(caseValidationErrors)
+                .build();
+        }
+
+        if (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))
                 .build();
         }
 

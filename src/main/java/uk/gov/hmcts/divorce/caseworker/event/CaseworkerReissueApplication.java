@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -100,6 +101,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData caseData = details.getData();
+        final Application application = caseData.getApplication();
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
@@ -109,6 +111,13 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(caseValidationErrors)
+                .build();
+        }
+
+        if (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))
                 .build();
         }
 
