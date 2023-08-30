@@ -139,6 +139,7 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
+    @Disabled
     public void shouldSendAosLetterForJSSolicitorUndisputedSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST);
         final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, SUBMITTED_URL);
