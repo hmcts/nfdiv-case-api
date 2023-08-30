@@ -156,6 +156,11 @@ public class NoticeOfProceedingContent {
         templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
+
+        if (caseData.getApplication().getIssueDate() == null) {
+            throw new RuntimeException("Cannot generate notice of proceeding without issue date. Case ID: " + ccdCaseReference);
+        }
+
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         if (!isNull(caseData.getDueDate())) {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));

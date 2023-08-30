@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -318,4 +319,15 @@ public class NoticeOfProceedingContentTest {
             .phoneNumber("0300 303 0642")
             .build();
     }
+
+    @Test
+    public void shouldThrowRuntimeExceptionOnCasesNotIssued() {
+        CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(null);
+
+        assertThatThrownBy(() -> noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH))
+            .isInstanceOf(RuntimeException.class)
+            .hasMessage("Cannot generate notice of proceeding without issue date. Case ID: 1616591401473378");
+    }
+
 }
