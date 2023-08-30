@@ -134,7 +134,6 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
             if (caseData.isJudicialSeparationCase()) {
                 if (caseData.getApplicant2().isRepresented()) {
-                    // TODO Check with Aaron that even tho this is going to solicitor recipient should be app2
                     generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, caseId, caseData.getApplicant1(),
                             caseData.getApplicant2());
                 } else {
