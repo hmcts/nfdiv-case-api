@@ -11,8 +11,8 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -67,7 +67,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
     ) {
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
-        final Applicant applicant =caseData.getApplicant1();
+        final Applicant applicant = caseData.getApplicant1();
         final boolean isIssued = application.getIssueDate() != null;
 
         if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && applicant.isConfidentialContactDetails()) {
