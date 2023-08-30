@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -64,14 +65,12 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
         CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Hello, world!");
-        log.info("Caseworker about to submit callback invoked with Case Id: {}", details.getId());
-
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
+        final Applicant applicant =caseData.getApplicant1();
         final boolean isIssued = application.getIssueDate() != null;
 
-        if (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) {
+        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && applicant.isConfidentialContactDetails()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))

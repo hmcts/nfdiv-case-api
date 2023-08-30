@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -96,6 +97,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
+        final Applicant applicant = caseData.getApplicant1();
 
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
@@ -108,7 +110,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        if (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) {
+        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && applicant.isConfidentialContactDetails()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))

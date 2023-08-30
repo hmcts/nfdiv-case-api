@@ -9,11 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -39,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 
 @Component
 @Slf4j
@@ -102,6 +99,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
+        final Applicant applicant =caseData.getApplicant1();
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
@@ -114,7 +112,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .build();
         }
 
-        if (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) {
+        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && applicant.isConfidentialContactDetails()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))
