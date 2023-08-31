@@ -62,6 +62,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPAR
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -534,6 +535,11 @@ public class CaseData {
             );
             conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
             conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
+        }
+
+        if (FINAL_ORDER_APPLICATION.equals(documentType)) {
+            finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
+            finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
         }
     }
 }

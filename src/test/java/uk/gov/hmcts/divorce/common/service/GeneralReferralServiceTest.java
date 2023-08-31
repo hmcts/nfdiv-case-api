@@ -3,10 +3,13 @@ package uk.gov.hmcts.divorce.common.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.SetGeneralReferralDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -24,7 +27,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,10 +69,11 @@ class GeneralReferralServiceTest {
         verifyNoInteractions(setGeneralReferralDetails);
     }
 
-    @Test
-    void shouldDoNothingWhenStateIsFinalOrderRequestedButNoFinalOrderLateExplanationPresent() {
+    @ParameterizedTest
+    @EnumSource(value = State.class, names = {"FinalOrderRequested", "RespondentFinalOrderRequested"})
+    void shouldDoNothingWhenStateIsFinalOrderRequestedButNotOverdue(State state) {
 
-        caseDetails.setState(FinalOrderRequested);
+        caseDetails.setState(state);
 
         generalReferralService.caseWorkerGeneralReferral(caseDetails);
 
@@ -80,11 +83,12 @@ class GeneralReferralServiceTest {
         verifyNoInteractions(setGeneralReferralDetails);
     }
 
-    @Test
-    void shouldCreateEventWhenStateIsFinalOrderRequestedButAndFinalOrderLateExplanationPresent() {
-        caseDetails.setState(FinalOrderRequested);
+    @ParameterizedTest
+    @EnumSource(value = State.class, names = {"FinalOrderRequested", "RespondentFinalOrderRequested"})
+    void shouldCreateEventWhenStateIsFinalOrderRequestedButAndOverdue(State state) {
+        caseDetails.setState(state);
         caseData.setFinalOrder(FinalOrder.builder()
-            .applicant1FinalOrderLateExplanation("My dog ate it")
+            .isFinalOrderOverdue(YesOrNo.YES)
             .build());
 
         generalReferralService.caseWorkerGeneralReferral(caseDetails);
