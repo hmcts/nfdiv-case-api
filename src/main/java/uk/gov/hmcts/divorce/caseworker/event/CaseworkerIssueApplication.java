@@ -97,7 +97,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
-        final Applicant applicant = caseData.getApplicant1();
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
 
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
@@ -110,7 +111,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && applicant.isConfidentialContactDetails()) {
+        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))
