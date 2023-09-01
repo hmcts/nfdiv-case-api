@@ -150,8 +150,12 @@ public class FinalOrder {
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
 
     @CCD(
-        label = "${labelContentRespondentsOrApplicant2s} final order late explanation",
-        access = {Applicant2Access.class}
+            label = "${labelContentTheApplicant2UC} final order late explanation",
+            hint = "You are making this application for a final order over one year from when the conditional order was made. "
+                    + "Explain to the court why you did not apply for a final order earlier. "
+                    + "Your answer will be reviewed as part of your application",
+            access = {Applicant2Access.class},
+            typeOverride = TextArea
     )
     private String applicant2FinalOrderLateExplanation;
 
