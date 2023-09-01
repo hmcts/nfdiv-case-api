@@ -110,6 +110,8 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
+
+
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -117,12 +119,6 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .build();
         }
 
-        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential."))
-                .build();
-        }
 
         try {
             final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);

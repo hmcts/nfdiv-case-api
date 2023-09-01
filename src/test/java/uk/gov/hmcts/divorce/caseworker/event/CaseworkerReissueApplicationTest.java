@@ -102,11 +102,12 @@ class CaseworkerReissueApplicationTest {
         caseDetails.setState(Submitted);
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.isConfidentialContactDetails();
-        applicant2.isConfidentialContactDetails();
+        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
+
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         updatedCaseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReissue.aboutToSubmit(
