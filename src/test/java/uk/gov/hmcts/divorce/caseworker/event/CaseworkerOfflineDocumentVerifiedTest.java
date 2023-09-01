@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
@@ -25,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -71,6 +73,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorR
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
@@ -111,6 +114,10 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
+
 
     @InjectMocks
     private CaseworkerOfflineDocumentVerified caseworkerOfflineDocumentVerified;
@@ -763,6 +770,111 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldSetOnlyApplicant2ToOfflineIfSoleCaseAndD36SelectedRespondentRequested() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .finalOrder(FinalOrder.builder().d36WhoApplying(OfflineWhoApplying.APPLICANT_2).build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(FO_D36)
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D36.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
+    }
+
+    @Test
+    void shouldSetStateRespondentFinalOrderRequestedWhenSoleCaseAndD36SelectedRespondentRequested() {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD36Document =  ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("D36.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .finalOrder(FinalOrder.builder().d36WhoApplying(OfflineWhoApplying.APPLICANT_2).build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(FO_D36)
+                    .scannedDocuments(List.of(scannedD36Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("D36.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(RespondentFinalOrderRequested);
+    }
+
+    @Test
     void shouldSetBothApplicantsToOfflineIfJointCaseAndD36Selected() {
         setMockClock(clock);
 
@@ -965,6 +1077,33 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldInvokeGeneralReferralServiceFO_D36() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build())
+            .build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(details);
+    }
+
+    @Test
+    void shouldInvokeGeneralReferralServiceD36() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedSubtypeReceived(D36).build())
+            .build();
+        details.setData(caseData);
+
+        caseworkerOfflineDocumentVerified.submitted(details, details);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(details);
+    }
+
+
+    @Test
     void shouldSendOfflineNotifications() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         CaseData caseData = CaseData.builder()
@@ -1064,7 +1203,9 @@ class CaseworkerOfflineDocumentVerifiedTest {
     @Test
     void shouldNotTriggerSwitchToSoleEventIfD36AndSwitchToSoleNotSelected() {
         final CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().build())
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .build())
             .finalOrder(FinalOrder.builder().build())
             .build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
