@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -44,6 +45,24 @@ class SetServiceTypeTest {
 
         assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
         assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+    }
+
+    @Test
+    void shouldSetServiceTypeToCourtServiceForJointCasesEvenIfApplicant2IsOverseas() {
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> response = setServiceType.apply(caseDetails);
+
+        assertThat(response.getData().getApplication().getServiceMethod()).isEqualTo(COURT_SERVICE);
     }
 
     @Test

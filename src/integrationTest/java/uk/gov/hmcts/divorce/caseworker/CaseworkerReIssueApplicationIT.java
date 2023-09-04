@@ -1774,7 +1774,8 @@ public class CaseworkerReIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.setDueDate(LocalDate.now().plusDays(14));
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
         ListValue<DivorceDocument> divorceDocumentListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
