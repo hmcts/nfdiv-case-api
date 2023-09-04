@@ -97,7 +97,7 @@ class SendAosPackToApplicantTest {
     }
 
     @Test
-    void shouldSendAosLetterToApplicantIfJudicialSeparationIfNotCourtServiceSelected() {
+    void shouldNotSendAosLetterToAnyoneIfJudicialSeparationIfNotCourtServiceSelected() {
         final var caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -111,7 +111,6 @@ class SendAosPackToApplicantTest {
 
         sendAosPackToApplicant.apply(caseDetails);
 
-        verify(aosPackPrinter).sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosPackPrinter);
     }
 
@@ -119,7 +118,7 @@ class SendAosPackToApplicantTest {
     public void shouldSendAosPackToApplicantWithoutNopForApp2WhenJoint() {
         final var caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant1().setOffline(NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Australia").build());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
