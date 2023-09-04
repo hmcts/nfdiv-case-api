@@ -39,6 +39,7 @@ class IssueApplicationTest {
     void shouldThrowErrorIfPersonalServiceConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
         final Applicant applicant1 = caseData.getApplicant1();

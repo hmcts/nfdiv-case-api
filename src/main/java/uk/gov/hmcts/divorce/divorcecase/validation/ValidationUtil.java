@@ -175,8 +175,8 @@ public final class ValidationUtil {
         final boolean check = (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod())
             && (applicant1ConfidentialContactDetails || applicant2ConfidentialContactDetails);
         return check
-            ? emptyList()
-            : singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential.") ;
+            ? singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential.")
+        : emptyList();
     }
 
     public static List<String> validateCitizenResendInvite(CaseDetails<CaseData, State> details) {
