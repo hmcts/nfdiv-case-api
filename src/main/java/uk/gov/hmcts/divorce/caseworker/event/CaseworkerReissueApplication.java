@@ -102,15 +102,10 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData caseData = details.getData();
-        final Application application = caseData.getApplication();
-        final Applicant applicant1 = caseData.getApplicant1();
-        final Applicant applicant2 = caseData.getApplicant2();
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
         final List<String> caseValidationErrors = validateIssue(details.getData());
-
-
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -118,7 +113,6 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .errors(caseValidationErrors)
                 .build();
         }
-
 
         try {
             final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);

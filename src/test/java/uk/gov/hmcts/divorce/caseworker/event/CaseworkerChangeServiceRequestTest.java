@@ -46,8 +46,8 @@ class CaseworkerChangeServiceRequestTest {
         caseDetails.setState(Submitted);
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.isConfidentialContactDetails();
-        applicant2.isConfidentialContactDetails();
+        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
@@ -68,8 +68,8 @@ class CaseworkerChangeServiceRequestTest {
         caseDetails.setState(Submitted);
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.isConfidentialContactDetails();
-        applicant2.isConfidentialContactDetails();
+        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
