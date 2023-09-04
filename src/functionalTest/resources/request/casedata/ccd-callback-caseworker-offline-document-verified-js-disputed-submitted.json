@@ -105,18 +105,6 @@
         "documentType": "D84",
         "documentFileName": "D84.pdf"
       }
-    },
-    {
-      "id": "614fbd5a-bd90-4926-b316-eed9f7ec3b92",
-      "value": {
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/bb3f309f-003e-4d59-a983-86d8053e66bd",
-          "document_filename": "coversheet.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/bb3f309f-003e-4d59-a983-86d8053e66bd/binary"
-        },
-        "documentType": "Coversheet",
-        "documentFileName": "coversheet.pdf"
-      }
     }
   ],
   "applicant1FirstName": "app1_first_name",
