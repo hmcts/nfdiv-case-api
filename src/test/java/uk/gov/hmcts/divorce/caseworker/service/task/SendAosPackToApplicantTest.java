@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -113,4 +114,22 @@ class SendAosPackToApplicantTest {
         verify(aosPackPrinter).sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosPackPrinter);
     }
+
+    @Test
+    public void shouldSendAosPackToApplicantWithoutNopForApp2WhenJoint() {
+        final var caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplicant1().setOffline(NO);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("Australia").build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosPackToApplicant.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosLetterToApplicant(caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(aosPackPrinter);
+    }
+
 }

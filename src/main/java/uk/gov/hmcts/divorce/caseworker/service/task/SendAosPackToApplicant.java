@@ -21,7 +21,7 @@ public class SendAosPackToApplicant implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplication().isCourtServiceMethod()) {
+        if (caseData.getApplication().isCourtServiceMethod() || !caseData.getApplicationType().isSole()) {
             log.info("Sending AOS pack to applicant for sole case with id: {}", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
         } else {
