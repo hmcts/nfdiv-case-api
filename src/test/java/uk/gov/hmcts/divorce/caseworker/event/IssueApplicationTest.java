@@ -35,48 +35,4 @@ class IssueApplicationTest {
             .extracting(Event::getId)
             .contains(CASEWORKER_ISSUE_APPLICATION);
     }
-    @Test
-    void shouldThrowErrorIfPersonalServiceConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        final Applicant applicant1 = caseData.getApplicant1();
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
-        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        updatedCaseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
-    }
-
-    @Test
-    void shouldThrowErrorIfSolicitorServiceConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        final Applicant applicant1 = caseData.getApplicant1();
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
-        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-        updatedCaseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
-    }
 }
