@@ -238,6 +238,52 @@ class CaseworkerIssueApplicationTest {
             + "or Personal Service if the respondent is confidential.");
     }
 
+    @Test
+    void shouldIssueApplicationPersonalServiceNonConfidential(){
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant1.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isEmpty();
+    }
+
+    @Test
+    void shouldIssueApplicationSolicitorServiceNonConfidential(){
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant1.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isEmpty();
+    }
+
     private CaseData caseDataWithAllMandatoryFields() {
         var caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
