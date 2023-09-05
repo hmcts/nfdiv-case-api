@@ -148,7 +148,7 @@ class CaseworkerReissueApplicationTest {
     }
 
     @Test
-    void shouldIssueApplicationPersonalServiceNonConfidential(){
+    void shouldIssueApplicationPersonalServiceNonConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
@@ -171,7 +171,7 @@ class CaseworkerReissueApplicationTest {
     }
 
     @Test
-    void shouldIssueApplicationSolicitorServiceNonConfidential(){
+    void shouldIssueApplicationSolicitorServiceNonConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
