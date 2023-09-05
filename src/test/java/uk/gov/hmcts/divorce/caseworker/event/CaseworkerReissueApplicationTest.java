@@ -167,7 +167,7 @@ class CaseworkerReissueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -190,6 +190,6 @@ class CaseworkerReissueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getErrors()).isNull();
     }
 }

@@ -258,7 +258,7 @@ class CaseworkerIssueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -281,7 +281,7 @@ class CaseworkerIssueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getErrors()).isNull();
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
