@@ -111,7 +111,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
+        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod())
+            && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential. "))

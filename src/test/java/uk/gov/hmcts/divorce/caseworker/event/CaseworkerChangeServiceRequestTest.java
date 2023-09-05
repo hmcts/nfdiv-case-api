@@ -8,9 +8,11 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
-
-import java.awt.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerChangeServiceRequest.CASEWORKER_CHANGE_SERVICE_REQUEST;
@@ -57,7 +59,8 @@ class CaseworkerChangeServiceRequestTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
     }
 
     @Test
@@ -79,6 +82,7 @@ class CaseworkerChangeServiceRequestTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
     }
 }

@@ -113,7 +113,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .data(caseData)
                 .errors(singletonList("You may not select Personal Service. Please select Solicitor or Court Service."))
                 .build();
-        } else if (application.isSolicitorServiceMethod() && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
+        } else if (application.isSolicitorServiceMethod()
+            && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service if the respondent is confidential."))

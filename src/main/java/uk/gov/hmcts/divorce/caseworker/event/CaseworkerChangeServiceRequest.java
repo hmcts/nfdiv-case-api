@@ -74,7 +74,8 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
         final Applicant applicant2 = caseData.getApplicant2();
         final boolean isIssued = application.getIssueDate() != null;
 
-        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod()) && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
+        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod())
+            && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential."))

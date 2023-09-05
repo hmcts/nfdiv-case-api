@@ -10,7 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 
 import java.time.LocalDateTime;
@@ -94,6 +98,7 @@ class CaseworkerReissueApplicationTest {
 
         assertThat(response.getErrors()).isNull();
     }
+
     @Test
     void shouldThrowErrorIfPersonalServiceConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
@@ -114,7 +119,8 @@ class CaseworkerReissueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
     }
 
     @Test
@@ -137,6 +143,7 @@ class CaseworkerReissueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
     }
 }

@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
@@ -21,7 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;

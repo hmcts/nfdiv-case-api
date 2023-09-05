@@ -46,7 +46,9 @@ public final class ApplicationValidation {
         return flattenLists(
             validateBasicCase(caseData),
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails()),
-            validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(), caseData.getApplicant1().isConfidentialContactDetails(), caseData.getApplicant2().isConfidentialContactDetails())
+            validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
+                caseData.getApplicant1().isConfidentialContactDetails(),
+                caseData.getApplicant2().isConfidentialContactDetails())
         );
     }
 

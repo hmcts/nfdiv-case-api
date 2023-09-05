@@ -10,7 +10,15 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -39,8 +47,10 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.*;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationTest {
@@ -180,6 +190,7 @@ class CaseworkerIssueApplicationTest {
 
         verify(issueApplicationService).sendNotifications(caseDetails);
     }
+
     @Test
     void shouldThrowErrorIfPersonalServiceConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
@@ -200,7 +211,8 @@ class CaseworkerIssueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
     }
 
     @Test
@@ -222,7 +234,8 @@ class CaseworkerIssueApplicationTest {
             updatedCaseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
     }
 
     private CaseData caseDataWithAllMandatoryFields() {

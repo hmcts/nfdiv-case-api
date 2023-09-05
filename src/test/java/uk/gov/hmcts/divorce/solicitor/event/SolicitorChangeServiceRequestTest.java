@@ -14,7 +14,11 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
