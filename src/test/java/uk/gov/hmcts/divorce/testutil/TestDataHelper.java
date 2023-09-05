@@ -320,6 +320,7 @@ public class TestDataHelper {
 
     public static CaseData caseData() {
         return CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .supplementaryCaseType(NA)
