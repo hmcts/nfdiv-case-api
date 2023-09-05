@@ -17,7 +17,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.Collections.singletonList;
+import java.util.List;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateChangeServiceRequest;
 
 @Component
 @Slf4j
@@ -70,15 +72,14 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
     ) {
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
-        final Applicant applicant1 = caseData.getApplicant1();
-        final Applicant applicant2 = caseData.getApplicant2();
         final boolean isIssued = application.getIssueDate() != null;
 
-        if ((application.isPersonalServiceMethod() || application.isSolicitorServiceMethod())
-            && (applicant1.isConfidentialContactDetails() || applicant2.isConfidentialContactDetails())) {
+        final List<String> caseValidationErrors = validateChangeServiceRequest(details.getData());
+
+        if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential."))
+                .errors(caseValidationErrors)
                 .build();
         }
 

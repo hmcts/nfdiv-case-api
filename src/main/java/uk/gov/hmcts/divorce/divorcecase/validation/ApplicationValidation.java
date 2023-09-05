@@ -52,4 +52,13 @@ public final class ApplicationValidation {
         );
     }
 
+    public static List<String> validateChangeServiceRequest(CaseData caseData) {
+        return flattenLists(
+            validateBasicCase(caseData),
+            validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
+                caseData.getApplicant1().isConfidentialContactDetails(),
+                caseData.getApplicant2().isConfidentialContactDetails())
+        );
+    }
+
 }
