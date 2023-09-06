@@ -87,10 +87,9 @@ class CaseworkerChangeServiceRequestTest {
     }
 
     @Test
-    void shouldIssueApplicationPersonalServiceNonConfidential() {
+    void shouldChangeServiceRequestPersonalServiceNonConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
         final Applicant applicant1 = caseData.getApplicant1();
@@ -110,10 +109,9 @@ class CaseworkerChangeServiceRequestTest {
     }
 
     @Test
-    void shouldIssueApplicationSolicitorServiceNonConfidential() {
+    void shouldChangeServiceRequestSolicitorServiceNonConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
         final Applicant applicant1 = caseData.getApplicant1();
