@@ -76,7 +76,12 @@ public class ConditionalOrderPronouncedPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
+        conditionalOrderPronouncedPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            caseData.getApplicant1()
+        );
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -93,7 +98,12 @@ public class ConditionalOrderPronouncedPrinterTest {
         CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+        conditionalOrderPronouncedPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            caseData.getApplicant2()
+        );
 
         verifyNoInteractions(bulkPrintService);
     }
@@ -105,15 +115,22 @@ public class ConditionalOrderPronouncedPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        conditionalOrderPronouncedPrinter.sendLetter(caseData, TEST_CASE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+        conditionalOrderPronouncedPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            caseData.getApplicant2()
+        );
 
         final Print print = printCaptor.getValue();
+        var recipient = List.of(TEST_CASE_ID.toString(), caseData.getApplicant2().getFullName(), LETTER_TYPE_CO_PRONOUNCED);
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(coGrantedCoversheetValueApp2);
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coGrantedDocValue);
+        assertThat(print.getRecipients()).isEqualTo(recipient);
     }
 
     private CaseData caseData() {

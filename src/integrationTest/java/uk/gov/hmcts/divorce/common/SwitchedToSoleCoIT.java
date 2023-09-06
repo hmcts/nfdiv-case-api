@@ -384,7 +384,7 @@ public class SwitchedToSoleCoIT {
             .andExpect(status().isOk());
 
         verify(switchToSoleCoPrinter)
-            .print(any(CaseData.class), eq(TEST_CASE_ID));
+            .print(any(CaseData.class), eq(TEST_CASE_ID), eq(data.getApplicant2()));
     }
 
     @Test

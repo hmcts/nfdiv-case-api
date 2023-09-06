@@ -501,7 +501,8 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(printer).sendLetter(
             eq(data),
             eq(1234567890123456L),
-            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
+            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1),
+            eq(data.getApplicant1())
         );
     }
 
@@ -515,7 +516,8 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(printer).sendLetter(
             eq(data),
             eq(1234567890123456L),
-            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
+            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2),
+            eq(data.getApplicant2())
         );
     }
 

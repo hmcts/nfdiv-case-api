@@ -62,7 +62,9 @@ public class ApplyForConditionalOrderPrinter {
                 conditionalOrderLettersToSend,
                 caseIdString,
                 caseIdString,
-                LETTER_TYPE_APPLY_FOR_CONDITIONAL_ORDER_PACK);
+                LETTER_TYPE_APPLY_FOR_CONDITIONAL_ORDER_PACK,
+                applicant.getFullName()
+            );
 
             final UUID letterId = bulkPrintService.print(print);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
