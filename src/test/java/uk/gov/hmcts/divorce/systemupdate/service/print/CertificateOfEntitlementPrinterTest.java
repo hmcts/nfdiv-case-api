@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntit
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
@@ -73,7 +74,12 @@ public class CertificateOfEntitlementPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        certificateOfEntitlementPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            caseData.getApplicant1()
+        );
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -82,6 +88,9 @@ public class CertificateOfEntitlementPrinterTest {
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(certificateOfEntitlementCoverLetterValue);
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(certificateOfEntitlementDocValue);
+
+        final List recipient = List.of(TEST_CASE_ID, caseData.getApplicant1(), "certificate-of-entitlement");
+        assertThat(print.getRecipients().equals(recipient));
     }
 
     @Test
@@ -90,7 +99,12 @@ public class CertificateOfEntitlementPrinterTest {
         final CaseData caseData = caseData();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        certificateOfEntitlementPrinter.sendLetter(caseData, TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
+        certificateOfEntitlementPrinter.sendLetter(
+            caseData,
+            TEST_CASE_ID,
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            caseData.getApplicant1()
+        );
 
         verifyNoInteractions(bulkPrintService);
     }

@@ -9,10 +9,12 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
@@ -46,7 +48,23 @@ public class GeneralLetterPrinter {
 
             final String caseIdString = caseId.toString();
 
-            final Print print = new Print(mapToLetters(documents, GENERAL_LETTER), caseIdString, caseIdString, LETTER_TYPE_GENERAL_LETTER);
+            GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
+                .map(element -> element.getValue().getGeneralLetterParties())
+                .orElse(GeneralParties.OTHER);
+
+            var recipientName = switch (parties) {
+                case RESPONDENT -> caseData.getApplicant2().getFullName();
+                case APPLICANT -> caseData.getApplicant1().getFullName();
+                case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
+            };
+
+            final Print print = new Print(
+                mapToLetters(documents, GENERAL_LETTER),
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_GENERAL_LETTER,
+                recipientName
+            );
 
             final UUID letterId = bulkPrintService.print(print);
 

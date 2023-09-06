@@ -66,7 +66,13 @@ public class AppliedForCoPrinter {
 
             final String caseIdString = caseId.toString();
             final Print print =
-                new Print(singletonList(appliedForCoLetter), caseIdString, caseIdString, LETTER_TYPE_APPLIED_FOR_CO);
+                new Print(
+                    singletonList(appliedForCoLetter),
+                    caseIdString,
+                    caseIdString,
+                    LETTER_TYPE_APPLIED_FOR_CO,
+                    applicant.getFullName()
+                );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
