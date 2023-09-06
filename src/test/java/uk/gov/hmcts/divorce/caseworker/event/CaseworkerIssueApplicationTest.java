@@ -245,17 +245,20 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant1.setContactDetailsType(ContactDetailsType.PUBLIC);
         applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
 
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        updatedCaseDetails.setData(caseData);
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(caseData);
+        expectedDetails.setState(Submitted);
+
+        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
+            expectedDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
@@ -268,17 +271,20 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant1.setContactDetailsType(ContactDetailsType.PUBLIC);
         applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
 
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-        updatedCaseDetails.setData(caseData);
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(caseData);
+        expectedDetails.setState(Submitted);
+
+        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
+            expectedDetails, caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
