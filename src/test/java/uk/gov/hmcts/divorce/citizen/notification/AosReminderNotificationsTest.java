@@ -205,7 +205,9 @@ class AosReminderNotificationsTest {
         aosReminderNotifications.sendToApplicant1Offline(data, 1234567890123456L);
 
         verify(aosOverduePrinter).sendLetterToApplicant(
-            data, 1234567890123456L
+            data,
+            data.getApplicant1(),
+            1234567890123456L
         );
     }
 

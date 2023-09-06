@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -191,7 +192,7 @@ public class SystemProgressCaseToAosOverdueIT {
             eq(ENGLISH),
             eq(AOS_OVERDUE_LETTER_DOCUMENT_NAME));
 
-        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), anyLong());
+        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), any(Applicant.class), anyLong());
     }
 
     @Test
@@ -239,7 +240,7 @@ public class SystemProgressCaseToAosOverdueIT {
             eq(ENGLISH),
             eq(AOS_OVERDUE_LETTER_DOCUMENT_NAME));
 
-        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), anyLong());
+        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), any(Applicant.class), anyLong());
 
         verifyNoInteractions(notificationService);
     }

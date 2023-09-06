@@ -306,7 +306,7 @@ public class FinalOrderGrantedNotificationTest {
 
         finalOrderGrantedNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(printer).print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1);
+        verify(printer).print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, caseData.getApplicant1());
     }
 
     @Test
@@ -315,6 +315,6 @@ public class FinalOrderGrantedNotificationTest {
 
         finalOrderGrantedNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(printer).print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
+        verify(printer).print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, caseData.getApplicant2());
     }
 }
