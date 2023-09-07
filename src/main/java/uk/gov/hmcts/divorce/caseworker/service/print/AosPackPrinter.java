@@ -44,8 +44,14 @@ public class AosPackPrinter {
         if (!isEmpty(currentAosLetters)) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
             final var app2 = caseData.getApplicant2();
+            final Print print = new Print(
+                currentAosLetters,
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_RESPONDENT_PACK,
+                app2.getFullName()
+            );
 
             var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
                 ? !app2.getSolicitor().hasOrgId()
@@ -69,7 +75,13 @@ public class AosPackPrinter {
         if (!isEmpty(currentAosLetters)) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_APPLICANT_PACK);
+            final Print print = new Print(
+                currentAosLetters,
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_APPLICANT_PACK,
+                caseData.getApplicant1().getFullName()
+            );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
@@ -89,7 +101,13 @@ public class AosPackPrinter {
         if (!isEmpty(currentAosLetters)) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_APPLICANT_PACK);
+            final Print print = new Print(
+                currentAosLetters,
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_APPLICANT_PACK,
+                caseData.getApplicant1().getFullName()
+            );
             final UUID letterId = bulkPrintService.printWithD10Form(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
@@ -146,7 +164,13 @@ public class AosPackPrinter {
 
             log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
             final String caseIdString = caseId.toString();
-            final Print print = new Print(aosResponseLetterWithAos, caseIdString, caseIdString, LETTER_TYPE_AOS_RESPONSE_PACK);
+            final Print print = new Print(
+                aosResponseLetterWithAos,
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_AOS_RESPONSE_PACK,
+                caseData.getApplicant1().getFullName()
+            );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {}, size {}, for case {}", letterId, aosResponseLetterWithAos.size(), caseId);

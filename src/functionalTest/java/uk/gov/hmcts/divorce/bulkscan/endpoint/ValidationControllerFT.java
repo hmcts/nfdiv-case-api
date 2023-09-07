@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.testutil.ServiceAuthenticationGenerator;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8SOcrDataFields;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -90,8 +90,8 @@ public class ValidationControllerFT {
         OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
-                    populateKeyValue("applicationForDivorce", "true"),
-                    populateKeyValue("aSoleApplication", "true")
+                    new OcrDataField("applicationForDivorce", "true"),
+                    new OcrDataField("aSoleApplication", "true")
                 )
             )
             .build();
@@ -118,8 +118,8 @@ public class ValidationControllerFT {
         OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
-                    populateKeyValue("applicationForDivorce", "true"),
-                    populateKeyValue("aSoleApplication", "true")
+                    new OcrDataField("applicationForDivorce", "true"),
+                    new OcrDataField("aSoleApplication", "true")
                 )
             )
             .build();

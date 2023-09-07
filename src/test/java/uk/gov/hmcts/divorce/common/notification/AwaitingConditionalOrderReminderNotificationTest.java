@@ -184,7 +184,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
         awaitingConditionalOrderReminderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID);
+        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
     }
 
     @Test
@@ -194,7 +194,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
         awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID);
+        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
     }
 
     @Test

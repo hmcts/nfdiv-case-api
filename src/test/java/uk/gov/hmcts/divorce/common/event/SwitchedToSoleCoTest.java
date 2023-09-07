@@ -260,7 +260,7 @@ class SwitchedToSoleCoTest {
 
         switchedToSoleCo.submitted(caseDetails, caseDetails);
 
-        verify(switchToSoleCoPrinter).print(caseData, caseId);
+        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant2());
         verifyNoMoreInteractions(switchToSoleCoPrinter);
     }
 

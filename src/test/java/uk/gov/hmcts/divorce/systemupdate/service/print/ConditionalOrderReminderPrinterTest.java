@@ -71,7 +71,7 @@ class ConditionalOrderReminderPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(randomUUID());
 
-        conditionalOrderReminderPrinter.sendLetters(caseData, TEST_CASE_ID);
+        conditionalOrderReminderPrinter.sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -107,7 +107,36 @@ class ConditionalOrderReminderPrinterTest {
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
 
-        conditionalOrderReminderPrinter.sendLetters(caseData, TEST_CASE_ID);
+        conditionalOrderReminderPrinter.sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldNotPrintConditionalOrderReminderPackWhenMissingDocumentCoversheetApp1() {
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_REMINDER)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(D84)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(
+                Applicant.builder()
+                    .email("testresp@test.com")
+                    .build())
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
+            .build();
+
+        conditionalOrderReminderPrinter.sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verifyNoInteractions(bulkPrintService);
     }

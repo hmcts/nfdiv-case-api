@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
-import uk.gov.hmcts.ccd.sdk.type.KeyValue;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -29,6 +28,7 @@ import uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.InputScannedDoc;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.InputScannedDocUrl;
+import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -262,6 +262,9 @@ public class TestDataHelper {
             .firstName(TEST_APP2_FIRST_NAME)
             .middleName(TEST_APP2_MIDDLE_NAME)
             .lastName(TEST_APP2_LAST_NAME)
+            .solicitor(
+                Solicitor.builder().build()
+            )
             .build();
     }
 
@@ -320,6 +323,7 @@ public class TestDataHelper {
 
     public static CaseData caseData() {
         return CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .supplementaryCaseType(NA)
@@ -1029,76 +1033,66 @@ public class TestDataHelper {
         return OcrDataValidationRequest.builder()
             .ocrDataFields(
                 List.of(
-                    KeyValue.builder()
-                        .key("applicant1Name")
-                        .value("bob")
-                        .build())
-            )
+                    new OcrDataField("applicant1Name", "bob")
+            ))
             .build();
     }
 
-    public static List<KeyValue> populateCommonOcrDataFields() {
-        List<KeyValue> kv = new ArrayList<>();
-        kv.add(populateKeyValue("aSoleApplication", "true"));
-        kv.add(populateKeyValue("marriageOrCivilPartnershipCertificate", "true"));
-        kv.add(populateKeyValue("translation", "false"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1FirstName", "bob"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1LastName", "builder"));
-        kv.add(populateKeyValue("respondentOrApplicant2FirstName", "the"));
-        kv.add(populateKeyValue("respondentOrApplicant2LastName", "respondent"));
-        kv.add(populateKeyValue("respondentOrApplicant2MarriedName", "No"));
-        kv.add(populateKeyValue("serveOutOfUK", "Yes"));
-        kv.add(populateKeyValue("respondentServePostOnly", "true"));
-        kv.add(populateKeyValue("respondentDifferentServiceAddress", "No"));
-        kv.add(populateKeyValue("marriageOutsideOfUK", "No"));
-        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipDay", "01"));
-        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipMonth", "01"));
-        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipYear", "1990"));
-        kv.add(populateKeyValue("soleOrApplicant1FullNameAsOnCert", "bob builder"));
-        kv.add(populateKeyValue("respondentOrApplicant2FullNameAsOnCert", "the respondent"));
-        kv.add(populateKeyValue("detailsOnCertCorrect", "Yes"));
-        kv.add(populateKeyValue("jurisdictionReasonsBothPartiesHabitual", "true"));
-        kv.add(populateKeyValue("existingOrPreviousCourtCases", "No"));
-        kv.add(populateKeyValue("soleOrApplicant1FinancialOrder", "No"));
-        kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1LegalRepStatementOfTruth", "true"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepSignature", "signed"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1Signing", "true"));
-        kv.add(populateKeyValue("legalRepSigning", "false"));
-        kv.add(populateKeyValue("statementOfTruthDateDay", "01"));
-        kv.add(populateKeyValue("statementOfTruthDateMonth", "01"));
-        kv.add(populateKeyValue("statementOfTruthDateYear", "2022"));
-        kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepFullName", "bob builder"));
-        kv.add(populateKeyValue("soleOrApplicant1HWFNo", "HWF123"));
-        return kv;
+    public static List<OcrDataField> populateCommonOcrDataFields() {
+        List<OcrDataField> ocrDataFields = new ArrayList<>();
+        ocrDataFields.add(new OcrDataField("aSoleApplication", "true"));
+        ocrDataFields.add(new OcrDataField("marriageOrCivilPartnershipCertificate", "true"));
+        ocrDataFields.add(new OcrDataField("translation", "false"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1FirstName", "bob"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1LastName", "builder"));
+        ocrDataFields.add(new OcrDataField("respondentOrApplicant2FirstName", "the"));
+        ocrDataFields.add(new OcrDataField("respondentOrApplicant2LastName", "respondent"));
+        ocrDataFields.add(new OcrDataField("respondentOrApplicant2MarriedName", "No"));
+        ocrDataFields.add(new OcrDataField("serveOutOfUK", "Yes"));
+        ocrDataFields.add(new OcrDataField("respondentServePostOnly", "true"));
+        ocrDataFields.add(new OcrDataField("respondentDifferentServiceAddress", "No"));
+        ocrDataFields.add(new OcrDataField("marriageOutsideOfUK", "No"));
+        ocrDataFields.add(new OcrDataField("dateOfMarriageOrCivilPartnershipDay", "01"));
+        ocrDataFields.add(new OcrDataField("dateOfMarriageOrCivilPartnershipMonth", "01"));
+        ocrDataFields.add(new OcrDataField("dateOfMarriageOrCivilPartnershipYear", "1990"));
+        ocrDataFields.add(new OcrDataField("soleOrApplicant1FullNameAsOnCert", "bob builder"));
+        ocrDataFields.add(new OcrDataField("respondentOrApplicant2FullNameAsOnCert", "the respondent"));
+        ocrDataFields.add(new OcrDataField("detailsOnCertCorrect", "Yes"));
+        ocrDataFields.add(new OcrDataField("jurisdictionReasonsBothPartiesHabitual", "true"));
+        ocrDataFields.add(new OcrDataField("existingOrPreviousCourtCases", "No"));
+        ocrDataFields.add(new OcrDataField("soleOrApplicant1FinancialOrder", "No"));
+        ocrDataFields.add(new OcrDataField("soleOrApplicant1ConfirmationOfBreakdown", "true"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1StatementOfTruth", "true"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1LegalRepStatementOfTruth", "true"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1OrLegalRepSignature", "signed"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1Signing", "true"));
+        ocrDataFields.add(new OcrDataField("legalRepSigning", "false"));
+        ocrDataFields.add(new OcrDataField("statementOfTruthDateDay", "01"));
+        ocrDataFields.add(new OcrDataField("statementOfTruthDateMonth", "01"));
+        ocrDataFields.add(new OcrDataField("statementOfTruthDateYear", "2022"));
+        ocrDataFields.add(new OcrDataField("soleApplicantOrApplicant1OrLegalRepFullName", "bob builder"));
+        ocrDataFields.add(new OcrDataField("soleOrApplicant1HWFNo", "HWF123"));
+        return ocrDataFields;
     }
 
 
-    public static List<KeyValue> populateD8OcrDataFields() {
-        List<KeyValue> kv = new ArrayList<>(populateCommonOcrDataFields());
+    public static List<OcrDataField> populateD8OcrDataFields() {
+        List<OcrDataField> ocrDataFields = new ArrayList<>(populateCommonOcrDataFields());
 
-        kv.add(populateKeyValue("applicationForDivorce", "true"));
-        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
+        ocrDataFields.add(new OcrDataField("applicationForDivorce", "true"));
+        ocrDataFields.add(new OcrDataField("prayerMarriageDissolved", "true"));
 
-        return kv;
+        return ocrDataFields;
     }
 
-    public static List<KeyValue> populateD8SOcrDataFields() {
-        List<KeyValue> kv = new ArrayList<>(populateCommonOcrDataFields());
+    public static List<OcrDataField> populateD8SOcrDataFields() {
+        List<OcrDataField> ocrDataFields = new ArrayList<>(populateCommonOcrDataFields());
 
-        kv.add(populateKeyValue("prayerApplicant1JudiciallySeparated", "true"));
+        ocrDataFields.add(new OcrDataField("prayerApplicant1JudiciallySeparated", "true"));
 
-        return kv;
+        return ocrDataFields;
     }
 
-
-    public static KeyValue populateKeyValue(String key, String value) {
-        return KeyValue.builder()
-            .key(key)
-            .value(value)
-            .build();
-    }
 
     public static List<ListValue<ScannedDocument>> scannedDocuments(FormType formType) {
         return scannedDocuments(formType.getName());
