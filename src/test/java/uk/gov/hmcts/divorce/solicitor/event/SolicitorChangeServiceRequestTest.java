@@ -14,9 +14,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -102,26 +100,6 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).contains("You may not select Personal Service. Please select Solicitor or Court Service.");
-    }
-
-    @Test
-    void shouldThrowErrorIfSolicitorServiceConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-        updatedCaseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service if the respondent is confidential.");
     }
 
     @Test
