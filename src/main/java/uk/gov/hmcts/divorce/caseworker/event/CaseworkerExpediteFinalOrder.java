@@ -107,7 +107,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         final var generalOrderDocuments = caseData.getGeneralOrders()
             .stream()
             .map(doc -> doc.getValue().getGeneralOrderDocument())
-            .collect(toList());
+            .toList();
 
         List<DynamicListElement> generalOrderDocumentNames =
             generalOrderDocuments

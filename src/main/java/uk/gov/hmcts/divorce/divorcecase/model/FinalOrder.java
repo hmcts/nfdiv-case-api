@@ -328,6 +328,12 @@ public class FinalOrder {
     )
     private ExpeditedFinalOrderAuthorisation expeditedFinalOrderAuthorisation;
 
+    @CCD(
+        label = "Overdue Final Order Authorisation",
+        access = {DefaultAccess.class}
+    )
+    private ExpeditedFinalOrderAuthorisation overdueFinalOrderAuthorisation;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
