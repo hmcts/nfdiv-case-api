@@ -172,10 +172,9 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateCaseFieldsForPersonalAndSolicitorService(final Application application,
-                                                                                final boolean applicant1ConfidentialContactDetails,
                                                                                 final boolean applicant2ConfidentialContactDetails) {
         final boolean check = (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod())
-            && (applicant1ConfidentialContactDetails || applicant2ConfidentialContactDetails);
+            && applicant2ConfidentialContactDetails;
         return check
             ? singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential.")
             : emptyList();

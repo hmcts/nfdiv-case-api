@@ -105,9 +105,8 @@ class CaseworkerReissueApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
-        final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
 
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
@@ -129,9 +128,7 @@ class CaseworkerReissueApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
-        final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
-        applicant1.setContactDetailsType(ContactDetailsType.PRIVATE);
         applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
