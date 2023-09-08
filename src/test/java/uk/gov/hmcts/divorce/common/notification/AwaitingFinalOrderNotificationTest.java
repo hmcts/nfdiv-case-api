@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_12_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
@@ -301,6 +302,7 @@ class AwaitingFinalOrderNotificationTest {
             .applicant1(applicant)
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        data.getConditionalOrder().setGrantedDate(LocalDate.of(2022, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
@@ -319,7 +321,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(IS_SOLE, YES),
-                hasEntry(IS_JOINT, NO)
+                hasEntry(IS_JOINT, NO),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_12_MONTHS, "18 June 2023")
             )),
             eq(ENGLISH)
         );
@@ -336,6 +339,7 @@ class AwaitingFinalOrderNotificationTest {
             .applicant2(applicant)
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        data.getConditionalOrder().setGrantedDate(LocalDate.of(2022, 6, 18));
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
@@ -354,7 +358,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "ref"),
                 hasEntry(IS_SOLE, NO),
-                hasEntry(IS_JOINT, YES)
+                hasEntry(IS_JOINT, YES),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_12_MONTHS, "18 June 2023")
             )),
             eq(ENGLISH)
         );

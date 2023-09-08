@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_12_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
@@ -146,6 +147,8 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_12_MONTHS,
+            caseData.getConditionalOrder().getGrantedDate().plusMonths(12).format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }
