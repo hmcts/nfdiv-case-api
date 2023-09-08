@@ -228,6 +228,11 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public boolean isNotConfidentialContactDetails() {
+        return ContactDetailsType.PUBLIC.equals(contactDetailsType);
+    }
+
+    @JsonIgnore
     public boolean isBasedOverseas() {
         return !isRepresented() && nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address);
     }
