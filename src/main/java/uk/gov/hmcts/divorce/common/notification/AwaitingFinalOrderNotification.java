@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Slf4j
 public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
+    public static final String FINAL_ORDER_OVERDUE_DATE = "finalOrderOverdueDate";
     @Autowired
     private CommonContent commonContent;
 
@@ -146,6 +147,8 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
+            .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }
