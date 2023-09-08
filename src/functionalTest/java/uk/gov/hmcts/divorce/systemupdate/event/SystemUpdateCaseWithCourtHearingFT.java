@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -81,7 +80,6 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
 
@@ -100,7 +98,6 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendLettersToApplicantsAndCreateCertificateOfEntitlementDocumentAndCoverLetterWhenBothContactsArePrivate()
         throws IOException {
 
@@ -121,7 +118,6 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendLettersToOfflineRespondentInSoleApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
 
@@ -140,7 +136,6 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendLettersToOfflineApplicantsInSoleJSApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
 
@@ -160,7 +155,6 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled
     public void shouldSendLettersToOfflineApplicantSolicitorInJointJSApplicationAndCreateCertificateOfEntitlementDocumentAndCoverLetter()
         throws IOException {
 

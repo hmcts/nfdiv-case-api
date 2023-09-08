@@ -119,7 +119,7 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
                 caseData,
                 caseId);
 
-            conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
+            conditionalOrderReminderPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
 
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline(YesOrNo.YES);
@@ -150,7 +150,7 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
                 caseData,
                 caseId);
 
-            conditionalOrderReminderPrinter.sendLetters(caseData, caseId);
+            conditionalOrderReminderPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
 
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline(YesOrNo.YES);

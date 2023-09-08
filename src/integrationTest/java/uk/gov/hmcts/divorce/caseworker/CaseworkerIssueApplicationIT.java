@@ -1962,7 +1962,8 @@ public class CaseworkerIssueApplicationIT {
     void shouldSendLettersToOnlyApplicant1IfCourtServiceNotSelected() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.now());
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.setDueDate(LocalDate.now().plusDays(7));
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);

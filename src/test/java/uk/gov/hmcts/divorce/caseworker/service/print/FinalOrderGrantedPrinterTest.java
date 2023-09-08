@@ -69,7 +69,7 @@ public class FinalOrderGrantedPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1);
+        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, caseData.getApplicant1());
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -78,6 +78,9 @@ public class FinalOrderGrantedPrinterTest {
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(finalOrderGrantedCoverLetter.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(finalOrderGrantedLetter.getValue());
+
+        final List recipient = List.of(TEST_CASE_ID, caseData.getApplicant1(), "final-order-granted-letter");
+        assertThat(print.getRecipients().equals(recipient));
     }
 
     @Test
@@ -98,7 +101,7 @@ public class FinalOrderGrantedPrinterTest {
             )
             .build();
 
-        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1);
+        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, caseData.getApplicant1());
 
         verifyNoInteractions(bulkPrintService);
     }
@@ -134,7 +137,7 @@ public class FinalOrderGrantedPrinterTest {
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
+        printer.print(caseData, TEST_CASE_ID, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, caseData.getApplicant2());
 
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
@@ -143,6 +146,9 @@ public class FinalOrderGrantedPrinterTest {
         assertThat(print.getLetters().size()).isEqualTo(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(finalOrderGrantedCoverLetter.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(finalOrderGrantedLetter.getValue());
+
+        final List recipient = List.of(TEST_CASE_ID, caseData.getApplicant2(), "final-order-granted-letter");
+        assertThat(print.getRecipients().equals(recipient));
     }
 
 }

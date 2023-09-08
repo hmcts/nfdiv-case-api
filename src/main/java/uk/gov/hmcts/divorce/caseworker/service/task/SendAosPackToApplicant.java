@@ -24,7 +24,7 @@ public class SendAosPackToApplicant implements CaseTask {
         if (caseData.getApplication().isCourtServiceMethod()) {
             log.info("Sending AOS pack to applicant for sole case with id: {}", caseId);
             aosPackPrinter.sendAosLetterToApplicant(caseData, caseId);
-        } else {
+        } else if (caseData.getApplication().isPersonalServiceMethod()) {
             log.info("Bulk printing NOP and application pack. Case id: {}:", caseId);
             aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, caseId);
         }

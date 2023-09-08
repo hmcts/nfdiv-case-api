@@ -171,6 +171,15 @@ public final class ValidationUtil {
         );
     }
 
+    public static List<String> validateCaseFieldsForPersonalAndSolicitorService(final Application application,
+                                                                                final boolean applicant2ConfidentialContactDetails) {
+        final boolean personalOrSolicitorServiceCheck = (application.isPersonalServiceMethod() || application.isSolicitorServiceMethod())
+            && applicant2ConfidentialContactDetails;
+        return personalOrSolicitorServiceCheck
+            ? singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential.")
+            : emptyList();
+    }
+
     public static List<String> validateCitizenResendInvite(CaseDetails<CaseData, State> details) {
         var data = details.getData();
         boolean isApplicant2EmailUpdatePossible = details.getState() == State.AwaitingApplicant2Response
