@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -35,6 +36,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Component
 @Slf4j
 public class AwaitingFinalOrderNotification implements ApplicantNotification {
+
+    @Value("${final_order.due_offset_months}")
+    private long finalOrderDueOffsetMonths;
 
     @Autowired
     private CommonContent commonContent;
@@ -148,7 +152,7 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_12_MONTHS,
-            caseData.getConditionalOrder().getGrantedDate().plusMonths(12).format(DATE_TIME_FORMATTER));
+            caseData.getConditionalOrder().getGrantedDate().plusMonths(finalOrderDueOffsetMonths).format(DATE_TIME_FORMATTER));
 
         return templateVars;
     }

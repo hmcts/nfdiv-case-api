@@ -93,6 +93,7 @@ final_order:
   eligible_from_offset_days: ${FINAL_ORDER_ELIGIBLE_FROM_OFFSET_DAYS:43}
   respondent_eligible_from_offset_months: ${FINAL_ORDER_RESPONDENT_ELIGIBLE_FROM_OFFSET_MONTHS:3}
   awaiting_joint_final_order_reminder_offset_days: ${AWAITING_JOINT_FINAL_ORDER_REMINDER_OFFSET_DAYS:7}
+  due_offset_months: ${FINAL_ORDER_DUE_OFFSET_MONTHS:12}
 
 apply_for_final_order:
   reminder_offset_days: ${APPLY_FOR_FINAL_ORDER_REMINDER_OFFSET_DAYS:14}
