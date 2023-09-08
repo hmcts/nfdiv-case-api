@@ -18,6 +18,7 @@ import java.util.Map;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -210,6 +211,19 @@ class CommonContentTest {
                 entry(CIVIL_PARTNER_JOINT, "no")
             );
     }
+
+    @Test
+    void shouldNotThrowNpeIfGenderIsNull() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
+        assertDoesNotThrow(() -> commonContent
+            .conditionalOrderTemplateVars(caseData, 1L, getApplicant(null), getApplicant(null))
+        );
+    }
+
 
     @Test
     void shouldSetTemplateVarsForJointDivorceApplicationWhenPartnerIsFemale() {

@@ -240,11 +240,11 @@ public class CommonContent {
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
-            && partner.getGender().equals(MALE)
+            && MALE.equals(partner.getGender())
             ? YES : NO);
         templateVars.put(WIFE_JOINT, jointApplication
             && caseData.isDivorce()
-            && partner.getGender().equals(FEMALE)
+            && FEMALE.equals(partner.getGender())
             ? YES : NO);
         templateVars.put(CIVIL_PARTNER_JOINT, jointApplication
             && !caseData.isDivorce()
