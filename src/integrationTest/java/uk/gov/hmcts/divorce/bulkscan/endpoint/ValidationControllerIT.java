@@ -13,7 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrDataValidationRequest;
-import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 
@@ -26,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -73,8 +73,8 @@ public class ValidationControllerIT {
                 OcrDataValidationRequest.builder()
                     .ocrDataFields(
                         List.of(
-                            new OcrDataField("applicationForDivorce", "true"),
-                            new OcrDataField("aSoleApplication", "true")
+                            populateKeyValue("applicationForDivorce", "true"),
+                            populateKeyValue("aSoleApplication", "true")
                         )
                     )
                     .build()))
@@ -93,8 +93,8 @@ public class ValidationControllerIT {
                 OcrDataValidationRequest.builder()
                     .ocrDataFields(
                         List.of(
-                            new OcrDataField("applicationForDivorce", "true"),
-                            new OcrDataField("aSoleApplication", "true")
+                            populateKeyValue("applicationForDivorce", "true"),
+                            populateKeyValue("aSoleApplication", "true")
                         )
                     )
                     .build()))

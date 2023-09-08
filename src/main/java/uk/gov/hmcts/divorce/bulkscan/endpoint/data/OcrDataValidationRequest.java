@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
+import uk.gov.hmcts.ccd.sdk.type.KeyValue;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ import java.util.List;
 public class OcrDataValidationRequest {
 
     @JsonProperty("ocr_data_fields")
-    private List<OcrDataField> ocrDataFields;
+    private List<KeyValue> ocrDataFields;
 }
