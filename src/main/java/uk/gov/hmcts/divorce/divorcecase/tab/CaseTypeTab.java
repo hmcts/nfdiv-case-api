@@ -436,6 +436,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("granted")
             .field("grantedDate")
             .field("expeditedFinalOrderAuthorisation")
+            .field("overdueFinalOrderAuthorisation")
             .field("dateFinalOrderNoLongerEligible")
             .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
             .field("doesApplicant1IntendToSwitchToSole")
@@ -446,10 +447,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelFinalOrderDetails-SoleRespondent",
                 "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
                 "### Respondent")
-            .field("doesApplicant2WantToApplyForFinalOrder")
-            .field("applicant2FinalOrderExplanation")
-            .field("applicant2FinalOrderLateExplanation")
-            .field("applicant2FinalOrderStatementOfTruth");
+            .field("doesApplicant2WantToApplyForFinalOrder", IS_JOINT)
+            .field("applicant2FinalOrderExplanation", IS_JOINT)
+            .field("applicant2FinalOrderLateExplanation", IS_JOINT)
+            .field("applicant2FinalOrderStatementOfTruth")
+            .field("scannedD36Form");
 
     }
 

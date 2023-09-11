@@ -51,6 +51,7 @@ class GeneralLetterPrinterTest {
 
         final ListValue<GeneralLetterDetails> doc1 = ListValue.<GeneralLetterDetails>builder()
             .value(GeneralLetterDetails.builder()
+                    .generalLetterParties(GeneralParties.APPLICANT)
                     .generalLetterLink(generalLetter)
                     .generalLetterAttachmentLinks(Lists.newArrayList(attachment))
                     .build())
@@ -58,6 +59,7 @@ class GeneralLetterPrinterTest {
 
         final ListValue<GeneralLetterDetails> doc2 = ListValue.<GeneralLetterDetails>builder()
             .value(GeneralLetterDetails.builder()
+                .generalLetterParties(GeneralParties.APPLICANT)
                 .generalLetterLink(Document.builder().build())
                 .build())
             .build();

@@ -79,7 +79,8 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
                 currentLetters,
                 caseIdString,
                 caseIdString,
-                awaitingAmendmentOrClarificationLetterType.toString()
+                awaitingAmendmentOrClarificationLetterType.toString(),
+                applicant.getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 

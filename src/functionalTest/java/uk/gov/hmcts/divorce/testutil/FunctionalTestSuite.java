@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -118,7 +119,10 @@ public abstract class FunctionalTestSuite {
 
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url) throws IOException {
 
-        return triggerCallback(caseData, eventId, url, 1234567890123456L);
+        // Add random Long generation of 16 digits to avoid duplicate case id
+        long caseId = Math.abs(new Random().nextLong());
+
+        return triggerCallback(caseData, eventId, url, caseId);
     }
 
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url, Long caseId) throws IOException {

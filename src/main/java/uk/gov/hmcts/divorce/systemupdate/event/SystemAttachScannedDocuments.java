@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -20,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -46,9 +44,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 @Slf4j
 public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, UserRole> {
 
-    @Value("${toggle.enable_qr_code_reading}")
-    private boolean qrCodeReadingEnabled;
-
     @Autowired
     private Clock clock;
 
@@ -64,10 +59,10 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
             .complex(CaseData::getDocuments)
-                .mandatory(CaseDocuments::getScannedDocuments)
+            .mandatory(CaseDocuments::getScannedDocuments)
             .done()
             .complex(CaseData::getBulkScanMetaInfo)
-                .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
+            .mandatoryWithLabel(BulkScanMetaInfo::getEvidenceHandled, "Supplementary evidence handled")
             .done();
     }
 
@@ -95,10 +90,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         final CaseData caseData = details.getData();
         final CaseData beforeCaseData = beforeDetails.getData();
         caseData.getApplication().setPreviousState(beforeDetails.getState());
-
-        if (qrCodeReadingEnabled) {
-            handleScannedDocument(caseData, beforeCaseData);
-        }
+        handleScannedDocument(caseData, beforeCaseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -106,18 +98,23 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
     }
 
     private void handleScannedDocument(CaseData caseData, CaseData beforeCaseData) {
-        final List<ListValue<ScannedDocument>> afterScannedDocs = caseData.getDocuments().getScannedDocuments();
-        final List<ListValue<ScannedDocument>> beforeScannedDocs =
-            isNotEmpty(beforeCaseData.getDocuments().getScannedDocuments())
-                ? beforeCaseData.getDocuments().getScannedDocuments()
-                : new ArrayList<>();
 
-        Optional<ScannedDocument> mostRecentScannedSubtypeReceived = Stream.ofNullable(afterScannedDocs)
+        final List<ScannedDocument> afterScannedDocs = Stream.ofNullable(caseData.getDocuments().getScannedDocuments())
             .flatMap(Collection::stream)
-            .filter(element -> !beforeScannedDocs.contains(element))
             .map(ListValue::getValue)
-            .filter(SystemAttachScannedDocuments::isValidDocumentSubtype)
-            .findFirst();
+            .toList();
+
+        final List<ScannedDocument> beforeScannedDocs = Stream.ofNullable(beforeCaseData.getDocuments().getScannedDocuments())
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .toList();
+
+        Optional<ScannedDocument> mostRecentScannedSubtypeReceived =
+            afterScannedDocs
+                .stream()
+                .filter(element -> !beforeScannedDocs.contains(element))
+                .filter(SystemAttachScannedDocuments::isValidDocumentSubtype)
+                .findFirst();
 
         if (mostRecentScannedSubtypeReceived.isPresent()) {
             final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();

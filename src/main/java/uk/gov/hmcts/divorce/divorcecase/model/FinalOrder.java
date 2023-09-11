@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
@@ -149,8 +150,12 @@ public class FinalOrder {
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
 
     @CCD(
-        label = "${labelContentRespondentsOrApplicant2s} final order late explanation",
-        access = {Applicant2Access.class}
+            label = "${labelContentTheApplicant2UC} final order late explanation",
+            hint = "You are making this application for a final order over one year from when the conditional order was made. "
+                    + "Explain to the court why you did not apply for a final order earlier. "
+                    + "Your answer will be reviewed as part of your application",
+            access = {Applicant2Access.class},
+            typeOverride = TextArea
     )
     private String applicant2FinalOrderLateExplanation;
 
@@ -216,6 +221,18 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private YesOrNo finalOrderReminderSentApplicant2;
+
+    @CCD(
+        label = "Link to scanned d36 form"
+    )
+    private Document scannedD36Form;
+
+    @CCD(
+        label = "Date D36 form was scanned"
+    )
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime dateD36FormScanned;
 
     @CCD(
         label = "What application type is the D36?",
@@ -310,6 +327,12 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private ExpeditedFinalOrderAuthorisation expeditedFinalOrderAuthorisation;
+
+    @CCD(
+        label = "Overdue Final Order Authorisation",
+        access = {DefaultAccess.class}
+    )
+    private ExpeditedFinalOrderAuthorisation overdueFinalOrderAuthorisation;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {

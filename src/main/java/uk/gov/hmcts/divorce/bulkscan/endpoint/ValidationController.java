@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,13 @@ import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 
 import java.nio.charset.StandardCharsets;
 
+import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.EnumUtils.isValidEnum;
 
 @RestController
+@Slf4j
 public class ValidationController {
 
     @Autowired
@@ -44,6 +47,7 @@ public class ValidationController {
         }
 
         OcrValidationResponse result = validator.validateExceptionRecord(encodedFormType, requestBody);
+        log.info(valueOf(result));
 
         return ResponseEntity.ok().body(result);
     }

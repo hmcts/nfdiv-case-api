@@ -16,10 +16,15 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -63,6 +68,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANTS_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
@@ -97,6 +103,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     public static final String GRANT_FINAL_ORDER_RESPONSE_JSON = "classpath:caseworker-grant-final-order-response.json";
     public static final String GRANT_FINAL_ORDER_OFFLINE_RESPONSE_JSON = "classpath:caseworker-grant-final-order-offline-response.json";
+    public static final String GRANT_FINAL_ORDER_OVERDUE_RESPONSE_JSON = "classpath:caseworker-grant-final-order-overdue-response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -207,6 +214,77 @@ public class CaseworkerGrantFinalOrderIT {
 
         assertThatJson(response)
             .isEqualTo(json(expectedResponse(GRANT_FINAL_ORDER_OFFLINE_RESPONSE_JSON)));
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldGenerateGrantFinalOrderDocumentAndFinalOrderCoverLetterWhenAboutToSubmitCallbackIsInvokedForFinalOrderOverdue()
+        throws Exception {
+
+        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setIsFinalOrderOverdue(YES);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setEmail(null);
+        caseData.getFinalOrder().setOverdueFinalOrderAuthorisation(
+            ExpeditedFinalOrderAuthorisation.builder()
+                .expeditedFinalOrderJudgeName("THE JUDGE")
+                .build()
+        );
+        caseData.setGeneralOrders(List.of(
+            ListValue.<DivorceGeneralOrder>builder()
+                .value(
+                    DivorceGeneralOrder.builder()
+                        .generalOrderDocument(
+                            DivorceDocument.builder()
+                                .documentType(GENERAL_ORDER)
+                                .documentFileName("generalOrder2023-07-03 17:17:30.pdf")
+                                .documentLink(Document.builder()
+                                    .binaryUrl("http://dm-store-aat.service.core-compute-aat.internal"
+                                        + "/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524/binary")
+                                    .url("http://dm-store-aat.service.core-compute-aat.internal"
+                                        + "/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524")
+                                    .filename("generalOrder2023-07-03 17:17:30.pdf")
+                                    .build())
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        ));
+        caseData.getDocuments().setGeneralOrderDocumentNames(DynamicList.builder()
+                .value(DynamicListElement.builder()
+                    .label("generalOrder2023-07-03 17:17:30.pdf")
+                    .build())
+            .build());
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse().getContentAsString();
+
+        assertThatJson(response)
+            .isEqualTo(json(expectedResponse(GRANT_FINAL_ORDER_OVERDUE_RESPONSE_JSON)));
 
         verifyNoInteractions(notificationService);
     }

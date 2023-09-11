@@ -64,7 +64,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending Final Order Granted letter to Applicant 1: {}", caseId);
-        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1);
+        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, caseData.getApplicant1());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending Final Order Granted letter to Applicant 2: {}", caseId);
-        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
+        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, caseData.getApplicant2());
     }
 
     @Override

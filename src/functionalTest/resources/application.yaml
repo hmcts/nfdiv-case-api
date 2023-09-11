@@ -50,6 +50,10 @@ fee:
   api:
     baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
 
+aac:
+  api:
+    url: ${AAC_MANAGE_CASE_ASSIGNMENT_BASEURL:http://aac-manage-case-assignment-aat.service.core-compute-aat.internal}
+
 core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
@@ -136,9 +140,6 @@ bulk-action:
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-
-toggle:
-  enable_qr_code_reading: ${ENABLE_QR_CODE_READING:true}
 
 logging:
   level:

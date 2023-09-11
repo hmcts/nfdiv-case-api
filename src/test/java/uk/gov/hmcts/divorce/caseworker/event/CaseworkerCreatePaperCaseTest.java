@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -42,6 +43,7 @@ public class CaseworkerCreatePaperCaseTest {
     @Test
     public void shouldSetHyphenatedCaseRefAndApplicant1Offline() {
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(1L);
@@ -84,7 +86,7 @@ public class CaseworkerCreatePaperCaseTest {
     @Test
     public void shouldSetApplicant1AndApplicant2OfflineWhenJointApplication() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

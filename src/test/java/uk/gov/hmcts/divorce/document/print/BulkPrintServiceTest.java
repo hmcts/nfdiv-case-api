@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.print;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,7 @@ class BulkPrintServiceTest {
     private static final String LETTER_TYPE_KEY = "letterType";
     private static final String CASE_REFERENCE_NUMBER_KEY = "caseReferenceNumber";
     private static final String CASE_IDENTIFIER_KEY = "caseIdentifier";
+    private static final String RECIPIENTS = "recipients";
 
     @Mock
     private SendLetterApi sendLetterApi;
@@ -121,7 +123,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -141,7 +144,8 @@ class BulkPrintServiceTest {
             .contains(
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
-                entry(CASE_IDENTIFIER_KEY, "1234")
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -198,7 +202,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
@@ -218,7 +223,8 @@ class BulkPrintServiceTest {
             .contains(
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
-                entry(CASE_IDENTIFIER_KEY, "1234")
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -276,7 +282,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
@@ -300,7 +307,8 @@ class BulkPrintServiceTest {
             .contains(
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
-                entry(CASE_IDENTIFIER_KEY, "1234")
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -360,7 +368,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.printWithD10Form(print);
@@ -381,7 +390,8 @@ class BulkPrintServiceTest {
             .contains(
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
-                entry(CASE_IDENTIFIER_KEY, "1234")
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -415,7 +425,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         given(resource.getInputStream()).willThrow(new IOException("Corrupt data"));
@@ -443,7 +454,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -471,7 +483,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -486,9 +499,10 @@ class BulkPrintServiceTest {
 
     @Test
     void shouldLoadD10DocumentSuccessfully() throws Exception {
-        final PDDocument d10 = PDDocument.load(bulkPrintService.loadD10PdfBytes("/D10.pdf"));
-        assertThat(new PDFTextStripper().getText(d10))
-            .contains("D10 Respond to a divorce, dissolution or (judicial) separation application");
+        try (final PDDocument d10 = Loader.loadPDF(bulkPrintService.loadD10PdfBytes("/D10.pdf"))) {
+            assertThat(new PDFTextStripper().getText(d10))
+                .contains("D10 Respond to a divorce, dissolution or (judicial) separation application");
+        }
     }
 
     @Test
@@ -528,7 +542,8 @@ class BulkPrintServiceTest {
             letters,
             "1234",
             "5678",
-            "letterType"
+            "letterType",
+            "Test User"
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -550,7 +565,8 @@ class BulkPrintServiceTest {
             .contains(
                 entry(LETTER_TYPE_KEY, "letterType"),
                 entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
-                entry(CASE_IDENTIFIER_KEY, "1234")
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
             );
 
         verify(idamService).retrieveSystemUpdateUserDetails();
@@ -579,7 +595,13 @@ class BulkPrintServiceTest {
 
         List<Letter> letters = List.of(new Letter(divorceDocumentListValue.getValue(), 1));
 
-        Print print = new Print(letters, "1234", "5678", "letterType");
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType",
+            "Test User"
+        );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(InvalidResourceException.class)

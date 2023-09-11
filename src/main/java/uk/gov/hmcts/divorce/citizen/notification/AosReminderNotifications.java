@@ -76,7 +76,7 @@ public class AosReminderNotifications implements ApplicantNotification {
     @Override
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
         log.info("Sending AOS overdue letter to applicant for case : {}", caseId);
-        aosOverduePrinter.sendLetterToApplicant(caseData, caseId);
+        aosOverduePrinter.sendLetterToApplicant(caseData, caseData.getApplicant1(), caseId);
     }
 
     private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {

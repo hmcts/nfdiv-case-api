@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -40,6 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -47,6 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -186,6 +189,97 @@ class CaseworkerIssueApplicationTest {
         verifyNoInteractions(ccdUpdateService);
 
         verify(issueApplicationService).sendNotifications(caseDetails);
+    }
+
+    @Test
+    void shouldThrowErrorIfPersonalServiceConfidential() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
+    }
+
+    @Test
+    void shouldThrowErrorIfSolicitorServiceConfidential() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
+            + "or Personal Service if the respondent is confidential.");
+    }
+
+    @Test
+    void shouldIssueApplicationPersonalServiceNonConfidential() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(caseData);
+        expectedDetails.setState(Submitted);
+
+        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            expectedDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldIssueApplicationSolicitorServiceNonConfidential() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(caseData);
+        expectedDetails.setState(Submitted);
+
+        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            expectedDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
