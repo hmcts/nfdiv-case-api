@@ -13,8 +13,10 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
@@ -28,6 +30,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REMINDER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
@@ -38,6 +43,9 @@ public final class DocumentUtil {
 
     private static final Map<String, List<DocumentType>> DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY
         = documentsApplicableForConfidentiality();
+
+    private static final Map<DocumentType, ConfidentialDocumentsReceived> DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING
+        = getDocumentTypeToConfidentialTypeMapping();
 
     private DocumentUtil() {
     }
@@ -140,6 +148,8 @@ public final class DocumentUtil {
             return caseData.getApplicant1().isConfidentialContactDetails();
         } else if (DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY.get(APPLICANT2).contains(documentType)) {
             return caseData.getApplicant2().isConfidentialContactDetails();
+        } else if (isOtherConfidentialDocumentType(documentType)) {
+            return caseData.getApplicant1().isConfidentialContactDetails() || caseData.getApplicant2().isConfidentialContactDetails();
         }
 
         return false;
@@ -152,19 +162,34 @@ public final class DocumentUtil {
     }
 
     public static ConfidentialDocumentsReceived getConfidentialDocumentType(DocumentType documentType) {
-        return switch (documentType) {
-            case NOTICE_OF_PROCEEDINGS_APP_1 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1;
-            case NOTICE_OF_PROCEEDINGS_APP_2 -> ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2;
-            case GENERAL_LETTER -> ConfidentialDocumentsReceived.GENERAL_LETTER;
-            case AOS_RESPONSE_LETTER -> ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER;
-            case CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 -> ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-            case CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2 -> ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
-            case CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1 -> ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-            case CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2 -> ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-            case FINAL_ORDER_GRANTED_COVER_LETTER_APP_1 -> ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-            case FINAL_ORDER_GRANTED_COVER_LETTER_APP_2 -> ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
-            default -> ConfidentialDocumentsReceived.OTHER;
-        };
+        Map<DocumentType, ConfidentialDocumentsReceived> confidentialDocumentsMap = new HashMap<>(
+            Map.of(
+                NOTICE_OF_PROCEEDINGS_APP_1, ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
+                NOTICE_OF_PROCEEDINGS_APP_2, ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
+                GENERAL_LETTER, ConfidentialDocumentsReceived.GENERAL_LETTER,
+                AOS_RESPONSE_LETTER, ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, ConfidentialDocumentsReceived.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+            )
+        );
+
+        confidentialDocumentsMap.putAll(
+            Map.of(
+                FINAL_ORDER_CAN_APPLY_APP1, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1,
+                FINAL_ORDER_CAN_APPLY_APP2, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2)
+        );
+
+        confidentialDocumentsMap.putAll(DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING);
+
+        return Optional.ofNullable(confidentialDocumentsMap.get(documentType)).orElse(ConfidentialDocumentsReceived.OTHER);
+    }
+
+    private static boolean isOtherConfidentialDocumentType(DocumentType documentType) {
+        return DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING.containsKey(documentType);
     }
 
     public static void removeDocumentsBasedOnContactPrivacy(final CaseData caseData, final DocumentType documentType) {
@@ -182,17 +207,64 @@ public final class DocumentUtil {
                 NOTICE_OF_PROCEEDINGS_APP_1,
                 GENERAL_LETTER,
                 AOS_RESPONSE_LETTER,
+                CONDITIONAL_ORDER_REMINDER,
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+                FINAL_ORDER_CAN_APPLY_APP1
             ),
             APPLICANT2, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_2,
                 GENERAL_LETTER,
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
                 CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+                FINAL_ORDER_CAN_APPLY_APP2
             )
         );
+    }
+
+    public static Map<DocumentType, ConfidentialDocumentsReceived> getDocumentTypeToConfidentialTypeMapping() {
+        Map<DocumentType, ConfidentialDocumentsReceived> map = new HashMap<>(
+            Map.of(
+                DocumentType.ACKNOWLEDGEMENT_OF_SERVICE, ConfidentialDocumentsReceived.AOS,
+                DocumentType.ANNEX_A, ConfidentialDocumentsReceived.ANNEX_A,
+                DocumentType.OTHER, ConfidentialDocumentsReceived.OTHER,
+                DocumentType.BAILIFF_SERVICE, ConfidentialDocumentsReceived.BAILIFF_SERVICE,
+                DocumentType.CONDITIONAL_ORDER_APPLICATION, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_APPLICATION,
+                DocumentType.CONDITIONAL_ORDER_REFUSAL, ConfidentialDocumentsReceived.CO_REFUSAL_CLARIFICATION_RESP,
+                DocumentType.CORRESPONDENCE, ConfidentialDocumentsReceived.CORRESPONDENCE,
+                DocumentType.COSTS, ConfidentialDocumentsReceived.COSTS
+            )
+        );
+
+        map.putAll(
+            Map.of(
+                DocumentType.COSTS_ORDER, ConfidentialDocumentsReceived.COSTS_ORDER,
+                DocumentType.DEEMED_SERVICE, ConfidentialDocumentsReceived.DEEMED_SERVICE,
+                DocumentType.DISPENSE_WITH_SERVICE, ConfidentialDocumentsReceived.DISPENSE_WITH_SERVICE,
+                DocumentType.D9D, ConfidentialDocumentsReceived.D9D,
+                DocumentType.D9H, ConfidentialDocumentsReceived.D9H,
+                DocumentType.EMAIL, ConfidentialDocumentsReceived.EMAIL,
+                DocumentType.FINAL_ORDER_APPLICATION, ConfidentialDocumentsReceived.FINAL_ORDER_APPLICATION,
+                DocumentType.WELSH_TRANSLATION, ConfidentialDocumentsReceived.WELSH_TRANSLATION,
+                DocumentType.CONDITIONAL_ORDER_CAN_APPLY, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_CAN_APPLY,
+                DocumentType.FINAL_ORDER_CAN_APPLY, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY
+            )
+        );
+
+        map.putAll(
+            Map.of(
+                DocumentType.GENERAL_LETTER, ConfidentialDocumentsReceived.GENERAL_LETTER,
+                DocumentType.AOS_RESPONSE_LETTER, ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER,
+                DocumentType.NAME_CHANGE_EVIDENCE, ConfidentialDocumentsReceived.NAME_CHANGE,
+                DocumentType.NOTICE_OF_REFUSAL_OF_ENTITLEMENT, ConfidentialDocumentsReceived.NOTICE_OF_REFUSAL_OF_ENTITLEMENT,
+                DocumentType.SOLICITOR_SERVICE, ConfidentialDocumentsReceived.SOLICITOR_SERVICE,
+                DocumentType.CONDITIONAL_ORDER_REMINDER, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_REMINDER,
+                DocumentType.COVERSHEET, ConfidentialDocumentsReceived.COVERSHEET
+            )
+        );
+
+        return map;
     }
 }

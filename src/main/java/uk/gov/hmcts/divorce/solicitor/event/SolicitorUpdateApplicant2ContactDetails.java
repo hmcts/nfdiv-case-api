@@ -65,7 +65,7 @@ public class SolicitorUpdateApplicant2ContactDetails implements CCDConfig<CaseDa
 
         var caseData = details.getData();
 
-        confidentialDocumentsService.processDocuments(caseData, caseData.getApplicant2(), false);
+        confidentialDocumentsService.processDocuments(caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

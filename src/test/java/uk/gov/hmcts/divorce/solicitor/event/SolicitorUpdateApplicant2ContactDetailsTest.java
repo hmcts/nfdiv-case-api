@@ -61,6 +61,6 @@ public class SolicitorUpdateApplicant2ContactDetailsTest {
 
         solicitorUpdateApplicant2ContactDetails.aboutToSubmit(details, null);
 
-        verify(confidentialDocumentsService).processDocuments(caseData, caseData.getApplicant2(), false);
+        verify(confidentialDocumentsService).processDocuments(caseData, details.getId());
     }
 }
