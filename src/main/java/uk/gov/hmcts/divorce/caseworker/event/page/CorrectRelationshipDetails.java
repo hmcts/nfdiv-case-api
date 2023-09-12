@@ -4,7 +4,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
@@ -29,12 +28,6 @@ public class CorrectRelationshipDetails implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getScreenHasMarriageCert,
                     "Does ${labelContentTheApplicantOrApplicant1} have the ${labelContentMarriageOrCivilPartnership} certificate?")
-            .done()
-            .complex(CaseData::getApplicant1)
-                .mandatoryWithLabel(Applicant::getGender, "Applicant 1 gender")
-            .done()
-            .complex(CaseData::getApplicant2)
-                .mandatoryWithLabel(Applicant::getGender, "Applicant 2 gender")
             .done();
     }
 
