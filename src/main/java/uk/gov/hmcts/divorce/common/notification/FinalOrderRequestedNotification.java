@@ -36,8 +36,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     public static final String APPLICANT_1_OVERDUE_CONTENT = "applicant1OverdueContent";
     public static final String APPLICANT_2_OVERDUE_CONTENT = "applicant2OverdueContent";
 
-    public static final String DELAY_REASON_STATIC_CONTENT = " applied more than 12 months after the conditional order "
-        + "was made and gave the following reason:\n";
+    public static final String DELAY_REASON = "%s applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\n%s";
 
     @Autowired
     private CommonContent commonContent;
@@ -105,11 +105,11 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
         String applicant1OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
-            .map(reason -> getUniqueOverdueContent(caseData.getApplicant1().getFullName(), reason))
+            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant1().getFullName(), reason))
             .orElse(StringUtils.EMPTY);
 
         String applicant2OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant2FinalOrderLateExplanation())
-            .map(reason -> getUniqueOverdueContent(caseData.getApplicant2().getFullName(), reason))
+            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant2().getFullName(), reason))
             .orElse(StringUtils.EMPTY);
 
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
@@ -125,9 +125,5 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         return templateVars;
-    }
-
-    private String getUniqueOverdueContent(String fullName, String delayReason) {
-        return fullName + DELAY_REASON_STATIC_CONTENT + delayReason;
     }
 }
