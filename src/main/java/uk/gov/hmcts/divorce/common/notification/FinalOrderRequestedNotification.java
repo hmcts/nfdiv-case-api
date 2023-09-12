@@ -1,16 +1,19 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import com.microsoft.applicationinsights.web.dependencies.apachecommons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -31,6 +34,11 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Component
 @Slf4j
 public class FinalOrderRequestedNotification implements ApplicantNotification {
+    public static final String APPLICANT_1_OVERDUE_CONTENT = "applicant1OverdueContent";
+    public static final String APPLICANT_2_OVERDUE_CONTENT = "applicant2OverdueContent";
+
+    public static final String DELAY_REASON_STATIC_CONTENT = " applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\n";
 
     @Autowired
     private CommonContent commonContent;
@@ -97,8 +105,20 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     private Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
+        Optional<String> applicant1DelayReason = getApplicant1DelayReason(caseData.getFinalOrder());
+        String applicant1OverdueContent = applicant1DelayReason
+            .map(r -> getUniqueOverdueContent(caseData.getApplicant1().getFullName(), r))
+            .orElse(StringUtils.EMPTY);
+
+        Optional<String> applicant2DelayReason = getApplicant2DelayReason(caseData.getFinalOrder());
+        String applicant2OverdueContent = applicant2DelayReason
+            .map(r -> getUniqueOverdueContent(caseData.getApplicant2().getFullName(), r))
+            .orElse(StringUtils.EMPTY);
+
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
         templateVars.put(IS_FINAL_ORDER, YES);
+        templateVars.put(APPLICANT_1_OVERDUE_CONTENT, applicant1OverdueContent);
+        templateVars.put(APPLICANT_2_OVERDUE_CONTENT, applicant2OverdueContent);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
                 isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
@@ -108,5 +128,21 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         return templateVars;
+    }
+
+    private Optional<String> getApplicant1DelayReason(FinalOrder finalOrder) {
+        return finalOrder.getApplicant1FinalOrderLateExplanation() != null
+            ? Optional.of(finalOrder.getApplicant1FinalOrderLateExplanation())
+            : Optional.ofNullable(finalOrder.getApplicant1FinalOrderLateExplanationTranslated());
+    }
+
+    private Optional<String> getApplicant2DelayReason(FinalOrder finalOrder) {
+        return finalOrder.getApplicant2FinalOrderLateExplanation() != null
+            ? Optional.of(finalOrder.getApplicant2FinalOrderLateExplanation())
+            : Optional.ofNullable(finalOrder.getApplicant2FinalOrderLateExplanationTranslated());
+    }
+
+    private String getUniqueOverdueContent(String fullName, String delayReason) {
+        return fullName + DELAY_REASON_STATIC_CONTENT + delayReason;
     }
 }
