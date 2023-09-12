@@ -107,12 +107,12 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
 
         Optional<String> applicant1DelayReason = getApplicant1DelayReason(caseData.getFinalOrder());
         String applicant1OverdueContent = applicant1DelayReason
-            .map(r -> getUniqueOverdueContent(caseData.getApplicant1().getFullName(), r))
+            .map(reason -> getUniqueOverdueContent(caseData.getApplicant1().getFullName(), reason))
             .orElse(StringUtils.EMPTY);
 
         Optional<String> applicant2DelayReason = getApplicant2DelayReason(caseData.getFinalOrder());
         String applicant2OverdueContent = applicant2DelayReason
-            .map(r -> getUniqueOverdueContent(caseData.getApplicant2().getFullName(), r))
+            .map(reason -> getUniqueOverdueContent(caseData.getApplicant2().getFullName(), reason))
             .orElse(StringUtils.EMPTY);
 
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
