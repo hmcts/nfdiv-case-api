@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -105,13 +104,11 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     private Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
-        Optional<String> applicant1DelayReason = getApplicant1DelayReason(caseData.getFinalOrder());
-        String applicant1OverdueContent = applicant1DelayReason
+        String applicant1OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
             .map(reason -> getUniqueOverdueContent(caseData.getApplicant1().getFullName(), reason))
             .orElse(StringUtils.EMPTY);
 
-        Optional<String> applicant2DelayReason = getApplicant2DelayReason(caseData.getFinalOrder());
-        String applicant2OverdueContent = applicant2DelayReason
+        String applicant2OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant2FinalOrderLateExplanation())
             .map(reason -> getUniqueOverdueContent(caseData.getApplicant2().getFullName(), reason))
             .orElse(StringUtils.EMPTY);
 
@@ -128,18 +125,6 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         return templateVars;
-    }
-
-    private Optional<String> getApplicant1DelayReason(FinalOrder finalOrder) {
-        return finalOrder.getApplicant1FinalOrderLateExplanation() != null
-            ? Optional.of(finalOrder.getApplicant1FinalOrderLateExplanation())
-            : Optional.ofNullable(finalOrder.getApplicant1FinalOrderLateExplanationTranslated());
-    }
-
-    private Optional<String> getApplicant2DelayReason(FinalOrder finalOrder) {
-        return finalOrder.getApplicant2FinalOrderLateExplanation() != null
-            ? Optional.of(finalOrder.getApplicant2FinalOrderLateExplanation())
-            : Optional.ofNullable(finalOrder.getApplicant2FinalOrderLateExplanationTranslated());
     }
 
     private String getUniqueOverdueContent(String fullName, String delayReason) {
