@@ -19,8 +19,11 @@ import uk.gov.hmcts.reform.document.domain.UploadResponse;
 import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -64,7 +67,10 @@ public class GenerateFormHelper {
                 .build())
             .build();
 
-        caseData.getDocuments().getDocumentsGenerated().add(FIRST, generatedForm);
+        List<ListValue<DivorceDocument>> documentsGenerated = Optional.ofNullable(caseData.getDocuments().getDocumentsGenerated())
+            .orElse(newArrayList());
+        documentsGenerated.add(FIRST, generatedForm);
+        caseData.getDocuments().setDocumentsGenerated(documentsGenerated);
     }
 
     private Document uploadFormToDocumentStore(String formDisplayName,

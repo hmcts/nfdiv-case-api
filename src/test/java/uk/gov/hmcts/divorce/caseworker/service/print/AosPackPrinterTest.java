@@ -266,25 +266,25 @@ class AosPackPrinterTest {
     @Test
     void shouldPrintPersonalServiceAosPackWithConfidentialNopDocsForApplicantIfRequiredDocumentsArePresent() {
 
-        final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
+        final ListValue<ConfidentialDivorceDocument> nopAppOne = ListValue.<ConfidentialDivorceDocument>builder()
             .value(ConfidentialDivorceDocument.builder()
                 .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> application = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(APPLICATION)
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(COVERSHEET)
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc4 = ListValue.<DivorceDocument>builder()
+        final ListValue<DivorceDocument> nopAppTwo = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
@@ -295,8 +295,8 @@ class AosPackPrinterTest {
                 .contactDetailsType(ContactDetailsType.PRIVATE)
                 .build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(asList(doc2, doc3, doc4))
-                .confidentialDocumentsGenerated(List.of(doc1))
+                .documentsGenerated(asList(application, coversheet, nopAppTwo))
+                .confidentialDocumentsGenerated(List.of(nopAppOne))
                 .build())
             .build();
 
@@ -309,11 +309,11 @@ class AosPackPrinterTest {
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
         assertThat(print.getLetters().size()).isEqualTo(5);
-        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
-        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
-        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
-        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(doc4.getValue());
-        assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(nopAppOne.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(application.getValue());
+        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(coversheet.getValue());
+        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(nopAppTwo.getValue());
+        assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(application.getValue());
     }
 
     @Test

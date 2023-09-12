@@ -109,7 +109,7 @@ public class ReIssueApplicationService {
                 setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
-                    generateApplication,
+                generateApplication,
                 generateD10Form,
                 generateD84Form,
                 resetAosFields
@@ -122,7 +122,7 @@ public class ReIssueApplicationService {
                 setNoticeOfProceedingDetailsForRespondent,
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
-                    generateApplication,
+                generateApplication,
                 generateD10Form,
                 generateD84Form,
                 resetAosFields

@@ -39,6 +39,20 @@
     "accessCode": "",
     "dateFinalOrderEligibleFrom": "${json-unit.any-string}",
     "dateFinalOrderEligibleToRespondent": "${json-unit.any-string}",
+    "confidentialDocumentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "confidentialDocumentsReceived": "finalOrderCanApplyApp1"
+        }
+      }
+    ],
     "documentsGenerated": [{
       "id": "${json-unit.any-string}",
       "value": {
@@ -60,17 +74,6 @@
         },
         "documentFileName": "D36.pdf",
         "documentType": "d36"
-      }
-    }, {
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "${json-unit.any-string}",
-          "document_filename": "${json-unit.any-string}",
-          "document_binary_url": "${json-unit.any-string}"
-        },
-        "documentFileName": "${json-unit.any-string}",
-        "documentType": "finalOrderCanApplyApp1"
       }
     }],
     "dueDate": "${json-unit.any-string}",

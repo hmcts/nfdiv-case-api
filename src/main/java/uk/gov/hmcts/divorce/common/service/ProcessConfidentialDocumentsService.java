@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
@@ -20,7 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentTo
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableForConfidentiality;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 
 @Service
 @Slf4j
@@ -29,28 +28,24 @@ public class ProcessConfidentialDocumentsService {
     public void processDocuments(final CaseData caseData, final Long caseId) {
 
         log.info("Processing confidential documents for case id : {}", caseId);
+        if (caseData.getApplicant1().isConfidentialContactDetails()) {
+            moveToConfidentialDocumentsTab(caseData, caseId, true);
+        }
 
-        processDocuments(caseData, caseData.getApplicant1(), true);
-
-        processDocuments(caseData, caseData.getApplicant2(), false);
-    }
-
-    public void processDocuments(final CaseData caseData, final Applicant applicant,
-                                                         final boolean isApplicant1) {
-        if (applicant.isConfidentialContactDetails()) {
-            moveToConfidentialDocumentsTab(caseData, isApplicant1);
+        if (caseData.getApplicant2().isConfidentialContactDetails()) {
+            moveToConfidentialDocumentsTab(caseData, caseId, false);
         }
     }
 
-    private void moveToConfidentialDocumentsTab(final CaseData caseData, final Boolean isApplicant1) {
-        log.info("Moving documents to confidential list for : applicant {}", isApplicant1 ? "1" : "2");
+    private void moveToConfidentialDocumentsTab(final CaseData caseData, final Long caseId, boolean isApplicant1) {
+        log.info("Moving documents to confidential list for case {}", caseId);
 
         CaseDocuments caseDocuments = caseData.getDocuments();
 
         List<ListValue<DivorceDocument>> documentsToMove
             = ofNullable(caseDocuments.getDocumentsGenerated())
             .flatMap(Collection::stream)
-            .filter(document -> filterDocumentBasedOnConfidentialityForGivenApplicant(caseData, document.getValue(), isApplicant1))
+            .filter(document -> filterDocumentBasedOnPotentialConfidentiality(document.getValue(), caseData, isApplicant1))
             .toList();
 
         if (!CollectionUtils.isEmpty(documentsToMove)) {
@@ -77,19 +72,19 @@ public class ProcessConfidentialDocumentsService {
             .build();
     }
 
-    private boolean filterDocumentBasedOnConfidentialityForGivenApplicant(final CaseData caseData, final DivorceDocument document,
-                                                                          final boolean isApplicant1) {
-        boolean applicable = isDocumentApplicableForConfidentiality(document.getDocumentType(), isApplicant1);
-
-        if (applicable && DocumentType.GENERAL_LETTER.equals(document.getDocumentType())) {
-            return generalLetterBelongsToGivenApplicant(caseData, document, isApplicant1);
+    private boolean filterDocumentBasedOnPotentialConfidentiality(final DivorceDocument document,
+                                                                  final CaseData caseData,
+                                                                  boolean isApplicant1) {
+        if (DocumentType.GENERAL_LETTER.equals(document.getDocumentType())) {
+            return isConfidentialGeneralLetter(caseData, document, isApplicant1);
         }
 
-        return applicable;
+        return isConfidential(caseData, document.getDocumentType());
     }
 
-    private boolean generalLetterBelongsToGivenApplicant(final CaseData caseData, final DivorceDocument generalLetterDocument,
-                                                               final boolean isApplicant1) {
+    private boolean isConfidentialGeneralLetter(final CaseData caseData,
+                                                final DivorceDocument generalLetterDocument,
+                                                boolean isApplicant1) {
 
         GeneralParties party = isApplicant1 ? APPLICANT : RESPONDENT;
 

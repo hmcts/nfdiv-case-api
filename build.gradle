@@ -26,7 +26,7 @@ plugins {
   id 'org.springframework.boot' version '3.1.3'
   id 'com.github.ben-manes.versions' version '0.48.0'
   id 'hmcts.ccd.sdk' version '5.4.4'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.796'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.798'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -331,7 +331,7 @@ dependencies {
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
   cftlibTestImplementation 'com.microsoft.playwright:playwright:1.37.0'
-  cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.0.1'
+  cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.1.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
