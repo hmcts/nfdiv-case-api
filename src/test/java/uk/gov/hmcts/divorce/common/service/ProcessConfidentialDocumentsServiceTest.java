@@ -19,14 +19,16 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,17 +36,32 @@ public class ProcessConfidentialDocumentsServiceTest {
 
     private final ListValue<DivorceDocument> applicant1Nop = ListValue.<DivorceDocument>builder()
         .id("1111")
-        .value(buildDivorceDocument(DocumentType.NOTICE_OF_PROCEEDINGS_APP_1))
+        .value(buildDivorceDocument(NOTICE_OF_PROCEEDINGS_APP_1))
         .build();
 
     private final ListValue<DivorceDocument> applicant2Nop = ListValue.<DivorceDocument>builder()
         .id("2222")
-        .value(buildDivorceDocument(DocumentType.NOTICE_OF_PROCEEDINGS_APP_2))
+        .value(buildDivorceDocument(NOTICE_OF_PROCEEDINGS_APP_2))
         .build();
 
     private final ListValue<DivorceDocument> applicationDoc = ListValue.<DivorceDocument>builder()
         .id("3333")
         .value(buildDivorceDocument(DocumentType.APPLICATION))
+        .build();
+
+    private final ListValue<DivorceDocument> bailiffRefusedDoc = ListValue.<DivorceDocument>builder()
+        .id("3333")
+        .value(buildDivorceDocument(DocumentType.BAILIFF_SERVICE_REFUSED))
+        .build();
+
+    private final ListValue<DivorceDocument> coCanApply = ListValue.<DivorceDocument>builder()
+        .id("3333")
+        .value(buildDivorceDocument(DocumentType.CONDITIONAL_ORDER_CAN_APPLY))
+        .build();
+
+    private final ListValue<DivorceDocument> foCanApply = ListValue.<DivorceDocument>builder()
+        .id("3333")
+        .value(buildDivorceDocument(DocumentType.FINAL_ORDER_CAN_APPLY))
         .build();
 
     private final ListValue<ConfidentialDivorceDocument> applicant1NopConfidential
@@ -102,36 +119,6 @@ public class ProcessConfidentialDocumentsServiceTest {
     @InjectMocks
     private ProcessConfidentialDocumentsService documentsService;
 
-    @Test
-    public void processDocumentsShouldMoveNOPDocumentsToConfidentialDocumentsGeneratedWhenContactIsPrivateForBothApplicants() {
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
-            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(Lists.newArrayList(applicant1Nop, applicant2Nop, applicationDoc))
-                .build())
-            .build();
-
-        documentsService.processDocuments(caseData, TEST_CASE_ID);
-
-        List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
-        List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
-
-        assertEquals(1, nonConfidentialDocuments.size());
-        assertEquals(2, confidentialDocuments.size());
-
-        assertEquals(DocumentType.APPLICATION,
-            nonConfidentialDocuments.get(0).getValue().getDocumentType());
-
-        assertThat(
-            confidentialDocuments.stream()
-                .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
-            containsInAnyOrder(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
-                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
-        );
-    }
 
     @Test
     public void processDocumentsShouldMoveNOPDocumentsToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
@@ -143,7 +130,7 @@ public class ProcessConfidentialDocumentsServiceTest {
                 .build())
             .build();
 
-        documentsService.processDocuments(caseData, caseData.getApplicant1(), true);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
@@ -151,47 +138,33 @@ public class ProcessConfidentialDocumentsServiceTest {
         assertEquals(2, nonConfidentialDocuments.size());
         assertEquals(1, confidentialDocuments.size());
 
-        assertEquals(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
-            confidentialDocuments.get(0).getValue().getConfidentialDocumentsReceived());
-
-        assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
-                .collect(Collectors.toList()),
-            containsInAnyOrder(
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_2,
-                DocumentType.APPLICATION)
+        assertThat(confidentialDocuments.stream()
+            .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
+            .collect(Collectors.toList()),  containsInAnyOrder(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
         );
     }
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentsToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant2() {
-
+    public void processDocumentsShouldNotMoveGeneratedDocumentsToConfidentialIfTheyDoNotHaveAMapping() {
         CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(Lists.newArrayList(applicant1Nop, applicant2Nop, applicationDoc))
+                .documentsGenerated(Lists.newArrayList(applicant1Nop, bailiffRefusedDoc, coCanApply))
                 .build())
             .build();
 
-        documentsService.processDocuments(caseData, caseData.getApplicant2(), false);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(2, nonConfidentialDocuments.size());
-        assertEquals(1, confidentialDocuments.size());
+        assertEquals(1, nonConfidentialDocuments.size());
+        assertEquals(2, confidentialDocuments.size());
 
-        assertEquals(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
-            confidentialDocuments.get(0).getValue().getConfidentialDocumentsReceived());
-
-        assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
-                .collect(Collectors.toList()),
-            containsInAnyOrder(
-                DocumentType.NOTICE_OF_PROCEEDINGS_APP_1,
-                DocumentType.APPLICATION)
+        assertThat(nonConfidentialDocuments.stream()
+            .map(doc -> doc.getValue().getDocumentType())
+            .collect(Collectors.toList()),  containsInAnyOrder(
+            DocumentType.BAILIFF_SERVICE_REFUSED)
         );
     }
 
@@ -206,7 +179,7 @@ public class ProcessConfidentialDocumentsServiceTest {
                 .build())
             .build();
 
-        documentsService.processDocuments(caseData, caseData.getApplicant1(), true);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
@@ -238,7 +211,7 @@ public class ProcessConfidentialDocumentsServiceTest {
                 .build())
             .build();
 
-        documentsService.processDocuments(caseData, caseData.getApplicant2(), false);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
@@ -260,94 +233,6 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentShouldMoveApplicant1GeneralLettersToConfidentialDocumentsWhenContactIsPrivateForApplicant1() {
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
-            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(Lists.newArrayList(applicant1GeneralLetter, applicant2GeneralLetter, applicationDoc))
-                .build())
-            .generalLetters(Lists.newArrayList(applicant1GeneralLetterDetail, applicant2GeneralLetterDetail))
-            .build();
-
-        documentsService.processDocuments(caseData, caseData.getApplicant1(), true);
-
-        List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
-        List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
-
-        assertEquals(2, nonConfidentialDocuments.size());
-        assertEquals(1, confidentialDocuments.size());
-
-        assertEquals(ConfidentialDocumentsReceived.GENERAL_LETTER,
-            confidentialDocuments.get(0).getValue().getConfidentialDocumentsReceived());
-
-        assertEquals("generalLetter1Url",
-            confidentialDocuments.get(0).getValue().getDocumentLink().getUrl());
-
-        assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
-                .collect(Collectors.toList()),
-            containsInAnyOrder(
-                DocumentType.GENERAL_LETTER,
-                DocumentType.APPLICATION)
-        );
-
-        Optional<ListValue<DivorceDocument>> applicant2NonConfidentialGeneralLetter = nonConfidentialDocuments.stream()
-            .filter(doc -> GENERAL_LETTER.equals(doc.getValue().getDocumentType())
-                && doc.getValue().getDocumentLink().getUrl().equals("generalLetter2Url"))
-            .findAny();
-
-        assertTrue(applicant2NonConfidentialGeneralLetter.isPresent());
-
-    }
-
-    @Test
-    public void processDocumentShouldMoveApplicant2GeneralLettersToConfidentialDocumentsWhenContactIsPrivateForApplicant2() {
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
-            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
-            .documents(CaseDocuments.builder()
-                .documentsGenerated(Lists.newArrayList(applicant1GeneralLetter, applicant2GeneralLetter, applicationDoc))
-                .build())
-            .generalLetters(Lists.newArrayList(applicant1GeneralLetterDetail, applicant2GeneralLetterDetail))
-            .build();
-
-        documentsService.processDocuments(caseData, caseData.getApplicant2(), false);
-
-        List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
-        List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
-
-        assertEquals(2, nonConfidentialDocuments.size());
-        assertEquals(1, confidentialDocuments.size());
-
-        assertEquals(ConfidentialDocumentsReceived.GENERAL_LETTER,
-            confidentialDocuments.get(0).getValue().getConfidentialDocumentsReceived());
-
-        assertEquals("generalLetter2Url",
-            confidentialDocuments.get(0).getValue().getDocumentLink().getUrl());
-
-        assertThat(
-            nonConfidentialDocuments.stream()
-                .map(doc -> doc.getValue().getDocumentType())
-                .collect(Collectors.toList()),
-            containsInAnyOrder(
-                DocumentType.GENERAL_LETTER,
-                DocumentType.APPLICATION)
-        );
-
-        Optional<ListValue<DivorceDocument>> applicant1NonConfidentialGeneralLetter = nonConfidentialDocuments.stream()
-            .filter(doc -> GENERAL_LETTER.equals(doc.getValue().getDocumentType())
-                && doc.getValue().getDocumentLink().getUrl().equals("generalLetter1Url"))
-            .findAny();
-
-        assertTrue(applicant1NonConfidentialGeneralLetter.isPresent());
-
-    }
-
-    @Test
     public void processDocumentShouldMoveBothApplicantsGeneralLettersToConfidentialDocumentsWhenContactIsPrivateForBothApplicant() {
 
         CaseData caseData = CaseData.builder()
@@ -355,7 +240,7 @@ public class ProcessConfidentialDocumentsServiceTest {
             .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
                 .documentsGenerated(Lists.newArrayList(
-                    applicant1Nop, applicant2Nop, applicant1GeneralLetter, applicant2GeneralLetter, applicationDoc))
+                    applicant1Nop, applicant2Nop, applicant1GeneralLetter, applicant2GeneralLetter, applicationDoc, bailiffRefusedDoc))
                 .build())
             .generalLetters(Lists.newArrayList(applicant1GeneralLetterDetail, applicant2GeneralLetterDetail))
             .build();
@@ -365,11 +250,13 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(1, nonConfidentialDocuments.size());
+        assertEquals(2, nonConfidentialDocuments.size());
         assertEquals(4, confidentialDocuments.size());
 
-        assertEquals(DocumentType.APPLICATION,
-            nonConfidentialDocuments.get(0).getValue().getDocumentType());
+        assertThat(nonConfidentialDocuments.stream()
+            .map(doc -> doc.getValue().getDocumentType())
+            .collect(Collectors.toList()),
+            containsInAnyOrder(BAILIFF_SERVICE_REFUSED, APPLICATION));
 
         assertThat(
             confidentialDocuments.stream()
@@ -390,6 +277,54 @@ public class ProcessConfidentialDocumentsServiceTest {
             containsInAnyOrder(
                 "generalLetter1Url",
                 "generalLetter2Url")
+        );
+    }
+
+    @Test
+    public void processDocumentShouldMoveFOCanApplyToConfidentialDocumentsWhenContactIsPrivateForEitherApplicant() {
+        CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(Lists.newArrayList(
+                    foCanApply))
+                .build())
+            .generalLetters(Lists.newArrayList(applicant1GeneralLetterDetail, applicant2GeneralLetterDetail))
+            .build();
+
+        documentsService.processDocuments(caseData, 1L);
+
+        List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
+
+        assertEquals(1, confidentialDocuments.size());
+
+        assertEquals(ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY, confidentialDocuments.get(0).getValue()
+            .getConfidentialDocumentsReceived());
+    }
+
+    @Test
+    public void processDocumentsShouldMoveOfflineRespondentNopToConfidentialDocumentsTab() {
+        CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .documents(CaseDocuments.builder()
+                .documentsGenerated(Lists.newArrayList(
+                    applicant2Nop, applicant2GeneralLetter))
+                .build())
+            .generalLetters(Lists.newArrayList(applicant2GeneralLetterDetail))
+            .build();
+
+        documentsService.processDocuments(caseData, 1L);
+
+        List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
+
+        assertEquals(2, confidentialDocuments.size());
+
+        assertThat(
+            confidentialDocuments.stream()
+                .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
+                .collect(Collectors.toList()),
+            containsInAnyOrder(
+                ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
+                ConfidentialDocumentsReceived.GENERAL_LETTER)
         );
     }
 
