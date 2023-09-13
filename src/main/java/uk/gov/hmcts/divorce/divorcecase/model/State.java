@@ -302,13 +302,6 @@ public enum State {
     FinalOrderComplete,
 
     @CCD(
-        label = "Final order overdue",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    FinalOrderOverdue,
-
-    @CCD(
         label = "Final order pending",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
