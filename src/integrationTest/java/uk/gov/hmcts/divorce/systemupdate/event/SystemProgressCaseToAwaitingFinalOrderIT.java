@@ -210,6 +210,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderEligibleToRespondent(LocalDate.now())
             .build());
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
         caseData.getApplication().setIssueDate(LocalDate.now());
 
         mockMvc.perform(post(SUBMITTED_URL)

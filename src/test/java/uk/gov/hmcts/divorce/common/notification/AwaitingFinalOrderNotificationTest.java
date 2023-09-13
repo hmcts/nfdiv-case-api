@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.common.notification.AwaitingFinalOrderNotification.FINAL_ORDER_OVERDUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -301,6 +302,8 @@ class AwaitingFinalOrderNotificationTest {
             .applicant1(applicant)
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
+        data.getConditionalOrder().setGrantedDate(coGrantedDate);
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
@@ -319,7 +322,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(IS_SOLE, YES),
-                hasEntry(IS_JOINT, NO)
+                hasEntry(IS_JOINT, NO),
+                hasEntry(FINAL_ORDER_OVERDUE_DATE, coGrantedDate.plusMonths(12).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -336,6 +340,8 @@ class AwaitingFinalOrderNotificationTest {
             .applicant2(applicant)
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
+        data.getConditionalOrder().setGrantedDate(coGrantedDate);
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
@@ -354,7 +360,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "ref"),
                 hasEntry(IS_SOLE, NO),
-                hasEntry(IS_JOINT, YES)
+                hasEntry(IS_JOINT, YES),
+                hasEntry(FINAL_ORDER_OVERDUE_DATE, coGrantedDate.plusMonths(12).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
