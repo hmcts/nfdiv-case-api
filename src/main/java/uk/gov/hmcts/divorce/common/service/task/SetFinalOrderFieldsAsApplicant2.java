@@ -16,7 +16,6 @@ import static java.util.Objects.isNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 
 @Slf4j
 @Component
@@ -29,7 +28,7 @@ public class SetFinalOrderFieldsAsApplicant2 implements CaseTask {
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         log.info("Running SetFinalOrderFieldsAsApplicant2 task for CaseID {}", details.getId());
 
-        if (AwaitingFinalOrder.equals(details.getState()) || FinalOrderOverdue.equals(details.getState())) {
+        if (AwaitingFinalOrder.equals(details.getState())) {
             log.info("Updating final order fields for CaseID {} (SetFinalOrderFieldsAsApplicant2)", details.getId());
             FinalOrder finalOrder = details.getData().getFinalOrder();
 
