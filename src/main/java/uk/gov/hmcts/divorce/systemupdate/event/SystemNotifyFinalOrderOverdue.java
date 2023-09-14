@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -29,7 +29,7 @@ public class SystemNotifyFinalOrderOverdue implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(SYSTEM_FINAL_ORDER_OVERDUE)
-            .forStateTransition(AwaitingFinalOrder, FinalOrderOverdue)
+            .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder)
             .name("Alert Applicant 1")
             .description("Alert Applicant 1 that Final Order request is overdue")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

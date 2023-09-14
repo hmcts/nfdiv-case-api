@@ -163,13 +163,16 @@ public class Applicant2ApplyForFinalOrderIT {
 
         final CaseData data = validApplicant2CaseData();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.setFinalOrder(FinalOrder.builder().dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30)).build());
+        data.setFinalOrder(FinalOrder.builder()
+            .isFinalOrderOverdue(YES)
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().minusDays(30))
+            .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, APPLICANT2_FINAL_ORDER_REQUESTED, "finalOrderOverdue")))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, APPLICANT2_FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
