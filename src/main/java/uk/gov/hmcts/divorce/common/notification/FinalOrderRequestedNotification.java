@@ -124,7 +124,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         return templateVars;
     }
 
-    private Map<String, String> applicantFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant1, Applicant applicant2) {
+    private Map<String, String> applicantFinalOrderTemplateVars(final CaseData caseData, final Long caseId,
+                                                                Applicant applicant1, Applicant applicant2) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant1, applicant2);
         applicantFinalOrderOverdueTemplateVars(templateVars, caseData);
         if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
