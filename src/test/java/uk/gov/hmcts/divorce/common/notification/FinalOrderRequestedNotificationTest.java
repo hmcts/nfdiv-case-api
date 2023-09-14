@@ -262,4 +262,62 @@ class FinalOrderRequestedNotificationTest {
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).basicTemplateVars(data, 1L);
     }
+
+    @Test
+    void shouldSendApplicant1NotificationIfJointApplicationAndRepresentedAndOverdue() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .isFinalOrderOverdue(YesOrNo.YES)
+            .applicant1FinalOrderLateExplanation("Forgot").build());
+
+        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry(APPLICANT_1_OVERDUE_CONTENT, APPLICANT_1_CONTENT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendApplicant2NotificationIfJointApplicationAndRepresentedAndOverdue() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.getApplicant2().setFirstName("John");
+        data.getApplicant2().setMiddleName(null);
+        data.getApplicant2().setLastName("Smith");
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .isFinalOrderOverdue(YesOrNo.YES)
+            .applicant2FinalOrderLateExplanation("Forgot").build());
+
+        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry(APPLICANT_2_OVERDUE_CONTENT, APPLICANT_2_CONTENT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+    }
 }
