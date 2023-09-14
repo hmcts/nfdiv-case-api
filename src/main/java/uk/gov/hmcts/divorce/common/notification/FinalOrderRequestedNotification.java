@@ -39,6 +39,9 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     public static final String DELAY_REASON = "%s applied more than 12 months after the conditional order "
         + "was made and gave the following reason:\n%s";
 
+    public static final String IN_TIME = "inTime";
+    public static final String IS_OVERDUE = "isOverdue";
+
     @Autowired
     private CommonContent commonContent;
 
@@ -124,6 +127,13 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     private Map<String, String> applicantFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant1, Applicant applicant2) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant1, applicant2);
         applicantFinalOrderOverdueTemplateVars(templateVars, caseData);
+        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
+            templateVars.put(IS_OVERDUE, YES);
+            templateVars.put(IN_TIME, NO);
+        } else {
+            templateVars.put(IS_OVERDUE, NO);
+            templateVars.put(IN_TIME, YES);
+        }
 
         return templateVars;
     }

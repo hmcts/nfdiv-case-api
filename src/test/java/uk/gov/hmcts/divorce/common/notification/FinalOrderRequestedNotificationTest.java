@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -23,12 +22,15 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.APPLICANT_1_OVERDUE_CONTENT;
 import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.APPLICANT_2_OVERDUE_CONTENT;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.IN_TIME;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -162,7 +164,10 @@ class FinalOrderRequestedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER),
-            anyMap(),
+            argThat(allOf(
+                hasEntry(IN_TIME, YES),
+                hasEntry(IS_OVERDUE, NO)
+            )),
             eq(ENGLISH)
         );
 
@@ -187,7 +192,10 @@ class FinalOrderRequestedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER),
-            anyMap(),
+            argThat(allOf(
+                hasEntry(IN_TIME, YES),
+                hasEntry(IS_OVERDUE, NO)
+            )),
             eq(ENGLISH)
         );
 
@@ -281,7 +289,9 @@ class FinalOrderRequestedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICANT_1_OVERDUE_CONTENT, APPLICANT_1_CONTENT)
+                hasEntry(APPLICANT_1_OVERDUE_CONTENT, APPLICANT_1_CONTENT),
+                hasEntry(IN_TIME, NO),
+                hasEntry(IS_OVERDUE, YES)
             )),
             eq(ENGLISH)
         );
@@ -312,7 +322,9 @@ class FinalOrderRequestedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICANT_2_OVERDUE_CONTENT, APPLICANT_2_CONTENT)
+                hasEntry(APPLICANT_2_OVERDUE_CONTENT, APPLICANT_2_CONTENT),
+                hasEntry(IN_TIME, NO),
+                hasEntry(IS_OVERDUE, YES)
             )),
             eq(ENGLISH)
         );
