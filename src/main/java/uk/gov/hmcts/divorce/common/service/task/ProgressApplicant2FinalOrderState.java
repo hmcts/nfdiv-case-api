@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 
@@ -27,7 +26,7 @@ public class ProgressApplicant2FinalOrderState implements CaseTask {
         var isSole = data.getApplicationType().isSole();
         state = isSole
             ? RespondentFinalOrderRequested
-            : AwaitingFinalOrder.equals(state) || FinalOrderOverdue.equals(state)
+            : AwaitingFinalOrder.equals(state)
                 ? AwaitingJointFinalOrder
                 : FinalOrderRequested;
 

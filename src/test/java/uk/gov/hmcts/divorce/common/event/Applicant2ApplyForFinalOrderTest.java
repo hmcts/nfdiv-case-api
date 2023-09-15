@@ -31,7 +31,6 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -111,7 +110,6 @@ class Applicant2ApplyForFinalOrderTest {
     void shouldNotSendSoleAppliedForFinalOrderNotificationFinalOrderOverdueState() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
-        caseDetails.setState(FinalOrderOverdue);
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
 
