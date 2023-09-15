@@ -68,11 +68,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 .done()
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getAddress,
-                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"")
+                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
@@ -82,15 +82,15 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
-                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"")
+                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getAddress,
-                        "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"")
+                        "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant2\"")
@@ -100,7 +100,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
-                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"")
+                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .done();
     }
 
