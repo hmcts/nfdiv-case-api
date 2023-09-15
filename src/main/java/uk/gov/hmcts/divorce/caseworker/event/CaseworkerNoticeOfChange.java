@@ -160,7 +160,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             noticeOfChangeService);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(correctRepresentationDetails(details.getData(), beforeDetails.getData()))
+            .data(correctRepresentationDetails(details.getData()))
             .build();
     }
 
@@ -176,6 +176,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (beforeOrgPolicy.getOrganisation() != null && orgPolicy.getOrganisation() == null) {
             return NoticeType.ORG_REMOVED;
         } else if (orgPolicy.getOrganisation() != null && orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
+            if (applicant.getSolicitor().getEmail().equals(beforeApplicant.getSolicitor().getEmail())) {
+                //if email and org is the same as pre-event then it means the user has probably used the event to update contact details
+                //erroneously and not change case access, doing this check ensures that we don't actually alter the case access
+                return NoticeType.OFFLINE_NOC;
+            }
             return NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG;
         } else if (orgPolicy.getOrganisation() != null && !orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
             return NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
@@ -204,15 +209,14 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     /** On NOC event, CCD is somehow removing solicitor details for the applicant other than the one selected for NOC.
     * Hence, putting the solicitor details back to the new case details using the before details.
     * */
-    private CaseData correctRepresentationDetails(final CaseData data,
-                                                  final CaseData beforeData) {
+    private CaseData correctRepresentationDetails(final CaseData data) {
 
-        if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
-            data.getApplicant2().setSolicitor(beforeData.getApplicant2().getSolicitor());
-            data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
-        } else {
-            data.getApplicant1().setSolicitor(beforeData.getApplicant1().getSolicitor());
-            data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
+        if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
+            if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
+                data.getApplicant1().getSolicitor().setAddress(null);
+            } else {
+                data.getApplicant1().getSolicitor().setAddress(null);
+            }
         }
 
         if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
