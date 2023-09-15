@@ -76,10 +76,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
-                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant1\"")
+                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant1\"", true)
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR, true)
-                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
@@ -94,10 +94,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant2\"")
-                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant2\"")
+                            .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant2\"", true)
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR, true)
-                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
@@ -160,7 +160,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             noticeOfChangeService);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(correctRepresentationDetails(details.getData()))
+            .data(correctRepresentationDetails(details.getData(), beforeData))
             .build();
     }
 
@@ -209,13 +209,17 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     /** On NOC event, CCD is somehow removing solicitor details for the applicant other than the one selected for NOC.
     * Hence, putting the solicitor details back to the new case details using the before details.
     * */
-    private CaseData correctRepresentationDetails(final CaseData data) {
+    private CaseData correctRepresentationDetails(final CaseData data, final CaseData beforeData) {
 
-        if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
-            if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
+        if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
+            data.getApplicant2().getSolicitor().setOrganisationPolicy(beforeData.getApplicant2().getSolicitor().getOrganisationPolicy());
+            if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant1().getSolicitor().setAddress(null);
-            } else {
-                data.getApplicant1().getSolicitor().setAddress(null);
+            }
+        } else {
+            data.getApplicant1().getSolicitor().setOrganisationPolicy(beforeData.getApplicant1().getSolicitor().getOrganisationPolicy());
+            if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
+                data.getApplicant2().getSolicitor().setAddress(null);
             }
         }
 
