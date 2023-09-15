@@ -286,7 +286,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: versions.springBoot
-  implementation group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.2'
+  implementation group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.3'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.0.4'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '4.1.0-RELEASE'
