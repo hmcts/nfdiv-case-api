@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import com.microsoft.applicationinsights.web.dependencies.apachecommons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -31,6 +33,11 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Component
 @Slf4j
 public class FinalOrderRequestedNotification implements ApplicantNotification {
+    public static final String APPLICANT_1_OVERDUE_CONTENT = "applicant1OverdueContent";
+    public static final String APPLICANT_2_OVERDUE_CONTENT = "applicant2OverdueContent";
+
+    public static final String DELAY_REASON = "%s applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\n%s";
 
     @Autowired
     private CommonContent commonContent;
@@ -97,8 +104,18 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     private Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
+        String applicant1OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
+            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant1().getFullName(), reason))
+            .orElse(StringUtils.EMPTY);
+
+        String applicant2OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant2FinalOrderLateExplanation())
+            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant2().getFullName(), reason))
+            .orElse(StringUtils.EMPTY);
+
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
         templateVars.put(IS_FINAL_ORDER, YES);
+        templateVars.put(APPLICANT_1_OVERDUE_CONTENT, applicant1OverdueContent);
+        templateVars.put(APPLICANT_2_OVERDUE_CONTENT, applicant2OverdueContent);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
                 isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);

@@ -21,6 +21,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.APPLICANT_1_OVERDUE_CONTENT;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.APPLICANT_2_OVERDUE_CONTENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -41,6 +43,11 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 
 @ExtendWith(MockitoExtension.class)
 class FinalOrderRequestedNotificationTest {
+
+    private static final String APPLICANT_1_CONTENT = "test_first_name test_middle_name test_last_name applied more than 12 "
+        + "months after the conditional order was made and gave the following reason:\nForgot";
+    private static final String APPLICANT_2_CONTENT = "John Smith applied more than 12 months after the "
+        + "conditional order was made and gave the following reason:\nForgot";
 
     @Mock
     private CommonContent commonContent;
@@ -186,5 +193,73 @@ class FinalOrderRequestedNotificationTest {
 
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationIfJointApplicationAndRepresentedAndOverdue() {
+        CaseData data = caseData();
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.setApplicationType(JOINT_APPLICATION);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .isFinalOrderOverdue(YesOrNo.YES)
+            .applicant1FinalOrderLateExplanation("Forgot").build());
+
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .email(TEST_SOLICITOR_EMAIL).build());
+
+        when(commonContent.basicTemplateVars(data, 1L)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
+            argThat(allOf(
+                hasEntry(IS_FINAL_ORDER, YES),
+                hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName()),
+                hasEntry(APPLICANT_1_OVERDUE_CONTENT, APPLICANT_1_CONTENT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).basicTemplateVars(data, 1L);
+    }
+
+    @Test
+    void shouldSendApplicant2SolicitorNotificationIfJointApplicationAndRepresentedAndOverdue() {
+        CaseData data = caseData();
+        data.getApplication().setIssueDate(LOCAL_DATE);
+        data.setApplicationType(JOINT_APPLICATION);
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setFirstName("John");
+        data.getApplicant2().setLastName("Smith");
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .isFinalOrderOverdue(YesOrNo.YES)
+            .applicant2FinalOrderLateExplanation("Forgot").build());
+
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .email(TEST_SOLICITOR_EMAIL).build());
+
+        when(commonContent.basicTemplateVars(data, 1L)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant2())));
+
+        notification.sendToApplicant2Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
+            argThat(allOf(
+                hasEntry(IS_FINAL_ORDER, YES),
+                hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName()),
+                hasEntry(APPLICANT_2_OVERDUE_CONTENT, APPLICANT_2_CONTENT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+        verify(commonContent).basicTemplateVars(data, 1L);
     }
 }
