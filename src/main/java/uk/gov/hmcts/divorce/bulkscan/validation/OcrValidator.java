@@ -51,18 +51,19 @@ public class OcrValidator {
     public OcrValidationResponse validateOcrData(String formType, OcrDataFields data) {
 
         List<String> warnings = new ArrayList<>();
-        List<String> errors = new ArrayList<>();
 
-        validateYourApplication(formType, data, warnings, errors);
-        validateAboutYou(data, warnings, errors);
-        validateAboutTheRespondent(data, warnings, errors);
-        validateDetailsOfUnion(data, warnings, errors);
-        validateJurisdiction(data, warnings, errors);
-        validateStatementOfIrretrievableBreakdown(data, warnings, errors);
-        validateExistingCourtCases(data, warnings, errors);
-        validateMoneyProperty(formType, data, warnings, errors);
-        validatePrayer(formType, data, warnings, errors);
-        validateSoT(data, warnings, errors);
+        validateYourApplication(formType, data, warnings);
+        validateAboutYou(data, warnings);
+        validateAboutTheRespondent(data, warnings);
+        validateDetailsOfUnion(data, warnings);
+        validateJurisdiction(data, warnings);
+        validateStatementOfIrretrievableBreakdown(data, warnings);
+        validateExistingCourtCases(data, warnings);
+        validateMoneyProperty(formType, data, warnings);
+        validatePrayer(formType, data, warnings);
+        validateSoT(data, warnings);
+
+        List<String> errors = emptyList();
 
         return OcrValidationResponse.builder()
             .errors(errors)
@@ -71,29 +72,29 @@ public class OcrValidator {
             .build();
     }
 
-    private void validateYourApplication(String formType, OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateYourApplication(String formType, OcrDataFields data, List<String> warnings) {
 
         if (D8.getName().equals(formType)
             && isEmpty(data.getApplicationForDivorce())
             && isEmpty(data.getApplicationForDissolution())
         ) {
-            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicationForDivorce"));
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "applicationForDivorce"));
         }
         if (isEmpty(data.getSoleApplication()) && isEmpty(data.getJointApplication())) {
-            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "aSoleApplication"));
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "aSoleApplication"));
         } else if (Objects.equals(data.getSoleApplication(), data.getJointApplication())) {
-            errors.add(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
+            warnings.add(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
         }
         if (isEmpty(data.getMarriageOrCivilPartnershipCertificate())) {
-            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "marriageOrCivilPartnershipCertificate"));
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "marriageOrCivilPartnershipCertificate"));
         }
 
         if (Objects.equals(data.getMarriageOrCivilPartnershipCertificate(), data.getTranslation())) {
-            errors.add(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
+            warnings.add(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
         }
     }
 
-    private void validateAboutYou(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateAboutYou(OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateWarningFields = new HashMap<>();
         Map<String, String> validateErrorFields = new HashMap<>();
@@ -115,10 +116,10 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
-    private void validateAboutTheRespondent(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateAboutTheRespondent(OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateWarningFields = new HashMap<>();
         Map<String, String> validateErrorFields = new HashMap<>();
@@ -156,10 +157,10 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
-    private void validateDetailsOfUnion(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateDetailsOfUnion(OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateErrorFields = new HashMap<>();
 
@@ -193,7 +194,7 @@ public class OcrValidator {
                         .ofPattern("dd/MM/uuuu")
                         .withResolverStyle(ResolverStyle.STRICT));
             } catch (DateTimeParseException e) {
-                errors.add("dateOfMarriageOrCivilPartnership is not valid");
+                warnings.add("dateOfMarriageOrCivilPartnership is not valid");
             }
         } else {
             validateErrorFields.put("dateOfMarriageOrCivilPartnershipDay", data.getDateOfMarriageOrCivilPartnershipDay());
@@ -213,10 +214,10 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
-    private void validateJurisdiction(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateJurisdiction(OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateFields = new HashMap<>();
         validateFields.put("jurisdictionReasonsBothPartiesHabitual", data.getJurisdictionReasonsBothPartiesHabitual());
@@ -232,30 +233,30 @@ public class OcrValidator {
         if (validateFields.entrySet().stream().allMatch(e -> isEmpty(e.getValue()))
             && isEmpty(data.getJurisdictionReasonsSameSex())
         ) {
-            errors.add("Invalid jurisdiction: jurisdiction connection has not been selected");
+            warnings.add("Invalid jurisdiction: jurisdiction connection has not been selected");
         }
     }
 
-    private void validateStatementOfIrretrievableBreakdown(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateStatementOfIrretrievableBreakdown(OcrDataFields data, List<String> warnings) {
 
         if (isEmpty(data.getSoleOrApplicant1ConfirmationOfBreakdown())) {
-            errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1ConfirmationOfBreakdown"));
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, "soleOrApplicant1ConfirmationOfBreakdown"));
         }
 
         if (!isEmpty(data.getSoleApplication())
             && data.getSoleApplication().equalsIgnoreCase("true")
             && !isEmpty(data.getApplicant2ConfirmationOfBreakdown())
         ) {
-            errors.add("applicant2ConfirmationOfBreakdown should not be populated for sole applications");
+            warnings.add("applicant2ConfirmationOfBreakdown should not be populated for sole applications");
         } else if (!isEmpty(data.getJointApplication())
             && data.getJointApplication().equalsIgnoreCase("true")
             && isEmpty(data.getApplicant2ConfirmationOfBreakdown())
         ) {
-            errors.add("applicant2ConfirmationOfBreakdown should be populated for joint applications");
+            warnings.add("applicant2ConfirmationOfBreakdown should be populated for joint applications");
         }
     }
 
-    private void validateExistingCourtCases(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateExistingCourtCases(OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateErrorFields = new HashMap<>();
 
@@ -269,10 +270,10 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
-    private void validateMoneyProperty(String formType, OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateMoneyProperty(String formType, OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateErrorFields = new HashMap<>();
         Map<String, String> validateWarningFields = new HashMap<>();
@@ -319,20 +320,20 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
 
         validateWarningFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
             .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_WARNING, e.getKey())));
     }
 
-    private void validatePrayer(String formType, OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validatePrayer(String formType, OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateErrorFields = new HashMap<>();
 
         if (D8.getName().equals(formType)) {
             if (isEmpty(data.getPrayerMarriageDissolved()) && isEmpty(data.getPrayerCivilPartnershipDissolved())) {
-                errors.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
+                warnings.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
             }
         } else {
             validateErrorFields.put("prayerApplicant1JudiciallySeparated", data.getPrayerApplicant1JudiciallySeparated());
@@ -340,10 +341,10 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
     }
 
-    private void validateSoT(OcrDataFields data, List<String> warnings, List<String> errors) {
+    private void validateSoT(OcrDataFields data, List<String> warnings) {
 
         Map<String, String> validateWarningFields = new HashMap<>();
         Map<String, String> validateErrorFields = new HashMap<>();
@@ -379,18 +380,18 @@ public class OcrValidator {
 
         validateErrorFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> errors.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING_ERROR, e.getKey())));
 
         if (!isEmpty(data.getSoleOrApplicant1HWFNo())
             && data.getSoleOrApplicant1HWFNo().length() != 6
         ) {
-            errors.add("soleOrApplicant1HWFNo should be 6 digits long");
+            warnings.add("soleOrApplicant1HWFNo should be 6 digits long");
         }
 
         if (!isEmpty(data.getApplicant2HWFNo())
             && data.getApplicant2HWFNo().length() != 6
         ) {
-            errors.add("applicant2HWFNo should be 6 digits long");
+            warnings.add("applicant2HWFNo should be 6 digits long");
         }
     }
 }
