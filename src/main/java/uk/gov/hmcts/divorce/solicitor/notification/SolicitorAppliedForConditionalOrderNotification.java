@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.notification;
 
+import com.microsoft.applicationinsights.web.dependencies.apachecommons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.APPLICANT_1_OVERDUE_CONTENT;
+import static uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification.APPLICANT_2_OVERDUE_CONTENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
@@ -74,6 +77,8 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
         templateVars.put(IS_CONDITIONAL_ORDER, YES);
         templateVars.put(IS_FINAL_ORDER, NO);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(APPLICANT_1_OVERDUE_CONTENT, StringUtils.EMPTY);
+        templateVars.put(APPLICANT_2_OVERDUE_CONTENT, StringUtils.EMPTY);
         templateVars.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
         templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
