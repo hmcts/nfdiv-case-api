@@ -332,7 +332,7 @@ public class FinalOrder {
         label = "Overdue Final Order Authorisation",
         access = {DefaultAccess.class}
     )
-    private ExpeditedFinalOrderAuthorisation overdueFinalOrderAuthorisation;
+    private FinalOrderAuthorisation overdueFinalOrderAuthorisation;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
