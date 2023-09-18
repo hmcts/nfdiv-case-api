@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -140,6 +141,27 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
+    public void shouldAddErrorIfEmailIsMissingAndIsDigitalNoc() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyDigital(YES)
+            .areTheyRepresented(YES)
+            .build());
+        details.getData().getApplicant1().getSolicitor().setEmail(null);
+        details.getData().getApplicant1().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder().organisationId(TEST_ORG_ID).build())
+            .build());
+
+
+        var result = noticeOfChange.midEvent(details, details);
+
+        assertThat(result.getErrors()).hasSize(1);
+        assertThat(result.getErrors().get(0))
+            .isEqualTo("No email provided - please provide an email for the solicitor you wish to add");
+    }
+
+    @Test
     public void shouldProcessOfflineNoticeOfChangeWithoutInvokingNocService() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
@@ -195,6 +217,7 @@ class CaseworkerNoticeOfChangeTest {
     public void shouldReplaceAccessWithinOrganisation() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
+        beforeDetails.getData().getApplicant1().getSolicitor().setEmail(TEST_SOL_USER_EMAIL);
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
             .organisationId(TEST_ORG_ID)
             .build());
@@ -226,6 +249,30 @@ class CaseworkerNoticeOfChangeTest {
             .build();
 
         verify(noticeOfChangeService).changeAccessWithinOrganisation(newSolicitor, roles, APPLICANT_1_SOLICITOR.getRole(), details.getId());
+    }
+
+    @Test
+    public void shouldBeTreatedAsOfflineNocWhenEmailAndOrgAreSameAsBeforeEvent() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+        beforeDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .build());
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyRepresented(YES)
+            .areTheyDigital(YES)
+            .build());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+
+        verifyNoInteractions(noticeOfChangeService);
     }
 
     @Test
