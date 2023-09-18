@@ -141,6 +141,27 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
+    public void shouldAddErrorIfEmailIsMissingAndIsDigitalNoc() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyDigital(YES)
+            .areTheyRepresented(YES)
+            .build());
+        details.getData().getApplicant1().getSolicitor().setEmail(null);
+        details.getData().getApplicant1().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder().organisationId(TEST_ORG_ID).build())
+            .build());
+
+
+        var result = noticeOfChange.midEvent(details, details);
+
+        assertThat(result.getErrors()).hasSize(1);
+        assertThat(result.getErrors().get(0))
+            .isEqualTo("No email provided - please provide an email for the solicitor you wish to add");
+    }
+
+    @Test
     public void shouldProcessOfflineNoticeOfChangeWithoutInvokingNocService() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();

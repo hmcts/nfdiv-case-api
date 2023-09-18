@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -109,6 +110,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         final CaseDetails<CaseData, State> detailsBefore
     ) {
         CaseData data = details.getData();
+        List<String> errors = new ArrayList<>();
 
         if (data.getNoticeOfChange().isNotAddingNewDigitalSolicitor()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -121,7 +123,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         String email = applicant.getSolicitor().getEmail();
         String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
 
-        List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(email, details.getId(), orgId);
+        if (email == null) {
+            errors.add("No email provided - please provide an email for the solicitor you wish to add");
+        } else {
+            errors = solicitorValidationService.validateEmailBelongsToOrgUser(email, details.getId(), orgId);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(errors)

@@ -134,7 +134,7 @@ public class NoticeOfChangeService {
         String userId = StringUtils.EMPTY;
 
         if (StringUtils.isNotBlank(newSolicitor.getEmail())) {
-            Optional<String> userIdOption = solicitorValidationService.findSolicitorByEmail(newSolicitor.getEmail(), caseId);
+            Optional<String> userIdOption = solicitorValidationService.findSolicitorByEmail(newSolicitor.getEmail().toLowerCase(), caseId);
             String orgId = newSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationId();
 
             if (userIdOption.isEmpty()) {
