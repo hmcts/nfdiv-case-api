@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.ccd.sdk.type.KeyValue;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 
 import java.util.List;
@@ -167,7 +166,7 @@ public class OcrDataFields {
     private String paymentDetailEmail;
     private String chequeOrPostalOrderPayment;
 
-    public static OcrDataFields transformData(List<KeyValue> ocrDataFields) {
+    public static OcrDataFields transformData(List<OcrDataField> ocrDataFields) {
         final ObjectMapper mapper = new ObjectMapper();
         final Map<String, String> map =
             Optional.ofNullable(ocrDataFields)
@@ -175,7 +174,7 @@ public class OcrDataFields {
                 .stream()
                 .collect(
                     toMap(
-                        entry -> entry.getKey(),
+                        entry -> entry.getName(),
                         entry -> Optional.ofNullable(entry.getValue()).orElse("")
                     )
                 );
