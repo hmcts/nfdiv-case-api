@@ -14,6 +14,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJointFinalOrderNotification.DELAY_REASON_IF_OVERDUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
@@ -95,11 +96,20 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
                 JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
-                finalOrderNotificationCommonContent
-                    .jointApplicantTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), false),
+                getTemplateVars(caseData, caseId),
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
+    }
+
+    private Map<String, String> getTemplateVars(final CaseData caseData, Long caseId) {
+        Map<String, String> templateVars = finalOrderNotificationCommonContent
+            .jointApplicantTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), false);
+
+        templateVars.put(DELAY_REASON_IF_OVERDUE, FinalOrderNotificationCommonContent.getPartnerDelayReason(
+            caseData.getFinalOrder().getIsFinalOrderOverdue(),
+            caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation()));
+        return templateVars;
     }
 
     @Override
