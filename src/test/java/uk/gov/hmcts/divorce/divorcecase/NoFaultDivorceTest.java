@@ -19,7 +19,7 @@ public class NoFaultDivorceTest {
     private NoFaultDivorce noFaultDivorce;
 
     @Test
-    void shouldAddSystemUpdateUserAccessToDraftStateWhenEnvironmentIsAat() {
+    void shouldSetTheCorrectCaseTypeName() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         noFaultDivorce.configure(configBuilder);
