@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASE_TYPE = "NO_FAULT_DIVORCE_BulkAction";
+    public static final String CASE_TYPE_DESCRIPTION = "New Law Bulk Case";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override
@@ -30,7 +31,11 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
             .map(changeId -> CASE_TYPE + "_PR_" + changeId)
             .orElse(CASE_TYPE);
 
-        configBuilder.caseType(caseType, "New Law Bulk Case", "Handling of the dissolution of marriage");
+        var caseTypeDescription = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
+            .map(changeId -> CASE_TYPE_DESCRIPTION + "_PR_" + changeId)
+            .orElse(CASE_TYPE_DESCRIPTION);
+
+        configBuilder.caseType(caseType, caseTypeDescription, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
 
         configBuilder.grant(Created, CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER, SYSTEMUPDATE);

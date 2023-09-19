@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICI
 public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASE_TYPE = "NFD";
+    public static final String CASE_TYPE_DESCRIPTION = "New Law Case";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override
@@ -30,7 +31,11 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
             .map(changeId -> CASE_TYPE + "_PR_" + changeId)
             .orElse(CASE_TYPE);
 
-        configBuilder.caseType(caseType, "New Law Case", "Handling of the dissolution of marriage");
+        var caseTypeDescription = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
+            .map(changeId -> CASE_TYPE_DESCRIPTION + "_PR_" + changeId)
+            .orElse(CASE_TYPE_DESCRIPTION);
+
+        configBuilder.caseType(caseType, caseTypeDescription, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
         configBuilder.omitHistoryForRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR);
 
