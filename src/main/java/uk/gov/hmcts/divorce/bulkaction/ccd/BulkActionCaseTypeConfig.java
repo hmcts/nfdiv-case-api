@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Optional;
+
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -24,7 +26,11 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
         configBuilder.addPreEventHook(BulkCaseRetiredFields::migrate);
         configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
-        configBuilder.caseType(CASE_TYPE, "New Law Bulk Case", "Handling of the dissolution of marriage");
+        var caseType = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
+            .map(changeId -> CASE_TYPE + "_PR_" + changeId)
+            .orElse(CASE_TYPE);
+
+        configBuilder.caseType(caseType, "New Law Bulk Case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
 
         configBuilder.grant(Created, CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER, SYSTEMUPDATE);

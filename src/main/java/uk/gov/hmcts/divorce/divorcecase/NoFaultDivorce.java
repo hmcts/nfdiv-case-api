@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Optional;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
@@ -24,7 +26,11 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.addPreEventHook(RetiredFields::migrate);
         configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
-        configBuilder.caseType(CASE_TYPE, "New Law Case", "Handling of the dissolution of marriage");
+        var caseType = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
+            .map(changeId -> CASE_TYPE + "_PR_" + changeId)
+            .orElse(CASE_TYPE);
+
+        configBuilder.caseType(caseType, "New Law Case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
         configBuilder.omitHistoryForRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR);
 
