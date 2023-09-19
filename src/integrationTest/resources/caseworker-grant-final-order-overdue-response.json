@@ -58,7 +58,7 @@
     "grantedDate": "2022-02-15T13:39:00.000",
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
     "overdueFinalOrderAuthorisation": {
-      "expeditedFinalOrderGeneralOrder": {
+      "finalOrderGeneralOrder": {
         "generalOrderDocument": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/1f42d0dc-45b4-4ac5-bc4b-e72a36cf7524",
@@ -69,7 +69,7 @@
           "documentType": "generalOrder"
         }
       },
-      "expeditedFinalOrderJudgeName": "THE JUDGE"
+      "finalOrderJudgeName": "THE JUDGE"
     },
     "generalOrderDocumentNames": {
       "value": {
