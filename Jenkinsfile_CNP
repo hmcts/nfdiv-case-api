@@ -162,8 +162,8 @@ withPipeline(type, product, component) {
 
     onPR {
       env.ENVIRONMENT="preview"
-      env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}-java"
-      env.CCD_DEF_NAME = "preview"
+      env.CASE_API_URL = "https://nfdiv-case-api-pr-${CHANGE_ID}-preview.preview.platform.hmcts.net"
+      env.CCD_DEF_NAME = "NFDIV_PR_${CHANGE_ID}"
       env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
       env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
