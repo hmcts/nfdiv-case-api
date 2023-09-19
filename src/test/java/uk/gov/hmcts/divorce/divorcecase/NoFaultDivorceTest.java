@@ -24,7 +24,7 @@ public class NoFaultDivorceTest {
 
         noFaultDivorce.configure(configBuilder);
 
-        assertThat(configBuilder.build().getCaseType()).isEqualTo("NFD");
+        assertThat(configBuilder.build().getCaseDesc()).isEqualTo("Handling of the dissolution of marriage");
 
     }
 
