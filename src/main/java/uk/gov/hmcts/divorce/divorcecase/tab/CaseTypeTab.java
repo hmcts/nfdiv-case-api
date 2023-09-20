@@ -59,6 +59,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String PAPER_FORM_PAYMENT_OTHER_DETAILS =
         String.format("(%s) OR (%s)", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS);
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
+
     public static final String IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
         + "applicant1SolicitorRepresented=\"Yes\" AND doesApplicant1WantToApplyForFinalOrder=\"Yes\"";
 
@@ -432,6 +433,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 RespondentFinalOrderRequested,
                 FinalOrderPending,
                 FinalOrderComplete))
+            .field("isFinalOrderOverdue", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant1SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant2SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
