@@ -39,6 +39,9 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     public static final String DELAY_REASON = "%s applied more than 12 months after the conditional order "
         + "was made and gave the following reason:\n%s";
 
+    public static final String IN_TIME = "inTime";
+    public static final String IS_OVERDUE = "isOverdue";
+
     @Autowired
     private CommonContent commonContent;
 
@@ -78,10 +81,11 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         if (!caseData.getApplicationType().isSole()
                 && YesOrNo.YES.equals(caseData.getFinalOrder().getApplicant2AppliedForFinalOrderFirst())) {
             log.info("Notifying Applicant 1 that both applicants have applied for final order for case {}", caseId);
+            var templateVars = applicantFinalOrderTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
                 JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                templateVars,
                 caseData.getApplicant1().getLanguagePreference()
             );
         }
@@ -92,10 +96,11 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         if (!caseData.getApplicationType().isSole()
                 && YesOrNo.YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
             log.info("Notifying Applicant 2 that both applicants have applied for final order for case {}", caseId);
+            var templateVars = applicantFinalOrderTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
                 JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER,
-                commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                templateVars,
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
@@ -104,18 +109,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     private Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
         Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
-        String applicant1OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
-            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant1().getFullName(), reason))
-            .orElse(StringUtils.EMPTY);
-
-        String applicant2OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant2FinalOrderLateExplanation())
-            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant2().getFullName(), reason))
-            .orElse(StringUtils.EMPTY);
-
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
         templateVars.put(IS_FINAL_ORDER, YES);
-        templateVars.put(APPLICANT_1_OVERDUE_CONTENT, applicant1OverdueContent);
-        templateVars.put(APPLICANT_2_OVERDUE_CONTENT, applicant2OverdueContent);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
                 isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
@@ -124,6 +119,36 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
+        applicantFinalOrderOverdueTemplateVars(templateVars, caseData);
+
         return templateVars;
+    }
+
+    private Map<String, String> applicantFinalOrderTemplateVars(final CaseData caseData, final Long caseId,
+                                                                Applicant applicant1, Applicant applicant2) {
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant1, applicant2);
+        applicantFinalOrderOverdueTemplateVars(templateVars, caseData);
+        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
+            templateVars.put(IS_OVERDUE, YES);
+            templateVars.put(IN_TIME, NO);
+        } else {
+            templateVars.put(IS_OVERDUE, NO);
+            templateVars.put(IN_TIME, YES);
+        }
+
+        return templateVars;
+    }
+
+    private void applicantFinalOrderOverdueTemplateVars(Map<String, String> templateVars, final CaseData caseData) {
+        String applicant1OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
+            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant1().getFullName(), reason))
+            .orElse(StringUtils.EMPTY);
+
+        String applicant2OverdueContent = Optional.ofNullable(caseData.getFinalOrder().getApplicant2FinalOrderLateExplanation())
+            .map(reason -> DELAY_REASON.formatted(caseData.getApplicant2().getFullName(), reason))
+            .orElse(StringUtils.EMPTY);
+
+        templateVars.put(APPLICANT_1_OVERDUE_CONTENT, applicant1OverdueContent);
+        templateVars.put(APPLICANT_2_OVERDUE_CONTENT, applicant2OverdueContent);
     }
 }
