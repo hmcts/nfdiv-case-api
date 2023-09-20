@@ -48,6 +48,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
@@ -56,6 +57,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 
 @ExtendWith(MockitoExtension.class)
 class Applicant1AppliedForFinalOrderNotificationTest {
+
+    private static final String APPLICANT_1_CONTENT = "They applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\nForgot";
 
     @Mock
     private CommonContent commonContent;
@@ -333,6 +337,37 @@ class Applicant1AppliedForFinalOrderNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
+            eq(ENGLISH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verifyNoMoreInteractions(finalOrderNotificationCommonContent);
+    }
+
+    @Test
+    void shouldSendApplicant2SolNotificationWhenJointApplicant1AppliedForFOAndOverdue() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+                .email(TEST_SOL_USER_EMAIL)
+            .build());
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+                .isFinalOrderOverdue(YesOrNo.YES)
+                .applicant1FinalOrderLateExplanation("Forgot")
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
+        );
+
+        when(commonContent.solicitorTemplateVars(
+            data, 1L, data.getApplicant2())).thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOL_USER_EMAIL),
+            eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry("delayReason", APPLICANT_1_CONTENT)
+            )),
             eq(ENGLISH)
         );
         verifyNoMoreInteractions(notificationService);

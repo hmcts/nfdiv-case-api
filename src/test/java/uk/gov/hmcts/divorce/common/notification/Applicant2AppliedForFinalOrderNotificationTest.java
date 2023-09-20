@@ -52,6 +52,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 @ExtendWith(MockitoExtension.class)
 class Applicant2AppliedForFinalOrderNotificationTest {
 
+    private static final String APPLICANT_2_CONTENT = "They applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\nForgot";
     @Mock
     private CommonContent commonContent;
 
@@ -266,6 +268,37 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
+            eq(ENGLISH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verifyNoMoreInteractions(finalOrderNotificationCommonContent);
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationWhenJointApplicant2AppliedForFOAndOverdue() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+                .isFinalOrderOverdue(YesOrNo.YES)
+                .applicant2FinalOrderLateExplanation("Forgot")
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
+        );
+
+        when(commonContent.solicitorTemplateVars(
+            data, 1L, data.getApplicant1())).thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1Solicitor(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry("delayReason", APPLICANT_2_CONTENT)
+            )),
             eq(ENGLISH)
         );
         verifyNoMoreInteractions(notificationService);
