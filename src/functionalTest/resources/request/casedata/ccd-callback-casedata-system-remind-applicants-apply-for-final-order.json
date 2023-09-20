@@ -69,5 +69,6 @@
     }
   ],
   "documentUploadComplete": "Yes",
-  "dateFinalOrderEligibleToRespondent": "2022-07-11"
+  "dateFinalOrderEligibleToRespondent": "2022-07-11",
+  "dateFinalOrderEligibleFrom": "2022-07-11"
 }
