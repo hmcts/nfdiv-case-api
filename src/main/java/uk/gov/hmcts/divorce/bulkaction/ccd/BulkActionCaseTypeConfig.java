@@ -18,9 +18,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
-    public static final String CASE_TYPE = "NO_FAULT_DIVORCE_BulkAction";
+    private static final String CASE_TYPE = "NO_FAULT_DIVORCE_BulkAction";
     public static final String CASE_TYPE_DESCRIPTION = "New Law Bulk Case";
     public static final String JURISDICTION = "DIVORCE";
+
+    public static String getCaseType() {
+        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
+            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
+            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
+
+        return prNumber
+            .map(num -> CASE_TYPE + "_PR_" + num)
+            .orElse(CASE_TYPE);
+    }
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -31,15 +41,11 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
             .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
             .or(() -> ofNullable(getenv().get("CHANGE_ID")));
 
-        var caseType = prNumber
-            .map(num -> CASE_TYPE + "_PR_" + num)
-            .orElse(CASE_TYPE);
-
         var caseTypeDescription = prNumber
             .map(num -> CASE_TYPE_DESCRIPTION + "_PR_" + num)
             .orElse(CASE_TYPE_DESCRIPTION);
 
-        configBuilder.caseType(caseType, caseTypeDescription, "Handling of the dissolution of marriage");
+        configBuilder.caseType(getCaseType(), caseTypeDescription, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
 
         configBuilder.grant(Created, CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER, SYSTEMUPDATE);

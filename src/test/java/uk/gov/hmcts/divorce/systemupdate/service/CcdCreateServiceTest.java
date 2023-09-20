@@ -21,7 +21,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.CASE_TYPE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.getCaseType;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -62,7 +62,7 @@ class CcdCreateServiceTest {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 CREATE_BULK_LIST
             )
         ).thenReturn(startEventResponse);
@@ -83,7 +83,7 @@ class CcdCreateServiceTest {
             SERVICE_AUTHORIZATION,
             SYSTEM_USER_USER_ID,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             true,
             caseDataContent
         );
@@ -103,7 +103,7 @@ class CcdCreateServiceTest {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 CREATE_BULK_LIST
             )
         ).thenReturn(startEventResponse);
@@ -123,7 +123,7 @@ class CcdCreateServiceTest {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 true,
                 caseDataContent
             );

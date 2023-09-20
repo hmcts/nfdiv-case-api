@@ -13,7 +13,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.CASE_TYPE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.getCaseType;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 
@@ -48,7 +48,7 @@ public class CcdCreateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 CREATE_BULK_LIST
             );
 
@@ -63,7 +63,7 @@ public class CcdCreateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 true,
                 caseDataContent);
 

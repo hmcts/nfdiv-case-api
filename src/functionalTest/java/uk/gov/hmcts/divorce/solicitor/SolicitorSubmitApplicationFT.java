@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -79,7 +79,7 @@ public class SolicitorSubmitApplicationFT extends FunctionalTestSuite {
                 CaseDetails
                     .builder()
                     .id(1L)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
                     .state(Draft.name())
                     .build()

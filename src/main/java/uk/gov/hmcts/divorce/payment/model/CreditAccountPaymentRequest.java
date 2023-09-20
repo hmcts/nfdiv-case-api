@@ -34,7 +34,7 @@ public class CreditAccountPaymentRequest {
     @JsonProperty("site_id")
     private String siteId;
 
-    @JsonProperty("case_type")
+    @JsonProperty("getCaseType()")
     private String caseType;
 
     @JsonProperty("description")

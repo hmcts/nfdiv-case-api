@@ -24,8 +24,8 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGL
 import static io.micrometer.core.instrument.binder.BaseUnits.FILES;
 import static java.util.Objects.requireNonNull;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 import static uk.gov.hmcts.reform.ccd.document.am.model.Classification.RESTRICTED;
 
@@ -81,7 +81,7 @@ public class CaseDocumentAccessManagement {
         HttpEntity<Resource> fileResource = new HttpEntity<>(buildByteArrayResource(file), buildPartHeaders(file));
         parameters.add(FILES, fileResource);
         parameters.add(CLASSIFICATION, RESTRICTED.toString());
-        parameters.add(CASE_TYPE_ID, CASE_TYPE);
+        parameters.add(CASE_TYPE_ID, getCaseType());
         parameters.add(JURISDICTION_ID, JURISDICTION);
 
         HttpHeaders headers = new HttpHeaders();

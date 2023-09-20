@@ -120,7 +120,7 @@ public class SystemCreateBulkCaseListTaskTest {
         final List<ListValue<CaseLink>> casesAcceptedToHearing = List.of(caseAcceptedToHearing1, caseAcceptedToHearing2);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
-        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases)
             .casesAcceptedToListForHearing(casesAcceptedToHearing)
@@ -228,7 +228,7 @@ public class SystemCreateBulkCaseListTaskTest {
 
         final List<ListValue<BulkListCaseDetails>> bulkCases1 = List.of(bulkListCaseDetails1, bulkListCaseDetails2);
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails1 = new CaseDetails<>();
-        bulkActionCaseDetails1.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails1.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
         bulkActionCaseDetails1.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases1)
             .casesAcceptedToListForHearing(casesAcceptedToHearing1)
@@ -242,7 +242,7 @@ public class SystemCreateBulkCaseListTaskTest {
             .build());
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails2 = new CaseDetails<>();
-        bulkActionCaseDetails2.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails2.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
         final List<ListValue<BulkListCaseDetails>> bulkCases2 = List.of(bulkListCaseDetails3, bulkListCaseDetails4);
         bulkActionCaseDetails2.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases2)
@@ -366,7 +366,7 @@ public class SystemCreateBulkCaseListTaskTest {
 
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
-        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCaseList)
             .casesAcceptedToListForHearing(casesAcceptedToHearing)
@@ -443,7 +443,7 @@ public class SystemCreateBulkCaseListTaskTest {
             caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
-        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(List.of(bulkListCaseDetails1))
             .casesAcceptedToListForHearing(List.of(caseAcceptedToHearing1))

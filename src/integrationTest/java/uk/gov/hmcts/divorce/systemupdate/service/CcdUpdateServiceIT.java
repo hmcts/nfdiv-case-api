@@ -35,8 +35,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -91,7 +91,7 @@ public class CcdUpdateServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 "1",
                 CREATE_BULK_LIST
             )
@@ -113,7 +113,7 @@ public class CcdUpdateServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 "1",
                 true,
                 caseDataContent
@@ -149,7 +149,7 @@ public class CcdUpdateServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_REMOVE_FAILED_CASES
             )
@@ -179,7 +179,7 @@ public class CcdUpdateServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 TEST_CASE_ID.toString(),
                 true,
                 caseDataContent

@@ -13,7 +13,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -53,7 +53,7 @@ public class SolicitorGeneralApplicationFT extends FunctionalTestSuite {
                 CaseDetails
                     .builder()
                     .id(1L)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
                     .state(IssuedToBailiff.name())
                     .build()
@@ -78,7 +78,7 @@ public class SolicitorGeneralApplicationFT extends FunctionalTestSuite {
                 CaseDetails
                     .builder()
                     .id(1L)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST_TELEPHONE_PAYMENT))
                     .state(IssuedToBailiff.name())
                     .build()

@@ -226,10 +226,10 @@ withPipeline(type, product, component) {
     env.FEE_API_URL = "http://fees-register-api-ithc.service.core-compute-ithc.internal"
   }
 
-    before('functionalTest:preview') {
-      // Only for preview upload the definitions via script as high level data set up relies on an existing environment
-      uploadCoreCaseDataDefinitions()
-    }
+  after('functionalTest:preview') {
+    sh "echo Hello"
+  }
+
 }
 
 def setCommonEnvVariables() {

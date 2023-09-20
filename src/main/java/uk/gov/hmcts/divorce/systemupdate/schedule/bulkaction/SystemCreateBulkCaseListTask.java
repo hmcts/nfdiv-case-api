@@ -118,7 +118,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
         final AtomicInteger counter = new AtomicInteger(1);
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
-        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkListCaseDetails)
             .casesAcceptedToListForHearing(

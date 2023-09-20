@@ -71,7 +71,7 @@ class CcdUpdateServiceTest {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_REMOVE_FAILED_CASES)
         )
@@ -92,7 +92,7 @@ class CcdUpdateServiceTest {
             SERVICE_AUTHORIZATION,
             SYSTEM_USER_USER_ID,
             JURISDICTION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             TEST_CASE_ID.toString(),
             true,
             caseDataContent);
@@ -112,7 +112,7 @@ class CcdUpdateServiceTest {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_REMOVE_FAILED_CASES)
         )
@@ -133,7 +133,7 @@ class CcdUpdateServiceTest {
             SERVICE_AUTHORIZATION,
             SYSTEM_USER_USER_ID,
             JURISDICTION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             TEST_CASE_ID.toString(),
             true,
             caseDataContent);
@@ -157,7 +157,7 @@ class CcdUpdateServiceTest {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_REMOVE_FAILED_CASES)
         )
@@ -178,7 +178,7 @@ class CcdUpdateServiceTest {
             SERVICE_AUTHORIZATION,
             SYSTEM_USER_USER_ID,
             JURISDICTION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             TEST_CASE_ID.toString(),
             true,
             caseDataContent);

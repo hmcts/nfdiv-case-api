@@ -95,7 +95,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -593,7 +593,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                    .caseTypeId(BulkActionCaseTypeConfig.getCaseType())
                     .build()
             )
             .build();
@@ -612,7 +612,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .build()
             )
             .build();
@@ -632,7 +632,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .state(state)
                     .id(TEST_CASE_ID)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .build()
             )
             .build();
@@ -652,7 +652,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .build()
             )
             .build();
@@ -971,7 +971,7 @@ public class TestDataHelper {
             .builder()
             .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
             .id(TEST_CASE_ID)
-            .caseTypeId(CASE_TYPE)
+            .caseTypeId(getCaseType())
             .build();
     }
 
@@ -980,7 +980,7 @@ public class TestDataHelper {
             .builder()
             .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
             .id(TEST_CASE_ID)
-            .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+            .caseTypeId(BulkActionCaseTypeConfig.getCaseType())
             .build();
     }
 

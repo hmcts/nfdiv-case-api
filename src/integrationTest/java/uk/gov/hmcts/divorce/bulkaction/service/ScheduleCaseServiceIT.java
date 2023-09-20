@@ -33,8 +33,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
@@ -102,7 +102,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 bulkActionCaseDetails.getId().toString(),
                 SYSTEM_UPDATE_BULK_CASE))
             .thenReturn(startEventResponse);
@@ -119,7 +119,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_UPDATE_CASE_COURT_HEARING))
             .thenReturn(startEventResponseNFD);
@@ -129,7 +129,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(CASE_TYPE),
+            eq(getCaseType()),
             eq(TEST_CASE_ID.toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -140,7 +140,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(BulkActionCaseTypeConfig.CASE_TYPE),
+            eq(BulkActionCaseTypeConfig.getCaseType()),
             eq(bulkActionCaseDetails.getId().toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -154,7 +154,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 bulkActionCaseDetails.getId().toString(),
                 SYSTEM_UPDATE_BULK_CASE
             );
@@ -165,7 +165,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_UPDATE_CASE_COURT_HEARING
             );
@@ -175,7 +175,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(CASE_TYPE),
+            eq(getCaseType()),
             eq(TEST_CASE_ID.toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -186,7 +186,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(BulkActionCaseTypeConfig.CASE_TYPE),
+            eq(BulkActionCaseTypeConfig.getCaseType()),
             eq(bulkActionCaseDetails.getId().toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -230,7 +230,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 bulkActionCaseDetails.getId().toString(),
                 SYSTEM_UPDATE_BULK_CASE))
             .thenReturn(startEventResponse);
@@ -247,7 +247,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
             .thenReturn(startEventResponseNFD);
@@ -257,7 +257,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(CASE_TYPE),
+            eq(getCaseType()),
             eq(TEST_CASE_ID.toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -268,7 +268,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(BulkActionCaseTypeConfig.CASE_TYPE),
+            eq(BulkActionCaseTypeConfig.getCaseType()),
             eq(bulkActionCaseDetails.getId().toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -282,7 +282,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 bulkActionCaseDetails.getId().toString(),
                 SYSTEM_UPDATE_BULK_CASE
             );
@@ -293,7 +293,7 @@ public class ScheduleCaseServiceIT {
                 TEST_SERVICE_AUTH_TOKEN,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 TEST_CASE_ID.toString(),
                 SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE
             );
@@ -303,7 +303,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(CASE_TYPE),
+            eq(getCaseType()),
             eq(TEST_CASE_ID.toString()),
             eq(true),
             any(CaseDataContent.class)
@@ -314,7 +314,7 @@ public class ScheduleCaseServiceIT {
             eq(TEST_SERVICE_AUTH_TOKEN),
             eq(SYSTEM_USER_USER_ID),
             eq(JURISDICTION),
-            eq(BulkActionCaseTypeConfig.CASE_TYPE),
+            eq(BulkActionCaseTypeConfig.getCaseType()),
             eq(bulkActionCaseDetails.getId().toString()),
             eq(true),
             any(CaseDataContent.class)

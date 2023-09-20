@@ -52,7 +52,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -113,7 +113,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
@@ -138,13 +138,13 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             getSourceBuilder(0, PAGE_SIZE).toString()))
             .thenReturn(expected1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
             .thenReturn(expected2);
 
@@ -171,19 +171,19 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             getSourceBuilder(0, PAGE_SIZE).toString()))
             .thenReturn(searchResult1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
             .thenReturn(searchResult2);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             getSourceBuilder(PAGE_SIZE * 2, PAGE_SIZE).toString()))
             .thenReturn(SearchResult.builder().total(PAGE_SIZE)
                 .cases(emptyList()).build());
@@ -230,13 +230,13 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder1.toString()))
             .thenReturn(expected1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder2.toString()))
             .thenReturn(expected2);
 
@@ -277,14 +277,14 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder2.toString()))
             .thenReturn(expected2);
 
@@ -321,7 +321,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected1);
 
@@ -355,7 +355,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected1);
 
@@ -375,7 +375,7 @@ class CcdSearchServiceTest {
             .searchCases(
                 SYSTEM_UPDATE_AUTH_TOKEN,
                 SERVICE_AUTHORIZATION,
-                CASE_TYPE,
+                getCaseType(),
                 getSourceBuilder(0, PAGE_SIZE).toString());
 
         final CcdSearchCaseException exception = assertThrows(
@@ -399,13 +399,13 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             searchSourceBuilderForAwaitingPronouncementCases(0).toString()))
             .thenReturn(searchResult1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             searchSourceBuilderForAwaitingPronouncementCases(100).toString()))
             .thenReturn(searchResult2);
         when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases))
@@ -437,13 +437,13 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             searchSourceBuilderForAwaitingPronouncementCases(0).toString()))
             .thenReturn(searchResult1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             searchSourceBuilderForAwaitingPronouncementCases(100).toString()))
             .thenReturn(searchResult2);
         when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases))
@@ -469,7 +469,7 @@ class CcdSearchServiceTest {
             .searchCases(
                 SYSTEM_UPDATE_AUTH_TOKEN,
                 SERVICE_AUTHORIZATION,
-                CASE_TYPE,
+                getCaseType(),
                 searchSourceBuilderForAwaitingPronouncementCases(0).toString());
 
         final CcdSearchCaseException exception = assertThrows(
@@ -495,13 +495,13 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             searchSourceBuilderForPronouncedCasesWithCasesInError(0).toString()))
             .thenReturn(expectedSearchResult1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             searchSourceBuilderForPronouncedCasesWithCasesInError(100).toString()))
             .thenReturn(expectedSearchResult2);
         when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(any(CaseDetails.class)))
@@ -521,7 +521,7 @@ class CcdSearchServiceTest {
         doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             searchSourceBuilderForPronouncedCasesWithCasesInError(0).toString());
 
         assertThrows(
@@ -546,13 +546,13 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(0).toString()))
             .thenReturn(expectedSearchResult1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(100).toString()))
             .thenReturn(expectedSearchResult2);
         when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(any(CaseDetails.class)))
@@ -572,7 +572,7 @@ class CcdSearchServiceTest {
         doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(0).toString());
 
         assertThrows(
@@ -608,7 +608,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
@@ -644,7 +644,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
@@ -677,7 +677,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
@@ -714,7 +714,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
@@ -753,7 +753,7 @@ class CcdSearchServiceTest {
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()))
             .thenReturn(expected);
 
@@ -772,7 +772,7 @@ class CcdSearchServiceTest {
             SERVICE_AUTHORIZATION,
             user.getUserDetails().getId(),
             BulkActionCaseTypeConfig.JURISDICTION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             "1"
         )).thenReturn(mock(CaseDetails.class));
 
@@ -788,7 +788,7 @@ class CcdSearchServiceTest {
             SERVICE_AUTHORIZATION,
             user.getUserDetails().getId(),
             BulkActionCaseTypeConfig.JURISDICTION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             "1");
     }
 

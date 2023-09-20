@@ -30,8 +30,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
@@ -82,7 +82,7 @@ public class DocAssemblyServiceTest {
                 .outputType("PDF")
                 .formPayload(objectMapper.valueToTree(caseDataMap))
                 .secureDocStoreEnabled(true)
-                .caseTypeId(CASE_TYPE)
+                .caseTypeId(getCaseType())
                 .jurisdictionId(JURISDICTION)
                 .build();
 
@@ -150,7 +150,7 @@ public class DocAssemblyServiceTest {
                 .outputType("PDF")
                 .formPayload(objectMapper.valueToTree(caseDataMap))
                 .secureDocStoreEnabled(true)
-                .caseTypeId(CASE_TYPE)
+                .caseTypeId(getCaseType())
                 .jurisdictionId(JURISDICTION)
                 .build();
 

@@ -28,8 +28,8 @@ import java.util.function.Predicate;
 import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
 import static org.springframework.http.HttpStatus.CONFLICT;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 
 @Service
 @Slf4j
@@ -97,7 +97,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 caseId,
                 eventId);
 
@@ -112,7 +112,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 caseId,
                 true,
                 caseDataContent);
@@ -142,7 +142,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 String.valueOf(caseId),
                 eventId);
 
@@ -157,7 +157,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 String.valueOf(caseId),
                 true,
                 caseDataContent);
@@ -186,7 +186,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 String.valueOf(caseId),
                 eventId
             );
@@ -202,7 +202,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 String.valueOf(caseId),
                 true,
                 caseDataContent);
@@ -231,7 +231,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 String.valueOf(caseId),
                 eventId
             );
@@ -247,7 +247,7 @@ public class CcdUpdateService {
                 serviceAuth,
                 userId,
                 JURISDICTION,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 String.valueOf(caseId),
                 true,
                 caseDataContent);
@@ -384,7 +384,7 @@ public class CcdUpdateService {
             serviceAuth,
             userId,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             caseId,
             eventId);
 
@@ -399,7 +399,7 @@ public class CcdUpdateService {
             serviceAuth,
             userId,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             caseId,
             true,
             caseDataContent);

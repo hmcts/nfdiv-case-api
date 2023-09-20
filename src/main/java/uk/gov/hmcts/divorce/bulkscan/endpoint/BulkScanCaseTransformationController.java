@@ -29,7 +29,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 
 @RestController
 @Slf4j
@@ -65,7 +65,7 @@ public class BulkScanCaseTransformationController {
         SuccessfulTransformationResponse callbackResponse = SuccessfulTransformationResponse.builder()
             .caseCreationDetails(
                 new CaseCreationDetails(
-                    CASE_TYPE,
+                    getCaseType(),
                     CREATE_PAPER_CASE,
                     transformedCaseData
                 )
