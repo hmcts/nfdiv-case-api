@@ -7,8 +7,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.Optional;
-
 import static java.lang.System.getenv;
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
