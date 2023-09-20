@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.Optional;
 
+import static java.lang.System.getenv;
+import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 
@@ -25,14 +27,18 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.addPreEventHook(RetiredFields::migrate);
-        configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
+        configBuilder.setCallbackHost(getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
-        var caseType = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
-            .map(changeId -> CASE_TYPE + "_PR_" + changeId)
+        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
+            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
+            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
+
+        var caseType = prNumber
+            .map(num -> CASE_TYPE + "_PR_" + num)
             .orElse(CASE_TYPE);
 
-        var caseTypeDescription = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
-            .map(changeId -> CASE_TYPE_DESCRIPTION + "_PR_" + changeId)
+        var caseTypeDescription = prNumber
+            .map(num -> CASE_TYPE_DESCRIPTION + "_PR_" + num)
             .orElse(CASE_TYPE_DESCRIPTION);
 
         configBuilder.caseType(caseType, caseTypeDescription, "Handling of the dissolution of marriage");
@@ -41,6 +47,6 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
         // to shutter the service within xui uncomment this line
         // configBuilder.shutterService();
-        log.info("Building definition for " + System.getenv().getOrDefault("ENVIRONMENT", ""));
+        log.info("Building definition for " + getenv().getOrDefault("ENVIRONMENT", ""));
     }
 }

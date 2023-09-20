@@ -3,4 +3,4 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
-    CHANGE_ID: 3221
+    SERVICE_NAME: ${SERVICE_NAME}

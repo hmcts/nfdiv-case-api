@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.Optional;
 
+import static java.lang.System.getenv;
+import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -27,12 +29,16 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
         configBuilder.addPreEventHook(BulkCaseRetiredFields::migrate);
         configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
-        var caseType = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
-            .map(changeId -> CASE_TYPE + "_PR_" + changeId)
+        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
+            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
+            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
+
+        var caseType = prNumber
+            .map(num -> CASE_TYPE + "_PR_" + num)
             .orElse(CASE_TYPE);
 
-        var caseTypeDescription = Optional.ofNullable(System.getenv().get("CHANGE_ID"))
-            .map(changeId -> CASE_TYPE_DESCRIPTION + "_PR_" + changeId)
+        var caseTypeDescription = prNumber
+            .map(num -> CASE_TYPE_DESCRIPTION + "_PR_" + num)
             .orElse(CASE_TYPE_DESCRIPTION);
 
         configBuilder.caseType(caseType, caseTypeDescription, "Handling of the dissolution of marriage");
