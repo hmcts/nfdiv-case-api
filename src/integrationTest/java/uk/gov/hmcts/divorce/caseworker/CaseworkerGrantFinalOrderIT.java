@@ -24,7 +24,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -228,8 +228,8 @@ public class CaseworkerGrantFinalOrderIT {
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setEmail(null);
         caseData.getFinalOrder().setOverdueFinalOrderAuthorisation(
-            ExpeditedFinalOrderAuthorisation.builder()
-                .expeditedFinalOrderJudgeName("THE JUDGE")
+            FinalOrderAuthorisation.builder()
+                .finalOrderJudgeName("THE JUDGE")
                 .build()
         );
         caseData.setGeneralOrders(List.of(
