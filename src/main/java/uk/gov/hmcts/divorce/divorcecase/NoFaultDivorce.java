@@ -23,11 +23,8 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
     public static final String JURISDICTION = "DIVORCE";
 
     public static String getCaseType() {
-        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
-            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
-            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
-
-        return prNumber
+        log.info("CHANGE_ID: " + getenv().getOrDefault("CHANGE_ID", ""));
+        return ofNullable(getenv().get("CHANGE_ID"))
             .map(num -> CASE_TYPE + "_PR_" + num)
             .orElse(CASE_TYPE);
     }
@@ -37,11 +34,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.addPreEventHook(RetiredFields::migrate);
         configBuilder.setCallbackHost(getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
-        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
-            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
-            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
-
-        var caseTypeDescription = prNumber
+        var caseTypeDescription = ofNullable(getenv().get("CHANGE_ID"))
             .map(num -> CASE_TYPE_DESCRIPTION + "_PR_" + num)
             .orElse(CASE_TYPE_DESCRIPTION);
 

@@ -23,11 +23,7 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
     public static final String JURISDICTION = "DIVORCE";
 
     public static String getCaseType() {
-        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
-            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
-            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
-
-        return prNumber
+        return ofNullable(getenv().get("CHANGE_ID"))
             .map(num -> CASE_TYPE + "_PR_" + num)
             .orElse(CASE_TYPE);
     }
@@ -37,11 +33,7 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
         configBuilder.addPreEventHook(BulkCaseRetiredFields::migrate);
         configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
-        var prNumber = ofNullable(getenv().get("SERVICE_NAME"))
-            .map(serviceName -> serviceName.replaceAll("[^0-9]", ""))
-            .or(() -> ofNullable(getenv().get("CHANGE_ID")));
-
-        var caseTypeDescription = prNumber
+        var caseTypeDescription = ofNullable(getenv().get("CHANGE_ID"))
             .map(num -> CASE_TYPE_DESCRIPTION + "_PR_" + num)
             .orElse(CASE_TYPE_DESCRIPTION);
 
