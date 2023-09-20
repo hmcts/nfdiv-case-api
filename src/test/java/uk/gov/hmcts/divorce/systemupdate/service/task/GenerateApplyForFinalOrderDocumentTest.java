@@ -70,6 +70,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -114,6 +115,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -158,6 +160,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -202,6 +205,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));

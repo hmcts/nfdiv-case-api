@@ -30,6 +30,7 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1HWFNeedHelp": "No",
     "applicant2InviteEmailAddress": "applicant2@test.com",
+    "dateFinalOrderEligibleFrom": "2023-09-20",
     "confidentialDocumentsGenerated": [
       {
         "id": "${json-unit.any-string}",
