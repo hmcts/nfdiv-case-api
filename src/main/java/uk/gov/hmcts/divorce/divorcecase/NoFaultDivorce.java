@@ -23,7 +23,6 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
     public static final String JURISDICTION = "DIVORCE";
 
     public static String getCaseType() {
-        log.info("CHANGE_ID: " + getenv().getOrDefault("CHANGE_ID", ""));
         return ofNullable(getenv().get("CHANGE_ID"))
             .map(num -> CASE_TYPE + "_PR_" + num)
             .orElse(CASE_TYPE);
