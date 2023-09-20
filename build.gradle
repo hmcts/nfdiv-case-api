@@ -430,6 +430,7 @@ bootWithCCD {
       environment key, value
     }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+    environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
   }
 }
 
