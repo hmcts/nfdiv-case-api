@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJointFinalOrderNotification.DELAY_REASON_IF_OVERDUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -33,6 +35,10 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Component
 @Slf4j
 public class Applicant1AppliedForFinalOrderNotification implements ApplicantNotification {
+
+    private static final String APP_1_OVERDUE_CONTENT = "They applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\n%s";
+    private static final String DELAY_REASON = "delayReason";
 
     @Autowired
     private CommonContent commonContent;
@@ -117,13 +123,25 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
         if (!caseData.getApplicationType().isSole()
                 && YesOrNo.YES.equals(caseData.getFinalOrder().getApplicant1AppliedForFinalOrderFirst())) {
             log.info("Sending Applicant 2 solicitor notification informing them that other party have applied for final order: {}", caseId);
+
+            Map<String, String> app2SolTemplateVars = commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2());
+            app2SolTemplateVars.put(DELAY_REASON, getApp1DelayReason(caseData));
+
             notificationService.sendEmail(
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
-                commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
+                app2SolTemplateVars,
                 caseData.getApplicant2().getLanguagePreference()
             );
         }
+    }
+
+    private String getApp1DelayReason(CaseData caseData) {
+        return YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())
+            ? Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
+                .map(APP_1_OVERDUE_CONTENT::formatted)
+                .orElse(APP_1_OVERDUE_CONTENT.formatted(StringUtils.EMPTY))
+            : StringUtils.EMPTY;
     }
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {
