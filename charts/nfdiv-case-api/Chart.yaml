@@ -3,30 +3,13 @@ appVersion: "1.0"
 description: A Helm chart for nfdiv-case-api App
 name: nfdiv-case-api
 home: https://github.com/hmcts/nfdiv-case-api
-version: 0.0.80
+version: 0.0.81
 maintainers:
   - name: HMCTS nfdiv team
 dependencies:
   - name: java
     version: 4.2.0
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-  - name: ccd
-    version: 8.0.29
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    tags:
-        - ccd-idam-pr
-  - name: xui-webapp
-    version: ~1.0.0
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    condition: xui-webapp.enabled
-  - name: xui-mo-webapp
-    version: ~1.1.0
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    condition: xui-mo-webapp.enabled
-  - name: aac-manage-case-assignment
-    version: ~0.2.0
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    condition: aac-manage-case-assignment.enabled
   - name: idam-pr
     version: 2.3.0
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
