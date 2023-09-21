@@ -12,12 +12,6 @@ ccd:
 xui-webapp:
   enabled: false
 
-xui-mo-webapp:
-  enabled: false
-
-aac-manage-case-assignment:
-  enabled: false
-
 nfdiv-frontend:
   enabled: false
 
