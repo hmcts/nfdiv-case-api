@@ -374,6 +374,34 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
     }
 
+    @Test
+    void shouldSendApplicant2NotificationWhenJointApplicant1AppliedForFOAndIsOverdue() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+            .isFinalOrderOverdue(YesOrNo.YES)
+            .applicant1FinalOrderLateExplanation("Forgot")
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
+        );
+
+        when(finalOrderNotificationCommonContent.jointApplicantTemplateVars(
+            data, 1L, data.getApplicant2(), data.getApplicant1(), false)).thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry("delayReasonIfOverdue", APPLICANT_1_CONTENT)
+            )),
+            eq(ENGLISH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verifyNoMoreInteractions(finalOrderNotificationCommonContent);
+    }
+
     private void setupMocks(Clock mockClock) {
         if (Objects.nonNull(mockClock)) {
             setMockClock(mockClock);

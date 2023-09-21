@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.notification;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -9,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -22,6 +25,9 @@ public class FinalOrderNotificationCommonContent {
     public static final String NOW_PLUS_14_DAYS = "now plus 14 days";
     public static final String IS_REMINDER = "isReminder";
     private static final int FINAL_ORDER_OFFSET_DAYS = 14;
+
+    public static final String DELAY_REASON_STATIC_CONTENT = "They applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\n%s";
 
     @Autowired
     private CommonContent commonContent;
@@ -53,5 +59,13 @@ public class FinalOrderNotificationCommonContent {
             ? finalOrder.getDateFinalOrderSubmitted().plusDays(FINAL_ORDER_OFFSET_DAYS)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
             : "";
+    }
+
+    public static String getPartnerDelayReason(final YesOrNo isFinalOrderOverdue, final String partnerDelayReason) {
+        return YesOrNo.YES.equals(isFinalOrderOverdue)
+            ? Optional.ofNullable(partnerDelayReason)
+            .map(DELAY_REASON_STATIC_CONTENT::formatted)
+            .orElse(DELAY_REASON_STATIC_CONTENT.formatted(StringUtils.EMPTY))
+            : StringUtils.EMPTY;
     }
 }
