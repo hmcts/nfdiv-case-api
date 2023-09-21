@@ -65,7 +65,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
     }
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        return new PageBuilder(configBuilder
+        return new PageBuilder(
+            configBuilder
             .event(SWITCH_TO_SOLE_FO)
             .forStateTransition(AwaitingJointFinalOrder, FinalOrderRequested)
             .name("Switched to sole final order")
@@ -74,7 +75,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted));
+            .submittedCallback(this::submitted)
+        );
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
