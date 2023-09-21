@@ -15,7 +15,7 @@ nfdiv-frontend:
     image: hmctspublic.azurecr.io/nfdiv/frontend:latest #pr-xxxx
     ingressHost: frontend-${SERVICE_FQDN}
     environment:
-      CASE_TYPE_ID: NFD_PR_${CHANGE_ID}
+      CASE_TYPE: NFD_PR_${CHANGE_ID}
       SKIP_DIV_CASE_CHECK: true
 
 idam-pr:
