@@ -15,6 +15,7 @@ import java.util.Map;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FINAL_ORDER_OVERDUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -35,7 +36,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Slf4j
 public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
-    public static final String FINAL_ORDER_OVERDUE_DATE = "finalOrderOverdueDate";
     @Autowired
     private CommonContent commonContent;
 
@@ -129,6 +129,8 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS,
             caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent()
                     .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+            .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
@@ -147,7 +149,7 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
-        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
