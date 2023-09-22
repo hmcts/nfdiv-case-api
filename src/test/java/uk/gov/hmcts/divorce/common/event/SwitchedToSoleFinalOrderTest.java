@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -33,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -54,6 +57,9 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Mock
     private SwitchedToSoleFoNotification switchedToSoleFoNotification;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private SwitchedToSoleFinalOrder switchedToSoleFinalOrder;
@@ -183,5 +189,21 @@ public class SwitchedToSoleFinalOrderTest {
         switchedToSoleFinalOrder.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchedToSoleFoNotification, caseDetails.getData(), caseId);
+    }
+
+    @Test
+    void shouldPassCaseDetailsToGeneralReferralService() {
+        final long caseId = 1L;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getFinalOrder().setIsFinalOrderOverdue(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .state(FinalOrderRequested)
+            .build();
+
+        switchedToSoleFinalOrder.submitted(caseDetails, caseDetails);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
     }
 }

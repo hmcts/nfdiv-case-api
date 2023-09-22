@@ -8,8 +8,10 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -28,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWIT
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -58,6 +61,9 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
     @Autowired
     private SwitchedToSoleFoNotification switchedToSoleFoNotification;
+
+    @Autowired
+    private GeneralReferralService generalReferralService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -113,6 +119,12 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         log.info("SWITCH_TO_SOLE_FO submitted callback invoked for case id: {}", details.getId());
 
         notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
+
+        final State state = details.getState();
+        if ((FinalOrderRequested.equals(state) || RespondentFinalOrderRequested.equals(state))
+                && YesOrNo.YES.equals(details.getData().getFinalOrder().getIsFinalOrderOverdue())) {
+            generalReferralService.caseWorkerGeneralReferral(details);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }

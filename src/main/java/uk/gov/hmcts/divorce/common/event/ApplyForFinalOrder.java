@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.ApplyForFinalOrderDetails;
@@ -26,6 +27,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -134,7 +136,11 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
 
-        generalReferralService.caseWorkerGeneralReferral(details);
+        final State state = details.getState();
+        if ((FinalOrderRequested.equals(state) || RespondentFinalOrderRequested.equals(state))
+            && YesOrNo.YES.equals(details.getData().getFinalOrder().getIsFinalOrderOverdue())) {
+            generalReferralService.caseWorkerGeneralReferral(details);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }

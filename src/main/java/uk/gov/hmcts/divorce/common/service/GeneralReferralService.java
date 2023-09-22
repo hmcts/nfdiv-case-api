@@ -34,20 +34,11 @@ public class GeneralReferralService {
     private SetGeneralReferralDetails setGeneralReferralDetails;
 
     public void caseWorkerGeneralReferral(final CaseDetails<CaseData, State> details) {
-        if (finalOrderRequestedAndOverdue(details)) {
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuthorization = authTokenGenerator.generate();
-            final String caseId = details.getId().toString();
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+        final String caseId = details.getId().toString();
 
-            ccdUpdateService
-                .submitEventWithRetry(caseId, CASEWORKER_GENERAL_REFERRAL, setGeneralReferralDetails, user, serviceAuthorization);
-        }
-    }
-
-    private boolean finalOrderRequestedAndOverdue(final CaseDetails<CaseData, State> details) {
-        final State state = details.getState();
-        final boolean requestedState = FinalOrderRequested.equals(state) || RespondentFinalOrderRequested.equals(state);
-        final boolean finalOrderOverdue = YesOrNo.YES.equals(details.getData().getFinalOrder().getIsFinalOrderOverdue());
-        return requestedState && finalOrderOverdue;
+        ccdUpdateService
+            .submitEventWithRetry(caseId, CASEWORKER_GENERAL_REFERRAL, setGeneralReferralDetails, user, serviceAuthorization);
     }
 }
