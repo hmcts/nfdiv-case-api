@@ -30,7 +30,7 @@ public class SystemNotifyFinalOrderOverdue implements CCDConfig<CaseData, State,
         configBuilder
             .event(SYSTEM_FINAL_ORDER_OVERDUE)
             .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder)
-            .name("Alert Applicant 1")
+            .name("Final Order Overdue")
             .description("Alert Applicant 1 that Final Order request is overdue")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)

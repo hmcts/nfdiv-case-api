@@ -130,13 +130,16 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.getApplicant2().setEmail(null);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
+        caseData.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderEligibleFrom(LocalDate.now())
+            .build());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(COVERSHEET_DOC_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, "FL-NFD-GOR-ENG-Can-Apply-Final-Order_V2.docx");
+        stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, "FL-NFD-GOR-ENG-Can-Apply-Final-Order_V3.docx");
         stubApplyForFinalOrderPackSendLetter();
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -170,7 +173,8 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.setFinalOrder(FinalOrder.builder()
-                .dateFinalOrderEligibleToRespondent(LocalDate.now())
+            .dateFinalOrderEligibleFrom(LocalDate.now())
+            .dateFinalOrderEligibleToRespondent(LocalDate.now())
             .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
@@ -208,6 +212,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
             .address("app2 sol address")
             .build());
         caseData.setFinalOrder(FinalOrder.builder()
+            .dateFinalOrderEligibleFrom(LocalDate.now())
             .dateFinalOrderEligibleToRespondent(LocalDate.now())
             .build());
         caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
