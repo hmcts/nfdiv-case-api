@@ -60,6 +60,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         String.format("(%s) OR (%s)", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS);
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
 
+    public static final String IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
+        + "applicant1SolicitorRepresented=\"Yes\" AND doesApplicant1WantToApplyForFinalOrder=\"Yes\"";
+
+    public static final String IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
+        + "applicant2SolicitorRepresented=\"Yes\" AND doesApplicant2WantToApplyForFinalOrder=\"Yes\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildWarningsTab(configBuilder);
@@ -427,10 +433,18 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 RespondentFinalOrderRequested,
                 FinalOrderPending,
                 FinalOrderComplete))
+            .field("isFinalOrderOverdue", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant1SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant2SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
             .field("applicant1FinalOrderStatementOfTruth")
+            .label("finalOrderSolApp1StatementOfTruth",
+                IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED,
+                "The applicant believes that the facts stated in the application are true.")
+            .field("applicant1SolicitorName", IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
+            .field("applicant1SolicitorFirmName", IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
             .field("granted")
             .field("grantedDate")
             .field("expeditedFinalOrderAuthorisation")
@@ -449,6 +463,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2FinalOrderExplanation")
             .field("applicant2FinalOrderLateExplanation")
             .field("applicant2FinalOrderStatementOfTruth")
+            .label("finalOrderSolApp2StatementOfTruth",
+                IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED,
+                "The applicant believes that the facts stated in the application are true.")
+            .field("applicant2SolicitorName", IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
+            .field("applicant2SolicitorFirmName", IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field("scannedD36Form");
 
     }
