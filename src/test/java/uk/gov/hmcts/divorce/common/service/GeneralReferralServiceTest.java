@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.common.service;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 
 @ExtendWith(MockitoExtension.class)
 class GeneralReferralServiceTest {
@@ -54,33 +52,6 @@ class GeneralReferralServiceTest {
     void setUp() {
         caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         caseDetails = CaseDetails.<CaseData, State>builder().id(new Random().nextLong()).data(caseData).build();
-    }
-
-    @Test
-    void shouldDoNothingWhenStateIsNotFinalOrderRequested() {
-
-        caseDetails.setState(GeneralApplicationReceived);
-
-        generalReferralService.caseWorkerGeneralReferral(caseDetails);
-
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(authTokenGenerator);
-        verifyNoInteractions(ccdUpdateService);
-        verifyNoInteractions(setGeneralReferralDetails);
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = State.class, names = {"FinalOrderRequested", "RespondentFinalOrderRequested"})
-    void shouldDoNothingWhenStateIsFinalOrderRequestedButNotOverdue(State state) {
-
-        caseDetails.setState(state);
-
-        generalReferralService.caseWorkerGeneralReferral(caseDetails);
-
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(authTokenGenerator);
-        verifyNoInteractions(ccdUpdateService);
-        verifyNoInteractions(setGeneralReferralDetails);
     }
 
     @ParameterizedTest

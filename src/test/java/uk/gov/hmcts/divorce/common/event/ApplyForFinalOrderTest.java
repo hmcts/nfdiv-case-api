@@ -157,7 +157,12 @@ class ApplyForFinalOrderTest {
     void shouldPassCaseDetailsToGeneralReferralService() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         caseData.getFinalOrder().setIsFinalOrderOverdue(YES);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).state(FinalOrderRequested).build();
+        final CaseDetails<CaseData, State> caseDetails =
+            CaseDetails.<CaseData, State>builder()
+                .id(1L)
+                .data(caseData)
+                .state(FinalOrderRequested)
+                .build();
 
         applyForFinalOrder.submitted(caseDetails, null);
 
