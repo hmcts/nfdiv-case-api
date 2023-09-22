@@ -9,6 +9,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.event.page.FinalOrderExplainTheDelay;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
@@ -58,8 +60,13 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        new FinalOrderExplainTheDelay().addTo(pageBuilder);
+    }
 
-        configBuilder
+    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder(
+            configBuilder
             .event(SWITCH_TO_SOLE_FO)
             .forStateTransition(AwaitingJointFinalOrder, FinalOrderRequested)
             .name("Switched to sole final order")
@@ -68,7 +75,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted);
+            .submittedCallback(this::submitted)
+        );
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
