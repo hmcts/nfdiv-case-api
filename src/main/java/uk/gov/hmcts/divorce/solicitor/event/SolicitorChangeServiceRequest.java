@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -26,6 +27,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import static java.time.LocalDate.now;
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -76,6 +78,9 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     @Autowired
     private ReIssueApplicationService reIssueApplicationService;
 
+    @Value("${aos_pack.due_date_offset_days}")
+    private long dueDateOffsetDays;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -118,6 +123,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service if the respondent is confidential."))
                 .build();
+        } else if (application.isCourtServiceMethod() && beforeDetails.getData().getApplication().isSolicitorServiceMethod()) {
+            caseData.setDueDate(now().plusDays(dueDateOffsetDays));
         }
 
         State state = details.getState();
