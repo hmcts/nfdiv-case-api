@@ -60,8 +60,8 @@ DELETE FROM complex_field_acl WHERE case_field_id IN
 
 ----takes very long to complete
 ----fk_case_field_case_type_id is not indexed by default
---DELETE FROM case_field WHERE case_type_id IN
---  (SELECT id FROM tmp_case_type_ids_for_:caseTypeReference);
+DELETE FROM case_field WHERE case_type_id IN
+  (SELECT id FROM tmp_case_type_ids_for_:caseTypeReference);
 
 DELETE FROM display_group WHERE case_type_id IN
   (SELECT id FROM tmp_case_type_ids_for_:caseTypeReference);
