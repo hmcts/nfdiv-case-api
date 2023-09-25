@@ -58,10 +58,10 @@ DELETE FROM complex_field_acl WHERE case_field_id IN
       (SELECT id FROM tmp_case_type_ids)
   );
 
---takes very long to complete
---fk_case_field_case_type_id is not indexed by default
-DELETE FROM case_field WHERE case_type_id IN
-  (SELECT id FROM tmp_case_type_ids);
+----takes very long to complete
+----fk_case_field_case_type_id is not indexed by default
+--DELETE FROM case_field WHERE case_type_id IN
+--  (SELECT id FROM tmp_case_type_ids);
 
 DELETE FROM display_group WHERE case_type_id IN
   (SELECT id FROM tmp_case_type_ids);
@@ -86,10 +86,10 @@ DELETE FROM event_post_state WHERE case_event_id IN
       (SELECT id FROM tmp_case_type_ids)
   );
 
---Takes very long to complete
---fk_event_case_type_id is not indexed by default
-DELETE FROM event WHERE case_type_id IN
-  (SELECT id FROM tmp_case_type_ids);
+----Takes very long to complete
+----fk_event_case_type_id is not indexed by default
+--DELETE FROM event WHERE case_type_id IN
+--  (SELECT id FROM tmp_case_type_ids);
 
 DELETE FROM state_acl WHERE state_id IN
   (SELECT id FROM state WHERE case_type_id IN
