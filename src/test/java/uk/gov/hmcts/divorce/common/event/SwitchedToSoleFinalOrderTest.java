@@ -28,7 +28,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -192,23 +191,12 @@ public class SwitchedToSoleFinalOrderTest {
     }
 
     @Test
-    void shouldPassCaseDetailsToGeneralReferralServiceIfCaseOverdue() {
+    void shouldPassCaseDetailsToGeneralReferralService() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
-        caseData.getFinalOrder().setIsFinalOrderOverdue(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
         switchedToSoleFinalOrder.submitted(caseDetails, null);
 
         verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
-    }
-
-    @Test
-    void shouldNotPassCaseDetailsToGeneralReferralServiceIfCaseNotOverdue() {
-        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
-
-        switchedToSoleFinalOrder.submitted(caseDetails, null);
-
-        verifyNoInteractions(generalReferralService);
     }
 }

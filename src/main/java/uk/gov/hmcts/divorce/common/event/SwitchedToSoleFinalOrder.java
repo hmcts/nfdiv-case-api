@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.FinalOrderExplainTheDelay;
@@ -122,13 +121,9 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
         log.info("SWITCH_TO_SOLE_FO submitted callback invoked for case id: {}", details.getId());
 
-        CaseData caseData = details.getData();
+        notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
 
-        notificationDispatcher.send(switchedToSoleFoNotification, caseData, details.getId());
-
-        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
-            generalReferralService.caseWorkerGeneralReferral(details);
-        }
+        generalReferralService.caseWorkerGeneralReferral(details);
 
         return SubmittedCallbackResponse.builder().build();
     }
