@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS tmp_case_type_ids;
+DROP TABLE IF EXISTS tmp_case_type_ids_for_:changeId;
 
 --Store just the filtered case_type ids to be used for deletion purposes
 CREATE TABLE tmp_case_type_ids_for_:changeId AS
