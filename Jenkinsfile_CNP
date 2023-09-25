@@ -240,7 +240,7 @@ withPipeline(type, product, component) {
   // TODO replace this with helm operator
   afterAlways('functionalTest:preview') {
     sh "echo Hello"
-    sh "./bin/remote-case-type.sh"
+    sh "./bin/remove-case-type.sh"
   }
 
 }
