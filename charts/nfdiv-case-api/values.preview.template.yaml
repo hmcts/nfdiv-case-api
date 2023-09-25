@@ -4,6 +4,7 @@ java:
   ingressHost: ${SERVICE_FQDN}
   environment:
     CHANGE_ID: ${CHANGE_ID}
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
   keyVaults:
     nfdiv:
       secrets:
