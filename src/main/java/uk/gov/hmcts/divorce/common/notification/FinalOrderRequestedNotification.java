@@ -28,6 +28,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -38,9 +40,6 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
 
     public static final String DELAY_REASON = "%s applied more than 12 months after the conditional order "
         + "was made and gave the following reason:\n%s";
-
-    public static final String IN_TIME = "inTime";
-    public static final String IS_OVERDUE = "isOverdue";
 
     @Autowired
     private CommonContent commonContent;
