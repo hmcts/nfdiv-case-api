@@ -5,6 +5,7 @@
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
 import uk.gov.hmcts.contino.MetricsPublisher
+import uk.gov.hmcts.contino.GithubAPI
 
 def type = "java"
 def product = "nfdiv"
@@ -239,10 +240,15 @@ withPipeline(type, product, component) {
 
   // TODO replace this with helm operator
   afterAlways('functionalTest:preview') {
-    sh "echo Hello"
-    sh "./bin/remove-case-type.sh"
+    if (!checkForKeepHelmLabel(env.BRANCH_NAME)) {
+      sh "./bin/remove-case-type.sh"
+    }
   }
 
+}
+
+def checkForKeepHelmLabel(branch_name) {
+  return new GithubAPI(this).getLabelsbyPattern(branch_name, "enable_helm_keep").contains("enable_helm_keep")
 }
 
 def setCommonEnvVariables() {
