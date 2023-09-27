@@ -248,7 +248,7 @@ withPipeline(type, product, component) {
 }
 
 def checkForKeepHelmLabel(branch_name) {
-  return new GithubAPI(this).getLabelsbyPattern(branch_name, "enable_helm_keep").contains("enable_helm_keep")
+  return new GithubAPI(this).checkForLabel(env.BRANCH_NAME, "enable_keep_helm")
 }
 
 def setCommonEnvVariables() {
