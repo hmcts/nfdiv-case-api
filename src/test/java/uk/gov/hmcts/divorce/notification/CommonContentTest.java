@@ -2,17 +2,22 @@ package uk.gov.hmcts.divorce.notification;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -47,6 +52,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSION
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -448,5 +455,20 @@ class CommonContentTest {
                 entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
             );
+    }
+
+    @ParameterizedTest
+    @CsvSource({"YES,yes, no", "NO,no,yes", ",no,yes"})
+    public void shouldSetOverdueAndInTimeVariablesFinalOrderOverdue(YesOrNo finalOrderOverdue, String isOverdue, String inTime) {
+        CaseData caseData = CaseData.builder()
+            .finalOrder(FinalOrder.builder().isFinalOrderOverdue(finalOrderOverdue).build())
+            .build();
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        commonContent.setOverdueAndInTimeVariables(caseData,  templateVars);
+
+        assertThat(templateVars.get(IS_OVERDUE)).isEqualTo(isOverdue);
+        assertThat(templateVars.get(IN_TIME)).isEqualTo(inTime);
     }
 }

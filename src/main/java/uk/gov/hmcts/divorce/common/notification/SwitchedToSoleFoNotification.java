@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -19,8 +18,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
-import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 
 @Component
 @Slf4j
@@ -40,13 +37,9 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
 
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
-            templateVars.put(IS_OVERDUE, YES);
-            templateVars.put(IN_TIME, NO);
-        } else {
-            templateVars.put(IS_OVERDUE, NO);
-            templateVars.put(IN_TIME, YES);
-        }
+
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
+
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             SOLE_APPLIED_FOR_FINAL_ORDER,
@@ -61,13 +54,8 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
         log.info("Notifying applicant 2 that they made a sole application for a final order: {}", id);
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
-            templateVars.put(IS_OVERDUE, YES);
-            templateVars.put(IN_TIME, NO);
-        } else {
-            templateVars.put(IS_OVERDUE, NO);
-            templateVars.put(IN_TIME, YES);
-        }
+
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
 
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
