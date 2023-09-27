@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -54,6 +56,9 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Mock
     private SwitchedToSoleFoNotification switchedToSoleFoNotification;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private SwitchedToSoleFinalOrder switchedToSoleFinalOrder;
@@ -183,5 +188,15 @@ public class SwitchedToSoleFinalOrderTest {
         switchedToSoleFinalOrder.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchedToSoleFoNotification, caseDetails.getData(), caseId);
+    }
+
+    @Test
+    void shouldPassCaseDetailsToGeneralReferralService() {
+        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+
+        switchedToSoleFinalOrder.submitted(caseDetails, null);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
     }
 }

@@ -24,7 +24,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.common.notification.AwaitingFinalOrderNotification.FINAL_ORDER_OVERDUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -35,6 +34,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FINAL_ORDER_OVERDUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -303,7 +303,7 @@ class AwaitingFinalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
-        data.getConditionalOrder().setGrantedDate(coGrantedDate);
+        data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
@@ -341,7 +341,7 @@ class AwaitingFinalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
-        data.getConditionalOrder().setGrantedDate(coGrantedDate);
+        data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);

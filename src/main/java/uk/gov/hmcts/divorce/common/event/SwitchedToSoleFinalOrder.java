@@ -9,7 +9,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.event.page.FinalOrderExplainTheDelay;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -18,14 +21,11 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.EnumSet;
-
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -59,19 +59,28 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
     @Autowired
     private SwitchedToSoleFoNotification switchedToSoleFoNotification;
 
+    @Autowired
+    private GeneralReferralService generalReferralService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        new FinalOrderExplainTheDelay().addTo(pageBuilder);
+    }
 
-        configBuilder
-            .event(SWITCH_TO_SOLE_FO)
-            .forStateTransition(EnumSet.of(AwaitingFinalOrder, AwaitingJointFinalOrder, FinalOrderRequested), FinalOrderRequested)
-            .name("Switched to sole final order")
-            .description("Switched to sole final order")
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
-            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
-            .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted);
+    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder(
+            configBuilder
+                .event(SWITCH_TO_SOLE_FO)
+                .forStateTransition(AwaitingJointFinalOrder, FinalOrderRequested)
+                .name("Switched to sole final order")
+                .description("Switched to sole final order")
+                .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
+                .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+                .retries(120, 120)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .submittedCallback(this::submitted)
+        );
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -113,6 +122,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         log.info("SWITCH_TO_SOLE_FO submitted callback invoked for case id: {}", details.getId());
 
         notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
+
+        generalReferralService.caseWorkerGeneralReferral(details);
 
         return SubmittedCallbackResponse.builder().build();
     }
