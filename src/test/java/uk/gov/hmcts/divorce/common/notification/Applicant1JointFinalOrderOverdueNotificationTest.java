@@ -12,12 +12,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -27,6 +30,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 
 @ExtendWith(MockitoExtension.class)
 public class Applicant1JointFinalOrderOverdueNotificationTest {
+
+    private static final String APPLICANT_2_DELAY_CONTENT = "They applied more than 12 months after the conditional order "
+        + "was made and gave the following reason:\nForgot";
 
     @Mock
     private NotificationService notificationService;
@@ -56,6 +62,35 @@ public class Applicant1JointFinalOrderOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
+            eq(ENGLISH)
+        );
+        verifyNoMoreInteractions(notificationService);
+        verifyNoMoreInteractions(finalOrderNotificationCommonContent);
+    }
+
+    @Test
+    void shouldSendApplicant1NotificationWhenJointFinalOrderIsOverdueWithDelayReasonFromApp2() {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
+        data.setFinalOrder(FinalOrder.builder()
+            .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
+            .isFinalOrderOverdue(YesOrNo.YES)
+            .applicant2FinalOrderLateExplanation("Forgot")
+            .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build()
+        );
+
+        when(finalOrderNotificationCommonContent.jointApplicantTemplateVars(
+            data, 1L, data.getApplicant1(), data.getApplicant2(), true))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
+            argThat(allOf(
+                hasEntry("delayReasonIfOverdue", APPLICANT_2_DELAY_CONTENT)
+            )),
             eq(ENGLISH)
         );
         verifyNoMoreInteractions(notificationService);

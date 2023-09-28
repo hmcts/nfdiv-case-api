@@ -53,171 +53,171 @@ def pipelineConf = new AppPipelineConfig()
 pipelineConf.vaultSecrets = secrets
 
 withPipeline(type, product, component) {
-    enableAksStagingDeployment()
-    disableLegacyDeployment()
-    loadVaultSecrets(secrets)
-    syncBranchesWithMaster(['perftest', 'ithc', 'demo'])
-    enableSlackNotifications('#no-fault-divorce-builds')
-    MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component)
-    approvedEnvironmentRepository(params.environment, metricsPublisher) {
-      enableHighLevelDataSetup()
-    }
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  loadVaultSecrets(secrets)
+  syncBranchesWithMaster(['perftest', 'ithc', 'demo'])
+  enableSlackNotifications('#no-fault-divorce-builds')
+  MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component)
+  approvedEnvironmentRepository(params.environment, metricsPublisher) {
+    enableHighLevelDataSetup()
+  }
 
-    afterAlways('test') {
-      builder.gradle('jacocoTestReport')
+  afterAlways('test') {
+    builder.gradle('jacocoTestReport')
 
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/checkstyle",
-        reportFiles          : "main.html",
-        reportName           : "Checkstyle Main Report"
-      ]
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "main.html",
+      reportName           : "Checkstyle Main Report"
+    ]
 
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/checkstyle",
-        reportFiles          : "test.html",
-        reportName           : "Checkstyle Test Report"
-      ]
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "test.html",
+      reportName           : "Checkstyle Test Report"
+    ]
 
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/checkstyle",
-        reportFiles          : "functionalTest.html",
-        reportName           : "Checkstyle Functional Test Report"
-      ]
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "functionalTest.html",
+      reportName           : "Checkstyle Functional Test Report"
+    ]
 
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/checkstyle",
-        reportFiles          : "integrationTest.html",
-        reportName           : "Checkstyle Integration Test Report"
-      ]
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "integrationTest.html",
+      reportName           : "Checkstyle Integration Test Report"
+    ]
 
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/test",
-        reportFiles          : "index.html",
-        reportName           : "Unit Tests Report"
-      ]
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/test",
+      reportFiles          : "index.html",
+      reportName           : "Unit Tests Report"
+    ]
 
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/pmd",
-        reportFiles          : "main.html",
-        reportName           : "PMD Report"
-      ]
-    }
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "main.html",
+      reportName           : "PMD Report"
+    ]
+  }
 
-    afterAlways('functionalTest') {
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/functional",
-        reportFiles          : "index.html",
-        reportName           : "Functional Tests Report"
-      ]
-    }
+  afterAlways('functionalTest') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "index.html",
+      reportName           : "Functional Tests Report"
+    ]
+  }
 
-    afterAlways('smoketest:preview') {
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/smoke",
-        reportFiles          : "index.html",
-        reportName           : "Smoke Test Report"
-      ]
-    }
+  afterAlways('smoketest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/smoke",
+      reportFiles          : "index.html",
+      reportName           : "Smoke Test Report"
+    ]
+  }
 
-    afterAlways('smoketest:aat') {
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/smoke",
-        reportFiles          : "index.html",
-        reportName           : "Smoke Test Report"
-      ]
-    }
+  afterAlways('smoketest:aat') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/smoke",
+      reportFiles          : "index.html",
+      reportName           : "Smoke Test Report"
+    ]
+  }
 
-    afterAlways('checkout') {
-      builder.setupToolVersion()
-      builder.gradle('generateCCDConfig')
-      generateDefinitions()
-    }
+  afterAlways('checkout') {
+    builder.setupToolVersion()
+    builder.gradle('generateCCDConfig')
+    generateDefinitions()
+  }
 
-    onPR {
-      env.ENVIRONMENT="preview"
-      env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}-java"
-      env.CCD_DEF_NAME = "preview"
-      env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
-      env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
-      env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-      env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
-      env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
-      env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  onPR {
+    env.ENVIRONMENT="preview"
+    env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}-java"
+    env.CCD_DEF_NAME = "preview"
+    env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
+    env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
+    env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+    env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+    env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 
-      setCommonEnvVariables()
-    }
+    setCommonEnvVariables()
+  }
 
-    onMaster {
-        env.ENVIRONMENT="aat"
-        env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
-        env.CCD_DEF_NAME="aat"
-        env.ELASTIC_SEARCH_ENABLED=true
-        env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
-        env.ADMIN_UNLINK_APPLICANT_2_ENABLED=true
-        env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
-        env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-        setCommonEnvVariables()
-    }
+  onMaster {
+    env.ENVIRONMENT="aat"
+    env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
+    env.CCD_DEF_NAME="aat"
+    env.ELASTIC_SEARCH_ENABLED=true
+    env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+    env.ADMIN_UNLINK_APPLICANT_2_ENABLED=true
+    env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+    env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    setCommonEnvVariables()
+  }
 
-    afterAlways('functionalTest:aat') {
-        env.ENVIRONMENT="prod"
-        env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
-        env.CCD_DEF_NAME="prod"
-        env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-prod.service.core-compute-prod.internal"
-        env.CITIZEN_UPDATE_CASE_STATE_ENABLED=false
-        env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
-        env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
-        env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
-        env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
-        env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+  afterAlways('functionalTest:aat') {
+    env.ENVIRONMENT="prod"
+    env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
+    env.CCD_DEF_NAME="prod"
+    env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-prod.service.core-compute-prod.internal"
+    env.CITIZEN_UPDATE_CASE_STATE_ENABLED=false
+    env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+    env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
+    env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
+    env.BEFTA_S2S_CLIENT_ID = "ccd_data"
 
-        builder.gradle('generateCCDConfig --rerun-tasks')
-        generateDefinitions()
-    }
+    builder.gradle('generateCCDConfig --rerun-tasks')
+    generateDefinitions()
+  }
 
-    onDemo {
-      env.ENVIRONMENT="demo"
-      env.CASE_API_URL = "http://nfdiv-case-api-demo.service.core-compute-demo.internal"
-      env.CCD_DEF_NAME = "demo"
-      env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
-      env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
-    }
+  onDemo {
+    env.ENVIRONMENT="demo"
+    env.CASE_API_URL = "http://nfdiv-case-api-demo.service.core-compute-demo.internal"
+    env.CCD_DEF_NAME = "demo"
+    env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+  }
 
-    onPerftest {
-      env.ENVIRONMENT="perftest"
-      env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
-      env.CCD_DEF_NAME = "perftest"
-      env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
-      env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
-      env.FEE_API_URL = "http://fees-register-api-perftest.service.core-compute-perftest.internal"
-    }
+  onPerftest {
+    env.ENVIRONMENT="perftest"
+    env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+    env.CCD_DEF_NAME = "perftest"
+    env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
+    env.FEE_API_URL = "http://fees-register-api-perftest.service.core-compute-perftest.internal"
+  }
 
   onIthc {
     env.ENVIRONMENT="ithc"
@@ -228,27 +228,13 @@ withPipeline(type, product, component) {
     env.FEE_API_URL = "http://fees-register-api-ithc.service.core-compute-ithc.internal"
   }
 
-    before('functionalTest:preview') {
-      // Only for preview upload the definitions via script as high level data set up relies on an existing environment
-      uploadCoreCaseDataDefinitions()
-    }
 }
 
 def setCommonEnvVariables() {
-    env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
-    env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-    env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
-    env.BEFTA_S2S_CLIENT_ID = "ccd_data"
-}
-
-def uploadCoreCaseDataDefinitions() {
-    dir("${WORKSPACE}/bin"){
-        sh "./add-roles.sh"
-        sh "./process-and-import-ccd-definition.sh"
-    }
-    dir("${WORKSPACE}") {
-        steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
-    }
+  env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
+  env.BEFTA_S2S_CLIENT_ID = "ccd_data"
 }
 
 def generateDefinitions() {

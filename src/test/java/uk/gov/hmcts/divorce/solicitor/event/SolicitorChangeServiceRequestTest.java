@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -209,6 +210,27 @@ class SolicitorChangeServiceRequestTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldSetDueDateWhenServiceTypeChangedFromSolicitorToCourt() {
+        final long dueDateOffsetDays = 16;
+        ReflectionTestUtils.setField(solicitorChangeServiceRequest, "dueDateOffsetDays", dueDateOffsetDays);
+
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseData beforeCaseData = caseDataWithStatementOfTruth();
+        beforeCaseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        beforeDetails.setData(beforeCaseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            caseDetails, beforeDetails);
+
+        assertThat(response.getData().getDueDate()).isEqualTo(now().plusDays(dueDateOffsetDays));
     }
 
     @Test
