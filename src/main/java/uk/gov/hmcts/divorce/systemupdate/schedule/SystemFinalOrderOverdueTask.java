@@ -16,11 +16,12 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyFinalOrderOverdue.SYSTEM_FINAL_ORDER_OVERDUE;
@@ -43,7 +44,7 @@ public class SystemFinalOrderOverdueTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    private static final String PRONOUNCED_DATE = "coGrantedDate";
+    public static final String PRONOUNCED_DATE = "coGrantedDate";
 
     private static final String FINAL_ORDER_OVERDUE_FLAG = "isFinalOrderOverdue";
 
@@ -54,6 +55,9 @@ public class SystemFinalOrderOverdueTask implements Runnable {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String overdueDate = formatter.format(LocalDate.now().minusMonths(12));
+
         try {
             final BoolQueryBuilder query =
                 boolQuery()
@@ -62,6 +66,10 @@ public class SystemFinalOrderOverdueTask implements Runnable {
                             .should(matchQuery(STATE, AwaitingFinalOrder))
                             .should(matchQuery(STATE, AwaitingJointFinalOrder))
                             .minimumShouldMatch(1)
+                    )
+                    .must(
+                        boolQuery()
+                            .should(boolQuery().must(rangeQuery(String.format(DATA, PRONOUNCED_DATE)).lt(overdueDate)))
                     )
                     .mustNot(matchQuery(String.format(DATA, FINAL_ORDER_OVERDUE_FLAG), YesOrNo.YES));
 
@@ -85,23 +93,8 @@ public class SystemFinalOrderOverdueTask implements Runnable {
 
     private void triggerFinalOrderEventForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
-            Map<String, Object> caseDataMap = caseDetails.getData();
-
-            String pronouncedDate = (String) caseDataMap.getOrDefault(PRONOUNCED_DATE, null);
-            if (pronouncedDate == null) {
-                log.error("Ignoring case id {} with created on {} and modified on {}, as pronounced date is null",
-                    caseDetails.getId(),
-                    caseDetails.getCreatedDate(),
-                    caseDetails.getLastModified()
-                );
-            } else {
-                LocalDate finalOrderOverdueDate = LocalDate.parse(pronouncedDate).plusMonths(12);
-
-                if (finalOrderOverdueDate.isBefore(LocalDate.now())) {
-                    log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
-                    ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_FINAL_ORDER_OVERDUE, user, serviceAuth);
-                }
-            }
+            log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_FINAL_ORDER_OVERDUE, user, serviceAuth);
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final IllegalArgumentException e) {
