@@ -21,12 +21,12 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -37,6 +37,7 @@ import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyFinalOrderOverdue.SYSTEM_FINAL_ORDER_OVERDUE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemFinalOrderOverdueTask.PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -63,11 +64,18 @@ class SystemFinalOrderOverdueTaskTest {
     private User user;
 
     private static final String FINAL_ORDER_OVERDUE_FLAG = "isFinalOrderOverdue";
+
+    private static final String OVERDUE_DATE = DateTimeFormatter
+        .ofPattern("yyyy-MM-dd").format(LocalDate.now().minusMonths(12));
     private static final BoolQueryBuilder query = boolQuery()
         .must(boolQuery()
             .should(matchQuery(STATE, AwaitingFinalOrder))
             .should(matchQuery(STATE, AwaitingJointFinalOrder))
             .minimumShouldMatch(1))
+        .must(
+            boolQuery()
+                .should(boolQuery().must(rangeQuery(String.format(DATA, PRONOUNCED_DATE)).lt(OVERDUE_DATE)))
+        )
         .mustNot(matchQuery(String.format(DATA, FINAL_ORDER_OVERDUE_FLAG), YesOrNo.YES));
 
     @BeforeEach
@@ -82,10 +90,6 @@ class SystemFinalOrderOverdueTaskTest {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final CaseDetails caseDetails3 = mock(CaseDetails.class);
-
-        when(caseDetails1.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(13).toString()));
-        when(caseDetails2.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusWeeks(53).toString()));
-        when(caseDetails3.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusDays(364).toString()));
 
         when(caseDetails1.getId()).thenReturn(1L);
         when(caseDetails2.getId()).thenReturn(2L);
@@ -103,24 +107,6 @@ class SystemFinalOrderOverdueTaskTest {
     }
 
     @Test
-    void shouldIgnoreCaseWhenDatePronouncedDateIsNull() {
-        final CaseDetails caseDetails = mock(CaseDetails.class);
-
-        Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("coGrantedDate", null);
-
-        when(caseDetails.getData()).thenReturn(caseDataMap);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
-            .thenReturn(List.of(caseDetails));
-
-        task.run();
-
-        verify(ccdUpdateService, never())
-            .submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
-    }
-
-    @Test
     void shouldNotSubmitEventIfSearchFails() {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
@@ -135,8 +121,6 @@ class SystemFinalOrderOverdueTaskTest {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-
-        when(caseDetails1.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(13).toString()));
 
         when(caseDetails1.getId()).thenReturn(1L);
 
@@ -158,9 +142,6 @@ class SystemFinalOrderOverdueTaskTest {
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
-
-        when(caseDetails1.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(13).toString()));
-        when(caseDetails2.getData()).thenReturn(Map.of("coGrantedDate", LocalDate.now().minusMonths(14).toString()));
 
         when(caseDetails1.getId()).thenReturn(1L);
         when(caseDetails2.getId()).thenReturn(2L);
