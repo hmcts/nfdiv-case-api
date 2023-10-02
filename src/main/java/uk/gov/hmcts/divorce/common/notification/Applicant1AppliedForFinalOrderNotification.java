@@ -155,6 +155,8 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
         templateVars.put(NOW_PLUS_14_DAYS, !isFinalOrderEligible ? finalOrderNotificationCommonContent
             .getNowPlus14Days(caseData.getApplicant1()) : "");
 
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
+
         return templateVars;
     }
 }

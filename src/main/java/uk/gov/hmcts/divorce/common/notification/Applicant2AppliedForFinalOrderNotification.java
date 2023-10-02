@@ -150,6 +150,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, YES);
         templateVars.put(NOW_PLUS_14_DAYS, finalOrderNotificationCommonContent.getNowPlus14Days(caseData.getApplicant2()));
 
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
+
         return templateVars;
     }
 }

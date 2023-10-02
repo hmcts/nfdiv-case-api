@@ -24,6 +24,8 @@ public class FinalOrderNotificationCommonContent {
     public static final String WILL_BE_CHECKED_WITHIN_14_DAYS = "will be checked within 14 days";
     public static final String NOW_PLUS_14_DAYS = "now plus 14 days";
     public static final String IS_REMINDER = "isReminder";
+    public static final String IN_TIME = "inTime";
+    public static final String IS_OVERDUE = "isOverdue";
     private static final int FINAL_ORDER_OFFSET_DAYS = 14;
 
     public static final String DELAY_REASON_STATIC_CONTENT = "They applied more than 12 months after the conditional order "

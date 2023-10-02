@@ -35,10 +35,15 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
 
         log.info("Notifying applicant 1 that they made a sole application for a final order: {}", id);
 
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
+
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             SOLE_APPLIED_FOR_FINAL_ORDER,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -47,11 +52,15 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
     public void sendToApplicant2(final CaseData caseData, final Long id) {
 
         log.info("Notifying applicant 2 that they made a sole application for a final order: {}", id);
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
 
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            templateVars,
             caseData.getApplicant2().getLanguagePreference()
         );
     }

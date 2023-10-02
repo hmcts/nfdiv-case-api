@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,6 +28,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -282,5 +285,15 @@ public class CommonContent {
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
 
         return templateContent;
+    }
+
+    public void setOverdueAndInTimeVariables(CaseData caseData, Map<String, String> templateVars) {
+        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
+            templateVars.put(IS_OVERDUE, YES);
+            templateVars.put(IN_TIME, NO);
+        } else {
+            templateVars.put(IS_OVERDUE, NO);
+            templateVars.put(IN_TIME, YES);
+        }
     }
 }
