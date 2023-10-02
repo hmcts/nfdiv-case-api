@@ -30,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.CASE_TYPE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.getCaseType;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerPronounceList.CASEWORKER_PRONOUNCE_LIST;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -87,7 +87,7 @@ public class CaseworkerPronounceListIT {
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .data(objectMapper.convertValue(caseData, new TypeReference<>(){}))
                     .id(TEST_CASE_ID)
                     .build()

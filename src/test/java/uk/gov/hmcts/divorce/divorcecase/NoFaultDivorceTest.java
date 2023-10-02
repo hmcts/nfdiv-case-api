@@ -19,12 +19,12 @@ public class NoFaultDivorceTest {
     private NoFaultDivorce noFaultDivorce;
 
     @Test
-    void shouldAddSystemUpdateUserAccessToDraftStateWhenEnvironmentIsAat() {
+    void shouldSetTheCorrectCaseTypeName() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         noFaultDivorce.configure(configBuilder);
 
-        assertThat(configBuilder.build().getCaseType()).isEqualTo("NFD");
+        assertThat(configBuilder.build().getCaseDesc()).isEqualTo("Handling of the dissolution of marriage");
 
     }
 

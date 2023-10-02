@@ -17,8 +17,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.CASE_TYPE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.JURISDICTION;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.getCaseType;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -48,7 +48,7 @@ class CaseDetailsConverterTest {
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
         caseDetails.setId(id);
         caseDetails.setJurisdiction(JURISDICTION);
-        caseDetails.setCaseTypeId(CASE_TYPE);
+        caseDetails.setCaseTypeId(getCaseType());
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseDetails.setLastModified(LOCAL_DATE_TIME);
         caseDetails.setState(Submitted);
@@ -62,7 +62,7 @@ class CaseDetailsConverterTest {
 
         assertThat(reformModelCaseDetails.getId()).isEqualTo(id);
         assertThat(reformModelCaseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
-        assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(getCaseType());
         assertThat(reformModelCaseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getState()).isEqualTo(Submitted.name());
@@ -84,7 +84,7 @@ class CaseDetailsConverterTest {
         final CaseDetails reformCaseDetails = CaseDetails.builder()
             .id(456L)
             .jurisdiction(JURISDICTION)
-            .caseTypeId(CASE_TYPE)
+            .caseTypeId(getCaseType())
             .createdDate(LOCAL_DATE_TIME)
             .lastModified(LOCAL_DATE_TIME)
             .state(Submitted.name())
@@ -100,7 +100,7 @@ class CaseDetailsConverterTest {
 
         assertThat(caseDetails.getId()).isEqualTo(id);
         assertThat(caseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
-        assertThat(caseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(caseDetails.getCaseTypeId()).isEqualTo(getCaseType());
         assertThat(caseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(caseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(caseDetails.getState()).isEqualTo(Submitted);
@@ -127,7 +127,7 @@ class CaseDetailsConverterTest {
             new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
         caseDetails.setId(id);
         caseDetails.setJurisdiction(JURISDICTION);
-        caseDetails.setCaseTypeId(CASE_TYPE);
+        caseDetails.setCaseTypeId(getCaseType());
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseDetails.setLastModified(LOCAL_DATE_TIME);
         caseDetails.setState(Created);
@@ -141,7 +141,7 @@ class CaseDetailsConverterTest {
 
         assertThat(reformModelCaseDetails.getId()).isEqualTo(id);
         assertThat(reformModelCaseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
-        assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(getCaseType());
         assertThat(reformModelCaseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getState()).isEqualTo(Created.name());
@@ -163,7 +163,7 @@ class CaseDetailsConverterTest {
         final CaseDetails reformCaseDetails = CaseDetails.builder()
             .id(456L)
             .jurisdiction(JURISDICTION)
-            .caseTypeId(CASE_TYPE)
+            .caseTypeId(getCaseType())
             .createdDate(LOCAL_DATE_TIME)
             .lastModified(LOCAL_DATE_TIME)
             .state(Created.name())
@@ -179,7 +179,7 @@ class CaseDetailsConverterTest {
 
         assertThat(caseDetails.getId()).isEqualTo(id);
         assertThat(caseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
-        assertThat(caseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(caseDetails.getCaseTypeId()).isEqualTo(getCaseType());
         assertThat(caseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(caseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(caseDetails.getState()).isEqualTo(Created);

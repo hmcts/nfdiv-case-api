@@ -13,8 +13,8 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 
 @Service
 @Slf4j
@@ -72,7 +72,7 @@ public class DocAssemblyService {
             .outputType("PDF")
             .formPayload(objectMapper.valueToTree(templateContent))
             .secureDocStoreEnabled(true)
-            .caseTypeId(CASE_TYPE)
+            .caseTypeId(getCaseType())
             .jurisdictionId(JURISDICTION)
             .build();
     }

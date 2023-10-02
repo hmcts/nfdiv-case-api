@@ -39,8 +39,8 @@ import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
@@ -134,7 +134,7 @@ public class CcdSearchService {
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString());
     }
 
@@ -160,7 +160,7 @@ public class CcdSearchService {
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()
         ).getCases();
     }
@@ -185,7 +185,7 @@ public class CcdSearchService {
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             sourceBuilder.toString()
         ).getCases();
     }
@@ -201,7 +201,7 @@ public class CcdSearchService {
             serviceAuth,
             userId,
             JURISDICTION,
-            BulkActionCaseTypeConfig.CASE_TYPE,
+            BulkActionCaseTypeConfig.getCaseType(),
             bulkCaseId);
 
         return caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(bulkCaseDetails);
@@ -296,7 +296,7 @@ public class CcdSearchService {
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()
         ).getCases();
     }
@@ -325,7 +325,7 @@ public class CcdSearchService {
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()
         ).getCases();
 
@@ -358,7 +358,7 @@ public class CcdSearchService {
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()
         ).getCases();
 
@@ -393,7 +393,7 @@ public class CcdSearchService {
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()
         ).getCases();
 
@@ -422,7 +422,7 @@ public class CcdSearchService {
         List<CaseDetails> caseDetails = coreCaseDataApi.searchCases(
             user.getAuthToken(),
             serviceAuth,
-            CASE_TYPE,
+            getCaseType(),
             sourceBuilder.toString()
         ).getCases();
 
@@ -448,7 +448,7 @@ public class CcdSearchService {
             final SearchResult searchResult = coreCaseDataApi.searchCases(
                 user.getAuthToken(),
                 serviceAuth,
-                BulkActionCaseTypeConfig.CASE_TYPE,
+                BulkActionCaseTypeConfig.getCaseType(),
                 sourceBuilder.toString());
 
             final List<CaseDetails> pageResults = searchResult.getCases();

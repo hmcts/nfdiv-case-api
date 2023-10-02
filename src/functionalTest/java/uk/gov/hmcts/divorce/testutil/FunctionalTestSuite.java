@@ -28,8 +28,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 
@@ -94,7 +94,7 @@ public abstract class FunctionalTestSuite {
             s2sToken,
             solicitorUserId,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             SOLICITOR_CREATE
         );
     }
@@ -111,7 +111,7 @@ public abstract class FunctionalTestSuite {
             s2sToken,
             solicitorUserId,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             true,
             caseDataContent
         );
@@ -135,7 +135,7 @@ public abstract class FunctionalTestSuite {
                             .id(caseId)
                             .data(caseData)
                             .createdDate(LOCAL_DATE_TIME)
-                            .caseTypeId(CASE_TYPE)
+                            .caseTypeId(getCaseType())
                             .build())
             .caseDetails(
                     CaseDetails
@@ -143,7 +143,7 @@ public abstract class FunctionalTestSuite {
                             .id(caseId)
                             .data(caseData)
                             .createdDate(LOCAL_DATE_TIME)
-                            .caseTypeId(CASE_TYPE)
+                            .caseTypeId(getCaseType())
                             .build()
             )
             .build();
@@ -161,7 +161,7 @@ public abstract class FunctionalTestSuite {
                     .id(1234567890123456L)
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .state(state.name())
                     .build()
             )
@@ -171,7 +171,7 @@ public abstract class FunctionalTestSuite {
                     .id(1234567890123456L)
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
+                    .caseTypeId(getCaseType())
                     .state(state.name())
                     .build()
             )

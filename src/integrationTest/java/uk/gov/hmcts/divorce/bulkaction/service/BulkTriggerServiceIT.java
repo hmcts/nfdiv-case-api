@@ -37,8 +37,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
@@ -129,7 +129,7 @@ public class BulkTriggerServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 "1",
                 true,
                 caseDataContent
@@ -149,7 +149,7 @@ public class BulkTriggerServiceIT {
             SERVICE_AUTHORIZATION,
             SYSTEM_USER_USER_ID,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             "1",
             true,
             caseDataContent
@@ -183,7 +183,7 @@ public class BulkTriggerServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 "3",
                 true,
                 caseDataContent
@@ -208,7 +208,7 @@ public class BulkTriggerServiceIT {
             SERVICE_AUTHORIZATION,
             SYSTEM_USER_USER_ID,
             JURISDICTION,
-            CASE_TYPE,
+            getCaseType(),
             "3",
             true,
             caseDataContent
@@ -227,7 +227,7 @@ public class BulkTriggerServiceIT {
                 SERVICE_AUTHORIZATION,
                 SYSTEM_USER_USER_ID,
                 JURISDICTION,
-                CASE_TYPE,
+                getCaseType(),
                 caseId,
                 true,
                 caseDataContent
@@ -243,7 +243,7 @@ public class BulkTriggerServiceIT {
                     SERVICE_AUTHORIZATION,
                     SYSTEM_USER_USER_ID,
                     JURISDICTION,
-                    CASE_TYPE,
+                    getCaseType(),
                     caseId,
                     "event Id"))
                 .thenReturn(startEventResponse);

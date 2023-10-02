@@ -105,7 +105,7 @@ public class PronouncementListTemplateContentTest {
             CaseDetails
                 .builder()
                 .id(TEST_CASE_ID)
-                .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                .caseTypeId(BulkActionCaseTypeConfig.getCaseType())
                 .data(Map.of("bulkListCaseDetails", bulkActionCaseData))
                 .build();
 
@@ -162,7 +162,7 @@ public class PronouncementListTemplateContentTest {
             CaseDetails
                 .builder()
                 .id(TEST_CASE_ID)
-                .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                .caseTypeId(BulkActionCaseTypeConfig.getCaseType())
                 .data(Map.of("bulkListCaseDetails", bulkActionCaseData))
                 .build();
 
@@ -200,7 +200,7 @@ public class PronouncementListTemplateContentTest {
             CaseDetails
                 .builder()
                 .id(TEST_CASE_ID)
-                .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                .caseTypeId(BulkActionCaseTypeConfig.getCaseType())
                 .data(Map.of("bulkListCaseDetails", bulkActionCaseData))
                 .build();
 
@@ -266,7 +266,7 @@ public class PronouncementListTemplateContentTest {
         return CaseDetails
             .builder()
             .id(id)
-            .caseTypeId(NoFaultDivorce.CASE_TYPE)
+            .caseTypeId(NoFaultDivorce.getCaseType())
             .data(Map.of("", caseData))
             .build();
     }

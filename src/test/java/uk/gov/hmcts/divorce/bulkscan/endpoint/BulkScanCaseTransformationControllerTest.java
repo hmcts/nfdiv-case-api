@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +51,7 @@ public class BulkScanCaseTransformationControllerTest {
 
         CaseCreationDetails caseCreationDetails = requireNonNull(response.getBody()).getCaseCreationDetails();
         assertThat(caseCreationDetails.getCaseData()).isEqualTo(transformedData);
-        assertThat(caseCreationDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(caseCreationDetails.getCaseTypeId()).isEqualTo(getCaseType());
         assertThat(caseCreationDetails.getEventId()).isEqualTo(CREATE_PAPER_CASE);
     }
 }
