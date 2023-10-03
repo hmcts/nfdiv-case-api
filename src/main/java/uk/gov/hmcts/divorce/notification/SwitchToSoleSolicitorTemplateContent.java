@@ -9,7 +9,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static java.lang.String.join;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
@@ -32,10 +31,8 @@ public class SwitchToSoleSolicitorTemplateContent {
     public Map<String, String> templatevars(CaseData caseData, Long caseId, Applicant applicant, Applicant partner) {
         Map<String, String> templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
-        templateContent.put(APPLICANT_1_NAME,
-            join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
-        templateContent.put(APPLICANT_2_NAME,
-            join(" ", caseData.getApplicant2().getFirstName(), caseData.getApplicant2().getLastName()));
+        templateContent.put(APPLICANT_1_NAME, caseData.getApplicant1().getFullName());
+        templateContent.put(APPLICANT_2_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference())
                 ? applicant.getSolicitor().getReference()
