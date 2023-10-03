@@ -9,43 +9,28 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.SwitchToSoleSolicitorTemplateContent;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.String.join;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.solicitor.notification.SolicitorIntendsToSwitchToSoleFoNotification.APPLICANT_1_NAME;
-import static uk.gov.hmcts.divorce.solicitor.notification.SolicitorIntendsToSwitchToSoleFoNotification.APPLICANT_2_NAME;
-import static uk.gov.hmcts.divorce.solicitor.notification.SolicitorIntendsToSwitchToSoleFoNotification.DATE_PLUS_14_DAYS;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
-
-    @Mock
-    private CommonContent commonContent;
+class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
     @Mock
     private NotificationService notificationService;
 
     @Mock
-    private Clock clock;
+    SwitchToSoleSolicitorTemplateContent switchToSoleSolicitorTemplateContent;
 
     @InjectMocks
     private SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
@@ -53,55 +38,46 @@ public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
     @Test
     void shouldSendApplicant1SolicitorNotificationIfApplicant1IsRepresented() {
 
-        setMockClock(clock);
+        final Applicant applicant1 = Applicant.builder()
+            .firstName("Julie")
+            .lastName("Smith")
+            .solicitor(
+                Solicitor.builder()
+                    .name("app1 sol")
+                    .reference("sol ref")
+                    .build()
+            )
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName("Bob")
+            .lastName("Smith")
+            .solicitor(
+                Solicitor.builder()
+                    .name("app2 sol")
+                    .reference("sol ref")
+                    .build()
+            )
+            .build();
 
         final CaseData caseData = CaseData.builder()
             .applicant1(
-                Applicant.builder()
-                    .firstName("Julie")
-                    .lastName("Smith")
-                    .solicitor(
-                        Solicitor.builder()
-                            .name("app1 sol")
-                            .reference("sol ref")
-                            .build()
-                    )
-                    .build()
+                applicant1
             )
             .applicant2(
-                Applicant.builder()
-                    .firstName("Bob")
-                    .lastName("Smith")
-                    .solicitor(
-                        Solicitor.builder()
-                            .name("app2 sol")
-                            .reference("sol ref")
-                            .build()
-                    )
-                    .build()
+                applicant2
             )
             .finalOrder(FinalOrder.builder().doesApplicant2IntendToSwitchToSole(YES).build())
             .build();
 
-        Map<String, String> templateContent = new HashMap<>();
-        templateContent.put(APPLICANT_1_NAME,
-            join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
-        templateContent.put(APPLICANT_2_NAME,
-            join(" ", caseData.getApplicant2().getFirstName(), caseData.getApplicant2().getLastName()));
-        templateContent.put(SOLICITOR_REFERENCE, "sol ref");
-        templateContent.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER));
-
-        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
-            .thenReturn(new HashMap<>());
 
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
+        verify(switchToSoleSolicitorTemplateContent).templatevars(caseData,TEST_CASE_ID, applicant1, applicant2);
         verify(notificationService).sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
-            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR,
-            templateContent,
-            caseData.getApplicant1().getLanguagePreference()
+            eq(caseData.getApplicant1().getSolicitor().getEmail()),
+            eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
+            anyMap(),
+            eq(caseData.getApplicant1().getLanguagePreference())
         );
     }
 
@@ -114,59 +90,50 @@ public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
+        verifyNoInteractions(switchToSoleSolicitorTemplateContent);
         verifyNoInteractions(notificationService);
     }
 
     @Test
     void shouldSendApplicant2SolicitorNotificationIfApplicant2IsRepresented() {
 
-        setMockClock(clock);
 
-        final CaseData caseData = CaseData.builder()
-            .applicant1(
-                Applicant.builder()
-                    .firstName("Julie")
-                    .lastName("Smith")
-                    .solicitor(
-                        Solicitor.builder()
-                            .name("app1 sol")
-                            .build()
-                    )
+        final Applicant applicant1 = Applicant.builder()
+            .firstName("Julie")
+            .lastName("Smith")
+            .solicitor(
+                Solicitor.builder()
+                    .name("app1 sol")
                     .build()
             )
-            .applicant2(
-                Applicant.builder()
-                    .firstName("Bob")
-                    .lastName("Smith")
-                    .solicitor(
-                        Solicitor.builder()
-                            .name("app2 sol")
-                            .build()
-                    )
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName("Bob")
+            .lastName("Smith")
+            .solicitor(
+                Solicitor.builder()
+                    .name("app2 sol")
                     .build()
+            )
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(
+                applicant1
+            )
+            .applicant2(
+                applicant2
             )
             .finalOrder(FinalOrder.builder().doesApplicant1IntendToSwitchToSole(YES).build())
             .build();
 
-        Map<String, String> templateContent = new HashMap<>();
-        templateContent.put(APPLICANT_1_NAME,
-            join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
-        templateContent.put(APPLICANT_2_NAME,
-            join(" ", caseData.getApplicant2().getFirstName(), caseData.getApplicant2().getLastName()));
-        templateContent.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
-        templateContent.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER));
-
-        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
-            .thenReturn(new HashMap<>());
-
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
+        verify(switchToSoleSolicitorTemplateContent).templatevars(caseData,TEST_CASE_ID,applicant2,applicant1);
         verify(notificationService).sendEmail(
-            caseData.getApplicant2().getSolicitor().getEmail(),
-            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR,
-            templateContent,
-            caseData.getApplicant2().getLanguagePreference()
+            eq(caseData.getApplicant2().getSolicitor().getEmail()),
+            eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
+            anyMap(),
+            eq(caseData.getApplicant2().getLanguagePreference())
         );
     }
 
@@ -179,31 +146,26 @@ public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
+        verifyNoInteractions(switchToSoleSolicitorTemplateContent);
         verifyNoInteractions(notificationService);
     }
 
     @Test
     void shouldSendApplicant2NotificationIfApplicant2IsNotRepresented() {
 
-        setMockClock(clock);
 
         final CaseData caseData = CaseData.builder()
             .finalOrder(FinalOrder.builder().doesApplicant1IntendToSwitchToSole(YES).build())
             .build();
 
-        Map<String, String> templateContent = new HashMap<>();
-        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER));
-
-        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
-            .thenReturn(new HashMap<>());
-
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
+        verify(switchToSoleSolicitorTemplateContent).templatevars(eq(caseData),eq(TEST_CASE_ID),any(Applicant.class),any(Applicant.class));
         verify(notificationService).sendEmail(
-            caseData.getApplicant2().getEmail(),
-            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN,
-            templateContent,
-            caseData.getApplicant2().getLanguagePreference()
+            eq(caseData.getApplicant2().getEmail()),
+            eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN),
+            anyMap(),
+            eq(caseData.getApplicant2().getLanguagePreference())
         );
     }
 
@@ -216,6 +178,7 @@ public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
+        verifyNoInteractions(switchToSoleSolicitorTemplateContent);
         verifyNoInteractions(notificationService);
     }
 }
