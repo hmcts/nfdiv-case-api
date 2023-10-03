@@ -6,8 +6,11 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.SwitchToSoleSolicitorTemplateContent;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTEND_TO_SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO;
 
 @Component
@@ -16,6 +19,9 @@ public class Applicant1IntendToSwitchToSoleFoNotification extends IntendToSwitch
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    SwitchToSoleSolicitorTemplateContent solicitorTemplateContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -39,5 +45,19 @@ public class Applicant1IntendToSwitchToSoleFoNotification extends IntendToSwitch
             templateVars(data, id, data.getApplicant2(), data.getApplicant1()),
             data.getApplicant2().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(CaseData data, Long id) {
+        if (YES.equals(data.getFinalOrder().getDoesApplicant1IntendToSwitchToSole())) {
+            log.info("Notifying applicant 2's solicitor that applicant 1 intends to switch to sole fo : {}", id);
+
+            notificationService.sendEmail(
+                data.getApplicant2().getSolicitor().getEmail(),
+                OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR,
+                solicitorTemplateContent.templatevars(data, id, data.getApplicant2(), data.getApplicant1()),
+                data.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 }
