@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant1IntendToSwitchToSoleFoNotificationTest {
+class Applicant1IntendToSwitchToSoleFoNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -146,7 +146,6 @@ public class Applicant1IntendToSwitchToSoleFoNotificationTest {
 
     @Test
     void shouldSendNotificationToApplicant2Solicitor() {
-//        setMockClock(clock);
         final Applicant applicant1 = Applicant.builder()
             .firstName("Julie")
             .lastName("Smith")
@@ -177,7 +176,7 @@ public class Applicant1IntendToSwitchToSoleFoNotificationTest {
 
         applicant1IntendToSwitchToSoleFoNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
-        verify(switchToSoleSolicitorTemplateContent).templatevars(eq(caseData),eq(TEST_CASE_ID),eq(applicant2),eq(applicant1));
+        verify(switchToSoleSolicitorTemplateContent).templatevars(caseData,TEST_CASE_ID,applicant2,applicant1);
         verify(notificationService).sendEmail(
             eq(caseData.getApplicant2().getSolicitor().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
@@ -186,6 +185,7 @@ public class Applicant1IntendToSwitchToSoleFoNotificationTest {
         );
     }
 
+    @Test
     void shouldNotSendNotificationToApplicant2Solicitor() {
         final CaseData caseData = CaseData.builder()
             .finalOrder(FinalOrder.builder().doesApplicant1IntendToSwitchToSole(NO).build())

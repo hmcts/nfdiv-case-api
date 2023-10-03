@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OTHER_APPLICAN
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
+class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -72,7 +72,7 @@ public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
-        verify(switchToSoleSolicitorTemplateContent).templatevars(eq(caseData),eq(TEST_CASE_ID),eq(applicant1),eq(applicant2));
+        verify(switchToSoleSolicitorTemplateContent).templatevars(caseData,TEST_CASE_ID, applicant1, applicant2);
         verify(notificationService).sendEmail(
             eq(caseData.getApplicant1().getSolicitor().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
@@ -128,7 +128,7 @@ public class SolicitorIntendsToSwitchToSoleFoNotificationTest {
 
         solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
-        verify(switchToSoleSolicitorTemplateContent).templatevars(eq(caseData),eq(TEST_CASE_ID),eq(applicant2),eq(applicant1));
+        verify(switchToSoleSolicitorTemplateContent).templatevars(caseData,TEST_CASE_ID,applicant2,applicant1);
         verify(notificationService).sendEmail(
             eq(caseData.getApplicant2().getSolicitor().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
