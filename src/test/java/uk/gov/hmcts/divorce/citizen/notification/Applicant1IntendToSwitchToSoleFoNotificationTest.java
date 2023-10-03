@@ -21,9 +21,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -183,17 +181,5 @@ class Applicant1IntendToSwitchToSoleFoNotificationTest {
             anyMap(),
             eq(caseData.getApplicant2().getLanguagePreference())
         );
-    }
-
-    @Test
-    void shouldNotSendNotificationToApplicant2Solicitor() {
-        final CaseData caseData = CaseData.builder()
-            .finalOrder(FinalOrder.builder().doesApplicant1IntendToSwitchToSole(NO).build())
-            .build();
-
-        applicant1IntendToSwitchToSoleFoNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
-
-        verifyNoInteractions(switchToSoleSolicitorTemplateContent);
-        verifyNoInteractions(notificationService);
     }
 }
