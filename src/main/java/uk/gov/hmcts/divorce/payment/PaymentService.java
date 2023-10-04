@@ -262,8 +262,8 @@ public class PaymentService {
         creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
         creditAccountPaymentRequest.setCurrency(GBP);
         creditAccountPaymentRequest.setAccountNumber(pbaNumber);
-        creditAccountPaymentRequest.setCaseType(getCaseType());
-
+        log.info("caseType {}", getCaseType());
+        creditAccountPaymentRequest.setCaseType("NFD");
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
         creditAccountPaymentRequest.setCustomerReference(feeAccountReference);
