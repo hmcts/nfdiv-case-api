@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Disabled;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
