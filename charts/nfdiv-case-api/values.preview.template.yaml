@@ -21,6 +21,7 @@ java:
         - name: idam-systemupdate-password
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
 
+
 nfdiv-frontend:
   enabled: true
   nodejs:
