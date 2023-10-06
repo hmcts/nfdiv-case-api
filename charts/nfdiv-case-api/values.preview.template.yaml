@@ -5,7 +5,7 @@ java:
   environment:
     CHANGE_ID: ${CHANGE_ID}
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
-    UK_GOV_NOTIFY_API_KEY: nonprodlive-56f68e5c-b51f-4bdf-a0ac-d70af335e1d1-dde180f0-dcd5-4e53-8af3-860d1744412b
+    UK_GOV_NOTIFY_API_KEY: nonprodtest-56f68e5c-b51f-4bdf-a0ac-d70af335e1d1-75e362de-6be3-44b4-9558-bedd6244a5d8
   keyVaults:
     nfdiv:
       secrets:
