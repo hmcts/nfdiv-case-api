@@ -60,7 +60,8 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -81,7 +82,8 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -102,7 +104,8 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -124,7 +127,8 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -161,7 +165,8 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             eq("sol1@gm.com"),
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant1(), REJECT);
@@ -187,7 +192,8 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             eq("sol2@gm.com"),
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant2(), REJECT);
     }

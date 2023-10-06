@@ -54,7 +54,8 @@ class DisputeFormOverdueOverdueNotificationTest {
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -75,7 +76,8 @@ class DisputeFormOverdueOverdueNotificationTest {
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());

@@ -61,7 +61,8 @@ public class Applicant2CanSwitchToSoleNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT_CAN_SWITCH_TO_SOLE),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -84,7 +85,8 @@ public class Applicant2CanSwitchToSoleNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT_CAN_SWITCH_TO_SOLE),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -122,7 +124,8 @@ public class Applicant2CanSwitchToSoleNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).solicitorTemplateVars(data, 1234567890123456L, data.getApplicant2());

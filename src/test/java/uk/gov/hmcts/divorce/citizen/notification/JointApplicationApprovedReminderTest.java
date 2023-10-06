@@ -66,7 +66,8 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -91,7 +92,8 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -114,7 +116,8 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -141,7 +144,8 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -169,7 +173,8 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }

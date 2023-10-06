@@ -74,7 +74,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -101,7 +102,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -127,7 +129,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -156,7 +159,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, YES),
                 hasEntry(RESPONDENT_PARTNER, "husband")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
         verify(commonContent).getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference());
@@ -188,7 +192,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, YES),
                 hasEntry(RESPONDENT_PARTNER, "husband")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
         verify(commonContent).getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference());
@@ -216,7 +221,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -244,7 +250,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -275,7 +282,8 @@ public class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_RESPONDENT, YES),
                 hasEntry(RESPONDENT_PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
         verify(commonContent).getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference());
@@ -328,6 +336,8 @@ public class ApplicationWithdrawnNotificationTest {
             data.getApplicant2EmailAddress(),
             CITIZEN_APPLICATION_WITHDRAWN,
             divorceTemplateVars,
-            data.getApplicant2().getLanguagePreference());
+            data.getApplicant2().getLanguagePreference(),
+            1234567890123456L
+        );
     }
 }

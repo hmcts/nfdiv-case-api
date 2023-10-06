@@ -89,7 +89,8 @@ class AwaitingConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -125,7 +126,8 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(SIGN_IN_URL, SIGN_IN_PROFESSIONAL_USERS_URL)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -160,7 +162,8 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(IS_CONDITIONAL_ORDER, YES),
                 hasEntry(IS_FINAL_ORDER, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -195,7 +198,8 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(IS_CONDITIONAL_ORDER, YES),
                 hasEntry(IS_FINAL_ORDER, NO)
                 )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -228,7 +232,8 @@ class AwaitingConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(SOLICITOR_REFERENCE, "ref")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -261,7 +266,8 @@ class AwaitingConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }

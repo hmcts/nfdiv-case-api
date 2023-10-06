@@ -57,7 +57,8 @@ class SaveAndSignOutNotificationHandlerTest {
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(CASE_ID)
         );
     }
 
@@ -76,7 +77,8 @@ class SaveAndSignOutNotificationHandlerTest {
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(CASE_ID)
         );
     }
 }

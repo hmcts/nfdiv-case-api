@@ -67,7 +67,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             caseData.getApplicant1().getEmail(),
             CITIZEN_CONDITIONAL_ORDER_PRONOUNCED,
             templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -79,7 +80,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED,
             solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -104,7 +106,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             caseData.getApplicant2EmailAddress(),
             emailTemplateName,
             templateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -117,7 +120,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED,
             solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId
         );
     }
 

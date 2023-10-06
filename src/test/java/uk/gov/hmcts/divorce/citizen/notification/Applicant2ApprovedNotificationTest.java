@@ -66,7 +66,8 @@ class Applicant2ApprovedNotificationTest {
             argThat(allOf(
                 hasEntry(PAYS_FEES, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -85,7 +86,8 @@ class Applicant2ApprovedNotificationTest {
             argThat(allOf(
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -105,7 +107,8 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAYS_FEES, YES),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -126,7 +129,8 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAYS_FEES, YES),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -147,7 +151,8 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAYS_FEES, NO),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -168,7 +173,8 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAYS_FEES, YES),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -185,7 +191,8 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -203,7 +210,8 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -220,7 +228,8 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -238,7 +247,8 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -260,7 +270,8 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -284,7 +295,8 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());

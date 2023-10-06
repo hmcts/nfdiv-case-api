@@ -68,7 +68,8 @@ class PostInformationToCourtNotificationTest {
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -94,7 +95,8 @@ class PostInformationToCourtNotificationTest {
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -134,7 +136,8 @@ class PostInformationToCourtNotificationTest {
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -162,7 +165,8 @@ class PostInformationToCourtNotificationTest {
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());

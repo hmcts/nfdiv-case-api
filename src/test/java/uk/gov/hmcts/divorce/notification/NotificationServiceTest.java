@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
@@ -78,7 +79,8 @@ class NotificationServiceTest {
             EMAIL_ADDRESS,
             SAVE_SIGN_OUT,
             null,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verify(notificationClient).sendEmail(
@@ -117,7 +119,8 @@ class NotificationServiceTest {
             EMAIL_ADDRESS,
             SAVE_SIGN_OUT,
             null,
-            WELSH
+            WELSH,
+            TEST_CASE_ID
         );
 
         verify(notificationClient).sendEmail(
@@ -150,7 +153,8 @@ class NotificationServiceTest {
             EMAIL_ADDRESS,
             SAVE_SIGN_OUT,
             null,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
             )
         )
             .isInstanceOf(NotificationException.class)

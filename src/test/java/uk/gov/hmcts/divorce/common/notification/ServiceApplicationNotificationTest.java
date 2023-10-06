@@ -78,7 +78,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -97,7 +98,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -116,7 +118,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, YES),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -145,7 +148,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, YES),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 
@@ -164,7 +168,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, YES),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -183,7 +188,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -202,7 +208,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -221,7 +228,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -252,7 +260,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_BAILIFF_SERVICE, YES),
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 

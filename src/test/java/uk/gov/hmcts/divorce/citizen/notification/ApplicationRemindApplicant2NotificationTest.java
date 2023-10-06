@@ -76,7 +76,8 @@ class ApplicationRemindApplicant2NotificationTest {
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL),
                 hasEntry(IS_REMINDER, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -101,7 +102,8 @@ class ApplicationRemindApplicant2NotificationTest {
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL),
                 hasEntry(IS_REMINDER, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -126,7 +128,8 @@ class ApplicationRemindApplicant2NotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }

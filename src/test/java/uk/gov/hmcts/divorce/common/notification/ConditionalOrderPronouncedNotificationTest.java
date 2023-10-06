@@ -100,7 +100,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -134,7 +135,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -167,7 +169,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -203,7 +206,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -235,7 +239,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -270,7 +275,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -352,7 +358,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -391,7 +398,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -424,7 +432,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICANT2_LABEL, "Respondent"),
                 hasEntry(UNION_TYPE, "divorce")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -456,7 +465,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICANT2_LABEL, "Applicant 2"),
                 hasEntry(UNION_TYPE, "dissolution")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -488,7 +498,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICANT2_LABEL, "Applicant 2"),
                 hasEntry(UNION_TYPE, "divorce")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -549,7 +560,8 @@ class ConditionalOrderPronouncedNotificationTest {
                 hasEntry(APPLICANT2_LABEL, "Respondent"),
                 hasEntry(UNION_TYPE, "divorce")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 }

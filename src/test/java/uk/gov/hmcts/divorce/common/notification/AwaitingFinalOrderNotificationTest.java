@@ -53,7 +53,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -103,7 +102,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -131,7 +131,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -160,7 +161,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -188,7 +190,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -229,7 +232,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -258,7 +262,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -285,7 +290,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS, "21 March 2022")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -325,7 +331,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_JOINT, NO),
                 hasEntry(FINAL_ORDER_OVERDUE_DATE, coGrantedDate.plusMonths(12).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -363,7 +370,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_JOINT, YES),
                 hasEntry(FINAL_ORDER_OVERDUE_DATE, coGrantedDate.plusMonths(12).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -372,11 +380,11 @@ class AwaitingFinalOrderNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
 
-        awaitingFinalOrderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+        awaitingFinalOrderNotification.sendToApplicant1Offline(caseData, 1234567890123456L);
 
         verify(applyForFinalOrderPrinter).sendLettersToApplicant1Offline(
             caseData,
-            TEST_CASE_ID,
+            1234567890123456L,
             caseData.getApplicant1()
         );
     }
@@ -385,11 +393,11 @@ class AwaitingFinalOrderNotificationTest {
     void shouldSendCanApplyForFinalOrderLettersToOfflineApplicant2InJointApplication() {
         CaseData caseData = validJointApplicant1CaseData();
 
-        awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+        awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, 1234567890123456L);
 
         verify(applyForFinalOrderPrinter).sendLettersToApplicant2Offline(
             caseData,
-            TEST_CASE_ID,
+            1234567890123456L,
             caseData.getApplicant2()
         );
     }
@@ -399,7 +407,7 @@ class AwaitingFinalOrderNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
 
-        awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+        awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, 1234567890123456L);
 
         verifyNoInteractions(applyForFinalOrderPrinter);
     }

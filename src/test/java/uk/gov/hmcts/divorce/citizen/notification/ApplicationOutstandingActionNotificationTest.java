@@ -100,7 +100,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -134,7 +135,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 
@@ -173,7 +175,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -201,7 +204,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 
@@ -227,7 +231,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -288,7 +293,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -322,7 +328,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -356,7 +363,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -387,7 +395,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -415,7 +424,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -443,7 +453,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -474,7 +485,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -505,7 +517,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -537,7 +550,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -569,7 +583,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 }

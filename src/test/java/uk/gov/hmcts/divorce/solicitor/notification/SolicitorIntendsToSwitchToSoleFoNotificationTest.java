@@ -77,7 +77,8 @@ class SolicitorIntendsToSwitchToSoleFoNotificationTest {
             eq(caseData.getApplicant1().getSolicitor().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
             anyMap(),
-            eq(caseData.getApplicant1().getLanguagePreference())
+            eq(caseData.getApplicant1().getLanguagePreference()),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -133,7 +134,8 @@ class SolicitorIntendsToSwitchToSoleFoNotificationTest {
             eq(caseData.getApplicant2().getSolicitor().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
             anyMap(),
-            eq(caseData.getApplicant2().getLanguagePreference())
+            eq(caseData.getApplicant2().getLanguagePreference()),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -165,7 +167,8 @@ class SolicitorIntendsToSwitchToSoleFoNotificationTest {
             eq(caseData.getApplicant2().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN),
             anyMap(),
-            eq(caseData.getApplicant2().getLanguagePreference())
+            eq(caseData.getApplicant2().getLanguagePreference()),
+            eq(TEST_CASE_ID)
         );
     }
 

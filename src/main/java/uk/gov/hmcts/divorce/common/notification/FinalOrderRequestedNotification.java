@@ -56,7 +56,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
                     caseData.getApplicant1().getSolicitor().getEmail(),
                     JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
                     templateVars,
-                    caseData.getApplicant1().getLanguagePreference()
+                    caseData.getApplicant1().getLanguagePreference(),
+                    caseId
             );
         }
     }
@@ -70,7 +71,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
                     caseData.getApplicant2().getSolicitor().getEmail(),
                     JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
                     templateVars,
-                    caseData.getApplicant2().getLanguagePreference()
+                    caseData.getApplicant2().getLanguagePreference(),
+                    caseId
             );
         }
     }
@@ -85,7 +87,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
                 caseData.getApplicant1().getEmail(),
                 JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER,
                 templateVars,
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -100,7 +103,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
                 caseData.getApplicant2().getEmail(),
                 JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER,
                 templateVars,
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

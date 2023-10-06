@@ -66,7 +66,8 @@ public class JointApplicationNotReviewedNotificationTest {
             argThat(allOf(
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -91,7 +92,8 @@ public class JointApplicationNotReviewedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -118,7 +120,8 @@ public class JointApplicationNotReviewedNotificationTest {
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(WELSH_DATE_TIME_FORMATTER)),
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }

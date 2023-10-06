@@ -80,7 +80,6 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -127,7 +126,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -151,7 +151,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -175,7 +176,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -202,7 +204,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -228,7 +231,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(CIVIL_PARTNER_APPLIED, NO),
                 hasEntry(PARTNER_DID_NOT_APPLY_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -245,7 +249,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLIED_FOR_CONDITIONAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -266,7 +271,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -284,7 +290,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -320,7 +327,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SOLICITOR_REFERENCE, "REF01")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -347,7 +355,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PLUS_14_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -374,7 +383,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -397,7 +407,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -416,7 +427,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 
@@ -468,7 +480,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -511,7 +524,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(SIGN_IN_URL,"/signInUrl")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -521,16 +535,16 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
         data.setApplicant1(Applicant.builder().build());
 
-        notification.sendToApplicant1Offline(data, TEST_CASE_ID);
+        notification.sendToApplicant1Offline(data, 1234567890123456L);
 
-        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant1());
+        verify(appliedForCoPrinter).print(data, 1234567890123456L, data.getApplicant1());
     }
 
     @Test
     void shouldNotSendLetterToApplicant2IfSoleCase() {
         CaseData data = caseData(DIVORCE, ApplicationType.SOLE_APPLICATION);
 
-        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+        notification.sendToApplicant2Offline(data, 1234567890123456L);
 
         verifyNoInteractions(appliedForCoPrinter);
 
@@ -541,9 +555,9 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
         data.setApplicant2(Applicant.builder().build());
 
-        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+        notification.sendToApplicant2Offline(data, 1234567890123456L);
 
-        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant2());
+        verify(appliedForCoPrinter).print(data, 1234567890123456L, data.getApplicant2());
     }
 
     private CaseData caseData(DivorceOrDissolution divorceOrDissolution, ApplicationType applicationType) {

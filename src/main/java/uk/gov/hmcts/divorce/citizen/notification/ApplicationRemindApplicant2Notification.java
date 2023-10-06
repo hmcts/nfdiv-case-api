@@ -48,7 +48,8 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
 
         } else {
@@ -56,7 +57,8 @@ public class ApplicationRemindApplicant2Notification implements ApplicantNotific
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
                 citizenTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
 
         }

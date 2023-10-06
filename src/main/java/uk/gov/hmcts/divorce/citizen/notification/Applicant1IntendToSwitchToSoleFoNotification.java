@@ -30,7 +30,8 @@ public class Applicant1IntendToSwitchToSoleFoNotification extends IntendToSwitch
             caseData.getApplicant1().getEmail(),
             INTEND_TO_SWITCH_TO_SOLE_FO,
             templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -42,7 +43,8 @@ public class Applicant1IntendToSwitchToSoleFoNotification extends IntendToSwitch
             data.getApplicant2EmailAddress(),
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO,
             templateVars(data, id, data.getApplicant2(), data.getApplicant1()),
-            data.getApplicant2().getLanguagePreference()
+            data.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 
@@ -54,7 +56,8 @@ public class Applicant1IntendToSwitchToSoleFoNotification extends IntendToSwitch
             data.getApplicant2().getSolicitor().getEmail(),
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR,
             solicitorTemplateContent.templatevars(data, id, data.getApplicant2(), data.getApplicant1()),
-            data.getApplicant2().getLanguagePreference()
+            data.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 }

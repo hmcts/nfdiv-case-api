@@ -46,7 +46,8 @@ public class ServiceApplicationNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             getEmailTemplate(caseData.getAlternativeService(), id),
             getServiceApplicationVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference());
+            caseData.getApplicant1().getLanguagePreference(),
+            id);
     }
 
     private Map<String, String> getServiceApplicationVars(final CaseData caseData, final Long id) {

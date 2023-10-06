@@ -100,7 +100,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANTS_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -133,7 +134,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -182,7 +184,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLICITOR_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -214,7 +217,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANTS_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -248,7 +252,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -296,7 +301,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLICITOR_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 

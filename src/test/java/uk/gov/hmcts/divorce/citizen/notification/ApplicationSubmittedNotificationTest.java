@@ -67,7 +67,8 @@ class ApplicationSubmittedNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -91,7 +92,8 @@ class ApplicationSubmittedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
                 hasEntry(IS_PAID, "no")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -116,7 +118,8 @@ class ApplicationSubmittedNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(SOLICITOR_JOINT_APPLICATION_SUBMITTED),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -141,7 +144,8 @@ class ApplicationSubmittedNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(SOLICITOR_JOINT_APPLICATION_SUBMITTED),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }

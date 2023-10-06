@@ -74,7 +74,8 @@ public class RespondentSolicitorReminderNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "ref"),
                 hasEntry(SIGN_IN_URL, "test-url")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -108,7 +109,8 @@ public class RespondentSolicitorReminderNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "Not provided"),
                 hasEntry(SIGN_IN_URL, "test-url")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 }

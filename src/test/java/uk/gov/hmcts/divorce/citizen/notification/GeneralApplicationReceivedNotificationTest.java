@@ -68,7 +68,8 @@ class GeneralApplicationReceivedNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -94,7 +95,8 @@ class GeneralApplicationReceivedNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DISPENSE_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -119,7 +121,8 @@ class GeneralApplicationReceivedNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -145,7 +148,8 @@ class GeneralApplicationReceivedNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }

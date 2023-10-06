@@ -71,7 +71,8 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
@@ -97,7 +98,8 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
@@ -119,7 +121,8 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
@@ -142,7 +145,8 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
@@ -167,7 +171,8 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
@@ -193,7 +198,8 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }

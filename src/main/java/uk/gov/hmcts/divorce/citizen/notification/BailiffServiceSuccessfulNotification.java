@@ -28,7 +28,8 @@ public class BailiffServiceSuccessfulNotification implements ApplicantNotificati
             caseData.getApplicant1().getEmail(),
             BAILIFF_SERVICE_SUCCESSFUL,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 }

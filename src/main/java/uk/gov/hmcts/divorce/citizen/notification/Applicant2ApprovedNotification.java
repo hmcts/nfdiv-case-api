@@ -65,7 +65,8 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             templateId,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -77,7 +78,8 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_APPLICANT2_APPROVED_SOLICITOR,
                 applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         } else {
             log.info("Sending applicant 2 approved notification to applicant 2 for case : {}", id);
@@ -85,7 +87,8 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_APPLICANT2_APPROVED,
                 applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         }
     }
@@ -100,7 +103,8 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR,
                 applicant1SolicitorTemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         }
     }

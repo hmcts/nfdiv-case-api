@@ -85,7 +85,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -110,7 +111,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -135,7 +137,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -162,7 +165,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -187,7 +191,8 @@ public class SoleApplicationNotDisputedNotificationTest {
             argThat(allOf(
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -219,7 +224,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(ISSUE_DATE_PLUS_37_DAYS, ""),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -248,7 +254,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(ISSUE_DATE_PLUS_141_DAYS, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(DATE_OF_ISSUE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -277,7 +284,8 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry(ISSUE_DATE_PLUS_141_DAYS, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(DATE_OF_ISSUE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 }

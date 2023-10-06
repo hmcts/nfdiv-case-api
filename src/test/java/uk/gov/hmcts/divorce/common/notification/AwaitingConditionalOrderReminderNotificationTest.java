@@ -85,7 +85,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -110,7 +111,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 
@@ -136,7 +138,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -163,7 +166,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 

@@ -84,7 +84,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
@@ -109,7 +110,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             any(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
@@ -142,7 +144,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                 hasEntry(WILL_BE_CHECKED_WITHIN_14_DAYS, CommonContent.YES),
                 hasEntry(NOW_PLUS_14_DAYS, nowPlusFourteenDays)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
     }
@@ -171,7 +174,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -217,7 +221,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
                 hasEntry(RESPONSE_DUE_DATE, "24 September 2022"),
                 hasEntry(CO_OR_FO, "final")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -244,7 +249,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
@@ -268,7 +274,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
@@ -299,7 +306,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry("delayReason", APPLICANT_2_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
@@ -327,7 +335,8 @@ class Applicant2AppliedForFinalOrderNotificationTest {
             argThat(allOf(
                 hasEntry("delayReasonIfOverdue", APPLICANT_2_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);

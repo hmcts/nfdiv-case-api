@@ -55,7 +55,8 @@ public class Applicant1AppliedForConditionalOrderNotification
             caseData.getApplicant1().getEmail(),
             templateName,
             templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT1),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -67,7 +68,8 @@ public class Applicant1AppliedForConditionalOrderNotification
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant1().getSolicitor()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         } else {
             log.info("Notifying applicant 1 solicitor that their conditional order application has been submitted: {}", id);
@@ -75,7 +77,8 @@ public class Applicant1AppliedForConditionalOrderNotification
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant1(), APPLICANT1),
-                ENGLISH
+                ENGLISH,
+                id
             );
         }
     }
@@ -109,7 +112,8 @@ public class Applicant1AppliedForConditionalOrderNotification
                 caseData.getApplicant2EmailAddress(),
                 templateName,
                 templateMap,
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -130,7 +134,8 @@ public class Applicant1AppliedForConditionalOrderNotification
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant2(), APPLICANT1),
-                ENGLISH
+                ENGLISH,
+                id
             );
         }
     }

@@ -131,7 +131,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -163,7 +164,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -210,7 +212,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -245,7 +248,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -273,7 +277,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -303,7 +308,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -333,7 +339,8 @@ public class ApplicationIssuedNotificationTest {
             argThat(allOf(
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -361,7 +368,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -391,7 +399,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -418,7 +427,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             nopSolicitorTemplateVars(caseData.getApplicant1()),
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -447,7 +457,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             nopSolicitorTemplateVars(caseData.getApplicant1()),
-            WELSH
+            WELSH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -475,7 +486,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE,
             nopSolicitorTemplateVars(caseData.getApplicant1()),
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -501,7 +513,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             respondentSolicitorTemplateVars(),
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -529,7 +542,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             respondentSolicitorTemplateVarsWithSolicitorReference(),
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -559,7 +573,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             nopSolicitorTemplateVars(caseData.getApplicant2()),
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -631,7 +646,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             APPLICANT_SOLICITOR_SERVICE,
             personalServiceTemplateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -668,7 +684,8 @@ public class ApplicationIssuedNotificationTest {
             TEST_SOLICITOR_EMAIL,
             APPLICANT_SOLICITOR_SERVICE,
             personalServiceTemplateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -721,7 +738,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -753,7 +771,8 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());

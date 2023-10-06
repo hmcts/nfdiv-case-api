@@ -84,7 +84,8 @@ class FinalOrderRequestedNotificationTest {
                         hasEntry(IS_FINAL_ORDER, YES),
                         hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName())
                 )),
-                eq(ENGLISH)
+                eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -115,7 +116,8 @@ class FinalOrderRequestedNotificationTest {
                         hasEntry(IS_FINAL_ORDER, YES),
                         hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName())
                 )),
-                eq(ENGLISH)
+                eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -168,7 +170,8 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, YES),
                 hasEntry(IS_OVERDUE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -196,7 +199,8 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, YES),
                 hasEntry(IS_OVERDUE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -229,7 +233,8 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName()),
                 hasEntry(APPLICANT_1_OVERDUE_CONTENT, APPLICANT_1_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -264,7 +269,8 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName()),
                 hasEntry(APPLICANT_2_OVERDUE_CONTENT, APPLICANT_2_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -293,7 +299,8 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, NO),
                 hasEntry(IS_OVERDUE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -326,7 +333,8 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, NO),
                 hasEntry(IS_OVERDUE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);

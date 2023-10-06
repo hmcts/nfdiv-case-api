@@ -85,7 +85,8 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DIVORCE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -112,7 +113,8 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DIVORCE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -141,7 +143,8 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DIVORCE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -170,7 +173,8 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DIVORCE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -190,7 +194,8 @@ class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -218,7 +223,8 @@ class Applicant2RequestChangesNotificationTest {
                     hasEntry(PARTNER, "gŵr")
                 )
             ),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -241,7 +247,8 @@ class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -271,7 +278,8 @@ class Applicant2RequestChangesNotificationTest {
                     hasEntry(PARTNER, "gwraig")
                 )
             ),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -292,7 +300,8 @@ class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -316,7 +325,8 @@ class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }

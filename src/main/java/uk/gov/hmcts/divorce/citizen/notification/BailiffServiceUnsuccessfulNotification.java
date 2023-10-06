@@ -28,7 +28,8 @@ public class BailiffServiceUnsuccessfulNotification implements ApplicantNotifica
             caseData.getApplicant1().getEmail(),
             BAILIFF_SERVICE_UNSUCCESSFUL,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 }

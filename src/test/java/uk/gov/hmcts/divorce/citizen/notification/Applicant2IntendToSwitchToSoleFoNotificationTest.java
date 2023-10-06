@@ -61,7 +61,8 @@ public class Applicant2IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -83,7 +84,8 @@ public class Applicant2IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            WELSH
+            WELSH,
+            TEST_CASE_ID
         );
     }
 
@@ -105,7 +107,8 @@ public class Applicant2IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             INTEND_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -128,7 +131,8 @@ public class Applicant2IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             INTEND_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            WELSH
+            WELSH,
+            TEST_CASE_ID
         );
     }
 }

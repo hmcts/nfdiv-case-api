@@ -98,7 +98,8 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
@@ -124,7 +125,8 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
@@ -158,7 +160,8 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
@@ -186,7 +189,8 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
@@ -220,7 +224,8 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
@@ -248,7 +253,8 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent)
@@ -285,7 +291,8 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
@@ -314,7 +321,8 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
@@ -349,7 +357,8 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent)
             .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
@@ -378,7 +387,8 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
 
         verify(commonContent)

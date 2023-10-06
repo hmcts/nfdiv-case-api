@@ -69,7 +69,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -97,7 +98,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -125,7 +127,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -154,7 +157,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
@@ -195,7 +199,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -224,7 +229,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
@@ -251,7 +257,8 @@ class AwaitingFinalOrderReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES),
                 hasEntry(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS, "21 March 2022")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());

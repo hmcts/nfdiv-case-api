@@ -52,7 +52,8 @@ public class AosReminderNotifications implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED,
             commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -68,7 +69,8 @@ public class AosReminderNotifications implements ApplicantNotification {
                 caseData.getApplicant2EmailAddress(),
                 SOLE_RESPONDENT_APPLICATION_ACCEPTED,
                 reminderToSoleRespondentTemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         }
     }

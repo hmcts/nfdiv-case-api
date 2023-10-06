@@ -45,7 +45,8 @@ public class GeneralApplicationReceivedNotification implements ApplicantNotifica
             caseData.getApplicant1().getEmail(),
             GENERAL_APPLICATION_RECEIVED,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 

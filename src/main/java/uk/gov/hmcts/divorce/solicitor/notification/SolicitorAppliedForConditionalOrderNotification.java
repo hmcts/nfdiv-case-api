@@ -50,7 +50,8 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
                 templateVars,
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -66,7 +67,8 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_BOTH_APPLIED_CO_FO,
                 templateVars,
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

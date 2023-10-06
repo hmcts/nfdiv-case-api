@@ -68,7 +68,8 @@ class RespondentApplyForFinalOrderNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(RESPONDENT_APPLY_FOR_FINAL_ORDER),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -93,6 +94,7 @@ class RespondentApplyForFinalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
             )),
+            any(),
             any()
         );
     }

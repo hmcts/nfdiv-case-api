@@ -76,7 +76,8 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -147,7 +148,8 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -213,7 +215,8 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -242,7 +245,8 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -308,7 +312,8 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -337,7 +342,8 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);

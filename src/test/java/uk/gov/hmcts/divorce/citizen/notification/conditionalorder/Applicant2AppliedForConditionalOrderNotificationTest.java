@@ -114,7 +114,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PLUS_14_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -142,7 +143,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -167,7 +169,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
@@ -188,7 +191,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
     }
 
@@ -216,7 +220,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
                 hasEntry(CIVIL_PARTNER_APPLIED, NO),
                 hasEntry(PARTNER_DID_NOT_APPLY_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -236,7 +241,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLIED_FOR_CONDITIONAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -259,7 +265,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, LocalDate.now().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -279,7 +286,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -320,7 +328,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
                 hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }
@@ -373,7 +382,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(SIGN_IN_URL,"/signInUrl")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).basicTemplateVars(data, 1234567890123456L);
     }

@@ -79,7 +79,8 @@ class ApplicationIssuedOverseasNotificationTest {
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(DATE_TIME_FORMATTER)),
                 hasEntry(COURT_EMAIL, "courtEmail")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -104,7 +105,8 @@ class ApplicationIssuedOverseasNotificationTest {
             argThat(allOf(
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }

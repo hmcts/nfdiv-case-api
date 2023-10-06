@@ -58,7 +58,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             caseData.getApplicant1().getEmail(),
             SOLE_APPLICANT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -70,7 +71,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 
@@ -82,7 +84,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
             applicant1SolicitorTemplateVars(caseData, id),
-            ENGLISH
+            ENGLISH,
+            id
         );
     }
 
@@ -94,7 +97,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR,
             applicant2SolicitorTemplateVars(caseData, id),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 

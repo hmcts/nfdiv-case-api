@@ -47,7 +47,8 @@ public class SwitchedToSoleFoNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -64,7 +65,8 @@ public class SwitchedToSoleFoNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLIED_FOR_FINAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -80,7 +82,8 @@ public class SwitchedToSoleFoNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -97,7 +100,8 @@ public class SwitchedToSoleFoNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -118,7 +122,8 @@ public class SwitchedToSoleFoNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2());

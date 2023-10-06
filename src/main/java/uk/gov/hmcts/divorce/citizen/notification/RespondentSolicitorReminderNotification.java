@@ -43,7 +43,8 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
             caseData.getApplicant2().getSolicitor().getEmail(),
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED,
             respondentSolicitorTemplateVars(caseData, caseId),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId
         );
     }
 

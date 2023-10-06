@@ -77,7 +77,8 @@ class DisputedApplicationAnswerReceivedNotificationTest {
                 hasEntry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -103,7 +104,8 @@ class DisputedApplicationAnswerReceivedNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "solicitor reference"),
                 hasEntry(SIGN_IN_URL, "http://professional-signin-url/" + TEST_CASE_ID)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 }

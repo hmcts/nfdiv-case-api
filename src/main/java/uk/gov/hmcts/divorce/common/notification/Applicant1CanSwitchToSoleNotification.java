@@ -39,7 +39,8 @@ public class Applicant1CanSwitchToSoleNotification implements ApplicantNotificat
                 applicant1.getEmail(),
                 JOINT_APPLICANT_CAN_SWITCH_TO_SOLE,
                 commonContent.mainTemplateVars(caseData, id, applicant1, caseData.getApplicant2()),
-                applicant1.getLanguagePreference()
+                applicant1.getLanguagePreference(),
+                id
             );
         }
     }
@@ -57,7 +58,8 @@ public class Applicant1CanSwitchToSoleNotification implements ApplicantNotificat
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE,
                 templateVars,
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         }
     }

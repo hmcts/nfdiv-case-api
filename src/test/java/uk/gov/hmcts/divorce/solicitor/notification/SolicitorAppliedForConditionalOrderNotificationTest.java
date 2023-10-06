@@ -76,7 +76,8 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(caseId)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).basicTemplateVars(caseData, caseId);
@@ -116,7 +117,8 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(caseId)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).basicTemplateVars(caseData, caseId);

@@ -62,7 +62,8 @@ public class Applicant2JointFinalOrderOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
@@ -91,7 +92,8 @@ public class Applicant2JointFinalOrderOverdueNotificationTest {
             argThat(allOf(
                 hasEntry("delayReasonIfOverdue", APPLICANT_1_DELAY_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1L)
         );
 
         verifyNoMoreInteractions(notificationService);

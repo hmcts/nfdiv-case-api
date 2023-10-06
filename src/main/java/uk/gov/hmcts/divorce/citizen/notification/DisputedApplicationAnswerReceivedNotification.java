@@ -51,7 +51,8 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
                 solicitor.getEmail(),
                 SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED,
                 templateVars,
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         }
     }

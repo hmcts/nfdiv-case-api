@@ -38,7 +38,8 @@ public class PartnerNotAppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant1().getEmail(),
                 OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER,
                 commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -52,7 +53,8 @@ public class PartnerNotAppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant2().getEmail(),
                 OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER,
                 commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -66,7 +68,8 @@ public class PartnerNotAppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE_FINAL_ORDER,
                 getSolicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -80,7 +83,8 @@ public class PartnerNotAppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE_FINAL_ORDER,
                 getSolicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

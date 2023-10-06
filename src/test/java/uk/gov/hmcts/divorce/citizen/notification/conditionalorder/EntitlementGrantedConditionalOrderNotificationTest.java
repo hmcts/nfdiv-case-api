@@ -86,7 +86,8 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(DATE_OF_HEARING_MINUS_SEVEN_DAYS, "1 November 2021"),
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -115,7 +116,8 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(DATE_OF_HEARING_MINUS_SEVEN_DAYS, "1 November 2021"),
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -164,7 +166,8 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(DATE_OF_HEARING_MINUS_SEVEN_DAYS, "1 November 2021"),
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -208,7 +211,8 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "App1 Sol Ref"),
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
@@ -251,7 +255,8 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "App2 Sol Ref"),
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
@@ -281,7 +286,8 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(SOLICITOR_REFERENCE, "not provided")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(1234567890123456L)
         );
     }
 
