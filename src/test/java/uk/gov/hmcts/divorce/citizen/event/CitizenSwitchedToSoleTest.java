@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -87,7 +88,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
@@ -105,7 +106,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2NotLinkedShouldSendNotifications() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         CaseData caseDataBefore = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
@@ -128,7 +129,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2LinkedShouldRemoveAccessCodeAndSendNotifications() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         CaseData caseDataBefore = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
@@ -156,7 +157,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseForApplicant2SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
@@ -183,7 +184,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseShouldRemoveApplicant2AddressIfPrivate() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
         CaseData caseDataBefore = validJointApplicant1CaseData();
@@ -217,7 +218,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseShouldNotRemoveApplicant2AddressIfNotPrivate() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
@@ -259,7 +260,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseShouldRemoveApplicant2Answers() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().getApplicantPrayer().setPrayerDissolveDivorce(Set.of(DISSOLVE_DIVORCE));
 
@@ -377,7 +378,7 @@ class CitizenSwitchedToSoleTest {
 
     @Test
     void givenEventStartedWithValidJointCaseShouldRemoveJurisdictionAnswers() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validApplicant2CaseData();
         setValidCaseInviteData(caseData);
         caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_EMAIL, ACCESS_CODE, null));

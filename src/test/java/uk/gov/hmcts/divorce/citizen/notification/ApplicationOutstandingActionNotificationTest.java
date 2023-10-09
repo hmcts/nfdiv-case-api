@@ -52,7 +52,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
@@ -83,24 +85,25 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -117,24 +120,25 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -145,7 +149,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -158,22 +162,23 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setNameChangedHow(Set.of(DEED_POLL));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -186,22 +191,23 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplicant2().setEmail(null);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -211,23 +217,24 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
         data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -238,7 +245,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -249,7 +256,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -268,18 +275,18 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
@@ -288,7 +295,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -305,24 +313,25 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         data.getApplicant1().setNameChangedHow(Set.of(DEED_POLL));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
-                hasEntry(CONDITIONAL_REFERENCE_NUMBER, "1234-5678-9012-3456"),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
                 hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -336,16 +345,16 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, CommonContent.NO),
                 hasEntry(CONDITIONAL_REFERENCE_NUMBER, ""),
                 hasEntry(CONDITIONAL_COURT_EMAIL, ""),
@@ -356,7 +365,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -374,10 +384,10 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -387,7 +397,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -402,10 +413,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -415,7 +426,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -430,10 +442,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -443,7 +455,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -457,10 +470,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant2(MALE));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -474,7 +487,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -488,10 +502,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant2(MALE));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -505,7 +519,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -520,10 +535,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant2(MALE));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -537,7 +552,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -552,10 +568,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.setApplicant2(getApplicant2(MALE));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -569,7 +585,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 }

@@ -48,6 +48,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLY_FO
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -78,10 +80,10 @@ class AwaitingConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToApplicant1() {
         final var data = validApplicant1CaseData();
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(new HashMap<>());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -89,9 +91,10 @@ class AwaitingConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -106,11 +109,11 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(SIGN_IN_PROFESSIONAL_USERS_URL);
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(SIGN_IN_PROFESSIONAL_USERS_URL);
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -119,13 +122,14 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, String.join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME)),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(SIGN_IN_URL, SIGN_IN_PROFESSIONAL_USERS_URL)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -141,10 +145,10 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -153,14 +157,15 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, String.join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME)),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(IS_CONDITIONAL_ORDER, YES),
                 hasEntry(IS_FINAL_ORDER, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -176,10 +181,10 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -188,14 +193,15 @@ class AwaitingConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, String.join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME)),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(IS_CONDITIONAL_ORDER, YES),
                 hasEntry(IS_FINAL_ORDER, NO)
                 )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -217,10 +223,10 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -228,7 +234,8 @@ class AwaitingConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(SOLICITOR_REFERENCE, "ref")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -237,11 +244,11 @@ class AwaitingConditionalOrderNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicant2(getApplicant2(FEMALE));
 
-        notification.sendToApplicant1Offline(caseData, 1234567890123456L);
+        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
         verify(applyForConditionalOrderPrinter).sendLetters(
             caseData,
-            1234567890123456L,
+            TEST_CASE_ID,
             caseData.getApplicant1(),
             caseData.getApplicant2()
         );
@@ -250,10 +257,10 @@ class AwaitingConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToApplicant2IfJointApplication() {
         final var data = validApplicant2CaseData();
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(new HashMap<>());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -261,9 +268,10 @@ class AwaitingConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -271,7 +279,7 @@ class AwaitingConditionalOrderNotificationTest {
         final var data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }
@@ -281,7 +289,7 @@ class AwaitingConditionalOrderNotificationTest {
         final var data = validApplicant2CaseData();
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }
@@ -291,7 +299,7 @@ class AwaitingConditionalOrderNotificationTest {
         final var data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant2Offline(data, 1234567890123456L);
+        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(applyForConditionalOrderPrinter);
     }
@@ -302,11 +310,11 @@ class AwaitingConditionalOrderNotificationTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant2(FEMALE));
 
-        notification.sendToApplicant2Offline(caseData, 1234567890123456L);
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
         verify(applyForConditionalOrderPrinter).sendLetters(
             caseData,
-            1234567890123456L,
+            TEST_CASE_ID,
             caseData.getApplicant2(),
             caseData.getApplicant1()
         );

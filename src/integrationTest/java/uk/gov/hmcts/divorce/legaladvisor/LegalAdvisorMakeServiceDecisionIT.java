@@ -32,6 +32,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -164,7 +165,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                 "classpath:legal-advisor-service-decision-dispensed-response.json"
             )));
 
-        verify(notificationService, never()).sendEmail(anyString(), any(EmailTemplateName.class), anyMap(), eq(ENGLISH));
+        verify(notificationService, never()).sendEmail(anyString(), any(EmailTemplateName.class), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -217,7 +218,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                 "classpath:legal-advisor-service-decision-deemed-response.json"
             )));
 
-        verify(notificationService, never()).sendEmail(anyString(), any(EmailTemplateName.class), anyMap(), eq(ENGLISH));
+        verify(notificationService, never()).sendEmail(anyString(), any(EmailTemplateName.class), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -269,7 +270,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                 "classpath:legal-advisor-service-decision-deemed-not-granted-response.json"
             )));
 
-        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH));
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -321,7 +322,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                 "classpath:legal-advisor-service-decision-dispensed-not-granted-response.json"
             )));
 
-        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH));
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -352,16 +353,16 @@ public class LegalAdvisorMakeServiceDecisionIT {
             .build();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    LEGAL_ADVISOR_SERVICE_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk())
@@ -396,16 +397,16 @@ public class LegalAdvisorMakeServiceDecisionIT {
             .build();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    LEGAL_ADVISOR_SERVICE_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
     }
@@ -437,16 +438,16 @@ public class LegalAdvisorMakeServiceDecisionIT {
             .build();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    LEGAL_ADVISOR_SERVICE_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
     }

@@ -72,12 +72,12 @@ class AwaitingConditionalOrderReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant1(),
                 caseData.getApplicant2()))
             .thenReturn(new HashMap<>());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+        awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -85,24 +85,25 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
     @Test
-    void shouldSendNotificationInWelshToApplicant1WhenApp1LangPrefIsWelsh() {
+    void shouldSendNotificationInWelshToApplicant1Whenapp1LangPrefIsWelsh() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant1(),
                 caseData.getApplicant2()))
             .thenReturn(new HashMap<>());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+        awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -110,7 +111,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -123,12 +125,12 @@ class AwaitingConditionalOrderReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant2(),
                 caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -136,7 +138,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -150,12 +153,12 @@ class AwaitingConditionalOrderReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant2(),
                 caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -163,7 +166,8 @@ class AwaitingConditionalOrderReminderNotificationTest {
             argThat(allOf(
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -173,7 +177,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }

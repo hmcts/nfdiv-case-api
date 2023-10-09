@@ -811,7 +811,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
@@ -926,7 +926,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
@@ -1028,7 +1028,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
-        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER,DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
@@ -1275,14 +1275,14 @@ public class NoticeOfProceedingContentIT {
 
     private CtscContactDetails buildCtscContactDetails() {
         return CtscContactDetails
-                .builder()
-                .centreName("HMCTS Digital Divorce and Dissolution")
-                .serviceCentre("Courts and Tribunals Service Centre")
-                .poBox("PO Box 13226")
-                .town("Harlow")
-                .postcode("CM20 9UG")
-                .phoneNumber("0300 303 0642")
-                .emailAddress("contactdivorce@justice.gov.uk")
-                .build();
+            .builder()
+            .centreName("HMCTS Digital Divorce and Dissolution")
+            .serviceCentre("Courts and Tribunals Service Centre")
+            .poBox("PO Box 13226")
+            .town("Harlow")
+            .postcode("CM20 9UG")
+            .phoneNumber("0300 303 0642")
+            .emailAddress("contactdivorce@justice.gov.uk")
+            .build();
     }
 }

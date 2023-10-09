@@ -64,7 +64,8 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
                 applicant1.getEmail(),
                 CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
                 templateVars,
-                applicant1.getLanguagePreference()
+                applicant1.getLanguagePreference(),
+                id
             );
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant1(YesOrNo.YES);
@@ -88,7 +89,8 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
                     applicant2.getEmail(),
                     CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
                     templateVars,
-                    applicant2.getLanguagePreference()
+                    applicant2.getLanguagePreference(),
+                    id
                 );
             }
             caseData.getSentNotifications()

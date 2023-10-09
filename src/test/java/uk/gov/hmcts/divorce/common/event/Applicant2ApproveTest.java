@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPL
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
@@ -83,7 +84,7 @@ class Applicant2ApproveTest {
 
     @Test
     void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setData(caseData);

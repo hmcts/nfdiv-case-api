@@ -74,7 +74,8 @@ public class SolicitorSubmitUpdateDraftAosIT {
 
     private final String docUrl = "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27";
     private final String docName = "draft-divorce-application-1616591401473378.pdf";
-    private final String docBinaryUrl = "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary";
+    private final String docBinaryUrl = "http://dm-store-aat.service.core-compute-aat"
+        + ".internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary";
 
     @BeforeAll
     static void setUp() {
@@ -92,14 +93,14 @@ public class SolicitorSubmitUpdateDraftAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithDocument(APPLICATION),
-                        eventId)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseDataWithDocument(APPLICATION),
+                            eventId)))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
@@ -118,14 +119,14 @@ public class SolicitorSubmitUpdateDraftAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithDocument(NOTICE_OF_PROCEEDINGS_APP_2),
-                        eventId)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseDataWithDocument(NOTICE_OF_PROCEEDINGS_APP_2),
+                            eventId)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -138,14 +139,14 @@ public class SolicitorSubmitUpdateDraftAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithoutDivorceApplication(),
-                        eventId)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseDataWithoutDivorceApplication(),
+                            eventId)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )

@@ -29,7 +29,8 @@ public class Applicant2NotBrokenNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT2_REJECTED,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -41,7 +42,8 @@ public class Applicant2NotBrokenNotification implements ApplicantNotification {
             caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_APPLICANT2_REJECTED,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 }

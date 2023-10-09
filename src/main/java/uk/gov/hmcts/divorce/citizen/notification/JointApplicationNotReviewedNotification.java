@@ -40,7 +40,8 @@ public class JointApplicationNotReviewedNotification implements ApplicantNotific
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICATION_OVERDUE,
             templateVars,
-            languagePreference
+            languagePreference,
+            id
         );
     }
 }

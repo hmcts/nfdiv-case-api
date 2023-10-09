@@ -15,12 +15,16 @@
     "applicant2LanguagePreferenceWelsh": "Yes",
     "applicant2LastName": "test_last_name",
     "applicant2MiddleName": "test_middle_name",
-    "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant2PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant2StatementOfTruth": "Yes",
     "divorceOrDissolution": "divorce",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "marriageDate": "1990-06-10"

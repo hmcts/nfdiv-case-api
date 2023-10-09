@@ -84,12 +84,14 @@
             "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
             "documentType": "generalOrder"
           },
-          "generalOrderDivorceParties": ["respondent"]
+          "generalOrderDivorceParties": [
+            "respondent"
+          ]
         },
         "id": "${json-unit.any-string}"
       }
     ],
-    "expeditedFinalOrderAuthorisation" : {
+    "expeditedFinalOrderAuthorisation": {
       "expeditedFinalOrderGeneralOrder": {
         "generalOrderDocument": {
           "documentLink": {
@@ -100,11 +102,15 @@
           "documentFileName": "generalOrder2023-07-03 17:17:30.pdf",
           "documentType": "generalOrder"
         },
-        "generalOrderDivorceParties": ["respondent"]
+        "generalOrderDivorceParties": [
+          "respondent"
+        ]
       },
       "expeditedFinalOrderJudgeName": "JudgeName"
     },
-    "granted": ["Yes"]
+    "granted": [
+      "Yes"
+    ]
   },
   "state": "FinalOrderComplete"
 }

@@ -36,7 +36,9 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant2HWFNeedHelp": "No",
     "divorceWho": "wife",
@@ -46,7 +48,9 @@
     "applicant1AppliedForFinalOrderFirst": "Yes",
     "finalOrderSwitchedToSole": "Yes",
     "applicant1CanIntendToSwitchToSoleFo": "Yes",
-    "applicant1IntendsToSwitchToSole": ["Yes"],
+    "applicant1IntendsToSwitchToSole": [
+      "Yes"
+    ],
     "doesApplicant1IntendToSwitchToSole": "Yes",
     "dateApplicant1DeclaredIntentionToSwitchToSoleFo": "2022-11-11",
     "dataVersion": 5,

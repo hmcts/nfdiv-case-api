@@ -256,13 +256,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         );
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+                .accept(APPLICATION_JSON))
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -315,13 +315,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         );
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk())
@@ -372,13 +372,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         );
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk())
@@ -506,61 +506,61 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
             .application(Application.builder()
-                    .issueDate(LOCAL_DATE)
-                    .applicant1HelpWithFees(HelpWithFees.builder()
-                            .build())
-                    .applicant2HelpWithFees(HelpWithFees.builder()
-                            .build())
+                .issueDate(LOCAL_DATE)
+                .applicant1HelpWithFees(HelpWithFees.builder()
                     .build())
+                .applicant2HelpWithFees(HelpWithFees.builder()
+                    .build())
+                .build())
             .applicant1(Applicant.builder()
-                    .solicitorRepresented(NO)
-                    .offline(YES)
-                    .solicitor(Solicitor.builder()
-                            .build())
+                .solicitorRepresented(NO)
+                .offline(YES)
+                .solicitor(Solicitor.builder()
                     .build())
+                .build())
             .acknowledgementOfService(AcknowledgementOfService.builder()
-                    .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
-                    .build())
+                .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+                .build())
             .applicant2(Applicant.builder()
-                    .solicitorRepresented(NO)
-                    .solicitor(Solicitor.builder()
-                            .build())
-                    .offline(YES)
+                .solicitorRepresented(NO)
+                .solicitor(Solicitor.builder()
                     .build())
+                .offline(YES)
+                .build())
             .dueDate(LOCAL_DATE)
             .noticeOfChange(NoticeOfChange.builder()
-                    .build())
+                .build())
             .retiredFields(retiredFields)
             .caseInvite(CaseInvite.builder()
-                    .build())
+                .build())
             .build();
 
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-                .value(
-                        ScannedDocument
-                                .builder()
-                                .fileName(FILENAME)
-                                .type(ScannedDocumentType.OTHER)
-                                .subtype("aos")
-                                .build()
-                )
-                .build();
+            .value(
+                ScannedDocument
+                    .builder()
+                    .fileName(FILENAME)
+                    .type(ScannedDocumentType.OTHER)
+                    .subtype("aos")
+                    .build()
+            )
+            .build();
 
         data.setDocuments(CaseDocuments.builder()
-                        .scannedDocuments(singletonList(doc1))
-                        .typeOfDocumentAttached(AOS_D10)
-                        .build());
+            .scannedDocuments(singletonList(doc1))
+            .typeOfDocumentAttached(AOS_D10)
+            .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
-                        .contentType(APPLICATION_JSON)
-                        .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-                        .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                        .content(objectMapper.writeValueAsString(callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
 
         verify(aosPackPrinter).sendAosResponseLetterToApplicant(any(), eq(TEST_CASE_ID));
         verifyNoMoreInteractions(aosPackPrinter);
@@ -622,11 +622,11 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()

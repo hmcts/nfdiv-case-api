@@ -43,7 +43,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMA
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -80,16 +82,16 @@ public class ClarificationSubmittedNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
 
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
@@ -98,10 +100,11 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -113,10 +116,10 @@ public class ClarificationSubmittedNotificationTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -124,10 +127,11 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -139,17 +143,17 @@ public class ClarificationSubmittedNotificationTest {
         caseData.setApplicationType(JOINT_APPLICATION);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(true);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
@@ -158,10 +162,11 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -174,11 +179,11 @@ public class ClarificationSubmittedNotificationTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(true);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -186,10 +191,11 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -201,17 +207,17 @@ public class ClarificationSubmittedNotificationTest {
         caseData.setApplicationType(JOINT_APPLICATION);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(false);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
@@ -220,10 +226,11 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -236,11 +243,11 @@ public class ClarificationSubmittedNotificationTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(false);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant1(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -248,11 +255,12 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
 
@@ -266,17 +274,17 @@ public class ClarificationSubmittedNotificationTest {
         caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(false);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
@@ -285,10 +293,11 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
 
     @Test
@@ -302,11 +311,11 @@ public class ClarificationSubmittedNotificationTest {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(false);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -314,10 +323,11 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
 
     @Test
@@ -330,17 +340,17 @@ public class ClarificationSubmittedNotificationTest {
         caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(true);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
@@ -349,10 +359,11 @@ public class ClarificationSubmittedNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail"),
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
 
     @Test
@@ -366,11 +377,11 @@ public class ClarificationSubmittedNotificationTest {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, 1234567890123456L)).thenReturn(true);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -378,11 +389,12 @@ public class ClarificationSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDate().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(WELSH_DATE_TIME_FORMATTER))
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent)
-            .mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1());
+            .mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
 
     @Test
@@ -391,7 +403,7 @@ public class ClarificationSubmittedNotificationTest {
         CaseData caseData = new CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
 
-        clarificationSubmittedNotification.sendToApplicant2(caseData, 1234567890123456L);
+        clarificationSubmittedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);

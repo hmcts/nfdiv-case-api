@@ -25,6 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,12 +58,12 @@ public class SystemProgressCaseToAosOverdueTest {
         final CaseData caseData = caseData();
         caseData.setCaseInvite(new CaseInvite("app2@email.com", "ACCESS12", null));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(aosReminderNotifications, caseData, 1L);
+        verify(notificationDispatcher).send(aosReminderNotifications, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosReminderNotifications);
     }
 
@@ -71,12 +72,12 @@ public class SystemProgressCaseToAosOverdueTest {
         final CaseData caseData = caseData();
         caseData.setCaseInvite(new CaseInvite("app2@email.com", null, null));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(aosReminderNotifications, caseData, 1L);
+        verify(notificationDispatcher).send(aosReminderNotifications, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosReminderNotifications);
     }
 
@@ -85,12 +86,12 @@ public class SystemProgressCaseToAosOverdueTest {
         final CaseData caseData = caseData();
         caseData.setCaseInvite(new CaseInvite(null, "ACCESS12", null));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(aosReminderNotifications, caseData, 1L);
+        verify(notificationDispatcher).send(aosReminderNotifications, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(aosReminderNotifications);
     }
 
@@ -100,7 +101,7 @@ public class SystemProgressCaseToAosOverdueTest {
         caseData.getApplicant1().setSolicitor(Solicitor.builder().email("test@test.com").build());
         caseData.getApplicant1().setSolicitorRepresented(YES);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
@@ -115,7 +116,7 @@ public class SystemProgressCaseToAosOverdueTest {
         caseData.getApplicant1().setOffline(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
@@ -130,7 +131,7 @@ public class SystemProgressCaseToAosOverdueTest {
         caseData.getApplicant1().setOffline(NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);

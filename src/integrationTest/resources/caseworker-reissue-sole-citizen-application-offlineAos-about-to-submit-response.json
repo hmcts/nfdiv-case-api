@@ -43,7 +43,9 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -103,7 +105,8 @@
           "documentFileName": "${json-unit.any-string}",
           "documentType": "noticeOfProceedingsApp2"
         }
-      }, {
+      },
+      {
         "id": "Notice of proceeding applicant",
         "value": {
           "documentLink": {

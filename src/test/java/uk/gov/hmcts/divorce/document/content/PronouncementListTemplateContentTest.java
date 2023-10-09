@@ -167,7 +167,7 @@ public class PronouncementListTemplateContentTest {
                 .build();
 
         final List<CaseDetails> bulkListCases = Lists.newArrayList(
-            mockCaseDetails(1L, mockCaseData(DIVORCE, NA)),
+            mockCaseDetails(TEST_CASE_ID, mockCaseData(DIVORCE, NA)),
             mockCaseDetails(2L, mockCaseData(DIVORCE, NA)),
             mockCaseDetails(3L, mockCaseData(DIVORCE, NA))
         );
@@ -178,7 +178,7 @@ public class PronouncementListTemplateContentTest {
         List<CaseDetails> caseDetails = pronouncementListTemplateContentService
             .retrieveBulkListCases(bulkActionCaseDetails.getId(), bulkActionCaseData);
 
-        assertThat(caseDetails.stream().map(CaseDetails::getId)).containsExactlyInAnyOrder(1L, 2L);
+        assertThat(caseDetails.stream().map(CaseDetails::getId)).containsExactlyInAnyOrder(TEST_CASE_ID, 2L);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class PronouncementListTemplateContentTest {
                 .build();
 
         final List<CaseDetails> bulkListCases = Lists.newArrayList(
-            mockCaseDetails(1L, mockCaseData(DIVORCE, NA)),
+            mockCaseDetails(TEST_CASE_ID, mockCaseData(DIVORCE, NA)),
             mockCaseDetails(2L, mockCaseData(DIVORCE, NA)),
             mockCaseDetails(3L, mockCaseData(DIVORCE, NA))
         );
@@ -216,7 +216,7 @@ public class PronouncementListTemplateContentTest {
         List<CaseDetails> caseDetails = pronouncementListTemplateContentService
             .retrieveBulkListCases(bulkActionCaseDetails.getId(), bulkActionCaseData);
 
-        assertThat(caseDetails.stream().map(CaseDetails::getId)).containsExactlyInAnyOrder(1L, 2L, 3L);
+        assertThat(caseDetails.stream().map(CaseDetails::getId)).containsExactlyInAnyOrder(TEST_CASE_ID, 2L, 3L);
     }
 
     private Map<String, Object> expectedValues(String applicationType) {

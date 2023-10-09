@@ -78,7 +78,7 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldReturnTrueForIsWelshApplicationIfSoleAndApp1LanguagePreferenceWelshYes() {
+    void shouldReturnTrueForIsWelshApplicationIfSoleAndapp1LanguagePreferenceWelshYes() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -89,7 +89,7 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldReturnFalseForIsWelshApplicationIfSoleAndApp1LanguagePreferenceWelshNo() {
+    void shouldReturnFalseForIsWelshApplicationIfSoleAndapp1LanguagePreferenceWelshNo() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -100,7 +100,7 @@ class CaseDataTest {
     }
 
     @Test
-    void shouldReturnTrueForIsWelshApplicationIfJointAndApp1LanguagePreferenceWelshYes() {
+    void shouldReturnTrueForIsWelshApplicationIfJointAndapp1LanguagePreferenceWelshYes() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)

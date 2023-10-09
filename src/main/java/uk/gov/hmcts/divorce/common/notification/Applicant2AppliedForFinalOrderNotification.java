@@ -56,7 +56,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant2EmailAddress(),
                 SOLE_APPLIED_FOR_FINAL_ORDER,
                 applicant2TemplateVars(caseData, caseId),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         } else {
             log.info("Sending Applicant 2 notification informing them that they have applied for final order: {}", caseId);
@@ -65,7 +66,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                 JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER,
                 finalOrderNotificationCommonContent
                     .jointApplicantTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), false),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -80,7 +82,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant1().getEmail(),
                 JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
                 getTemplateVars(caseData, caseId),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -110,7 +113,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                     caseData.getApplicant1().getSolicitor().getEmail(),
                     JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
                     app1SolTemplateVars,
-                    caseData.getApplicant1().getLanguagePreference()
+                    caseData.getApplicant1().getLanguagePreference(),
+                    caseId
             );
         }
     }
@@ -137,7 +141,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER,
                 templateVars,
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

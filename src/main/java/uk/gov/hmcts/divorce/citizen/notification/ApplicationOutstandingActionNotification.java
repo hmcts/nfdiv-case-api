@@ -66,7 +66,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
                 caseData.getApplicant1().getEmail(),
                 OUTSTANDING_ACTIONS,
                 applicant1TemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         }
     }
@@ -81,7 +82,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
                 caseData.getApplicant2EmailAddress(),
                 OUTSTANDING_ACTIONS,
                 this.applicant2TemplateVars(caseData, id),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         }
     }

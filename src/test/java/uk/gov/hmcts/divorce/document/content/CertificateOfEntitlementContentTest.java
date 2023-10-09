@@ -51,6 +51,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
@@ -80,7 +81,7 @@ public class CertificateOfEntitlementContentTest {
         final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(contentMap).contains(
-            entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry("courtDetails", expectedDetails),
             entry("approvalDate", "8 November 2021"),
             entry(APPLICANT_1_FULL_NAME, "John Smith"),
@@ -114,7 +115,7 @@ public class CertificateOfEntitlementContentTest {
         final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(contentMap).contains(
-            entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry("courtDetails", expectedDetails),
             entry("approvalDate", "8 November 2021"),
             entry(APPLICANT_1_FULL_NAME, "John Smith"),
@@ -203,7 +204,7 @@ public class CertificateOfEntitlementContentTest {
         final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(contentMap).contains(
-            entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry("courtDetails", expectedDetails),
             entry("approvalDate", "8 November 2021"),
             entry(APPLICANT_1_FULL_NAME, "John Smith"),
@@ -232,7 +233,7 @@ public class CertificateOfEntitlementContentTest {
         final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(contentMap).contains(
-            entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry("courtDetails", null),
             entry("approvalDate", null),
             entry(APPLICANT_1_FULL_NAME, "John Smith"),

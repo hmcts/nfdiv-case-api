@@ -64,7 +64,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             caseData.getApplicant1().getEmail(),
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
             templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference());
+            caseData.getApplicant1().getLanguagePreference(),
+            id);
     }
 
     @Override
@@ -75,7 +76,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             caseData.getApplicant1().getCorrespondenceEmail(),
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
             solicitorTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference());
+            caseData.getApplicant1().getLanguagePreference(),
+            id);
     }
 
     @Override
@@ -106,7 +108,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             caseData.getApplicant2EmailAddress(),
             emailTemplateName,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference());
+            caseData.getApplicant2().getLanguagePreference(),
+            id);
     }
 
     @Override
@@ -118,7 +121,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             caseData.getApplicant2().getCorrespondenceEmail(),
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
             solicitorTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference());
+            caseData.getApplicant2().getLanguagePreference(),
+            id);
     }
 
     @Override

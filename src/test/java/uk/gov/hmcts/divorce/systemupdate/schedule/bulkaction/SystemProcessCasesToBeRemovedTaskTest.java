@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +69,7 @@ public class SystemProcessCasesToBeRemovedTaskTest {
             .build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails1 = new CaseDetails<>();
-        caseDetails1.setId(1L);
+        caseDetails1.setId(TEST_CASE_ID);
         caseDetails1.setData(bulkActionCaseData);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails2 = new CaseDetails<>();
@@ -84,7 +85,7 @@ public class SystemProcessCasesToBeRemovedTaskTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             updateCasesToBeRemovedTask,
-            1L,
+            TEST_CASE_ID,
             SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION

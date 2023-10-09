@@ -50,7 +50,7 @@
       "PaymentTotal": "55000"
     },
     "applicant1KnowsApplicant2EmailAddress": "Yes",
-    "previousReissueOption":"reissueCase",
+    "previousReissueOption": "reissueCase",
     "documentUploadComplete": "Yes",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
@@ -67,7 +67,7 @@
       }
     ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "noticeOfProceedingsEmail":"solicitor@test.com",
+    "noticeOfProceedingsEmail": "solicitor@test.com",
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "Org"

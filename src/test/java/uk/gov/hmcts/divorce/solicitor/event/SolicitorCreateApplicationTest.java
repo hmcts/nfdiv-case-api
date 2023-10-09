@@ -131,7 +131,7 @@ class SolicitorCreateApplicationTest {
 
     @Test
     void shouldSetApplicant1SolicitorRoleWhenCaseSubmitted() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final String authorization = "authorization";
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();

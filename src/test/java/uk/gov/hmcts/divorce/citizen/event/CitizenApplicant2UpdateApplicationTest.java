@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CitizenApplicant2UpdateApplicationTest {
@@ -40,7 +41,7 @@ public class CitizenApplicant2UpdateApplicationTest {
 
     @Test
     void shouldSetDisputeApplicationFieldsToNullIfConfirmationIsNoAndInAosDraftedState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosDrafted);
@@ -59,7 +60,7 @@ public class CitizenApplicant2UpdateApplicationTest {
 
     @Test
     void shouldNotSetDisputeApplicationFieldsToNullIfConfirmationIsYesAndInAosDraftedState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosDrafted);
@@ -78,7 +79,7 @@ public class CitizenApplicant2UpdateApplicationTest {
 
     @Test
     void shouldNotSetDisputeApplicationFieldsToNullIfApplicationNotDisputedAndInAosDraftedState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosDrafted);
@@ -97,7 +98,7 @@ public class CitizenApplicant2UpdateApplicationTest {
 
     @Test
     void shouldSetDisputeApplicationFieldsToNullIfConfirmationIsNoAndInAosOverdueState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosOverdue);
@@ -116,7 +117,7 @@ public class CitizenApplicant2UpdateApplicationTest {
 
     @Test
     void shouldNotSetDisputeApplicationFieldsToNullIfConfirmationIsYesAndInAosOverdueState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosOverdue);
@@ -135,7 +136,7 @@ public class CitizenApplicant2UpdateApplicationTest {
 
     @Test
     void shouldNotSetDisputeApplicationFieldsToNullIfApplicationNotDisputedAndInAosOverduedState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setState(AosOverdue);

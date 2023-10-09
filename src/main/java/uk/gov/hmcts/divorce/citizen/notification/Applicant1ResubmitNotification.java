@@ -50,7 +50,8 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE,
             applicant1TemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -62,7 +63,8 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE_SOLICITOR,
                 applicant2TemplateVars(caseData, id),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         } else {
             log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
@@ -70,7 +72,8 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE,
                 applicant2TemplateVars(caseData, id),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         }
     }
@@ -85,7 +88,8 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_APPLICANT2_SOLICITOR_APPLICANT1_CHANGES_MADE,
                 applicant2SolicitorTemplateVars(caseData, id),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         }
     }

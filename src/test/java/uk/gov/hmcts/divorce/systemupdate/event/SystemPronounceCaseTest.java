@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -81,7 +82,7 @@ public class SystemPronounceCaseTest {
     void shouldGenerateConditionalOrderGrantedDocAndSetStateToConditionalOrderPronounced() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
@@ -99,7 +100,7 @@ public class SystemPronounceCaseTest {
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
@@ -115,7 +116,7 @@ public class SystemPronounceCaseTest {
     void shouldSendNotification() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
@@ -130,7 +131,7 @@ public class SystemPronounceCaseTest {
         final NotificationTemplateException notificationTemplateException = new NotificationTemplateException("Message");
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .build();
         doThrow(notificationTemplateException)
@@ -148,7 +149,7 @@ public class SystemPronounceCaseTest {
         setConditionalOrder(caseData);
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
@@ -168,12 +169,12 @@ public class SystemPronounceCaseTest {
         caseDataNew.getConditionalOrder().setPronouncementJudge("NewJudge");
 
         final CaseDetails<CaseData, State> detailsOld = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseDataOld)
             .build();
 
         final CaseDetails<CaseData, State> detailsNew = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseDataNew)
             .build();
 

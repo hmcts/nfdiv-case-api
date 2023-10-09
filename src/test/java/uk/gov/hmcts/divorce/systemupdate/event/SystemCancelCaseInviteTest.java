@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemCancelCaseInvite.SYSTEM_CANCEL_CASE_INVITE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -45,7 +46,7 @@ public class SystemCancelCaseInviteTest {
                 .applicant2UserId("Applicant2Id")
                 .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemCancelCaseInvite.aboutToSubmit(details, details);

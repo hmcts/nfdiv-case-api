@@ -38,6 +38,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -237,16 +238,16 @@ public class LegalAdvisorMakeDecisionIT {
         stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    LEGAL_ADVISOR_MAKE_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk());
@@ -258,7 +259,8 @@ public class LegalAdvisorMakeDecisionIT {
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
     }
 
@@ -289,16 +291,16 @@ public class LegalAdvisorMakeDecisionIT {
         stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    LEGAL_ADVISOR_MAKE_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk());
@@ -310,7 +312,8 @@ public class LegalAdvisorMakeDecisionIT {
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
 
         verify(notificationService).sendEmail(
@@ -320,7 +323,8 @@ public class LegalAdvisorMakeDecisionIT {
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -409,7 +413,8 @@ public class LegalAdvisorMakeDecisionIT {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -466,14 +471,16 @@ public class LegalAdvisorMakeDecisionIT {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -532,14 +539,16 @@ public class LegalAdvisorMakeDecisionIT {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -569,16 +578,16 @@ public class LegalAdvisorMakeDecisionIT {
         stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    LEGAL_ADVISOR_MAKE_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
@@ -603,9 +612,9 @@ public class LegalAdvisorMakeDecisionIT {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setIssueDate(LocalDate.of(2022, 6, 22));
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
-                .name("App1 sol")
-                .email("sol1@gm.com")
-                .reference("sol1")
+            .name("App1 sol")
+            .email("sol1@gm.com")
+            .reference("sol1")
             .build());
 
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -653,7 +662,8 @@ public class LegalAdvisorMakeDecisionIT {
                 hasEntry("amendApplication", "no"),
                 hasEntry("issueDate", "22 June 2022")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -725,7 +735,8 @@ public class LegalAdvisorMakeDecisionIT {
                 hasEntry("amendApplication", "yes"),
                 hasEntry("issueDate", "22 June 2022")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
 
         verify(notificationService).sendEmail(
@@ -741,7 +752,8 @@ public class LegalAdvisorMakeDecisionIT {
                 hasEntry("amendApplication", "yes"),
                 hasEntry("issueDate", "22 June 2022")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
 
         verifyNoMoreInteractions(notificationService);

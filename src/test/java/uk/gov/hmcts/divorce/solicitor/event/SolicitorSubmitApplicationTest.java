@@ -88,7 +88,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldSetOrderSummaryAndSolicitorFeesInPoundsAndSolicitorRolesAndPbaNumbersWhenAboutToStartIsInvoked() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final String authorization = "authorization";
         final OrderSummary orderSummary = mock(OrderSummary.class);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

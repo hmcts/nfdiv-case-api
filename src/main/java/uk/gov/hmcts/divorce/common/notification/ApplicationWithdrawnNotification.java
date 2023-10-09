@@ -40,7 +40,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             CITIZEN_APPLICATION_WITHDRAWN,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -66,7 +67,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
                 caseData.getApplicant2().getEmail(),
                 CITIZEN_APPLICATION_WITHDRAWN,
                 templateVars,
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         }
     }

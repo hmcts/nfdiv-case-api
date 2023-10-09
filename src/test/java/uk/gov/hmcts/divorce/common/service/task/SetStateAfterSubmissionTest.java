@@ -355,7 +355,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    void shouldSetWelshTranslationReviewStateForJointApplicationIfApp1LanguagePreferenceWelshIsYes() {
+    void shouldSetWelshTranslationReviewStateForJointApplicationIfapp1LanguagePreferenceWelshIsYes() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);

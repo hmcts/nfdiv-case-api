@@ -41,7 +41,8 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
                 applicant1.getEmail(),
                 CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
                 templateVars,
-                applicant1.getLanguagePreference()
+                applicant1.getLanguagePreference(),
+                id
             );
         }
     }
@@ -61,7 +62,8 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
                 applicant2.getEmail(),
                 CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
                 templateVars,
-                applicant2.getLanguagePreference()
+                applicant2.getLanguagePreference(),
+                id
             );
         }
     }

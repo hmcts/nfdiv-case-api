@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseStateAat.CITIZ
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.EMPTY_STRING;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +42,7 @@ class CitizenUpdateCaseStateAatTest {
 
     @Test
     void shouldUpdateCaseStateWhenCitizenUpdateCaseStateIsEnabled() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseData.setApplicant2(new Applicant());
@@ -58,7 +59,7 @@ class CitizenUpdateCaseStateAatTest {
 
     @Test
     void shouldNotUpdateCaseStateWhenStateIsInvalid() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
 
@@ -78,7 +79,7 @@ class CitizenUpdateCaseStateAatTest {
 
     @Test
     void shouldUpdateApplicant1MiddleNameToEmptyStringWhenChangingState() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
 
@@ -95,7 +96,7 @@ class CitizenUpdateCaseStateAatTest {
 
     @Test
     void shouldSuccessfullyUpdateCaseDataWhenApplicant1MiddleNameIsEmptyString() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
 

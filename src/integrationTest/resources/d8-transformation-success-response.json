@@ -7,7 +7,7 @@
       "applicationType": "soleApplication",
       "applicant1ContactDetailsType": "private",
       "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
+      "coCronRetriesRemindApplicantApplyCo": 0,
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
       "solStatementOfReconciliationFirm": "",
@@ -98,7 +98,9 @@
       "paperFormApplicant1LegalRepPosition": "",
       "marriageCertificateInEnglish": "Yes",
       "applicant2SolicitorReference": "",
-      "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+      "applicant2PrayerDissolveDivorce": [
+        "dissolveDivorce"
+      ],
       "paperFormSummaryApplicant1FinancialOrdersFor": [
         "children"
       ],
@@ -126,7 +128,9 @@
       "applicant1ScreenHasMarriageBroken": "Yes",
       "paperFormApplicant2LegalRepSigningSOT": "No",
       "warnings": [],
-      "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+      "applicant1PrayerDissolveDivorce": [
+        "dissolveDivorce"
+      ],
       "applicant1SolicitorAddress": "some street\nsecond line of address\nUK",
       "screenHasMarriageCert": "Yes",
       "jurisdictionConnections": [

@@ -51,7 +51,8 @@ public class ClarificationSubmittedNotification implements ApplicantNotification
                 caseData.getApplicant1().getEmail(),
                 CITIZEN_CLARIFICATION_SUBMITTED,
                 getTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         } else {
             EmailTemplateName templateId;
@@ -67,7 +68,8 @@ public class ClarificationSubmittedNotification implements ApplicantNotification
                 caseData.getApplicant1().getEmail(),
                 templateId,
                 getTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -90,7 +92,8 @@ public class ClarificationSubmittedNotification implements ApplicantNotification
                 caseData.getApplicant2().getEmail(),
                 templateId,
                 getTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

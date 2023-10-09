@@ -40,7 +40,8 @@ public class JointApplicationApprovedReminder implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 }

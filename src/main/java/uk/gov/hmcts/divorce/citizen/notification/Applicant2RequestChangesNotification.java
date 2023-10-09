@@ -49,7 +49,8 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -71,7 +72,8 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
             applicant1.getSolicitor().getEmail(),
             SOLICITOR_APPLICANT2_REQUESTED_CHANGES,
             templateVars,
-            applicant1.getLanguagePreference()
+            applicant1.getLanguagePreference(),
+            id
         );
     }
 
@@ -84,7 +86,8 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
                 caseData.getApplicant2EmailAddress(),
                 APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES,
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         } else {
             log.info("Sending notification to applicant 2 to confirm their request for changes (applicant 1 is not represented): {}", id);
@@ -93,7 +96,8 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICANT2_REQUEST_CHANGES,
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                id
             );
         }
     }

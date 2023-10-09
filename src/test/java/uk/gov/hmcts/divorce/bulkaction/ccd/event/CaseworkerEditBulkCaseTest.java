@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerEditBulkCase.CASEWORKER_EDIT_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerEditBulkCaseTest {
@@ -65,7 +66,7 @@ public class CaseworkerEditBulkCaseTest {
     void shouldSuccessfullyUpdateCasesInBulkWithCourtHearingDetails() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
@@ -83,7 +84,7 @@ public class CaseworkerEditBulkCaseTest {
             .dateAndTimeOfHearing(LocalDateTime.now().plusDays(5))
             .build()
         );
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = caseworkerEditBulkCase.aboutToSubmit(details, details);
 
@@ -100,7 +101,7 @@ public class CaseworkerEditBulkCaseTest {
             .dateAndTimeOfHearing(LocalDateTime.now().minusHours(5))
             .build()
         );
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = caseworkerEditBulkCase.aboutToSubmit(details, details);
 
@@ -141,7 +142,7 @@ public class CaseworkerEditBulkCaseTest {
                     .build())
                 .bulkListCaseDetails(bulkCaseList)
             .build());
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response
             = caseworkerEditBulkCase.aboutToSubmit(bulkCaseDetails, bulkCaseDetails);

@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class Applicant2ApplyForFinalOrderTest {
@@ -72,7 +73,7 @@ class Applicant2ApplyForFinalOrderTest {
 
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         caseData.getApplication().setPreviousState(AwaitingFinalOrder);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
 
@@ -83,7 +84,7 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldSendJointAppliedForFinalOrderNotificationToBothSolicitorsIfJointApplicationTypeAndFinalOrderRequestedState() {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         caseDetails.setState(FinalOrderRequested);
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
@@ -96,7 +97,7 @@ class Applicant2ApplyForFinalOrderTest {
     void shouldSendBothNotificationsIfCaseProgressedFromAwaitingFinalOrderToFinalOrderRequestedState() {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.getApplication().setPreviousState(AwaitingFinalOrder);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         caseDetails.setState(FinalOrderRequested);
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
@@ -109,7 +110,7 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldNotSendSoleAppliedForFinalOrderNotificationFinalOrderOverdueState() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
 
@@ -119,10 +120,11 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldUpdateCaseDataAndStateWhenAboutToSubmitIsCalled() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
-        final CaseDetails<CaseData, State> updatedCaseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> updatedCaseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData)
+            .build();
         updatedCaseDetails.setData(caseData);
         updatedCaseDetails.setState(FinalOrderRequested);
 
@@ -140,7 +142,7 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldReturnErrorCallbackIfValidateApplyForFinalOrderFails() {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         caseDetails.setState(AwaitingFinalOrder);
 
         final List<String> errors = new ArrayList<>();
@@ -157,7 +159,7 @@ class Applicant2ApplyForFinalOrderTest {
     @Test
     void shouldPassCaseDetailsToGeneralReferralService() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
 

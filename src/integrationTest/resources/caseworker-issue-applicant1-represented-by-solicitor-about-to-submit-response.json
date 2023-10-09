@@ -13,7 +13,9 @@
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "public",
     "applicant1SolicitorRepresented": "Yes",
-    "applicant1PrayerEndCivilPartnership": ["endCivilPartnership"],
+    "applicant1PrayerEndCivilPartnership": [
+      "endCivilPartnership"
+    ],
     "applicant1SolicitorReference": "TEST",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
@@ -43,7 +45,9 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
     "serviceMethod": "courtService",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"

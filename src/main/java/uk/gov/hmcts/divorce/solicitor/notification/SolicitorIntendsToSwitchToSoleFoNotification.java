@@ -32,7 +32,8 @@ public class SolicitorIntendsToSwitchToSoleFoNotification implements ApplicantNo
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR,
                 solicitorTemplateContent.templatevars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -47,7 +48,8 @@ public class SolicitorIntendsToSwitchToSoleFoNotification implements ApplicantNo
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR,
                 solicitorTemplateContent.templatevars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -62,7 +64,8 @@ public class SolicitorIntendsToSwitchToSoleFoNotification implements ApplicantNo
                 caseData.getApplicant2EmailAddress(),
                 OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN,
                 solicitorTemplateContent.templatevars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

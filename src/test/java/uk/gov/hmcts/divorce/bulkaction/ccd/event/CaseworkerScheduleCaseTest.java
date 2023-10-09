@@ -23,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.CASEWORKER_SCHEDULE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerScheduleCaseTest {
@@ -47,7 +48,7 @@ public class CaseworkerScheduleCaseTest {
     void shouldSuccessfullyUpdateCasesInBulkWithCourtHearingDetails() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
@@ -65,7 +66,7 @@ public class CaseworkerScheduleCaseTest {
             .dateAndTimeOfHearing(LocalDateTime.now().plusDays(5))
             .build()
         );
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
 
@@ -80,7 +81,7 @@ public class CaseworkerScheduleCaseTest {
             .dateAndTimeOfHearing(LocalDateTime.now().minusHours(5))
             .build()
         );
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
 

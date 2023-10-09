@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -59,24 +60,25 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validCaseDataForIssueApplication();
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant1(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -86,24 +88,25 @@ public class ApplicationWithdrawnNotificationTest {
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant1(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -112,24 +115,25 @@ public class ApplicationWithdrawnNotificationTest {
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant1(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -139,26 +143,27 @@ public class ApplicationWithdrawnNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
         when(commonContent.getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference()))
             .thenReturn("husband");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, YES),
                 hasEntry(RESPONDENT_PARTNER, "husband")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
         verify(commonContent).getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference());
     }
 
@@ -171,26 +176,27 @@ public class ApplicationWithdrawnNotificationTest {
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
         when(commonContent.getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference()))
             .thenReturn("husband");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, YES),
                 hasEntry(RESPONDENT_PARTNER, "husband")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
         verify(commonContent).getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference());
     }
 
@@ -201,24 +207,25 @@ public class ApplicationWithdrawnNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -229,24 +236,25 @@ public class ApplicationWithdrawnNotificationTest {
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -258,26 +266,27 @@ public class ApplicationWithdrawnNotificationTest {
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         Map<String, String> templateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
         when(commonContent.getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference()))
             .thenReturn("gŵr");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLICATION_WITHDRAWN),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, YES),
                 hasEntry(RESPONDENT_PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
         verify(commonContent).getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference());
     }
 
@@ -286,7 +295,7 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validApplicant1CaseData();
         data.getApplicant2().setEmail(null);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -296,7 +305,7 @@ public class ApplicationWithdrawnNotificationTest {
         CaseData data = validApplicant1CaseData();
         data.getApplicant2().setEmail("");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -307,7 +316,7 @@ public class ApplicationWithdrawnNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(null);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -319,15 +328,17 @@ public class ApplicationWithdrawnNotificationTest {
         data.getApplication().setIssueDate(null);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, 1234567890123456L);
+        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService, times(1)).sendEmail(
             data.getApplicant2EmailAddress(),
             CITIZEN_APPLICATION_WITHDRAWN,
             divorceTemplateVars,
-            data.getApplicant2().getLanguagePreference());
+            data.getApplicant2().getLanguagePreference(),
+            TEST_CASE_ID
+        );
     }
 }

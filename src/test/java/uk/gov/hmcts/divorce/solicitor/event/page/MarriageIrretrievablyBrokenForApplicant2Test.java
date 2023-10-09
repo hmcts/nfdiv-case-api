@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +37,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             AboutToStartOrSubmitResponse
@@ -62,7 +63,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             AboutToStartOrSubmitResponse
@@ -92,7 +93,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             AboutToStartOrSubmitResponse
@@ -116,7 +117,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             AboutToStartOrSubmitResponse

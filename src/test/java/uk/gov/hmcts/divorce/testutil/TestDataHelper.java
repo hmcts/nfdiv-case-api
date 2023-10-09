@@ -161,6 +161,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
@@ -799,7 +800,7 @@ public class TestDataHelper {
 
     public static Map<String, String> getMainTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
+        templateVars.put(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID);
         templateVars.put(IS_DIVORCE, CommonContent.YES);
         templateVars.put(IS_DISSOLUTION, CommonContent.NO);
         templateVars.put(FIRST_NAME, TEST_FIRST_NAME);
@@ -825,7 +826,7 @@ public class TestDataHelper {
 
     public static Map<String, String> getBasicTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
+        templateVars.put(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID);
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME));
         templateVars.put(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME));

@@ -40,7 +40,8 @@ public class SolicitorSwitchToSoleCoNotification implements ApplicantNotificatio
             applicant.getSolicitor().getEmail(),
             SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER,
             templateVars,
-            applicant.getLanguagePreference()
+            applicant.getLanguagePreference(),
+            id
         );
     }
 
@@ -53,7 +54,8 @@ public class SolicitorSwitchToSoleCoNotification implements ApplicantNotificatio
             caseData.getApplicant2EmailAddress(),
             PARTNER_SWITCHED_TO_SOLE_CO,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 
@@ -71,7 +73,8 @@ public class SolicitorSwitchToSoleCoNotification implements ApplicantNotificatio
             applicant.getSolicitor().getEmail(),
             SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER,
             templateVars,
-            applicant.getLanguagePreference()
+            applicant.getLanguagePreference(),
+            id
         );
     }
 }

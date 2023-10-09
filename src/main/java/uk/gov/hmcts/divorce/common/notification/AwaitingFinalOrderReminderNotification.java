@@ -39,7 +39,8 @@ public class AwaitingFinalOrderReminderNotification implements ApplicantNotifica
             applicant1.getEmail(),
             APPLICANT_APPLY_FOR_FINAL_ORDER,
             templateVars(caseData, id, applicant1, applicant2),
-            applicant1.getLanguagePreference()
+            applicant1.getLanguagePreference(),
+            id
         );
     }
 
@@ -55,7 +56,8 @@ public class AwaitingFinalOrderReminderNotification implements ApplicantNotifica
                 caseData.getApplicant2EmailAddress(),
                 APPLICANT_APPLY_FOR_FINAL_ORDER,
                 templateVars(caseData, id, applicant2, applicant1),
-                applicant2.getLanguagePreference()
+                applicant2.getLanguagePreference(),
+                id
             );
         }
     }

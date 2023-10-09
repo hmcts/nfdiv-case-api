@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRetryPronounceList.CASEWORKER_RETRY_PRONOUNCE_LIST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerRetryPronounceListTest {
@@ -47,7 +48,7 @@ class CaseworkerRetryPronounceListTest {
     void shouldUpdateBulkCaseAfterBulkTriggerForSubmittedCallback() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         doNothing().when(casePronouncementService).retryPronounceCases(details);
 

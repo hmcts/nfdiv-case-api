@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,7 +99,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldSetApplicationTypeToSoleAndSendNotificationToApplicant1() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -115,7 +116,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldSetApplicationTypeToSoleAndSendNotificationToApplicant2() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -137,7 +138,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSole() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -159,7 +160,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldNotSwitchRolesIfApplicant2TriggeredD84SwitchToSoleAndIsNewPaperCase() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setNewPaperCase(YES);
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
@@ -182,7 +183,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldNotSwitchUserDataOrRolesIfApplicant1TriggeredD84SwitchToSole() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -203,7 +204,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldTriggerSwitchToSoleEmailNotificationsInSubmittedCallback() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -218,7 +219,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldKeepSameStateIfInJSAwaitingLA() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -232,7 +233,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldProgressStateIfNotInStateJSAwaitingLA() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -246,7 +247,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldPrintSwitchToSoleCoLetterD84SwitchToSoleInSubmittedCallback() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -267,7 +268,7 @@ class SwitchedToSoleCoTest {
     @Test
     void shouldSwitchToSoleSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -292,7 +293,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldNotSwitchToSoleSwitchUserDataAndRolesIfApplicant1TriggeredD84SwitchToSoleInJudicialSeparation() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder()
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
@@ -326,7 +327,7 @@ class SwitchedToSoleCoTest {
 
     @Test
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());

@@ -1,5 +1,7 @@
 {
   "warnings": [],
-  "errors":["Form type 'invalid' not found"],
+  "errors": [
+    "Form type 'invalid' not found"
+  ],
   "status": "ERRORS"
 }

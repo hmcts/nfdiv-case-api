@@ -23,7 +23,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "previousReissueOption":"digitalAos",
+    "previousReissueOption": "digitalAos",
     "applicant2Address": {
       "AddressLine1": "223b",
       "AddressLine2": "Baker Street",
@@ -45,7 +45,9 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {

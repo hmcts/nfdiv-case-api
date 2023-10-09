@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import static java.time.LocalDate.now;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
@@ -71,7 +72,8 @@ public class SoleApplicationNotDisputedNotificationIT {
                 hasEntry(COURT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 hasEntry(SIGN_IN_URL, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
     }
 }

@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +74,7 @@ class CitizenSubmitApplicationTest {
 
     @Test
     public void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
@@ -89,7 +90,7 @@ class CitizenSubmitApplicationTest {
 
     @Test
     public void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
@@ -107,7 +108,7 @@ class CitizenSubmitApplicationTest {
 
     @Test
     public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);
@@ -132,7 +133,7 @@ class CitizenSubmitApplicationTest {
 
     @Test
     public void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         setValidCaseData(caseData);

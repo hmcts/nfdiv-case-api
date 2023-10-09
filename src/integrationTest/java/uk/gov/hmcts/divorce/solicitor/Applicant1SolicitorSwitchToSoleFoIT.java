@@ -121,16 +121,16 @@ public class Applicant1SolicitorSwitchToSoleFoIT {
             .build());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(
-                    data,
-                    APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_FO,
-                    "AwaitingJointFinalOrder")
-            ))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    callbackRequest(
+                        data,
+                        APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_FO,
+                        "AwaitingJointFinalOrder")
+                ))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()

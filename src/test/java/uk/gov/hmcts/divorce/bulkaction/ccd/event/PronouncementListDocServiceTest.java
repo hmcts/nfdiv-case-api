@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.PRONOUNCEMENT_LIST_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.PRONOUNCEMENT_LIST_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 
@@ -47,7 +48,7 @@ public class PronouncementListDocServiceTest {
         bulkListCaseDetails.setData(BulkActionCaseData.builder()
             .pronouncementJudge("Judge Bloggs")
             .build());
-        bulkListCaseDetails.setId(1L);
+        bulkListCaseDetails.setId(TEST_CASE_ID);
         bulkListCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -66,7 +67,7 @@ public class PronouncementListDocServiceTest {
         when(
             caseDataDocumentService.renderDocument(
                 templateContent,
-                1L,
+                TEST_CASE_ID,
                 PRONOUNCEMENT_LIST_TEMPLATE_ID,
                 LanguagePreference.ENGLISH,
                 PRONOUNCEMENT_LIST_DOCUMENT_NAME))

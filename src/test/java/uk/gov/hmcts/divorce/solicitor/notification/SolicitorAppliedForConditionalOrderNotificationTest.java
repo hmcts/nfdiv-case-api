@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -46,7 +47,7 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
     @Test
     void shouldSendApplicant1SolicitorNotificationIfApplicantIsRepresentedAndIsJointApplication() {
 
-        Long caseId = 1L;
+        Long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder()
             .applicant1(
                 Applicant.builder()
@@ -76,7 +77,8 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(caseId)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).basicTemplateVars(caseData, caseId);
@@ -86,7 +88,7 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
     @Test
     void shouldSendApplicant2SolicitorNotificationIfApplicantIsRepresentedAndIsJointApplication() {
 
-        Long caseId = 1L;
+        Long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder()
             .applicant2(
                 Applicant.builder()
@@ -116,7 +118,8 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_SOLICITOR_BOTH_APPLIED_CO_FO),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(caseId)
         );
         verifyNoMoreInteractions(notificationService);
         verify(commonContent).basicTemplateVars(caseData, caseId);

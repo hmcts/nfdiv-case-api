@@ -33,7 +33,8 @@ public class Applicant2RemindAwaitingJointFinalOrderNotification implements Appl
                 caseData.getApplicant2().getEmail(),
                 JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER,
                 getTemplateVars(caseData, caseId),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

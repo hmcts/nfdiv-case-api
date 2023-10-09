@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerHwfApplicationAcceptedTest {
@@ -57,7 +58,7 @@ class CaseworkerHwfApplicationAcceptedTest {
             )
             .build();
 
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerHwfApplicationAccepted
@@ -87,7 +88,7 @@ class CaseworkerHwfApplicationAcceptedTest {
             )
             .build();
 
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerHwfApplicationAccepted
@@ -105,7 +106,7 @@ class CaseworkerHwfApplicationAcceptedTest {
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .build();
 
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerHwfApplicationAccepted

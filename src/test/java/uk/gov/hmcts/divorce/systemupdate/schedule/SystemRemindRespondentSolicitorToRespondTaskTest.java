@@ -60,6 +60,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class SystemRemindRespondentSolicitorToRespondTaskTest {
@@ -115,7 +116,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         CaseDetails details1 = CaseDetails.builder()
             .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
                 "applicant2SolicitorEmail", "abc@gm.com"))
-            .id(1L)
+            .id(TEST_CASE_ID)
             .build();
 
         List<CaseDetails> caseDetailsList = List.of(details1);
@@ -128,7 +129,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         remindRespondentSolicitorToRespondTask.run();
 
         verify(ccdUpdateService, times(1))
-            .submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -156,7 +157,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     @Test
     void shouldContinueToNextCaseIfCcdManagementExceptionIsThrownWhileProcessingPreviousCase() {
         CaseDetails details1 = CaseDetails.builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
                 "applicant2SolicitorEmail", "abc@gm.com"))
             .build();
@@ -174,18 +175,18 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
 
         remindRespondentSolicitorToRespondTask.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldContinueToNextCaseIfIllegalArgumentExceptionIsThrownWhileProcessingPreviousCase() {
         CaseDetails details1 = CaseDetails.builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
                 "applicant2SolicitorEmail", "abc@gm.com"))
             .build();
@@ -204,11 +205,11 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new IllegalArgumentException())
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
 
         remindRespondentSolicitorToRespondTask.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND, user, SERVICE_AUTHORIZATION);
     }
 

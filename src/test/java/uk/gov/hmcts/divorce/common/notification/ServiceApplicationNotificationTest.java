@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -61,7 +62,7 @@ class ServiceApplicationNotificationTest {
     private static final YesOrNo NOT_GRANTED = YesOrNo.NO;
     private static final YesOrNo GRANTED = YesOrNo.YES;
 
-    private static final Long ID = 1234567890123456L;
+    private static final Long ID = TEST_CASE_ID;
 
     @Test
     void shouldSendDeemedAsServedServiceApplicationRejectedEmailToSoleApplicantWithDivorceContent() {
@@ -78,7 +79,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -97,7 +99,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -116,7 +119,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, YES),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -145,7 +149,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, YES),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -164,7 +169,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, YES),
                 hasEntry(IS_BAILIFF_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -183,7 +189,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -202,7 +209,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -221,7 +229,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -252,7 +261,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_BAILIFF_SERVICE, YES),
                 hasEntry(PARTNER, "gŵr")
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -260,7 +270,7 @@ class ServiceApplicationNotificationTest {
     void getEmailTemplateShouldThrowErrorIfServiceApplicationGrantedIsNull() {
         assertThatExceptionOfType(NotificationTemplateException.class)
             .isThrownBy(() -> sendNotification(BAILIFF, DIVORCE, null))
-            .withMessage("Notification failed with missing field 'serviceApplicationGranted' for Case Id: 1234567890123456");
+            .withMessage("Notification failed with missing field 'serviceApplicationGranted' for Case Id: 1616591401473378");
     }
 
     @Test

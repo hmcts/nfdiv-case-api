@@ -79,7 +79,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                     email,
                     SOLE_APPLICANT_APPLICATION_ACCEPTED,
                     soleApplicant1TemplateVars(caseData, caseId, languagePreference),
-                    languagePreference
+                    languagePreference,
+                    caseId
                 );
             }
         } else {
@@ -89,7 +90,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_APPLICATION_ACCEPTED,
                 commonTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                languagePreference
+                languagePreference,
+                caseId
             );
         }
     }
@@ -108,7 +110,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 APPLICANT_SOLICITOR_SERVICE,
                 templateVars(caseData, caseId, languagePreference),
-                languagePreference
+                languagePreference,
+                caseId
             );
         } else if (caseData.getApplicationType().isSole()) {
 
@@ -120,7 +123,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                     ? SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE
                     : SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                languagePreference
+                languagePreference,
+                caseId
             );
         } else if (!caseData.getApplicationType().isSole()) {
             log.info("Sending Notice Of Proceedings email to applicant 1 solicitor for joint case.  Case ID: {}", caseId);
@@ -129,7 +133,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                ENGLISH,
+                caseId);
         }
     }
 
@@ -147,7 +152,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                     email,
                     SOLE_RESPONDENT_APPLICATION_ACCEPTED,
                     soleRespondentTemplateVars(caseData, caseId),
-                    languagePreference
+                    languagePreference,
+                    caseId
                 );
             }
         } else {
@@ -157,7 +163,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_APPLICATION_ACCEPTED,
                 commonTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                languagePreference
+                languagePreference,
+                caseId
             );
         }
     }
@@ -174,7 +181,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH
+                ENGLISH,
+                caseId
             );
 
         } else if (!caseData.getApplicationType().isSole() && !caseData.getApplication().isSolicitorServiceMethod()) {
@@ -184,7 +192,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
+                ENGLISH,
+                caseId);
         }
     }
 

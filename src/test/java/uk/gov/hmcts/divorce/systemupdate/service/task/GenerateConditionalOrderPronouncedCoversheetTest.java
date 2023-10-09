@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +37,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 
@@ -55,7 +56,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         data.setApplicationType(JOINT_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 
@@ -74,7 +75,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
         data.setApplicationType(JOINT_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 

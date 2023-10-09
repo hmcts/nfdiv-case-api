@@ -91,15 +91,15 @@ public class CaseworkerRejectedIT {
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData,
-                        CASEWORKER_REJECTED,
-                        Submitted.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData,
+                            CASEWORKER_REJECTED,
+                            Submitted.name())))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()

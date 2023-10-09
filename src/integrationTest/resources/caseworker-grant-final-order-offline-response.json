@@ -57,7 +57,7 @@
     "dateFinalOrderEligibleFrom": "2021-12-21",
     "grantedDate": "2022-02-15T13:39:00.000",
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
-    "confidentialDocumentsGenerated" : [
+    "confidentialDocumentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {

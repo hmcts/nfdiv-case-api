@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenResendInviteTest {
@@ -56,7 +57,7 @@ class CitizenResendInviteTest {
 
     @Test
     public void dataUnchangedWhenApplicant2IsRepresented() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -70,7 +71,7 @@ class CitizenResendInviteTest {
 
     @Test
     public void dataUnchangedWhenValidationFails() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseDetails.setData(caseData);
@@ -83,7 +84,7 @@ class CitizenResendInviteTest {
 
     @Test
     public void errorReturnedWhenValidationFails() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseDetails.setData(caseData);
@@ -100,7 +101,7 @@ class CitizenResendInviteTest {
         ReflectionTestUtils.setField(citizenResendInvite, "toLinkToCaseOffsetDays", TO_LINK_TO_CASE_BY_OFFSET_DAYS);
         setMockClock(clock);
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
 

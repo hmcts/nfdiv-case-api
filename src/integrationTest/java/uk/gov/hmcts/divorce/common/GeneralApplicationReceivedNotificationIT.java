@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
@@ -78,7 +79,8 @@ public class GeneralApplicationReceivedNotificationIT {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISPENSE_SERVICE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            anyLong()
         );
     }
 
@@ -107,7 +109,8 @@ public class GeneralApplicationReceivedNotificationIT {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISPENSE_SERVICE, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
     }
 }
