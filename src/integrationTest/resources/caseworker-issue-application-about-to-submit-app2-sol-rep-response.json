@@ -42,10 +42,14 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "serviceMethod": "courtService",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -53,40 +57,45 @@
     },
     "documentUploadComplete": "Yes",
     "issueDate": "2021-06-17",
-    "applicationPayments": [{
-      "value": {
-        "feeCode": "FEE0001",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online",
-        "reference": "paymentRef",
-        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
       }
-    }],
+    ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "documentsGenerated": [{
-      "id": "Divorce application",
-      "value": {
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-          "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
-        },
-        "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
-        "documentType": "application"
+    "documentsGenerated": [
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          },
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application"
+        }
+      },
+      {
+        "id": "Notice of proceeding respondent",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          },
+          "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedingsApp2"
+        }
       }
-    }, {
-      "id": "Notice of proceeding respondent",
-      "value": {
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
-          "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
-        },
-        "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
-        "documentType": "noticeOfProceedingsApp2"
-      }
-    }],
+    ],
     "dueDate": "2021-07-03",
     "dataVersion": 5,
     "warnings": []

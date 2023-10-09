@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_AP
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,11 +52,11 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
 
         solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
-        verify(ccdUpdateService).submitEvent(1L, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -70,10 +71,10 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
 
         solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
-        verify(ccdUpdateService).submitEvent(1L, APPLICANT_2_APPROVE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, APPLICANT_2_APPROVE, user, SERVICE_AUTHORIZATION);
     }
 }

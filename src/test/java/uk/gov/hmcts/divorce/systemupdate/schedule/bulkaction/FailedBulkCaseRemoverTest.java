@@ -30,6 +30,7 @@ import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class FailedBulkCaseRemoverTest {
@@ -47,7 +48,7 @@ class FailedBulkCaseRemoverTest {
         final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("2", "4");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
         failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
@@ -58,7 +59,7 @@ class FailedBulkCaseRemoverTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             List.of(2L, 4L),
-            1L,
+            TEST_CASE_ID,
             SYSTEM_REMOVE_FAILED_CASES,
             user,
             SERVICE_AUTHORIZATION);
@@ -73,7 +74,7 @@ class FailedBulkCaseRemoverTest {
         final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
         failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
@@ -83,7 +84,7 @@ class FailedBulkCaseRemoverTest {
             SERVICE_AUTHORIZATION);
 
         verify(ccdUpdateService).submitBulkActionEvent(
-            1L,
+            TEST_CASE_ID,
             SYSTEM_EMPTY_CASE,
             user,
             SERVICE_AUTHORIZATION);
@@ -95,7 +96,7 @@ class FailedBulkCaseRemoverTest {
         final User user = mock(User.class);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
 
         failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
             emptyList(),
@@ -113,13 +114,13 @@ class FailedBulkCaseRemoverTest {
         final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("2", "4");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Message", null))
             .when(ccdUpdateService).submitBulkActionEvent(
                 List.of(2L, 4L),
-                1L,
+                TEST_CASE_ID,
                 SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 SERVICE_AUTHORIZATION);
@@ -142,12 +143,12 @@ class FailedBulkCaseRemoverTest {
         final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Message", null))
             .when(ccdUpdateService).submitBulkActionEvent(
-                1L,
+                TEST_CASE_ID,
                 SYSTEM_EMPTY_CASE,
                 user,
                 SERVICE_AUTHORIZATION);

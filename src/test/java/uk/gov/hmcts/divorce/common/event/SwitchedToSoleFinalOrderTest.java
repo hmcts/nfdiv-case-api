@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICAN
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,7 +77,7 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Test
     void shouldNotSwitchDataAndSetApplicationTypeToSoleIfTriggeredByApplicant1() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -94,7 +95,7 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Test
     void shouldSwitchDataAndSetApplicationTypeToSoleIfTriggeredByApplicant2() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -115,7 +116,7 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Test
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD36SwitchToSole() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
         caseData.setFinalOrder(FinalOrder.builder()
@@ -136,7 +137,7 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Test
     void shouldNotSwitchRolesIfApplicant2TriggeredD36SwitchToSoleAndIsNewPaperCase() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setNewPaperCase(YES);
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
@@ -158,7 +159,7 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Test
     void shouldNotSwitchUserDataOrRolesIfApplicant1TriggeredD36SwitchToSole() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
         caseData.setFinalOrder(FinalOrder.builder()
@@ -178,7 +179,7 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Test
     void shouldSendNotificationsInSubmittedCallback() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -193,7 +194,7 @@ public class SwitchedToSoleFinalOrderTest {
     @Test
     void shouldPassCaseDetailsToGeneralReferralService() {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         switchedToSoleFinalOrder.submitted(caseDetails, null);
 

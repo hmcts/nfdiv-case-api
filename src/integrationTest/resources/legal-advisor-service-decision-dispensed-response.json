@@ -15,9 +15,10 @@
           "serviceApplicationGranted": "Yes",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
           "deemedServiceDate": "${json-unit.any-string}",
-          "serviceApplicationOutcomeLabel":"${json-unit.any-string}"
+          "serviceApplicationOutcomeLabel": "${json-unit.any-string}"
         }
-      }],
+      }
+    ],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

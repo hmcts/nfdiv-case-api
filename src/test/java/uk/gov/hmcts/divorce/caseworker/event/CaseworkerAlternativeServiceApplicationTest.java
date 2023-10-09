@@ -58,7 +58,7 @@ class CaseworkerAlternativeServiceApplicationTest {
         setMockClock(clock);
 
         CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, null);
 

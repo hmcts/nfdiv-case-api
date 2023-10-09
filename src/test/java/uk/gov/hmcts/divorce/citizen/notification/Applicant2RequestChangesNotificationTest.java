@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APP
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT2_REQUESTED_CHANGES;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -71,11 +72,11 @@ class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -85,9 +86,10 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DIVORCE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -98,11 +100,11 @@ class Applicant2RequestChangesNotificationTest {
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DISSOLUTION_URL, "sign in dissolution link"));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -112,9 +114,10 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DIVORCE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -125,11 +128,11 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
             .thenReturn(getBasicTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -141,9 +144,10 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DIVORCE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -154,11 +158,11 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
             .thenReturn(getBasicTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -170,9 +174,10 @@ class Applicant2RequestChangesNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DIVORCE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -181,18 +186,19 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -205,10 +211,10 @@ class Applicant2RequestChangesNotificationTest {
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(PARTNER, "gŵr");
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -218,9 +224,10 @@ class Applicant2RequestChangesNotificationTest {
                     hasEntry(PARTNER, "gŵr")
                 )
             ),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -232,18 +239,19 @@ class Applicant2RequestChangesNotificationTest {
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -258,10 +266,10 @@ class Applicant2RequestChangesNotificationTest {
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         templateVars.put(PARTNER, "gwraig");
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -271,9 +279,10 @@ class Applicant2RequestChangesNotificationTest {
                     hasEntry(PARTNER, "gwraig")
                 )
             ),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -283,18 +292,19 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -307,17 +317,18 @@ class Applicant2RequestChangesNotificationTest {
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES),
             any(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 }

@@ -89,7 +89,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData.builder().build();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =

@@ -96,7 +96,7 @@ public class Applicant1SolicitorSwitchToSoleCoTest {
 
     @Test
     void shouldKeepSameStateIfInJSAwaitingLA() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
@@ -110,7 +110,7 @@ public class Applicant1SolicitorSwitchToSoleCoTest {
 
     @Test
     void shouldProgressStateIfNotInStateJSAwaitingLA() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)

@@ -71,7 +71,8 @@ class Applicant1IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             INTEND_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -93,7 +94,8 @@ class Applicant1IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             INTEND_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            WELSH
+            WELSH,
+            TEST_CASE_ID
         );
     }
 
@@ -115,7 +117,8 @@ class Applicant1IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -138,7 +141,8 @@ class Applicant1IntendToSwitchToSoleFoNotificationTest {
             TEST_USER_EMAIL,
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO,
             templateContent,
-            WELSH
+            WELSH,
+            TEST_CASE_ID
         );
     }
 
@@ -179,7 +183,8 @@ class Applicant1IntendToSwitchToSoleFoNotificationTest {
             eq(caseData.getApplicant2().getSolicitor().getEmail()),
             eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR),
             anyMap(),
-            eq(caseData.getApplicant2().getLanguagePreference())
+            eq(caseData.getApplicant2().getLanguagePreference()),
+            eq(TEST_CASE_ID)
         );
     }
 }

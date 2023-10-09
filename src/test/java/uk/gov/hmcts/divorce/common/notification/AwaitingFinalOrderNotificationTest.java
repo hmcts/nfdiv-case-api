@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINA
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -90,10 +91,10 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -103,10 +104,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -117,10 +119,10 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(JOINT_APPLICATION);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -131,10 +133,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -146,10 +149,10 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -160,10 +163,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -175,10 +179,10 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -188,10 +192,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -202,7 +207,7 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(SOLE_APPLICATION);
 
-        awaitingFinalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -215,10 +220,10 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(JOINT_APPLICATION);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -229,10 +234,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -244,10 +250,10 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -258,10 +264,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -271,10 +278,10 @@ class AwaitingFinalOrderNotificationTest {
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
-        awaitingFinalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -285,10 +292,11 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.NO),
                 hasEntry(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS, "21 March 2022")
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -305,10 +313,10 @@ class AwaitingFinalOrderNotificationTest {
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
         data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
-        awaitingFinalOrderNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -317,7 +325,7 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, String.join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME)),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
@@ -325,7 +333,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_JOINT, NO),
                 hasEntry(FINAL_ORDER_OVERDUE_DATE, coGrantedDate.plusMonths(12).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -343,10 +352,10 @@ class AwaitingFinalOrderNotificationTest {
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
         data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
-        awaitingFinalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        awaitingFinalOrderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -355,7 +364,7 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(APPLICANT_NAME, String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, String.join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME)),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(UNION_TYPE, DIVORCE),
                 hasEntry(DATE_OF_ISSUE, LocalDate.of(2021, 6, 18).format(DATE_TIME_FORMATTER)),
                 hasEntry(SOLICITOR_REFERENCE, "ref"),
@@ -363,7 +372,8 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_JOINT, YES),
                 hasEntry(FINAL_ORDER_OVERDUE_DATE, coGrantedDate.plusMonths(12).format(DATE_TIME_FORMATTER))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 

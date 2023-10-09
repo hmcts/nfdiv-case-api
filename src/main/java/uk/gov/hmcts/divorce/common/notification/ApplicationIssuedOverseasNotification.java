@@ -33,7 +33,8 @@ public class ApplicationIssuedOverseasNotification implements ApplicantNotificat
             caseData.getApplicant1().getEmail(),
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED,
             overseasRespondentTemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 

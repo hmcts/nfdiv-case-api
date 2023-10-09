@@ -44,7 +44,8 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             caseData.getApplicant1().getEmail(),
             CITIZEN_CONDITIONAL_ORDER_REFUSED,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -59,7 +60,8 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             applicant.getSolicitor().getEmail(),
             SOLICITOR_CO_REFUSED_SOLE_JOINT,
             commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
-            ENGLISH
+            ENGLISH,
+            caseId
         );
 
         log.info("Successfully sent CO refused notification to applicant 1 solicitor as required more info for case : {}", caseId);
@@ -86,7 +88,8 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
                 caseData.getApplicant2EmailAddress(),
                 CITIZEN_CONDITIONAL_ORDER_REFUSED,
                 templateVars,
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -102,7 +105,8 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             applicant.getSolicitor().getEmail(),
             SOLICITOR_CO_REFUSED_SOLE_JOINT,
             commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
-            ENGLISH
+            ENGLISH,
+            caseId
         );
 
         log.info("Successfully sent CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);

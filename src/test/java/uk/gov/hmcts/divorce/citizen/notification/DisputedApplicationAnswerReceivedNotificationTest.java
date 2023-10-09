@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -71,13 +72,14 @@ class DisputedApplicationAnswerReceivedNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SOLICITOR_REFERENCE, "not provided"),
                 hasEntry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 hasEntry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME))
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -103,7 +105,8 @@ class DisputedApplicationAnswerReceivedNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "solicitor reference"),
                 hasEntry(SIGN_IN_URL, "http://professional-signin-url/" + TEST_CASE_ID)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 }

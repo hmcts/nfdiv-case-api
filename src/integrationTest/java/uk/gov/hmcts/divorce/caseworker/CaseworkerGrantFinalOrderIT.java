@@ -48,6 +48,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -196,16 +197,16 @@ public class CaseworkerGrantFinalOrderIT {
         stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_GRANT_FINAL_ORDER)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk())
@@ -254,9 +255,9 @@ public class CaseworkerGrantFinalOrderIT {
                 .build()
         ));
         caseData.getDocuments().setGeneralOrderDocumentNames(DynamicList.builder()
-                .value(DynamicListElement.builder()
-                    .label("generalOrder2023-07-03 17:17:30.pdf")
-                    .build())
+            .value(DynamicListElement.builder()
+                .label("generalOrder2023-07-03 17:17:30.pdf")
+                .build())
             .build());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -481,14 +482,16 @@ public class CaseworkerGrantFinalOrderIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOLICITOR_FINAL_ORDER_GRANTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
                 eq(SOLICITOR_FINAL_ORDER_GRANTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -528,14 +531,16 @@ public class CaseworkerGrantFinalOrderIT {
                 eq("applicant@email.com"),
                 eq(APPLICANTS_FINAL_ORDER_GRANTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq("respondent@email.com"),
                 eq(APPLICANTS_FINAL_ORDER_GRANTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -558,16 +563,16 @@ public class CaseworkerGrantFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_GRANT_FINAL_ORDER)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk());
@@ -577,14 +582,16 @@ public class CaseworkerGrantFinalOrderIT {
                 eq("applicant@email.com"),
                 eq(APPLICANTS_FINAL_ORDER_GRANTED),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq("respondent@email.com"),
                 eq(APPLICANTS_FINAL_ORDER_GRANTED),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -635,16 +642,16 @@ public class CaseworkerGrantFinalOrderIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_GRANT_FINAL_ORDER)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_GRANT_FINAL_ORDER)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk());

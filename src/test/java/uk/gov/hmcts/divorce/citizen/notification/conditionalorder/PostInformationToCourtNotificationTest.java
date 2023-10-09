@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.POST_INFORMATION_TO_COURT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -52,62 +53,64 @@ class PostInformationToCourtNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant1CaseData();
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(ApplicationType.SOLE_APPLICATION));
 
-        postInformationToCourtNotification.sendToApplicant1(data, 1234567890123456L);
+        postInformationToCourtNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(POST_INFORMATION_TO_COURT),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO),
                 hasEntry(WIFE_JOINT, CommonContent.NO),
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendWelshEmailToApplicant1WithDivorceContentIfLanguagePreferenceIsWelsh() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(ApplicationType.SOLE_APPLICATION));
 
-        postInformationToCourtNotification.sendToApplicant1(data, 1234567890123456L);
+        postInformationToCourtNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(POST_INFORMATION_TO_COURT),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO),
                 hasEntry(WIFE_JOINT, CommonContent.NO),
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldNotSendEmailToApplicant2WhenSoleApplication() {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(ApplicationType.JOINT_APPLICATION));
 
-        postInformationToCourtNotification.sendToApplicant2(data, 1234567890123456L);
+        postInformationToCourtNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(commonContent);
         verifyNoInteractions(notificationService);
@@ -118,26 +121,27 @@ class PostInformationToCourtNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.setApplicationType(JOINT_APPLICATION);
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(ApplicationType.JOINT_APPLICATION));
 
-        postInformationToCourtNotification.sendToApplicant2(data, 1234567890123456L);
+        postInformationToCourtNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(POST_INFORMATION_TO_COURT),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES),
                 hasEntry(WIFE_JOINT, CommonContent.YES),
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -146,25 +150,26 @@ class PostInformationToCourtNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.setApplicationType(JOINT_APPLICATION);
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(ApplicationType.JOINT_APPLICATION));
 
-        postInformationToCourtNotification.sendToApplicant2(data, 1234567890123456L);
+        postInformationToCourtNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(POST_INFORMATION_TO_COURT),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES),
                 hasEntry(WIFE_JOINT, CommonContent.YES),
                 hasEntry(HUSBAND_JOINT, CommonContent.NO),
                 hasEntry(CIVIL_PARTNER_JOINT, CommonContent.NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 }

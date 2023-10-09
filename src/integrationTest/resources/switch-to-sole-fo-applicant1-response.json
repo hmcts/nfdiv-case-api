@@ -28,7 +28,9 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1HWFNeedHelp": "No",
     "applicant2InviteEmailAddress": "applicant2@test.com",

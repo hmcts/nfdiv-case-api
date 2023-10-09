@@ -34,25 +34,29 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant2HWFNeedHelp": "No",
     "divorceWho": "wife",
     "switchedToSoleCo": "Yes",
     "applicant2InviteEmailAddress": "test@test.com",
     "coSwitchedToSole": "Yes",
-    "documentsGenerated": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "${json-unit.any-string}",
-          "document_filename": "conditionalOrderAnswers.pdf",
-          "document_binary_url": "${json-unit.any-string}"
-        },
-        "documentFileName": "conditionalOrderAnswers.pdf",
-        "documentType": "conditionalOrderAnswers"
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "conditionalOrderAnswers.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "conditionalOrderAnswers.pdf",
+          "documentType": "conditionalOrderAnswers"
+        }
       }
-    }],
+    ],
     "dataVersion": 5,
     "warnings": []
   }

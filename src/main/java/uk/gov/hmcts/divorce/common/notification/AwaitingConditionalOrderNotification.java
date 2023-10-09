@@ -55,7 +55,8 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
             applicant1.getEmail(),
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
             templateVars,
-            applicant1.getLanguagePreference()
+            applicant1.getLanguagePreference(),
+            id
         );
     }
 
@@ -71,7 +72,8 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 applicant1.getSolicitor().getEmail(),
                 APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER,
                 templateVars,
-                applicant1.getLanguagePreference()
+                applicant1.getLanguagePreference(),
+                id
             );
         } else {
             templateVars.put(IS_CONDITIONAL_ORDER, YES);
@@ -81,7 +83,8 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 applicant1.getSolicitor().getEmail(),
                 JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
                 templateVars,
-                applicant1.getLanguagePreference()
+                applicant1.getLanguagePreference(),
+                id
             );
         }
     }
@@ -104,7 +107,8 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 applicant2.getEmail(),
                 CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
                 templateVars,
-                applicant2.getLanguagePreference()
+                applicant2.getLanguagePreference(),
+                id
             );
         }
     }
@@ -123,7 +127,8 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
                 applicant2.getSolicitor().getEmail(),
                 JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR,
                 templateVars,
-                applicant2.getLanguagePreference()
+                applicant2.getLanguagePreference(),
+                id
             );
         }
     }

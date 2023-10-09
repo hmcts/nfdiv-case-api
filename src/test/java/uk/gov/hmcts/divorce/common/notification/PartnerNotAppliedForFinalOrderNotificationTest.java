@@ -64,7 +64,8 @@ public class PartnerNotAppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER),
             eq(templateVars),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -93,7 +94,8 @@ public class PartnerNotAppliedForFinalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE_FINAL_ORDER),
             eq(templateVars),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1());
     }
@@ -117,7 +119,8 @@ public class PartnerNotAppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER),
             eq(templateVars),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
@@ -191,7 +194,8 @@ public class PartnerNotAppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER),
             eq(templateVars),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }
@@ -220,7 +224,8 @@ public class PartnerNotAppliedForFinalOrderNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE_FINAL_ORDER),
             eq(templateVars),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2());
     }
@@ -244,7 +249,8 @@ public class PartnerNotAppliedForFinalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER),
             eq(templateVars),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
     }

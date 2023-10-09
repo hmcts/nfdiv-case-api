@@ -34,7 +34,8 @@ public class RespondentApplyForFinalOrderNotification implements ApplicantNotifi
             caseData.getApplicant2EmailAddress(),
             RESPONDENT_APPLY_FOR_FINAL_ORDER,
             templateVars(caseData, id, applicant2, applicant1),
-            applicant2.getLanguagePreference()
+            applicant2.getLanguagePreference(),
+            id
         );
     }
 

@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ISSUE_D
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemNotifyApplicantDisputeFormOverdueTaskTest {
@@ -82,13 +83,13 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
 
     @Test
     void shouldSubmitNotificationEventIfNotAlreadyDone() {
-        final CaseDetails case1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
+        final CaseDetails case1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(List.of(case1));
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -103,33 +104,33 @@ class SystemNotifyApplicantDisputeFormOverdueTaskTest {
 
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
-        CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
+        CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
         CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(List.of(caseDetails1, caseDetails2));
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
             .submitEvent(2L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
+        CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
         CaseDetails caseDetails2 = CaseDetails.builder().data(new HashMap<>()).id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding))
             .thenReturn(caseDetailsList);
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 }

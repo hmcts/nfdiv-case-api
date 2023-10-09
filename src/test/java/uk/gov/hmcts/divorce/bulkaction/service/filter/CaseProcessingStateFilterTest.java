@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +53,7 @@ class CaseProcessingStateFilterTest {
         when(ccdSearchService.searchForCases(List.of("1", "2", "3", "4"), user, SERVICE_AUTHORIZATION))
             .thenReturn(asList(
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
-                    .id(1L)
+                    .id(TEST_CASE_ID)
                     .state(AwaitingPronouncement.name())
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()

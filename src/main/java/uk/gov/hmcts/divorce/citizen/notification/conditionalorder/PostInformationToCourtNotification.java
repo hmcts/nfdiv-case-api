@@ -27,7 +27,8 @@ public class PostInformationToCourtNotification implements ApplicantNotification
             caseData.getApplicant1().getEmail(),
             POST_INFORMATION_TO_COURT,
             commonContent.conditionalOrderTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -39,7 +40,8 @@ public class PostInformationToCourtNotification implements ApplicantNotification
                 caseData.getApplicant2EmailAddress(),
                 POST_INFORMATION_TO_COURT,
                 commonContent.conditionalOrderTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

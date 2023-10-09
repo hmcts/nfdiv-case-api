@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class BulkCaseProcessingServiceTest {
@@ -45,7 +46,7 @@ class BulkCaseProcessingServiceTest {
             .build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(bulkActionCaseData);
 
         bulkCaseProcessingService.updateBulkCase(
@@ -56,7 +57,7 @@ class BulkCaseProcessingServiceTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkCaseTask,
-            1L,
+            TEST_CASE_ID,
             SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION);
@@ -74,7 +75,7 @@ class BulkCaseProcessingServiceTest {
             .build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(bulkActionCaseData);
 
         bulkCaseProcessingService.updateBulkCase(
@@ -85,7 +86,7 @@ class BulkCaseProcessingServiceTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkCaseTask,
-            1L,
+            TEST_CASE_ID,
             SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION);

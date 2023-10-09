@@ -76,7 +76,8 @@ public class GeneralEmailNotification {
                 emailTo,
                 templateId,
                 templateVars,
-                ENGLISH
+                ENGLISH,
+                caseId
             );
             log.info("Successfully sent general email notification for case id: {}", caseId);
         }

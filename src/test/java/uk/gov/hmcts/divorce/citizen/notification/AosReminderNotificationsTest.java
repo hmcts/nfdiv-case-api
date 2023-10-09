@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
@@ -76,25 +77,26 @@ class AosReminderNotificationsTest {
         data.setCaseInvite(new CaseInvite("applicant2@test.com", ACCESS_CODE, null));
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -110,25 +112,26 @@ class AosReminderNotificationsTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -141,7 +144,7 @@ class AosReminderNotificationsTest {
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 
-        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }
@@ -154,7 +157,7 @@ class AosReminderNotificationsTest {
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 
-        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -167,7 +170,7 @@ class AosReminderNotificationsTest {
         data.getApplicant2().setEmail(null);
         data.setCaseInvite(new CaseInvite(null, null, null));
 
-        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -178,23 +181,24 @@ class AosReminderNotificationsTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        aosReminderNotifications.sendToApplicant1(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -202,12 +206,12 @@ class AosReminderNotificationsTest {
         CaseData data = validCaseDataForIssueApplication();
         data.getApplicant1().setOffline(YesOrNo.YES);
 
-        aosReminderNotifications.sendToApplicant1Offline(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verify(aosOverduePrinter).sendLetterToApplicant(
             data,
             data.getApplicant1(),
-            1234567890123456L
+            TEST_CASE_ID
         );
     }
 
@@ -226,7 +230,7 @@ class AosReminderNotificationsTest {
             .county("Florida")
             .country("United States")
             .build());
-        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -238,23 +242,24 @@ class AosReminderNotificationsTest {
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        aosReminderNotifications.sendToApplicant1(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 }

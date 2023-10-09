@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemProgressCasesToAw
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemProgressCasesToAwaitingFinalOrderTaskTest {
@@ -83,7 +84,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
         when(caseDetails2.getId()).thenReturn(2L);
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
@@ -91,7 +92,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
@@ -110,7 +111,7 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         task.run();
 
         verify(ccdUpdateService, never())
-            .submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -148,15 +149,15 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
         verify(ccdUpdateService)
-            .submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
             .submitEvent(2L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
@@ -174,15 +175,15 @@ class SystemProgressCasesToAwaitingFinalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, ConditionalOrderPronounced))
             .thenReturn(caseDetailsList);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
         when(caseDetails2.getId()).thenReturn(2L);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 }

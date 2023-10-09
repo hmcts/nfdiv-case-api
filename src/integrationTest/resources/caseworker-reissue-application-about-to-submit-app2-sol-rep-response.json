@@ -6,27 +6,22 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
-
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
-
     "applicant2LanguagePreferenceWelsh": "No",
-
     "applicant2Address": {
       "AddressLine1": "line 1",
       "PostTown": "town",
       "PostCode": "postcode"
     },
-
     "applicant2Gender": "male",
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "testsol",
@@ -48,7 +43,9 @@
     "jurisdictionConnections": [
       "A"
     ],
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -68,18 +65,19 @@
         }
       }
     ],
-    "documentsGenerated": [{
-      "id": "Notice of proceeding respondent",
-      "value": {
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94",
-          "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
-        },
-        "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
-        "documentType": "noticeOfProceedingsApp2"
-      }
-    },
+    "documentsGenerated": [
+      {
+        "id": "Notice of proceeding respondent",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94",
+            "document_filename": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/rf939456-4c5c-491c-9b7f-22056412ff94/binary"
+          },
+          "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "noticeOfProceedingsApp2"
+        }
+      },
       {
         "id": "Notice of proceeding applicant",
         "value": {
@@ -91,7 +89,8 @@
           "documentFileName": "noticeOfProceedings-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "noticeOfProceedings"
         }
-      }],
+      }
+    ],
     "dueDate": "2021-07-03"
   },
   "state": "AwaitingAos"

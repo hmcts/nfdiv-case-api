@@ -138,11 +138,11 @@ public class SwitchedToSoleFinalOrderIT {
         setupMocks(true, false);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "AwaitingFinalOrder")))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -183,11 +183,11 @@ public class SwitchedToSoleFinalOrderIT {
         ).thenReturn(caseRolesResponse);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -213,11 +213,11 @@ public class SwitchedToSoleFinalOrderIT {
         setupMocks(false, false);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -247,9 +247,9 @@ public class SwitchedToSoleFinalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -259,7 +259,7 @@ public class SwitchedToSoleFinalOrderIT {
         dataAfterSwitchToSoleFo.getApplication().setIssueDate(LocalDate.now());
         dataAfterSwitchToSoleFo.getApplicant2().setSolicitorRepresented(YES);
         dataAfterSwitchToSoleFo.getApplicant2().setSolicitor(Solicitor.builder()
-                .email(TEST_SOLICITOR_EMAIL)
+            .email(TEST_SOLICITOR_EMAIL)
             .build());
         dataAfterSwitchToSoleFo.setFinalOrder(FinalOrder.builder()
             .doesApplicant1IntendToSwitchToSole(YES)
@@ -274,9 +274,9 @@ public class SwitchedToSoleFinalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 

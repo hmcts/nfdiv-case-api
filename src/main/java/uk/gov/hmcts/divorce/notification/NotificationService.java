@@ -32,9 +32,10 @@ public class NotificationService {
         String destinationAddress,
         EmailTemplateName template,
         Map<String, String> templateVars,
-        LanguagePreference languagePreference
+        LanguagePreference languagePreference,
+        Long caseId
     ) {
-        String referenceId = UUID.randomUUID().toString();
+        String referenceId = String.format("%s-%s", caseId,  UUID.randomUUID());
 
         try {
             String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());

@@ -339,14 +339,16 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -442,7 +444,8 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
@@ -451,7 +454,8 @@ public class CaseworkerIssueApplicationIT {
                 argThat(allOf(
                     hasEntry(CommonContent.PARTNER, "gwraig"))
                 ),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -598,14 +602,16 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -631,14 +637,14 @@ public class CaseworkerIssueApplicationIT {
         stubAosPackSendLetterToApplicant2();
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk());
 
@@ -647,14 +653,16 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -742,7 +750,8 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -781,7 +790,8 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -870,7 +880,8 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_USER_EMAIL),
                 eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -908,14 +919,14 @@ public class CaseworkerIssueApplicationIT {
         stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andReturn();
@@ -999,14 +1010,16 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(JOINT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -1113,14 +1126,16 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
                 eq(JOINT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -1166,14 +1181,14 @@ public class CaseworkerIssueApplicationIT {
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andReturn();
@@ -1261,13 +1276,15 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -1343,14 +1360,16 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -1467,7 +1486,8 @@ public class CaseworkerIssueApplicationIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_SERVICE),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -1509,14 +1529,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk());
 
@@ -1527,7 +1547,8 @@ public class CaseworkerIssueApplicationIT {
                 argThat(allOf(
                     hasEntry("union type", DIVORCE_WELSH)
                 )),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -2142,7 +2163,7 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_JOINT_TEMPLATE_ID,
-                "FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx");
+            "FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2153,14 +2174,14 @@ public class CaseworkerIssueApplicationIT {
         stubAosPackSendLetterToApplicant2();
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andReturn()
@@ -2170,8 +2191,8 @@ public class CaseworkerIssueApplicationIT {
         assertThatJson(response)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(
-                TestResourceUtil.expectedResponse(
-                    JOINT_APPLICATION_CASEWORKER_ISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT)
+                    TestResourceUtil.expectedResponse(
+                        JOINT_APPLICATION_CASEWORKER_ISSUE_APPLICATION_JS_ABOUT_TO_SUBMIT)
                 )
             );
         verifyNoMoreInteractions(bulkPrintService);
@@ -2249,7 +2270,7 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID,
-                "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
+            "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -2288,8 +2309,8 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
-                .name("Sol1")
-                .reference("1234")
+            .name("Sol1")
+            .reference("1234")
             .build());
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
@@ -2306,9 +2327,9 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
             "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
-                "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID,
-                "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
+            "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -2373,7 +2394,7 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
             "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Joint.docx");
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_JOINT_TEMPLATE_ID,
-                "FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx");
+            "FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx");
         stubForDocAssemblyWith(SOLICITOR_COVERSHEET_ID, "FL-NFD-GOR-ENG-Solicitor-Coversheet.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);

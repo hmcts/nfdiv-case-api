@@ -103,11 +103,11 @@ public class CaseworkerWithdrawnIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_WITHDRAWN)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_WITHDRAWN)))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
@@ -125,14 +125,16 @@ public class CaseworkerWithdrawnIT {
                 eq(TEST_USER_EMAIL),
                 eq(CITIZEN_APPLICATION_WITHDRAWN),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(CITIZEN_APPLICATION_WITHDRAWN),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -152,11 +154,11 @@ public class CaseworkerWithdrawnIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_WITHDRAWN)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_WITHDRAWN)))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
@@ -174,14 +176,16 @@ public class CaseworkerWithdrawnIT {
                 eq(TEST_USER_EMAIL),
                 eq(CITIZEN_APPLICATION_WITHDRAWN),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(CITIZEN_APPLICATION_WITHDRAWN),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }

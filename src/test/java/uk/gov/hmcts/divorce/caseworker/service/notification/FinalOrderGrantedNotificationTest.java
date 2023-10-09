@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GR
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -58,8 +59,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 public class FinalOrderGrantedNotificationTest {
-
-    private static final long TEST_CASE_ID = 1234567890123456L;
 
     @Mock
     private CommonContent commonContent;
@@ -100,7 +99,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANTS_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -133,7 +133,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -182,7 +183,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLICITOR_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -214,7 +216,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICANTS_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -248,7 +251,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -296,7 +300,8 @@ public class FinalOrderGrantedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLICITOR_FINAL_ORDER_GRANTED),
             eq(templateContent),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 

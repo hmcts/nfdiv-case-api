@@ -32,6 +32,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -95,10 +96,10 @@ public class CitizenSubmitApplicationIT {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseData(), CITIZEN_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseData(), CITIZEN_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -120,17 +121,17 @@ public class CitizenSubmitApplicationIT {
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH), anyLong());
 
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
@@ -148,10 +149,10 @@ public class CitizenSubmitApplicationIT {
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
             )
@@ -170,10 +171,10 @@ public class CitizenSubmitApplicationIT {
         data.getApplicant2().setEmail("onlineApplicant2@email.com");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorResponse()));
     }
@@ -181,9 +182,9 @@ public class CitizenSubmitApplicationIT {
     @Test
     public void givenRequestBodyIsNullWhenEndpointInvokedThenReturnBadRequest() throws Exception {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest());
     }
 
@@ -192,10 +193,10 @@ public class CitizenSubmitApplicationIT {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant2CaseData(), CITIZEN_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(validApplicant2CaseData(), CITIZEN_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -215,10 +216,10 @@ public class CitizenSubmitApplicationIT {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForJointApplicationResponse()));
     }
@@ -229,10 +230,10 @@ public class CitizenSubmitApplicationIT {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT, Draft.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToSubmitCallbackErrorForApplicant2OfflineJointApplicationResponse()));
     }

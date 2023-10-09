@@ -74,7 +74,8 @@ public class GeneralEmailNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_PETITIONER),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -103,7 +104,8 @@ public class GeneralEmailNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_RESPONDENT),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -160,7 +162,8 @@ public class GeneralEmailNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(GENERAL_EMAIL_PETITIONER_SOLICITOR),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -192,7 +195,8 @@ public class GeneralEmailNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(GENERAL_EMAIL_RESPONDENT_SOLICITOR),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -221,7 +225,8 @@ public class GeneralEmailNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_OTHER_PARTY),
             anyMap(),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
     }
 }

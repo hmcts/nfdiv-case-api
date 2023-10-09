@@ -71,7 +71,8 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW,
             templateVars,
-            languagePreference
+            languagePreference,
+            id
         );
     }
 
@@ -87,7 +88,8 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
             caseData.getApplicant2EmailAddress(),
             emailTemplate,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 
@@ -99,7 +101,8 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
             caseData.getApplicant2().getSolicitor().getEmail(),
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_SOLICITOR,
             solicitorTemplateVars(caseData, caseId),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId
         );
     }
 

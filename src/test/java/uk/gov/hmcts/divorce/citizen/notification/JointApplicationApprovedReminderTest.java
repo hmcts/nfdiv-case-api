@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -54,10 +55,10 @@ class JointApplicationApprovedReminderTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationApprovedReminder.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -66,9 +67,10 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -79,10 +81,10 @@ class JointApplicationApprovedReminderTest {
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
         data.getApplication().setApplicant2HelpWithFees(hwf);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationApprovedReminder.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -91,9 +93,10 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -103,9 +106,9 @@ class JointApplicationApprovedReminderTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
         final Map<String, String> templateVars = getMainTemplateVars();
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationApprovedReminder.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -114,9 +117,10 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -130,9 +134,9 @@ class JointApplicationApprovedReminderTest {
         data.getApplication().setApplicant2HelpWithFees(hwf);
         final HashMap<String, String> templateVars = new HashMap<>();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationApprovedReminder.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -141,9 +145,10 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -157,10 +162,10 @@ class JointApplicationApprovedReminderTest {
         data.getApplication().setApplicant1HelpWithFees(hwf);
         data.getApplication().setApplicant2HelpWithFees(hwf);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        jointApplicationApprovedReminder.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationApprovedReminder.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -169,8 +174,9 @@ class JointApplicationApprovedReminderTest {
                 hasEntry(IS_REMINDER, YES),
                 hasEntry(PAYS_FEES, NO)
             )),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 }

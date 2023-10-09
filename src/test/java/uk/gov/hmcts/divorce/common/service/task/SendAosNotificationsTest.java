@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SendAosNotificationsTest {
@@ -43,12 +44,12 @@ class SendAosNotificationsTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         sendAosNotifications.apply(caseDetails);
 
-        verify(notificationDispatcher).send(soleApplicationDisputedNotification, caseData, 1L);
+        verify(notificationDispatcher).send(soleApplicationDisputedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -62,12 +63,12 @@ class SendAosNotificationsTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         sendAosNotifications.apply(caseDetails);
 
-        verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseData, 1L);
+        verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 }

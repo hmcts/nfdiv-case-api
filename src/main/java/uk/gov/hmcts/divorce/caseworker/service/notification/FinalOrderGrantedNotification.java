@@ -57,7 +57,8 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
             solicitorTemplateContent(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
         );
     }
 
@@ -77,14 +78,16 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
                 caseData.getApplicant1().getEmail(),
                 FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT,
                 commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         } else {
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
                 commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -106,14 +109,16 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
                 caseData.getApplicant2().getEmail(),
                 FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT,
                 commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         } else {
             notificationService.sendEmail(
                 caseData.getApplicant2().getEmail(),
                 APPLICANTS_FINAL_ORDER_GRANTED,
                 commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -126,7 +131,8 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLICITOR_FINAL_ORDER_GRANTED,
             solicitorTemplateContent(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId
         );
     }
 

@@ -104,7 +104,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -138,7 +138,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -170,7 +170,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -204,7 +204,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -238,7 +238,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -273,7 +273,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -306,7 +306,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
@@ -341,7 +341,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant1Name("app1fname app1lname");
+        marriageDetails.setApplicant1Name("app1fname app1Lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);

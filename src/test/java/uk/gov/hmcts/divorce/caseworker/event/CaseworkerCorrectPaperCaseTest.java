@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCorrectPaperCase.C
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerCorrectPaperCaseTest {
@@ -96,7 +97,7 @@ public class CaseworkerCorrectPaperCaseTest {
             )
         );
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =

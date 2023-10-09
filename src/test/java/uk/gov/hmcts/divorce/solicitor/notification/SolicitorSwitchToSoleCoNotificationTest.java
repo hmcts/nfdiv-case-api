@@ -65,7 +65,8 @@ class SolicitorSwitchToSoleCoNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICANT_NAME, caseData.getApplicant1().getFullName())
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1());
@@ -93,7 +94,8 @@ class SolicitorSwitchToSoleCoNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICANT_NAME, caseData.getApplicant2().getFullName())
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent).solicitorTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2());
@@ -114,7 +116,8 @@ class SolicitorSwitchToSoleCoNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(PARTNER_SWITCHED_TO_SOLE_CO),
             eq(templateVars),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
@@ -136,7 +139,8 @@ class SolicitorSwitchToSoleCoNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(PARTNER_SWITCHED_TO_SOLE_CO),
             eq(templateVars),
-            eq(WELSH)
+            eq(WELSH),
+            eq(TEST_CASE_ID)
         );
 
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());

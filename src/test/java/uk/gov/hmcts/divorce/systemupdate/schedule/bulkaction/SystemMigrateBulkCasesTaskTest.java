@@ -107,7 +107,7 @@ public class SystemMigrateBulkCasesTaskTest {
     void shouldContinueProcessingIfThereIsConflictDuringSubmission() {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
-                .id(1L)
+                .id(TEST_CASE_ID)
                 .data(new HashMap<>())
                 .build();
 
@@ -156,7 +156,7 @@ public class SystemMigrateBulkCasesTaskTest {
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
         final CaseDetails caseDetails1 =
             CaseDetails.builder()
-                .id(1L)
+                .id(TEST_CASE_ID)
                 .data(new HashMap<>())
                 .build();
 

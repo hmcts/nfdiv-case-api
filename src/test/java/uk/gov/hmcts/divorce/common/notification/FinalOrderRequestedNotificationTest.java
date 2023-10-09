@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonCont
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -73,9 +74,9 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant1().setSolicitor(Solicitor.builder()
                 .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
@@ -84,11 +85,12 @@ class FinalOrderRequestedNotificationTest {
                         hasEntry(IS_FINAL_ORDER, YES),
                         hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName())
                 )),
-                eq(ENGLISH)
+                eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -104,9 +106,9 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant2().setSolicitor(Solicitor.builder()
                 .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn(getFinalOrderSolicitorsVars(data, data.getApplicant2()));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getFinalOrderSolicitorsVars(data, data.getApplicant2()));
 
-        notification.sendToApplicant2Solicitor(data, 1L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
@@ -115,11 +117,12 @@ class FinalOrderRequestedNotificationTest {
                         hasEntry(IS_FINAL_ORDER, YES),
                         hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName())
                 )),
-                eq(ENGLISH)
+                eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -131,7 +134,7 @@ class FinalOrderRequestedNotificationTest {
                 .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
                 .build());
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -142,7 +145,7 @@ class FinalOrderRequestedNotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant2Solicitor(data, 1L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -156,10 +159,10 @@ class FinalOrderRequestedNotificationTest {
             .applicant2AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -168,11 +171,12 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, YES),
                 hasEntry(IS_OVERDUE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -184,10 +188,10 @@ class FinalOrderRequestedNotificationTest {
             .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
             .dateFinalOrderNoLongerEligible(getExpectedLocalDate().plusDays(30)).build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -196,11 +200,12 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, YES),
                 hasEntry(IS_OVERDUE, NO)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -217,9 +222,9 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant1().setSolicitor(Solicitor.builder()
             .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -229,11 +234,12 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(SOLICITOR_NAME, data.getApplicant1().getSolicitor().getName()),
                 hasEntry(APPLICANT_1_OVERDUE_CONTENT, APPLICANT_1_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -252,9 +258,9 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant2().setSolicitor(Solicitor.builder()
             .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, 1L)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant2())));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant2())));
 
-        notification.sendToApplicant2Solicitor(data, 1L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -264,11 +270,12 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(SOLICITOR_NAME, data.getApplicant2().getSolicitor().getName()),
                 hasEntry(APPLICANT_2_OVERDUE_CONTENT, APPLICANT_2_CONTENT)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, 1L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -280,10 +287,10 @@ class FinalOrderRequestedNotificationTest {
             .isFinalOrderOverdue(YesOrNo.YES)
             .applicant1FinalOrderLateExplanation("Forgot").build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -293,11 +300,12 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, NO),
                 hasEntry(IS_OVERDUE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -313,10 +321,10 @@ class FinalOrderRequestedNotificationTest {
             .isFinalOrderOverdue(YesOrNo.YES)
             .applicant2FinalOrderLateExplanation("Forgot").build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -326,10 +334,11 @@ class FinalOrderRequestedNotificationTest {
                 hasEntry(IN_TIME, NO),
                 hasEntry(IS_OVERDUE, YES)
             )),
-            eq(ENGLISH)
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 }

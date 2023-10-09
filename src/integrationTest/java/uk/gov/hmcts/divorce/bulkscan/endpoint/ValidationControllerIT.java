@@ -52,13 +52,13 @@ public class ValidationControllerIT {
     @Test
     public void givenValidOcrDataThenValidationSuccess() throws Exception {
         mockMvc.perform(post("/forms/D8/validate-ocr")
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                OcrDataValidationRequest.builder()
-                    .ocrDataFields(populateD8OcrDataFields())
-                    .build()))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    OcrDataValidationRequest.builder()
+                        .ocrDataFields(populateD8OcrDataFields())
+                        .build()))
+                .accept(APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-success-response.json")));
@@ -67,18 +67,18 @@ public class ValidationControllerIT {
     @Test
     public void givenIncompleteOcrDataThenValidationWarnings() throws Exception {
         mockMvc.perform(post("/forms/D8/validate-ocr")
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                OcrDataValidationRequest.builder()
-                    .ocrDataFields(
-                        List.of(
-                            new OcrDataField("applicationForDivorce", "true"),
-                            new OcrDataField("aSoleApplication", "true")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    OcrDataValidationRequest.builder()
+                        .ocrDataFields(
+                            List.of(
+                                new OcrDataField("applicationForDivorce", "true"),
+                                new OcrDataField("aSoleApplication", "true")
+                            )
                         )
-                    )
-                    .build()))
-            .accept(APPLICATION_JSON))
+                        .build()))
+                .accept(APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-warning-response.json")));
@@ -87,18 +87,18 @@ public class ValidationControllerIT {
     @Test
     public void givenInvalidFormTypeThenValidationErrors() throws Exception {
         mockMvc.perform(post("/forms/invalid/validate-ocr")
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                OcrDataValidationRequest.builder()
-                    .ocrDataFields(
-                        List.of(
-                            new OcrDataField("applicationForDivorce", "true"),
-                            new OcrDataField("aSoleApplication", "true")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    OcrDataValidationRequest.builder()
+                        .ocrDataFields(
+                            List.of(
+                                new OcrDataField("applicationForDivorce", "true"),
+                                new OcrDataField("aSoleApplication", "true")
+                            )
                         )
-                    )
-                    .build()))
-            .accept(APPLICATION_JSON))
+                        .build()))
+                .accept(APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-error-response.json")));

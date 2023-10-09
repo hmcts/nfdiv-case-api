@@ -23,6 +23,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -135,7 +136,8 @@ public class CaseworkerMakeBailiffDecisionIT {
                 jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );
 
-        verify(notificationService, never()).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH));
+        verify(notificationService, never()).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH),
+            anyLong());
     }
 
     @Test
@@ -153,16 +155,16 @@ public class CaseworkerMakeBailiffDecisionIT {
         caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_BAILIFF_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_BAILIFF_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
     }
@@ -205,7 +207,7 @@ public class CaseworkerMakeBailiffDecisionIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -225,23 +227,24 @@ public class CaseworkerMakeBailiffDecisionIT {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_BAILIFF_DECISION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_BAILIFF_DECISION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SERVICE_APPLICATION_REJECTED),
             anyMap(),
-            eq(WELSH)
+            eq(WELSH),
+            anyLong()
         );
     }
 

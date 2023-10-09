@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DAT
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemProgressHeldCasesTaskTest {
@@ -78,14 +79,14 @@ class SystemProgressHeldCasesTaskTest {
 
     @Test
     void shouldTriggerAwaitingConditionalOrderOnEachCaseAndSendNotificationWhenCaseHasFinishedHoldingPeriod() {
-        final CaseDetails caseDetails = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
+        final CaseDetails caseDetails = CaseDetails.builder().data(new HashMap<>()).id(TEST_CASE_ID).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails);
         when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding)).thenReturn(caseDetailsList);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -107,14 +108,14 @@ class SystemProgressHeldCasesTaskTest {
         when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding)).thenReturn(caseDetailsList);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never()).submitEvent(2L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
     }
 
@@ -126,15 +127,15 @@ class SystemProgressHeldCasesTaskTest {
         when(holdingPeriodService.getHoldingPeriodInDays()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding)).thenReturn(caseDetailsList);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
         when(caseDetails2.getId()).thenReturn(2L);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
     }
 }

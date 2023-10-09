@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SuperuserRemoveCaseFromBulkList.SUPERUSER_REMOVE_CASE_BULK_LIST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SuperuserRemoveCaseFromBulkListTest {
@@ -64,7 +65,7 @@ class SuperuserRemoveCaseFromBulkListTest {
 
         details.setData(BulkActionCaseData.builder().build());
         details.getData().setBulkListCaseDetails(singletonList(listValue));
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
             superuserRemoveCaseFromBulkList.aboutToStart(details);
@@ -78,7 +79,7 @@ class SuperuserRemoveCaseFromBulkListTest {
     void shouldReturnEmptyListInAboutToStartIfBulkListCaseDetailIsNull() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
             superuserRemoveCaseFromBulkList.aboutToStart(details);
@@ -92,7 +93,7 @@ class SuperuserRemoveCaseFromBulkListTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
         details.getData().setBulkListCaseDetails(emptyList());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
             superuserRemoveCaseFromBulkList.aboutToStart(details);
@@ -128,7 +129,7 @@ class SuperuserRemoveCaseFromBulkListTest {
         details.setData(BulkActionCaseData.builder().build());
         details.getData().setBulkListCaseDetails(singletonList(bulkListCaseDetailsListValue));
         details.getData().setCasesAcceptedToListForHearing(List.of(caseLinkListValue1, caseLinkListValue2));
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
             superuserRemoveCaseFromBulkList.midEvent(details, details);
@@ -173,7 +174,7 @@ class SuperuserRemoveCaseFromBulkListTest {
         details.setData(BulkActionCaseData.builder().build());
         details.getData().setBulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2));
         details.getData().setCasesAcceptedToListForHearing(List.of(caseLinkListValue1, caseLinkListValue2));
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
             superuserRemoveCaseFromBulkList.midEvent(details, details);
@@ -202,7 +203,7 @@ class SuperuserRemoveCaseFromBulkListTest {
         details.setData(BulkActionCaseData.builder().build());
         details.getData().setBulkListCaseDetails(singletonList(bulkListCaseDetailsListValue));
         details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue));
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
             superuserRemoveCaseFromBulkList.midEvent(details, details);
@@ -244,7 +245,7 @@ class SuperuserRemoveCaseFromBulkListTest {
                 .documentType(DocumentType.PRONOUNCEMENT_LIST)
                 .build())
             .build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
             superuserRemoveCaseFromBulkList.aboutToSubmit(details, details);

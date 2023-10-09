@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
@@ -97,7 +98,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         CaseDetails caseDetails1 = CaseDetails.builder()
             .data(new HashMap<>())
-            .id(1L).build();
+            .id(TEST_CASE_ID).build();
 
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
 
@@ -120,7 +121,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdUpdateService);
     }
@@ -143,7 +144,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         CaseDetails caseDetails1 = CaseDetails.builder()
             .data(data)
-            .id(1L).build();
+            .id(TEST_CASE_ID).build();
 
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
 
@@ -158,7 +159,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdUpdateService);
     }
@@ -172,7 +173,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         CaseDetails caseDetails1 = CaseDetails.builder()
             .data(data)
-            .id(1L).build();
+            .id(TEST_CASE_ID).build();
 
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
 
@@ -208,7 +209,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         CaseDetails caseDetails1 = CaseDetails.builder()
             .data(data)
-            .id(1L).build();
+            .id(TEST_CASE_ID).build();
 
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
 
@@ -255,7 +256,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         CaseDetails caseDetails1 = CaseDetails.builder()
             .data(data)
-            .id(1L).build();
+            .id(TEST_CASE_ID).build();
 
         CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
 
@@ -278,11 +279,11 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService)
-            .submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
             .submitEvent(2L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
     }
@@ -296,7 +297,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         CaseDetails caseDetails1 = CaseDetails.builder()
             .data(data1)
-            .id(1L).build();
+            .id(TEST_CASE_ID).build();
 
         Map<String, Object> data2 = new HashMap<>();
         data2.put("coApplicant2IsSubmitted", "Yes");
@@ -335,11 +336,11 @@ class SystemNotifyJointApplicantCanSwitchToSoleTaskTest {
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService)
-            .submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
 
         notifyJointApplicantCanSwitchToSoleTask.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE, user, SERVICE_AUTHORIZATION);
     }
 }

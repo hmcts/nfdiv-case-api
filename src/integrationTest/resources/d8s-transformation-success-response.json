@@ -8,8 +8,8 @@
       "paperFormApplicant1SigningSOT": "Yes",
       "applicant1HWFAppliedForFees": "No",
       "sentNotifications": {},
-    "coCronRetriesRemindApplicantApplyCo": 0,
-      "marriageCertifiedTranslation" : "No",
+      "coCronRetriesRemindApplicantApplyCo": 0,
+      "marriageCertifiedTranslation": "No",
       "scannedDocuments": [
         {
           "id": "${json-unit.any-string}",
@@ -84,8 +84,12 @@
       "applicant1PhoneNumber": "",
       "applicant2HWFNeedHelp": "Yes",
       "applicant1ScreenHasMarriageBroken": "Yes",
-      "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
-      "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+      "applicant1PrayerDissolveDivorce": [
+        "dissolveDivorce"
+      ],
+      "applicant2PrayerDissolveDivorce": [
+        "dissolveDivorce"
+      ],
       "jurisdictionConnections": [
         "A"
       ],

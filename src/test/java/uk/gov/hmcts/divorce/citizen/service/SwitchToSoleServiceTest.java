@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -127,7 +128,7 @@ public class SwitchToSoleServiceTest {
 
     @Test
     void shouldSwitchCitizenUserRolesIfApplicant2TriggeredD84SwitchToSole() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder().build();
 
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
@@ -190,7 +191,7 @@ public class SwitchToSoleServiceTest {
 
     @Test
     void shouldSwitchSolicitorUserRolesIfApplicant2SolicitorTriggeredSwitchToSoleCo() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().solicitorRepresented(YES).build())
             .applicant2(Applicant.builder().solicitorRepresented(YES).build())
@@ -256,7 +257,7 @@ public class SwitchToSoleServiceTest {
 
     @Test
     void shouldSwitchCitizenAndSolicitorUserRolesIfApplicant2SolicitorTriggeredSwitchToSoleAndApplicant1Citizen() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().solicitorRepresented(NO).build())
             .applicant2(Applicant.builder().solicitorRepresented(YES).build())
@@ -322,7 +323,7 @@ public class SwitchToSoleServiceTest {
 
     @Test
     void shouldSwitchSolicitorAndCitizenUserRolesIfApplicant2SolicitorTriggeredSwitchToSoleAndApplicant1Citizen() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().solicitorRepresented(YES).build())
             .applicant2(Applicant.builder().solicitorRepresented(NO).build())
@@ -396,7 +397,7 @@ public class SwitchToSoleServiceTest {
     private CaseAssignmentUserRoleWithOrganisation getCaseAssignmentUserRole(String role, String userId) {
         return CaseAssignmentUserRoleWithOrganisation.builder()
             .organisationId(null)
-            .caseDataId(String.valueOf(1L))
+            .caseDataId(String.valueOf(TEST_CASE_ID))
             .caseRole(role)
             .userId(userId)
             .build();

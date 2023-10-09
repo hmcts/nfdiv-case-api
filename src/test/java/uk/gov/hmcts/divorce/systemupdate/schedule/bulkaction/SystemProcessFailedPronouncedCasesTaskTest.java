@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemProcessFailedPronouncedCasesTaskTest {
@@ -65,7 +66,7 @@ class SystemProcessFailedPronouncedCasesTaskTest {
         final var bulkActionCaseData = BulkActionCaseData.builder().build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails1 = new CaseDetails<>();
-        caseDetails1.setId(1L);
+        caseDetails1.setId(TEST_CASE_ID);
         caseDetails1.setData(bulkActionCaseData);
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails2 = new CaseDetails<>();

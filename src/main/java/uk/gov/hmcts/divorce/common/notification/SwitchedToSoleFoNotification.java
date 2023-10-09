@@ -44,7 +44,8 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             SOLE_APPLIED_FOR_FINAL_ORDER,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -61,7 +62,8 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
             caseData.getApplicant2().getEmail(),
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER,
             templateVars,
-            caseData.getApplicant2().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference(),
+            id
         );
     }
 
@@ -79,7 +81,8 @@ public class SwitchedToSoleFoNotification implements ApplicantNotification {
             applicant.getSolicitor().getEmail(),
             SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER,
             templateVars,
-            applicant.getLanguagePreference()
+            applicant.getLanguagePreference(),
+            caseId
         );
     }
 }

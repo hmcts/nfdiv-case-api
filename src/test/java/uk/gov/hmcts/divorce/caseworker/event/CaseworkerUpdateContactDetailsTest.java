@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateContactDetai
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerUpdateContactDetailsTest {
@@ -54,7 +55,7 @@ class CaseworkerUpdateContactDetailsTest {
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder().build();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         caseworkerUpdateContactDetails.aboutToSubmit(details, null);
 

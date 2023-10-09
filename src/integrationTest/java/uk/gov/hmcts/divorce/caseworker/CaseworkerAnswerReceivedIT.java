@@ -115,10 +115,10 @@ public class CaseworkerAnswerReceivedIT {
             ).build();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_ADD_ANSWER, Holding.toString())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_ADD_ANSWER, Holding.toString())))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -136,10 +136,10 @@ public class CaseworkerAnswerReceivedIT {
             ).build();
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_ADD_ANSWER)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_ADD_ANSWER)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationDispatcher).send(any(DisputedApplicationAnswerReceivedNotification.class), any(CaseData.class), anyLong());

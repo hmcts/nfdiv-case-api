@@ -56,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,7 +113,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .applicationType(SOLE_APPLICATION)
             .build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
@@ -129,7 +130,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .applicationType(SOLE_APPLICATION)
             .build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
@@ -139,7 +140,7 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetDateSubmittedForApplicant2OnAboutToSubmit() {
         setupMocks(clock);
-        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
@@ -148,7 +149,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .applicationType(JOINT_APPLICATION)
             .build();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
@@ -166,7 +167,7 @@ class SubmitConditionalOrderTest {
             .build());
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderDrafted).id(1L).build();
+            .data(caseData).state(ConditionalOrderDrafted).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -187,7 +188,7 @@ class SubmitConditionalOrderTest {
                 .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderPending).id(1L).build();
+            .data(caseData).state(ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -208,7 +209,7 @@ class SubmitConditionalOrderTest {
                 .statementOfTruth(YES).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderPending).id(1L).build();
+            .data(caseData).state(ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -225,7 +226,7 @@ class SubmitConditionalOrderTest {
                 .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(AwaitingConditionalOrder).id(1L).build();
+            .data(caseData).state(AwaitingConditionalOrder).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -235,7 +236,7 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateToWelshTranslationReviewIfSoleApplicationAndApp1LanguagePreferenceWelshIsYes() {
+    void shouldSetStateToWelshTranslationReviewIfSoleApplicationAndapp1LanguagePreferenceWelshIsYes() {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -244,7 +245,7 @@ class SubmitConditionalOrderTest {
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(AwaitingConditionalOrder).id(1L).build();
+            .data(caseData).state(AwaitingConditionalOrder).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -253,7 +254,7 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateToWelshTranslationReviewIfJointApplicationAndApp1LanguagePreferenceWelshIsYesAndCoSubmitted() {
+    void shouldSetStateToWelshTranslationReviewIfJointApplicationAndapp1LanguagePreferenceWelshIsYesAndCoSubmitted() {
         setupMocks(null);
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -264,7 +265,7 @@ class SubmitConditionalOrderTest {
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderPending).id(1L).build();
+            .data(caseData).state(ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -284,7 +285,7 @@ class SubmitConditionalOrderTest {
             .build());
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderPending).id(1L).build();
+            .data(caseData).state(ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -295,28 +296,28 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSendApp1NotificationsOnSubmittedCallback() {
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
-        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
 
         CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         submitConditionalOrder.submitted(caseDetails, null);
 
-        verify(notificationDispatcher).send(app1AppliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
     void shouldSendApp2NotificationsOnAboutToSubmit() {
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
-        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
 
         CaseData caseData = caseData();
         caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(YES);
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         submitConditionalOrder.submitted(caseDetails, null);
 
-        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -342,7 +343,7 @@ class SubmitConditionalOrderTest {
 
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .state(AwaitingLegalAdvisorReferral)
             .build();
@@ -350,14 +351,14 @@ class SubmitConditionalOrderTest {
         CaseData caseDataBefore = caseData();
 
         final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseDataBefore)
             .state(ConditionalOrderPronounced)
             .build();
 
         submitConditionalOrder.submitted(caseDetails, beforeDetails);
 
-        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -376,7 +377,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderDrafted).id(1L).build();
+            .data(caseData).state(ConditionalOrderDrafted).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -387,7 +388,7 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetIsSubmittedForApplicant2OnAboutToSubmit() {
         setupMocks(clock);
-        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(false);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
             .application(Application.builder()
@@ -401,7 +402,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(ConditionalOrderDrafted).id(1L).build();
+            .data(caseData).state(ConditionalOrderDrafted).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -418,7 +419,7 @@ class SubmitConditionalOrderTest {
         caseData.getConditionalOrder().setLastApprovedServiceApplicationIsBailiffApplication(YES);
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -434,7 +435,7 @@ class SubmitConditionalOrderTest {
         caseData.getConditionalOrder().setServiceConfirmed(YES);
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -451,7 +452,7 @@ class SubmitConditionalOrderTest {
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -468,7 +469,7 @@ class SubmitConditionalOrderTest {
         caseData.getAlternativeService().setAlternativeServiceType(DISPENSED);
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -487,7 +488,7 @@ class SubmitConditionalOrderTest {
         );
         caseData.setCaseInvite(CaseInvite.builder().build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -508,6 +509,6 @@ class SubmitConditionalOrderTest {
             setMockClock(mockClock);
         }
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
-        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, 1L)).thenReturn(true);
+        when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
     }
 }

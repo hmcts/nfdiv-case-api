@@ -119,10 +119,10 @@ public class SystemProgressCaseToAosOverdueIT {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_PROGRESS_TO_AOS_OVERDUE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_PROGRESS_TO_AOS_OVERDUE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -133,10 +133,10 @@ public class SystemProgressCaseToAosOverdueIT {
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccess()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
 
@@ -179,7 +179,7 @@ public class SystemProgressCaseToAosOverdueIT {
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessOffline()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
 

@@ -43,7 +43,7 @@ public final class FeesWireMock {
 
     public static void stubForFeesLookup(final String feeResponse, final String event, final String service, final String keyword) {
         String url = String.format("/fees-register/fees/lookup"
-            + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family%%20court&service=%s&keyword=%s",
+                + "?channel=default&event=%s&jurisdiction1=family&jurisdiction2=family%%20court&service=%s&keyword=%s",
             event, service, keyword);
 
         FEES_SERVER.stubFor(get(url)

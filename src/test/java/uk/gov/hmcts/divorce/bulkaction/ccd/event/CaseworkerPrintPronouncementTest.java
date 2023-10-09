@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerPrintPronouncement.CASEWORKER_PRINT_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerPrintPronouncementTest {
@@ -58,7 +59,7 @@ public class CaseworkerPrintPronouncementTest {
     void shouldSuccessfullyUpdatePronouncementJudgeDetailsForCasesInBulk() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         doNothing().when(scheduleCaseService).updatePronouncementJudgeDetailsForCasesInBulk(details);
 
@@ -72,7 +73,7 @@ public class CaseworkerPrintPronouncementTest {
     void shouldSetDefaultPronouncementJudgeWhenNullInAboutToStart() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = printPronounceCase.aboutToStart(details);
 
@@ -85,7 +86,7 @@ public class CaseworkerPrintPronouncementTest {
         details.setData(BulkActionCaseData.builder()
                             .pronouncementJudge("Judge Bloggs")
                             .build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = printPronounceCase.aboutToStart(details);
 

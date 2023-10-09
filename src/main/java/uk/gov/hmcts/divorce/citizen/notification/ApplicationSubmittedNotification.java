@@ -44,7 +44,8 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
             caseData.getApplicant1().getEmail(),
             APPLICATION_SUBMITTED,
             citizenTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            id
         );
     }
 
@@ -57,7 +58,8 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
                 caseData.getApplicant2EmailAddress(),
                 JOINT_APPLICATION_SUBMITTED,
                 citizenTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                id
             );
         }
     }
@@ -73,7 +75,8 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
                 solicitorEmail,
                 SOLICITOR_JOINT_APPLICATION_SUBMITTED,
                 solicitorTemplateVars(caseData, caseId, caseData.getApplicant1()),
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                caseId
             );
         }
     }
@@ -89,7 +92,8 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
                 solicitorEmail,
                 SOLICITOR_JOINT_APPLICATION_SUBMITTED,
                 solicitorTemplateVars(caseData, caseId, caseData.getApplicant2()),
-                caseData.getApplicant2().getLanguagePreference()
+                caseData.getApplicant2().getLanguagePreference(),
+                caseId
             );
         }
     }

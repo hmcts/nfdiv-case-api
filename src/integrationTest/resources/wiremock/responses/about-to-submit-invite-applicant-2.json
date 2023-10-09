@@ -16,7 +16,9 @@
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "applicant1FinancialOrder": "No",
     "applicant1HWFNeedHelp": "No",
     "accessCode": "${json-unit.any-string}",

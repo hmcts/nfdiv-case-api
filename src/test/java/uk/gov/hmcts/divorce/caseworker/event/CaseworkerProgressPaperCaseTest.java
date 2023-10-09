@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +48,7 @@ public class CaseworkerProgressPaperCaseTest {
     @Test
     void shouldUpdateCaseStateWhenCaseworkerSelectsAwaitingPayment() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setProgressPaperCase(AWAITING_PAYMENT);
@@ -62,7 +63,7 @@ public class CaseworkerProgressPaperCaseTest {
 
     @Test
     void shouldUpdateCaseStateWhenCaseworkerSelectsAwaitingDocuments() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setProgressPaperCase(AWAITING_DOCUMENTS);
@@ -77,7 +78,7 @@ public class CaseworkerProgressPaperCaseTest {
 
     @Test
     void shouldUpdateCaseStateWhenCaseworkerSelectsSubmitted() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setProgressPaperCase(SUBMITTED);
@@ -93,7 +94,7 @@ public class CaseworkerProgressPaperCaseTest {
     @Test
     void shouldUpdateCaseStateWhenCaseworkerSelectsAwaitingHwfDecision() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setProgressPaperCase(AWAITING_HWF_DECISION);
@@ -108,7 +109,7 @@ public class CaseworkerProgressPaperCaseTest {
 
     @Test
     void shouldReturnErrorsIfCaseDataIsNotReadyForProgression() {
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
         caseDetails.setData(caseData);
