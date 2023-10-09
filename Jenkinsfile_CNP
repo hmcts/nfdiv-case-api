@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("Infrastructure")
+@Library("Infrastructure@DTSSE-3685/add-ardoq-gradle-support")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
