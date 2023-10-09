@@ -13,10 +13,26 @@
       "documentDateAdded": "${json-unit.any-string}",
       "documentType": "generalApplication"
     },
-    "generalApplications": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "generalApplicationDocument": {
+    "generalApplications": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "generalApplicationDocument": {
+            "documentLink": {
+              "document_url": "http://localhost:4200/assets/d11",
+              "document_filename": "GA.pdf",
+              "document_binary_url": "GA.pdf/binary"
+            },
+            "documentDateAdded": "${json-unit.any-string}",
+            "documentType": "generalApplication"
+          }
+        }
+      }
+    ],
+    "documentsUploaded": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
           "documentLink": {
             "document_url": "http://localhost:4200/assets/d11",
             "document_filename": "GA.pdf",
@@ -26,19 +42,7 @@
           "documentType": "generalApplication"
         }
       }
-    }],
-    "documentsUploaded": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "http://localhost:4200/assets/d11",
-          "document_filename": "GA.pdf",
-          "document_binary_url": "GA.pdf/binary"
-        },
-        "documentDateAdded": "${json-unit.any-string}",
-        "documentType": "generalApplication"
-      }
-    }],
+    ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },

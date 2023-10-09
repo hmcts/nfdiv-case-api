@@ -171,7 +171,8 @@ public class CaseworkerGeneralEmailIT {
             TEST_USER_EMAIL,
             GENERAL_EMAIL_PETITIONER,
             templateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -241,7 +242,8 @@ public class CaseworkerGeneralEmailIT {
             TEST_SOLICITOR_EMAIL,
             GENERAL_EMAIL_PETITIONER_SOLICITOR,
             templateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -305,7 +307,8 @@ public class CaseworkerGeneralEmailIT {
             TEST_USER_EMAIL,
             GENERAL_EMAIL_RESPONDENT,
             templateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -376,7 +379,8 @@ public class CaseworkerGeneralEmailIT {
             TEST_SOLICITOR_EMAIL,
             GENERAL_EMAIL_RESPONDENT_SOLICITOR,
             templateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -442,7 +446,8 @@ public class CaseworkerGeneralEmailIT {
             TEST_USER_EMAIL,
             GENERAL_EMAIL_OTHER_PARTY,
             templateVars,
-            ENGLISH
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 }

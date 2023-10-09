@@ -90,14 +90,14 @@ public class CaseworkerAddNoteIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ADD_NOTE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ADD_NOTE)))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk())
@@ -114,14 +114,14 @@ public class CaseworkerAddNoteIT {
         stubForIdamFailure();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ADD_NOTE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ADD_NOTE)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
             )

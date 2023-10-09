@@ -256,13 +256,13 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .build();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(caseData, CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                        callbackRequest(caseData, CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()

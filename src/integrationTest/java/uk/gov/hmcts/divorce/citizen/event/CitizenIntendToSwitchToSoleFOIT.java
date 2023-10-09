@@ -89,16 +89,16 @@ public class CitizenIntendToSwitchToSoleFOIT {
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(HttpHeaders.AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    data,
-                    INTEND_SWITCH_TO_SOLE_FO,
-                    "AwaitingJointFinalOrder")
-            ))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        data,
+                        INTEND_SWITCH_TO_SOLE_FO,
+                        "AwaitingJointFinalOrder")
+                ))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -125,16 +125,16 @@ public class CitizenIntendToSwitchToSoleFOIT {
         when(ccdAccessService.isApplicant2(anyString(), anyLong())).thenReturn(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(HttpHeaders.AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    data,
-                    INTEND_SWITCH_TO_SOLE_FO,
-                    "AwaitingJointFinalOrder")
-            ))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        data,
+                        INTEND_SWITCH_TO_SOLE_FO,
+                        "AwaitingJointFinalOrder")
+                ))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -162,20 +162,20 @@ public class CitizenIntendToSwitchToSoleFOIT {
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -194,20 +194,20 @@ public class CitizenIntendToSwitchToSoleFOIT {
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -225,20 +225,20 @@ public class CitizenIntendToSwitchToSoleFOIT {
         when(ccdAccessService.isApplicant2(anyString(), anyLong())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -258,20 +258,20 @@ public class CitizenIntendToSwitchToSoleFOIT {
         when(ccdAccessService.isApplicant2(anyString(), anyLong())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, INTEND_SWITCH_TO_SOLE_FO, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(INTEND_TO_SWITCH_TO_SOLE_FO), anyMap(), eq(WELSH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 }

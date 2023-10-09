@@ -29,14 +29,17 @@
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionConnections": [
+      "A"
+    ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1HWFNeedHelp": "No",
     "switchedToSoleCo": "Yes",
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "coD84WhoApplying": "applicant1",
     "coSwitchedToSole": "Yes",
-    "documentsGenerated": [{
+    "documentsGenerated": [
+      {
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
@@ -47,7 +50,8 @@
           "documentFileName": "${json-unit.any-string}",
           "documentType": "switchToSoleCoLetter"
         }
-      }],
+      }
+    ],
     "dataVersion": 5,
     "warnings": []
   }

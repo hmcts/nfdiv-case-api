@@ -44,7 +44,9 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -92,7 +94,8 @@
           "documentFileName": "noticeOfProceedingsApp2-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "noticeOfProceedingsApp2"
         }
-      }, {
+      },
+      {
         "id": "Notice of proceeding applicant",
         "value": {
           "documentLink": {

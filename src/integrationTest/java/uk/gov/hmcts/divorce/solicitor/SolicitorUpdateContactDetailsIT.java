@@ -101,11 +101,11 @@ public class SolicitorUpdateContactDetailsIT {
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
 
         final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -123,11 +123,11 @@ public class SolicitorUpdateContactDetailsIT {
         stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
 
         final String jsonStringResponse = mockMvc.perform(post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )

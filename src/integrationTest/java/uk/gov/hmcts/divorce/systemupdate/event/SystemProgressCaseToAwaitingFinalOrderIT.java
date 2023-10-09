@@ -35,6 +35,7 @@ import java.util.UUID;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -186,10 +187,10 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_APPLY_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_APPLY_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICANT_APPLY_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICANT_APPLY_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
 
@@ -202,9 +203,9 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
-                .email("app1sol@email.com")
-                .name("app1 sol")
-                .address("app1 sol address")
+            .email("app1sol@email.com")
+            .name("app1 sol")
+            .address("app1 sol address")
             .build());
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
             .email("app2sol@email.com")
@@ -227,10 +228,10 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq("app1sol@email.com"), eq(APPLY_FOR_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app1sol@email.com"), eq(APPLY_FOR_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq("app2sol@email.com"), eq(APPLY_FOR_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2sol@email.com"), eq(APPLY_FOR_FINAL_ORDER_SOLICITOR), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
 

@@ -21,9 +21,10 @@
           "serviceApplicationGranted": "No",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
           "serviceApplicationRefusalReason": "refusal reasons",
-          "serviceApplicationOutcomeLabel":" "
+          "serviceApplicationOutcomeLabel": " "
         }
-      }],
+      }
+    ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
     "documentsGenerated": [

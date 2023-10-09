@@ -52,6 +52,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -269,13 +270,13 @@ public class SubmitAosIT {
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Cy.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseData, SUBMIT_AOS, AosDrafted.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
     }
@@ -596,21 +597,21 @@ public class SubmitAosIT {
         doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
-                        .contentType(APPLICATION_JSON)
-                        .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-                        .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                        .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -641,40 +642,40 @@ public class SubmitAosIT {
         doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(SUBMITTED_URL)
-                        .contentType(APPLICATION_JSON)
-                        .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-                        .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                        .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
 
     private ListValue<ScannedDocument> aosScannedDocument() {
         return ListValue.<ScannedDocument>builder()
-                .value(
-                        ScannedDocument
-                                .builder()
-                                .url(
-                                        Document
-                                                .builder()
-                                                .url("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068")
-                                                .binaryUrl("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068/binary")
-                                                .build()
-                                )
-                                .subtype("aos")
-                                .build())
-                .build();
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .url("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068")
+                            .binaryUrl("http://localhost:8080/4cacfcd1-3588-40c2-94da-c22fb59e1068/binary")
+                            .build()
+                    )
+                    .subtype("aos")
+                    .build())
+            .build();
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulWithoutDisputeResponse() throws IOException {

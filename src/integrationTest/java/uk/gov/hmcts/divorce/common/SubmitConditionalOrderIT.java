@@ -181,7 +181,7 @@ public class SubmitConditionalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -210,11 +210,11 @@ public class SubmitConditionalOrderIT {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CONDITIONAL_ORDER)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CONDITIONAL_ORDER)))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk()
@@ -245,7 +245,7 @@ public class SubmitConditionalOrderIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(WELSH), anyLong());
     }
 
     @Test
@@ -471,7 +471,7 @@ public class SubmitConditionalOrderIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -551,7 +551,7 @@ public class SubmitConditionalOrderIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -647,10 +647,11 @@ public class SubmitConditionalOrderIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH),
+                anyLong());
     }
 
     @Test
@@ -694,10 +695,11 @@ public class SubmitConditionalOrderIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2sol@gm.com"), eq(JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app1sol@gm.com"), eq(JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER), anyMap(), eq(ENGLISH),
+                anyLong());
     }
 
     private void verifyJointCOSubmission(final ConditionalOrder conditionalOrder)
@@ -755,10 +757,10 @@ public class SubmitConditionalOrderIT {
                 status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(applicant1EmailTemplateId), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(applicant1EmailTemplateId), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq("app2@gm.com"), eq(applicant2EmailTemplateId), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2@gm.com"), eq(applicant2EmailTemplateId), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }

@@ -120,17 +120,17 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(POST_INFORMATION_TO_COURT), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(POST_INFORMATION_TO_COURT), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -148,17 +148,17 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(POST_INFORMATION_TO_COURT), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(POST_INFORMATION_TO_COURT), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -175,17 +175,17 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -202,11 +202,11 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -255,11 +255,11 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         String actualResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -286,17 +286,17 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -324,7 +324,7 @@ public class SubmitClarificationIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH), anyLong());
     }
 
 
@@ -342,19 +342,19 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -383,9 +383,9 @@ public class SubmitClarificationIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH), anyLong());
     }
 
     @Test
@@ -403,19 +403,19 @@ public class SubmitClarificationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SUBMIT_CLARIFICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -445,8 +445,8 @@ public class SubmitClarificationIT {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_PARTNER_CLARIFICATION_SUBMITTED), anyMap(), eq(WELSH), anyLong());
     }
 }

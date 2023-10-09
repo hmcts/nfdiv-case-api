@@ -55,13 +55,13 @@ public class CaseworkerUploadDocumentsAndSubmitIT {
         caseData.getApplication().setDocumentUploadComplete(YES);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseData,
-                CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    caseData,
+                    CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -77,14 +77,14 @@ public class CaseworkerUploadDocumentsAndSubmitIT {
         caseData.getApplication().setDocumentUploadComplete(NO);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseData,
-                CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT,
-                AwaitingDocuments.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    caseData,
+                    CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT,
+                    AwaitingDocuments.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -98,14 +98,14 @@ public class CaseworkerUploadDocumentsAndSubmitIT {
         caseData.getApplication().setDocumentUploadComplete(YES);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseData,
-                CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT,
-                AwaitingDocuments.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    caseData,
+                    CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT,
+                    AwaitingDocuments.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )

@@ -96,11 +96,11 @@ public class CitizenSwitchToSoleApplicationIT {
         setupMocks(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -114,9 +114,9 @@ public class CitizenSwitchToSoleApplicationIT {
             .isEqualTo(ApplicationType.SOLE_APPLICATION);
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -128,11 +128,11 @@ public class CitizenSwitchToSoleApplicationIT {
 
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "Applicant2Approved")))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "Applicant2Approved")))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -146,9 +146,9 @@ public class CitizenSwitchToSoleApplicationIT {
             .isEqualTo(ApplicationType.SOLE_APPLICATION);
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -160,11 +160,11 @@ public class CitizenSwitchToSoleApplicationIT {
         setupMocks(true);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.accessCode").doesNotExist())
             .andReturn()
@@ -180,9 +180,9 @@ public class CitizenSwitchToSoleApplicationIT {
             .isEqualTo(ApplicationType.SOLE_APPLICATION);
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -204,9 +204,9 @@ public class CitizenSwitchToSoleApplicationIT {
             .andExpect(jsonPath("$.data.applicationType").value("soleApplication"));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(WELSH), anyLong());
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(WELSH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -246,7 +246,8 @@ public class CitizenSwitchToSoleApplicationIT {
                         hasEntry(PARTNER, "gŵr")
                     )
                 ),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -256,7 +257,8 @@ public class CitizenSwitchToSoleApplicationIT {
                         hasEntry(PARTNER, "gwraig")
                     )
                 ),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 

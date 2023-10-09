@@ -4,14 +4,16 @@
     "divorceOrDissolution": "divorce",
     "coGranted": "No",
     "coRefusalDecision": "moreInfo",
-    "coLegalAdvisorDecisions": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "granted": "No",
-        "decisionDate": "${json-unit.any-string}",
-        "refusalDecision": "moreInfo"
+    "coLegalAdvisorDecisions": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "granted": "No",
+          "decisionDate": "${json-unit.any-string}",
+          "refusalDecision": "moreInfo"
+        }
       }
-    }]
+    ]
   },
   "state": "AwaitingClarification"
 }

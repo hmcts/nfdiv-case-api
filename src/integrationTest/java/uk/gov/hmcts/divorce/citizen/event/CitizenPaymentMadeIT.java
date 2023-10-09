@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -113,10 +114,10 @@ public class CitizenPaymentMadeIT {
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verifyNoInteractions(notificationService);
@@ -139,10 +140,10 @@ public class CitizenPaymentMadeIT {
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verifyNoInteractions(notificationService);
@@ -176,7 +177,7 @@ public class CitizenPaymentMadeIT {
             .andExpect(jsonPath("$.state").value("AwaitingDocuments"));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -210,7 +211,7 @@ public class CitizenPaymentMadeIT {
             .andExpect(jsonPath("$.state").value("AwaitingDocuments"));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -235,17 +236,17 @@ public class CitizenPaymentMadeIT {
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -279,10 +280,10 @@ public class CitizenPaymentMadeIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -303,10 +304,10 @@ public class CitizenPaymentMadeIT {
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verifyNoInteractions(notificationService);
@@ -331,16 +332,16 @@ public class CitizenPaymentMadeIT {
 
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(APPLICATION_SUBMITTED),
-            anyMap(),
-            eq(ENGLISH));
+                eq(TEST_USER_EMAIL),
+                eq(APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH), anyLong());
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
     }

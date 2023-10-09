@@ -86,15 +86,15 @@ public class CitizenSaveAndCloseIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SAVE_SIGN_OUT), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SAVE_SIGN_OUT), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -102,10 +102,10 @@ public class CitizenSaveAndCloseIT {
     @Test
     public void givenRequestBodyIsNullWhenEndpointInvokedThenReturnBadRequest() throws Exception {
         mockMvc.perform(post(SUBMITTED_URL)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest());
     }
 
@@ -113,17 +113,19 @@ public class CitizenSaveAndCloseIT {
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(SAVE_SIGN_OUT),
-            anyMap(),
-            eq(ENGLISH));
+                eq(TEST_USER_EMAIL),
+                eq(SAVE_SIGN_OUT),
+                anyMap(),
+                eq(ENGLISH),
+                anyLong()
+            );
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
     }

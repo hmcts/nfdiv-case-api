@@ -37,6 +37,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -138,10 +139,10 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.getApplication().setIssueDate(LocalDate.now());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -152,10 +153,11 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccess()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -176,20 +178,20 @@ public class SystemUpdateCaseWithCourtHearingIT {
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Certificate-Of-Entitlement.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -221,10 +223,11 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccess()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -258,20 +261,21 @@ public class SystemUpdateCaseWithCourtHearingIT {
         );
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
 
         verify(notificationService)
-            .sendEmail(eq("app2-solicitor@test.com"), eq(SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq("app2-solicitor@test.com"), eq(SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -310,10 +314,10 @@ public class SystemUpdateCaseWithCourtHearingIT {
         );
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -355,7 +359,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH));;
+            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
+        ;
         verifyNoMoreInteractions(notificationService);
 
         verify(bulkPrintService).print(any());

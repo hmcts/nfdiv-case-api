@@ -19,6 +19,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -74,18 +75,18 @@ public class CitizenResendInviteIT {
         data.setDueDate(LocalDate.of(2021, 6, 20));
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -101,12 +102,12 @@ public class CitizenResendInviteIT {
         final String originalAccessCode = data.getCaseInvite().accessCode();
 
         final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -135,12 +136,12 @@ public class CitizenResendInviteIT {
         data.getApplicant2().setSolicitorRepresented(YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             );
@@ -162,12 +163,12 @@ public class CitizenResendInviteIT {
         final LocalDate originalDueDate = data.getDueDate();
 
         final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -193,12 +194,12 @@ public class CitizenResendInviteIT {
         data.setApplicationType(SOLE_APPLICATION);
 
         final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(data, CITIZEN_RESEND_INVITE, String.valueOf(AwaitingApplicant2Response))))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()

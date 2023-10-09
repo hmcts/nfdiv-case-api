@@ -93,7 +93,7 @@
         }
       }
     ],
-    "confidentialDocumentsGenerated" : [
+    "confidentialDocumentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {

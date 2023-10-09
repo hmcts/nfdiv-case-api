@@ -3,7 +3,7 @@
     "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
     "supplementaryCaseType": "notApplicable",
-    "serviceMethod":"courtService",
+    "serviceMethod": "courtService",
     "applicant1FirstName": "test_first_name",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
@@ -70,7 +70,7 @@
         "OrganisationID": "Org"
       }
     },
-    "noticeOfProceedingsEmail":"solicitor@test.com",
+    "noticeOfProceedingsEmail": "solicitor@test.com",
     "documentsGenerated": [
       {
         "id": "Divorce application",

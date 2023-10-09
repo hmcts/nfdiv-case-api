@@ -1,7 +1,7 @@
 {
   "data": {
     "applicationType": "soleApplication",
-    "serviceMethod":"courtService",
+    "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
     "supplementaryCaseType": "notApplicable",
     "sentNotifications": {},
@@ -45,7 +45,9 @@
       "A"
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
@@ -54,16 +56,18 @@
     "documentUploadComplete": "Yes",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
-    "applicationPayments": [{
-      "value": {
-        "feeCode": "FEE0001",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online",
-        "reference": "paymentRef",
-        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
       }
-    }],
+    ],
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "noticeOfProceedingsEmail": "test@test.com",
     "accessCode": "${json-unit.any-string}",

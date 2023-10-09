@@ -134,8 +134,8 @@ public class CaseworkerAddBailiffReturnIT {
                             .builder()
                             .successfulServedByBailiff(NO)
                             .certificateOfServiceDate(certificateOfServiceDate)
+                            .build())
                     .build())
-                .build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

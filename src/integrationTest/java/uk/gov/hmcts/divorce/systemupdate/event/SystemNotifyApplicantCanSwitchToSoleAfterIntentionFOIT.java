@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -87,7 +88,7 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
             .build());
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
-                .email(TEST_SOLICITOR_EMAIL)
+            .email(TEST_SOLICITOR_EMAIL)
             .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
@@ -118,7 +119,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -165,7 +167,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -209,7 +212,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
                 eq(TEST_USER_EMAIL),
                 eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -235,16 +239,16 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk());
@@ -254,7 +258,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
                 eq(TEST_USER_EMAIL),
                 eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -299,7 +304,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -326,16 +332,16 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION)
+                    )
                 )
-            )
-            .accept(APPLICATION_JSON))
+                .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
                 status().isOk());
@@ -345,7 +351,8 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOIT {
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }

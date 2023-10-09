@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -139,16 +140,16 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
             .build());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(
-                    data,
-                    APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO,
-                    "ConditionalOrderPending")
-            ))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    callbackRequest(
+                        data,
+                        APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO,
+                        "ConditionalOrderPending")
+                ))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -195,12 +196,12 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
             .build());
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(data, APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    callbackRequest(data, APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationService)
@@ -208,13 +209,15 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
                 eq(app1SolicitorEmail),
                 eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
         verify(notificationService)
             .sendEmail(
                 eq(app2SolicitorEmail),
                 eq(SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -245,13 +248,15 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
                 eq(app1SolicitorEmail),
                 eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(PARTNER_SWITCHED_TO_SOLE_CO),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -269,13 +274,13 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
 
         mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(
-                callbackRequest(data, APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)
-            ))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(
+                    callbackRequest(data, APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)
+                ))
+                .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
         verify(notificationService)
@@ -283,13 +288,15 @@ public class Applicant1SolicitorSwitchToSoleCoIT {
                 eq(app1SolicitorEmail),
                 eq(SOLICITOR_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER),
                 anyMap(),
-                eq(ENGLISH));
+                eq(ENGLISH),
+                anyLong());
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(PARTNER_SWITCHED_TO_SOLE_CO),
                 anyMap(),
-                eq(WELSH));
+                eq(WELSH),
+                anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 }

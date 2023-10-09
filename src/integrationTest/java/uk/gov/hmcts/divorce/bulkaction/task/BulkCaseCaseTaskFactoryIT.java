@@ -56,7 +56,7 @@ public class BulkCaseCaseTaskFactoryIT {
 
         assertThat(caseTask.getClass().toString()).contains("PronounceCaseProvider$$Lambda");
     }
-    
+
     @Test
     void shouldReturnLinkBulkCaseProviderCaseTask() {
 

@@ -15,15 +15,17 @@
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicationPayments": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "feeCode": "FEE002",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online"
+    "applicationPayments": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "feeCode": "FEE002",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online"
+        }
       }
-    }],
+    ],
     "generalApplicationDocument": {
       "documentLink": {
         "document_url": "http://localhost:4200/assets/d11",
@@ -34,13 +36,15 @@
       "documentType": "generalApplication"
     },
     "generalApplicationFeeOrderSummary": {
-      "Fees": [{
-        "id": "1",
-        "value": {
-          "FeeCode": "FEE002",
-          "FeeDescription": "fees for divorce"
+      "Fees": [
+        {
+          "id": "1",
+          "value": {
+            "FeeCode": "FEE002",
+            "FeeDescription": "fees for divorce"
+          }
         }
-      }],
+      ],
       "PaymentTotal": "55000"
     },
     "generalApplicationFeePaymentMethod": "feePayByAccount",
@@ -50,10 +54,45 @@
       },
       "valueLabel": "PBA0012345"
     },
-    "generalApplications": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "generalApplicationDocument": {
+    "generalApplications": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "generalApplicationDocument": {
+            "documentLink": {
+              "document_url": "http://localhost:4200/assets/d11",
+              "document_filename": "GA.pdf",
+              "document_binary_url": "GA.pdf/binary"
+            },
+            "documentDateAdded": "${json-unit.any-string}",
+            "documentType": "generalApplication"
+          },
+          "generalApplicationFeeOrderSummary": {
+            "Fees": [
+              {
+                "id": "1",
+                "value": {
+                  "FeeCode": "FEE002",
+                  "FeeDescription": "fees for divorce"
+                }
+              }
+            ],
+            "PaymentTotal": "55000"
+          },
+          "generalApplicationFeePaymentMethod": "feePayByAccount",
+          "generalApplicationFeePbaNumbers": {
+            "value": {
+              "label": "PBA0012345"
+            },
+            "valueLabel": "PBA0012345"
+          }
+        }
+      }
+    ],
+    "documentsUploaded": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
           "documentLink": {
             "document_url": "http://localhost:4200/assets/d11",
             "document_filename": "GA.pdf",
@@ -61,38 +100,9 @@
           },
           "documentDateAdded": "${json-unit.any-string}",
           "documentType": "generalApplication"
-        },
-        "generalApplicationFeeOrderSummary": {
-          "Fees": [{
-            "id": "1",
-            "value": {
-              "FeeCode": "FEE002",
-              "FeeDescription": "fees for divorce"
-            }
-          }],
-          "PaymentTotal": "55000"
-        },
-        "generalApplicationFeePaymentMethod": "feePayByAccount",
-        "generalApplicationFeePbaNumbers": {
-          "value": {
-            "label": "PBA0012345"
-          },
-          "valueLabel": "PBA0012345"
         }
       }
-    }],
-    "documentsUploaded": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "http://localhost:4200/assets/d11",
-          "document_filename": "GA.pdf",
-          "document_binary_url": "GA.pdf/binary"
-        },
-        "documentDateAdded": "${json-unit.any-string}",
-        "documentType": "generalApplication"
-      }
-    }],
+    ],
     "dataVersion": 5,
     "warnings": []
   },
