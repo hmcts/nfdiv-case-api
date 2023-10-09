@@ -58,6 +58,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
@@ -106,7 +107,7 @@ public class SolicitorGeneralApplicationTest {
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setState(Holding);
         details.setData(caseData);
 
@@ -127,7 +128,7 @@ public class SolicitorGeneralApplicationTest {
         caseData.getGeneralApplication().setGeneralApplicationDocument(document);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setState(Holding);
         details.setData(caseData);
 
@@ -223,7 +224,7 @@ public class SolicitorGeneralApplicationTest {
         caseData.getApplicant2().setSolicitor(applicant2Solicitor);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final var organisationsResponse = mock(OrganisationsResponse.class);
@@ -237,7 +238,7 @@ public class SolicitorGeneralApplicationTest {
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
             caseData,
-            1L,
+            TEST_CASE_ID,
             applicant1Solicitor,
             PBA_NUMBER,
             generalApplicationOrderSummary,
@@ -260,7 +261,7 @@ public class SolicitorGeneralApplicationTest {
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setState(AwaitingPronouncement);
         details.setData(caseData);
 
@@ -310,7 +311,7 @@ public class SolicitorGeneralApplicationTest {
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final var organisationsResponse = mock(OrganisationsResponse.class);
@@ -389,7 +390,7 @@ public class SolicitorGeneralApplicationTest {
         caseData.getApplicant2().setSolicitor(applicant2Solicitor);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final var organisationsResponse = mock(OrganisationsResponse.class);
@@ -403,7 +404,7 @@ public class SolicitorGeneralApplicationTest {
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
         when(paymentService.processPbaPayment(
             caseData,
-            1L,
+            TEST_CASE_ID,
             applicant2Solicitor,
             PBA_NUMBER,
             generalApplicationOrderSummary,

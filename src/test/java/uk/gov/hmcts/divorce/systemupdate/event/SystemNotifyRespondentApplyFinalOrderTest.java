@@ -24,6 +24,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
@@ -58,7 +59,7 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         when(httpServletRequest.getHeader(AUTHORIZATION))
@@ -75,7 +76,7 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         when(httpServletRequest.getHeader(AUTHORIZATION))

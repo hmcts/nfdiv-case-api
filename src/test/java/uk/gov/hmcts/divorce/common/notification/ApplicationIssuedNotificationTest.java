@@ -113,28 +113,28 @@ public class ApplicationIssuedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(16));
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -146,28 +146,28 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(16));
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }
@@ -194,7 +194,7 @@ public class ApplicationIssuedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
@@ -202,20 +202,20 @@ public class ApplicationIssuedNotificationTest {
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -229,7 +229,7 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
@@ -238,20 +238,20 @@ public class ApplicationIssuedNotificationTest {
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -261,26 +261,26 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -292,26 +292,26 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -323,7 +323,7 @@ public class ApplicationIssuedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.put(PARTNER, "gŵr");
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
@@ -331,7 +331,7 @@ public class ApplicationIssuedNotificationTest {
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -340,9 +340,9 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -352,26 +352,26 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -383,26 +383,26 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -707,7 +707,7 @@ public class ApplicationIssuedNotificationTest {
             .country("United States")
             .build());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -720,7 +720,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
@@ -728,21 +728,21 @@ public class ApplicationIssuedNotificationTest {
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -755,27 +755,27 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(WELSH_DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {

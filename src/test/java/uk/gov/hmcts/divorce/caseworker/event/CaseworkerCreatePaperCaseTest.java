@@ -22,6 +22,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,11 +48,11 @@ public class CaseworkerCreatePaperCaseTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
-        assertThat(submitResponse.getData().getHyphenatedCaseRef()).isEqualTo("0000-0000-0000-0001");
+        assertThat(submitResponse.getData().getHyphenatedCaseRef()).isEqualTo(FORMATTED_TEST_CASE_ID);
         assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
         assertThat(submitResponse.getData().getApplication().getNewPaperCase()).isEqualTo(YES);
 
@@ -90,7 +92,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
@@ -106,7 +108,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
@@ -121,7 +123,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
@@ -137,7 +139,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
@@ -154,7 +156,7 @@ public class CaseworkerCreatePaperCaseTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 

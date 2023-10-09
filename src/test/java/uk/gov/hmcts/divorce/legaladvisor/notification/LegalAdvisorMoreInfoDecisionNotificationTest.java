@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -57,24 +58,24 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         final var data = validApplicant1CaseData();
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -82,24 +83,24 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         final var data = validJointApplicant1CaseData();
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -107,24 +108,24 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         final var data = validJointApplicant1CaseData();
 
-        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -134,7 +135,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
         verifyNoInteractions(notificationService);
     }
 
@@ -151,17 +152,17 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
             .email("sol1@gm.com")
             .build());
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq("sol1@gm.com"),
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant1(), MORE_INFO);
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), MORE_INFO);
     }
 
     @Test
@@ -178,41 +179,41 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
             .email("sol2@gm.com")
             .build());
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq("sol2@gm.com"),
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant2(), MORE_INFO);
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), MORE_INFO);
     }
 
     @Test
     void shouldSendConditionalOrderClarificationLettersToApplicant1IfOffline() {
         final var caseData = validApplicant1CaseData();
 
-        notification.sendToApplicant1Offline(caseData, 1234567890123456L);
+        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, 1234567890123456L, caseData.getApplicant1());
+        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
     }
 
     @Test
     void shouldSendConditionalOrderClarificationLettersToApplicant2IfOfflineAndJointApplication() {
         final var caseData = validJointApplicant1CaseData();
 
-        notification.sendToApplicant2Offline(caseData, 1234567890123456L);
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, 1234567890123456L, caseData.getApplicant2());
+        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
     }
 
     @Test
     void shouldNotSendConditionalOrderClarificationLettersToApplicant2IfOfflineAndSoleApplication() {
         final var caseData = validApplicant1CaseData();
 
-        notification.sendToApplicant2Offline(caseData, 1234567890123456L);
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(awaitingClarificationApplicationPrinter);
     }

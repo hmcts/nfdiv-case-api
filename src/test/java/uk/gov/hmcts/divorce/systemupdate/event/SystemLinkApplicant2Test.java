@@ -25,6 +25,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkApplicant2.SYSTEM_LINK_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -59,7 +60,7 @@ public class SystemLinkApplicant2Test {
                 .applicant2UserId("Applicant2Id")
                 .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         when(httpServletRequest.getHeader(AUTHORIZATION))
@@ -69,6 +70,6 @@ public class SystemLinkApplicant2Test {
 
         assertThat(response.getData().getCaseInvite().accessCode()).isNull();
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YesOrNo.NO);
-        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("Applicant2Id"));
+        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(TEST_CASE_ID), eq("Applicant2Id"));
     }
 }

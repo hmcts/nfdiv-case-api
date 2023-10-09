@@ -57,7 +57,7 @@ class CaseworkerRejectedTest {
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder().build();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejected.aboutToSubmit(details, null);
 

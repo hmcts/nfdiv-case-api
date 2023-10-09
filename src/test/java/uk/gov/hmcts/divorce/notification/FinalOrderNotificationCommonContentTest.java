@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonCont
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -37,12 +38,13 @@ public class FinalOrderNotificationCommonContentTest {
     @Test
     public void shouldReturnJointApplicantVars() {
         CaseData data = validJointApplicant1CaseData();
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2())).thenReturn(getMainTemplateVars());
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
 
         setMockClock(mockClock);
 
         final Map<String, String> result = finalOrderNotificationCommonContent.jointApplicantTemplateVars(
-            data, 1L, data.getApplicant1(), data.getApplicant2(), false);
+            data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2(), false);
 
         assertThat(result)
             .isNotEmpty()
@@ -56,10 +58,11 @@ public class FinalOrderNotificationCommonContentTest {
     public void shouldReturnJointApplicantVarsForReminder() {
         CaseData data = validJointApplicant1CaseData();
         data.getFinalOrder().setDateFinalOrderSubmitted(LocalDateTime.now());
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2())).thenReturn(getMainTemplateVars());
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
 
         final Map<String, String> result = finalOrderNotificationCommonContent.jointApplicantTemplateVars(
-            data, 1L, data.getApplicant1(), data.getApplicant2(), true);
+            data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2(), true);
 
         assertThat(result)
             .isNotEmpty()

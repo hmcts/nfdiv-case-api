@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReque
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerResolveWelshTranslationTest {
@@ -47,7 +48,7 @@ class CaseworkerResolveWelshTranslationTest {
                 .build())
             .build();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResolveWelshTranslation.aboutToSubmit(details, null);
 
@@ -64,7 +65,7 @@ class CaseworkerResolveWelshTranslationTest {
                 .build())
             .build();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResolveWelshTranslation.aboutToSubmit(details, null);
 

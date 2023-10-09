@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOr
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -40,7 +41,7 @@ class SystemRemindApplicantsApplyForCOrderTest {
     void shouldSetSentNotificationFlagToYesWhenAboutToSubmitCalled() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(AwaitingConditionalOrder).id(1L).data(caseData)
+            .state(AwaitingConditionalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
 

@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMA
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
@@ -78,10 +79,10 @@ class ApplicationSentForReviewNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LOCAL_DATE);
         data.setApplicant2(getApplicant2(Gender.MALE));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -90,9 +91,9 @@ class ApplicationSentForReviewNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -105,10 +106,10 @@ class ApplicationSentForReviewNotificationTest {
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.put(PARTNER, "gŵr");
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -118,20 +119,20 @@ class ApplicationSentForReviewNotificationTest {
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseState() {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -141,9 +142,9 @@ class ApplicationSentForReviewNotificationTest {
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -160,11 +161,11 @@ class ApplicationSentForReviewNotificationTest {
                             .build())
                     .build())
             .build());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -175,9 +176,9 @@ class ApplicationSentForReviewNotificationTest {
                 hasEntry(SOLICITOR_FIRM, TEST_SOLICITOR_FIRM_NAME)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -189,14 +190,14 @@ class ApplicationSentForReviewNotificationTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_SOLICITOR),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -207,10 +208,10 @@ class ApplicationSentForReviewNotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -220,8 +221,8 @@ class ApplicationSentForReviewNotificationTest {
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 }

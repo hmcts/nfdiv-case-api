@@ -51,6 +51,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -118,7 +119,7 @@ public class CaseworkerRescindConditionalOrderTest {
         );
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPronouncement);
 
@@ -185,7 +186,7 @@ public class CaseworkerRescindConditionalOrderTest {
         );
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPronouncement);
 
@@ -263,7 +264,7 @@ public class CaseworkerRescindConditionalOrderTest {
         BulkActionCaseData caseData = BulkActionCaseData.builder()
             .casesAcceptedToListForHearing(Lists.newArrayList(ListValue.<CaseLink>builder()
                     .value(CaseLink.builder()
-                        .caseReference("1")
+                        .caseReference(TEST_CASE_ID.toString())
                         .build())
                 .build()))
             .build();

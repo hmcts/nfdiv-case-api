@@ -54,6 +54,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
@@ -107,7 +108,7 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
 
     @Test
     void shouldSubmitEventResendCOPronouncedCoverLetterWhenOfflineApplicant1ContactIsPrivateAndCoverLetterIsNotInConfidentialList() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L)
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID)
             .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -120,13 +121,13 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
     @Test
     void shouldSubmitEventResendCOPronouncedCoverLetterWhenOfflineApplicant2ContactIsPrivateAndCoverLetterIsNotInConfidentialList() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L)
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID)
             .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -139,13 +140,13 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
     @Test
     void shouldNotSubmitEventResendCOPronouncedCoverLetterWhenOfflineApplicantsContactIsPublic() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L)
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID)
             .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -164,7 +165,7 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
     @Test
     void shouldNotSubmitEventResendCOPronouncedCoverLetterWhenOfflineApplicantsContactIsPrivateButCoverLettersAreAlreadyInConfidentialList(
     ) {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L)
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID)
             .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -210,7 +211,7 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
 
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L)
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID)
             .data(Map.of("applicant1Offline", "Yes"))
             .build();
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L)
@@ -226,18 +227,18 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
             .thenReturn(buildCaseDataCOPronounced(YES, PRIVATE, PUBLIC));
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
             .submitEvent(2L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L)
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID)
             .data(Map.of("applicant1Offline", "Yes"))
             .build();
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L)
@@ -255,11 +256,11 @@ class SystemResendCOPronouncedCoverLettersTaskTest {
             .thenReturn(buildCaseDataCOPronounced(YES, PUBLIC, PRIVATE));
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, SERVICE_AUTHORIZATION);
 
     }

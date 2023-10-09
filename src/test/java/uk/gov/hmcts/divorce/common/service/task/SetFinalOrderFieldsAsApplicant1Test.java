@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SetFinalOrderFieldsAsApplicant1Test {
@@ -34,7 +35,7 @@ class SetFinalOrderFieldsAsApplicant1Test {
 
         final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(AwaitingFinalOrder).id(1L).data(caseData)
+            .state(AwaitingFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant1.apply(details);
@@ -55,7 +56,7 @@ class SetFinalOrderFieldsAsApplicant1Test {
 
         final CaseData caseData = CaseData.builder().finalOrder(finalOrder).build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(AwaitingFinalOrder).id(1L).data(caseData)
+            .state(AwaitingFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant1.apply(details);
@@ -68,7 +69,7 @@ class SetFinalOrderFieldsAsApplicant1Test {
     void shouldNotUpdateFinalOrderFieldsIfNotAwaitingFinalOrder() {
         final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(AwaitingJointFinalOrder).id(1L).data(caseData)
+            .state(AwaitingJointFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant1.apply(details);

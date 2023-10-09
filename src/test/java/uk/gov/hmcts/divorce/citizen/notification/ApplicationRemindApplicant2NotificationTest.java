@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -62,11 +63,11 @@ class ApplicationRemindApplicant2NotificationTest {
     void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseStateWhenSendingReminder() {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -77,9 +78,9 @@ class ApplicationRemindApplicant2NotificationTest {
                 hasEntry(IS_REMINDER, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -89,10 +90,10 @@ class ApplicationRemindApplicant2NotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -103,9 +104,9 @@ class ApplicationRemindApplicant2NotificationTest {
                 hasEntry(IS_REMINDER, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
 
@@ -118,19 +119,19 @@ class ApplicationRemindApplicant2NotificationTest {
             .build());
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_REMINDER_WHEN_APPLICANT1_REPRESENTED),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 }

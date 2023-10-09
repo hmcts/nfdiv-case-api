@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -58,7 +59,7 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -67,7 +68,7 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAYS_FEES, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -78,7 +79,7 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -87,7 +88,7 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAYS_FEES, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -98,7 +99,7 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -108,7 +109,7 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -120,7 +121,7 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -130,7 +131,7 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -142,7 +143,7 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -152,7 +153,7 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -164,7 +165,7 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -174,7 +175,7 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -185,14 +186,14 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -204,14 +205,14 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -222,14 +223,14 @@ class Applicant2ApprovedNotificationTest {
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -241,14 +242,14 @@ class Applicant2ApprovedNotificationTest {
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT2_APPROVED_APPLICANT1_SOLICITOR),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -261,20 +262,20 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
             anyMap(),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -286,20 +287,20 @@ class Applicant2ApprovedNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             anyMap(),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 }
 

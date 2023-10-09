@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantCanSw
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -61,7 +62,7 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTest {
             .dateApplicant1DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
             .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -80,7 +81,7 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTest {
             .dateApplicant2DeclaredIntentionToSwitchToSoleFo(getExpectedLocalDate().minusDays(15))
             .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =

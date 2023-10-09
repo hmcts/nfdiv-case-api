@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -55,10 +56,10 @@ public class JointApplicationNotReviewedNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        jointApplicationNotReviewedNotification.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationNotReviewedNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -67,9 +68,9 @@ public class JointApplicationNotReviewedNotificationTest {
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -80,9 +81,9 @@ public class JointApplicationNotReviewedNotificationTest {
         data.setApplicant2(getApplicant(Gender.MALE));
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        jointApplicationNotReviewedNotification.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationNotReviewedNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -93,9 +94,9 @@ public class JointApplicationNotReviewedNotificationTest {
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -109,9 +110,9 @@ public class JointApplicationNotReviewedNotificationTest {
         data.setApplicant2(getApplicant(Gender.MALE));
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        jointApplicationNotReviewedNotification.sendToApplicant1(data, 1234567890123456L);
+        jointApplicationNotReviewedNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -121,8 +122,8 @@ public class JointApplicationNotReviewedNotificationTest {
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 }

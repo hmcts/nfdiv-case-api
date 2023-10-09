@@ -24,6 +24,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantDisputeFormOverdue.SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -56,7 +57,7 @@ class SystemNotifyApplicantDisputeFormOverdueTest {
     void shouldSetOverdueNotificationSentToYes() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");

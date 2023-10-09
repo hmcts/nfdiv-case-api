@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCH
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
@@ -50,7 +51,7 @@ class SwitchToSoleCoNotificationTest {
     @InjectMocks
     private SwitchToSoleCoNotification notification;
 
-    private static final long CASE_ID = 1234567890123456L;
+    private static final long CASE_ID = TEST_CASE_ID;
 
     @Test
     void shouldSendNotificationToApplicant1WithDivorceContent() {
@@ -72,7 +73,7 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
@@ -99,7 +100,7 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
@@ -122,7 +123,7 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
@@ -146,7 +147,7 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
@@ -172,7 +173,7 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
@@ -199,7 +200,7 @@ class SwitchToSoleCoNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, CASE_ID, data.getApplicant2(), data.getApplicant1());
     }

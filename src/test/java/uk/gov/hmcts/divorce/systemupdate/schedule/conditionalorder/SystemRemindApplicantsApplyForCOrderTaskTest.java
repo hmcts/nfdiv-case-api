@@ -57,6 +57,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DAT
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemRemindApplicantsApplyForCOrderTaskTest {
@@ -113,7 +114,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
     @Test
     void shouldSendEmailForConditionalOrder() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().state(AwaitingConditionalOrder.name()).id(1L).build();
+        final CaseDetails caseDetails1 = CaseDetails.builder().state(AwaitingConditionalOrder.name()).id(TEST_CASE_ID).build();
         final CaseDetails caseDetails2 = CaseDetails.builder().state(AwaitingConditionalOrder.name()).id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -123,7 +124,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
 
@@ -132,7 +133,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails1 = CaseDetails.builder()
             .state(AwaitingConditionalOrder.name())
             .data(Collections.emptyMap())
-            .id(1L)
+            .id(TEST_CASE_ID)
             .build();
         CaseData caseData = CaseData.builder().build();
 
@@ -147,7 +148,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -156,7 +157,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails1 = CaseDetails.builder()
             .state(ConditionalOrderPending.name())
             .data(Collections.emptyMap())
-            .id(1L)
+            .id(TEST_CASE_ID)
             .build();
         CaseData caseData = CaseData.builder().build();
 
@@ -171,7 +172,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -180,7 +181,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails1 = CaseDetails.builder()
             .state(ConditionalOrderPending.name())
             .data(Collections.emptyMap())
-            .id(1L)
+            .id(TEST_CASE_ID)
             .build();
         CaseData caseData = CaseData.builder().build();
 
@@ -195,7 +196,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdUpdateService);
     }
 
@@ -204,7 +205,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         final CaseDetails caseDetails1 = CaseDetails.builder()
             .state(ConditionalOrderPending.name())
             .data(Map.of("coMaxCronRetriesRemindApplicant", 5))
-            .id(1L)
+            .id(TEST_CASE_ID)
             .build();
         CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().cronRetriesRemindApplicantApplyCo(5).build())
@@ -237,7 +238,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L).build();
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID).build();
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -246,18 +247,18 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
             .submitEvent(2L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L).build();
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID).build();
         final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -266,11 +267,11 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
     }

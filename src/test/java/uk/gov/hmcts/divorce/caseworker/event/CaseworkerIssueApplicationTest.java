@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
@@ -90,12 +91,12 @@ class CaseworkerIssueApplicationTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
         final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
         expectedDetails.setData(expectedCaseData);
-        expectedDetails.setId(1L);
+        expectedDetails.setId(TEST_CASE_ID);
         expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
         expectedDetails.setState(AwaitingService);
 
@@ -116,7 +117,7 @@ class CaseworkerIssueApplicationTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
@@ -150,11 +151,11 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
 
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
 
         verify(issueApplicationService).sendNotifications(caseDetails);
     }

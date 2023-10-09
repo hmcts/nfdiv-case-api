@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerPronounceListTest {
@@ -143,7 +144,7 @@ class CaseworkerPronounceListTest {
     void shouldUpdateBulkCaseAfterBulkTriggerForSubmittedCallback() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         doNothing().when(casePronouncementService).pronounceCases(details);
 

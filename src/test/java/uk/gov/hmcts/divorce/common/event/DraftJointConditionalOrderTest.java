@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.common.event.DraftJointConditionalOrder.DRAFT
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class DraftJointConditionalOrderTest {
@@ -66,7 +67,7 @@ class DraftJointConditionalOrderTest {
                 .build())
             .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -89,7 +90,7 @@ class DraftJointConditionalOrderTest {
                 .build())
             .build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).id(1L).build();
+            .data(caseData).id(TEST_CASE_ID).build();
 
         when(progressDraftConditionalOrderState.apply(caseDetails)).thenReturn(caseDetails);
 

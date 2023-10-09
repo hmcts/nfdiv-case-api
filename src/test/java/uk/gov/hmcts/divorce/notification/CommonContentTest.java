@@ -187,7 +187,7 @@ class CommonContentTest {
             .build();
 
         final Map<String, String> templateVars = commonContent
-            .conditionalOrderTemplateVars(caseData, 1L, getApplicant(), respondent());
+            .conditionalOrderTemplateVars(caseData, TEST_CASE_ID, getApplicant(), respondent());
 
         assertThat(templateVars)
             .isNotEmpty()
@@ -207,7 +207,7 @@ class CommonContentTest {
             .build();
 
         final Map<String, String> templateVars = commonContent
-            .conditionalOrderTemplateVars(caseData, 1L, getApplicant(FEMALE), getApplicant(MALE));
+            .conditionalOrderTemplateVars(caseData, TEST_CASE_ID, getApplicant(FEMALE), getApplicant(MALE));
 
         assertThat(templateVars)
             .isNotEmpty()
@@ -227,7 +227,7 @@ class CommonContentTest {
             .build();
 
         assertDoesNotThrow(() -> commonContent
-            .conditionalOrderTemplateVars(caseData, 1L, getApplicant(null), getApplicant(null))
+            .conditionalOrderTemplateVars(caseData, TEST_CASE_ID, getApplicant(null), getApplicant(null))
         );
     }
 
@@ -240,7 +240,7 @@ class CommonContentTest {
             .build();
 
         final Map<String, String> templateVars = commonContent
-            .conditionalOrderTemplateVars(caseData, 1L, getApplicant(MALE), getApplicant(FEMALE));
+            .conditionalOrderTemplateVars(caseData, TEST_CASE_ID, getApplicant(MALE), getApplicant(FEMALE));
 
         assertThat(templateVars)
             .isNotEmpty()
@@ -260,7 +260,7 @@ class CommonContentTest {
             .build();
 
         final Map<String, String> templateVars = commonContent
-            .conditionalOrderTemplateVars(caseData, 1L, getApplicant(MALE), getApplicant(FEMALE));
+            .conditionalOrderTemplateVars(caseData, TEST_CASE_ID, getApplicant(MALE), getApplicant(FEMALE));
 
         assertThat(templateVars)
             .isNotEmpty()
@@ -301,7 +301,7 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant1, applicant2);
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
 
         assertThat(result)
             .isNotEmpty()
@@ -328,7 +328,7 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant1, applicant2);
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
 
         assertThat(result)
             .isNotEmpty()
@@ -356,7 +356,7 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant2, applicant1);
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant2, applicant1);
 
         assertThat(result)
             .isNotEmpty()
@@ -383,7 +383,7 @@ class CommonContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, String> result = commonContent.mainTemplateVars(caseData, 1L, applicant2, applicant1);
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant2, applicant1);
 
         assertThat(result)
             .isNotEmpty()
@@ -405,7 +405,7 @@ class CommonContentTest {
             .applicant2(respondent())
             .build();
 
-        final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, 1L,
+        final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, TEST_CASE_ID,
             caseData.getApplicant1(), MORE_INFO);
 
         assertThat(result)
@@ -438,7 +438,7 @@ class CommonContentTest {
 
         caseData.getApplicant2().getSolicitor().setReference("sol2");
 
-        final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, 1L,
+        final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, TEST_CASE_ID,
             caseData.getApplicant2(), REJECT);
 
         assertThat(result)

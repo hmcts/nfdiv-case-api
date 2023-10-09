@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class LinkBulkCaseProviderTest {
@@ -31,7 +32,7 @@ class LinkBulkCaseProviderTest {
     void shouldReturnSystemLinkWithBulkCaseCaseTask() {
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setId(TEST_CASE_ID);
 
         final var caseData = CaseData.builder()
             .finalOrder(FinalOrder.builder().build())
@@ -46,6 +47,6 @@ class LinkBulkCaseProviderTest {
         final CaseData resultCaseData = resultCaseDetails.getData();
         final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
 
-        assertThat(resultCaseData.getBulkListCaseReferenceLink().getCaseReference()).isEqualTo("1");
+        assertThat(resultCaseData.getBulkListCaseReferenceLink().getCaseReference()).isEqualTo(TEST_CASE_ID.toString());
     }
 }

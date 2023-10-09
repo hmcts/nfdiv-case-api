@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -57,12 +58,12 @@ class ConditionalOrderPendingReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant1(),
                 caseData.getApplicant2()))
             .thenReturn(new HashMap<>());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -71,7 +72,7 @@ class ConditionalOrderPendingReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -88,12 +89,12 @@ class ConditionalOrderPendingReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant1(),
                 caseData.getApplicant2()))
             .thenReturn(new HashMap<>());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -102,7 +103,7 @@ class ConditionalOrderPendingReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -113,7 +114,7 @@ class ConditionalOrderPendingReminderNotificationTest {
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -128,7 +129,7 @@ class ConditionalOrderPendingReminderNotificationTest {
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -144,12 +145,12 @@ class ConditionalOrderPendingReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant2(),
                 caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -158,7 +159,7 @@ class ConditionalOrderPendingReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -174,12 +175,12 @@ class ConditionalOrderPendingReminderNotificationTest {
         when(commonContent
             .conditionalOrderTemplateVars(
                 caseData,
-                1234567890123456L,
+                TEST_CASE_ID,
                 caseData.getApplicant2(),
                 caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -188,7 +189,7 @@ class ConditionalOrderPendingReminderNotificationTest {
                 hasEntry(IS_REMINDER, CommonContent.YES)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -201,7 +202,7 @@ class ConditionalOrderPendingReminderNotificationTest {
             .build());
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
 
-        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -214,7 +215,7 @@ class ConditionalOrderPendingReminderNotificationTest {
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
 
-        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }
@@ -230,7 +231,7 @@ class ConditionalOrderPendingReminderNotificationTest {
             .build());
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
 
-        conditionalOrderPendingReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
     }

@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_CAN_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
@@ -49,20 +50,20 @@ public class Applicant1CanSwitchToSoleNotificationTest {
         CaseData data = validJointApplicant1CaseData();
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        applicant1CanSwitchToSoleNotification.sendToApplicant1(data, 1234567890123456L);
+        applicant1CanSwitchToSoleNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_CAN_SWITCH_TO_SOLE),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -72,20 +73,20 @@ public class Applicant1CanSwitchToSoleNotificationTest {
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        applicant1CanSwitchToSoleNotification.sendToApplicant1(data, 1234567890123456L);
+        applicant1CanSwitchToSoleNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_CAN_SWITCH_TO_SOLE),
             anyMap(),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -93,7 +94,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
 
         CaseData data = validApplicant1CaseData();
 
-        applicant1CanSwitchToSoleNotification.sendToApplicant1(data, 1234567890123456L);
+        applicant1CanSwitchToSoleNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -111,20 +112,20 @@ public class Applicant1CanSwitchToSoleNotificationTest {
             .build());
 
         Map<String, String> templateVars = new HashMap<>(solicitorTemplateVars(data, data.getApplicant1()));
-        when(commonContent.solicitorTemplateVars(data, 1234567890123456L, data.getApplicant1()))
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(templateVars);
 
-        applicant1CanSwitchToSoleNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        applicant1CanSwitchToSoleNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).solicitorTemplateVars(data, 1234567890123456L, data.getApplicant1());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -133,7 +134,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YES);
 
-        applicant1CanSwitchToSoleNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        applicant1CanSwitchToSoleNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);

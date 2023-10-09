@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerPaymentMadeTest {
@@ -57,7 +58,7 @@ public class CaseworkerPaymentMadeTest {
             )
             .build();
 
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerPaymentMade.aboutToSubmit(caseDetails, caseDetails);
@@ -86,7 +87,7 @@ public class CaseworkerPaymentMadeTest {
             )
             .build();
 
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerPaymentMade.aboutToSubmit(caseDetails, caseDetails);
@@ -103,7 +104,7 @@ public class CaseworkerPaymentMadeTest {
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .build();
 
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerPaymentMade.aboutToSubmit(caseDetails, caseDetails);

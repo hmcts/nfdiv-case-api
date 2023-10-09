@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIG
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -74,10 +75,10 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setEmail(null);
         final Map<String, String> templateVars = new HashMap<>();
         templateVars.putAll(getConfigTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -87,7 +88,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -98,7 +99,7 @@ class Applicant1ResubmitNotificationTest {
         data.setDueDate(LOCAL_DATE);
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -108,7 +109,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -120,7 +121,7 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -130,7 +131,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -141,7 +142,7 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setEmail(null);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -151,7 +152,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -163,7 +164,7 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -173,7 +174,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -185,7 +186,7 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setEmail(null);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -195,7 +196,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -207,7 +208,7 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -217,7 +218,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -233,7 +234,7 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -243,7 +244,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -253,10 +254,10 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setSolicitor(
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
         );
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -268,7 +269,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -279,10 +280,10 @@ class Applicant1ResubmitNotificationTest {
         data.getApplicant2().setSolicitor(
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).build()
         );
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -294,7 +295,7 @@ class Applicant1ResubmitNotificationTest {
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 }

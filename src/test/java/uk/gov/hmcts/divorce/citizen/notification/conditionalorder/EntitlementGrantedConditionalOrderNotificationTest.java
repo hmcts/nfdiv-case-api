@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDEN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -71,10 +72,10 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         CaseData data = validCaseWithCourtHearing();
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -87,9 +88,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -99,10 +100,10 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -117,9 +118,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -130,13 +131,13 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setOffline(YesOrNo.YES);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
 
         verify(certificateOfEntitlementPrinter).sendLetter(
             data,
-            1234567890123456L,
+            TEST_CASE_ID,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
             data.getApplicant2()
         );
@@ -149,10 +150,10 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -167,9 +168,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -188,11 +189,11 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant1().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -212,9 +213,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -232,11 +233,11 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -256,9 +257,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -275,10 +276,10 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -287,7 +288,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(SOLICITOR_REFERENCE, "not provided")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -295,11 +296,11 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     void shouldSendLetterToOfflineApplicant1IfNotBeenSentAlready() {
         CaseData data = validCaseWithCourtHearing();
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verify(certificateOfEntitlementPrinter).sendLetter(
             data,
-            1234567890123456L,
+            TEST_CASE_ID,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
             data.getApplicant1()
         );
@@ -311,7 +312,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         CaseData data = validCaseWithCourtHearing();
         data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(certificateOfEntitlementPrinter);
     }
@@ -320,11 +321,11 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     void shouldSendLetterToOfflineApplicant2IfNotBeenSentAlready() {
         CaseData data = validCaseWithCourtHearing();
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verify(certificateOfEntitlementPrinter).sendLetter(
             data,
-            1234567890123456L,
+            TEST_CASE_ID,
             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
             data.getApplicant2()
         );
@@ -336,7 +337,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         CaseData data = validCaseWithCourtHearing();
         data.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, 1234567890123456L);
+        entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(certificateOfEntitlementPrinter);
     }

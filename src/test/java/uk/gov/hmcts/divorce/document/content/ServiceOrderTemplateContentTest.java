@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -68,7 +69,7 @@ public class ServiceOrderTemplateContentTest {
         CaseData caseData = buildCaseData(YES, DISPENSED);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
@@ -91,7 +92,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
@@ -114,7 +115,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.setSupplementaryCaseType(SEPARATION);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
@@ -137,7 +138,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021");
@@ -161,7 +162,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021");
@@ -185,7 +186,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.setSupplementaryCaseType(SEPARATION);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "20 June 2021");
@@ -210,7 +211,7 @@ public class ServiceOrderTemplateContentTest {
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
@@ -237,7 +238,7 @@ public class ServiceOrderTemplateContentTest {
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
@@ -263,7 +264,7 @@ public class ServiceOrderTemplateContentTest {
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
@@ -290,7 +291,7 @@ public class ServiceOrderTemplateContentTest {
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, "1616-5914-0147-3378");
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
         expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
         expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");

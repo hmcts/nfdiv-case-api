@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +43,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 
@@ -68,7 +69,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         data.setApplicationType(JOINT_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 
@@ -94,7 +95,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         data.setApplicationType(JOINT_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 
@@ -112,7 +113,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 
@@ -148,7 +149,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         data.getDocuments().setConfidentialDocumentsGenerated(Lists.newArrayList(coCoverLetterApp1, coCoverLetterApp2));
 
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(data)
             .build();
 

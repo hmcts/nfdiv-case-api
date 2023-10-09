@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -87,7 +88,8 @@ public class SubmitJointConditionalOrderTest {
         final CaseDetails<CaseData, State> caseDetails =
             CaseDetails.<CaseData, State>builder()
                 .data(caseData)
-                .id(1L)
+                .id(
+                    TEST_CASE_ID)
                 .state(ConditionalOrderPending)
                 .build();
 
@@ -99,7 +101,7 @@ public class SubmitJointConditionalOrderTest {
             .isEqualTo(YesOrNo.YES);
 
         verify(notificationDispatcher, times(0))
-            .send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+            .send(app2AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -123,16 +125,16 @@ public class SubmitJointConditionalOrderTest {
             .build());
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(1L)
+            .id(TEST_CASE_ID)
             .data(caseData)
             .state(AwaitingLegalAdvisorReferral)
             .build();
 
-        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder().id(1L).build();
+        final CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).build();
 
         submitJointConditionalOrder.submitted(caseDetails, beforeDetails);
 
-        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -141,7 +143,7 @@ public class SubmitJointConditionalOrderTest {
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.ConditionalOrderDrafted).id(1L).build();
+            .data(caseData).state(State.ConditionalOrderDrafted).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -155,11 +157,11 @@ public class SubmitJointConditionalOrderTest {
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
+            .data(caseData).state(State.ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         submitJointConditionalOrder.submitted(caseDetails, caseDetails);
 
-        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+        verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -169,7 +171,7 @@ public class SubmitJointConditionalOrderTest {
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(State.ConditionalOrderPending).id(1L).build();
+            .data(caseData).state(State.ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -178,6 +180,6 @@ public class SubmitJointConditionalOrderTest {
         verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
 
         verify(notificationDispatcher, times(0))
-            .send(app2AppliedForConditionalOrderNotification, caseData, 1L);
+            .send(app2AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 }

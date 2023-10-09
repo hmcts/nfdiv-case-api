@@ -29,7 +29,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONS
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_JOINT_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -55,22 +57,22 @@ class ApplicationSubmittedNotificationTest {
     void shouldSendEmailToApplicant1WithSubmissionResponseDate() {
         CaseData data = caseData();
         data.setDueDate(LocalDate.of(2021, 4, 21));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICATION_SUBMITTED),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -79,23 +81,23 @@ class ApplicationSubmittedNotificationTest {
         data.setDueDate(LocalDate.of(2021, 4, 21));
         data.getApplicant2().setEmail(null);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICATION_SUBMITTED),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_PAID, "no")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -109,9 +111,9 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
 
         verify(notificationService).sendEmail(
@@ -119,9 +121,9 @@ class ApplicationSubmittedNotificationTest {
             eq(SOLICITOR_JOINT_APPLICATION_SUBMITTED),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -135,9 +137,9 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
 
         verify(notificationService).sendEmail(
@@ -145,9 +147,9 @@ class ApplicationSubmittedNotificationTest {
             eq(SOLICITOR_JOINT_APPLICATION_SUBMITTED),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, 1234567890123456L);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
     }
 
     @Test
@@ -156,7 +158,7 @@ class ApplicationSubmittedNotificationTest {
         data.setDueDate(LocalDate.of(2021, 4, 21));
         data.getApplicant2().setEmail(null);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }
@@ -172,7 +174,7 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }
@@ -188,7 +190,7 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService, commonContent);
     }

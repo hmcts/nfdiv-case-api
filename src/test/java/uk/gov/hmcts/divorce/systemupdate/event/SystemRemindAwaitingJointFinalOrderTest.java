@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrd
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindAwaitingJointFinalOrder.SYSTEM_REMIND_AWAITING_JOINT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -68,7 +69,7 @@ class SystemRemindAwaitingJointFinalOrderTest {
             .build());
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(AwaitingJointFinalOrder).id(1L).data(caseData)
+            .state(AwaitingJointFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
@@ -91,7 +92,7 @@ class SystemRemindAwaitingJointFinalOrderTest {
             .build());
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(AwaitingJointFinalOrder).id(1L).data(caseData)
+            .state(AwaitingJointFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");

@@ -24,6 +24,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -53,17 +54,17 @@ public class Applicant2JointFinalOrderOverdueNotificationTest {
         );
 
         when(finalOrderNotificationCommonContent.jointApplicantTemplateVars(
-            data, 1L, data.getApplicant2(), data.getApplicant1(), true))
+            data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1(), true))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER),
             any(),
             eq(ENGLISH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
@@ -81,10 +82,10 @@ public class Applicant2JointFinalOrderOverdueNotificationTest {
         );
 
         when(finalOrderNotificationCommonContent.jointApplicantTemplateVars(
-            data, 1L, data.getApplicant2(), data.getApplicant1(), true))
+            data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1(), true))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -93,7 +94,7 @@ public class Applicant2JointFinalOrderOverdueNotificationTest {
                 hasEntry("delayReasonIfOverdue", APPLICANT_1_DELAY_CONTENT)
             )),
             eq(ENGLISH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
@@ -105,7 +106,7 @@ public class Applicant2JointFinalOrderOverdueNotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(finalOrderNotificationCommonContent);

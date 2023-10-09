@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreateGeneralOrder.CASEWORKER_CREATE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
@@ -73,7 +74,7 @@ public class CaseworkerCreateGeneralOrderTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         when(documentIdProvider.documentId()).thenReturn(LIST_VALUE_ID_1);
 
@@ -110,7 +111,7 @@ public class CaseworkerCreateGeneralOrderTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         when(documentIdProvider.documentId()).thenReturn(LIST_VALUE_ID_2);
 

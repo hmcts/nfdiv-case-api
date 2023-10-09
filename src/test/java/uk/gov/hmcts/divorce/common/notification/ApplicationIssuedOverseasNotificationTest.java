@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPO
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -61,10 +62,10 @@ class ApplicationIssuedOverseasNotificationTest {
         data.setCaseInvite(new CaseInvite(null, null, null));
         data.getApplicant2().setEmail(null);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        applicationIssuedOverseasNotification.sendToApplicant1(data, 1234567890123456L);
+        applicationIssuedOverseasNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -72,7 +73,7 @@ class ApplicationIssuedOverseasNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(FIRST_NAME, TEST_FIRST_NAME),
                 hasEntry(LAST_NAME, TEST_LAST_NAME),
                 hasEntry(PARTNER, "partner"),
@@ -80,9 +81,9 @@ class ApplicationIssuedOverseasNotificationTest {
                 hasEntry(COURT_EMAIL, "courtEmail")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -94,10 +95,10 @@ class ApplicationIssuedOverseasNotificationTest {
         data.setCaseInvite(new CaseInvite(null, null, null));
         data.getApplicant2().setEmail(null);
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        applicationIssuedOverseasNotification.sendToApplicant1(data, 1234567890123456L);
+        applicationIssuedOverseasNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -106,8 +107,8 @@ class ApplicationIssuedOverseasNotificationTest {
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 }

@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
 @ExtendWith(MockitoExtension.class)
@@ -286,11 +287,11 @@ class SolicitorChangeServiceRequestTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingService);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
 
         solicitorChangeServiceRequest.submitted(caseDetails, caseDetails);
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
         verify(applicationIssuedNotification).sendToApplicant1Solicitor(caseDetails.getData(), caseDetails.getId());
     }
 

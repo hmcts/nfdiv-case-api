@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.BAILIFF_SERVICE_SUCCESSFUL;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -46,23 +47,23 @@ class BailiffServiceSuccessfulNotificationTest {
     @Test
     void shouldSendNotificationToApplicantWithDivorceContent() {
         CaseData caseData = validApplicant1CaseData();
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(caseData, 1234567890123456L);
+        notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(BAILIFF_SERVICE_SUCCESSFUL),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -73,24 +74,24 @@ class BailiffServiceSuccessfulNotificationTest {
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(PARTNER, "gŵr");
 
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(caseData, 1234567890123456L);
+        notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(BAILIFF_SERVICE_SUCCESSFUL),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -99,23 +100,23 @@ class BailiffServiceSuccessfulNotificationTest {
         Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(IS_DISSOLUTION, CommonContent.YES);
         templateVars.put(IS_DIVORCE, NO);
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(caseData, 1234567890123456L);
+        notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(BAILIFF_SERVICE_SUCCESSFUL),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, CommonContent.YES)
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 
     @Test
@@ -126,23 +127,23 @@ class BailiffServiceSuccessfulNotificationTest {
         templateVars.put(IS_DISSOLUTION, CommonContent.YES);
         templateVars.put(IS_DIVORCE, NO);
         templateVars.put(PARTNER, "partner sifil");
-        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(caseData, 1234567890123456L);
+        notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(BAILIFF_SERVICE_SUCCESSFUL),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, CommonContent.YES),
                 hasEntry(PARTNER, "partner sifil")
             )),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
     }
 }

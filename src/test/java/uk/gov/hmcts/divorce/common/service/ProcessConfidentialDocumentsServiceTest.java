@@ -245,7 +245,7 @@ public class ProcessConfidentialDocumentsServiceTest {
             .generalLetters(Lists.newArrayList(applicant1GeneralLetterDetail, applicant2GeneralLetterDetail))
             .build();
 
-        documentsService.processDocuments(caseData, 1L);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
@@ -291,7 +291,7 @@ public class ProcessConfidentialDocumentsServiceTest {
             .generalLetters(Lists.newArrayList(applicant1GeneralLetterDetail, applicant2GeneralLetterDetail))
             .build();
 
-        documentsService.processDocuments(caseData, 1L);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
@@ -312,7 +312,7 @@ public class ProcessConfidentialDocumentsServiceTest {
             .generalLetters(Lists.newArrayList(applicant2GeneralLetterDetail))
             .build();
 
-        documentsService.processDocuments(caseData, 1L);
+        documentsService.processDocuments(caseData, TEST_CASE_ID);
 
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 

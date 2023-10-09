@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SystemFinalOrderOverdueTaskTest {
@@ -91,7 +92,7 @@ class SystemFinalOrderOverdueTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final CaseDetails caseDetails3 = mock(CaseDetails.class);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
         when(caseDetails2.getId()).thenReturn(2L);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2, caseDetails3);
@@ -101,7 +102,7 @@ class SystemFinalOrderOverdueTaskTest {
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService,never()).submitEvent(3L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
@@ -122,18 +123,18 @@ class SystemFinalOrderOverdueTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
         verify(ccdUpdateService)
-            .submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
             .submitEvent(2L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
@@ -143,7 +144,7 @@ class SystemFinalOrderOverdueTaskTest {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
-        when(caseDetails1.getId()).thenReturn(1L);
+        when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
         when(caseDetails2.getId()).thenReturn(2L);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
@@ -152,11 +153,11 @@ class SystemFinalOrderOverdueTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
 
         task.run();
 
-        verify(ccdUpdateService).submitEvent(1L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(2L, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 

@@ -29,6 +29,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 
@@ -54,12 +56,12 @@ public class RespondentSolicitorReminderNotificationTest {
                 .reference("ref")
                 .email("sol@gm.com")
             .build());
-        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
             .thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L))
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("test-url");
 
-        reminderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        reminderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq("sol@gm.com"),
@@ -67,7 +69,7 @@ public class RespondentSolicitorReminderNotificationTest {
             argThat(allOf(
                 hasEntry(ISSUE_DATE, "5 April 2021"),
                 hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, "yes"),
                 hasEntry(IS_DISSOLUTION, "no"),
                 hasEntry(SOLICITOR_NAME, "sol"),
@@ -75,7 +77,7 @@ public class RespondentSolicitorReminderNotificationTest {
                 hasEntry(SIGN_IN_URL, "test-url")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 
@@ -89,12 +91,12 @@ public class RespondentSolicitorReminderNotificationTest {
             .name("sol")
             .email("sol@gm.com")
             .build());
-        when(commonContent.basicTemplateVars(data, 1234567890123456L))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
             .thenReturn(getBasicTemplateVars());
-        when(commonContent.getProfessionalUsersSignInUrl(1234567890123456L))
+        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("test-url");
 
-        reminderNotification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        reminderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq("sol@gm.com"),
@@ -102,7 +104,7 @@ public class RespondentSolicitorReminderNotificationTest {
             argThat(allOf(
                 hasEntry(ISSUE_DATE, "5 April 2021"),
                 hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(IS_DIVORCE, "no"),
                 hasEntry(IS_DISSOLUTION, "yes"),
                 hasEntry(SOLICITOR_NAME, "sol"),
@@ -110,7 +112,7 @@ public class RespondentSolicitorReminderNotificationTest {
                 hasEntry(SIGN_IN_URL, "test-url")
             )),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
     }
 }

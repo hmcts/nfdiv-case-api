@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationDispatcherTest {
@@ -27,7 +28,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant1SolicitorIfRepresented() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .solicitorRepresented(YES)
@@ -42,7 +43,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant1OfflineIfIsApplicant1OffLineTrue() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = mock(CaseData.class);
         final Applicant applicant1 = mock(Applicant.class);
         final Applicant applicant2 = mock(Applicant.class);
@@ -61,7 +62,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant1IfNotRepresented() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .solicitorRepresented(NO)
@@ -76,7 +77,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant2SolicitorIfRepresented() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
                 .solicitorRepresented(YES)
@@ -91,7 +92,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant2OfflineIsApplicant1OffLineTrue() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
                 .offline(YES)
@@ -106,7 +107,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant2IfNotRepresented() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
                 .email("app2@email.com")
@@ -122,7 +123,7 @@ class NotificationDispatcherTest {
     @Test
     void shouldNotifyApplicant2IfNotRepresentedWithCaseInvite() {
 
-        final long caseId = 1L;
+        final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
                 .solicitorRepresented(NO)

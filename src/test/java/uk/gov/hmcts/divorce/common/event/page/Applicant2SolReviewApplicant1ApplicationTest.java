@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +27,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
@@ -44,7 +45,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 

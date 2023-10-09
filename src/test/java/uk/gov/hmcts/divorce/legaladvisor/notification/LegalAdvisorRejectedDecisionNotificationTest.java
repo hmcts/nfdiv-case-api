@@ -54,17 +54,17 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             .refusalDecision(REJECT)
             .build());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -76,17 +76,17 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             .refusalDecision(REJECT)
             .build());
 
-        notification.sendToApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -98,17 +98,17 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             .refusalDecision(REJECT)
             .build());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -121,17 +121,17 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             .refusalDecision(REJECT)
             .build());
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT),
             anyMap(),
             eq(WELSH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
-        notification.sendToApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
         verifyNoInteractions(notificationService);
     }
 
@@ -159,17 +159,17 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             .email("sol1@gm.com")
             .build());
 
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq("sol1@gm.com"),
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant1(), REJECT);
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), REJECT);
     }
 
     @Test
@@ -186,16 +186,16 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
             .email("sol2@gm.com")
             .build());
 
-        notification.sendToApplicant2Solicitor(data, 1234567890123456L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq("sol2@gm.com"),
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
             eq(ENGLISH),
-            eq(1234567890123456L)
+            eq(TEST_CASE_ID)
         );
-        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, 1234567890123456L, data.getApplicant2(), REJECT);
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), REJECT);
     }
 
     @Test

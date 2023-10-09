@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFIC
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
@@ -81,12 +82,12 @@ class SubmitClarificationTest {
         CaseData caseData = validApplicant1CaseData();
         caseData.getConditionalOrder().setCannotUploadClarificationDocuments(YES);
 
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(postInformationToCourtNotification, caseData, 1L);
-        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verify(notificationDispatcher).send(postInformationToCourtNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -98,11 +99,11 @@ class SubmitClarificationTest {
         CaseData caseData = validApplicant1CaseData();
         caseData.getConditionalOrder().setCannotUploadClarificationDocuments(NO);
 
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -114,11 +115,11 @@ class SubmitClarificationTest {
 
         CaseData caseData = validApplicant1CaseData();
 
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(1L).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
 
         submitClarification.aboutToSubmit(caseDetails, null);
 
-        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, 1L);
+        verify(notificationDispatcher).send(clarificationSubmittedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -129,7 +130,7 @@ class SubmitClarificationTest {
 
         CaseData caseData = validApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(AwaitingClarification).id(1L).build();
+            .data(caseData).state(AwaitingClarification).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
 
@@ -146,7 +147,7 @@ class SubmitClarificationTest {
         CaseData caseData = validApplicant1CaseData();
         caseData.getConditionalOrder().setClarificationUploadDocuments(clarificationDocuments);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .data(caseData).state(AwaitingClarification).id(1L).build();
+            .data(caseData).state(AwaitingClarification).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
 

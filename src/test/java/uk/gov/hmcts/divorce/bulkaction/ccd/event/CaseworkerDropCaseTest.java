@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerDropCase.CASEW
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,7 +65,7 @@ public class CaseworkerDropCaseTest {
     @Test
     void shouldSuccessfullyUnlinkCasesInBulkCase() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
 
         final var user = mock(User.class);
 

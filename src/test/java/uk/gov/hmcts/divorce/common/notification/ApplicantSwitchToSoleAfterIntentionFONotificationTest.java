@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -67,22 +68,22 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant1IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
             .build());
 
-        when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant1()))
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant1());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -90,7 +91,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -104,7 +105,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant1IntendsToSwitchToSole(emptySet())
             .build());
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -117,7 +118,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         data.setFinalOrder(FinalOrder.builder()
             .build());
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -139,22 +140,22 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
             .build());
 
-        when(commonContent.solicitorTemplateVars(data, 1L, data.getApplicant2()))
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2()))
             .thenReturn(solicitorTemplateVars(data, data.getApplicant2()));
 
-        notification.sendToApplicant2Solicitor(data, 1L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).solicitorTemplateVars(data, 1L, data.getApplicant2());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     @Test
@@ -162,7 +163,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant1Solicitor(data, 1L);
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -175,7 +176,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         data.setFinalOrder(FinalOrder.builder()
             .build());
 
-        notification.sendToApplicant2Solicitor(data, 1L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -189,7 +190,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant2IntendsToSwitchToSole(emptySet())
             .build());
 
-        notification.sendToApplicant2Solicitor(data, 1L);
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -206,22 +207,22 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant1IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
             .build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -236,22 +237,22 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant1IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
             .build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(WELSH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -259,7 +260,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -273,7 +274,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant1IntendsToSwitchToSole(emptySet())
             .build());
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -286,7 +287,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         data.setFinalOrder(FinalOrder.builder()
             .build());
 
-        notification.sendToApplicant1(data, 1L);
+        notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -303,22 +304,22 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
             .build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(ENGLISH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -333,22 +334,22 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant2IntendsToSwitchToSole(Set.of(I_INTEND_TO_SWITCH_TO_SOLE))
             .build());
 
-        when(commonContent.mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO),
             any(),
             eq(WELSH),
-            eq(1L)
+            eq(TEST_CASE_ID)
         );
 
         verifyNoMoreInteractions(notificationService);
 
-        verify(commonContent).mainTemplateVars(data, 1L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -356,7 +357,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -370,7 +371,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
             .applicant2IntendsToSwitchToSole(emptySet())
             .build());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);
@@ -383,7 +384,7 @@ class ApplicantSwitchToSoleAfterIntentionFONotificationTest {
         data.setFinalOrder(FinalOrder.builder()
             .build());
 
-        notification.sendToApplicant2(data, 1L);
+        notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
         verifyNoInteractions(commonContent);

@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -88,7 +89,7 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplicant2().setOffline(NO);
@@ -120,7 +121,7 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
 
@@ -154,7 +155,7 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(REISSUE_CASE);
 
@@ -198,7 +199,7 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
@@ -242,7 +243,7 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
@@ -289,7 +290,7 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
@@ -334,12 +335,12 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
-            .hasMessage("Invalid reissue option for CaseId: 1");
+            .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
 
     }
 
@@ -347,7 +348,7 @@ class ReIssueApplicationServiceTest {
     public void shouldNotSendBulkPrintNotificationsWhenReissueOptionIsDigitalAos() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData());
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         reIssueApplicationService.sendNotifications(caseDetails, DIGITAL_AOS);
@@ -361,7 +362,7 @@ class ReIssueApplicationServiceTest {
     public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsOfflineAos() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData());
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
@@ -381,7 +382,7 @@ class ReIssueApplicationServiceTest {
         CaseData caseData = caseData();
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
@@ -401,7 +402,7 @@ class ReIssueApplicationServiceTest {
         CaseData caseData = caseData();
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         when(sendAosPackToApplicant.apply(caseDetails)).thenReturn(caseDetails);
@@ -421,11 +422,11 @@ class ReIssueApplicationServiceTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(1L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         assertThatThrownBy(() -> reIssueApplicationService.sendNotifications(caseDetails, null))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
-            .hasMessage("Exception occurred while sending reissue application notifications for case id 1");
+            .hasMessage("Exception occurred while sending reissue application notifications for case id 1616591401473378");
     }
 }

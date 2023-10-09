@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantPartnerNotAppliedForFinalOrder.SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -54,7 +55,7 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getFinalOrder().setApplicant1AppliedForFinalOrderFirst(YES);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -72,7 +73,7 @@ public class SystemNotifyApplicantPartnerNotAppliedForFinalOrderTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getFinalOrder().setApplicant2AppliedForFinalOrderFirst(YES);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
