@@ -75,7 +75,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
-                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
+                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"", true)
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
                             .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant1\"", true)
                             .done()
@@ -93,7 +93,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
-                        "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
+                        "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"", true)
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant2\"")
                             .mandatory(Organisation::getOrganisationId, "nocWhichApplicant=\"applicant2\"", true)
                             .done()
@@ -218,12 +218,12 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private CaseData correctRepresentationDetails(final CaseData data, final CaseData beforeData) {
 
         if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
-            data.getApplicant2().getSolicitor().setOrganisationPolicy(beforeData.getApplicant2().getSolicitor().getOrganisationPolicy());
+            //data.getApplicant2().getSolicitor().setOrganisationPolicy(beforeData.getApplicant2().getSolicitor().getOrganisationPolicy());
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant1().getSolicitor().setAddress(null);
             }
         } else {
-            data.getApplicant1().getSolicitor().setOrganisationPolicy(beforeData.getApplicant1().getSolicitor().getOrganisationPolicy());
+            //data.getApplicant1().getSolicitor().setOrganisationPolicy(beforeData.getApplicant1().getSolicitor().getOrganisationPolicy());
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant2().getSolicitor().setAddress(null);
             }
