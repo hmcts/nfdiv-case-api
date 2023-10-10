@@ -166,7 +166,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             noticeOfChangeService);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(correctRepresentationDetails(details.getData(), beforeData))
+            .data(correctRepresentationDetails(details.getData()))
             .build();
     }
 
@@ -215,15 +215,13 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     /** On NOC event, CCD is somehow removing solicitor details for the applicant other than the one selected for NOC.
     * Hence, putting the solicitor details back to the new case details using the before details.
     * */
-    private CaseData correctRepresentationDetails(final CaseData data, final CaseData beforeData) {
+    private CaseData correctRepresentationDetails(final CaseData data) {
 
         if (data.getNoticeOfChange().getWhichApplicant().equals(APPLICANT_1)) {
-            //data.getApplicant2().getSolicitor().setOrganisationPolicy(beforeData.getApplicant2().getSolicitor().getOrganisationPolicy());
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant1().getSolicitor().setAddress(null);
             }
         } else {
-            //data.getApplicant1().getSolicitor().setOrganisationPolicy(beforeData.getApplicant1().getSolicitor().getOrganisationPolicy());
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant2().getSolicitor().setAddress(null);
             }
