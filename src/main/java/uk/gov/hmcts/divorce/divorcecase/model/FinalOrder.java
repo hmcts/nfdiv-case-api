@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -95,7 +96,7 @@ public class FinalOrder {
     private YesOrNo applicant1AppliedForFinalOrderFirst;
 
     @CCD(
-        label = "Does ${labelContentTheApplicant2} want to apply for a Final Order?",
+        label = "Does the applicant want to apply for a Final Order?",
         access = {Applicant2Access.class}
     )
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
@@ -180,7 +181,7 @@ public class FinalOrder {
     private YesOrNo applicant1FinalOrderStatementOfTruth;
 
     @CCD(
-        label = "${labelContentRespondentsOrApplicant2s} believes that the facts stated in this application are true.",
+        label = "The applicant believes that the facts stated in this application are true.",
         access = {Applicant2Access.class}
     )
     private YesOrNo applicant2FinalOrderStatementOfTruth;
