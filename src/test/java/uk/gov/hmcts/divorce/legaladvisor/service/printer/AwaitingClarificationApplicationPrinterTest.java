@@ -58,11 +58,11 @@ public class AwaitingClarificationApplicationPrinterTest {
         );
 
         final MissingDocumentsValidation missingDocumentsValidation = missingDocumentsValidationCaptor.getValue();
-        assertThat(missingDocumentsValidation.message).isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsMessage);
+        assertThat(missingDocumentsValidation.message).isEqualTo(AwaitingClarificationApplicationPrinter.MISSING_DOCUMENTS_MESSAGE);
         assertThat(missingDocumentsValidation.documentTypeList)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsTypeList);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.missingDocumentsTypeList);
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsExpectedDocumentsSize);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.missingDocumentsExpectedDocumentsSize);
     }
 
     @Test
@@ -91,11 +91,11 @@ public class AwaitingClarificationApplicationPrinterTest {
 
         final MissingDocumentsValidation missingDocumentsValidation = missingDocumentsValidationCaptor.getValue();
         assertThat(missingDocumentsValidation.message)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationMessage);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.MISSING_DOCUMENTS_JUDICIAL_SEPARATION_MESSAGE);
         assertThat(missingDocumentsValidation.documentTypeList)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationTypeList);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationTypeList);
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationExpectedDocumentsSize);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationExpectedDocumentsSize);
     }
 
     @Test
@@ -124,10 +124,10 @@ public class AwaitingClarificationApplicationPrinterTest {
 
         final MissingDocumentsValidation missingDocumentsValidation = missingDocumentsValidationCaptor.getValue();
         assertThat(missingDocumentsValidation.message)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationMessage);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.MISSING_DOCUMENTS_JUDICIAL_SEPARATION_MESSAGE);
         assertThat(missingDocumentsValidation.documentTypeList)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationRepresentedTypeList);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationRepresentedTypeList);
         assertThat(missingDocumentsValidation.expectedDocumentsSize)
-            .isEqualTo(awaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationExpectedDocumentsSize);
+            .isEqualTo(AwaitingClarificationApplicationPrinter.missingDocumentsJudicialSeparationExpectedDocumentsSize);
     }
 }

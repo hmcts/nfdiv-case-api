@@ -25,19 +25,24 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REMINDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_COVER_LETTER;
 
 public final class DocumentUtil {
 
@@ -180,7 +185,8 @@ public final class DocumentUtil {
         confidentialDocumentsMap.putAll(
             Map.of(
                 FINAL_ORDER_CAN_APPLY_APP1, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1,
-                FINAL_ORDER_CAN_APPLY_APP2, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2)
+                FINAL_ORDER_CAN_APPLY_APP2, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2,
+                AOS_OVERDUE_LETTER, ConfidentialDocumentsReceived.AOS_OVERDUE_LETTER)
         );
 
         confidentialDocumentsMap.putAll(DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING);
@@ -211,7 +217,8 @@ public final class DocumentUtil {
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
                 FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-                FINAL_ORDER_CAN_APPLY_APP1
+                FINAL_ORDER_CAN_APPLY_APP1,
+                AOS_OVERDUE_LETTER
             ),
             APPLICANT2, Lists.newArrayList(
                 NOTICE_OF_PROCEEDINGS_APP_2,
@@ -261,7 +268,21 @@ public final class DocumentUtil {
                 DocumentType.NOTICE_OF_REFUSAL_OF_ENTITLEMENT, ConfidentialDocumentsReceived.NOTICE_OF_REFUSAL_OF_ENTITLEMENT,
                 DocumentType.SOLICITOR_SERVICE, ConfidentialDocumentsReceived.SOLICITOR_SERVICE,
                 DocumentType.CONDITIONAL_ORDER_REMINDER, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_REMINDER,
-                DocumentType.COVERSHEET, ConfidentialDocumentsReceived.COVERSHEET
+                DocumentType.COVERSHEET, ConfidentialDocumentsReceived.COVERSHEET,
+                DocumentType.SWITCH_TO_SOLE_CO_LETTER, ConfidentialDocumentsReceived.SWITCH_TO_SOLE_CO_LETTER,
+                DocumentType.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER,
+                ConfidentialDocumentsReceived.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER,
+                JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
+                ConfidentialDocumentsReceived.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER
+            )
+        );
+
+        map.putAll(
+            Map.of(
+                SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
+                ConfidentialDocumentsReceived.SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
+                SEPARATION_ORDER_REFUSAL_COVER_LETTER, ConfidentialDocumentsReceived.SEPARATION_ORDER_REFUSAL_COVER_LETTER,
+                CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER
             )
         );
 

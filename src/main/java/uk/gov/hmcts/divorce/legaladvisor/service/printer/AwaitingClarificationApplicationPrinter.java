@@ -24,9 +24,9 @@ public class AwaitingClarificationApplicationPrinter {
     @Autowired
     private AwaitingAmendedOrClarificationApplicationCommonPrinter awaitingAmendedOrClarificationApplicationCommonPrinter;
 
-    public static final String missingDocumentsMessage =
+    public static final String MISSING_DOCUMENTS_MESSAGE =
         "Awaiting clarification Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
-    public static final String missingDocumentsJudicialSeparationMessage =
+    public static final String MISSING_DOCUMENTS_JUDICIAL_SEPARATION_MESSAGE =
         "Awaiting clarification JS Application Letter pack has missing documents. Expected documents with type {} , for Case ID: {}";
     public static final List<DocumentType> missingDocumentsTypeList =
         List.of(COVERSHEET, CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, CONDITIONAL_ORDER_REFUSAL);
@@ -49,13 +49,13 @@ public class AwaitingClarificationApplicationPrinter {
 
     public void sendLetters(final CaseData caseData, final Long caseId, final Applicant applicant) {
         MissingDocumentsValidation missingDocumentsValidation = MissingDocumentsValidation.builder()
-            .message(missingDocumentsMessage)
+            .message(MISSING_DOCUMENTS_MESSAGE)
             .documentTypeList(missingDocumentsTypeList)
             .expectedDocumentsSize(missingDocumentsExpectedDocumentsSize)
             .build();
 
         if (caseData.isJudicialSeparationCase()) {
-            missingDocumentsValidation.message = missingDocumentsJudicialSeparationMessage;
+            missingDocumentsValidation.message = MISSING_DOCUMENTS_JUDICIAL_SEPARATION_MESSAGE;
             missingDocumentsValidation.documentTypeList = applicant.isRepresented()
                 ? missingDocumentsJudicialSeparationRepresentedTypeList
                 : missingDocumentsJudicialSeparationTypeList;

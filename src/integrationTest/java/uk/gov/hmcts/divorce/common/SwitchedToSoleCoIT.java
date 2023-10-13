@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -262,6 +263,7 @@ public class SwitchedToSoleCoIT {
         throws Exception {
 
         CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setContactDetailsType(ContactDetailsType.PUBLIC);
         data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         data.setConditionalOrder(ConditionalOrder.builder()
             .d84ApplicationType(SWITCH_TO_SOLE)

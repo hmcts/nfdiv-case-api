@@ -26,7 +26,7 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -96,7 +96,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
     }
 
     private Letter getFirstLetterWithDocumentType(final CaseData caseData, final DocumentType documentType) {
-        final List<Letter> letters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), documentType);
+        final List<Letter> letters = getLettersBasedOnContactPrivacy(caseData, documentType);
         return firstElement(letters);
     }
 
