@@ -55,6 +55,32 @@ public class CaseDataDocumentService {
         updateCaseData(caseData, documentType, documentInfo, caseId, templateId);
     }
 
+    public Document renderUpdateAndFetchDocument(final CaseData caseData,
+                                                 final DocumentType documentType,
+                                                 final Map<String, Object> templateContent,
+                                                 final Long caseId,
+                                                 final String templateId,
+                                                 final LanguagePreference languagePreference,
+                                                 final String filename) {
+
+        log.info("Rendering document request for templateId : {} case id: {}", templateId, caseId);
+
+        final String authorisation = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+
+        final var documentInfo = docAssemblyService.renderDocument(
+            templateContent,
+            caseId,
+            authorisation,
+            templateId,
+            languagePreference,
+            filename
+        );
+
+        updateCaseData(caseData, documentType, documentInfo, caseId, templateId);
+
+        return documentFrom(documentInfo);
+    }
+
     public Document renderDocument(final Map<String, Object> templateContent,
                                    final Long caseId,
                                    final String templateId,

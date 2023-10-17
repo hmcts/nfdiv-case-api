@@ -71,7 +71,7 @@ public class GenerateCoRefusedCoverLetterTest {
     private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
+    private CoRefusalTemplateContent coRefusalTemplateContent;
 
     @Test
     void shouldGenerateCoRefusedCoverLetterWithDivorceContent() {
@@ -126,7 +126,7 @@ public class GenerateCoRefusedCoverLetterTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
+        coRefusalTemplateContent.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -196,7 +196,7 @@ public class GenerateCoRefusedCoverLetterTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateCoRefusedCoverLetter.generateAndUpdateCaseData(
+        coRefusalTemplateContent.generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()

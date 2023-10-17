@@ -85,7 +85,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
     private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private GenerateJudicialSeparationCORefusedForAmendmentCoverLetter generateJudicialSeparationCORefusedForAmendmentCoverLetter;
+    private JudicialSeparationCoRefusalTemplateContent judicialSeparationCoRefusalTemplateContent;
 
     @Test
     void shouldGenerateAndUpdateCaseData() {
@@ -147,7 +147,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+        judicialSeparationCoRefusalTemplateContent.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
@@ -242,7 +242,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+        judicialSeparationCoRefusalTemplateContent.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
@@ -328,7 +328,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(
+        judicialSeparationCoRefusalTemplateContent.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(

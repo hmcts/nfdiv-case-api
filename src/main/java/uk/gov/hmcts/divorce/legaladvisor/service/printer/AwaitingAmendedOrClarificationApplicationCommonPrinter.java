@@ -9,13 +9,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
-import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
-import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForClarificationCoverLetter;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationCoRefusalTemplateContent;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationCORefusedForClarificationCoverLetter;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.legaladvisor.service.task.GenerateCoRefusedCoverLetter;
+import uk.gov.hmcts.divorce.legaladvisor.service.task.CoRefusalTemplateContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,16 +49,16 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
     private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Autowired
-    private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
+    private CoRefusalTemplateContent coRefusalTemplateContent;
 
     @Autowired
     private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
-    private GenerateJudicialSeparationCORefusedForAmendmentCoverLetter generateJudicialSeparationCORefusedForAmendmentCoverLetter;
+    private JudicialSeparationCoRefusalTemplateContent judicialSeparationCoRefusalTemplateContent;
 
     @Autowired
-    private GenerateJudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
+    private JudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
 
     public void sendLetters(
         final CaseData caseData,
@@ -136,6 +136,32 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
         return awaitingAmendmentOrClarificationLetters;
     }
 
+    private void generateLetters(
+        final CaseData caseData,
+        final Long caseId,
+        final Applicant applicant,
+        final Boolean isClarificationRefusal
+    ) {
+        if (caseData.isJudicialSeparationCase()) {
+            generateJudicialSeparationLetters(caseData, caseId, applicant, isClarificationRefusal);
+        } else {
+            generateCoversheet.generateCoversheet(
+                caseData,
+                caseId,
+                COVERSHEET_APPLICANT,
+                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
+                applicant.getLanguagePreference()
+            );
+
+            coRefusalTemplateContent.generateAndUpdateCaseData(
+                caseData,
+                caseId,
+                applicant,
+                isClarificationRefusal
+            );
+        }
+    }
+
     private void generateJudicialSeparationLetters(
         final CaseData caseData,
         final Long caseId,
@@ -161,33 +187,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinter {
         if (isClarificationRefusal) {
             generateJudicialSeparationCORefusedForClarificationCoverLetter.generateAndUpdateCaseData(caseData, caseId, applicant);
         } else {
-            generateJudicialSeparationCORefusedForAmendmentCoverLetter.generateAndUpdateCaseData(caseData, caseId, applicant);
-        }
-    }
-
-    private void generateLetters(
-        final CaseData caseData,
-        final Long caseId,
-        final Applicant applicant,
-        final Boolean isClarificationRefusal
-    ) {
-        if (caseData.isJudicialSeparationCase()) {
-            generateJudicialSeparationLetters(caseData, caseId, applicant, isClarificationRefusal);
-        } else {
-            generateCoversheet.generateCoversheet(
-                caseData,
-                caseId,
-                COVERSHEET_APPLICANT,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, applicant),
-                applicant.getLanguagePreference()
-            );
-
-            generateCoRefusedCoverLetter.generateAndUpdateCaseData(
-                caseData,
-                caseId,
-                applicant,
-                isClarificationRefusal
-            );
+            judicialSeparationCoRefusalTemplateContent.generateAndUpdateCaseData(caseData, caseId, applicant);
         }
     }
 }

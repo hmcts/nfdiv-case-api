@@ -9,8 +9,8 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 @Component
 @Slf4j
-public class GenerateJudicialSeparationCORefusedForClarificationCoverLetter extends
-    GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
+public class JudicialSeparationCORefusedForClarificationCoverLetter extends
+    JudicialSeparationCoRefusalTemplateContent {
 
     @Autowired
     private ConditionalOrderCommonContent conditionalOrderCommonContent;

@@ -33,7 +33,7 @@ public class AwaitingAmendedApplicationPrinter {
     public static final List<DocumentType> missingDocumentsJudicialSeparationTypeList =
         List.of(
             COVERSHEET,
-                JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER,
+            JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER,
             CONDITIONAL_ORDER_REFUSAL,
             APPLICATION
         );

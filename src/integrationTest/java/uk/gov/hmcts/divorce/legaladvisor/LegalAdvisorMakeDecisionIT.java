@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.legaladvisor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
@@ -633,6 +635,70 @@ public class LegalAdvisorMakeDecisionIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(notificationService).sendEmail(
+            eq("sol1@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            argThat(allOf(
+                hasEntry("solicitor name", "App1 sol"),
+                hasEntry("solicitor reference", "sol1"),
+                hasEntry("applicant1Label", "Applicant"),
+                hasEntry("applicant2Label", "Respondent"),
+                hasEntry("isJoint", "no"),
+                hasEntry("moreInfo", "yes"),
+                hasEntry("amendApplication", "no"),
+                hasEntry("issueDate", "22 June 2022")
+            )),
+            eq(ENGLISH),
+            anyLong()
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldAddRefusalLetterToConfidentialDocumentsWhenEitherPartyHasConfidentialContactInfo() throws Exception {
+        setMockClock(clock);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 6, 22));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
+            .build());
+
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
+        stubForDocAssemblyWith(UUID, "COVERSHEET_APPLICANT");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

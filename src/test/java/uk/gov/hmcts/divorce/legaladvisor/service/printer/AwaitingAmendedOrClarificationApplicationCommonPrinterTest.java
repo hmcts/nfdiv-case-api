@@ -17,12 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
-import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForAmendmentCoverLetter;
-import uk.gov.hmcts.divorce.document.content.GenerateJudicialSeparationCORefusedForClarificationCoverLetter;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationCoRefusalTemplateContent;
+import uk.gov.hmcts.divorce.document.content.JudicialSeparationCORefusedForClarificationCoverLetter;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.legaladvisor.service.task.GenerateCoRefusedCoverLetter;
+import uk.gov.hmcts.divorce.legaladvisor.service.task.CoRefusalTemplateContent;
 
 import java.util.HashMap;
 
@@ -72,13 +72,13 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
     private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
     @Mock
-    private GenerateCoRefusedCoverLetter generateCoRefusedCoverLetter;
+    private CoRefusalTemplateContent coRefusalTemplateContent;
 
     @Mock
-    private GenerateJudicialSeparationCORefusedForAmendmentCoverLetter generateJudicialSeparationCORefusedForAmendmentCoverLetter;
+    private JudicialSeparationCoRefusalTemplateContent judicialSeparationCoRefusalTemplateContent;
 
     @Mock
-    private GenerateJudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
+    private JudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
 
     @InjectMocks
     private AwaitingAmendedOrClarificationApplicationCommonPrinter awaitingAmendedOrClarificationApplicationCommonPrinter;
@@ -147,7 +147,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+        verify(coRefusalTemplateContent).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -223,7 +223,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+        verify(coRefusalTemplateContent).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -303,7 +303,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateJudicialSeparationCORefusedForAmendmentCoverLetter).generateAndUpdateCaseData(
+        verify(judicialSeparationCoRefusalTemplateContent).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -464,7 +464,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateJudicialSeparationCORefusedForAmendmentCoverLetter).generateAndUpdateCaseData(
+        verify(judicialSeparationCoRefusalTemplateContent).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1()
@@ -668,7 +668,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+        verify(coRefusalTemplateContent).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -727,7 +727,7 @@ public class AwaitingAmendedOrClarificationApplicationCommonPrinterTest {
             eq(ENGLISH)
         );
 
-        verify(generateCoRefusedCoverLetter).generateAndUpdateCaseData(
+        verify(coRefusalTemplateContent).generateAndUpdateCaseData(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),

@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class GenerateCoRefusedCoverLetter {
+public class CoRefusalTemplateContent {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -69,7 +69,7 @@ public class GenerateCoRefusedCoverLetter {
         );
     }
 
-    private Map<String, Object> templateContent(final CaseData caseData,
+    public Map<String, Object> templateContent(final CaseData caseData,
                                                 final Long caseId,
                                                 final Applicant applicant) {
 

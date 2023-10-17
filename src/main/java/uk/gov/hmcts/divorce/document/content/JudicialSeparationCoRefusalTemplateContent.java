@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
+public class JudicialSeparationCoRefusalTemplateContent {
 
     private static final String IS_JOINT = "isJoint";
 
@@ -104,7 +104,7 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
             : "not provided";
     }
 
-    private Map<String, Object> templateContent(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
+    public Map<String, Object> templateContent(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
 
         Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 

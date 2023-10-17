@@ -85,7 +85,7 @@ class GenerateJudicialSeparationCORefusedForClarificationCoverLetterTest {
     private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private GenerateJudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
+    private JudicialSeparationCORefusedForClarificationCoverLetter generateJudicialSeparationCORefusedForClarificationCoverLetter;
 
     @Test
     void shouldGenerateAndUpdateCaseData() {
