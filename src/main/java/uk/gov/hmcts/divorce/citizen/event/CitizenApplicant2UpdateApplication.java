@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrd
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -38,7 +39,7 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
             .event(CITIZEN_APPLICANT2_UPDATE)
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AosDrafted, AosOverdue,
                 ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification, AwaitingService,
-                AwaitingFinalOrder, AwaitingJointFinalOrder))
+                AwaitingFinalOrder, AwaitingJointFinalOrder, OfflineDocumentReceived))
             .name("Patch a joint case")
             .description("Patch a joint divorce or dissolution as applicant 2")
             .aboutToSubmitCallback(this::aboutToSubmit)
