@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
@@ -13,9 +12,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent.LEGAL_ADVISOR_COMMENTS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
@@ -34,9 +30,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 public class CoRefusalTemplateContent {
 
     @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
-
-    @Autowired
     private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     @Autowired
@@ -44,30 +37,6 @@ public class CoRefusalTemplateContent {
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
-
-    public void generateAndUpdateCaseData(final CaseData caseData,
-                                          final Long caseId,
-                                          final Applicant applicant) {
-        this.generateAndUpdateCaseData(caseData, caseId, applicant, false);
-    }
-
-    public void generateAndUpdateCaseData(final CaseData caseData,
-                                          final Long caseId,
-                                          final Applicant applicant,
-                                          final Boolean isClarificationRefusal) {
-
-        log.info("Generating Conditional Order Refused Cover Letter for case id {} ", caseId);
-
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, isClarificationRefusal),
-            templateContent(caseData, caseId, applicant),
-            caseId,
-            conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, isClarificationRefusal),
-            applicant.getLanguagePreference(),
-            formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
-        );
-    }
 
     public Map<String, Object> templateContent(final CaseData caseData,
                                                 final Long caseId,

@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
@@ -18,9 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -29,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent.LEGAL_ADVISOR_COMMENTS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
@@ -45,7 +41,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -57,9 +52,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTempl
 
 @ExtendWith(MockitoExtension.class)
 public class GenerateCoRefusedCoverLetterTest {
-
-    @Mock
-    private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
     private ConditionalOrderCommonContent conditionalOrderCommonContent;
@@ -117,30 +109,15 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
-        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
-            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        coRefusalTemplateContent.generateAndUpdateCaseData(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1()
-        );
+        Map<String, Object> actualTemplateContent = coRefusalTemplateContent.templateContent(caseData,
+            TEST_CASE_ID, caseData.getApplicant1());
 
-        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            eq(caseData),
-            eq(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
-            eq(templateContent),
-            eq(TEST_CASE_ID),
-            eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
-            eq(ENGLISH),
-            anyString()
-        );
+        assertThat(actualTemplateContent.entrySet()).containsAll(templateContent.entrySet());
     }
 
     @Test
@@ -187,29 +164,14 @@ public class GenerateCoRefusedCoverLetterTest {
             )
             .build();
 
-        when(conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, caseData.getApplicant1(), false))
-            .thenReturn(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER);
-        when(conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, caseData.getApplicant1(), false))
-            .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
 
-        coRefusalTemplateContent.generateAndUpdateCaseData(
-            caseData,
-            TEST_CASE_ID,
-            caseData.getApplicant1()
-        );
+        Map<String, Object> actualTemplateContent = coRefusalTemplateContent.templateContent(caseData,
+            TEST_CASE_ID, caseData.getApplicant1());
 
-        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            eq(caseData),
-            eq(CONDITIONAL_ORDER_REFUSAL_COVER_LETTER),
-            eq(templateContent),
-            eq(TEST_CASE_ID),
-            eq(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
-            eq(ENGLISH),
-            anyString()
-        );
+        assertThat(actualTemplateContent.entrySet()).containsAll(templateContent.entrySet());
     }
 }
