@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingClarificationApplicationPrinter;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.ConditionalOrderRefusedPrinter;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -28,7 +28,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     private CommonContent commonContent;
 
     @Autowired
-    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
+    private ConditionalOrderRefusedPrinter conditionalOrderRefusedPrinter;
 
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
@@ -71,7 +71,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     @Override
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
         log.info("Notifying applicant 1 offline that their conditional order is rejected - clarification needed: {}", caseId);
-        awaitingClarificationApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+        conditionalOrderRefusedPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
     }
 
     @Override
@@ -116,7 +116,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying applicant 2 offline that their conditional order is rejected - clarification needed: {}", caseId);
-            awaitingClarificationApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+            conditionalOrderRefusedPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
         }
     }
 }

@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ConditionalOrderDocumentGenerator {
+public class ConditionalOrderRefusedDocumentGenerator {
 
     private static final Set<DocumentType> COMMON_DOCUMENTS = Set.of(APPLICATION, COVERSHEET, CONDITIONAL_ORDER_REFUSAL);
 
@@ -51,16 +51,24 @@ public class ConditionalOrderDocumentGenerator {
     public List<Letter> generateDocuments(final CaseData caseData,
                                           final Long caseId,
                                           final Applicant applicant,
-                                          final CoRefusalDocPack documentPack) {
+                                          final CoRefusalDocumentPack documentPack) {
 
         Letter coversheet = new Letter(getCoversheet(caseId, applicant, caseData), 1);
         Letter coverLetter = new Letter(getCoverLetter(caseData, caseId, applicant, documentPack), 1);
+
+        final List<Letter> coRefusalLetterPack = new ArrayList<>(List.of(coversheet, coverLetter));
+
         final Letter refusalLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_REFUSAL));
-        final List<Letter> coRefusalLetterPack = new ArrayList<>(List.of(coversheet, coverLetter, refusalLetter));
+
+        if (refusalLetter != null) {
+            coRefusalLetterPack.add(refusalLetter);
+        }
 
         if (documentPack.getDocumentPack().contains(APPLICATION)) {
             final Letter application = firstElement(getLettersBasedOnContactPrivacy(caseData, APPLICATION));
-
+            if (application != null) {
+                coRefusalLetterPack.add(application);
+            }
         }
 
         return coRefusalLetterPack;
@@ -85,7 +93,7 @@ public class ConditionalOrderDocumentGenerator {
     private Document getCoverLetter(final CaseData caseData,
                                     final long caseId,
                                     final Applicant applicant,
-                                    final CoRefusalDocPack documentPack) {
+                                    final CoRefusalDocumentPack documentPack) {
 
         Map<String, Object> templateContent = caseData.isJudicialSeparationCase()
             ? judicialSeparationCoRefusalTemplateContent.templateContent(caseData, caseId, applicant)

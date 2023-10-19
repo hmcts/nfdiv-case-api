@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -241,6 +242,11 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
             .thenReturn(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference()));
+
+        Map<String, Object> actualTemplateContent = judicialSeparationCoRefusalTemplateContent.templateContent(caseData,
+            TEST_CASE_ID, caseData.getApplicant1());
+
+        assertThat();
 
         judicialSeparationCoRefusalTemplateContent.generateAndUpdateCaseData(
             caseData, TEST_CASE_ID, caseData.getApplicant1());

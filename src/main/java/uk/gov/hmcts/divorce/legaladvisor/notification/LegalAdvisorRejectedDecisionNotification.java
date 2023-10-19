@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingAmendedApplicationPrinter;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.ConditionalOrderRefusedPrinter;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -28,7 +28,7 @@ public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotifi
     private CommonContent commonContent;
 
     @Autowired
-    private AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter;
+    private ConditionalOrderRefusedPrinter conditionalOrderRefusedPrinter;
 
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
@@ -87,7 +87,7 @@ public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotifi
 
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         log.info("Notifying applicant 1 offline that their conditional order is rejected: {}", caseId);
-        awaitingAmendedApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+        conditionalOrderRefusedPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
     }
 
     @Override
@@ -111,7 +111,7 @@ public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotifi
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying applicant 2 offline that their conditional order is rejected: {}", caseId);
-            awaitingAmendedApplicationPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+            conditionalOrderRefusedPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
         }
     }
 }

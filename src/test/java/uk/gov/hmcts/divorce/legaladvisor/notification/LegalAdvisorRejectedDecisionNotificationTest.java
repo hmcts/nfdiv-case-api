@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingAmendedApplicationPrinter;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.ConditionalOrderRefusedPrinter;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -41,7 +41,7 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
     private CommonContent commonContent;
 
     @Mock
-    private AwaitingAmendedApplicationPrinter awaitingAmendedApplicationPrinter;
+    private ConditionalOrderRefusedPrinter conditionalOrderRefusedPrinter;
 
     @InjectMocks
     private LegalAdvisorRejectedDecisionNotification notification;
@@ -204,7 +204,7 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
 
         notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingAmendedApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        verify(conditionalOrderRefusedPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
 
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingAmendedApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        verify(conditionalOrderRefusedPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
     }
 
     @Test
@@ -222,6 +222,6 @@ public class LegalAdvisorRejectedDecisionNotificationTest {
 
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verifyNoInteractions(awaitingAmendedApplicationPrinter);
+        verifyNoInteractions(conditionalOrderRefusedPrinter);
     }
 }

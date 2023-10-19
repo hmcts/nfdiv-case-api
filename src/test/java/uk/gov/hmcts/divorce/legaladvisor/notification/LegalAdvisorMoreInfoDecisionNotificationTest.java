@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingClarificationApplicationPrinter;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.ConditionalOrderRefusedPrinter;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -48,7 +48,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
     private CommonContent commonContent;
 
     @Mock
-    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
+    private ConditionalOrderRefusedPrinter conditionalOrderRefusedPrinter;
 
     @InjectMocks
     private LegalAdvisorMoreInfoDecisionNotification notification;
@@ -197,7 +197,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        verify(conditionalOrderRefusedPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
     }
 
     @Test
@@ -206,7 +206,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        verify(conditionalOrderRefusedPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
     }
 
     @Test
@@ -215,6 +215,6 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verifyNoInteractions(awaitingClarificationApplicationPrinter);
+        verifyNoInteractions(conditionalOrderRefusedPrinter);
     }
 }
