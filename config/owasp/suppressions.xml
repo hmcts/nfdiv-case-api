@@ -20,11 +20,11 @@
     <cve>CVE-2016-9878</cve>
     <cve>CVE-2023-34047</cve>
   </suppress>
-  <suppress>
+  <suppress base="true">
     <notes><![CDATA[
-   file name: json-20230227.jar
+   False positive https://github.com/jeremylong/DependencyCheck/issues/5991
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
-    <cve>CVE-2023-5072</cve>
+    <cpe>cpe:/a:json-java_project:json-java</cpe>
   </suppress>
 </suppressions>

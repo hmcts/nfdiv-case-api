@@ -220,6 +220,8 @@ dependencyManagement {
     //CVE-2020-23064
     dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.15'
     dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.15'
+    //CVE-2023-5072
+    dependency group: 'org.json', name: 'json', version: '20231013'
   }
 }
 
