@@ -20,4 +20,11 @@
     <cve>CVE-2016-9878</cve>
     <cve>CVE-2023-34047</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+   file name: json-20230227.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
+    <cve>CVE-2023-5072</cve>
+  </suppress>
 </suppressions>
