@@ -230,7 +230,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             data.getApplicant1().getSolicitor().setOrganisationPolicy(beforeData.getApplicant1().getSolicitor().getOrganisationPolicy());
             data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
             if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-                data.getApplicant2().setAddress(beforeData.getApplicant1().getAddress());
+                data.getApplicant2().setAddress(beforeData.getApplicant2().getAddress());
             }
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant2().getSolicitor().setAddress(null);
