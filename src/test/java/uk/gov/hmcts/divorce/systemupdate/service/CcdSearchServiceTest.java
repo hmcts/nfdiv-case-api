@@ -803,8 +803,8 @@ class CcdSearchServiceTest {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, 1)).build();
-        final SearchResult searchResult2 = SearchResult.builder().total(1)
-            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, PAGE_SIZE + 1)).build();
         final List<CaseDetails> expectedCases = concat(searchResult1.getCases().stream(), searchResult2.getCases().stream())
             .collect(toSet()).stream().toList();
 
@@ -821,12 +821,13 @@ class CcdSearchServiceTest {
             searchSourceBuilderForAwaitingPronouncementCases(PAGE_SIZE).toString()))
             .thenReturn(searchResult2);
         when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases))
-            .thenReturn(createConvertedCaseDetailsList(TOTAL_MAX_RESULTS, TEST_CASE_ID));
+            .thenReturn(createConvertedCaseDetailsList(PAGE_SIZE * 2, TEST_CASE_ID));
 
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(3);
+        assertThat(allPages.size()).isEqualTo(4);
+        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
