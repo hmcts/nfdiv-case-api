@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
 import feign.FeignException;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -77,8 +76,10 @@ public class CcdSearchService {
     private int pageSize;
 
     @Value("${bulk-action.page-size}")
-    @Setter
     private int bulkActionPageSize;
+
+    @Value("${core_case_data.search.total_max_results}")
+    private int totalMaxResults;
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
@@ -99,7 +100,7 @@ public class CcdSearchService {
         int totalResults = pageSize;
 
         try {
-            while (totalResults == pageSize) {
+            while (totalResults == pageSize && allCaseDetails.size() <= totalMaxResults) {
                 final SearchResult searchResult = searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
                 final List<CaseDetails> pageResults = searchResult.getCases();
