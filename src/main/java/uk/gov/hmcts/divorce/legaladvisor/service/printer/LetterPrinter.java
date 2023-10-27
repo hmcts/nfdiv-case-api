@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.DocumentGenerator;
-import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.DocumentPackInfo;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 
 import java.util.List;
 import java.util.UUID;

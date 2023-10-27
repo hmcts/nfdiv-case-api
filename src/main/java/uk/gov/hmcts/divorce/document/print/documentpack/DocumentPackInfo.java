@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder;
+package uk.gov.hmcts.divorce.document.print.documentpack;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

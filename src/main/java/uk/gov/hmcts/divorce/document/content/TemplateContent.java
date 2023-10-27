@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder;
+package uk.gov.hmcts.divorce.document.content;
 
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;

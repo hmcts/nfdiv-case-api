@@ -2,13 +2,12 @@ package uk.gov.hmcts.divorce.legaladvisor.service.task;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
-import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.TemplateContent;
+import uk.gov.hmcts.divorce.document.content.TemplateContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
