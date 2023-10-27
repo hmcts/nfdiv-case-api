@@ -78,17 +78,6 @@ public final class DocumentUtil {
             .build();
     }
 
-    public static ConfidentialDivorceDocument mapToConfidentialDivorceDocument(final DivorceDocument divorceDocument) {
-        return ConfidentialDivorceDocument.builder()
-            .documentLink(divorceDocument.getDocumentLink())
-            .documentComment(divorceDocument.getDocumentComment())
-            .documentFileName(divorceDocument.getDocumentFileName())
-            .documentDateAdded(divorceDocument.getDocumentDateAdded())
-            .documentEmailContent(divorceDocument.getDocumentEmailContent())
-            .confidentialDocumentsReceived(getConfidentialDocumentType(divorceDocument.getDocumentType()))
-            .build();
-    }
-
     public static ConfidentialDivorceDocument divorceDocumentFrom(final DocumentInfo documentInfo,
                                                                   final ConfidentialDocumentsReceived documentType) {
         return ConfidentialDivorceDocument
