@@ -73,6 +73,7 @@ class CcdSearchServiceTest {
 
     public static final int PAGE_SIZE = 100;
     public static final int BULK_LIST_MAX_PAGE_SIZE = 50;
+    public static final int TOTAL_MAX_RESULTS = 150;
 
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
@@ -90,6 +91,7 @@ class CcdSearchServiceTest {
     void setPageSize() {
         setField(ccdSearchService, "pageSize", PAGE_SIZE);
         setField(ccdSearchService, "bulkActionPageSize", BULK_LIST_MAX_PAGE_SIZE);
+        setField(ccdSearchService, "totalMaxResults", TOTAL_MAX_RESULTS);
     }
 
     @Test
@@ -794,6 +796,42 @@ class CcdSearchServiceTest {
             BulkActionCaseTypeConfig.getCaseType(),
             "1");
     }
+
+    @Test
+    void shouldNotReturnMoreThanTheTotalMaxNumberOfCases() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE, 1)).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(1)
+            .cases(createCaseDetailsList(1, PAGE_SIZE + 1)).build();
+        final List<CaseDetails> expectedCases = concat(searchResult1.getCases().stream(), searchResult2.getCases().stream())
+            .collect(toSet()).stream().toList();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            getCaseType(),
+            searchSourceBuilderForAwaitingPronouncementCases(0).toString()))
+            .thenReturn(searchResult1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            getCaseType(),
+            searchSourceBuilderForAwaitingPronouncementCases(PAGE_SIZE).toString()))
+            .thenReturn(searchResult2);
+        when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases))
+            .thenReturn(createConvertedCaseDetailsList(TOTAL_MAX_RESULTS, TEST_CASE_ID));
+
+        final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
+            ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+
+        assertThat(allPages.size()).isEqualTo(3);
+        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
+    }
+
 
     private List<CaseDetails> createCaseDetailsList(final int size, final long idStart) {
 
