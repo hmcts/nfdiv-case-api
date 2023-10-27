@@ -63,7 +63,8 @@ core_case_data:
   api:
     url: http://localhost:4012
   search:
-    page_size: 100
+    page_size: 50
+    total_max_results: 250
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
