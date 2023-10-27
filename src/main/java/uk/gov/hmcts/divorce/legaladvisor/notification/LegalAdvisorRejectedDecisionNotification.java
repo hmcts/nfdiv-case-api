@@ -1,11 +1,12 @@
 package uk.gov.hmcts.divorce.legaladvisor.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.ConditionalOrderRefusedPrinter;
+import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.ConditionalOrderRefusalDocumentPack;
+import uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterPrinter;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -18,17 +19,14 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotification {
 
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private ConditionalOrderRefusedPrinter conditionalOrderRefusedPrinter;
+    private final NotificationService notificationService;
+    private final CommonContent commonContent;
+    private final LetterPrinter letterPrinter;
+    private final ConditionalOrderRefusalDocumentPack conditionalOrderRefusalDocumentPack;
 
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
@@ -87,7 +85,13 @@ public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotifi
 
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         log.info("Notifying applicant 1 offline that their conditional order is rejected: {}", caseId);
-        conditionalOrderRefusedPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+        var documentPack = conditionalOrderRefusalDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
+        letterPrinter.sendLetters(
+            caseData,
+            caseId,
+            caseData.getApplicant1(),
+            documentPack,
+            conditionalOrderRefusalDocumentPack.getLetterId());
     }
 
     @Override
@@ -111,7 +115,13 @@ public class LegalAdvisorRejectedDecisionNotification implements ApplicantNotifi
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying applicant 2 offline that their conditional order is rejected: {}", caseId);
-            conditionalOrderRefusedPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+            var documentPack = conditionalOrderRefusalDocumentPack.getDocumentPack(caseData, caseData.getApplicant2());
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                caseData.getApplicant2(),
+                documentPack,
+                conditionalOrderRefusalDocumentPack.getLetterId());
         }
     }
 }

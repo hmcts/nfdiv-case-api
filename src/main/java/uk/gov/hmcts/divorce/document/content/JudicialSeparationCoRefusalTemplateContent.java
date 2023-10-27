@@ -1,16 +1,22 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.TemplateContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -35,19 +41,30 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class JudicialSeparationCoRefusalTemplateContent {
+public class JudicialSeparationCoRefusalTemplateContent implements TemplateContent {
 
     private static final String IS_JOINT = "isJoint";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(
+            JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+        );
+    }
 
-    @Autowired
-    private ConditionalOrderCommonContent conditionalOrderCommonContent;
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return templateContent(caseData, caseId, applicant);
+    }
 
     public Map<String, Object> templateContent(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
 

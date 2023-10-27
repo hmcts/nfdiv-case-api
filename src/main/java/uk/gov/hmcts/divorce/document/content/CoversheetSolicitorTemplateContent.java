@@ -4,10 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.TemplateContent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
@@ -15,7 +18,17 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class CoversheetSolicitorTemplateContent {
+public class CoversheetSolicitorTemplateContent implements TemplateContent {
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(COVERSHEET_APPLICANT2_SOLICITOR);
+    }
+
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseId, applicant);
+    }
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
         return this.apply(ccdCaseReference, caseData.getApplicant2());
@@ -28,4 +41,6 @@ public class CoversheetSolicitorTemplateContent {
         templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
         return templateContent;
     }
+
+
 }

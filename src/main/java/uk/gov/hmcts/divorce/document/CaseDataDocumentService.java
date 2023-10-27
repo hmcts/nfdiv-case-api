@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,21 +16,18 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.documentInfoFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class CaseDataDocumentService {
 
-    @Autowired
-    private DocAssemblyService docAssemblyService;
-
-    @Autowired
-    private DocumentIdProvider documentIdProvider;
-
-    @Autowired
-    private IdamService idamService;
+    private final DocAssemblyService docAssemblyService;
+    private final DocumentIdProvider documentIdProvider;
+    private final IdamService idamService;
 
     public void renderDocumentAndUpdateCaseData(final CaseData caseData,
                                                 final DocumentType documentType,
@@ -55,32 +53,6 @@ public class CaseDataDocumentService {
         updateCaseData(caseData, documentType, documentInfo, caseId, templateId);
     }
 
-    public Document renderUpdateAndFetchDocument(final CaseData caseData,
-                                                 final DocumentType documentType,
-                                                 final Map<String, Object> templateContent,
-                                                 final Long caseId,
-                                                 final String templateId,
-                                                 final LanguagePreference languagePreference,
-                                                 final String filename) {
-
-        log.info("Rendering document request for templateId : {} case id: {}", templateId, caseId);
-
-        final String authorisation = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-
-        final var documentInfo = docAssemblyService.renderDocument(
-            templateContent,
-            caseId,
-            authorisation,
-            templateId,
-            languagePreference,
-            filename
-        );
-
-        updateCaseData(caseData, documentType, documentInfo, caseId, templateId);
-
-        return documentFrom(documentInfo);
-    }
-
     public Document renderDocument(final Map<String, Object> templateContent,
                                    final Long caseId,
                                    final String templateId,
@@ -103,7 +75,7 @@ public class CaseDataDocumentService {
         return documentFrom(documentInfo);
     }
 
-    private void updateCaseData(final CaseData caseData,
+    public void updateCaseData(final CaseData caseData,
                                 final DocumentType documentType,
                                 final DocumentInfo documentInfo,
                                 final Long caseId,
@@ -129,5 +101,13 @@ public class CaseDataDocumentService {
                 documentIdProvider.documentId()
             ));
         }
+    }
+
+    public void updateCaseData(final CaseData caseData,
+                               final DocumentType documentType,
+                               final Document document,
+                               final Long caseId,
+                               final String templateId) {
+        updateCaseData(caseData, documentType, documentInfoFrom(document), caseId, templateId);
     }
 }

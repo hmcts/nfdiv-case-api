@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.CoRefusalDocumentPack;
-import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.ConditionalOrderRefusedDocumentGenerator;
+import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.DocumentGenerator;
+import uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder.DocumentPackInfo;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,27 +19,27 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ConditionalOrderRefusedPrinter {
+public class LetterPrinter {
 
-    private final ConditionalOrderRefusedDocumentGenerator conditionalOrderRefusedDocumentGenerator;
+    private final DocumentGenerator documentGenerator;
     private final BulkPrintService bulkPrintService;
 
     public void sendLetters(final CaseData caseData,
                             final Long caseId,
-                            final Applicant applicant) {
+                            final Applicant applicant,
+                            final DocumentPackInfo documentPackInfo,
+                            final String letterName) {
 
-        CoRefusalDocumentPack documentPackToSend = CoRefusalDocumentPack.refusalPackFromCaseData(caseData, applicant);
+        List<Letter> letters = documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo);
 
-        List<Letter> letters = conditionalOrderRefusedDocumentGenerator.generateDocuments(caseData, caseId, applicant, documentPackToSend);
-
-        if (!isEmpty(letters) && letters.size() == documentPackToSend.getDocumentPack().size()) {
+        if (!isEmpty(letters) && letters.size() == documentPackInfo.getDocumentPack().size()) {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(
                 letters,
                 caseIdString,
                 caseIdString,
-                documentPackToSend.getLetterType().toString(),
+                letterName,
                 applicant.getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
@@ -47,7 +47,7 @@ public class ConditionalOrderRefusedPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn("{} Letter pack has missing documents. Expected documents with type {} , for Case ID: {}",
-                documentPackToSend.getLetterType().toString(), documentPackToSend.getDocumentPack(), caseId);
+                letterName, documentPackInfo.getDocumentPack().keySet(), caseId);
         }
     }
 }

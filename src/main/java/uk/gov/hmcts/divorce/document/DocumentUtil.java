@@ -62,6 +62,13 @@ public final class DocumentUtil {
             documentInfo.getBinaryUrl());
     }
 
+    public static DocumentInfo documentInfoFrom(final Document document) {
+        return new DocumentInfo(
+            document.getUrl(),
+            document.getFilename(),
+            document.getBinaryUrl());
+    }
+
     public static DivorceDocument divorceDocumentFrom(final DocumentInfo documentInfo, final DocumentType documentType) {
         return DivorceDocument
             .builder()
