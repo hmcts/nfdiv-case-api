@@ -156,6 +156,8 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         templateVars.put(WILL_BE_CHECKED_WITHIN_2_DAYS, NO);
         templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, YES);
         templateVars.put(NOW_PLUS_14_DAYS, finalOrderNotificationCommonContent.getNowPlus14Days(caseData.getApplicant2()));
+        // Whenever the applicant2 applies the template should print the isOverdue statement, if we added another variable for
+        // if applicant 2 has applied, it would print 'must be reviewed by a judge' when applicant2 applies twice and is overdue
         templateVars.put(IS_OVERDUE, YES);
         templateVars.put(IN_TIME, NO);
 
