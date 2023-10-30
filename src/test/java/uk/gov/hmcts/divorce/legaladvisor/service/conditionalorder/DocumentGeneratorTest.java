@@ -152,52 +152,6 @@ class DocumentGeneratorTest {
             .containsExactly(COVERSHEET_DOCUMENT_NAME);
     }
 
-    @Test
-    void shouldGenerateAwaitingAmendedApplicationPack() {
-
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingClarificationPack() {
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingAmendedApplicationPackForJudicialSeparation() {
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingClarificationApplicationPackForJudicialSeparation() {
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingAmendedApplicationSolicitorPackForJudicialSeparation() {
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingClarificationApplicationSolicitorPackForJudicialSeparation() {
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingAmendedApplicationPackForSeparationOrder() {
-
-    }
-
-    @Test
-    void shouldGenerateAwaitingClarificationPackForSeparationOrder() {
-
-    }
-
-    @Test
-    void shouldFetchRefusalLetterWhenContactDetailsArePrivate() {
-
-    }
-
     private DocumentPackInfo getDocumentPackInfo() {
         return DocumentPackInfo.of(
             ImmutableMap.of(
