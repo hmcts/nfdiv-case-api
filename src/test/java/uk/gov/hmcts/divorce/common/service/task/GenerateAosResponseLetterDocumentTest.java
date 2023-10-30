@@ -13,8 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.content.AosUndefendedResponseLetterTemplateContent;
-import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
-import uk.gov.hmcts.divorce.document.content.CoversheetSolicitorTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.HashMap;

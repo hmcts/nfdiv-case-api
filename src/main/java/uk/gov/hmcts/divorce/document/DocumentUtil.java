@@ -45,7 +45,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_COVER_LETTER;
 
 public final class DocumentUtil {
-
     private static final Map<String, List<DocumentType>> DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY
         = documentsApplicableForConfidentiality();
 
@@ -246,7 +245,6 @@ public final class DocumentUtil {
                 DocumentType.OTHER, ConfidentialDocumentsReceived.OTHER,
                 DocumentType.BAILIFF_SERVICE, ConfidentialDocumentsReceived.BAILIFF_SERVICE,
                 DocumentType.CONDITIONAL_ORDER_APPLICATION, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_APPLICATION,
-                DocumentType.CONDITIONAL_ORDER_REFUSAL, ConfidentialDocumentsReceived.CO_REFUSAL_CLARIFICATION_RESP,
                 DocumentType.CORRESPONDENCE, ConfidentialDocumentsReceived.CORRESPONDENCE,
                 DocumentType.COSTS, ConfidentialDocumentsReceived.COSTS
             )

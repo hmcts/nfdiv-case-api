@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.legaladvisor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -24,6 +25,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -33,12 +37,17 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -111,6 +120,9 @@ public class LegalAdvisorMakeDecisionIT {
     private static final String CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME =
         "FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx";
     private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
+    private static final String NFD_APPLICANT_COVERSHEET_FILENAME = "NFD_Applicant_Coversheet.docx";
+    private static final String CO_REFUSAL_COVER_LETTER_TEMPLATE_NAME =
+        "FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -129,6 +141,9 @@ public class LegalAdvisorMakeDecisionIT {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private BulkPrintService bulkPrintService;
 
     @Mock
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
@@ -683,6 +698,18 @@ public class LegalAdvisorMakeDecisionIT {
         caseData.getApplicant1().setOffline(YES);
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+        caseData.getDocuments().setDocumentsGenerated(List.of(
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder()
+                    .documentType(DocumentType.APPLICATION)
+                    .documentLink(Document.builder()
+                        .filename("application.pdf")
+                        .binaryUrl("applicationbinaryurl")
+                        .url("applicationurl")
+                        .build())
+                    .build())
+                .build()
+        ));
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
@@ -698,7 +725,8 @@ public class LegalAdvisorMakeDecisionIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
-        stubForDocAssemblyWith(UUID, "COVERSHEET_APPLICANT");
+        stubForDocAssemblyWith(UUID, NFD_APPLICANT_COVERSHEET_FILENAME);
+        stubForDocAssemblyWith(UUID, CO_REFUSAL_COVER_LETTER_TEMPLATE_NAME);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -715,24 +743,11 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk());
 
-        verify(notificationService).sendEmail(
-            eq("sol1@gm.com"),
-            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
-            argThat(allOf(
-                hasEntry("solicitor name", "App1 sol"),
-                hasEntry("solicitor reference", "sol1"),
-                hasEntry("applicant1Label", "Applicant"),
-                hasEntry("applicant2Label", "Respondent"),
-                hasEntry("isJoint", "no"),
-                hasEntry("moreInfo", "yes"),
-                hasEntry("amendApplication", "no"),
-                hasEntry("issueDate", "22 June 2022")
-            )),
-            eq(ENGLISH),
-            anyLong()
-        );
-
-        verifyNoMoreInteractions(notificationService);
+        verify(bulkPrintService).print(argThat(allOf(
+            hasProperty("letters", hasSize(4)),
+            hasProperty("letterType", equalTo("conditional-order-refused")),
+            hasProperty("recipients", hasItem(equalTo("test_first_name test_middle_name test_last_name")))
+        )));
     }
 
     @Test

@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.TemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -50,21 +49,20 @@ public class DocumentGenerator {
                                       final Map<String, String> templateInfo) {
 
         Letter letter = entry.getValue()
-            .map(templatedId ->
-                {
-                    log.info("Generating document with id {} for case {}", templatedId, caseId);
+            .map(templatedId -> {
+                log.info("Generating document with id {} for case {}", templatedId, caseId);
 
-                    String documentName = templateInfo.get(templatedId);
-                    Document generatedDocument = generateDocument(
-                        caseId,
-                        applicant,
-                        caseData,
-                        entry.getKey(),
-                        templatedId,
-                        documentName);
+                String documentName = templateInfo.get(templatedId);
+                Document generatedDocument = generateDocument(
+                    caseId,
+                    applicant,
+                    caseData,
+                    entry.getKey(),
+                    templatedId,
+                    documentName);
 
-                    return new Letter(generatedDocument, 1);
-                })
+                return new Letter(generatedDocument, 1);
+            })
             .orElseGet(() -> firstElement(getLettersBasedOnContactPrivacy(caseData, entry.getKey())));
 
         log.info("Got the letter with type {} for case {}", entry.getKey(), caseId);

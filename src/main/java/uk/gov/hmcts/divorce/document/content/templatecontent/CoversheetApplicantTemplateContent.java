@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

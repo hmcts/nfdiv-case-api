@@ -14,8 +14,10 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DocumentPackInfo {
+
     private Map<DocumentType, Optional<String>> documentPack;
     private Map<String, String> templateInfo;
+
     public static DocumentPackInfo of(Map<DocumentType, Optional<String>> documentPack, Map<String, String> templateInfo) {
         return new DocumentPackInfo(documentPack, templateInfo);
     }
