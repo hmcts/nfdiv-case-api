@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderRefusalDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
