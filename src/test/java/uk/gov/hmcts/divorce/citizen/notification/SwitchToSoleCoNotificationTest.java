@@ -70,7 +70,7 @@ class SwitchToSoleCoNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(56).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -97,7 +97,7 @@ class SwitchToSoleCoNotificationTest {
             argThat(allOf(
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(28).format(DATE_TIME_FORMATTER))
+                hasEntry(PRONOUNCE_BY_DATE, getExpectedLocalDateTime().plusDays(56).format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
