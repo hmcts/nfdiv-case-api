@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -323,5 +324,17 @@ public class PaymentService {
         );
 
         return feeResponse.getAmount();
+    }
+
+    public PaymentStatus getPaymentStatusByReference(String authorisation, String serviceAuthorisation, String paymentReference) {
+
+        final var feeResponse = paymentPbaClient.getPaymentByReference(
+             authorisation,
+             serviceAuthorisation,
+             paymentReference
+        );
+
+
+        return feeResponse.getStatus();
     }
 }
