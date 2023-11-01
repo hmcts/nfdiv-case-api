@@ -74,7 +74,7 @@ public class CaseDataDocumentService {
         return documentFrom(documentInfo);
     }
 
-    public void updateCaseData(final CaseData caseData,
+    private void updateCaseData(final CaseData caseData,
                                 final DocumentType documentType,
                                 final DocumentInfo documentInfo,
                                 final Long caseId,

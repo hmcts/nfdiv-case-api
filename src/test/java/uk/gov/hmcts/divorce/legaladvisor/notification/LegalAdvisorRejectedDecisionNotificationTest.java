@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.legaladvisor.notification;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +17,6 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -44,9 +44,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 @ExtendWith(MockitoExtension.class)
 public class LegalAdvisorRejectedDecisionNotificationTest {
 
-    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = DocumentPackInfo.of(
-        Map.of(DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT)),
-        Map.of(COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME)
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT)),
+        ImmutableMap.of(COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME)
     );
 
     @Mock

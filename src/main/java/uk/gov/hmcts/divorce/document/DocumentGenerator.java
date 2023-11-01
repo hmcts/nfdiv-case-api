@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContac
 @Slf4j
 public class DocumentGenerator {
 
-    private final List<TemplateContent> templateContent;
+    private final List<TemplateContent> allTemplateContentHandlers;
     private final CaseDataDocumentService caseDataDocumentService;
     private final Clock clock;
 
@@ -36,8 +36,8 @@ public class DocumentGenerator {
                                           final DocumentPackInfo documentPackInfo) {
         log.info("About to start generating document pack for case {}", caseId);
 
-        return documentPackInfo.getDocumentPack().entrySet().stream()
-            .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.getTemplateInfo()))
+        return documentPackInfo.documentPack().entrySet().stream()
+            .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
             .flatMap(Optional::stream)
             .toList();
     }
@@ -46,13 +46,13 @@ public class DocumentGenerator {
                                       final CaseData caseData,
                                       final long caseId,
                                       final Applicant applicant,
-                                      final Map<String, String> templateInfo) {
+                                      final Map<String, String> documentIdToDocumentNameMap) {
 
         Letter letter = entry.getValue()
             .map(templatedId -> {
                 log.info("Generating document with id {} for case {}", templatedId, caseId);
 
-                String documentName = templateInfo.get(templatedId);
+                String documentName = documentIdToDocumentNameMap.get(templatedId);
                 Document generatedDocument = generateDocument(
                     caseId,
                     applicant,
@@ -77,8 +77,8 @@ public class DocumentGenerator {
                                       final String templateId,
                                       final String docName) {
 
-        List<TemplateContent> relevantTemplateContent = templateContent.stream()
-            .filter(provider -> provider.getSupportedTemplates().contains(templateId))
+        List<TemplateContent> relevantTemplateContent = allTemplateContentHandlers.stream()
+            .filter(handler -> handler.getSupportedTemplates().contains(templateId))
             .toList();
 
         if (relevantTemplateContent.size() != 1) {

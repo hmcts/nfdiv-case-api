@@ -50,7 +50,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
             Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
@@ -75,11 +75,12 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
             Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_REFUSAL, Optional.empty()
+            CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
+            APPLICATION, Optional.empty()
         ), ImmutableMap.of(
             COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
             JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
@@ -99,7 +100,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
             Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID),
@@ -123,11 +124,12 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
             Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_REFUSAL, Optional.empty()
+            CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
+            APPLICATION, Optional.empty()
         ), ImmutableMap.of(
             COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
             JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
@@ -146,7 +148,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
                 COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
                 CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, Optional.of(CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
                 CONDITIONAL_ORDER_REFUSAL, Optional.empty()),
@@ -168,7 +170,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER,
             Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
@@ -192,7 +194,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER,
             Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
@@ -216,7 +218,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(
+        DocumentPackInfo expected = new DocumentPackInfo(
             ImmutableMap.of(
                 COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
                 JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER, Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
@@ -240,7 +242,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER, Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
             CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
@@ -263,7 +265,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
 
         DocumentPackInfo documentPackInfo = conditionalOrderRefusalDocumentPack.getDocumentPack(data, data.getApplicant1());
 
-        DocumentPackInfo expected = DocumentPackInfo.of(ImmutableMap.of(
+        DocumentPackInfo expected = new DocumentPackInfo(ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, Optional.of(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
             CONDITIONAL_ORDER_REFUSAL, Optional.empty(),

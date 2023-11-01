@@ -153,7 +153,7 @@ class DocumentGeneratorTest {
     }
 
     private DocumentPackInfo getDocumentPackInfo() {
-        return DocumentPackInfo.of(
+        return new DocumentPackInfo(
             ImmutableMap.of(
                 DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
                 DocumentType.APPLICATION, Optional.empty()

@@ -55,7 +55,7 @@ public class LetterPrinterTest {
         Applicant applicant = caseData.getApplicant1();
         DocumentPackInfo documentPackInfo = getDocumentPackInfo();
 
-        List<Letter> expectedLetters = documentPackInfo.getDocumentPack().keySet().stream().map(this::getLetterFromDocumentType).toList();
+        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList();
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME);
@@ -84,7 +84,7 @@ public class LetterPrinterTest {
     }
 
     private DocumentPackInfo getDocumentPackInfo() {
-        return DocumentPackInfo.of(
+        return new DocumentPackInfo(
             ImmutableMap.of(
                 DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
                 DocumentType.APPLICATION, Optional.empty()

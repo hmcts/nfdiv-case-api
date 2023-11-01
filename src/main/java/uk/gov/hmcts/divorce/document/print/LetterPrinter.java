@@ -31,7 +31,7 @@ public class LetterPrinter {
 
         List<Letter> letters = documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo);
 
-        if (!isEmpty(letters) && letters.size() == documentPackInfo.getDocumentPack().size()) {
+        if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(
@@ -46,7 +46,7 @@ public class LetterPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn("{} Letter pack has missing documents. Expected documents with type {} , for Case ID: {}",
-                letterName, documentPackInfo.getDocumentPack().keySet(), caseId);
+                letterName, documentPackInfo.documentPack().keySet(), caseId);
         }
     }
 }

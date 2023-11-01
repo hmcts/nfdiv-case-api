@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPack;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 
 import java.util.Optional;
 
@@ -38,7 +36,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
 
     private static final String CONDITIONAL_ORDER_REFUSED_LETTER = "conditional-order-refused";
 
-    private static final DocumentPackInfo AMENDMENT_JS_PACK = DocumentPackInfo.of(
+    private static final DocumentPackInfo AMENDMENT_JS_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER, Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
@@ -49,7 +47,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
             COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
             JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME));
 
-    private static final DocumentPackInfo AMENDMENT_JS_SOL_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo AMENDMENT_JS_SOL_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
         JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER, Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
         CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
@@ -59,7 +57,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
         JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo AMENDMENT_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo AMENDMENT_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
         CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, Optional.of(REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
         CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
@@ -69,7 +67,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
         REJECTED_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo AMENDMENT_SEPARATION_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo AMENDMENT_SEPARATION_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
         JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER, Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID),
         CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
@@ -79,7 +77,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
         JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo AMENDMENT_SOL_SEPARATION_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo AMENDMENT_SOL_SEPARATION_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
         JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER,
         Optional.of(JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
@@ -90,7 +88,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
         JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo CLARIFICATION_JS_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo CLARIFICATION_JS_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
         JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
         Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID),
@@ -101,28 +99,30 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
         JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo CLARIFICATION_SEPARATION_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo CLARIFICATION_SEPARATION_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
         SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER,
         Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID),
-        CONDITIONAL_ORDER_REFUSAL, Optional.empty()
+        CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
+        APPLICATION, Optional.empty()
     ), ImmutableMap.of(
         COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
         JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo CLARIFICATION_SOL_SEPARATION_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo CLARIFICATION_SOL_SEPARATION_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
         SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
         Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
-        CONDITIONAL_ORDER_REFUSAL, Optional.empty()
+        CONDITIONAL_ORDER_REFUSAL, Optional.empty(),
+        APPLICATION, Optional.empty()
     ), ImmutableMap.of(
         COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
         JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
         REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo CLARIFICATION_SOL_JS_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo CLARIFICATION_SOL_JS_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
         JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER,
         Optional.of(JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
@@ -134,7 +134,7 @@ public class ConditionalOrderRefusalDocumentPack implements DocumentPack {
         REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME
     ));
 
-    private static final DocumentPackInfo CLARIFICATION_PACK = DocumentPackInfo.of(ImmutableMap.of(
+    private static final DocumentPackInfo CLARIFICATION_PACK = new DocumentPackInfo(ImmutableMap.of(
         COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
         CONDITIONAL_ORDER_REFUSAL_COVER_LETTER, Optional.of(CLARIFICATION_REFUSAL_ORDER_COVER_LETTER_TEMPLATE_ID),
         CONDITIONAL_ORDER_REFUSAL, Optional.empty()),
