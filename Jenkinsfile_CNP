@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("Infrastructure@java-21-home")
+@Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
