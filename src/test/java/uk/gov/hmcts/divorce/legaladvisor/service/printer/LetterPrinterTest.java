@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -68,7 +69,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldNotSendLetterWhenSizeOfListReturnedIsNotEqualToDocumentPackSize() {
+    public void shouldThrowExceptionWhenSizeOfListReturnedIsNotEqualToDocumentPackSize() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -78,7 +79,10 @@ public class LetterPrinterTest {
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(List.of(letter));
 
-        letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME);
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME)
+        );
 
         verifyNoInteractions(bulkPrintService);
     }
