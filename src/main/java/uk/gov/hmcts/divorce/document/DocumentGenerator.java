@@ -48,24 +48,27 @@ public class DocumentGenerator {
                                       final Applicant applicant,
                                       final Map<String, String> documentIdToDocumentNameMap) {
 
-        Letter letter = entry.getValue()
+        var documentType = entry.getKey();
+        var letter = entry.getValue()
             .map(templatedId -> {
-                log.info("Generating document with id {} for case {}", templatedId, caseId);
+                log.info("Generating document type {} from template id {} for case {}", documentType, templatedId, caseId);
 
                 String documentName = documentIdToDocumentNameMap.get(templatedId);
                 Document generatedDocument = generateDocument(
                     caseId,
                     applicant,
                     caseData,
-                    entry.getKey(),
+                    documentType,
                     templatedId,
                     documentName);
 
                 return new Letter(generatedDocument, 1);
             })
-            .orElseGet(() -> firstElement(getLettersBasedOnContactPrivacy(caseData, entry.getKey())));
+            .orElseGet(() -> {
+                log.info("Fetching pre-generated document of type: {} for case {}", documentType, caseId);
 
-        log.info("Got the letter with type {} for case {}", entry.getKey(), caseId);
+                return firstElement(getLettersBasedOnContactPrivacy(caseData, documentType));
+            });
 
         return Optional.ofNullable(letter);
     }
