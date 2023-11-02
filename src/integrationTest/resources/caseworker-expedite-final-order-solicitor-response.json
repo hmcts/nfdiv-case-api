@@ -58,10 +58,10 @@
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "FinalOrderGranted-2022-02-15:13:39.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           },
-          "documentFileName": "FinalOrderGranted-2022-02-15:13:39.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "finalOrderGranted"
         }
       }

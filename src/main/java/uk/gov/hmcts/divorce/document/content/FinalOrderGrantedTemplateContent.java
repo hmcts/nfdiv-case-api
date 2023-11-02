@@ -1,18 +1,22 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -33,8 +37,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class FinalOrderGrantedTemplateContent {
+public class FinalOrderGrantedTemplateContent implements TemplateContent {
 
     public static final String THE_MARRIAGE_OR_CP = "theMarriageOrCp";
     public static final String SECTION = "section";
@@ -51,10 +56,19 @@ public class FinalOrderGrantedTemplateContent {
     public static final String DISSOLUTION_OF_A_CIVIL_PARTNERSHIP_CY = "diddymu partneriaeth sifil";
     public static final String FORMER_CIVIL_PARTNER_CY = "cyn-bartner sifil";
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(FINAL_ORDER_TEMPLATE_ID);
+    }
+
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseData, caseId);
+    }
+
+    private Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference());

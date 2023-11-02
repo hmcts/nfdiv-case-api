@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -62,7 +63,9 @@ public class FinalOrderGrantedTemplateContentTest {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -87,7 +90,9 @@ public class FinalOrderGrantedTemplateContentTest {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -113,7 +118,9 @@ public class FinalOrderGrantedTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -139,7 +146,9 @@ public class FinalOrderGrantedTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -157,5 +166,10 @@ public class FinalOrderGrantedTemplateContentTest {
             entry(SECTION, SECTION_18C),
             entry(SPOUSE_OR_CP, FORMER_CIVIL_PARTNER_CY)
         );
+    }
+
+    @Test
+    public void shouldGetSupportedTemplates() {
+        assertThat(finalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(FINAL_ORDER_TEMPLATE_ID);
     }
 }
