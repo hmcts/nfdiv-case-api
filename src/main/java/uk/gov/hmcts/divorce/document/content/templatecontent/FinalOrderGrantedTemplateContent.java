@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
-import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.util.List;
 import java.util.Map;
