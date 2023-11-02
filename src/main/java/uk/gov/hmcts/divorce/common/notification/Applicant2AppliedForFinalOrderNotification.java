@@ -24,6 +24,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPL
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
+import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.NOW_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.WILL_BE_CHECKED_WITHIN_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.WILL_BE_CHECKED_WITHIN_2_DAYS;
@@ -154,8 +156,11 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         templateVars.put(WILL_BE_CHECKED_WITHIN_2_DAYS, NO);
         templateVars.put(WILL_BE_CHECKED_WITHIN_14_DAYS, YES);
         templateVars.put(NOW_PLUS_14_DAYS, finalOrderNotificationCommonContent.getNowPlus14Days(caseData.getApplicant2()));
-
-        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
+        // Whenever the applicant2 applies the template should print the isOverdue statement, if we added another variable for
+        // if applicant 2 has applied, it would print 'must be reviewed by a judge' when applicant2 applies twice and is overdue
+        // https://tools.hmcts.net/jira/browse/NFDIV-3687
+        templateVars.put(IS_OVERDUE, YES);
+        templateVars.put(IN_TIME, NO);
 
         return templateVars;
     }
