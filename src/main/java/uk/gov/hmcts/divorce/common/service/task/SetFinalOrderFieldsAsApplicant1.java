@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -30,6 +31,7 @@ public class SetFinalOrderFieldsAsApplicant1 implements CaseTask {
 
         if (AwaitingFinalOrder.equals(details.getState())) {
             log.info("Updating final order fields for CaseID {} (SetFinalOrderFields)", details.getId());
+            CaseData caseData = details.getData();
             FinalOrder finalOrder = details.getData().getFinalOrder();
 
             if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
@@ -37,6 +39,11 @@ public class SetFinalOrderFieldsAsApplicant1 implements CaseTask {
                 finalOrder.setApplicant2AppliedForFinalOrderFirst(NO);
                 finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
                 finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+            }
+
+            if (!YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
+                finalOrder.setApplicant1FinalOrderStatementOfTruth(YES);
+                finalOrder.setApplicant2FinalOrderStatementOfTruth(YES);
             }
         }
 
