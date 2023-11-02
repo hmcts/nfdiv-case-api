@@ -1,13 +1,27 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentManagementClient;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -16,6 +30,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, UserRole> {
+
+    @Autowired
+    private DocumentManagementClient documentManagementClient;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private IdamService idamService;
+
     public static final String CASEWORKER_REMOVE_DOCUMENT = "caseworker-remove-document";
 
     @Override
@@ -26,6 +50,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .name("Remove documents")
             .description("Remove uploaded and generated documents")
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER))
             .page("removeDocuments")
@@ -35,5 +60,51 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                 .optional(CaseDocuments::getDocumentsGenerated)
                 .optional(CaseDocuments::getDocumentsUploaded)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+
+        final var beforeCaseData = beforeDetails.getData();
+        final var currentCaseData = details.getData();
+
+        List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
+
+        beforeCaseData.getDocuments().getApplicant1DocumentsUploaded().forEach(document -> {
+            if (!currentCaseData.getDocuments().getApplicant1DocumentsUploaded().contains(document)) {
+                documentsToRemove.add(document);
+            }
+        });
+
+        beforeCaseData.getDocuments().getDocumentsGenerated().forEach(document -> {
+            if (!currentCaseData.getDocuments().getDocumentsGenerated().contains(document)) {
+                documentsToRemove.add(document);
+            }
+        });
+
+        beforeCaseData.getDocuments().getDocumentsUploaded().forEach(document -> {
+            if (!currentCaseData.getDocuments().getDocumentsUploaded().contains(document)) {
+                documentsToRemove.add(document);
+            }
+        });
+
+        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
+        final UserDetails userDetails = systemUser.getUserDetails();
+        final String rolesCsv = String.join(",", userDetails.getRoles());
+
+        documentsToRemove.forEach(document -> {
+            documentManagementClient.deleteDocument(
+                systemUser.getAuthToken(),
+                authTokenGenerator.generate(),
+                rolesCsv,
+                userDetails.getId(),
+                FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
+                true
+            );
+        });
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(currentCaseData)
+            .build();
     }
 }
