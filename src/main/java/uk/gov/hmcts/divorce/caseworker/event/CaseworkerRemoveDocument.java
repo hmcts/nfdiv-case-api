@@ -70,38 +70,52 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
 
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
-        beforeCaseData.getDocuments().getApplicant1DocumentsUploaded().forEach(document -> {
-            if (!currentCaseData.getDocuments().getApplicant1DocumentsUploaded().contains(document)) {
-                documentsToRemove.add(document);
-            }
-        });
+        var beforeApplicant1DocumentsUploaded = beforeCaseData.getDocuments().getApplicant1DocumentsUploaded();
+        var currentApplicant1DocumentsUploaded = currentCaseData.getDocuments().getApplicant1DocumentsUploaded();
+        if (beforeApplicant1DocumentsUploaded != null & currentApplicant1DocumentsUploaded != null) {
+            beforeApplicant1DocumentsUploaded.forEach(document -> {
+                if (!currentApplicant1DocumentsUploaded.contains(document)) {
+                    documentsToRemove.add(document);
+                }
+            });
+        }
 
-        beforeCaseData.getDocuments().getDocumentsGenerated().forEach(document -> {
-            if (!currentCaseData.getDocuments().getDocumentsGenerated().contains(document)) {
-                documentsToRemove.add(document);
-            }
-        });
+        var beforeDocumentsGenerated = beforeCaseData.getDocuments().getDocumentsGenerated();
+        var currentDocumentsGenerated = currentCaseData.getDocuments().getDocumentsGenerated();
+        if (beforeDocumentsGenerated != null & currentDocumentsGenerated != null) {
+            beforeDocumentsGenerated.forEach(document -> {
+                if (!currentDocumentsGenerated.contains(document)) {
+                    documentsToRemove.add(document);
+                }
+            });
+        }
 
-        beforeCaseData.getDocuments().getDocumentsUploaded().forEach(document -> {
-            if (!currentCaseData.getDocuments().getDocumentsUploaded().contains(document)) {
-                documentsToRemove.add(document);
-            }
-        });
+        var beforeDocumentsUploaded = beforeCaseData.getDocuments().getDocumentsUploaded();
+        var currentDocumentsUploaded = currentCaseData.getDocuments().getDocumentsUploaded();
+        if (beforeDocumentsUploaded != null & currentDocumentsUploaded != null) {
+            beforeDocumentsUploaded.forEach(document -> {
+                if (!currentDocumentsUploaded.contains(document)) {
+                    documentsToRemove.add(document);
+                }
+            });
+        }
 
-        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
-        final UserDetails userDetails = systemUser.getUserDetails();
-        final String rolesCsv = String.join(",", userDetails.getRoles());
+        if (!documentsToRemove.isEmpty()) {
+            final User systemUser = idamService.retrieveSystemUpdateUserDetails();
+            final UserDetails userDetails = systemUser.getUserDetails();
+            final String rolesCsv = String.join(",", userDetails.getRoles());
 
-        documentsToRemove.forEach(document -> {
-            documentManagementClient.deleteDocument(
-                systemUser.getAuthToken(),
-                authTokenGenerator.generate(),
-                rolesCsv,
-                userDetails.getId(),
-                FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
-                true
-            );
-        });
+            documentsToRemove.forEach(document -> {
+                documentManagementClient.deleteDocument(
+                    systemUser.getAuthToken(),
+                    authTokenGenerator.generate(),
+                    rolesCsv,
+                    userDetails.getId(),
+                    FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
+                    true
+                );
+            });
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(currentCaseData)
