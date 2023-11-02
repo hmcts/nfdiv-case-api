@@ -95,7 +95,7 @@ public class FinalOrder {
     private YesOrNo applicant1AppliedForFinalOrderFirst;
 
     @CCD(
-        label = "Does the applicant want to apply for a Final Order?",
+        label = "Does ${labelContentTheApplicant2} want to apply for a Final Order?",
         access = {Applicant2Access.class}
     )
     private YesOrNo doesApplicant2WantToApplyForFinalOrder;
@@ -180,7 +180,7 @@ public class FinalOrder {
     private YesOrNo applicant1FinalOrderStatementOfTruth;
 
     @CCD(
-        label = "The applicant believes that the facts stated in this application are true.",
+        label = "${labelContentRespondentsOrApplicant2s} believes that the facts stated in this application are true.",
         access = {Applicant2Access.class}
     )
     private YesOrNo applicant2FinalOrderStatementOfTruth;
