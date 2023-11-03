@@ -32,7 +32,7 @@ public class DocumentRemovalService {
         final UserDetails userDetails = systemUser.getUserDetails();
         final String rolesCsv = String.join(",", userDetails.getRoles());
 
-        documentsToRemove.forEach(document -> {
+        documentsToRemove.stream().parallel().forEach(document -> {
             documentManagementClient.deleteDocument(
                 systemUser.getAuthToken(),
                 authTokenGenerator.generate(),

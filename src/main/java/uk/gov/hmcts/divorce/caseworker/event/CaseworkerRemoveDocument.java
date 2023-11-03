@@ -56,38 +56,22 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
 
         final var beforeCaseData = beforeDetails.getData();
         final var currentCaseData = details.getData();
-
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
-        var beforeApplicant1DocumentsUploaded = beforeCaseData.getDocuments().getApplicant1DocumentsUploaded();
-        var currentApplicant1DocumentsUploaded = currentCaseData.getDocuments().getApplicant1DocumentsUploaded();
-        if (beforeApplicant1DocumentsUploaded != null & currentApplicant1DocumentsUploaded != null) {
-            beforeApplicant1DocumentsUploaded.forEach(document -> {
-                if (!currentApplicant1DocumentsUploaded.contains(document)) {
-                    documentsToRemove.add(document);
-                }
-            });
-        }
+        documentsToRemove.addAll(removeDocumentFromList(
+            beforeCaseData.getDocuments().getApplicant1DocumentsUploaded(),
+            currentCaseData.getDocuments().getApplicant1DocumentsUploaded()
+        ));
 
-        var beforeDocumentsGenerated = beforeCaseData.getDocuments().getDocumentsGenerated();
-        var currentDocumentsGenerated = currentCaseData.getDocuments().getDocumentsGenerated();
-        if (beforeDocumentsGenerated != null & currentDocumentsGenerated != null) {
-            beforeDocumentsGenerated.forEach(document -> {
-                if (!currentDocumentsGenerated.contains(document)) {
-                    documentsToRemove.add(document);
-                }
-            });
-        }
+        documentsToRemove.addAll(removeDocumentFromList(
+            beforeCaseData.getDocuments().getDocumentsGenerated(),
+            currentCaseData.getDocuments().getDocumentsGenerated()
+        ));
 
-        var beforeDocumentsUploaded = beforeCaseData.getDocuments().getDocumentsUploaded();
-        var currentDocumentsUploaded = currentCaseData.getDocuments().getDocumentsUploaded();
-        if (beforeDocumentsUploaded != null & currentDocumentsUploaded != null) {
-            beforeDocumentsUploaded.forEach(document -> {
-                if (!currentDocumentsUploaded.contains(document)) {
-                    documentsToRemove.add(document);
-                }
-            });
-        }
+        documentsToRemove.addAll(removeDocumentFromList(
+            beforeCaseData.getDocuments().getDocumentsUploaded(),
+            currentCaseData.getDocuments().getDocumentsUploaded()
+        ));
 
         if (!documentsToRemove.isEmpty()) {
             documentRemovalService.deleteDocumentFromDocumentStore(documentsToRemove);
@@ -96,5 +80,21 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(currentCaseData)
             .build();
+    }
+
+    private List<ListValue<DivorceDocument>> removeDocumentFromList(final List<ListValue<DivorceDocument>> beforeDocs,
+                                                                    final List<ListValue<DivorceDocument>> currentDocs) {
+
+        List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
+
+        if (beforeDocs != null & currentDocs != null) {
+            beforeDocs.forEach(document -> {
+                if (!currentDocs.contains(document)) {
+                    documentsToRemove.add(document);
+                }
+            });
+        }
+
+        return documentsToRemove;
     }
 }
