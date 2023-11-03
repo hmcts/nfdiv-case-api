@@ -58,17 +58,17 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         final var currentCaseData = details.getData();
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
-        documentsToRemove.addAll(removeDocumentFromList(
+        documentsToRemove.addAll(findDocumentsForRemoval(
             beforeCaseData.getDocuments().getApplicant1DocumentsUploaded(),
             currentCaseData.getDocuments().getApplicant1DocumentsUploaded()
         ));
 
-        documentsToRemove.addAll(removeDocumentFromList(
+        documentsToRemove.addAll(findDocumentsForRemoval(
             beforeCaseData.getDocuments().getDocumentsGenerated(),
             currentCaseData.getDocuments().getDocumentsGenerated()
         ));
 
-        documentsToRemove.addAll(removeDocumentFromList(
+        documentsToRemove.addAll(findDocumentsForRemoval(
             beforeCaseData.getDocuments().getDocumentsUploaded(),
             currentCaseData.getDocuments().getDocumentsUploaded()
         ));
@@ -82,8 +82,8 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private List<ListValue<DivorceDocument>> removeDocumentFromList(final List<ListValue<DivorceDocument>> beforeDocs,
-                                                                    final List<ListValue<DivorceDocument>> currentDocs) {
+    private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
+                                                                     final List<ListValue<DivorceDocument>> currentDocs) {
 
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
