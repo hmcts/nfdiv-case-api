@@ -87,7 +87,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
 
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
-        if (beforeDocs != null & currentDocs != null) {
+        if (beforeDocs != null && currentDocs != null) {
             beforeDocs.forEach(document -> {
                 if (!currentDocs.contains(document)) {
                     documentsToRemove.add(document);
