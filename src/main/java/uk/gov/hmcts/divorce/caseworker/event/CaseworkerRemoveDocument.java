@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -13,12 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentManagementClient;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
-    private DocumentManagementClient documentManagementClient;
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
-
-    @Autowired
-    private IdamService idamService;
+    private DocumentRemovalService documentRemovalService;
 
     public static final String CASEWORKER_REMOVE_DOCUMENT = "caseworker-remove-document";
 
@@ -101,20 +90,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
 
         if (!documentsToRemove.isEmpty()) {
-            final User systemUser = idamService.retrieveSystemUpdateUserDetails();
-            final UserDetails userDetails = systemUser.getUserDetails();
-            final String rolesCsv = String.join(",", userDetails.getRoles());
-
-            documentsToRemove.forEach(document -> {
-                documentManagementClient.deleteDocument(
-                    systemUser.getAuthToken(),
-                    authTokenGenerator.generate(),
-                    rolesCsv,
-                    userDetails.getId(),
-                    FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
-                    true
-                );
-            });
+            documentRemovalService.deleteDocumentFromDocumentStore(documentsToRemove);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 
-import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,39 +14,25 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentManagementClient;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerRemoveDocumentTest {
 
     @Mock
-    private DocumentManagementClient documentManagementClient;
-
-    @Mock
-    private AuthTokenGenerator authTokenGenerator;
-
-    @Mock
-    private IdamService idamService;
+    private DocumentRemovalService documentRemovalService;
 
     @InjectMocks
     private CaseworkerRemoveDocument caseworkerRemoveDocument;
@@ -97,24 +82,9 @@ public class CaseworkerRemoveDocumentTest {
             .data(currentCaseData)
             .build();
 
-        final List<String> systemRoles = List.of("caseworker-divorce-superuser");
-        final String systemRolesCsv = String.join(",", systemRoles);
-        UserDetails userDetails = UserDetails.builder().roles(systemRoles).id(SYSTEM_USER_USER_ID).build();
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentManagementClient).deleteDocument(
-            SYSTEM_UPDATE_AUTH_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            SYSTEM_USER_USER_ID,
-            FilenameUtils.getName(doc2.getValue().getDocumentLink().getUrl()),
-            true
-        );
+        verify(documentRemovalService).deleteDocumentFromDocumentStore(List.of(doc2));
     }
 
     @Test
@@ -151,24 +121,9 @@ public class CaseworkerRemoveDocumentTest {
             .data(currentCaseData)
             .build();
 
-        final List<String> systemRoles = List.of("caseworker-divorce-superuser");
-        final String systemRolesCsv = String.join(",", systemRoles);
-        UserDetails userDetails = UserDetails.builder().roles(systemRoles).id(SYSTEM_USER_USER_ID).build();
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentManagementClient).deleteDocument(
-            SYSTEM_UPDATE_AUTH_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            SYSTEM_USER_USER_ID,
-            FilenameUtils.getName(doc2.getValue().getDocumentLink().getUrl()),
-            true
-        );
+        verify(documentRemovalService).deleteDocumentFromDocumentStore(List.of(doc2));
     }
 
     @Test
@@ -205,24 +160,9 @@ public class CaseworkerRemoveDocumentTest {
             .data(currentCaseData)
             .build();
 
-        final List<String> systemRoles = List.of("caseworker-divorce-superuser");
-        final String systemRolesCsv = String.join(",", systemRoles);
-        UserDetails userDetails = UserDetails.builder().roles(systemRoles).id(SYSTEM_USER_USER_ID).build();
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentManagementClient).deleteDocument(
-            SYSTEM_UPDATE_AUTH_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            SYSTEM_USER_USER_ID,
-            FilenameUtils.getName(doc2.getValue().getDocumentLink().getUrl()),
-            true
-        );
+        verify(documentRemovalService).deleteDocumentFromDocumentStore(List.of(doc2));
     }
 
     @Test
@@ -246,6 +186,6 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verifyNoInteractions(documentManagementClient);
+        verifyNoInteractions(documentRemovalService);
     }
 }
