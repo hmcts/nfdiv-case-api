@@ -15,13 +15,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -31,12 +37,17 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -109,6 +120,9 @@ public class LegalAdvisorMakeDecisionIT {
     private static final String CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME =
         "FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx";
     private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
+    private static final String NFD_APPLICANT_COVERSHEET_FILENAME = "NFD_Applicant_Coversheet.docx";
+    private static final String CO_REFUSAL_COVER_LETTER_TEMPLATE_NAME =
+        "FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -127,6 +141,9 @@ public class LegalAdvisorMakeDecisionIT {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private BulkPrintService bulkPrintService;
 
     @Mock
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
@@ -667,6 +684,70 @@ public class LegalAdvisorMakeDecisionIT {
         );
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldAddRefusalLetterToConfidentialDocumentsWhenEitherPartyHasConfidentialContactInfo() throws Exception {
+        setMockClock(clock);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 6, 22));
+
+        caseData.getApplicant1().setSolicitorRepresented(NO);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+        caseData.getDocuments().setDocumentsGenerated(List.of(
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder()
+                    .documentType(DocumentType.APPLICATION)
+                    .documentLink(Document.builder()
+                        .filename("application.pdf")
+                        .binaryUrl("applicationbinaryurl")
+                        .url("applicationurl")
+                        .build())
+                    .build())
+                .build()
+        ));
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .refusalDecision(MORE_INFO)
+            .refusalClarificationReason(Set.of(MARRIAGE_CERTIFICATE))
+            .refusalClarificationAdditionalInfo("Clarification comments")
+            .build());
+
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID))
+            .thenReturn(templateContent);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME);
+        stubForDocAssemblyWith(UUID, NFD_APPLICANT_COVERSHEET_FILENAME);
+        stubForDocAssemblyWith(UUID, CO_REFUSAL_COVER_LETTER_TEMPLATE_NAME);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_MAKE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk());
+
+        verify(bulkPrintService).print(argThat(allOf(
+            hasProperty("letters", hasSize(4)),
+            hasProperty("letterType", equalTo("conditional-order-refused")),
+            hasProperty("recipients", hasItem(equalTo("test_first_name test_middle_name test_last_name")))
+        )));
     }
 
     @Test

@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -262,6 +263,7 @@ public class SwitchedToSoleCoIT {
         throws Exception {
 
         CaseData data = validJointApplicant1CaseData();
+        data.getApplicant1().setContactDetailsType(ContactDetailsType.PUBLIC);
         data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
         data.setConditionalOrder(ConditionalOrder.builder()
             .d84ApplicationType(SWITCH_TO_SOLE)
@@ -450,7 +452,8 @@ public class SwitchedToSoleCoIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers.docx");
-        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc", "FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole.docx");
+        stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc",
+            "FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole_V2.docx");
     }
 
     @Test
