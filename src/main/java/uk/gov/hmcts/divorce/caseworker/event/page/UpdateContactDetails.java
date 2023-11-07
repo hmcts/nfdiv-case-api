@@ -230,8 +230,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private boolean validContactDetails(CaseData caseDataBefore, CaseData caseData) {
 
         if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
-            if (!caseDataBefore.getApplicant1().isRepresented() &&
-                !caseData.getApplicant1().isApplicantOffline()
+            if (!caseDataBefore.getApplicant1().isRepresented()
+                && !caseData.getApplicant1().isApplicantOffline()
                 && caseData.getApplicant1().getEmail() == null
                 || caseData.getApplicant1().getEmail().isBlank()) {
                 return false;
