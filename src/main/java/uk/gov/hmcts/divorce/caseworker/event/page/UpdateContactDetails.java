@@ -232,8 +232,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
             if (!caseDataBefore.getApplicant1().isRepresented()
                 && !caseData.getApplicant1().isApplicantOffline()
-                && caseData.getApplicant1().getEmail() == null
-                || caseData.getApplicant1().getEmail().isBlank()) {
+                && (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank())) {
                 return false;
             }
         }
@@ -241,8 +240,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         if (caseDataBefore.getApplicant2().getEmail() != null && !caseDataBefore.getApplicant2().getEmail().isBlank()) {
             if (!caseDataBefore.getApplicant2().isRepresented()
                 && !caseData.getApplicant2().isApplicantOffline()
-                && caseData.getApplicant2().getEmail() == null
-                || caseData.getApplicant2().getEmail().isBlank()) {
+                && (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank())) {
                 return false;
             }
         }
