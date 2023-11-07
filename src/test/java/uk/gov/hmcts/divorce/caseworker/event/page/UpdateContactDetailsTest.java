@@ -6,9 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -17,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
 public class UpdateContactDetailsTest {
@@ -238,5 +241,55 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).contains("""
                 You have selected the applicant gender as Female and they are divorcing their Husband and they are an Same-sex couple.
                 Please ensure this is correct before submitting.""");
+    }
+
+    @Test
+    void shouldReturnErrorsIfApplicant1EmailHasBeenRemovedInOnlineCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isEqualTo(singletonList("You cannot remove the email address of an applicant for an online case"));
+    }
+
+    @Test
+    void shouldReturnErrorsIfApplicant2EmailHasBeenRemovedInOnlineCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isEqualTo(singletonList("You cannot remove the email address of an applicant for an online case"));
     }
 }
