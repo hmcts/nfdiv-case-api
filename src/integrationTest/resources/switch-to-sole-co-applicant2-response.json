@@ -38,7 +38,7 @@
     "applicant2InviteEmailAddress": "test@test.com",
     "coD84WhoApplying": "applicant2",
     "coSwitchedToSole": "Yes",
-    "documentsGenerated": [
+    "confidentialDocumentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {
@@ -48,7 +48,7 @@
             "document_binary_url": "${json-unit.any-string}"
           },
           "documentFileName": "${json-unit.any-string}",
-          "documentType": "switchToSoleCoLetter"
+          "confidentialDocumentsReceived": "switchToSoleCoLetter"
         }
       }
     ],

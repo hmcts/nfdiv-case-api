@@ -97,7 +97,7 @@ public class BulkPrintService {
                             userId
                         )
                     ),
-                    letter.getCount()
+                    letter.getNumCopiesToPrint()
                 )
             )
             .collect(toList());
@@ -136,6 +136,8 @@ public class BulkPrintService {
             docUrl = letter.getDivorceDocument().getDocumentLink().getUrl();
         } else if (letter.getConfidentialDivorceDocument() != null) {
             docUrl = letter.getConfidentialDivorceDocument().getDocumentLink().getUrl();
+        } else if (letter.getDocument() != null) {
+            docUrl = letter.getDocument().getUrl();
         } else {
             throw new InvalidResourceException("Invalid document resource");
         }
