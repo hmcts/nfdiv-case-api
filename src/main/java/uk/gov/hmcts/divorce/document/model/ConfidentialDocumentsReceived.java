@@ -144,7 +144,32 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     FINAL_ORDER_CAN_APPLY("Final order can apply"),
 
     @JsonProperty("finalOrderGrantedCoverLetterApp2")
-    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter");
+    FINAL_ORDER_GRANTED_COVER_LETTER_APP_2("Applicant 2 Final order granted cover letter"),
+
+    @JsonProperty("switchToSoleCoLetter")
+    SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter"),
+
+    @JsonProperty("aosOverdueLetter")
+    AOS_OVERDUE_LETTER("Aos overdue letter"),
+
+    @JsonProperty("judicialSeparationOrderRefusalCoverLetter")
+    JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
+        "Judicial Separation order clarification refusal cover letter"
+    ),
+
+    @JsonProperty("separationOrderRefusalCoverLetter")
+    SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
+        "Separation order clarification refusal cover letter"
+    ),
+
+    @JsonProperty("judicialSeparationOrderRefusalCoverLetter")
+    JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER("Judicial Separation order refusal cover letter"),
+
+    @JsonProperty("separationOrderRefusalCoverLetter")
+    SEPARATION_ORDER_REFUSAL_COVER_LETTER("Separation order refusal cover letter"),
+
+    @JsonProperty("conditionalOrderRefusalCoverLetter")
+    CONDITIONAL_ORDER_REFUSAL_COVER_LETTER("Conditional order refusal cover letter");
 
     private final String label;
 }

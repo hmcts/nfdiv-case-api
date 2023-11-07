@@ -16,7 +16,7 @@
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",
-    "applicant1ContactDetailsType": "private",
+    "applicant1ContactDetailsType": "${json-unit.any-string}",
     "applicant1FinancialOrder": "No",
     "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_app2_first_name",

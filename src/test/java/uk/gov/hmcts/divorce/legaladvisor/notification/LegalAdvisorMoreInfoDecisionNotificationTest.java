@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.legaladvisor.notification;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,9 +8,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.legaladvisor.service.printer.AwaitingClarificationApplicationPrinter;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderRefusalDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -23,6 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -32,6 +40,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_R
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -41,14 +50,22 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 @ExtendWith(MockitoExtension.class)
 class LegalAdvisorMoreInfoDecisionNotificationTest {
 
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT)),
+        ImmutableMap.of(COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME)
+    );
+
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private ConditionalOrderRefusalDocumentPack conditionalOrderRefusalDocumentPack;
 
     @Mock
     private CommonContent commonContent;
 
     @Mock
-    private AwaitingClarificationApplicationPrinter awaitingClarificationApplicationPrinter;
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private LegalAdvisorMoreInfoDecisionNotification notification;
@@ -195,18 +212,26 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
     void shouldSendConditionalOrderClarificationLettersToApplicant1IfOffline() {
         final var caseData = validApplicant1CaseData();
 
+        when(conditionalOrderRefusalDocumentPack.getDocumentPack(eq(caseData), eq(caseData.getApplicant1())))
+            .thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(conditionalOrderRefusalDocumentPack.getLetterId()).thenReturn(TEST_REFERENCE);
+
         notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        verify(letterPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1(), TEST_DOCUMENT_PACK_INFO, TEST_REFERENCE);
     }
 
     @Test
     void shouldSendConditionalOrderClarificationLettersToApplicant2IfOfflineAndJointApplication() {
         final var caseData = validJointApplicant1CaseData();
 
+        when(conditionalOrderRefusalDocumentPack.getDocumentPack(caseData, caseData.getApplicant2()))
+            .thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(conditionalOrderRefusalDocumentPack.getLetterId()).thenReturn(TEST_REFERENCE);
+
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(awaitingClarificationApplicationPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        verify(letterPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, TEST_REFERENCE);
     }
 
     @Test
@@ -215,6 +240,6 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
 
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verifyNoInteractions(awaitingClarificationApplicationPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 }

@@ -129,7 +129,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3",
-            "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter.docx");
+            "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
             "FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent.docx");
         stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
