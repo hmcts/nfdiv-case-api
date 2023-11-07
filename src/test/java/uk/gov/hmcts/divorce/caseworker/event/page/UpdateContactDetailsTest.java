@@ -294,7 +294,6 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).isEqualTo(singletonList("You cannot remove the email address of an applicant for an online case"));
     }
 
-    // Tests for if statements represented, offline (app1 & app2) - should not return error
     @Test
     void shouldAllowApplicant1EmailRemovalInOfflineCase() {
         final CaseData caseDataBefore = CaseData.builder()
@@ -350,6 +349,7 @@ public class UpdateContactDetailsTest {
 
         assertThat(response.getErrors()).isNull();
     }
+
     @Test
     void shouldAllowApplicant1EmailRemovalIfRepresentedCase() {
         final CaseData caseDataBefore = CaseData.builder()
