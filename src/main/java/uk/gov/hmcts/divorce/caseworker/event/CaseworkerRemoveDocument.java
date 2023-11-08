@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -46,8 +47,10 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .pageLabel("Remove uploaded and generated documents")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getApplicant1DocumentsUploaded)
+                .optional(CaseDocuments::getApplicant2DocumentsUploaded)
                 .optional(CaseDocuments::getDocumentsGenerated)
                 .optional(CaseDocuments::getDocumentsUploaded)
+                .optional(CaseDocuments::getScannedDocuments)
             .done();
     }
 
@@ -56,30 +59,41 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
 
         final var beforeCaseData = beforeDetails.getData();
         final var currentCaseData = details.getData();
-        List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
-        documentsToRemove.addAll(findDocumentsForRemoval(
-            beforeCaseData.getDocuments().getApplicant1DocumentsUploaded(),
-            currentCaseData.getDocuments().getApplicant1DocumentsUploaded()
-        ));
-
-        documentsToRemove.addAll(findDocumentsForRemoval(
-            beforeCaseData.getDocuments().getDocumentsGenerated(),
-            currentCaseData.getDocuments().getDocumentsGenerated()
-        ));
-
-        documentsToRemove.addAll(findDocumentsForRemoval(
-            beforeCaseData.getDocuments().getDocumentsUploaded(),
-            currentCaseData.getDocuments().getDocumentsUploaded()
-        ));
-
-        if (!documentsToRemove.isEmpty()) {
-            documentRemovalService.deleteDocumentFromDocumentStore(documentsToRemove);
-        }
+        handleDeletionOfDivorceDocuments(beforeCaseData, currentCaseData);
+        handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(currentCaseData)
             .build();
+    }
+
+    private void handleDeletionOfDivorceDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
+        List<ListValue<DivorceDocument>> divorceDocsToRemove = new ArrayList<>();
+
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
+            beforeCaseData.getDocuments().getApplicant1DocumentsUploaded(),
+            currentCaseData.getDocuments().getApplicant1DocumentsUploaded()
+        ));
+
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
+            beforeCaseData.getDocuments().getApplicant2DocumentsUploaded(),
+            currentCaseData.getDocuments().getApplicant2DocumentsUploaded()
+        ));
+
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
+            beforeCaseData.getDocuments().getDocumentsGenerated(),
+            currentCaseData.getDocuments().getDocumentsGenerated()
+        ));
+
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
+            beforeCaseData.getDocuments().getDocumentsUploaded(),
+            currentCaseData.getDocuments().getDocumentsUploaded()
+        ));
+
+        if (!divorceDocsToRemove.isEmpty()) {
+            documentRemovalService.deleteDivorceDocumentsFromDocumentStore(divorceDocsToRemove);
+        }
     }
 
     private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
@@ -96,5 +110,34 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
 
         return documentsToRemove;
+    }
+
+    private void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
+
+        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>(
+            findScannedDocumentsForRemoval(
+                beforeCaseData.getDocuments().getScannedDocuments(),
+                currentCaseData.getDocuments().getScannedDocuments()
+        ));
+
+        if (!scannedDocsToRemove.isEmpty()) {
+            documentRemovalService.deleteScannedDocumentsFromDocumentStore(scannedDocsToRemove);
+        }
+    }
+
+    private List<ListValue<ScannedDocument>> findScannedDocumentsForRemoval(final List<ListValue<ScannedDocument>> beforeDocs,
+                                                                            final List<ListValue<ScannedDocument>> currentDocs) {
+
+        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>();
+
+        if (beforeDocs != null && currentDocs != null) {
+            beforeDocs.forEach(document -> {
+                if (!currentDocs.contains(document)) {
+                    scannedDocsToRemove.add(document);
+                }
+            });
+        }
+
+        return scannedDocsToRemove;
     }
 }

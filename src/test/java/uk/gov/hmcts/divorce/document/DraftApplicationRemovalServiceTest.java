@@ -15,9 +15,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.*;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
@@ -42,7 +40,7 @@ public class DraftApplicationRemovalServiceTest {
             TEST_CASE_ID
         );
 
-        verify(documentRemovalService).deleteDocumentFromDocumentStore(List.of(divorceDocumentListValue));
+        verify(documentRemovalService).deleteDivorceDocumentsFromDocumentStore(List.of(divorceDocumentListValue));
         assertThat(actualDocumentsList).size().isEqualTo(1);
     }
 

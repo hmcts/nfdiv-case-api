@@ -29,11 +29,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -76,7 +72,7 @@ public class DocumentRemovalServiceTest {
             true
         );
 
-        documentRemovalService.deleteDocumentFromDocumentStore(singletonList(divorceDocumentListValue));
+        documentRemovalService.deleteDivorceDocumentsFromDocumentStore(singletonList(divorceDocumentListValue));
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
@@ -125,7 +121,7 @@ public class DocumentRemovalServiceTest {
                 anyBoolean()
             );
 
-        assertThatThrownBy(() -> documentRemovalService.deleteDocumentFromDocumentStore(
+        assertThatThrownBy(() -> documentRemovalService.deleteDivorceDocumentsFromDocumentStore(
             singletonList(documentWithType(APPLICATION))
         ))
             .hasMessageContaining("403 User role is not authorised to delete document")
@@ -159,7 +155,7 @@ public class DocumentRemovalServiceTest {
 
         doThrow(feignException).when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> documentRemovalService.deleteDocumentFromDocumentStore(
+        assertThatThrownBy(() -> documentRemovalService.deleteDivorceDocumentsFromDocumentStore(
             singletonList(documentWithType(APPLICATION))
         ))
             .hasMessageContaining("401 Invalid s2s secret")
