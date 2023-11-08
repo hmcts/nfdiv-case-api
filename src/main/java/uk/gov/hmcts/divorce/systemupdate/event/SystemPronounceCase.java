@@ -24,7 +24,6 @@ import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -63,9 +62,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         new PageBuilder(
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
-                .forStateTransition(
-                    EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
-                    EnumSet.of(ConditionalOrderPronounced, SeparationOrderGranted))
+                .forStates(EnumSet.of(AwaitingPronouncement, ConditionalOrderPronounced))
                 .name("System pronounce case")
                 .description("System pronounce case")
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
