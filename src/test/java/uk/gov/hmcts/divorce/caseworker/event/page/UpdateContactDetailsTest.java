@@ -266,7 +266,8 @@ public class UpdateContactDetailsTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
 
-        assertThat(response.getErrors()).isEqualTo(singletonList("You cannot remove the email address of an applicant for an online case"));
+        assertThat(response.getErrors())
+            .isEqualTo(singletonList("Please use the 'Update offline status' event before removing the email address."));
     }
 
     @Test
