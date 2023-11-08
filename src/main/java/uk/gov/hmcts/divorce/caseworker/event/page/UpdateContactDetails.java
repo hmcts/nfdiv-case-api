@@ -203,7 +203,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         if (!validContactDetails(caseDataBefore, caseData)) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("You cannot remove the email address of an applicant for an online case"))
+                .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
                 .build();
         }
 
