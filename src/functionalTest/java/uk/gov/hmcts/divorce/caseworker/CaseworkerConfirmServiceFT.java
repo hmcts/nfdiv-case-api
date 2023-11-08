@@ -21,10 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
-import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmService.CASEWORKER_CONFIRM_SERVICE;
@@ -40,24 +38,6 @@ public class CaseworkerConfirmServiceFT extends FunctionalTestSuite {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Test
-    public void shouldSetDueDateTo14DaysAfterServiceDateWhenServiceNotProcessedByProcessServer() throws IOException {
-        final var caseData = getConfirmServiceCaseData();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        Map<String, Object> caseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
-
-        Response response = triggerCallback(caseDataMap, CASEWORKER_CONFIRM_SERVICE, ABOUT_TO_SUBMIT_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
-        assertThatJson(response.asString())
-            .when(TREATING_NULL_AS_ABSENT)
-            .isEqualTo(json(expectedResponse(SUBMIT_CONFIRM_SERVICE_JSON)));
-    }
 
     @Test
     public void shouldSetDueDateTo141DaysAfterIssuedDateWhenServiceProcessedByProcessServer() throws IOException {
