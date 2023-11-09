@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
-    public static final String SUPERUSER_REMOVE_ERRORED_CASES = "caseworker-remove-errored-cases";
+    public static final String SUPERUSER_REMOVE_ERRORED_CASES = "superuser-remove-errored-cases";
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
