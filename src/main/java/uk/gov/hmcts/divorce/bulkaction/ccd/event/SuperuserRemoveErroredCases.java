@@ -13,8 +13,9 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Component
 @Slf4j
@@ -31,7 +32,8 @@ public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData
             .description("Remove errored cases")
             .showEventNotes()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
+            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, SYSTEMUPDATE)
+            .grantHistoryOnly(CASE_WORKER))
             .page("removeCasesFromErroredList")
             .pageLabel("Remove cases from bulk list")
             .optionalNoSummary(BulkActionCaseData::getErroredCaseDetails);
