@@ -13,6 +13,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 public class Applicant2Access implements HasAccessControl {
@@ -27,6 +28,7 @@ public class Applicant2Access implements HasAccessControl {
         grants.putAll(APPLICANT_2_SOLICITOR, Permissions.CREATE_READ_UPDATE);
         grants.putAll(APPLICANT_2, Permissions.CREATE_READ_UPDATE);
         grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
+        grants.putAll(SUPER_USER, Permissions.CREATE_READ_UPDATE_DELETE);
         return grants;
     }
 }
