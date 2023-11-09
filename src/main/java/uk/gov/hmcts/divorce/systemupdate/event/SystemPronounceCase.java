@@ -63,9 +63,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         new PageBuilder(
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
-                .forStateTransition(
-                    EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced),
-                    EnumSet.of(ConditionalOrderPronounced, SeparationOrderGranted))
+                .forStates(EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced))
                 .name("System pronounce case")
                 .description("System pronounce case")
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
