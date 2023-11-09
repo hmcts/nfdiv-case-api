@@ -28,7 +28,6 @@ public class ProcessFailedScheduledCasesTask implements BulkCaseTask {
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
-        idamService.retrieveSystemUpdateUserDetails();
         return bulkCaseTaskUtil.processCases(
                 details,
                 getFailedBulkCases(details),
