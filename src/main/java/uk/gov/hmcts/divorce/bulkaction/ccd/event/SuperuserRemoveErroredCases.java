@@ -34,7 +34,7 @@ public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("removeCasesFromErroredList")
             .pageLabel("Remove cases from bulk list")
-            .mandatoryNoSummary(BulkActionCaseData::getErroredCaseDetails);
+            .optionalNoSummary(BulkActionCaseData::getErroredCaseDetails);
     }
 
 }
