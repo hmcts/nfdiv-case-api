@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 class Applicant2AccessTest {
@@ -29,7 +28,7 @@ class Applicant2AccessTest {
         final SetMultimap<HasRole, Permission> grants = new Applicant2Access().getGrants();
 
         assertThat(grants)
-            .hasSize(19)
+            .hasSize(15)
             .contains(
                 entry(SYSTEMUPDATE, R),
                 entry(CASE_WORKER, R),
@@ -46,11 +45,7 @@ class Applicant2AccessTest {
                 entry(SYSTEMUPDATE, C),
                 entry(SYSTEMUPDATE, R),
                 entry(SYSTEMUPDATE, U),
-                entry(SYSTEMUPDATE, D),
-                entry(SUPER_USER, C),
-                entry(SUPER_USER, R),
-                entry(SUPER_USER, U),
-                entry(SUPER_USER, D)
+                entry(SYSTEMUPDATE, D)
             );
     }
 }
