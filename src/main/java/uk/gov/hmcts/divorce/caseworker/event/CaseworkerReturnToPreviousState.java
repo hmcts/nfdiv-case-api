@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_RETURN_TO_PREVIOUS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -29,6 +30,8 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
     public static final String CASEWORKER_RETURN_TO_PREVIOUS_STATE = "caseworker-return-to-previous-state";
     private static final String INVALID_STATE_ERROR
         = "You cannot move this case into a pre-submission state. Select another state before continuing.";
+    private static final String CASE_MUST_BE_ISSUED_ERROR
+        = "You cannot move this case into a post-issue state as it has not been issued";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -59,6 +62,9 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
         State state = caseData.getApplication().getStateToTransitionApplicationTo();
         if (!PRE_RETURN_TO_PREVIOUS_STATES.contains(state)) {
             validationErrors.add(INVALID_STATE_ERROR);
+        }
+        if (POST_ISSUE_STATES.contains(state) && caseData.getApplication().getIssueDate() == null) {
+            validationErrors.add(CASE_MUST_BE_ISSUED_ERROR);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
