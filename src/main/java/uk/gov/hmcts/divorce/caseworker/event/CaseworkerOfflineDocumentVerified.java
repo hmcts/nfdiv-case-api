@@ -202,6 +202,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         var caseData = details.getData();
 
         if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info("Verifying AOS D10 for case {}", details.getId());
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
 
@@ -220,6 +221,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .build();
 
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info("Verifying CO D84 for case {}", details.getId());
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
@@ -245,6 +247,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .build();
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info("Verifying FO D36 for case {}", details.getId());
+
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
 
@@ -275,6 +279,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         } else {
             final State state = caseData.getApplication().getStateToTransitionApplicationTo();
+            log.info("User selected other document type received, transitioning to state {} for case {}", state, details.getId());
 
             if (Holding.equals(state)) {
                 log.info("Setting due date(Issue date + 20 weeks + 1 day) as state selected is Holding for case id {}",
