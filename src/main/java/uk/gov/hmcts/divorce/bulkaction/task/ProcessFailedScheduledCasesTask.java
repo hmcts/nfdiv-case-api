@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,16 +10,12 @@ import uk.gov.hmcts.divorce.bulkaction.util.BulkCaseTaskUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService.getFailedBulkCases;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
 @Component
 @Slf4j
 public class ProcessFailedScheduledCasesTask implements BulkCaseTask {
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Autowired
     protected IdamService idamService;
@@ -33,12 +28,12 @@ public class ProcessFailedScheduledCasesTask implements BulkCaseTask {
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
-
+        idamService.retrieveSystemUpdateUserDetails();
         return bulkCaseTaskUtil.processCases(
                 details,
                 getFailedBulkCases(details),
                 SYSTEM_UPDATE_CASE_COURT_HEARING,
-                idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
+                idamService.retrieveSystemUpdateUserDetails(),
                 authTokenGenerator.generate());
     }
 }
