@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,13 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
@@ -50,9 +47,6 @@ public class ProcessFailedScheduledCasesTaskTest {
 
     @Mock
     private IdamService idamService;
-
-    @Mock
-    private HttpServletRequest request;
 
     @InjectMocks
     private ProcessFailedScheduledCasesTask processFailedScheduledCasesTask;
@@ -87,9 +81,8 @@ public class ProcessFailedScheduledCasesTaskTest {
 
         final var user = mock(User.class);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_COURT_HEARING, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
