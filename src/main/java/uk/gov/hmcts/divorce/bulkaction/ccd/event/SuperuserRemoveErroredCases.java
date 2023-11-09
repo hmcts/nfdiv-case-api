@@ -27,8 +27,8 @@ public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData
         new BulkActionPageBuilder(configBuilder
             .event(SUPERUSER_REMOVE_ERRORED_CASES)
             .forStates(Created, Listed, Pronounced)
-            .name("Remove cases from bulk list")
-            .description("Remove cases from bulk list")
+            .name("Remove errored cases from bulk list")
+            .description("Remove errored cases from bulk list")
             .showEventNotes()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
