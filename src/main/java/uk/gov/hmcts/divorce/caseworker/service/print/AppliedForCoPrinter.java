@@ -24,7 +24,7 @@ import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLIED_FOR_CO_LETTER;
@@ -56,9 +56,7 @@ public class AppliedForCoPrinter {
 
         generateAppliedForCoLetter(caseData, caseId, applicant);
 
-        final List<Letter> appliedForCoLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            APPLIED_FOR_CO_LETTER);
+        final List<Letter> appliedForCoLetters = getLettersBasedOnContactPrivacy(caseData, APPLIED_FOR_CO_LETTER);
 
         final Letter appliedForCoLetter = firstElement(appliedForCoLetters);
 

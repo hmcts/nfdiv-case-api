@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.util.CollectionUtils.firstElement;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
@@ -82,28 +82,28 @@ public class RegenerateCourtOrdersPrinter {
 
     private List<Letter> regeneratedCourtOrderLetters(CaseData caseData, boolean isApplicant1) {
 
-        final List<Letter> conditionalOrderGrantedCoverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> conditionalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(
+            caseData,
             isApplicant1 ? CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1 : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
-        final List<Letter> conditionalOrderGrantedCertificates = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> conditionalOrderGrantedCertificates = getLettersBasedOnContactPrivacy(
+            caseData,
             CONDITIONAL_ORDER_GRANTED);
 
-        final List<Letter> finalOrderGrantedCoverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> finalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(
+            caseData,
             isApplicant1 ? FINAL_ORDER_GRANTED_COVER_LETTER_APP_1 : FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
 
-        final List<Letter> finalOrderGrantedCertificates = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> finalOrderGrantedCertificates = getLettersBasedOnContactPrivacy(
+            caseData,
             FINAL_ORDER_GRANTED);
 
-        final List<Letter> certificateOfEntitlementCoverLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> certificateOfEntitlementCoverLetters = getLettersBasedOnContactPrivacy(
+            caseData,
             isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
 
-        final List<Letter> certificateOfEntitlementDocuments = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
+        final List<Letter> certificateOfEntitlementDocuments = getLettersBasedOnContactPrivacy(
+            caseData,
             CERTIFICATE_OF_ENTITLEMENT);
 
         final Letter conditionalOrderGrantedCoverLetter = firstElement(conditionalOrderGrantedCoverLetters);
