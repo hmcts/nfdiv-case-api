@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
@@ -75,18 +75,11 @@ public class ApplyForConditionalOrderPrinter {
 
     private List<Letter> conditionalOrderLetters(final CaseData caseData) {
 
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET);
+        final List<Letter> coversheetLetters = getLettersBasedOnContactPrivacy(caseData, COVERSHEET);
 
-        final List<Letter> canApplyConditionalOrderLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_CAN_APPLY);
+        final List<Letter> canApplyConditionalOrderLetters = getLettersBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_CAN_APPLY);
 
-        final List<Letter> d84Letters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            D84
-        );
+        final List<Letter> d84Letters = getLettersBasedOnContactPrivacy(caseData, D84);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter canApplyConditionalOrderLetter = firstElement(canApplyConditionalOrderLetters);

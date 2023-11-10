@@ -16,7 +16,6 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -124,15 +123,11 @@ public class AosPackPrinter {
 
         final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
 
-        List<Letter> aosLetters;
+        var aosLetters = getLettersBasedOnContactPrivacy(caseData, RESPONDENT_ANSWERS);
         List<Letter> d84FormLetters = null;
+
         if (caseData.getApplicant2().isApplicantOffline()) {
-            // When respondent is offline respondent answers doc is reclassified and added to docs uploaded list
-            aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), RESPONDENT_ANSWERS);
-            d84FormLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
-        } else {
-            // When respondent is online respondent answers doc is generated and added to docs generated list
-            aosLetters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), RESPONDENT_ANSWERS);
+            d84FormLetters = getLettersBasedOnContactPrivacy(caseData, D84);
         }
 
         final Letter aosResponseLetter = firstElement(aosResponseLetters);
@@ -143,7 +138,7 @@ public class AosPackPrinter {
 
         final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
 
-        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+        final Letter coversheetLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, COVERSHEET));
 
         if (null != coversheetLetter && caseData.isJudicialSeparationCase()) {
             aosResponseLetterWithAos.add(coversheetLetter);
@@ -184,9 +179,7 @@ public class AosPackPrinter {
     }
 
     private List<Letter> aosLetters(CaseData caseData) {
-        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            APPLICATION);
+        final List<Letter> divorceApplicationLetters = getLettersBasedOnContactPrivacy(caseData, APPLICATION);
 
         //Always get document on top of list as new document is added to top after generation
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
@@ -206,9 +199,9 @@ public class AosPackPrinter {
     }
 
     private List<Letter> aosLettersForRespondent(CaseData caseData) {
-        final Letter coversheetLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), COVERSHEET));
+        final Letter coversheetLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, COVERSHEET));
         final Letter respondentInvitationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2));
-        final Letter divorceApplicationLetter = firstElement(lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(),
+        final Letter divorceApplicationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData,
             APPLICATION));
 
         final List<Letter> currentAosLetters = new ArrayList<>();
@@ -226,17 +219,9 @@ public class AosPackPrinter {
     }
 
     private List<Letter> personalServiceLetters(final CaseData caseData) {
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET);
-
-        final List<Letter> respondentInvitationLetters = getLettersBasedOnContactPrivacy(
-            caseData,
-            NOTICE_OF_PROCEEDINGS_APP_2);
-
-        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            APPLICATION);
+        final List<Letter> coversheetLetters = getLettersBasedOnContactPrivacy(caseData, COVERSHEET);
+        final List<Letter> respondentInvitationLetters = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
+        final List<Letter> divorceApplicationLetters = getLettersBasedOnContactPrivacy(caseData, APPLICATION);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
