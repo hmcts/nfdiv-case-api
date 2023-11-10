@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseListAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseRemovalAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -113,7 +114,7 @@ public class BulkActionCaseData {
         label = "Cases that have errored",
         typeOverride = Collection,
         typeParameterOverride = "BulkListCaseDetails",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class, SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
 
