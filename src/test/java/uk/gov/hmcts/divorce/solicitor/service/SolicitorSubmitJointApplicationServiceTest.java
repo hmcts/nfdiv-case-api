@@ -9,10 +9,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +42,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
     @Test
     void shouldSubmitCcdApplicant2RequestChangesEventOnSubmittedCallbackIfApp2SolicitorHasRequestedChanges() {
-        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
+        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
@@ -61,7 +61,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
     @Test
     void shouldSubmitCcdApplicant2ApproveEventOnSubmittedCallbackIfApp2SolicitorHasNotRequestedChanges() {
-        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
+        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
