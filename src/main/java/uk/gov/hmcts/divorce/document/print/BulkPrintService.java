@@ -121,19 +121,19 @@ public class BulkPrintService {
         log.info("Bulk print request sent with letterId: " + sendLetterUUID);
 
         for (var letter : print.getLetters()) {
-            log.info("Sent document id {} for case ref {} in letter {}", print.getCaseRef(), getDocumentUrl(letter), sendLetterUUID);
+            log.info("Sent document {} for case {} in letter {}", getDocument(letter).getFilename(), print.getCaseRef(), sendLetterUUID);
         }
 
         return sendLetterUUID;
     }
 
-    private String getDocumentUrl(final Letter letter) {
+    private uk.gov.hmcts.ccd.sdk.type.Document getDocument(final Letter letter) {
         if (letter.getDivorceDocument() != null) {
-            return letter.getDivorceDocument().getDocumentLink().getUrl();
+            return letter.getDivorceDocument().getDocumentLink();
         } else if (letter.getConfidentialDivorceDocument() != null) {
-            return letter.getConfidentialDivorceDocument().getDocumentLink().getUrl();
+            return letter.getConfidentialDivorceDocument().getDocumentLink();
         } else if (letter.getDocument() != null) {
-            return letter.getDocument().getUrl();
+            return letter.getDocument();
         } else {
             throw new InvalidResourceException("Invalid document resource");
         }
@@ -144,7 +144,7 @@ public class BulkPrintService {
                                     final String userAuth,
                                     final String userRoles,
                                     final String userId) {
-        String docUrl = getDocumentUrl(letter);
+        String docUrl = getDocument(letter).getUrl();
 
         final String fileName = FilenameUtils.getName(docUrl);
         ResponseEntity<Resource> resourceResponseEntity = documentManagementClient.downloadBinary(
