@@ -1,0 +1,123 @@
+package uk.gov.hmcts.divorce.document.content.templatecontent;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.ConditionalOrderCourtDetails;
+import uk.gov.hmcts.divorce.common.config.ConditionalOrderCourtDetailsConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+
+@Component
+@Slf4j
+public class CertificateOfEntitlementTemplateContent implements TemplateContent {
+
+    private static final String IS_SOLE = "isSole";
+    private static final String IS_JOINT = "isJoint";
+    private static final String COURT_DETAILS = "courtDetails";
+    private static final String APPROVAL_DATE = "approvalDate";
+
+    @Autowired
+    private ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
+
+    @Autowired
+    private DocmosisCommonContent docmosisCommonContent;
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+    }
+
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseData, caseId);
+    }
+
+    private Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+                applicant1.getLanguagePreference());
+
+        final ConditionalOrderCourt conditionalOrderCourt = conditionalOrder.getCourt();
+        final ConditionalOrderCourtDetails conditionalOrderCourtDetails = nonNull(conditionalOrderCourt)
+            ? conditionalOrderCourtDetailsConfig.get(conditionalOrderCourt.getCourtId())
+            : null;
+
+        final LocalDate decisionDate = conditionalOrder.getDecisionDate();
+        final String approvalDate = nonNull(decisionDate)
+            ? decisionDate.format(DATE_TIME_FORMATTER)
+            : null;
+
+        templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
+        templateContent.put(COURT_DETAILS, conditionalOrderCourtDetails);
+        templateContent.put(APPROVAL_DATE, approvalDate);
+
+        if (caseData.isJudicialSeparationCase()) {
+            templateContent.put(IS_DIVORCE, caseData.isDivorce());
+            templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+            templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        }
+
+        templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
+        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
+
+        if (WELSH.equals(applicant1.getLanguagePreference())) {
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_CY : CIVIL_PARTNERSHIP_CY);
+        } else {
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
+                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
+        }
+
+        final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
+        final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
+        final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
+        final String beforeDateOfHearing = nonNull(dateAndTimeOfHearing)
+            ? dateAndTimeOfHearing.minusDays(7).format(DATE_TIME_FORMATTER) : null;
+
+        templateContent.put(DATE_OF_HEARING, dateOfHearing);
+        templateContent.put(TIME_OF_HEARING, timeOfHearing);
+        templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
+
+        templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.appliedForFinancialOrder());
+
+        return templateContent;
+    }
+}

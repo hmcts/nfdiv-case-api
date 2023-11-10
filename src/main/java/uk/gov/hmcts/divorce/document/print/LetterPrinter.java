@@ -26,8 +26,7 @@ public class LetterPrinter {
     public void sendLetters(final CaseData caseData,
                             final Long caseId,
                             final Applicant applicant,
-                            final DocumentPackInfo documentPackInfo,
-                            final String letterName) {
+                            final DocumentPackInfo documentPackInfo) {
 
         List<Letter> letters = documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo);
 
@@ -35,21 +34,21 @@ public class LetterPrinter {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(
-                letters,
-                caseIdString,
-                caseIdString,
-                letterName,
-                applicant.getFullName()
+                    letters,
+                    caseIdString,
+                    caseIdString,
+                    documentPackInfo.letterId(),
+                    applicant.getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             throw new IllegalArgumentException(
-                "%s letter pack has missing documents. Expected documents with type %s for case %s".formatted(
-                    letterName,
-                    documentPackInfo.documentPack().keySet(),
-                    caseId)
+                    "%s letter pack has missing documents. Expected documents with type %s for case %s".formatted(
+                            documentPackInfo.letterId(),
+                            documentPackInfo.documentPack().keySet(),
+                            caseId)
             );
         }
     }

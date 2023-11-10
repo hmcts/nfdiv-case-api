@@ -30,6 +30,22 @@ public class DocumentGenerator {
     private final CaseDataDocumentService caseDataDocumentService;
     private final Clock clock;
 
+    public void generateAndStoreCaseDocument(DocumentType documentType,
+                                             String templateId,
+                                             String templateName,
+                                             CaseData caseData,
+                                             long caseId) {
+        //this is a case document like FO Granted or CO Granted so is not specific to an applicant
+        var templateContent = getTemplateContent(caseId, null, caseData, documentType, templateId);
+
+        var generatedDocument = caseDataDocumentService.renderDocument(templateContent,
+                caseId,
+                templateId,
+                caseData.getApplicant1().getLanguagePreference(),
+                formatDocumentName(caseId, templateName, now(clock)));
+
+        caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
+    }
     public List<Letter> generateDocuments(final CaseData caseData,
                                           final long caseId,
                                           final Applicant applicant,
@@ -37,9 +53,9 @@ public class DocumentGenerator {
         log.info("About to start generating document pack for case {}", caseId);
 
         return documentPackInfo.documentPack().entrySet().stream()
-            .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
-            .flatMap(Optional::stream)
-            .toList();
+                .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
+                .flatMap(Optional::stream)
+                .toList();
     }
 
     private Optional<Letter> toLetter(final Map.Entry<DocumentType, Optional<String>> entry,
@@ -50,25 +66,25 @@ public class DocumentGenerator {
 
         var documentType = entry.getKey();
         var letter = entry.getValue()
-            .map(templatedId -> {
-                log.info("Generating document type {} from template id {} for case {}", documentType, templatedId, caseId);
+                .map(templatedId -> {
+                    log.info("Generating document type {} from template id {} for case {}", documentType, templatedId, caseId);
 
-                String documentName = documentIdToDocumentNameMap.get(templatedId);
-                Document generatedDocument = generateDocument(
-                    caseId,
-                    applicant,
-                    caseData,
-                    documentType,
-                    templatedId,
-                    documentName);
+                    String documentName = documentIdToDocumentNameMap.get(templatedId);
+                    Document generatedDocument = generateDocument(
+                            caseId,
+                            applicant,
+                            caseData,
+                            documentType,
+                            templatedId,
+                            documentName);
 
-                return new Letter(generatedDocument, 1);
-            })
-            .orElseGet(() -> {
-                log.info("Fetching pre-generated document of type: {} for case {}", documentType, caseId);
+                    return new Letter(generatedDocument, 1);
+                })
+                .orElseGet(() -> {
+                    log.info("Fetching pre-generated document of type: {} for case {}", documentType, caseId);
 
-                return firstElement(getLettersBasedOnContactPrivacy(caseData, documentType));
-            });
+                    return firstElement(getLettersBasedOnContactPrivacy(caseData, documentType));
+                });
 
         return Optional.ofNullable(letter);
     }
@@ -80,29 +96,35 @@ public class DocumentGenerator {
                                       final String templateId,
                                       final String docName) {
 
-        List<TemplateContent> relevantTemplateContent = allTemplateContentHandlers.stream()
-            .filter(handler -> handler.getSupportedTemplates().contains(templateId))
-            .toList();
-
-        if (relevantTemplateContent.size() != 1) {
-            throw new IllegalStateException(
-                String.format("Multiple template content providers found for given templateId %s for case %s", templateId, caseId)
-            );
-        }
-
-        log.info("Got the relevant template content bean for doctype {} for case {}", documentType, caseId);
-
-        Map<String, Object> templateContent = relevantTemplateContent.get(0).getTemplateContent(caseData, caseId, applicant);
+        Map<String, Object> templateContent = getTemplateContent(caseId, applicant, caseData, documentType, templateId);
 
         Document generatedDocument = caseDataDocumentService.renderDocument(templateContent,
-            caseId,
-            templateId,
-            applicant.getLanguagePreference(),
-            formatDocumentName(caseId, docName, now(clock)));
+                caseId,
+                templateId,
+                applicant.getLanguagePreference(),
+                formatDocumentName(caseId, docName, now(clock)));
 
         caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
 
         return generatedDocument;
     }
 
+    private Map<String, Object> getTemplateContent(long caseId,
+                                                   Applicant applicant,
+                                                   CaseData caseData,
+                                                   DocumentType documentType,
+                                                   String templateId) {
+        List<TemplateContent> relevantTemplateContent = allTemplateContentHandlers.stream()
+                .filter(handler -> handler.getSupportedTemplates().contains(templateId))
+                .toList();
+        if (relevantTemplateContent.size() != 1) {
+            throw new IllegalStateException(
+                    String.format("Multiple template content providers found for given templateId %s for case %s", templateId, caseId)
+            );
+        }
+
+        log.info("Got the relevant template content bean for doctype {} for case {}", documentType, caseId);
+
+        return relevantTemplateContent.get(0).getTemplateContent(caseData, caseId, applicant);
+    }
 }

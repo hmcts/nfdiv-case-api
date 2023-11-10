@@ -1,7 +1,10 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -14,6 +17,8 @@ import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotificatio
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentGenerationPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
@@ -29,37 +34,36 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REGENERATE_COURT_ORDERS = "caseworker-regenerate-court-orders";
 
-    @Autowired
     private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
-
-    @Autowired
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-
-    @Autowired
     private GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
-
-    @Autowired
     private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
-
-    @Autowired
     private GenerateFinalOrder generateFinalOrder;
-
-    @Autowired
     private RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
 
-    @Autowired
     private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
     private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
+
+    private DocumentGenerationUtil documentGenerationUtil;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -109,23 +113,37 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             generateFinalOrder.removeExistingAndGenerateNewFinalOrderGrantedDoc(details);
         }
 
-        CaseDetails<CaseData, State> updatedDetails = null;
         if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
-            generateCertificateOfEntitlement.removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(details);
-            updatedDetails = caseTasks(generateCertificateOfEntitlement).run(details);
+
+            regenerateCertificateOfEntitlement(details);
         }
 
-        if (null != updatedDetails) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(updatedDetails.getData())
-                .build();
-        } else {
-            log.info("Certificate of entitlement doesn't exist for Case Id: {}", details.getId());
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .build();
-        }
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
+    private void regenerateCertificateOfEntitlement(CaseDetails<CaseData, State> details) {
+        documentGenerationUtil.generate(DocumentGenerationPack.CERTIFICATE_OF_ENTITLEMENT, details,
+                () -> details.getData().isJudicialSeparationCase() ?
+                        DocumentGenerationUtil.getDocumentPack(ImmutableMap.of(
+                                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, Optional.of(CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID),
+                                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, Optional.of(CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID),
+                                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+                                ),
+                                ImmutableMap.of(
+                                        CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME
+                                ), "certificate-of-entitlement") :
+                        DocumentGenerationUtil.getDocumentPack(ImmutableMap.of(
+                                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, Optional.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID),
+                                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, Optional.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID),
+                                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+                                ),
+                                ImmutableMap.of(
+                                        CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME
+                                ),  "certificate-of-entitlement")
+        , List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,

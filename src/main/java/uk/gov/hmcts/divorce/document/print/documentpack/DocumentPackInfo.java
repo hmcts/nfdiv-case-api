@@ -5,4 +5,5 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.Optional;
 
-public record DocumentPackInfo(ImmutableMap<DocumentType, Optional<String>> documentPack, ImmutableMap<String, String> templateInfo) {}
+public record DocumentPackInfo(ImmutableMap<DocumentType, Optional<String>> documentPack, ImmutableMap<String, String> templateInfo,
+                               String letterId) {}

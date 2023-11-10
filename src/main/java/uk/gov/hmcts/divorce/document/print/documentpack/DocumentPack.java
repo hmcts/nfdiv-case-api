@@ -16,12 +16,5 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
  * <p>For example implementation see {@link ConditionalOrderRefusalDocumentPack}
  */
 public interface DocumentPack {
-    /*** Contains all the business logic required to determine which pack to generate and send for a given applicant and case.
-     * @param caseData - case data
-     * @param applicant - the applicant to whom document pack is being sent
-     * @return - the document pack to generate
-     */
-    DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant);
-
-    String getLetterId();
+    DocumentPackInfo getDocumentPack();
 }
