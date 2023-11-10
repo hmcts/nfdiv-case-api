@@ -105,10 +105,6 @@ public class BulkPrintService {
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
 
-        log.debug("Recipients:");
-        for (String recipient : print.getRecipients()) {
-            log.debug(recipient);
-        }
         UUID sendLetterUUID = sendLetterApi.sendLetter(
             authToken,
             new LetterV3(
@@ -121,8 +117,26 @@ public class BulkPrintService {
                     RECIPIENTS, print.getRecipients()
                 )))
             .letterId;
+
         log.info("Bulk print request sent with letterId: " + sendLetterUUID);
+
+        for (var letter : print.getLetters()) {
+            log.info("Sent document id {} for case ref {} in letter {}", print.getCaseRef(), getDocumentUrl(letter), sendLetterUUID);
+        }
+
         return sendLetterUUID;
+    }
+
+    private String getDocumentUrl(final Letter letter) {
+        if (letter.getDivorceDocument() != null) {
+            return letter.getDivorceDocument().getDocumentLink().getUrl();
+        } else if (letter.getConfidentialDivorceDocument() != null) {
+            return letter.getConfidentialDivorceDocument().getDocumentLink().getUrl();
+        } else if (letter.getDocument() != null) {
+            return letter.getDocument().getUrl();
+        } else {
+            throw new InvalidResourceException("Invalid document resource");
+        }
     }
 
     private byte[] getDocumentBytes(final Letter letter,
@@ -130,17 +144,7 @@ public class BulkPrintService {
                                     final String userAuth,
                                     final String userRoles,
                                     final String userId) {
-        String docUrl;
-
-        if (letter.getDivorceDocument() != null) {
-            docUrl = letter.getDivorceDocument().getDocumentLink().getUrl();
-        } else if (letter.getConfidentialDivorceDocument() != null) {
-            docUrl = letter.getConfidentialDivorceDocument().getDocumentLink().getUrl();
-        } else if (letter.getDocument() != null) {
-            docUrl = letter.getDocument().getUrl();
-        } else {
-            throw new InvalidResourceException("Invalid document resource");
-        }
+        String docUrl = getDocumentUrl(letter);
 
         final String fileName = FilenameUtils.getName(docUrl);
         ResponseEntity<Resource> resourceResponseEntity = documentManagementClient.downloadBinary(
