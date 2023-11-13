@@ -84,7 +84,7 @@ public class SolicitorConfirmServiceIT {
     }
 
     @Test
-    void shouldSetDueDateTo14DaysFromToday() throws Exception {
+    void shouldSetDueDateTo141DaysFromToday() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -112,7 +112,7 @@ public class SolicitorConfirmServiceIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(16).toString()));
+            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(141).toString()));
     }
 
     @Test

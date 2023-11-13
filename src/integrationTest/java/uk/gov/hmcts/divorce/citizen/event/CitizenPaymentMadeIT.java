@@ -18,10 +18,10 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.time.LocalDateTime;
@@ -46,15 +46,15 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYM
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.CANCELLED;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.IN_PROGRESS;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;

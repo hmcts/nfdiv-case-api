@@ -17,7 +17,6 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 
 @Component
@@ -62,9 +61,7 @@ public class ConditionalOrderPronouncedPrinter {
     private List<Letter> conditionalOrderPronouncedLetters(CaseData caseData, DocumentType coversheetDocumentType) {
         final List<Letter> coversheetLetters = getLettersBasedOnContactPrivacy(caseData, coversheetDocumentType);
 
-        final List<Letter> conditionalOrderGrantedLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_GRANTED);
+        final List<Letter> conditionalOrderGrantedLetters = getLettersBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_GRANTED);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter conditionalOrderGrantedLetter = firstElement(conditionalOrderGrantedLetters);

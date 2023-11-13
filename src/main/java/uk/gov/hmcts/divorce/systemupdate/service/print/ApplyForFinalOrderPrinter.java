@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -18,7 +18,7 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
@@ -90,25 +90,16 @@ public class ApplyForFinalOrderPrinter {
 
     private List<Letter> finalOrderLetters(final CaseData caseData, boolean isApplicant1) {
 
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET);
+        final List<Letter> coversheetLetters = getLettersBasedOnContactPrivacy(caseData, COVERSHEET);
 
         final List<Letter> canApplyFinalOrderLetters;
         if (isApplicant1) {
-            canApplyFinalOrderLetters = lettersWithDocumentType(
-                caseData.getDocuments().getDocumentsGenerated(),
-                FINAL_ORDER_CAN_APPLY_APP1);
+            canApplyFinalOrderLetters = getLettersBasedOnContactPrivacy(caseData, FINAL_ORDER_CAN_APPLY_APP1);
         } else {
-            canApplyFinalOrderLetters = lettersWithDocumentType(
-                caseData.getDocuments().getDocumentsGenerated(),
-                FINAL_ORDER_CAN_APPLY_APP2);
+            canApplyFinalOrderLetters = getLettersBasedOnContactPrivacy(caseData, FINAL_ORDER_CAN_APPLY_APP2);
         }
 
-        final List<Letter> d36Letters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            D36
-        );
+        final List<Letter> d36Letters = getLettersBasedOnContactPrivacy(caseData, D36);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter canApplyFinalOrderLetter = firstElement(canApplyFinalOrderLetters);

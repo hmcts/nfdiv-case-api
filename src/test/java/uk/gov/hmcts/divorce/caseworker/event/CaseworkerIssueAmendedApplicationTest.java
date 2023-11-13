@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.content.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 

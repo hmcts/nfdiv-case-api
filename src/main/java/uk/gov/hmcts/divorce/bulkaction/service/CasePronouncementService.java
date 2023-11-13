@@ -50,10 +50,9 @@ public class CasePronouncementService {
     private void pronounceCasesWithFilter(CaseDetails<BulkActionCaseData, BulkActionState> details,
                                           BulkCaseTask bulkCaseTask
     ) {
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuth = authTokenGenerator.generate();
-
         try {
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
             ccdUpdateService.submitBulkActionEvent(
                 bulkCaseTask,
                 details.getId(),

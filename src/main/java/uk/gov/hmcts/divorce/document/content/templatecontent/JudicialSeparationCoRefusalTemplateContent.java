@@ -1,21 +1,23 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderCommonContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
-import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -40,71 +42,32 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
+public class JudicialSeparationCoRefusalTemplateContent implements TemplateContent {
 
     private static final String IS_JOINT = "isJoint";
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final Clock clock;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    @Autowired
-    private Clock clock;
-
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-
-    @Autowired
-    private ConditionalOrderCommonContent conditionalOrderCommonContent;
-
-    public void generateAndUpdateCaseData(final CaseData caseData,
-                                          final Long caseId,
-                                          final Applicant applicant) {
-
-        if (caseData.isDivorce()) {
-            log.info("Generating Judicial Separation Order Refused Cover Letter for case id {} ", caseId);
-        } else {
-            log.info("Generating Separation Order Refused Cover Letter for case id {} ", caseId);
-        }
-
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            getCoverLetterDocumentType(caseData, applicant),
-            templateContent(caseData, caseId, applicant),
-            caseId,
-            getCoverLetterDocumentTemplateId(caseData, applicant),
-            applicant.getLanguagePreference(),
-            formatDocumentName(caseId, REJECTED_REFUSAL_ORDER_COVER_LETTER_DOCUMENT_NAME, now(clock))
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(
+            JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER_TEMPLATE_ID
         );
     }
 
-    public DocumentType getCoverLetterDocumentType(final CaseData caseData, final Applicant applicant) {
-        return conditionalOrderCommonContent.getCoverLetterDocumentType(caseData, applicant, false);
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return templateContent(caseData, caseId, applicant);
     }
 
-    public String getCoverLetterDocumentTemplateId(final CaseData caseData, final Applicant applicant) {
-        return conditionalOrderCommonContent.getCoverLetterDocumentTemplateId(caseData, applicant, false);
-    }
-
-    private String getSolicitorName(final Applicant applicant) {
-        if (applicant.isRepresented()) {
-            return applicant.getSolicitor().getName();
-        }
-        return WELSH.equals(applicant.getLanguagePreference())
-            ? "nas cynrychiolwyd"
-            : "not represented";
-    }
-
-    private String getSolicitorReference(final Applicant applicant) {
-        if (applicant.isRepresented() && applicant.getSolicitor().getReference() != null) {
-            return applicant.getSolicitor().getReference();
-        }
-        return WELSH.equals(applicant.getLanguagePreference())
-            ? "heb ei ddarparu"
-            : "not provided";
-    }
-
-    private Map<String, Object> templateContent(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
+    public Map<String, Object> templateContent(final CaseData caseData, final Long ccdCaseReference, final Applicant applicant) {
 
         Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
@@ -141,5 +104,23 @@ public class GenerateJudicialSeparationCORefusedForAmendmentCoverLetter {
         }
 
         return templateContent;
+    }
+
+    private String getSolicitorName(final Applicant applicant) {
+        if (applicant.isRepresented()) {
+            return applicant.getSolicitor().getName();
+        }
+        return WELSH.equals(applicant.getLanguagePreference())
+            ? "nas cynrychiolwyd"
+            : "not represented";
+    }
+
+    private String getSolicitorReference(final Applicant applicant) {
+        if (applicant.isRepresented() && applicant.getSolicitor().getReference() != null) {
+            return applicant.getSolicitor().getReference();
+        }
+        return WELSH.equals(applicant.getLanguagePreference())
+            ? "heb ei ddarparu"
+            : "not provided";
     }
 }
