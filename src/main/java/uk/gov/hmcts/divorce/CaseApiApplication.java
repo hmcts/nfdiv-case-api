@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.PaymentClient;
 import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
@@ -42,7 +43,8 @@ import java.util.TimeZone;
         OrganisationClient.class,
         PbaRefDataClient.class,
         PaymentPbaClient.class,
-        CaseEventsApi.class
+        CaseEventsApi.class,
+        PaymentClient.class
     }
 )
 @EnableScheduling
