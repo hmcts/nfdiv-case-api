@@ -42,6 +42,10 @@ public class CasePronouncementService {
         pronounceCasesWithFilter(details, pronounceCasesTask);
     }
 
+    public void systemPronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
+        pronounceCasesWithFilter(details, pronounceCasesTask);
+    }
+
     @Async
     public void retryPronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
         pronounceCasesWithFilter(details, retryPronounceCasesTask);
