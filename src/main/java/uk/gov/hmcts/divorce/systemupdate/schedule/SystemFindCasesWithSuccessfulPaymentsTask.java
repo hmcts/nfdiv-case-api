@@ -4,14 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Payment;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.payment.PaymentStatusService;
-import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -42,9 +36,6 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
     @Autowired
     private PaymentStatusService paymentStatusService;
 
-    @Autowired
-    private CaseDetailsConverter caseDetailsConverter;
-
     @Override
     public void run() {
         log.info("SystemFindCasesWithSuccessfulPaymentsTask scheduled task started");
@@ -64,7 +55,7 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
             final List<Long> caseIds = casesWithPaymentsInAwaitingFinalOrderState
                 .stream()
                 .filter(cd -> cd.getData().containsKey("applicationPayments"))
-                .filter(cd -> hasSuccessFulPayment(user.getAuthToken(), serviceAuth, cd))
+                .filter(cd -> paymentStatusService.hasSuccessFulPayment(cd))
                 .map(CaseDetails::getId)
                 .toList();
 
@@ -75,20 +66,5 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
         } catch (final CcdConflictException e) {
             log.info("SystemFindCasesWithSuccessfulPaymentsTask schedule task stopping due to conflict with another running task");
         }
-    }
-
-    private boolean hasSuccessFulPayment(String authToken, String serviceAuthorisation, CaseDetails cd) {
-        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails =
-            caseDetailsConverter.convertToCaseDetailsFromReformModel(cd);
-
-        final List<ListValue<Payment>> applicationPayments = caseDetails.getData().getApplication().getApplicationPayments();
-
-        return applicationPayments
-            .stream()
-            .filter(ap -> ap.getValue().getStatus().equals(PaymentStatus.IN_PROGRESS))
-            .map(ap -> ap.getValue().getReference())
-            .map(r -> paymentStatusService.paymentSuccessful(authToken, serviceAuthorisation, r))
-            .findFirst()
-            .orElse(false);
     }
 }
