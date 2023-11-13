@@ -80,8 +80,8 @@ class SystemProcessFailedPronouncedCasesTaskTest {
 
         systemCreateBulkCaseListTask.run();
 
-        verify(casePronouncementService).pronounceCases(caseDetails1);
-        verify(casePronouncementService).pronounceCases(caseDetails2);
+        verify(casePronouncementService).systemPronounceCases(caseDetails1);
+        verify(casePronouncementService).systemPronounceCases(caseDetails2);
     }
 
     @Test
