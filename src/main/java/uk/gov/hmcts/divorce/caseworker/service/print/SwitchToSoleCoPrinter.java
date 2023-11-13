@@ -15,7 +15,7 @@ import java.util.UUID;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.util.CollectionUtils.firstElement;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 
 @Component
@@ -29,9 +29,7 @@ public class SwitchToSoleCoPrinter {
 
     public void print(final CaseData caseData, final Long caseId, final Applicant respondent) {
 
-        final List<Letter> switchToSoleCoLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            SWITCH_TO_SOLE_CO_LETTER);
+        final List<Letter> switchToSoleCoLetters = getLettersBasedOnContactPrivacy(caseData, SWITCH_TO_SOLE_CO_LETTER);
 
         final Letter switchToSoleCoLetter = firstElement(switchToSoleCoLetters);
 

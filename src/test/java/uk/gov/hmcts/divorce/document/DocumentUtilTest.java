@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentTy
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableForConfidentiality;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -46,8 +45,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
@@ -90,92 +87,6 @@ class DocumentUtilTest {
                 DOC_URL,
                 PDF_FILENAME,
                 DOC_BINARY_URL);
-    }
-
-    @Test
-    void shouldReturnListOfLetterOfGivenDocumentTypeIfPresent() {
-
-        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(MARRIAGE_CERTIFICATE)
-                .build())
-            .build();
-
-        final List<Letter> letters = lettersWithDocumentType(
-            asList(doc1, doc2),
-            MARRIAGE_CERTIFICATE);
-
-        assertThat(letters.size()).isEqualTo(1);
-        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc2.getValue());
-    }
-
-    @Test
-    void shouldNotFindDocumentOfGivenDocumentTypeIfNotPresent() {
-
-        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(MARRIAGE_CERTIFICATE)
-                .build())
-            .build();
-
-        final List<Letter> letters = lettersWithDocumentType(
-            asList(doc1, doc2),
-            NAME_CHANGE_EVIDENCE);
-
-        assertThat(letters.size()).isZero();
-    }
-
-    @Test
-    void shouldReturnEmptyListIfNullDocumentList() {
-        final List<Letter> letters = lettersWithDocumentType(null, NAME_CHANGE_EVIDENCE);
-        assertThat(letters.size()).isZero();
-    }
-
-    @Test
-    void shouldReturnEmptyListIfEmptyDocumentList() {
-        final List<Letter> letters = lettersWithDocumentType(emptyList(), NAME_CHANGE_EVIDENCE);
-        assertThat(letters.size()).isZero();
-    }
-
-    @Test
-    void shouldReturnListOfLettersOfGivenDocumentTypesIfPresent() {
-
-        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(MARRIAGE_CERTIFICATE)
-                .build())
-            .build();
-
-        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(NAME_CHANGE_EVIDENCE)
-                .build())
-            .build();
-
-        final List<Letter> letters = lettersWithDocumentType(
-            asList(doc1, doc2, doc3),
-            NAME_CHANGE_EVIDENCE);
-
-        assertThat(letters.size()).isEqualTo(1);
-        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc3.getValue());
     }
 
     @Test
