@@ -493,6 +493,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setOffline(YES);
 
         stubAosPackSendLetter();
+        stubCdamUploadWith(D10_DOCUMENT_ID, D10.getLabel());
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)

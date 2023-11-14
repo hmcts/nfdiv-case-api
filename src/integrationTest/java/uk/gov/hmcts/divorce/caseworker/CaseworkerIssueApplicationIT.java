@@ -2366,6 +2366,7 @@ public class CaseworkerIssueApplicationIT {
             "FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx");
         stubForDocAssemblyWith(SOLICITOR_COVERSHEET_ID, "FL-NFD-GOR-ENG-Solicitor-Coversheet.docx");
 
+        stubCdamUploadWith(D84_DOCUMENT_ID, D84.getLabel());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);

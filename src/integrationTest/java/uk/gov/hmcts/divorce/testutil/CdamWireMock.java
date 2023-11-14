@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.testutil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import com.github.tomakehurst.wiremock.matching.MatchResult;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -57,6 +58,7 @@ public final class CdamWireMock {
 
     public static void stubCdamUploadWith(final String documentUuid, final String label) {
         CDAM_SERVER.stubFor(post("/cases/documents")
+            .andMatching(request -> MatchResult.of(request.getBodyAsString().contains(label)))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.CREATED.value())
                 .withHeader("Content-Type", "application/json")
