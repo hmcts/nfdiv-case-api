@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.legaladvisor;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -123,6 +124,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
+    @Disabled("CDAM requires the case to exist")
     public void shouldSendAwaitingAmendedApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -146,6 +148,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
+    @Disabled("CDAM requires the case to exist")
     public void shouldSendAwaitingAmendedApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
