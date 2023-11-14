@@ -57,6 +57,11 @@ public class Applicant {
     private String lastName;
 
     @CCD(
+        label = "Confirm your full name"
+    )
+    private YesOrNo confirmFullName;
+
+    @CCD(
         label = "Email address",
         typeOverride = Email
     )

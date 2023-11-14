@@ -3,7 +3,9 @@ package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -31,12 +33,20 @@ public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData
             .name("Remove errored cases")
             .description("Remove errored cases")
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, SYSTEMUPDATE)
-            .grantHistoryOnly(CASE_WORKER))
-            .page("removeCasesFromErroredList")
-            .pageLabel("Remove cases from bulk list")
-            .optionalNoSummary(BulkActionCaseData::getErroredCaseDetails);
+            .grantHistoryOnly(CASE_WORKER));
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails,
+        CaseDetails<BulkActionCaseData, BulkActionState> details) {
+        details.getData().setErroredCaseDetails(null);
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(details.getData())
+            .build();
     }
 
 }
