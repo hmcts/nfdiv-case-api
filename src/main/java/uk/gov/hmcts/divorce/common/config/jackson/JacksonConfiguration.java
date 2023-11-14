@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -35,6 +36,8 @@ public class JacksonConfiguration {
         JavaTimeModule datetime = new JavaTimeModule();
         datetime.addSerializer(LocalDateSerializer.INSTANCE);
         mapper.registerModule(datetime);
+
+        mapper.registerModule(new ParameterNamesModule());
 
         return mapper;
     }
