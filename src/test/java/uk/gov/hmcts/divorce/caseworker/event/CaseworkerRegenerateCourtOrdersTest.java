@@ -19,9 +19,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
@@ -36,6 +37,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -47,7 +50,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 public class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
-    private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
+    private DocumentGenerationUtil documentGenerationUtil;
 
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
@@ -69,6 +72,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
     private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
+
+    @Mock
+    private CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
 
     @InjectMocks
     private CaseworkerRegenerateCourtOrders caseworkerRegenerateCourtOrders;
@@ -113,30 +119,27 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
 
-        final CaseData updatedCaseData = CaseData.builder()
-            .conditionalOrder(
-                ConditionalOrder.builder()
-                    .dateAndTimeOfHearing(LocalDateTime.now())
-                    .certificateOfEntitlementDocument(
-                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
-                    )
-                    .build()
-            )
-            .build();
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        updatedCaseDetails.setData(updatedCaseData);
-
-        when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedCaseDetails);
+//        final CaseData updatedCaseData = CaseData.builder()
+//            .conditionalOrder(
+//                ConditionalOrder.builder()
+//                    .dateAndTimeOfHearing(LocalDateTime.now())
+//                    .certificateOfEntitlementDocument(
+//                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
+//                    )
+//                    .build()
+//            )
+//            .build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData()).isEqualTo(updatedCaseData);
+        assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateCertificateOfEntitlement).removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(caseDetails);
-        verify(generateCertificateOfEntitlement).apply(caseDetails);
+        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(), certificateOfEntitlementDocumentPack,
+                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
     }
 
     @Test
@@ -239,6 +242,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
 
         final ListValue<DivorceDocument> regeneratedCODoc =
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
@@ -249,28 +253,27 @@ public class CaseworkerRegenerateCourtOrdersTest {
         documentsGenerated.add(regeneratedCODoc);
         documentsGenerated.add(regeneratedFODoc);
 
-        final CaseData updatedCaseData = CaseData
-            .builder()
-            .conditionalOrder(
-                ConditionalOrder.builder()
-                    .dateAndTimeOfHearing(LocalDateTime.now())
-                    .certificateOfEntitlementDocument(
-                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
-                    )
-                    .build()
-            )
-            .documents(
-                CaseDocuments
-                    .builder()
-                    .documentsGenerated(documentsGenerated)
-                    .build()
-            )
-            .build();
+//        final CaseData updatedCaseData = CaseData
+//            .builder()
+//            .conditionalOrder(
+//                ConditionalOrder.builder()
+//                    .dateAndTimeOfHearing(LocalDateTime.now())
+//                    .certificateOfEntitlementDocument(
+//                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
+//                    )
+//                    .build()
+//            )
+//            .documents(
+//                CaseDocuments
+//                    .builder()
+//                    .documentsGenerated(documentsGenerated)
+//                    .build()
+//            )
+//            .build();
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        updatedCaseDetails.setData(updatedCaseData);
+        updatedCaseDetails.setData(caseData);
 
-        when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedCaseDetails);
         when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
         when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
         doNothing().when(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
@@ -278,26 +281,26 @@ public class CaseworkerRegenerateCourtOrdersTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData()).isEqualTo(updatedCaseData);
+        assertThat(response.getData()).isEqualTo(caseData);
 
         verify(generateConditionalOrderPronouncedCoversheetDocument)
             .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
         verify(generateFinalOrderCoverLetter).removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(caseDetails);
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
-        verify(generateCertificateOfEntitlement).apply(caseDetails);
         verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
-        verify(generateCertificateOfEntitlement).removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(caseDetails);
-    }
+        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(), certificateOfEntitlementDocumentPack,
+                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));    }
 
     @Test
-    void shouldTriggerNotificationsInSubmittedCallback() {
+    void shouldTriggerNotificationsInAboutToSubmitCallback() {
         final CaseData caseData = new CaseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        caseworkerRegenerateCourtOrders.submitted(caseDetails, null);
+        caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, TEST_CASE_ID);
     }

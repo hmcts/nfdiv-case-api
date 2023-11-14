@@ -42,16 +42,15 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 @Slf4j
 public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REGENERATE_COURT_ORDERS = "caseworker-regenerate-court-orders";
-    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-    private GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
-    private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
-    private GenerateFinalOrder generateFinalOrder;
-    private RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
 
-    private NotificationDispatcher notificationDispatcher;
-    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
-
-    private DocumentGenerationUtil documentGenerationUtil;
+    private final  GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+    private final GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
+    private final GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
+    private final GenerateFinalOrder generateFinalOrder;
+    private final RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
+    private final NotificationDispatcher notificationDispatcher;
+    private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
+    private final DocumentGenerationUtil documentGenerationUtil;
     private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
 
     @Override

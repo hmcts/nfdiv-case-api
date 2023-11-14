@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,9 +11,11 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter;
 
 import java.time.LocalDate;
 
@@ -25,6 +29,9 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
@@ -49,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseWithCourtHearing;
 
@@ -62,7 +70,10 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     private CommonContent commonContent;
 
     @Mock
-    private CertificateOfEntitlementPrinter certificateOfEntitlementPrinter;
+    private LetterPrinter letterPrinter;
+
+    @Mock
+    private CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
 
     @InjectMocks
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
@@ -131,15 +142,27 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setOffline(YesOrNo.YES);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
+        var documentPackInfo = new DocumentPackInfo(
+                ImmutableMap.of(
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, Optional.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID),
+                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+                ),
+                ImmutableMap.of(
+                        CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
+        );
+
+        //when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
+
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(notificationService);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(
+        verify(letterPrinter).sendLetters(
             data,
             TEST_CASE_ID,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-            data.getApplicant2()
+            data.getApplicant2(),
+            documentPackInfo,
+            certificateOfEntitlementDocumentPack.getLetterId()
         );
     }
 
@@ -298,12 +321,27 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(
-            data,
-            TEST_CASE_ID,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-            data.getApplicant1()
+        var documentPackInfo = new DocumentPackInfo(
+                ImmutableMap.of(
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, Optional.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID),
+                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+                ),
+                ImmutableMap.of(
+                        CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
         );
+
+        //when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
+
+        verifyNoInteractions(notificationService);
+
+        verify(letterPrinter).sendLetters(
+                data,
+                TEST_CASE_ID,
+                data.getApplicant2(),
+                documentPackInfo,
+                certificateOfEntitlementDocumentPack.getLetterId()
+        );
+
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isTrue();
     }
 
@@ -314,7 +352,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
-        verifyNoInteractions(certificateOfEntitlementPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 
     @Test
@@ -323,12 +361,27 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verify(certificateOfEntitlementPrinter).sendLetter(
-            data,
-            TEST_CASE_ID,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-            data.getApplicant2()
+        var documentPackInfo = new DocumentPackInfo(
+                ImmutableMap.of(
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, Optional.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID),
+                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+                ),
+                ImmutableMap.of(
+                        CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
         );
+
+        //when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
+
+        verifyNoInteractions(notificationService);
+
+        verify(letterPrinter).sendLetters(
+                data,
+                TEST_CASE_ID,
+                data.getApplicant2(),
+                documentPackInfo,
+                certificateOfEntitlementDocumentPack.getLetterId()
+        );
+
         assertThat(data.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isTrue();
     }
 
@@ -339,6 +392,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verifyNoInteractions(certificateOfEntitlementPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 }
