@@ -30,30 +30,25 @@ public class CaseDocumentAccessManagement {
                                  final String fileName,
                                  final String filePath) throws IOException {
 
-        try {
-            final var file = IOUtils.resourceToByteArray(filePath);
+        final var file = IOUtils.resourceToByteArray(filePath);
 
-            return client.uploadDocuments(
-                userToken,
-                serviceToken,
-                getCaseType(),
-                JURISDICTION,
-                List.of(
-                    new InMemoryMultipartFile(
-                        displayName,
-                        fileName,
-                        MediaType.APPLICATION_PDF_VALUE,
-                        file
-                    )
+        return client.uploadDocuments(
+            userToken,
+            serviceToken,
+            getCaseType(),
+            JURISDICTION,
+            List.of(
+                new InMemoryMultipartFile(
+                    displayName,
+                    fileName,
+                    MediaType.APPLICATION_PDF_VALUE,
+                    file
                 )
-            );
-        } catch (final Exception e) {
-            throw new IOException(e);
-        }
+            )
+        );
     }
 
     public void deleteDocument(String userToken, String serviceToken, Document document, boolean hard) {
-        var uuid = getUuid(document);
         client.deleteDocument(userToken, serviceToken, getUuid(document), hard);
     }
 
