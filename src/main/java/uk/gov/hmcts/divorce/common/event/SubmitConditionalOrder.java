@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -50,21 +51,37 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDIT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLIED_FOR_CO_LETTER;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
 
-    private final Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
-    private final Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
-    private final NotificationDispatcher notificationDispatcher;
-    private final Clock clock;
-    private final HttpServletRequest request;
-    private final CcdAccessService ccdAccessService;
-    private final GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
-    private final SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
-    private final DocumentGenerator documentGenerator;
+    @Autowired
+    private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Autowired
+    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private Clock clock;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private CcdAccessService ccdAccessService;
+
+    @Autowired
+    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+
+    @Autowired
+    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+
+    @Autowired
+    private DocumentGenerator documentGenerator;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -150,7 +167,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                 APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID,
                 APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME,
                 data,
-                caseId
+                caseId,
+                isApplicant1 ? data.getApplicant1() : data.getApplicant2()
             );
         }
 

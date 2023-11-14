@@ -34,9 +34,10 @@ public class DocumentGenerator {
                                              String templateId,
                                              String templateName,
                                              CaseData caseData,
-                                             long caseId) {
+                                             long caseId,
+                                             Applicant applicant) {
         //this is a case document like FO Granted or CO Granted so is not specific to an applicant
-        var templateContent = getTemplateContent(caseId, null, caseData, documentType, templateId);
+        var templateContent = getTemplateContent(caseId, applicant, caseData, documentType, templateId);
 
         var generatedDocument = caseDataDocumentService.renderDocument(templateContent,
             caseId,

@@ -29,9 +29,9 @@ public class Applicant1AppliedForConditionalOrderNotification
     extends AppliedForConditionalOrderNotification
     implements ApplicantNotification {
 
-    private NotificationService notificationService;
-    private AppliedForConditionalOrderDocumentPack appliedForConditionalOrderDocumentPack;
-    private LetterPrinter letterPrinter;
+    private final NotificationService notificationService;
+    private final AppliedForConditionalOrderDocumentPack appliedForConditionalOrderDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
