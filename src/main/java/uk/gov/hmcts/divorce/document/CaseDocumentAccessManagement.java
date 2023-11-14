@@ -6,14 +6,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.reform.ccd.document.am.feign.CaseDocumentClient;
 import uk.gov.hmcts.reform.ccd.document.am.model.UploadResponse;
-import uk.gov.hmcts.reform.document.utils.InMemoryMultipartFile;
+import uk.gov.hmcts.reform.ccd.document.am.util.InMemoryMultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 

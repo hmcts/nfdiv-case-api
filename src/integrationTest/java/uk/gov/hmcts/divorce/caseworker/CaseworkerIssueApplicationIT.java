@@ -28,7 +28,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;

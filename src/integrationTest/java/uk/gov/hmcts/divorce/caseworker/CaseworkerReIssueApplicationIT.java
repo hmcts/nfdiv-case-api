@@ -32,12 +32,11 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
+import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
@@ -59,7 +58,6 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -102,10 +100,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
 import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamUploadWith;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -214,9 +212,6 @@ public class CaseworkerReIssueApplicationIT {
 
     @MockBean
     private NotificationService notificationService;
-
-    @MockBean
-    private DocumentUploadClientApi documentUploadClientApi;
 
     @MockBean
     private BulkPrintService bulkPrintService;
@@ -1406,7 +1401,7 @@ public class CaseworkerReIssueApplicationIT {
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-V3.docx");
-
+        stubCdamUploadWith(D10_DOCUMENT_ID, D10.getLabel());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1427,12 +1422,6 @@ public class CaseworkerReIssueApplicationIT {
             )
             .andReturn().getResponse().getContentAsString();
 
-        verify(documentUploadClientApi).upload(
-            eq(TEST_AUTHORIZATION_TOKEN),
-            eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(CASEWORKER_USER_ID),
-            anyList()
-        );
     }
 
     @Test
@@ -1484,7 +1473,6 @@ public class CaseworkerReIssueApplicationIT {
             .getResponse()
             .getContentAsString();
 
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test
@@ -1527,8 +1515,6 @@ public class CaseworkerReIssueApplicationIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test

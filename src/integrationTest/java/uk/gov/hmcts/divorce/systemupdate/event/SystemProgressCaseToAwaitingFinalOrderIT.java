@@ -16,13 +16,13 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
+import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
@@ -34,7 +34,6 @@ import java.util.UUID;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -53,8 +52,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderProno
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaitingFinalOrder.SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
+import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
@@ -105,7 +104,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     private NotificationService notificationService;
 
     @MockBean
-    private DocumentUploadClientApi documentUploadClientApi;
+    private CaseDocumentAccessManagement documentUploadClientApi;
 
     @BeforeAll
     static void setUp() {
@@ -163,8 +162,9 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         verify(documentUploadClientApi, times(2)).upload(
             anyString(),
             eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(SYSTEM_USER_USER_ID),
-            anyList()
+            anyString(),
+            anyString(),
+            anyString()
         );
     }
 

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
-import uk.gov.hmcts.reform.document.healthcheck.InternalHealth;
+import uk.gov.hmcts.reform.ccd.document.am.healthcheck.InternalHealth;
 
 import static com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS;
 import static com.fasterxml.jackson.databind.MapperFeature.INFER_BUILDER_TYPE_BINDINGS;
