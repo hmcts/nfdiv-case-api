@@ -59,7 +59,7 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
                 .map(CaseDetails::getId)
                 .toList();
 
-            log.info("Found : " + caseIds);
+            log.info("SystemFindCasesWithSuccessfulPaymentsTask Found : " + caseIds);
             log.info("SystemFindCasesWithSuccessfulPaymentsTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("SystemFindCasesWithSuccessfulPaymentsTask schedule task stopped after search error", e);
