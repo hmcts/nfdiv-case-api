@@ -1,17 +1,18 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,8 +21,6 @@ import java.util.Objects;
 
 import static java.lang.String.join;
 import static java.time.temporal.ChronoUnit.DAYS;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -43,18 +42,15 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_COND
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class EntitlementGrantedConditionalOrderNotification implements ApplicantNotification {
 
-    @Autowired
     private NotificationService notificationService;
-
-    @Autowired
     private CommonContent commonContent;
-
-    @Autowired
-    private CertificateOfEntitlementPrinter certificateOfEntitlementPrinter;
+    private CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -85,12 +81,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()) {
             log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
 
-            certificateOfEntitlementPrinter.sendLetter(
-                caseData,
-                caseId,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                caseData.getApplicant1()
-            );
+            sendLettersToParty(caseData, caseId, caseData.getApplicant1());
 
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant1(YesOrNo.YES);
         }
@@ -130,16 +121,18 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
             log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
 
-            certificateOfEntitlementPrinter.sendLetter(
-                caseData,
-                caseId,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                caseData.getApplicant2()
-            );
+            sendLettersToParty(caseData, caseId, caseData.getApplicant2());
 
             caseData.getConditionalOrder().setOfflineCertificateOfEntitlementDocumentSentToApplicant2(YesOrNo.YES);
         }
     }
+
+    private void sendLettersToParty(CaseData caseData, Long caseId, Applicant applicant) {
+        var documentPackInfo = certificateOfEntitlementDocumentPack.getDocumentPack(caseData, applicant);
+
+        letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, certificateOfEntitlementDocumentPack.getLetterId());
+    }
+
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);

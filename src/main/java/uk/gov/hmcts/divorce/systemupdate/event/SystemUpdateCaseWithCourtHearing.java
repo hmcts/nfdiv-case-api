@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,8 +12,11 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
+import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -24,22 +27,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_UPDATE_CASE_COURT_HEARING = "system-update-case-court-hearing";
-
-    @Autowired
-    private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
-
-    @Autowired
     private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
+    private DocumentGenerationUtil documentGenerationUtil;
+    private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -57,19 +57,25 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
+        CaseData caseData = details.getData();
+
         log.info("System update case court hearing about to submit callback invoked for case id: {}", details.getId());
 
-        generateCertificateOfEntitlement.generateCertificateOfEntitlementCoverLetters(details);
-        final CaseDetails<CaseData, State> updatedDetails = caseTasks(generateCertificateOfEntitlement).run(details);
+        documentGenerationUtil.removeExistingAndGenerateNewDocuments(
+                caseData,
+                details.getId(),
+                certificateOfEntitlementDocumentPack,
+                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
 
         notificationDispatcher.send(
             entitlementGrantedConditionalOrderNotification,
-            updatedDetails.getData(),
-            updatedDetails.getId()
+                caseData,
+            details.getId()
         );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(updatedDetails.getData())
+            .data(caseData)
             .build();
     }
 }
