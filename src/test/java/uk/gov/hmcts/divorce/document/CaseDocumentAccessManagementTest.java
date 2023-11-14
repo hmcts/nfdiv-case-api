@@ -46,6 +46,8 @@ class CaseDocumentAccessManagementTest {
             .thenReturn(mock(UploadResponse.class));
 
         cdam.upload("dummy", "dummy", "displayName", "fileName", "/D10.pdf");
+
+        verify(client).uploadDocuments(eq("dummy"), eq("dummy"), eq(getCaseType()), eq(JURISDICTION), anyList());
     }
 
     @Test
