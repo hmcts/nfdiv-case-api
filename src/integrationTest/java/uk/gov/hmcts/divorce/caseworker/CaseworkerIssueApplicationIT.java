@@ -28,21 +28,20 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
-import uk.gov.hmcts.divorce.testutil.DocumentUploadDFormsMocker;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
-import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
@@ -66,7 +65,6 @@ import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -115,11 +113,12 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDeleteWith;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamUploadWith;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForSystem;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -157,7 +156,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class})
 public class CaseworkerIssueApplicationIT {
 
@@ -206,9 +205,6 @@ public class CaseworkerIssueApplicationIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private DocumentUploadDFormsMocker documentUploadDFormsMocker;
-
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
@@ -225,9 +221,6 @@ public class CaseworkerIssueApplicationIT {
     private CcdUpdateService ccdUpdateService;
 
     @MockBean
-    private DocumentUploadClientApi documentUploadClientApi;
-
-    @MockBean
     private BulkPrintService bulkPrintService;
 
     @MockBean
@@ -237,7 +230,7 @@ public class CaseworkerIssueApplicationIT {
     static void setUp() {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         SendLetterWireMock.start();
     }
 
@@ -245,7 +238,7 @@ public class CaseworkerIssueApplicationIT {
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         SendLetterWireMock.stopAndReset();
     }
 
@@ -1677,7 +1670,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForSystem(documentUuid, FORBIDDEN);
+        stubCdamDeleteWith(documentUuid, FORBIDDEN);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
@@ -1712,7 +1705,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setAddress(applicantAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForSystem(documentUuid, UNAUTHORIZED);
+        stubCdamDeleteWith(documentUuid, UNAUTHORIZED);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
@@ -1830,13 +1823,6 @@ public class CaseworkerIssueApplicationIT {
                 status().isOk()
             )
             .andReturn().getResponse().getContentAsString();
-
-        verify(documentUploadClientApi).upload(
-            eq(TEST_AUTHORIZATION_TOKEN),
-            eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(CASEWORKER_USER_ID),
-            anyList()
-        );
     }
 
     @Test
@@ -1879,7 +1865,6 @@ public class CaseworkerIssueApplicationIT {
             .getResponse()
             .getContentAsString();
 
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test
@@ -1934,7 +1919,6 @@ public class CaseworkerIssueApplicationIT {
             .getResponse()
             .getContentAsString();
 
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test
@@ -1976,7 +1960,6 @@ public class CaseworkerIssueApplicationIT {
             .getResponse()
             .getContentAsString();
 
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test
@@ -2169,7 +2152,7 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        documentUploadDFormsMocker.mockDFormsUpload(D84, D84_DOCUMENT_ID);
+        stubCdamUploadWith(D84_DOCUMENT_ID, D84.getLabel());
         stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
 
@@ -2292,13 +2275,6 @@ public class CaseworkerIssueApplicationIT {
                 status().isOk()
             )
             .andReturn().getResponse().getContentAsString();
-
-        verify(documentUploadClientApi).upload(
-            eq(TEST_AUTHORIZATION_TOKEN),
-            eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(CASEWORKER_USER_ID),
-            anyList()
-        );
     }
 
     @Test
@@ -2356,12 +2332,6 @@ public class CaseworkerIssueApplicationIT {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(TestResourceUtil.expectedResponse(SOLE_JS_APPLICANT1_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
 
-        verify(documentUploadClientApi).upload(
-            eq(TEST_AUTHORIZATION_TOKEN),
-            eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(CASEWORKER_USER_ID),
-            anyList()
-        );
     }
 
     @Test
@@ -2420,13 +2390,6 @@ public class CaseworkerIssueApplicationIT {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(TestResourceUtil.expectedResponse(JOINT_JS_APPLICANTS_REPRESENTED_BY_SOLICITOR_CASEWORKER_ABOUT_TO_SUBMIT)));
-
-        verify(documentUploadClientApi).upload(
-            eq(TEST_AUTHORIZATION_TOKEN),
-            eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(CASEWORKER_USER_ID),
-            anyList()
-        );
     }
 
     private AddressGlobalUK applicantAddress() {
@@ -2458,7 +2421,7 @@ public class CaseworkerIssueApplicationIT {
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
         for (String documentId : documentIds) {
-            stubDownloadBinaryFromDocumentManagement(documentId, pdfAsBytes);
+            stubCdamDownloadBinaryWith(documentId, pdfAsBytes);
         }
 
         final SendLetterResponse sendLetterResponse = new SendLetterResponse(UUID.randomUUID());
@@ -2505,7 +2468,7 @@ public class CaseworkerIssueApplicationIT {
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
         for (String documentId : documentIds) {
-            stubDownloadBinaryFromDocumentManagement(documentId, pdfAsBytes);
+            stubCdamDownloadBinaryWith(documentId, pdfAsBytes);
         }
 
         final SendLetterResponse sendLetterResponse = new SendLetterResponse(UUID.randomUUID());
@@ -2549,7 +2512,7 @@ public class CaseworkerIssueApplicationIT {
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
         for (String documentId : documentIds) {
-            stubDownloadBinaryFromDocumentManagement(documentId, pdfAsBytes);
+            stubCdamDownloadBinaryWith(documentId, pdfAsBytes);
         }
 
         final SendLetterResponse sendLetterResponse = new SendLetterResponse(UUID.randomUUID());

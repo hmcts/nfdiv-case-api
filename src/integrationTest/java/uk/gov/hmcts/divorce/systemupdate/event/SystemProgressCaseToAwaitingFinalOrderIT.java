@@ -18,7 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_APPL
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLY_FOR_FINAL_ORDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaitingFinalOrder.SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
@@ -81,7 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class
 })
 public class SystemProgressCaseToAwaitingFinalOrderIT {
@@ -111,7 +111,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     static void setUp() {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         SendLetterWireMock.start();
     }
 
@@ -119,7 +119,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         SendLetterWireMock.stopAndReset();
     }
 
@@ -247,7 +247,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
         for (String documentId : documentIds) {
-            stubDownloadBinaryFromDocumentManagement(documentId, pdfAsBytes);
+            stubCdamDownloadBinaryWith(documentId, pdfAsBytes);
         }
 
         final SendLetterResponse sendLetterResponse = new SendLetterResponse(UUID.randomUUID());

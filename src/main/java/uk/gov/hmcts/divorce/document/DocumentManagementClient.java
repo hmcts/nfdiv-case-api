@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.PERMANENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.USER_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.USER_ROLES;
 
-@FeignClient(name = "document-management-api", url = "${document_management.url}")
+@FeignClient(name = "document-management-api", url = "${case_document_am.url}")
 public interface DocumentManagementClient {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/documents/{document_delete_uri}")

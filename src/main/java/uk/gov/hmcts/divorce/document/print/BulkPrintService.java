@@ -4,10 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.document.DocumentManagementClient;
+import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -42,7 +41,7 @@ public class BulkPrintService {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private DocumentManagementClient documentManagementClient;
+    private CaseDocumentAccessManagement documentManagementClient;
 
     @Autowired
     private IdamService idamService;
@@ -81,9 +80,6 @@ public class BulkPrintService {
 
         final var systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
         final var userAuth = systemUpdateUser.getAuthToken();
-        final var userDetails = systemUpdateUser.getUserDetails();
-        final var userRoles = String.join(",", userDetails.getRoles());
-        final var userId = userDetails.getId();
 
         return print.getLetters().stream()
             .map(letter ->
@@ -92,9 +88,7 @@ public class BulkPrintService {
                         getDocumentBytes(
                             letter,
                             serviceAuth,
-                            userAuth,
-                            userRoles,
-                            userId
+                            userAuth
                         )
                     ),
                     letter.getNumCopiesToPrint()
@@ -139,21 +133,10 @@ public class BulkPrintService {
         }
     }
 
-    private byte[] getDocumentBytes(final Letter letter,
-                                    final String serviceAuth,
-                                    final String userAuth,
-                                    final String userRoles,
-                                    final String userId) {
-        String docUrl = getDocument(letter).getUrl();
-
-        final String fileName = FilenameUtils.getName(docUrl);
-        ResponseEntity<Resource> resourceResponseEntity = documentManagementClient.downloadBinary(
-            userAuth,
-            serviceAuth,
-            userRoles,
-            userId,
-            fileName
-        );
+    private byte[] getDocumentBytes(final Letter letter, final String serviceAuth, final String userAuth) {
+        var doc = getDocument(letter);
+        var fileName = FilenameUtils.getName(doc.getUrl());
+        var resourceResponseEntity = documentManagementClient.downloadBinary(userAuth, serviceAuth, doc);
 
         return Optional.ofNullable(resourceResponseEntity)
             .map(ResponseEntity::getBody)
