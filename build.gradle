@@ -280,7 +280,7 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.1'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.14'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.15'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
