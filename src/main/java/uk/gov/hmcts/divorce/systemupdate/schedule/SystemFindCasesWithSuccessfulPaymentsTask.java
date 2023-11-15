@@ -50,7 +50,7 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
             final List<CaseDetails> casesWithPaymentsInAwaitingFinalOrderState =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
-            log.info("{} cases in AwaitingPayment state", casesWithPaymentsInAwaitingFinalOrderState.size());
+            log.info("SystemFindCasesWithSuccessfulPaymentsTask: {} cases in AwaitingPayment state", casesWithPaymentsInAwaitingFinalOrderState.size());
 
             final List<Long> caseIds = casesWithPaymentsInAwaitingFinalOrderState
                 .stream()
