@@ -8,7 +8,7 @@ maintainers:
   - name: HMCTS nfdiv team
 dependencies:
   - name: java
-    version: 5.0.1
+    version: 5.0.2
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
   - name: idam-pr
     version: 2.3.0
