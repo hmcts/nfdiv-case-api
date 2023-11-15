@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 @RequiredArgsConstructor
 @Slf4j
 public class CertificateOfEntitlementCoverLetterTemplateContent implements TemplateContent {
-    private GenerateCertificateOfEntitlementHelper generateCertificateOfEntitlementHelper;
+    private final GenerateCertificateOfEntitlementHelper generateCertificateOfEntitlementHelper;
 
     @Override
     public List<String> getSupportedTemplates() {
