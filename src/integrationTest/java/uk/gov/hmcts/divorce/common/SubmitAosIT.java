@@ -29,8 +29,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -84,9 +84,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosDisputed.SYSTEM_ISSUE_AOS_DISPUTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.SYSTEM_ISSUE_AOS_UNDISPUTED;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -121,7 +121,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class
 })
 public class SubmitAosIT {
@@ -148,7 +148,7 @@ public class SubmitAosIT {
     static void setUp() {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         SendLetterWireMock.start();
     }
 
@@ -156,7 +156,7 @@ public class SubmitAosIT {
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         SendLetterWireMock.stopAndReset();
     }
 
@@ -703,7 +703,7 @@ public class SubmitAosIT {
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
         for (String documentId : documentIds) {
-            stubDownloadBinaryFromDocumentManagement(documentId, pdfAsBytes);
+            stubCdamDownloadBinaryWith(documentId, pdfAsBytes);
         }
 
         final SendLetterResponse sendLetterResponse = new SendLetterResponse(UUID.randomUUID());

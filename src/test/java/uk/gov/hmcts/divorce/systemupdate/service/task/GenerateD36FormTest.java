@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.service.task.GenerateFormHelper;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.reform.document.domain.Document;
+import uk.gov.hmcts.reform.ccd.document.am.model.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class GenerateD36FormTest {
         final CaseData caseData = CaseData.builder().build();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
-        final Document document = new Document();
+        final Document document = Document.builder().build();
         document.links = new Document.Links();
         document.links.self = new Document.Link();
         document.links.binary = new Document.Link();
