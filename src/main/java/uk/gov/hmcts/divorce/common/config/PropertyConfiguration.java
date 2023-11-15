@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -17,7 +18,7 @@ import java.util.stream.StreamSupport;
 public class PropertyConfiguration {
 
     // Uncomment to dump env vars to console
-    // @EventListener
+    @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
         final Environment env = event.getApplicationContext().getEnvironment();
         log.info("====== Environment and configuration ======");

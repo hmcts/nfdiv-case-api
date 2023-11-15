@@ -488,7 +488,7 @@ doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
 
 case_document_am:
-  url: ${CASE_DOCUMENT_AM_URL:http://ccd-case-document-am-api-aat.service.core-compute-aat.internal}
+  url: http://localhost:4455
 
 prd:
   api:
