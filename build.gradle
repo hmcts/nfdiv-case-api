@@ -26,7 +26,7 @@ plugins {
   id 'org.springframework.boot' version '3.1.5'
   id 'com.github.ben-manes.versions' version '0.49.0'
   id 'hmcts.ccd.sdk' version '5.5.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.876'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.881'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.15'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.16'
     dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.15'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20231013'
@@ -280,7 +280,7 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.1'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.14'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.15'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
