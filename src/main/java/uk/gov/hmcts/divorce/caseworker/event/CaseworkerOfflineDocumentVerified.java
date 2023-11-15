@@ -200,8 +200,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         var caseData = details.getData();
+        log.info("Scanned subtype received is {} for case {}", caseData.getDocuments().getScannedSubtypeReceived(), details.getId());
+        log.info("Type of document attached is {} for case {}", caseData.getDocuments().getTypeOfDocumentAttached(), details.getId());
 
         if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info("Verifying AOS D10 for case {}", details.getId());
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
 
@@ -220,6 +223,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .build();
 
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info("Verifying CO D84 for case {}", details.getId());
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
@@ -245,6 +249,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .build();
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info("Verifying FO D36 for case {}", details.getId());
+
 
             reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
 
@@ -275,6 +281,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         } else {
             final State state = caseData.getApplication().getStateToTransitionApplicationTo();
+            log.info("User selected other document type received, transitioning to state {} for case {}", state, details.getId());
 
             if (Holding.equals(state)) {
                 log.info("Setting due date(Issue date + 20 weeks + 1 day) as state selected is Holding for case id {}",

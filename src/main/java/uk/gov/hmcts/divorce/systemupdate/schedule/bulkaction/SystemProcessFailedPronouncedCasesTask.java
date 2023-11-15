@@ -40,7 +40,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
 
             ccdSearchService
                 .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth)
-                .forEach(caseDetailsBulkCase -> casePronouncementService.pronounceCases(caseDetailsBulkCase));
+                .forEach(caseDetailsBulkCase -> casePronouncementService.systemPronounceCases(caseDetailsBulkCase));
 
         } catch (final CcdSearchCaseException e) {
             log.error("Retry bulk case pronounced errors schedule task, stopped after search error", e);

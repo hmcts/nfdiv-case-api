@@ -278,9 +278,9 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> coversheet = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(COVERSHEET)
+        final ListValue<ConfidentialDivorceDocument> coversheet = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.COVERSHEET)
                 .build())
             .build();
 
@@ -295,8 +295,8 @@ class AosPackPrinterTest {
                 .contactDetailsType(ContactDetailsType.PRIVATE)
                 .build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(asList(application, coversheet, nopAppTwo))
-                .confidentialDocumentsGenerated(List.of(nopAppOne))
+                .documentsGenerated(asList(application, nopAppTwo))
+                .confidentialDocumentsGenerated(List.of(nopAppOne, coversheet))
                 .build())
             .build();
 
@@ -308,12 +308,12 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(5);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(nopAppOne.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(application.getValue());
-        assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(coversheet.getValue());
+        assertThat(print.getLetters().get(2).getConfidentialDivorceDocument()).isSameAs(coversheet.getValue());
         assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(nopAppTwo.getValue());
         assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(application.getValue());
+        assertThat(print.getLetters().size()).isEqualTo(5);
     }
 
     @Test

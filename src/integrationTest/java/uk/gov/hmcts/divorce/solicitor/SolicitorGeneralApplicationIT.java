@@ -33,7 +33,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -51,11 +51,11 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
@@ -74,7 +74,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     PrdOrganisationWireMock.PropertiesInitializer.class,
     PaymentWireMock.PropertiesInitializer.class
 })
@@ -105,14 +105,14 @@ public class SolicitorGeneralApplicationIT {
 
     @BeforeAll
     static void setUp() {
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         PrdOrganisationWireMock.start();
         PaymentWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         PrdOrganisationWireMock.stopAndReset();
         PaymentWireMock.stopAndReset();
     }

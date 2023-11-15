@@ -10,8 +10,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
-import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.PaymentClient;
 import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
@@ -21,13 +21,14 @@ import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.CaseEventsApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.document.am.feign.CaseDocumentClientApi;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 import java.util.TimeZone;
 
 @SpringBootApplication(
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
-        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.document"}
+        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign"}
 )
 @EnableFeignClients(
     clients = {
@@ -38,11 +39,12 @@ import java.util.TimeZone;
         DocAssemblyClient.class,
         CoreCaseDataApi.class,
         CaseAssignmentApi.class,
-        DocumentManagementClient.class,
+        CaseDocumentClientApi.class,
         OrganisationClient.class,
         PbaRefDataClient.class,
         PaymentPbaClient.class,
-        CaseEventsApi.class
+        CaseEventsApi.class,
+        PaymentClient.class
     }
 )
 @EnableScheduling
