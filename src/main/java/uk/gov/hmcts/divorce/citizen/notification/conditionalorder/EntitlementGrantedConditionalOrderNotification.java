@@ -47,9 +47,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Slf4j
 public class EntitlementGrantedConditionalOrderNotification implements ApplicantNotification {
 
-    private NotificationService notificationService;
-    private CommonContent commonContent;
-    private CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
+    private final NotificationService notificationService;
+    private final CommonContent commonContent;
+    private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
     private final LetterPrinter letterPrinter;
 
     @Override

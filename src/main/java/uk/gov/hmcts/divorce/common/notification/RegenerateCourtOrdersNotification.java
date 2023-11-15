@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 @Component
 @Slf4j
 public class RegenerateCourtOrdersNotification implements ApplicantNotification {
-    private CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
+    private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
     private final LetterPrinter letterPrinter;
 
     @Override

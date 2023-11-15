@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +17,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -56,7 +56,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseWithCourtHearing;
 
@@ -151,9 +150,11 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                         CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
         );
 
-        //when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
+        when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        assertThat(documentPackInfo.documentPack()).containsKey(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
 
         verifyNoInteractions(notificationService);
 
@@ -319,8 +320,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
     void shouldSendLetterToOfflineApplicant1IfNotBeenSentAlready() {
         CaseData data = validCaseWithCourtHearing();
 
-        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
-
         var documentPackInfo = new DocumentPackInfo(
                 ImmutableMap.of(
                         CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, Optional.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID),
@@ -330,14 +329,18 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                         CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
         );
 
-        //when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
+        when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant1())).thenReturn(documentPackInfo);
+
+        entitlementGrantedConditionalOrderNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
+
+        assertThat(documentPackInfo.documentPack()).containsKey(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1);
 
         verifyNoInteractions(notificationService);
 
         verify(letterPrinter).sendLetters(
                 data,
                 TEST_CASE_ID,
-                data.getApplicant2(),
+                data.getApplicant1(),
                 documentPackInfo,
                 certificateOfEntitlementDocumentPack.getLetterId()
         );
@@ -361,14 +364,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        var documentPackInfo = new DocumentPackInfo(
-                ImmutableMap.of(
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, Optional.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID),
-                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
-                ),
-                ImmutableMap.of(
-                        CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
-        );
+        var documentPackInfo = certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2());
 
         //when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);
 

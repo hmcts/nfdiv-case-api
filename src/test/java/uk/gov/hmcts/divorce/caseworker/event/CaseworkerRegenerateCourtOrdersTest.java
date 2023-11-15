@@ -121,23 +121,13 @@ public class CaseworkerRegenerateCourtOrdersTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-//        final CaseData updatedCaseData = CaseData.builder()
-//            .conditionalOrder(
-//                ConditionalOrder.builder()
-//                    .dateAndTimeOfHearing(LocalDateTime.now())
-//                    .certificateOfEntitlementDocument(
-//                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
-//                    )
-//                    .build()
-//            )
-//            .build();
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(), certificateOfEntitlementDocumentPack,
+        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(),
+                certificateOfEntitlementDocumentPack,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                         CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
     }
@@ -245,31 +235,18 @@ public class CaseworkerRegenerateCourtOrdersTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final ListValue<DivorceDocument> regeneratedCODoc =
-            getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
+            getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                    "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
+
         final ListValue<DivorceDocument> regeneratedFODoc =
-            getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "fo_granted.pdf", FINAL_ORDER_GRANTED);
+            getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                    "fo_granted.pdf", FINAL_ORDER_GRANTED);
 
         List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         documentsGenerated.add(regeneratedCODoc);
         documentsGenerated.add(regeneratedFODoc);
 
-//        final CaseData updatedCaseData = CaseData
-//            .builder()
-//            .conditionalOrder(
-//                ConditionalOrder.builder()
-//                    .dateAndTimeOfHearing(LocalDateTime.now())
-//                    .certificateOfEntitlementDocument(
-//                        divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
-//                    )
-//                    .build()
-//            )
-//            .documents(
-//                CaseDocuments
-//                    .builder()
-//                    .documentsGenerated(documentsGenerated)
-//                    .build()
-//            )
-//            .build();
+        caseData.getDocuments().setDocumentsGenerated(documentsGenerated);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
@@ -289,9 +266,11 @@ public class CaseworkerRegenerateCourtOrdersTest {
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
-        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(), certificateOfEntitlementDocumentPack,
+        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(),
+                certificateOfEntitlementDocumentPack,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));    }
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+    }
 
     @Test
     void shouldTriggerNotificationsInAboutToSubmitCallback() {

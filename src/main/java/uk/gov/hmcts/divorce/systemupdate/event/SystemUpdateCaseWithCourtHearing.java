@@ -36,9 +36,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_UPDATE_CASE_COURT_HEARING = "system-update-case-court-hearing";
-    private NotificationDispatcher notificationDispatcher;
-    private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
-    private DocumentGenerationUtil documentGenerationUtil;
+    private final NotificationDispatcher notificationDispatcher;
+    private final EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
+    private final DocumentGenerationUtil documentGenerationUtil;
     private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
 
     @Override
