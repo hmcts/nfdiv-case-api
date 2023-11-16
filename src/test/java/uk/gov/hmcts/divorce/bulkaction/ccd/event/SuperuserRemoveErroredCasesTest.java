@@ -39,7 +39,6 @@ class SuperuserRemoveErroredCasesTest {
     void shouldRemoveCasesInAboutToSubmit() {
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder().build();
         bulkActionCaseData.setProcessedCaseDetails(new ArrayList<>());
-        bulkActionCaseData.setProcessedCaseDetails(new ArrayList<>());
 
         final var caseDetails = new CaseDetails<BulkActionCaseData, BulkActionState>();
         caseDetails.setData(bulkActionCaseData);
