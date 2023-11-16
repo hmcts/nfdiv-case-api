@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +27,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 public class DocumentRemovalServiceTest {
 
     @Mock
-    private DocumentManagementClient documentManagementClient;
+    private CaseDocumentAccessManagement documentManagementClient;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -60,7 +60,6 @@ public class DocumentRemovalServiceTest {
     @Test
     public void shouldDeleteDivorceDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
-        final String systemRolesCsv = String.join(",", systemRoles);
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -68,27 +67,21 @@ public class DocumentRemovalServiceTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
-
         doNothing().when(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            userId,
-            documentUuid,
+            divorceDocumentListValue.getValue().getDocumentLink(),
             true
         );
 
-        documentRemovalService.deleteDivorceDocumentsFromDocumentStore(singletonList(divorceDocumentListValue));
+        documentRemovalService.deleteDocument(singletonList(divorceDocumentListValue));
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            userId,
-            documentUuid,
+            divorceDocumentListValue.getValue().getDocumentLink(),
             true
         );
 
@@ -98,7 +91,6 @@ public class DocumentRemovalServiceTest {
     @Test
     public void shouldDeleteScannedDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
-        final String systemRolesCsv = String.join(",", systemRoles);
         final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -106,27 +98,21 @@ public class DocumentRemovalServiceTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String documentUuid = FilenameUtils.getName(scannedDocumentList.get(0).getValue().getUrl().getUrl());
-
         doNothing().when(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            userId,
-            documentUuid,
+            scannedDocumentList.get(0).getValue().getUrl(),
             true
         );
 
-        documentRemovalService.deleteScannedDocumentsFromDocumentStore(scannedDocumentList);
+        documentRemovalService.deleteScannedDocuments(scannedDocumentList);
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            userId,
-            documentUuid,
+            scannedDocumentList.get(0).getValue().getUrl(),
             true
         );
 
@@ -160,13 +146,11 @@ public class DocumentRemovalServiceTest {
             .deleteDocument(
                 anyString(),
                 anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
+                any(),
                 anyBoolean()
             );
 
-        assertThatThrownBy(() -> documentRemovalService.deleteDivorceDocumentsFromDocumentStore(
+        assertThatThrownBy(() -> documentRemovalService.deleteDocument(
             singletonList(documentWithType(APPLICATION))
         ))
             .hasMessageContaining("403 User role is not authorised to delete document")
@@ -200,7 +184,7 @@ public class DocumentRemovalServiceTest {
 
         doThrow(feignException).when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> documentRemovalService.deleteDivorceDocumentsFromDocumentStore(
+        assertThatThrownBy(() -> documentRemovalService.deleteDocument(
             singletonList(documentWithType(APPLICATION))
         ))
             .hasMessageContaining("401 Invalid s2s secret")

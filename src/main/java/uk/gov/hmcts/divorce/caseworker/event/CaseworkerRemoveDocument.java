@@ -92,7 +92,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         ));
 
         if (!divorceDocsToRemove.isEmpty()) {
-            documentRemovalService.deleteDivorceDocumentsFromDocumentStore(divorceDocsToRemove);
+            documentRemovalService.deleteDocument(divorceDocsToRemove);
         }
     }
 
@@ -121,7 +121,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         ));
 
         if (!scannedDocsToRemove.isEmpty()) {
-            documentRemovalService.deleteScannedDocumentsFromDocumentStore(scannedDocsToRemove);
+            documentRemovalService.deleteScannedDocuments(scannedDocsToRemove);
         }
     }
 

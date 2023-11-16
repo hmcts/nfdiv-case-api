@@ -87,7 +87,7 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentRemovalService).deleteDivorceDocumentsFromDocumentStore(List.of(doc2));
+        verify(documentRemovalService).deleteDocument(List.of(doc2));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentRemovalService).deleteDivorceDocumentsFromDocumentStore(List.of(doc2));
+        verify(documentRemovalService).deleteDocument(List.of(doc2));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentRemovalService).deleteDivorceDocumentsFromDocumentStore(List.of(doc2));
+        verify(documentRemovalService).deleteDocument(List.of(doc2));
     }
 
     @Test
@@ -204,7 +204,7 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentRemovalService).deleteDivorceDocumentsFromDocumentStore(List.of(doc2));
+        verify(documentRemovalService).deleteDocument(List.of(doc2));
     }
 
     @Test
@@ -265,6 +265,6 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentRemovalService).deleteScannedDocumentsFromDocumentStore(List.of(doc2));
+        verify(documentRemovalService).deleteScannedDocuments(List.of(doc2));
     }
 }

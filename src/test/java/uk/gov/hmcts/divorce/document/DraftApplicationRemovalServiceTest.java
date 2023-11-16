@@ -42,7 +42,7 @@ public class DraftApplicationRemovalServiceTest {
             TEST_CASE_ID
         );
 
-        verify(documentRemovalService).deleteDivorceDocumentsFromDocumentStore(List.of(divorceDocumentListValue));
+        verify(documentRemovalService).deleteDocument(List.of(divorceDocumentListValue));
         assertThat(actualDocumentsList).size().isEqualTo(1);
     }
 

@@ -9,20 +9,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
-import uk.gov.hmcts.reform.document.domain.Document;
-import uk.gov.hmcts.reform.document.domain.UploadResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.ccd.document.am.model.Document;
+import uk.gov.hmcts.reform.ccd.document.am.model.UploadResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -38,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 public class GenerateFormHelperTest {
 
     @Mock
-    private DocumentUploadClientApi documentUploadClientApi;
+    private CaseDocumentAccessManagement documentUploadClientApi;
 
     @Mock
     private HttpServletRequest request;
@@ -62,7 +60,7 @@ public class GenerateFormHelperTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        final Document document = new Document();
+        final Document document = Document.builder().build();
         document.links = new Document.Links();
         document.links.self = new Document.Link();
         document.links.binary = new Document.Link();
@@ -71,20 +69,16 @@ public class GenerateFormHelperTest {
         document.originalDocumentName = "D10";
 
         final UploadResponse uploadResponse = mock(UploadResponse.class);
-        final UploadResponse.Embedded embedded = mock(UploadResponse.Embedded.class);
 
-        final User user = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().id("caseworker_id").build());
-
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
-        when(uploadResponse.getEmbedded()).thenReturn(embedded);
-        when(embedded.getDocuments()).thenReturn(singletonList(document));
+        when(uploadResponse.getDocuments()).thenReturn(singletonList(document));
         when(documentUploadClientApi.upload(
             eq(CASEWORKER_AUTH_TOKEN),
             eq(SERVICE_AUTHORIZATION),
-            eq("caseworker_id"),
-            anyList())
+            anyString(),
+            anyString(),
+            anyString())
         ).thenReturn(uploadResponse);
 
         generateFormHelper.addFormToGeneratedDocuments(
@@ -97,8 +91,9 @@ public class GenerateFormHelperTest {
         verify(documentUploadClientApi).upload(
             eq(CASEWORKER_AUTH_TOKEN),
             eq(SERVICE_AUTHORIZATION),
-            eq("caseworker_id"),
-            anyList()
+            eq("D10"),
+            eq("D10.pdf"),
+            eq("/D10.pdf")
         );
         assertThat(caseData.getDocuments().getDocumentsGenerated()).hasSize(1);
     }

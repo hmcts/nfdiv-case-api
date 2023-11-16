@@ -101,11 +101,13 @@ public final class DocumentUtil {
             return lettersWithConfidentialDocumentType(caseData.getDocuments().getConfidentialDocumentsGenerated(),
                 getConfidentialDocumentType(documentType));
         } else {
-            return lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), documentType);
+            var letters = lettersWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), documentType);
+
+            return letters.isEmpty() ? lettersWithDocumentType(caseData.getDocuments().getDocumentsUploaded(), documentType) : letters;
         }
     }
 
-    public static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents,
+    private static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents,
                                                        final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();

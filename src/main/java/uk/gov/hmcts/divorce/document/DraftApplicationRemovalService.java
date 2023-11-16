@@ -34,7 +34,7 @@ public class DraftApplicationRemovalService {
             .toList();
 
         if (!isEmpty(applicationDocumentsForRemoval)) {
-            documentRemovalService.deleteDivorceDocumentsFromDocumentStore(applicationDocumentsForRemoval);
+            documentRemovalService.deleteDocument(applicationDocumentsForRemoval);
             log.info("Successfully removed application document from case data generated document list for case id {} ", caseId);
         } else {
             log.info("No draft application document found for case id {} ", caseId);

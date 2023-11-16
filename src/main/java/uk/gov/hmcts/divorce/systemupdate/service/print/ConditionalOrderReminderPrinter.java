@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REMINDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
@@ -52,18 +52,9 @@ public class ConditionalOrderReminderPrinter {
 
     private List<Letter> conditionalOrderLetters(CaseData caseData) {
 
-        final List<Letter> coversheetLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            COVERSHEET);
-
-        final List<Letter> conditionalOrderReminderLetters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            CONDITIONAL_ORDER_REMINDER);
-
-        final List<Letter> d84Letters = lettersWithDocumentType(
-            caseData.getDocuments().getDocumentsGenerated(),
-            D84
-        );
+        final List<Letter> coversheetLetters = getLettersBasedOnContactPrivacy(caseData, COVERSHEET);
+        final List<Letter> conditionalOrderReminderLetters = getLettersBasedOnContactPrivacy(caseData, CONDITIONAL_ORDER_REMINDER);
+        final List<Letter> d84Letters = getLettersBasedOnContactPrivacy(caseData, D84);
 
         final Letter coversheetLetter = firstElement(coversheetLetters);
         final Letter conditionalOrderReminderLetter = firstElement(conditionalOrderReminderLetters);
