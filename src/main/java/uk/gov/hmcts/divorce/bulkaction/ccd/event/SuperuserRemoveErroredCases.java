@@ -43,6 +43,7 @@ public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> details) {
         details.getData().setErroredCaseDetails(null);
+        details.getData().setProcessedCaseDetails(beforeDetails.getData().getErroredCaseDetails());
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(details.getData())
