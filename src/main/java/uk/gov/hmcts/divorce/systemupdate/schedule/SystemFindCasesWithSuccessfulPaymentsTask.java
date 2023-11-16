@@ -47,20 +47,14 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
             final BoolQueryBuilder query = boolQuery()
                 .filter(matchQuery(STATE, AwaitingPayment));
 
-            final List<CaseDetails> casesWithPaymentsInAwaitingFinalOrderState =
+            final List<CaseDetails> casesInAwaitingPaymentState =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
             log.info("SystemFindCasesWithSuccessfulPaymentsTask: {} cases in AwaitingPayment state",
-                casesWithPaymentsInAwaitingFinalOrderState.size());
+                casesInAwaitingPaymentState.size());
 
-            final List<Long> caseIds = casesWithPaymentsInAwaitingFinalOrderState
-                .stream()
-                .filter(cd -> cd.getData().containsKey("applicationPayments"))
-                .filter(cd -> paymentStatusService.hasSuccessFulPayment(cd))
-                .map(CaseDetails::getId)
-                .toList();
+            paymentStatusService.hasSuccessFulPayment(casesInAwaitingPaymentState);
 
-            log.info("SystemFindCasesWithSuccessfulPaymentsTask Found : " + caseIds);
             log.info("SystemFindCasesWithSuccessfulPaymentsTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("SystemFindCasesWithSuccessfulPaymentsTask schedule task stopped after search error", e);
