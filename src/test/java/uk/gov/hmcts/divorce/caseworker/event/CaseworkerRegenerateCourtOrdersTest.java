@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -76,6 +77,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
     @Mock
     private CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
 
+    @Mock
+    private DocumentGenerator documentGenerator;
+
     @InjectMocks
     private CaseworkerRegenerateCourtOrders caseworkerRegenerateCourtOrders;
 
@@ -126,10 +130,10 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(),
-                certificateOfEntitlementDocumentPack,
+        verify(documentGenerationUtil).removeExistingGeneratedDocuments(caseData,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                        CERTIFICATE_OF_ENTITLEMENT));
     }
 
     @Test
@@ -266,10 +270,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
-        verify(documentGenerationUtil).removeExistingAndGenerateNewDocuments(caseData, caseDetails.getId(),
-                certificateOfEntitlementDocumentPack,
+        verify(documentGenerationUtil).removeExistingGeneratedDocuments(caseData,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, CERTIFICATE_OF_ENTITLEMENT));
     }
 
     @Test

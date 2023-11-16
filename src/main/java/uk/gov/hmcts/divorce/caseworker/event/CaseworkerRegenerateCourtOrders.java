@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
@@ -31,6 +32,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -52,6 +56,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
     private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
     private final DocumentGenerationUtil documentGenerationUtil;
     private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
+    private final DocumentGenerator documentGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -103,13 +108,19 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
 
-            documentGenerationUtil.removeExistingAndGenerateNewDocuments(
+            documentGenerationUtil.removeExistingGeneratedDocuments(
                     caseData,
-                    details.getId(),
-                    certificateOfEntitlementDocumentPack,
                     List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+                            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                            CERTIFICATE_OF_ENTITLEMENT));
 
+            documentGenerator.generateAndStoreCaseDocument(
+                    CERTIFICATE_OF_ENTITLEMENT,
+                    CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
+                    CERTIFICATE_OF_ENTITLEMENT_NAME,
+                    caseData,
+                    details.getId()
+            );
         }
 
         notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
