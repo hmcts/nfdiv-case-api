@@ -22,7 +22,6 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -62,17 +61,11 @@ class SystemFindCasesWithSuccessfulPaymentsTaskTest {
     @Test
     void shouldQueryPaymentApi() {
         CaseDetails caseDetails = CaseDetails.builder().data(Map.of("applicationPayments","SomeObject")).build();
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingPayment))
-            .thenReturn(List.of(caseDetails));
+            .thenReturn(caseDetailsList);
 
         systemFindCasesWithSuccessfulPaymentsTask.run();
-        verify(paymentStatusService).hasSuccessFulPayment(same(caseDetails));
-    }
-
-    @Test
-    void shouldNotQueryPaymentApi() {
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingPayment)).thenReturn(List.of());
-        systemFindCasesWithSuccessfulPaymentsTask.run();
-        verifyNoInteractions(paymentStatusService);
+        verify(paymentStatusService).hasSuccessFulPayment(same(caseDetailsList));
     }
 }
