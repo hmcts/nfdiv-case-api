@@ -39,7 +39,7 @@ class SuperuserRemoveErroredCasesTest {
         final var caseDetails = new CaseDetails<BulkActionCaseData, BulkActionState>();
         caseDetails.setData(bulkActionCaseData);
 
-        final var response = superuserRemoveErroredCases.aboutToSubmit(null, caseDetails);
+        final var response = superuserRemoveErroredCases.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getErroredCaseDetails()).isNull();
     }
