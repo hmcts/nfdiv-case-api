@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,8 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
-import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
@@ -32,12 +29,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalO
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
@@ -58,26 +51,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerRegenerateCourtOrdersTest {
 
-    private static final DocumentPackInfo APPLICANT_1_FINAL_ORDER_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, Optional.of(FINAL_ORDER_COVER_LETTER_TEMPLATE_ID),
-            FINAL_ORDER_GRANTED, Optional.empty()
-        ),
-        ImmutableMap.of(
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID, FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME
-        )
-    );
-
-    private static final DocumentPackInfo APPLICANT_2_FINAL_ORDER_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, Optional.of(FINAL_ORDER_COVER_LETTER_TEMPLATE_ID),
-            FINAL_ORDER_GRANTED, Optional.empty()
-        ),
-        ImmutableMap.of(
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID, FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME
-        )
-    );
-
     @Mock
     private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
 
@@ -86,9 +59,6 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
     private GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
-
-    @Mock
-    private FinalOrderGrantedDocumentPack finalOrderGrantedDocumentPack;
 
     @Mock
     private RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
@@ -232,30 +202,31 @@ public class CaseworkerRegenerateCourtOrdersTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        doNothing().when(documentGenerator).generateAndStoreCaseDocument(
-            FINAL_ORDER_GRANTED,
-            FINAL_ORDER_TEMPLATE_ID,
-            FINAL_ORDER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId()
-        );
-        when(finalOrderGrantedDocumentPack.getDocumentPack(caseData, caseData.getApplicant1())).thenReturn(APPLICANT_1_FINAL_ORDER_PACK);
-        when(finalOrderGrantedDocumentPack.getDocumentPack(caseData, caseData.getApplicant2())).thenReturn(APPLICANT_2_FINAL_ORDER_PACK);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
+
+        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId(),
+            caseData.getApplicant1());
+
+        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId(),
+            caseData.getApplicant2()
+        );
 
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED,
             FINAL_ORDER_TEMPLATE_ID,
             FINAL_ORDER_DOCUMENT_NAME,
             caseData,
             caseDetails.getId());
-        verify(documentGenerator).generateDocuments(any(), eq(TEST_CASE_ID),
-            eq(caseData.getApplicant1()), eq(APPLICANT_1_FINAL_ORDER_PACK));
-        verify(documentGenerator).generateDocuments(any(), eq(TEST_CASE_ID),
-            eq(caseData.getApplicant2()), eq(APPLICANT_2_FINAL_ORDER_PACK));
     }
 
     @Test
@@ -326,11 +297,6 @@ public class CaseworkerRegenerateCourtOrdersTest {
         when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedCaseDetails);
         when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
         when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
-        doNothing().when(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED,
-            FINAL_ORDER_TEMPLATE_ID,
-            FINAL_ORDER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
@@ -342,11 +308,15 @@ public class CaseworkerRegenerateCourtOrdersTest {
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateCertificateOfEntitlement).apply(caseDetails);
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED,
-            FINAL_ORDER_TEMPLATE_ID,
-            FINAL_ORDER_DOCUMENT_NAME,
+        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
             caseData,
-            caseDetails.getId());
+            caseDetails.getId(),
+            caseData.getApplicant2()
+        );
+        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED, FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME,
+            caseData, caseDetails.getId());
         verify(generateCertificateOfEntitlement).removeExistingAndGenerateNewCertificateOfEntitlementCoverLetters(caseDetails);
     }
 

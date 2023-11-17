@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
@@ -34,6 +33,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -54,7 +55,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
     private final NotificationDispatcher notificationDispatcher;
     private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
     private final DocumentGenerator documentGenerator;
-    private final FinalOrderGrantedDocumentPack finalOrderGrantedDocumentPack;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -142,17 +142,28 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
                 .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
         }
 
-        //slightly ugly but this allows us to regenerate the documents using the new abstraction
         if (caseData.getApplicant1().isApplicantOffline()) {
             var app1 = caseData.getApplicant1();
-            var app1DocumentPack = finalOrderGrantedDocumentPack.getDocumentPack(caseData, app1);
-            documentGenerator.generateDocuments(caseData, caseId, app1, app1DocumentPack);
+
+            documentGenerator.generateAndStoreCaseDocument(
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+                FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+                FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
+                caseData,
+                caseId,
+                app1);
         }
 
         if (caseData.getApplicant2().isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())) {
             var app2 = caseData.getApplicant2();
-            var app2DocumentPack = finalOrderGrantedDocumentPack.getDocumentPack(caseData, app2);
-            documentGenerator.generateDocuments(caseData, caseId, app2, app2DocumentPack);
+
+            documentGenerator.generateAndStoreCaseDocument(
+                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+                FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
+                FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
+                caseData,
+                caseId,
+                app2);
         }
     }
 
