@@ -66,7 +66,7 @@ class CaseDocumentAccessManagementTest {
     }
 
     @Test
-    void Ignore404ErrorFromCdam() {
+    void ignore404ErrorFromCdam() {
 
         var doc = documentWithType(APPLICATION);
         var url = doc.getValue().getDocumentLink().getUrl();
@@ -80,7 +80,7 @@ class CaseDocumentAccessManagementTest {
     }
 
     @Test
-    void RethrowExceptionIfNot404WhenCallingToDeleteDocumentFromCdam() {
+    void rethrowExceptionIfNot404WhenCallingToDeleteDocumentFromCdam() {
 
         var doc = documentWithType(APPLICATION);
         var url = doc.getValue().getDocumentLink().getUrl();
