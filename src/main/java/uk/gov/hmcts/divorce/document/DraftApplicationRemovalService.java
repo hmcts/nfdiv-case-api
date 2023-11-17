@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.document;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -34,8 +36,14 @@ public class DraftApplicationRemovalService {
             .toList();
 
         if (!isEmpty(applicationDocumentsForRemoval)) {
-            documentRemovalService.deleteDocument(applicationDocumentsForRemoval);
-            log.info("Successfully removed application document from case data generated document list for case id {} ", caseId);
+            try {
+                documentRemovalService.deleteDocument(applicationDocumentsForRemoval);
+                log.info("Successfully removed application document from case data generated document list for case id {} ", caseId);
+            } catch (FeignException e) {
+                if (e.status() == HttpStatus.NOT_FOUND.value()) {
+                    log.info("Document already deleted. Skipping 404 exception");
+                }
+            }
         } else {
             log.info("No draft application document found for case id {} ", caseId);
         }

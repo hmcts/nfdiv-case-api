@@ -13,6 +13,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATI
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
 public class DraftApplicationRemovalServiceTest {
@@ -71,5 +73,25 @@ public class DraftApplicationRemovalServiceTest {
         assertThat(actualDocumentsList).isEmpty();
 
         verifyNoInteractions(documentRemovalService);
+    }
+
+    @Test
+    public void shouldReturn404IfDocumentAlreadyDeleted() {
+
+        final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
+        final ListValue<DivorceDocument> coDocumentListValue = documentWithType(GENERAL_APPLICATION);
+        final List<ListValue<DivorceDocument>> docs = List.of(divorceDocumentListValue, coDocumentListValue);
+
+
+        doThrow(feignException(404, "NOT FOUND"))
+            .when(documentRemovalService).deleteDocument(List.of(divorceDocumentListValue));
+
+        final List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
+            docs,
+            TEST_CASE_ID
+        );
+
+        verify(documentRemovalService).deleteDocument(List.of(divorceDocumentListValue));
+        assertThat(actualDocumentsList).size().isEqualTo(1);
     }
 }
