@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document;
 
+import feign.FeignException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
@@ -49,7 +50,14 @@ public class CaseDocumentAccessManagement {
     }
 
     public void deleteDocument(String userToken, String serviceToken, Document document, boolean hard) {
-        client.deleteDocument(userToken, serviceToken, getUuid(document), hard);
+        try {
+            client.deleteDocument(userToken, serviceToken, getUuid(document), hard);
+        } catch (FeignException e) {
+            // Ignore 404 as document is already deleted if returned.
+            if (e.status() != 404) {
+                throw e;
+            }
+        }
     }
 
     public ResponseEntity<Resource> downloadBinary(String userAuth, String serviceAuth, Document document) {
