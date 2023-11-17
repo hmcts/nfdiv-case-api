@@ -87,6 +87,6 @@ public class PaymentStatusService {
             paymentReference
         );
 
-        return SUCCESS.equals(payment.getStatus());
+        return SUCCESS.equalsIgnoreCase(payment.getStatus());
     }
 }
