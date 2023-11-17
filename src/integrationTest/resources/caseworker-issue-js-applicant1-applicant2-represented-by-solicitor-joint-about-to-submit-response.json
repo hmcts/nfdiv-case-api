@@ -66,6 +66,18 @@
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "documentsGenerated": [
       {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "D84.pdf",
+          "documentLink": {
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/67db1868-e917-457a-b9a7-209d1905810a/binary",
+            "document_filename": "D84.pdf",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/67db1868-e917-457a-b9a7-209d1905810a"
+          },
+          "documentType": "d84"
+        }
+      },
+      {
         "id": "Judicial separation application",
         "value": {
           "documentLink": {

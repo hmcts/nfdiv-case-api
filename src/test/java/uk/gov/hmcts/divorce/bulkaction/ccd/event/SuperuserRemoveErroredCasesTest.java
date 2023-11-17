@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.ArrayList;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SuperuserRemoveErroredCases.SUPERUSER_REMOVE_ERRORED_CASES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
@@ -36,10 +38,12 @@ class SuperuserRemoveErroredCasesTest {
     @Test
     void shouldRemoveCasesInAboutToSubmit() {
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder().build();
+        bulkActionCaseData.setProcessedCaseDetails(new ArrayList<>());
+
         final var caseDetails = new CaseDetails<BulkActionCaseData, BulkActionState>();
         caseDetails.setData(bulkActionCaseData);
 
-        final var response = superuserRemoveErroredCases.aboutToSubmit(null, caseDetails);
+        final var response = superuserRemoveErroredCases.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getErroredCaseDetails()).isNull();
     }

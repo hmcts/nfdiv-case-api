@@ -32,13 +32,11 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
-import uk.gov.hmcts.divorce.testutil.DocumentUploadDFormsMocker;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.document.DocumentUploadClientApi;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
@@ -60,7 +58,6 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -103,9 +100,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamUploadWith;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -142,7 +140,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class})
 public class CaseworkerReIssueApplicationIT {
 
@@ -203,9 +201,6 @@ public class CaseworkerReIssueApplicationIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private DocumentUploadDFormsMocker documentUploadDFormsMocker;
-
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
@@ -219,9 +214,6 @@ public class CaseworkerReIssueApplicationIT {
     private NotificationService notificationService;
 
     @MockBean
-    private DocumentUploadClientApi documentUploadClientApi;
-
-    @MockBean
     private BulkPrintService bulkPrintService;
 
     @MockBean
@@ -231,7 +223,7 @@ public class CaseworkerReIssueApplicationIT {
     static void setUp() {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         SendLetterWireMock.start();
     }
 
@@ -239,7 +231,7 @@ public class CaseworkerReIssueApplicationIT {
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         SendLetterWireMock.stopAndReset();
     }
 
@@ -501,6 +493,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setOffline(YES);
 
         stubAosPackSendLetter();
+        stubCdamUploadWith(D10_DOCUMENT_ID, D10.getLabel());
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -1409,7 +1402,7 @@ public class CaseworkerReIssueApplicationIT {
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-V3.docx");
-
+        stubCdamUploadWith(D10_DOCUMENT_ID, D10.getLabel());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1430,12 +1423,6 @@ public class CaseworkerReIssueApplicationIT {
             )
             .andReturn().getResponse().getContentAsString();
 
-        verify(documentUploadClientApi).upload(
-            eq(TEST_AUTHORIZATION_TOKEN),
-            eq(TEST_SERVICE_AUTH_TOKEN),
-            eq(CASEWORKER_USER_ID),
-            anyList()
-        );
     }
 
     @Test
@@ -1487,7 +1474,6 @@ public class CaseworkerReIssueApplicationIT {
             .getResponse()
             .getContentAsString();
 
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test
@@ -1530,8 +1516,6 @@ public class CaseworkerReIssueApplicationIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-
-        verifyNoInteractions(documentUploadClientApi);
     }
 
     @Test
@@ -1959,7 +1943,7 @@ public class CaseworkerReIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        documentUploadDFormsMocker.mockDFormsUpload(D84, D84_DOCUMENT_ID);
+        stubCdamUploadWith(D84_DOCUMENT_ID, D84.getLabel());
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -2142,7 +2126,7 @@ public class CaseworkerReIssueApplicationIT {
         final byte[] pdfAsBytes = loadPdfAsBytes();
 
         for (String documentId : documentIds) {
-            stubDownloadBinaryFromDocumentManagement(documentId, pdfAsBytes);
+            stubCdamDownloadBinaryWith(documentId, pdfAsBytes);
         }
 
         final SendLetterResponse sendLetterResponse = new SendLetterResponse(UUID.randomUUID());

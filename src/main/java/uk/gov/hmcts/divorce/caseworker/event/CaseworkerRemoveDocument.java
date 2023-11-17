@@ -74,7 +74,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         ));
 
         if (!documentsToRemove.isEmpty()) {
-            documentRemovalService.deleteDocumentFromDocumentStore(documentsToRemove);
+            documentRemovalService.deleteDocument(documentsToRemove);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
