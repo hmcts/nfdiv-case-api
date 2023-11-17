@@ -42,8 +42,9 @@ public class DraftApplicationRemovalService {
             } catch (FeignException e) {
                 if (e.status() == HttpStatus.NOT_FOUND.value()) {
                     log.info("Document already deleted. Skipping 404 exception");
+                } else {
+                    throw e;
                 }
-                throw e;
             }
         } else {
             log.info("No draft application document found for case id {} ", caseId);
