@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -34,10 +35,12 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(MockitoExtension.class)
 public class DocumentRemovalServiceTest {
@@ -55,7 +58,7 @@ public class DocumentRemovalServiceTest {
     private DocumentRemovalService documentRemovalService;
 
     @Test
-    public void shouldDeleteDocumentFromDocManagement() {
+    public void shouldDeleteDivorceDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final String userId = UUID.randomUUID().toString();
@@ -79,6 +82,37 @@ public class DocumentRemovalServiceTest {
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
             divorceDocumentListValue.getValue().getDocumentLink(),
+            true
+        );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
+    }
+
+    @Test
+    public void shouldDeleteScannedDocumentFromDocManagement() {
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
+        final String userId = UUID.randomUUID().toString();
+        final User systemUser = systemUser(systemRoles, userId);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing().when(documentManagementClient).deleteDocument(
+            SYSTEM_USER_USER_ID,
+            TEST_SERVICE_AUTH_TOKEN,
+            scannedDocumentList.get(0).getValue().getUrl(),
+            true
+        );
+
+        documentRemovalService.deleteScannedDocuments(scannedDocumentList);
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(authTokenGenerator).generate();
+        verify(documentManagementClient).deleteDocument(
+            SYSTEM_USER_USER_ID,
+            TEST_SERVICE_AUTH_TOKEN,
+            scannedDocumentList.get(0).getValue().getUrl(),
             true
         );
 
