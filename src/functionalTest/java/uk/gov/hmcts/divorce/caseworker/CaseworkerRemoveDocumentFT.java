@@ -24,6 +24,12 @@ public class CaseworkerRemoveDocumentFT extends FunctionalTestSuite {
     private static final String CASEWORKER_REMOVE_DOCUMENT_REQUEST =
         "classpath:request/casedata/ccd-callback-caseworker-remove-document-data.json";
 
+    private static final String CASEWORKER_REMOVE_SCANNED_DOCUMENT_BEFORE_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-remove-scanned-document-before-data.json";
+
+    private static final String CASEWORKER_REMOVE_SCANNED_DOCUMENT_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-remove-document-data.json";
+
     @Test
     @Disabled("CDAM requires the case to exist")
     public void shouldRemoveDocument() throws Exception {
@@ -43,6 +49,36 @@ public class CaseworkerRemoveDocumentFT extends FunctionalTestSuite {
                 CaseDetails
                     .builder()
                     .data(caseData(CASEWORKER_REMOVE_DOCUMENT_REQUEST))
+                    .caseTypeId(getCaseType())
+                    .state("Submitted")
+                    .build()
+            )
+            .build();
+
+        final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    @Disabled("CDAM requires the case to exist")
+    public void shouldRemoveScannedDocument() throws Exception {
+
+        CallbackRequest request = CallbackRequest
+            .builder()
+            .eventId(CASEWORKER_REMOVE_DOCUMENT)
+            .caseDetailsBefore(
+                CaseDetails
+                    .builder()
+                    .data(caseData(CASEWORKER_REMOVE_SCANNED_DOCUMENT_BEFORE_REQUEST))
+                    .caseTypeId(getCaseType())
+                    .state("Submitted")
+                    .build()
+            )
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .data(caseData(CASEWORKER_REMOVE_SCANNED_DOCUMENT_REQUEST))
                     .caseTypeId(getCaseType())
                     .state("Submitted")
                     .build()
