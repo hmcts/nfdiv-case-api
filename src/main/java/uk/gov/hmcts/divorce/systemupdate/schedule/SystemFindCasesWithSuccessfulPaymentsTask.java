@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
 
-    private static final String LAST_MODIFIED = "lastModified";
+    private static final String LAST_MODIFIED = "last_modified";
 
     @Autowired
     private CcdSearchService ccdSearchService;

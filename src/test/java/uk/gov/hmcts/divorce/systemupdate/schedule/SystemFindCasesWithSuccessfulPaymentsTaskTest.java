@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 @ExtendWith(MockitoExtension.class)
 class SystemFindCasesWithSuccessfulPaymentsTaskTest {
 
-    private static final String LAST_MODIFIED = "lastModified";
+    private static final String LAST_MODIFIED = "last_modified";
 
     @Mock
     private CcdSearchService ccdSearchService;
