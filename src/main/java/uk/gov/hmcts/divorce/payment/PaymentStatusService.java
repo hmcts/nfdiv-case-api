@@ -51,7 +51,7 @@ public class PaymentStatusService {
         log.info("PaymentStatusService caseIds: {}",
             casesWithInProgressPayments
                 .stream()
-                .map(c -> c.getId())
+                .map(CaseDetails::getId)
                 .toList()
         );
 
@@ -88,7 +88,6 @@ public class PaymentStatusService {
     }
 
     private boolean paymentSuccessful(String paymentReference) {
-        log.info(paymentReference);
         final Payment payment = paymentClient.getPaymentByReference(
             idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
             authTokenGenerator.generate(),

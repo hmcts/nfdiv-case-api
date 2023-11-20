@@ -13,16 +13,20 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
 public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
+
+    private static final String LAST_MODIFIED = "lastModified";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -45,7 +49,9 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
 
         try {
             final BoolQueryBuilder query = boolQuery()
-                .filter(matchQuery(STATE, AwaitingPayment));
+                .filter(matchQuery(STATE, AwaitingPayment))
+                .filter(rangeQuery(LAST_MODIFIED)
+                    .lte(LocalDate.now().minusDays(1)));
 
             final List<CaseDetails> casesInAwaitingPaymentState =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
