@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForConditionalOrderDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForConditionalOrderPrinter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
