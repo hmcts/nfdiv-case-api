@@ -59,7 +59,7 @@ public class CertificateOfEntitlementDocumentPack implements DocumentPack {
                     CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
             ),
             ImmutableMap.of(
-                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
+                    CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
             )
     );
 
@@ -69,7 +69,7 @@ public class CertificateOfEntitlementDocumentPack implements DocumentPack {
                     CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
             ),
             ImmutableMap.of(
-                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
+                    CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
             )
     );
 
