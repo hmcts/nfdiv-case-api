@@ -27,7 +27,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 
@@ -62,11 +61,12 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
 
         log.info("System update case court hearing about to submit callback invoked for case id: {}", details.getId());
 
-        documentGenerationUtil.removeExistingGeneratedDocuments(
+        documentGenerationUtil.removeExistingDocuments(
                 caseData,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                        CERTIFICATE_OF_ENTITLEMENT));
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+
+        documentGenerationUtil.generateCertificateOfEntitlement(details);
 
         notificationDispatcher.send(
             entitlementGrantedConditionalOrderNotification,

@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntit
 import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
 
@@ -21,7 +22,9 @@ public class CertificateOfEntitlementCoverLetterTemplateContent implements Templ
 
     @Override
     public List<String> getSupportedTemplates() {
-        return List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
+        return List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
+                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+                CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Override

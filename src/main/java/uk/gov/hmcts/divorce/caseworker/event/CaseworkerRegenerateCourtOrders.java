@@ -32,8 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
@@ -47,7 +45,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REGENERATE_COURT_ORDERS = "caseworker-regenerate-court-orders";
 
-    private final  GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+    private final GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
     private final GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
     private final GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
     private final GenerateFinalOrder generateFinalOrder;
@@ -108,22 +106,20 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
 
-            documentGenerationUtil.removeExistingGeneratedDocuments(
+            documentGenerationUtil.generateCertificateOfEntitlement(details);
+
+            log.info("Completed generating certificate of entitlement pdf for CaseID: {}", details.getId());
+            documentGenerationUtil.removeExistingDocuments(
                     caseData,
                     List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                            CERTIFICATE_OF_ENTITLEMENT));
-
-            documentGenerator.generateAndStoreCaseDocument(
-                    CERTIFICATE_OF_ENTITLEMENT,
-                    CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
-                    CERTIFICATE_OF_ENTITLEMENT_NAME,
-                    caseData,
-                    details.getId()
-            );
+                            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
         }
 
         notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
+
+        documentGenerationUtil.removeExistingDocuments(
+                caseData,
+                List.of(CERTIFICATE_OF_ENTITLEMENT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(details.getData())
