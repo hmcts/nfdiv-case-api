@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
@@ -143,11 +144,13 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         var documentPackInfo = new DocumentPackInfo(
                 ImmutableMap.of(
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, Optional.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID),
-                        CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+                    CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+                    Optional.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID),
+                    CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
                 ),
                 ImmutableMap.of(
-                        CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME)
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
+                        CERTIFICATE_OF_ENTITLEMENT_NAME)
         );
 
         when(certificateOfEntitlementDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(documentPackInfo);

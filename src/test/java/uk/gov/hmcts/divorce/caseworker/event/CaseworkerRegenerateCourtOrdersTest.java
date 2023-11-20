@@ -110,6 +110,10 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Test
     void shouldOnlyRegenerateCOEDocumentWhenCOEExistsAndCOGrantedAndFOGrantedDoesNotExistsForDigitalCase() {
+        final ListValue<DivorceDocument> certificateOfEntitlement =
+                getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                        "certificate_of_entitlement.pdf", CERTIFICATE_OF_ENTITLEMENT);
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(
                 ConditionalOrder.builder()
@@ -118,7 +122,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-01-11:13:06.pdf")
                     )
                     .build()
-            )
+            ).documents(CaseDocuments.builder().documentsGenerated(List.of(certificateOfEntitlement)).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -130,10 +134,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(documentGenerationUtil).removeExistingGeneratedDocuments(caseData,
+        verify(documentGenerationUtil).removeExistingDocuments(caseData,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                        CERTIFICATE_OF_ENTITLEMENT));
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
     }
 
     @Test
@@ -246,9 +249,14 @@ public class CaseworkerRegenerateCourtOrdersTest {
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
                     "fo_granted.pdf", FINAL_ORDER_GRANTED);
 
+        final ListValue<DivorceDocument> certificateOfEntitlement =
+                getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+                        "certificate_of_entitlement.pdf", CERTIFICATE_OF_ENTITLEMENT);
+
         List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
         documentsGenerated.add(regeneratedCODoc);
         documentsGenerated.add(regeneratedFODoc);
+        documentsGenerated.add(certificateOfEntitlement);
 
         caseData.getDocuments().setDocumentsGenerated(documentsGenerated);
 
@@ -270,9 +278,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
-        verify(documentGenerationUtil).removeExistingGeneratedDocuments(caseData,
+        verify(documentGenerationUtil).removeExistingDocuments(caseData,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2, CERTIFICATE_OF_ENTITLEMENT));
+                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
     }
 
     @Test
