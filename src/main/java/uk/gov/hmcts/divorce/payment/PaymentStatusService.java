@@ -48,6 +48,13 @@ public class PaymentStatusService {
         log.info("PaymentStatusService: {} cases with payments In Progress",
             casesWithInProgressPayments.size());
 
+        log.info("PaymentStatusService caseIds: {}",
+            casesWithInProgressPayments
+                .stream()
+                .map(c -> c.getId())
+                .toList()
+        );
+
         final List<Long> caseIds = casesWithInProgressPayments
             .parallelStream()
             .filter(this::hasSuccessfulPayment)
@@ -81,6 +88,7 @@ public class PaymentStatusService {
     }
 
     private boolean paymentSuccessful(String paymentReference) {
+        log.info(paymentReference);
         final Payment payment = paymentClient.getPaymentByReference(
             idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
             authTokenGenerator.generate(),
