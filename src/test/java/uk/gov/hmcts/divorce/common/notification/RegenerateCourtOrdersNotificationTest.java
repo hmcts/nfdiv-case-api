@@ -70,7 +70,7 @@ public class RegenerateCourtOrdersNotificationTest {
 
         when(certificateOfEntitlementDocumentPack.getDocumentPack(caseData, caseData.getApplicant2())).thenReturn(documentPackInfo);
 
-        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
         verify(letterPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2(),
                 documentPackInfo,
                 null);
