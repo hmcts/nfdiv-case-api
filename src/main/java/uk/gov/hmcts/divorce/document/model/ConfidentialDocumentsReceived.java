@@ -152,12 +152,12 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     @JsonProperty("aosOverdueLetter")
     AOS_OVERDUE_LETTER("Aos overdue letter"),
 
-    @JsonProperty("judicialSeparationOrderRefusalCoverLetter")
+    @JsonProperty("judicialSeparationOrderClarificationRefusalCoverLetter")
     JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
         "Judicial Separation order clarification refusal cover letter"
     ),
 
-    @JsonProperty("separationOrderRefusalCoverLetter")
+    @JsonProperty("separationOrderClarificationRefusalCoverLetter")
     SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
         "Separation order clarification refusal cover letter"
     ),
