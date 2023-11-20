@@ -6,30 +6,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_CAN_APPLY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -48,9 +40,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddre
 
 @ExtendWith(MockitoExtension.class)
 public class GenerateApplyForConditionalOrderDocumentTest {
-
-    @Mock
-    private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
     private CommonContent commonContent;
@@ -85,10 +74,6 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_DIVORCE, true);
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
-        when(commonContent.templateContentCanApplyForCoOrFo(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
-        ).thenReturn(templateContent);
-
         generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
             caseData,
             TEST_CASE_ID,
@@ -96,15 +81,13 @@ public class GenerateApplyForConditionalOrderDocumentTest {
             caseData.getApplicant2()
         );
 
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
+        verify(commonContent)
+            .templateContentCanApplyForCoOrFo(
                 caseData,
-                CONDITIONAL_ORDER_CAN_APPLY,
-                templateContent,
                 TEST_CASE_ID,
-                CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+                caseData.getApplicant1(),
+                caseData.getApplicant2(),
+                getExpectedLocalDate()
             );
     }
 
@@ -129,10 +112,6 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_DIVORCE, true);
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
-        when(commonContent.templateContentCanApplyForCoOrFo(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
-        ).thenReturn(templateContent);
-
         generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
             caseData,
             TEST_CASE_ID,
@@ -140,15 +119,13 @@ public class GenerateApplyForConditionalOrderDocumentTest {
             caseData.getApplicant2()
         );
 
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
+        verify(commonContent)
+            .templateContentCanApplyForCoOrFo(
                 caseData,
-                CONDITIONAL_ORDER_CAN_APPLY,
-                templateContent,
                 TEST_CASE_ID,
-                CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+                caseData.getApplicant1(),
+                caseData.getApplicant2(),
+                getExpectedLocalDate()
             );
     }
 
@@ -173,10 +150,6 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_DIVORCE, false);
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
-        when(commonContent.templateContentCanApplyForCoOrFo(
-            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2(), getExpectedLocalDate())
-        ).thenReturn(templateContent);
-
         generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
             caseData,
             TEST_CASE_ID,
@@ -184,15 +157,13 @@ public class GenerateApplyForConditionalOrderDocumentTest {
             caseData.getApplicant2()
         );
 
-        verify(caseDataDocumentService)
-            .renderDocumentAndUpdateCaseData(
+        verify(commonContent)
+            .templateContentCanApplyForCoOrFo(
                 caseData,
-                CONDITIONAL_ORDER_CAN_APPLY,
-                templateContent,
                 TEST_CASE_ID,
-                CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID,
-                ENGLISH,
-                formatDocumentName(TEST_CASE_ID, CONDITIONAL_ORDER_CAN_APPLY_DOCUMENT_NAME, LocalDateTime.now(clock))
+                caseData.getApplicant1(),
+                caseData.getApplicant2(),
+                getExpectedLocalDate()
             );
     }
 }
