@@ -70,7 +70,7 @@ class CertificateOfEntitlementDocumentPackTest {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YES);
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        assertDocumentPackEntries(data, data.getApplicant2(), CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+        assertDocumentPackEntries(data, data.getApplicant1(), CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                 CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
 
