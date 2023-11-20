@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -39,6 +40,10 @@ import java.util.List;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,6 +86,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class CaseworkerRegenerateCourtOrdersIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final String APPLICANT1 = "applicant1";
+    public static final String APPLICANT2 = "applicant2";
 
     @Autowired
     private MockMvc mockMvc;
@@ -96,6 +103,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @MockBean
+    private BulkPrintService bulkPrintService;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -161,8 +171,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().offline(YES).build())
-            .applicant2(Applicant.builder().offline(YES).build())
+            .applicant1(Applicant.builder().firstName(APPLICANT1).offline(YES).build())
+            .applicant2(Applicant.builder().firstName(APPLICANT2).offline(YES).build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .court(BURY_ST_EDMUNDS)
@@ -197,6 +207,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSuccess()));
 
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
     }
 
     @Test
@@ -399,8 +411,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().offline(YES).build())
-            .applicant2(Applicant.builder().offline(YES).build())
+            .applicant1(Applicant.builder().firstName(APPLICANT1).offline(YES).build())
+            .applicant2(Applicant.builder().firstName(APPLICANT2).offline(YES).build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .court(BURY_ST_EDMUNDS)
@@ -435,6 +447,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess()));
 
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
     }
 
     @Test
@@ -483,8 +497,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().offline(YES).solicitorRepresented(YES).build())
-            .applicant2(Applicant.builder().offline(YES).solicitorRepresented(YES).build())
+            .applicant1(Applicant.builder().offline(YES).firstName(APPLICANT1).solicitorRepresented(YES).build())
+            .applicant2(Applicant.builder().offline(YES).firstName(APPLICANT2).solicitorRepresented(YES).build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .court(BURY_ST_EDMUNDS)
