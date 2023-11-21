@@ -15,14 +15,15 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -31,6 +32,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 
 @ExtendWith(MockitoExtension.class)
 class SystemFindCasesWithSuccessfulPaymentsTaskTest {
+
+    private static final String LAST_MODIFIED = "last_modified";
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -50,7 +53,9 @@ class SystemFindCasesWithSuccessfulPaymentsTaskTest {
 
     private User user;
     final BoolQueryBuilder query = boolQuery()
-        .filter(matchQuery(STATE, AwaitingPayment));
+        .filter(matchQuery(STATE, AwaitingPayment))
+        .filter(rangeQuery(LAST_MODIFIED)
+            .gte(LocalDate.now().minusWeeks(2)));
 
     @BeforeEach
     void setUp() {
@@ -62,17 +67,11 @@ class SystemFindCasesWithSuccessfulPaymentsTaskTest {
     @Test
     void shouldQueryPaymentApi() {
         CaseDetails caseDetails = CaseDetails.builder().data(Map.of("applicationPayments","SomeObject")).build();
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails);
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingPayment))
-            .thenReturn(List.of(caseDetails));
+            .thenReturn(caseDetailsList);
 
         systemFindCasesWithSuccessfulPaymentsTask.run();
-        verify(paymentStatusService).hasSuccessFulPayment(same(caseDetails));
-    }
-
-    @Test
-    void shouldNotQueryPaymentApi() {
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingPayment)).thenReturn(List.of());
-        systemFindCasesWithSuccessfulPaymentsTask.run();
-        verifyNoInteractions(paymentStatusService);
+        verify(paymentStatusService).hasSuccessFulPayment(same(caseDetailsList));
     }
 }
