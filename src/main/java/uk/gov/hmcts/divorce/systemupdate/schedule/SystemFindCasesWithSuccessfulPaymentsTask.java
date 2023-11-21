@@ -51,7 +51,7 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
             final BoolQueryBuilder query = boolQuery()
                 .filter(matchQuery(STATE, AwaitingPayment))
                 .filter(rangeQuery(LAST_MODIFIED)
-                    .lte(LocalDate.now().minusDays(1)));
+                    .gte(LocalDate.now().minusWeeks(2)));
 
             final List<CaseDetails> casesInAwaitingPaymentState =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);

@@ -51,9 +51,12 @@ public class PaymentStatusService {
         log.info("PaymentStatusService: {} cases with payments In Progress",
             casesWithInProgressPayments.size());
 
+        final String userToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        final String s2sToken = authTokenGenerator.generate();
+
         final List<Long> caseIds = casesWithInProgressPayments
             .parallelStream()
-            .filter(this::hasSuccessfulPayment)
+            .filter(caseDetails -> hasSuccessfulPayment(caseDetails, userToken, s2sToken))
             .map(CaseDetails::getId)
             .toList();
 
@@ -67,7 +70,8 @@ public class PaymentStatusService {
             .anyMatch(ap -> ap.getValue().getStatus().equals(PaymentStatus.IN_PROGRESS));
     }
 
-    private boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails) {
+    private boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                                         String userToken, String s2sToken) {
 
         final List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> applicationPayments
             = caseDetails.getData().getApplication().getApplicationPayments();
@@ -78,15 +82,15 @@ public class PaymentStatusService {
             .filter(ap -> ap.getValue().getStatus().equals(PaymentStatus.IN_PROGRESS))
             .map(ap -> ap.getValue().getReference())
             .filter(Objects::nonNull)
-            .map(this::paymentSuccessful)
+            .map(paymentReference -> paymentSuccessful(paymentReference, userToken, s2sToken))
             .findFirst()
             .orElse(false);
     }
 
-    private boolean paymentSuccessful(String paymentReference) {
+    private boolean paymentSuccessful(String paymentReference, String userToken, String s2sToken) {
         final Payment payment = paymentClient.getPaymentByReference(
-            idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-            authTokenGenerator.generate(),
+            userToken,
+            s2sToken,
             paymentReference
         );
 
