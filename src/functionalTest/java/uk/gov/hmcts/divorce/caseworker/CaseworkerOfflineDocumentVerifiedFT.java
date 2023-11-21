@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -137,7 +136,6 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSendAosLetterForJSSolicitorUndisputedSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_SOL_JS_UNDISPUTED_SUBMITTED_REQUEST);
         final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, SUBMITTED_URL);
