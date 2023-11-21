@@ -10,14 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
-import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderJSLetter;
-import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
-import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -41,11 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_JS_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -103,17 +95,15 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             switchToSoleService.switchApplicantData(data);
         }
 
-        generateSwitchToSoleDocuments(details, data, caseId);
-
         var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
 
         log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
 
         notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
-        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
-            || D84.equals(data.getDocuments().getScannedSubtypeReceived())
-            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
+//        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+//            || D84.equals(data.getDocuments().getScannedSubtypeReceived())
+//            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             var documentPackInfo =
                 switchToSoleConditionalOrderDocumentPack.getDocumentPack(data, null);
@@ -124,41 +114,11 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                 documentPackInfo,
                 switchToSoleConditionalOrderDocumentPack.getLetterId()
             );
-        }
+//        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(state)
             .build();
-    }
-
-    private void generateSwitchToSoleDocuments(CaseDetails<CaseData, State> details,
-                                               CaseData caseData,
-                                               Long caseId) {
-        if ((CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-                || D84.equals(caseData.getDocuments().getScannedSubtypeReceived()))
-            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
-
-            String templateId = "";
-
-            if (caseData.isJudicialSeparationCase()) {
-                if (caseData.getApplicant2().isRepresented()) {
-                    templateId = JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID;
-                } else {
-                    templateId = SWITCH_TO_SOLE_CO_JS_LETTER_TEMPLATE_ID;
-                }
-            } else {
-                templateId = SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
-            }
-
-            documentGenerator.generateAndStoreCaseDocument(
-                SWITCH_TO_SOLE_CO_LETTER,
-                templateId,
-                SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                caseData.getApplicant1()
-            );
-        }
     }
 }

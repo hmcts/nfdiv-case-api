@@ -42,7 +42,7 @@ public class DocumentGenerator {
         var generatedDocument = caseDataDocumentService.renderDocument(templateContent,
             caseId,
             templateId,
-            caseData.getApplicant1().getLanguagePreference(),
+            applicant.getLanguagePreference(),
             formatDocumentName(caseId, templateName, now(clock)));
 
         caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);

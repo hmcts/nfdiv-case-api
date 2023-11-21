@@ -52,7 +52,7 @@ public class JSSwitchToSoleCoSolicitorTemplateContent implements TemplateContent
         templateContent.put(RESPONDENT_SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
         templateContent.put(CASE_REFERENCE, formatId(caseId));
 
-        templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
             caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
@@ -60,7 +60,7 @@ public class JSSwitchToSoleCoSolicitorTemplateContent implements TemplateContent
             ? caseData.getApplicant2().getSolicitor().getReference()
             : NOT_PROVIDED);
 
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant.isRepresented()
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().isRepresented()
             ? applicant.getSolicitor().getName()
             : NOT_REPRESENTED);
 
