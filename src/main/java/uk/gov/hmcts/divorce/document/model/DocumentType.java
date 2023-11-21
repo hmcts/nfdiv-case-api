@@ -81,7 +81,7 @@ public enum DocumentType implements HasLabel {
         "Judicial Separation order refusal solicitor cover letter"
     ),
 
-    @JsonProperty("judicialSeparationOrderRefusalCoverLetter")
+    @JsonProperty("judicialSeparationOrderClarificationRefusalCoverLetter")
     JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
         "Judicial Separation order clarification refusal cover letter"
     ),
@@ -99,7 +99,7 @@ public enum DocumentType implements HasLabel {
         "Separation order refusal solicitor cover letter"
     ),
 
-    @JsonProperty("separationOrderRefusalCoverLetter")
+    @JsonProperty("separationOrderClarificationRefusalCoverLetter")
     SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER(
         "Separation order clarification refusal cover letter"
     ),
