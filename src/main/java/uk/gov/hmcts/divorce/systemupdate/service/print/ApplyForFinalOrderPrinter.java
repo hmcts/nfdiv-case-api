@@ -41,6 +41,8 @@ public class ApplyForFinalOrderPrinter {
     private static final int EXPECTED_DOCUMENTS_SIZE = 3;
 
     public void sendLettersToApplicant1Offline(final CaseData caseData, final Long caseId, final Applicant applicant) {
+        // What docs, ? Perms for template, one doc id can map to multiple template ids
+        // coverletter for app 1, coverletter for app 2
 
         generateFinalOrderCoversheet(caseData, caseId, applicant);
 
