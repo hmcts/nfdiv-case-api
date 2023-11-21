@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
@@ -111,6 +113,11 @@ public class CaseworkerRegenerateCourtOrdersTest {
         final var certificateOfEntitlementDocuments = buildCertificateOfEntitlementDocuments();
 
         final CaseData caseData = CaseData.builder()
+            .applicant1(
+                    Applicant
+                            .builder()
+                            .firstName(APPLICANT1)
+                            .build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .dateAndTimeOfHearing(LocalDateTime.now())
@@ -229,6 +236,11 @@ public class CaseworkerRegenerateCourtOrdersTest {
     void shouldRegenerateCOGrantedDocumentAndFOGrantedAndCOEWhenAllDocsExistForDigitalCase() {
         final CaseData caseData = CaseData
             .builder()
+            .applicant1(
+                    Applicant
+                            .builder()
+                            .firstName(APPLICANT1)
+                            .build())
             .documents(
                 CaseDocuments
                     .builder()
