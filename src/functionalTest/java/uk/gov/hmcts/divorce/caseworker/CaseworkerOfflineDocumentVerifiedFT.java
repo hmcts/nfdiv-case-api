@@ -81,7 +81,6 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSendAosLetterForApp1SolJSDisputedForSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_SOL_DISPUTED_SUBMITTED_REQUEST);
         caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
@@ -106,7 +105,6 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSendAosLetterForJSDisputedForSubmitted() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_DISPUTED_SUBMITTED_REQUEST);
         caseData.put("coDateD84FormScanned", "2022-01-01T12:12");

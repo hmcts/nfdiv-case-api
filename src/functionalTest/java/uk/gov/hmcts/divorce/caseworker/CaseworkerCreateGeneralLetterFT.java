@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -42,7 +41,6 @@ public class CaseworkerCreateGeneralLetterFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-letter-submitted.json");
 

@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -62,7 +61,6 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldGenerateLettersForOfflineApplicants() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("applicant1Offline", YES);

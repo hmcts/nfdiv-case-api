@@ -65,7 +65,6 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldUpdateCaseDataAndAddD10DocumentWhenAboutToSubmitCallbackIsSuccessfulForSolicitorApplication() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST);
         caseData.put("serviceMethod", SOLICITOR_SERVICE);
