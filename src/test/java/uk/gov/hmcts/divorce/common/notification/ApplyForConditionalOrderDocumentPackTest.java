@@ -14,14 +14,11 @@ import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForConditionalOrder
 import java.io.IOException;
 
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.D84_DISPLAY_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.D84_FILENAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.D84_FILE_LOCATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 
 @ExtendWith(MockitoExtension.class)
 class ApplyForConditionalOrderDocumentPackTest {
