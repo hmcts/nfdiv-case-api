@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.EntitlementGra
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ class SystemUpdateCaseWithCourtHearingTest {
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
 
     @Mock
-    private DocumentGenerationUtil documentGenerationUtil;
+    private DocumentGenerator documentGenerator;
 
     @InjectMocks
     private SystemUpdateCaseWithCourtHearing systemUpdateCaseWithCourtHearing;

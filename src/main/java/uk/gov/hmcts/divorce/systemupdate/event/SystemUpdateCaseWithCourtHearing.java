@@ -12,8 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
-import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 
@@ -39,8 +38,7 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
     public static final String SYSTEM_UPDATE_CASE_COURT_HEARING = "system-update-case-court-hearing";
     private final NotificationDispatcher notificationDispatcher;
     private final EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
-    private final DocumentGenerationUtil documentGenerationUtil;
-    private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
+    private final DocumentGenerator documentGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -62,22 +60,18 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
 
         log.info("System update case court hearing about to submit callback invoked for case id: {}", details.getId());
 
-        documentGenerationUtil.removeExistingDocuments(
+        removeExistingDocuments(
                 caseData,
                 List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                         CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
 
-        documentGenerationUtil.generateCertificateOfEntitlement(details);
+        documentGenerator.generateCertificateOfEntitlement(details);
 
         notificationDispatcher.send(
             entitlementGrantedConditionalOrderNotification,
                 caseData,
             details.getId()
         );
-
-        documentGenerationUtil.removeExistingDocuments(
-                caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

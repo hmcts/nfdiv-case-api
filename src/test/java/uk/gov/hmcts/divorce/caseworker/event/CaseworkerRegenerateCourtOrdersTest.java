@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentGenerationUtil;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
@@ -49,9 +49,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerRegenerateCourtOrdersTest {
-
-    @Mock
-    private DocumentGenerationUtil documentGenerationUtil;
 
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
@@ -110,9 +107,8 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Test
     void shouldOnlyRegenerateCOEDocumentWhenCOEExistsAndCOGrantedAndFOGrantedDoesNotExistsForDigitalCase() {
-        final ListValue<DivorceDocument> certificateOfEntitlement =
-                getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
-                        "certificate_of_entitlement.pdf", CERTIFICATE_OF_ENTITLEMENT);
+
+        final var certificateOfEntitlementDocuments = buildCertificateOfEntitlementDocuments();
 
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(
@@ -122,7 +118,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-01-11:13:06.pdf")
                     )
                     .build()
-            ).documents(CaseDocuments.builder().documentsGenerated(List.of(certificateOfEntitlement)).build())
+            ).documents(CaseDocuments.builder().documentsGenerated(certificateOfEntitlementDocuments).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -133,26 +129,46 @@ public class CaseworkerRegenerateCourtOrdersTest {
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
+    }
 
-        verify(documentGenerationUtil).removeExistingDocuments(caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+    private static List<ListValue<DivorceDocument>> buildCertificateOfEntitlementDocuments() {
+        return Lists.newArrayList(
+                ListValue.<DivorceDocument>builder()
+                        .id("1")
+                        .value(DivorceDocument.builder()
+                                .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
+                                .build())
+                        .build(),
+                ListValue.<DivorceDocument>builder()
+                        .id("2")
+                        .value(DivorceDocument.builder()
+                                .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2)
+                                .build())
+                        .build(),
+                ListValue.<DivorceDocument>builder()
+                        .id("3")
+                        .value(DivorceDocument.builder()
+                                .documentType(CERTIFICATE_OF_ENTITLEMENT)
+                                .build()).build()
+        );
     }
 
     @Test
     void shouldOnlyRegenerateCOGrantedDocumentWhenCOGrantedDocExistsAndCOEAndFOGrantedDoesNotExistsForDigitalCase() {
+
+        final var generatedDocuments = buildCertificateOfEntitlementDocuments();
+        generatedDocuments.add(getDivorceDocumentListValue(
+                "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
+                "co_granted.pdf",
+                CONDITIONAL_ORDER_GRANTED
+        ));
+
         final CaseData caseData = CaseData
             .builder()
             .documents(
                 CaseDocuments
                     .builder()
-                    .documentsGenerated(
-                        List.of(getDivorceDocumentListValue(
-                                "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
-                                "co_granted.pdf",
-                                CONDITIONAL_ORDER_GRANTED
-                            )
-                        )
+                    .documentsGenerated(generatedDocuments
                     ).build()
             )
             .build();
@@ -176,18 +192,21 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
     @Test
     void shouldOnlyRegenerateFOGrantedDocumentWhenCOGrantedDocExistsAndCOEAndCOGrantedDoesNotExistsForDigitalCase() {
+
+        final var generatedDocuments = buildCertificateOfEntitlementDocuments();
+        generatedDocuments.add(getDivorceDocumentListValue(
+                "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
+                "fo_granted.pdf",
+                FINAL_ORDER_GRANTED
+        ));
+
         final CaseData caseData = CaseData
             .builder()
             .documents(
                 CaseDocuments
                     .builder()
                     .documentsGenerated(
-                        List.of(getDivorceDocumentListValue(
-                                "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
-                                "fo_granted.pdf",
-                                FINAL_ORDER_GRANTED
-                            )
-                        )
+                        generatedDocuments
                     ).build()
             )
             .build();
@@ -278,9 +297,6 @@ public class CaseworkerRegenerateCourtOrdersTest {
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateFinalOrder).removeExistingAndGenerateNewFinalOrderGrantedDoc(caseDetails);
-        verify(documentGenerationUtil).removeExistingDocuments(caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
     }
 
     @Test

@@ -3,9 +3,11 @@ package uk.gov.hmcts.divorce.document;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
@@ -19,7 +21,11 @@ import java.util.Optional;
 import static java.time.LocalDateTime.now;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 
 @Component
 @RequiredArgsConstructor
@@ -127,5 +133,27 @@ public class DocumentGenerator {
         log.info("Got the relevant template content bean for doctype {} for case {}", documentType, caseId);
 
         return relevantTemplateContent.get(0).getTemplateContent(caseData, caseId, applicant);
+    }
+
+    public void generateCertificateOfEntitlement(CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+
+        generateAndStoreCaseDocument(
+                CERTIFICATE_OF_ENTITLEMENT,
+                caseData.isJudicialSeparationCase()
+                        ? CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID
+                        : CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
+                CERTIFICATE_OF_ENTITLEMENT_NAME,
+                caseData,
+                details.getId()
+        );
+
+        var regeneratedCertificateOfEntitlement =
+                caseData.getDocuments().getDocumentsGenerated()
+                        .stream()
+                        .filter(doc -> doc.getValue().getDocumentType().equals(CERTIFICATE_OF_ENTITLEMENT))
+                        .findFirst().orElseThrow();
+
+        caseData.getConditionalOrder().setCertificateOfEntitlementDocument(regeneratedCertificateOfEntitlement.getValue());
     }
 }
