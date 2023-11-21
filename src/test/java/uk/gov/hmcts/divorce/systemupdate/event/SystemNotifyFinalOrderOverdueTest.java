@@ -47,5 +47,7 @@ class SystemNotifyFinalOrderOverdueTest {
             systemNotifyFinalOrderOverdue.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getIsFinalOrderOverdue()).isEqualTo(YES);
+        assertThat(response.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(null);
     }
 }
