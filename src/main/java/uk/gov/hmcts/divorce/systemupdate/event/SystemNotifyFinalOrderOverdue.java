@@ -41,6 +41,8 @@ public class SystemNotifyFinalOrderOverdue implements CCDConfig<CaseData, State,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
         data.getFinalOrder().setIsFinalOrderOverdue(YesOrNo.YES);
+        data.getFinalOrder().setApplicant1FinalOrderStatementOfTruth(null);
+        data.getFinalOrder().setApplicant2FinalOrderStatementOfTruth(null);
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
