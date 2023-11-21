@@ -51,6 +51,13 @@ public class PaymentStatusService {
         log.info("PaymentStatusService: {} cases with payments In Progress",
             casesWithInProgressPayments.size());
 
+        log.info("PaymentStatusService caseIds: {}",
+            casesWithInProgressPayments
+                .stream()
+                .map(CaseDetails::getId)
+                .toList()
+        );
+
         final String userToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
 
