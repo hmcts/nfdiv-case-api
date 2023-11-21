@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForFinalOrderDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -44,6 +46,12 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     @Autowired
     private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
+
+    @Autowired
+    private ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
+
+    @Autowired
+    private LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -116,14 +124,26 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
         log.info("Notifying offline {} that they can apply for a final order: {}",
             caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
-        applyForFinalOrderPrinter.sendLettersToApplicant1Offline(caseData, caseId, caseData.getApplicant1());
+        var documentPack = applyForFinalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
+        letterPrinter.sendLetters(
+            caseData,
+            caseId,
+            caseData.getApplicant1(),
+            documentPack,
+            applyForFinalOrderDocumentPack.getLetterId());
     }
 
     @Override
     public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying offline applicant 2 that they can apply for a final order: {}", caseId);
-            applyForFinalOrderPrinter.sendLettersToApplicant2Offline(caseData, caseId, caseData.getApplicant2());
+            var documentPack = applyForFinalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant2());
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                caseData.getApplicant2(),
+                documentPack,
+                applyForFinalOrderDocumentPack.getLetterId());
         }
     }
 

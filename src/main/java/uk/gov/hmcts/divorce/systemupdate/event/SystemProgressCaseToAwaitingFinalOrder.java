@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForFinalOrderDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
@@ -54,7 +53,6 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
             .name("Awaiting Final Order")
             .description("Progress case to Awaiting Final Order")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
@@ -66,21 +64,13 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
         final Long caseId = details.getId();
 
         generateLetters(caseData, caseId);
+        log.info("6 week 1 day period elapsed for Case({}), notifying applicant(s) that they can apply for final order", details.getId());
+        notificationDispatcher.send(awaitingFinalOrderNotification, details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
 
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("6 week 1 day period elapsed for Case({}), notifying applicant(s) that they can apply for final order", details.getId());
-
-        notificationDispatcher.send(awaitingFinalOrderNotification, details.getData(), details.getId());
-
-        return SubmittedCallbackResponse.builder().build();
     }
 
     private void generateLetters(final CaseData caseData, final Long caseId) {

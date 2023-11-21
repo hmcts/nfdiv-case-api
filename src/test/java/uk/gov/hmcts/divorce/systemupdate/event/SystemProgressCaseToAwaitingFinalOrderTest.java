@@ -156,7 +156,7 @@ class SystemProgressCaseToAwaitingFinalOrderTest {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
-        systemProgressCaseToAwaitingFinalOrder.submitted(details, details);
+        systemProgressCaseToAwaitingFinalOrder.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(awaitingFinalOrderNotification, caseData, details.getId());
         verifyNoMoreInteractions(notificationDispatcher);

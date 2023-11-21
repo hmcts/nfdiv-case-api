@@ -9,17 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class CoversheetApplicantTemplateContent implements TemplateContent {
+public class FinalOrderCanApplyTemplateContent implements TemplateContent {
 
     @Override
     public List<String> getSupportedTemplates() {
-        return List.of(COVERSHEET_APPLICANT);
+        return List.of(FINAL_ORDER_CAN_APPLY_TEMPLATE_ID);
     }
 
     @Override

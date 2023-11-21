@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,21 +25,28 @@ import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.document.am.model.Document;
+import uk.gov.hmcts.reform.ccd.document.am.model.UploadResponse;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -63,7 +72,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -142,6 +150,23 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, "FL-NFD-GOR-ENG-Can-Apply-Final-Order_V3.docx");
         stubApplyForFinalOrderPackSendLetter();
 
+
+        List<Document> documents = new ArrayList<>();
+        final Document document = Document.builder().build();
+        document.links = new Document.Links();
+        document.links.self = new Document.Link();
+        document.links.binary = new Document.Link();
+        document.links.self.href = "/";
+        document.links.binary.href = "/binary";
+        document.originalDocumentName = "D36";
+        documents.add(document);
+        final UploadResponse uploadResponse = new UploadResponse(documents);
+        when(documentUploadClientApi.upload(any(), any(), any(),any(),any())).thenReturn(uploadResponse);
+
+        final Resource resource = mock(Resource.class);
+        when(documentUploadClientApi.downloadBinary(any(), any(), any())).thenReturn(ResponseEntity.ok(resource));
+        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream("data from file 1".getBytes(StandardCharsets.UTF_8)));
+
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
@@ -178,7 +203,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
             .dateFinalOrderEligibleToRespondent(LocalDate.now())
             .build());
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(objectMapper.writeValueAsString(
@@ -219,7 +244,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
         caseData.getApplication().setIssueDate(LocalDate.now());
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(objectMapper.writeValueAsString(
