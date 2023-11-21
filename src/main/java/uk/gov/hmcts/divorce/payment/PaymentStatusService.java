@@ -38,6 +38,9 @@ public class PaymentStatusService {
     private CaseDetailsConverter caseDetailsConverter;
 
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
+        log.info("PaymentStatusService: {} cases in AwaitingPayment state",
+            casesInAwaitingPaymentState.size());
+
         final List<CaseDetails<CaseData, State>> casesWithInProgressPayments = casesInAwaitingPaymentState
             .stream()
             .filter(cd -> cd.getData().containsKey("applicationPayments"))
