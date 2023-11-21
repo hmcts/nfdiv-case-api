@@ -1,14 +1,13 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderJSLetter;
@@ -17,10 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -40,39 +41,27 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_JS_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SWITCH_TO_SOLE_CO = "switch-to-sole-co";
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
-
-    @Autowired
-    private HttpServletRequest httpServletRequest;
-
-    @Autowired
-    private SwitchToSoleCoNotification switchToSoleCoNotification;
-
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
-    private SwitchToSoleService switchToSoleService;
-
-    @Autowired
-    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
-
-    @Autowired
-    private GenerateSwitchToSoleConditionalOrderJSLetter generateSwitchToSoleJSLetter;
-
-    @Autowired
-    private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
-
-    @Autowired
-    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
+    private final CcdAccessService ccdAccessService;
+    private final HttpServletRequest httpServletRequest;
+    private final SwitchToSoleCoNotification switchToSoleCoNotification;
+    private final NotificationDispatcher notificationDispatcher;
+    private final SwitchToSoleService switchToSoleService;
+    private final SwitchToSoleCODocumentPack switchToSoleConditionalOrderDocumentPack;
+    private final LetterPrinter letterPrinter;
+    private final DocumentGenerator documentGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -85,8 +74,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(120, 120)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted);
+            .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -119,6 +107,25 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
         var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
 
+        log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
+
+        notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
+
+        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+            || D84.equals(data.getDocuments().getScannedSubtypeReceived())
+            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
+
+            var documentPackInfo =
+                switchToSoleConditionalOrderDocumentPack.getDocumentPack(data, null);
+            letterPrinter.sendLetters(
+                data,
+                caseId,
+                data.getApplicant2(),
+                documentPackInfo,
+                switchToSoleConditionalOrderDocumentPack.getLetterId()
+            );
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(state)
@@ -132,34 +139,26 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                 || D84.equals(caseData.getDocuments().getScannedSubtypeReceived()))
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
 
+            String templateId = "";
+
             if (caseData.isJudicialSeparationCase()) {
                 if (caseData.getApplicant2().isRepresented()) {
-                    generateJudicialSeparationSwitchToSoleSolicitorLetter.apply(caseData, caseId, caseData.getApplicant1(),
-                            caseData.getApplicant2());
+                    templateId = JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR_TEMPLATE_ID;
                 } else {
-                    generateSwitchToSoleJSLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+                    templateId = SWITCH_TO_SOLE_CO_JS_LETTER_TEMPLATE_ID;
                 }
             } else {
-                generateSwitchToSoleCoLetter.apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+                templateId = SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
             }
+
+            documentGenerator.generateAndStoreCaseDocument(
+                SWITCH_TO_SOLE_CO_LETTER,
+                templateId,
+                SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME,
+                caseData,
+                caseId,
+                caseData.getApplicant1()
+            );
         }
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
-
-        final CaseData data = details.getData();
-        notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
-
-        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
-                || D84.equals(data.getDocuments().getScannedSubtypeReceived())
-            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
-
-            switchToSoleCoPrinter.print(data, details.getId(), data.getApplicant2());
-        }
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }
