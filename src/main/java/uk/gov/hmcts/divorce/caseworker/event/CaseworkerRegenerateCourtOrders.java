@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalO
 
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -107,11 +109,21 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
             documentGenerator.generateCertificateOfEntitlement(details);
 
-            log.info("Completed generating certificate of entitlement pdf for CaseID: {}", details.getId());
             removeExistingDocuments(
                     caseData,
                     List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+
+            var applicant1 = caseData.getApplicant1();
+            var applicant2 = caseData.getApplicant2();
+
+            ImmutableMap.of(applicant1, applicant1.isApplicantOffline(),
+                            applicant2, applicant2.isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress()))
+                    .entrySet().stream().filter(ImmutableMap.Entry::getValue)
+                    .forEach(applicant -> documentGenerator.generateDocuments(caseData, details.getId(), applicant.getKey(),
+                            certificateOfEntitlementDocumentPack.getDocumentPack(caseData, applicant.getKey())));
+
+            log.info("Completed generating certificate of entitlement pdf for CaseID: {}", details.getId());
         }
 
         notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
