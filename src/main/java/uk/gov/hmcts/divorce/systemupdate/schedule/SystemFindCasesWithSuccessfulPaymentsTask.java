@@ -56,9 +56,6 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
             final List<CaseDetails> casesInAwaitingPaymentState =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
-            log.info("SystemFindCasesWithSuccessfulPaymentsTask: {} cases in AwaitingPayment state",
-                casesInAwaitingPaymentState.size());
-
             paymentStatusService.hasSuccessFulPayment(casesInAwaitingPaymentState);
 
             log.info("SystemFindCasesWithSuccessfulPaymentsTask scheduled task complete.");
