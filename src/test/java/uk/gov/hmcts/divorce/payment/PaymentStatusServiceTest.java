@@ -113,12 +113,13 @@ class PaymentStatusServiceTest {
         final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         caseDetails.getData().getApplication().setApplicationPayments(null);
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(user);
-        verifyNoInteractions(authTokenGenerator);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(user).getAuthToken();
+        verify(authTokenGenerator).generate();
         verifyNoInteractions(paymentClient);
     }
 
@@ -127,12 +128,13 @@ class PaymentStatusServiceTest {
         final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         caseDetails.getData().getApplication().setApplicationPayments(emptyList());
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(user);
-        verifyNoInteractions(authTokenGenerator);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(user).getAuthToken();
+        verify(authTokenGenerator).generate();
         verifyNoInteractions(paymentClient);
     }
 
@@ -141,12 +143,13 @@ class PaymentStatusServiceTest {
         final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         caseDetails.getData().getApplication().getApplicationPayments().get(0).getValue().setReference(null);
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(user);
-        verifyNoInteractions(authTokenGenerator);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(user).getAuthToken();
+        verify(authTokenGenerator).generate();
         verifyNoInteractions(paymentClient);
     }
 
