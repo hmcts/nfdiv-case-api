@@ -48,38 +48,38 @@ public class RegenerateCourtOrdersPrinterTest {
 
         final ListValue<DivorceDocument> coGrantedCoversheet = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                    .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
-                    .build())
+                .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
+                .build())
             .build();
 
         final ListValue<DivorceDocument> coGrantedDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                    .documentType(CONDITIONAL_ORDER_GRANTED)
-                    .build())
+                .documentType(CONDITIONAL_ORDER_GRANTED)
+                .build())
             .build();
 
         final ListValue<DivorceDocument> foGrantedCoverLetter = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                    .documentType(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1)
-                    .build())
+                .documentType(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1)
+                .build())
             .build();
 
         final ListValue<DivorceDocument> foGrantedDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                    .documentType(FINAL_ORDER_GRANTED)
-                    .build())
+                .documentType(FINAL_ORDER_GRANTED)
+                .build())
             .build();
 
         final ListValue<DivorceDocument> coeCoverLetter = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                    .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
-                    .build())
+                .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
+                .build())
             .build();
 
         final ListValue<DivorceDocument> coeDoc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                    .documentType(CERTIFICATE_OF_ENTITLEMENT)
-                    .build())
+                .documentType(CERTIFICATE_OF_ENTITLEMENT)
+                .build())
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -87,17 +87,17 @@ public class RegenerateCourtOrdersPrinterTest {
             .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .documents(
-                    CaseDocuments.builder()
-                            .documentsGenerated(
-                                    asList(
-                                            coGrantedCoversheet,
-                                            coGrantedDoc,
-                                            foGrantedCoverLetter,
-                                            foGrantedDoc,
-                                            coeCoverLetter,
-                                            coeDoc)
-                            )
-                            .build()
+                CaseDocuments.builder()
+                    .documentsGenerated(
+                        asList(
+                                coGrantedCoversheet,
+                                coGrantedDoc,
+                                foGrantedCoverLetter,
+                                foGrantedDoc,
+                                coeCoverLetter,
+                                coeDoc)
+                )
+                .build()
             )
             .build();
 
