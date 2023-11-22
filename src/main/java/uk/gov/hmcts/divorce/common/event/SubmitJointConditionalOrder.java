@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -9,12 +9,12 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -32,27 +32,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_JOINT_CONDITIONAL_ORDER = "submit-joint-conditional-order";
+    private final Clock clock;
+    private final NotificationDispatcher notificationDispatcher;
+    private final SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+    private final Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+    private final DocumentGenerator documentGenerator;
 
-    @Autowired
-    private Clock clock;
-
-    @Autowired
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
-
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
-    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
-
-    @Autowired
-    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -93,7 +88,14 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             : AwaitingLegalAdvisorReferral;
 
         if (AwaitingLegalAdvisorReferral.equals(state)) {
-            generateConditionalOrderAnswersDocument.apply(details, data.getApplicant2().getLanguagePreference());
+            documentGenerator.generateAndStoreCaseDocument(
+                CONDITIONAL_ORDER_ANSWERS,
+                CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID,
+                CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME,
+                data,
+                details.getId(),
+                data.getApplicant2()
+            );
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -62,7 +61,6 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private final Clock clock;
     private final HttpServletRequest request;
     private final CcdAccessService ccdAccessService;
-    private final GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
     private final SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
     private final DocumentGenerator documentGenerator;
 

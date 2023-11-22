@@ -1,19 +1,19 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -29,21 +29,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO = "app1-sol-switch-to-sole-co";
 
-    @Autowired
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
-
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
-    private SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
+    private final NotificationDispatcher notificationDispatcher;
+    private final SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
+    private final DocumentGenerator documentGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -89,7 +88,14 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
-        generateConditionalOrderAnswersDocument.apply(details, data.getApplicant1().getLanguagePreference());
+        documentGenerator.generateAndStoreCaseDocument(
+            CONDITIONAL_ORDER_ANSWERS,
+            CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID,
+            CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME,
+            data,
+            caseId,
+            data.getApplicant1()
+        );
 
         var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
 
