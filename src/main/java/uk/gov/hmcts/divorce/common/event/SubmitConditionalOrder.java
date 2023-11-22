@@ -45,9 +45,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLIED_FOR_CO_LETTER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 
 @Component
 @RequiredArgsConstructor
@@ -133,8 +133,14 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         }
 
         if (AwaitingLegalAdvisorReferral.equals(state)) {
-            generateConditionalOrderAnswersDocument.apply(details,
-                isApplicant1 ? data.getApplicant1().getLanguagePreference() : data.getApplicant2().getLanguagePreference());
+            documentGenerator.generateAndStoreCaseDocument(
+                CONDITIONAL_ORDER_ANSWERS,
+                CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID,
+                CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME,
+                data,
+                caseId,
+                isApplicant1 ? data.getApplicant1() : data.getApplicant2()
+            );
         }
 
         if (AwaitingLegalAdvisorReferral.equals(state) && data.isWelshApplication()) {
