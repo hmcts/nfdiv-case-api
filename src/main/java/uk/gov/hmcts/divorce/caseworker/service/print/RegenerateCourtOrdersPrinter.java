@@ -32,20 +32,20 @@ public class RegenerateCourtOrdersPrinter {
 
     private static final String LETTER_TYPE_REGENERATE_COURT_ORDERS = "regenerate-court-orders-letter";
     private static final List<DocumentType> APPLICANT_1_DOCUMENTS = List.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
-            CONDITIONAL_ORDER_GRANTED,
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-            FINAL_ORDER_GRANTED,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-            CERTIFICATE_OF_ENTITLEMENT
+        CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+        CONDITIONAL_ORDER_GRANTED,
+        FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
+        FINAL_ORDER_GRANTED,
+        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+        CERTIFICATE_OF_ENTITLEMENT
     );
     private static final List<DocumentType> APPLICANT_2_DOCUMENTS = List.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-            CONDITIONAL_ORDER_GRANTED,
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-            FINAL_ORDER_GRANTED,
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-            CERTIFICATE_OF_ENTITLEMENT
+        CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+        CONDITIONAL_ORDER_GRANTED,
+        FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+        FINAL_ORDER_GRANTED,
+        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+        CERTIFICATE_OF_ENTITLEMENT
     );
 
     @Autowired
@@ -57,25 +57,25 @@ public class RegenerateCourtOrdersPrinter {
 
         if (!isEmpty(regeneratedCourtOrderLetters)) {
             final String recipientName = isApplicant1 ? caseData.getApplicant1().getFullName() :
-                    caseData.getApplicant2().getFullName();
+                caseData.getApplicant2().getFullName();
 
             final String caseIdString = caseId.toString();
             final Print print =
-                    new Print(
-                            regeneratedCourtOrderLetters,
-                            caseIdString,
-                            caseIdString,
-                            LETTER_TYPE_REGENERATE_COURT_ORDERS,
-                            recipientName
-                    );
+                new Print(
+                        regeneratedCourtOrderLetters,
+                        caseIdString,
+                        caseIdString,
+                        LETTER_TYPE_REGENERATE_COURT_ORDERS,
+                        recipientName
+                );
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
-                    "Regenerate Court Orders Printer has missing documents. Expected documents with type {} , for Case ID: {}",
-                    isApplicant1 ? APPLICANT_1_DOCUMENTS : APPLICANT_2_DOCUMENTS,
-                    caseId
+                "Regenerate Court Orders Printer has missing documents. Expected documents with type {} , for Case ID: {}",
+                isApplicant1 ? APPLICANT_1_DOCUMENTS : APPLICANT_2_DOCUMENTS,
+                caseId
             );
         }
     }
@@ -83,28 +83,28 @@ public class RegenerateCourtOrdersPrinter {
     private List<Letter> regeneratedCourtOrderLetters(CaseData caseData, boolean isApplicant1) {
 
         final List<Letter> conditionalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(
-                caseData,
-                isApplicant1 ? CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1 : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+            caseData,
+            isApplicant1 ? CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1 : CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
         final List<Letter> conditionalOrderGrantedCertificates = getLettersBasedOnContactPrivacy(
-                caseData,
-                CONDITIONAL_ORDER_GRANTED);
+            caseData,
+            CONDITIONAL_ORDER_GRANTED);
 
         final List<Letter> finalOrderGrantedCoverLetters = getLettersBasedOnContactPrivacy(
-                caseData,
-                isApplicant1 ? FINAL_ORDER_GRANTED_COVER_LETTER_APP_1 : FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
+            caseData,
+            isApplicant1 ? FINAL_ORDER_GRANTED_COVER_LETTER_APP_1 : FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
 
         final List<Letter> finalOrderGrantedCertificates = getLettersBasedOnContactPrivacy(
-                caseData,
-                FINAL_ORDER_GRANTED);
+            caseData,
+            FINAL_ORDER_GRANTED);
 
         final List<Letter> certificateOfEntitlementCoverLetters = getLettersBasedOnContactPrivacy(
-                caseData,
-                isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
+            caseData,
+            isApplicant1 ? CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1 : CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2);
 
         final List<Letter> certificateOfEntitlementDocuments = getLettersBasedOnContactPrivacy(
-                caseData,
-                CERTIFICATE_OF_ENTITLEMENT);
+            caseData,
+            CERTIFICATE_OF_ENTITLEMENT);
 
         final Letter conditionalOrderGrantedCoverLetter = firstElement(conditionalOrderGrantedCoverLetters);
         final Letter conditionalOrderGrantedCertificate = firstElement(conditionalOrderGrantedCertificates);
