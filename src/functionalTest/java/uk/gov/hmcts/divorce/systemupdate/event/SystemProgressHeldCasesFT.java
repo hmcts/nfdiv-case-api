@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,7 @@ public class SystemProgressHeldCasesFT extends FunctionalTestSuite {
     }
 
     @Test
+    @Disabled("CDAM requires the case to exist")
     public void shouldPassValidationAndSendLettersToOfflineApplicants() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_REQUEST);
 

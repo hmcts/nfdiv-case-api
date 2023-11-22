@@ -35,7 +35,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -93,7 +93,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class
 })
 public class CaseworkerOfflineDocumentVerifiedIT {
@@ -131,13 +131,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
     @BeforeAll
     static void setUp() {
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         SendLetterWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         SendLetterWireMock.stopAndReset();
     }
 

@@ -20,7 +20,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -40,35 +39,10 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-expedite-final-order-solicitor.json";
 
     @Test
-    public void shouldSendBothSolicitorsEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_SOLICITOR_JSON);
-        final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
-    public void shouldSendBothApplicantEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
-        final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
-    public void shouldSendBothApplicantSwitchToSoleEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
-        caseData.put("finalOrderSwitchedToSole", YES);
-
-        final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForDivorce() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
         final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
         assertThatJson(response.asString())
@@ -81,6 +55,7 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
         throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
         caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
@@ -91,6 +66,7 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForCP() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
         caseData.put("divorceOrDissolution", "dissolution");
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
@@ -108,6 +84,7 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
     @Test
     public void shouldGenerateGrantFinalOrderDocumentAndCoverLetterWhenAboutToSubmitCallbackIsInvokedForOfflineCase() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_OFFLINE_JSON);
+        caseData.put("finalOrderSwitchedToSole", YES);
         final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
@@ -123,6 +100,7 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
 
         caseData.put("divorceOrDissolution", "dissolution");
         caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_EXPEDITE_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 

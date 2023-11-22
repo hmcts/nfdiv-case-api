@@ -80,8 +80,8 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -105,6 +105,14 @@ public class CaseworkerGrantFinalOrderIT {
     public static final String GRANT_FINAL_ORDER_RESPONSE_JSON = "classpath:caseworker-grant-final-order-response.json";
     public static final String GRANT_FINAL_ORDER_OFFLINE_RESPONSE_JSON = "classpath:caseworker-grant-final-order-offline-response.json";
     public static final String GRANT_FINAL_ORDER_OVERDUE_RESPONSE_JSON = "classpath:caseworker-grant-final-order-overdue-response.json";
+
+    private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
+
+    private static final String FO_GRANTED_TEMPLATE_NAME = "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx";
+
+    private static final String FO_GRANTED_TEMPLATE_NAME_WELSH = "FL-NFD-GOR-WEL-Final-Order-Granted.docx";
+
+    private static final String FO_GRANTED_COVER_NAME = "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -177,7 +185,9 @@ public class CaseworkerGrantFinalOrderIT {
         assertThatJson(response)
             .isEqualTo(json(expectedResponse(GRANT_FINAL_ORDER_RESPONSE_JSON)));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), any(), any(), any(), anyLong());
+        verify(notificationService).sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), any(), any(), any(), anyLong());
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -324,7 +334,8 @@ public class CaseworkerGrantFinalOrderIT {
         assertThatJson(response)
             .isEqualTo(jsonDocument.json());
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), any(), any(), any(), anyLong());
+        verify(notificationService).sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), any(), any(), any(), anyLong());
     }
 
     @Test
@@ -432,11 +443,12 @@ public class CaseworkerGrantFinalOrderIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse("classpath:caseworker-grant-final-order-solicitor-response.json")));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq(TEST_SOLICITOR_EMAIL), any(), any(), any(), anyLong());
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), any(), any(), any(), anyLong());
     }
 
     @Test
-    public void shouldSendNotificationToSolicitorsWhenSubmittedCallbackIsInvoked() throws Exception {
+    public void shouldSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -461,8 +473,9 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FO_GRANTED_TEMPLATE_NAME);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -497,7 +510,7 @@ public class CaseworkerGrantFinalOrderIT {
     }
 
     @Test
-    public void shouldSendNotificationToApplicantAndRespondentWhenSubmittedCallbackIsInvokedForASoleCase() throws Exception {
+    public void shouldSendNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setEmail("applicant@email.com");
@@ -510,8 +523,10 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, FO_GRANTED_TEMPLATE_NAME);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -546,7 +561,7 @@ public class CaseworkerGrantFinalOrderIT {
     }
 
     @Test
-    public void shouldSendWelshNotificationToApplicantAndRespondentWhenSubmittedCallbackIsInvokedForASoleCase() throws Exception {
+    public void shouldSendWelshNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setEmail("applicant@email.com");
@@ -561,8 +576,10 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, FO_GRANTED_TEMPLATE_NAME_WELSH);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -640,8 +657,10 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, FO_GRANTED_TEMPLATE_NAME);
+        stubForDocAssemblyWith(UUID, FO_GRANTED_COVER_NAME);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)

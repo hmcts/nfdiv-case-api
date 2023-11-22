@@ -13,16 +13,20 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
 public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
+
+    private static final String LAST_MODIFIED = "last_modified";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -45,21 +49,15 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
 
         try {
             final BoolQueryBuilder query = boolQuery()
-                .filter(matchQuery(STATE, AwaitingPayment));
+                .filter(matchQuery(STATE, AwaitingPayment))
+                .filter(rangeQuery(LAST_MODIFIED)
+                    .gte(LocalDate.now().minusWeeks(2)));
 
-            final List<CaseDetails> casesWithPaymentsInAwaitingFinalOrderState =
+            final List<CaseDetails> casesInAwaitingPaymentState =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
-            log.info("{} cases in AwaitingPayment state", casesWithPaymentsInAwaitingFinalOrderState.size());
+            paymentStatusService.hasSuccessFulPayment(casesInAwaitingPaymentState);
 
-            final List<Long> caseIds = casesWithPaymentsInAwaitingFinalOrderState
-                .stream()
-                .filter(cd -> cd.getData().containsKey("applicationPayments"))
-                .filter(cd -> paymentStatusService.hasSuccessFulPayment(cd))
-                .map(CaseDetails::getId)
-                .toList();
-
-            log.info("SystemFindCasesWithSuccessfulPaymentsTask Found : " + caseIds);
             log.info("SystemFindCasesWithSuccessfulPaymentsTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("SystemFindCasesWithSuccessfulPaymentsTask schedule task stopped after search error", e);

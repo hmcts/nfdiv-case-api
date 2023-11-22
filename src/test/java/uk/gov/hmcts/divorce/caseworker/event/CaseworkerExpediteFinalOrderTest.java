@@ -13,14 +13,13 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -32,8 +31,14 @@ import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -51,10 +56,7 @@ class CaseworkerExpediteFinalOrderTest {
     private Clock clock;
 
     @Mock
-    private GenerateFinalOrder generateFinalOrder;
-
-    @Mock
-    private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
+    private DocumentGenerator documentGenerator;
 
     @Mock
     private FinalOrderGrantedNotification finalOrderGrantedNotification;
@@ -119,20 +121,21 @@ class CaseworkerExpediteFinalOrderTest {
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
 
-        verify(generateFinalOrderCoverLetter).apply(details);
-        verify(generateFinalOrder).apply(details);
+        verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
+            eq(FINAL_ORDER_TEMPLATE_ID),
+            eq(FINAL_ORDER_DOCUMENT_NAME),
+            any(),
+            anyLong());
     }
 
     @Test
     void shouldSendNotificationWhenSubmittedCallbackIsInvoked() {
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
+        final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
+        setMockClock(clock);
 
-        caseworkerExpediteFinalOrder.submitted(details, details);
+        caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
 
-        verify(notificationDispatcher).send(finalOrderGrantedNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(finalOrderGrantedNotification, details.getData(), TEST_CASE_ID);
     }
 
     CaseDetails<CaseData, State> getCaseDetails() {

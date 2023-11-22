@@ -34,6 +34,14 @@ public class DocumentGenerator {
                                              String templateId,
                                              String templateName,
                                              CaseData caseData,
+                                             long caseId) {
+        generateAndStoreCaseDocument(documentType, templateId, templateName, caseData, caseId, null);
+    }
+
+    public void generateAndStoreCaseDocument(DocumentType documentType,
+                                             String templateId,
+                                             String templateName,
+                                             CaseData caseData,
                                              long caseId,
                                              Applicant applicant) {
         //this is a case document like FO Granted or CO Granted so is not specific to an applicant
@@ -42,7 +50,7 @@ public class DocumentGenerator {
         var generatedDocument = caseDataDocumentService.renderDocument(templateContent,
             caseId,
             templateId,
-            applicant.getLanguagePreference(),
+            caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, templateName, now(clock)));
 
         caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
