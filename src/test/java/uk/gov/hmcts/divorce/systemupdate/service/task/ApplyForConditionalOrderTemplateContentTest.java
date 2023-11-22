@@ -32,8 +32,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument.FIRST_NAME;
-import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateApplyForConditionalOrderDocument.LAST_NAME;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.ApplyForConditionalOrderTemplateContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.ApplyForConditionalOrderTemplateContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -44,7 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateApplyForConditionalOrderDocumentTest {
+public class ApplyForConditionalOrderTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -56,7 +56,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
     private Clock clock;
 
     @InjectMocks
-    private GenerateApplyForConditionalOrderDocument generateApplyForConditionalOrderDocument;
+    private ApplyForConditionalOrderTemplateContent applyForConditionalOrderTemplateContent;
 
     @Test
     void shouldGenerateWithSoleDivorceContent() {
@@ -79,7 +79,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_DIVORCE, true);
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
+        applyForConditionalOrderTemplateContent.generateApplyForConditionalOrder(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -117,7 +117,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_DIVORCE, true);
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
+        applyForConditionalOrderTemplateContent.generateApplyForConditionalOrder(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -155,7 +155,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         templateContent.put(IS_DIVORCE, false);
         templateContent.putAll(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()));
 
-        generateApplyForConditionalOrderDocument.generateApplyForConditionalOrder(
+        applyForConditionalOrderTemplateContent.generateApplyForConditionalOrder(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
@@ -174,7 +174,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
 
     @Test
     void shouldReturnConditionalOrderCanApplyTemplateId() {
-        List<String> results = generateApplyForConditionalOrderDocument.getSupportedTemplates();
+        List<String> results = applyForConditionalOrderTemplateContent.getSupportedTemplates();
         Assertions.assertEquals(results, List.of(CONDITIONAL_ORDER_CAN_APPLY_TEMPLATE_ID));
     }
 
@@ -186,7 +186,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.setApplicant2(getApplicant2(FEMALE));
 
-        generateApplyForConditionalOrderDocument.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        applyForConditionalOrderTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         verify(commonContent)
             .templateContentCanApplyForCoOrFo(
@@ -207,7 +207,7 @@ public class GenerateApplyForConditionalOrderDocumentTest {
         caseData.setApplicant2(getApplicant2(FEMALE));
 
 
-        generateApplyForConditionalOrderDocument.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        applyForConditionalOrderTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant2());
 
         verify(commonContent)
             .templateContentCanApplyForCoOrFo(

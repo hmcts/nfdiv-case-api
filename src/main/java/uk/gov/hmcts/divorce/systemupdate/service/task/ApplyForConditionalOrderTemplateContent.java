@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_
 
 @Component
 @Slf4j
-public class GenerateApplyForConditionalOrderDocument implements TemplateContent {
+public class ApplyForConditionalOrderTemplateContent implements TemplateContent {
 
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
