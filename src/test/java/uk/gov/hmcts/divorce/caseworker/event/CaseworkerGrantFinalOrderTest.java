@@ -14,14 +14,13 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -33,9 +32,15 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -50,10 +55,7 @@ class CaseworkerGrantFinalOrderTest {
     private Clock clock;
 
     @Mock
-    private GenerateFinalOrder generateFinalOrder;
-
-    @Mock
-    private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
+    private DocumentGenerator documentGenerator;
 
     @Mock
     private FinalOrderGrantedNotification finalOrderGrantedNotification;
@@ -174,7 +176,11 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
 
-        verify(generateFinalOrder).apply(details);
+        verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
+            eq(FINAL_ORDER_TEMPLATE_ID),
+            eq(FINAL_ORDER_DOCUMENT_NAME),
+            any(),
+            anyLong());
     }
 
     @Test
@@ -201,8 +207,11 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
 
-        verify(generateFinalOrderCoverLetter).apply(details);
-        verify(generateFinalOrder).apply(details);
+        verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
+            eq(FINAL_ORDER_TEMPLATE_ID),
+            eq(FINAL_ORDER_DOCUMENT_NAME),
+            any(),
+            anyLong());
     }
 
     @Test
@@ -225,7 +234,7 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNull();
         assertThat(response.getErrors()).contains("Case is not yet eligible for Final Order");
 
-        verifyNoInteractions(generateFinalOrder);
+        verifyNoInteractions(documentGenerator);
     }
 
     @Test
@@ -296,8 +305,9 @@ class CaseworkerGrantFinalOrderTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
+        setMockClock(clock);
 
-        caseworkerGrantFinalOrder.submitted(details, details);
+        caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(finalOrderGrantedNotification, caseData, TEST_CASE_ID);
     }
