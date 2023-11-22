@@ -13,7 +13,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderJSLetter;
 import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -71,11 +70,7 @@ class SwitchedToSoleCoTest {
     private SwitchToSoleCoPrinter switchToSoleCoPrinter;
 
     @Mock
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
-
-    @Mock
     private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
-
 
     @Mock
     private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;

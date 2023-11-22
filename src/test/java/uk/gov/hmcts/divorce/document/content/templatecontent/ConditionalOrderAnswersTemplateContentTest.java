@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.Clock;
 import java.util.Map;
@@ -19,8 +20,8 @@ import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderAnswersTemplateContent.CO_CONFIRM_INFO_STILL_CORRECT;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderAnswersTemplateContent.CO_REASON_INFO_NOT_CORRECT;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderAnswersTemplateContent.CO_CONFIRM_INFO_STILL_CORRECT;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderAnswersTemplateContent.CO_REASON_INFO_NOT_CORRECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -65,7 +66,7 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(
             entry("isSole", true),
@@ -107,7 +108,7 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(
             entry(CO_CONFIRM_INFO_STILL_CORRECT, false),
@@ -140,7 +141,7 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(entry(CO_CONFIRM_INFO_STILL_CORRECT, true));
         assertThat(result.get(CO_REASON_INFO_NOT_CORRECT)).isNull();
@@ -176,7 +177,7 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(
             entry(CO_CONFIRM_INFO_STILL_CORRECT, false),
@@ -213,7 +214,7 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(
             entry(CO_CONFIRM_INFO_STILL_CORRECT, false),
@@ -249,7 +250,7 @@ class ConditionalOrderAnswersTemplateContentTest {
             .applicant2(applicant2)
             .build();
 
-        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> result = conditionalOrderAnswersTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(entry(CO_CONFIRM_INFO_STILL_CORRECT, true));
         assertThat(result.get(CO_REASON_INFO_NOT_CORRECT)).isNull();
