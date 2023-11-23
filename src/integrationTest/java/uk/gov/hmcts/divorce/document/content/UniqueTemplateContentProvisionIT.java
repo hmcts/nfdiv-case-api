@@ -4,10 +4,8 @@ package uk.gov.hmcts.divorce.document.content;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
@@ -18,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @Import(UniqueTemplateContentProvisionTestConfiguration.class)
-@TestPropertySource(properties = { "spring.config.location=file:src/integrationTest/resources/application.yaml" })
-@ContextConfiguration(initializers= ConfigDataApplicationContextInitializer.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UniqueTemplateContentProvisionIT {
 
     @Autowired
