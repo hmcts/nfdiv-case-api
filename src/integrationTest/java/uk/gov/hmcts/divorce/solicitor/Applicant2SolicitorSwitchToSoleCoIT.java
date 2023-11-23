@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -107,11 +113,22 @@ public class Applicant2SolicitorSwitchToSoleCoIT {
     @MockBean
     private CaseAssignmentApi caseAssignmentApi;
 
+    @MockBean
+    private Clock clock;
+
     @BeforeAll
     static void setUp() {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
         DocAssemblyWireMock.start();
         IdamWireMock.start();
+    }
+
+    @BeforeEach
+    void setClock() {
+        LocalDateTime dateTime = LocalDateTime.of(2022, Month.FEBRUARY, 15, 13, 39);
+        Instant instant = dateTime.atZone(ZoneId.of("Europe/London")).toInstant();
+        when(clock.instant()).thenReturn(instant);
+        when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
     @AfterAll
