@@ -644,7 +644,12 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .getResponse()
             .getContentAsString();
 
-        verify(printer, times(2)).sendLetters(any(CaseData.class), anyLong(), any(Applicant.class), eq(TEST_DOCUMENT_PACK_INFO), eq(THE_LETTER_ID));
+        verify(printer, times(2)).sendLetters(
+            any(CaseData.class),
+            anyLong(),
+            any(Applicant.class),
+            eq(TEST_DOCUMENT_PACK_INFO),
+            eq(THE_LETTER_ID));
         verifyNoMoreInteractions(printer);
     }
 }
