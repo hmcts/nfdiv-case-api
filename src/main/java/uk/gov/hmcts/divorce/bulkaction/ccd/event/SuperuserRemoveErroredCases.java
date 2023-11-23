@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -10,6 +11,8 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -42,6 +45,18 @@ public class SuperuserRemoveErroredCases implements CCDConfig<BulkActionCaseData
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> details) {
+
+        var processed = Optional
+            .ofNullable(details.getData().getProcessedCaseDetails())
+            .orElse(Lists.newArrayList());
+
+        var errored = Optional
+            .ofNullable(details.getData().getErroredCaseDetails())
+            .orElse(Lists.newArrayList());
+
+        processed.addAll(errored);
+
+        details.getData().setProcessedCaseDetails(processed);
         details.getData().setErroredCaseDetails(null);
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder;
+package uk.gov.hmcts.divorce.document;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,8 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -29,6 +28,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,6 +36,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -150,6 +153,47 @@ class DocumentGeneratorTest {
 
         assertThat(letters.stream().map(this::extractFilenameFromLetter))
             .containsExactly(COVERSHEET_DOCUMENT_NAME);
+    }
+
+    @Test
+    public void shouldGenerateAndStoreCaseDocument() {
+        setMockClock(clock, LocalDate.of(2022, 3, 16));
+
+        Document foDocument = Document.builder()
+            .filename("final-order.pdf")
+            .build();
+
+
+        when(templateContent2.getSupportedTemplates()).thenReturn(List.of(FINAL_ORDER_TEMPLATE_ID));
+        when(templateContent2.getTemplateContent(any(), anyLong(), any()))
+            .thenReturn(SUCCESS_MAP);
+        when(caseDataDocumentService.renderDocument(any(), anyLong(), any(), any(), any()))
+            .thenReturn(foDocument);
+
+        CaseData data = validApplicant1CaseData();
+
+        documentGenerator.generateAndStoreCaseDocument(
+            FINAL_ORDER_GRANTED,
+            FINAL_ORDER_TEMPLATE_ID,
+            FINAL_ORDER_DOCUMENT_NAME,
+            data,
+            TEST_CASE_ID
+        );
+
+        verify(caseDataDocumentService).renderDocument(
+            eq(SUCCESS_MAP),
+            eq(TEST_CASE_ID),
+            eq(FINAL_ORDER_TEMPLATE_ID),
+            eq(LanguagePreference.ENGLISH),
+            any()
+        );
+        verify(caseDataDocumentService).updateCaseData(
+            any(),
+            eq(FINAL_ORDER_GRANTED),
+            eq(foDocument),
+            anyLong(),
+            any()
+        );
     }
 
     private DocumentPackInfo getDocumentPackInfo() {

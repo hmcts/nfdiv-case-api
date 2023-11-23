@@ -8,12 +8,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -30,20 +32,20 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.DISSOLUTION_OF_A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.DISSOLUTION_OF_A_CIVIL_PARTNERSHIP_CY;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.DIVORCE_CY;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.FORMER_CIVIL_PARTNER_CY;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SECTION;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SECTION_18A;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SECTION_18C;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SPOUSE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SPOUSE_CY;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.SPOUSE_OR_CP;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.THE_MARRIAGE;
-import static uk.gov.hmcts.divorce.document.content.FinalOrderGrantedTemplateContent.THE_MARRIAGE_OR_CP;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.DISSOLUTION_OF_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.DISSOLUTION_OF_A_CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.DIVORCE_CY;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.FORMER_CIVIL_PARTNER_CY;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SECTION;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SECTION_18A;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SECTION_18C;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SPOUSE;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SPOUSE_CY;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SPOUSE_OR_CP;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.THE_MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.THE_MARRIAGE_OR_CP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataForGrantFinalOrder;
@@ -62,7 +64,9 @@ public class FinalOrderGrantedTemplateContentTest {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -87,7 +91,9 @@ public class FinalOrderGrantedTemplateContentTest {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -113,7 +119,9 @@ public class FinalOrderGrantedTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -139,7 +147,9 @@ public class FinalOrderGrantedTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
-        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = finalOrderGrantedTemplateContent.getTemplateContent(caseData,
+            TEST_CASE_ID,
+            null);
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
@@ -157,5 +167,10 @@ public class FinalOrderGrantedTemplateContentTest {
             entry(SECTION, SECTION_18C),
             entry(SPOUSE_OR_CP, FORMER_CIVIL_PARTNER_CY)
         );
+    }
+
+    @Test
+    public void shouldGetSupportedTemplates() {
+        assertThat(finalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(FINAL_ORDER_TEMPLATE_ID);
     }
 }

@@ -198,6 +198,14 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
+        CaseData caseDataBefore = detailsBefore.getData();
+
+        if (!validContactDetails(caseDataBefore, caseData)) {
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
+                .build();
+        }
 
         if (!isValidCombination(caseData)) {
             final String errorMessage = String.format(
@@ -217,6 +225,27 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private boolean validContactDetails(CaseData caseDataBefore, CaseData caseData) {
+
+        if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
+            if (!caseDataBefore.getApplicant1().isRepresented()
+                && !caseData.getApplicant1().isApplicantOffline()
+                && (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank())) {
+                return false;
+            }
+        }
+
+        if (caseDataBefore.getApplicant2().getEmail() != null && !caseDataBefore.getApplicant2().getEmail().isBlank()) {
+            if (!caseDataBefore.getApplicant2().isRepresented()
+                && !caseData.getApplicant2().isApplicantOffline()
+                && (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private boolean isValidCombination(final CaseData caseData) {

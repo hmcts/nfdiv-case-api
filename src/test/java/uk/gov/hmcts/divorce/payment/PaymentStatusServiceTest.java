@@ -20,15 +20,13 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -78,18 +76,17 @@ class PaymentStatusServiceTest {
         caseDetails.setData(CaseData.builder().application(
                 Application.builder().applicationPayments(payments).build())
             .build());
-
     }
 
     @Test
     void shouldReturnTrueIfCaseHasSuccessFulPayment() {
-        CaseDetails cd = mock(CaseDetails.class);
+        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
         when(paymentClient.getPaymentByReference(any(), any(), eq(reference))).thenReturn(new uk.gov.hmcts.divorce.payment.model.Payment(
             "Success"));
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
-        assertTrue(paymentStatusService.hasSuccessFulPayment(cd));
+        paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(user).getAuthToken();
@@ -98,13 +95,13 @@ class PaymentStatusServiceTest {
 
     @Test
     void shouldReturnFalseIfPaymentInProgress() {
-        CaseDetails cd = mock(CaseDetails.class);
+        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
         when(paymentClient.getPaymentByReference(any(), any(), eq(reference))).thenReturn(new uk.gov.hmcts.divorce.payment.model.Payment(
             "Created"));
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
-        assertFalse(paymentStatusService.hasSuccessFulPayment(cd));
+        paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(user).getAuthToken();
@@ -113,44 +110,46 @@ class PaymentStatusServiceTest {
 
     @Test
     void shouldReturnFalseIfApplicationPaymentsIsNull() {
-        CaseDetails cd = mock(CaseDetails.class);
+        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         caseDetails.getData().getApplication().setApplicationPayments(null);
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
-        assertFalse(paymentStatusService.hasSuccessFulPayment(cd));
+        paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(user);
-        verifyNoInteractions(authTokenGenerator);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(user).getAuthToken();
+        verify(authTokenGenerator).generate();
         verifyNoInteractions(paymentClient);
     }
 
     @Test
     void shouldReturnFalseIfApplicationPaymentsIsEmpty() {
-        CaseDetails cd = mock(CaseDetails.class);
+        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         caseDetails.getData().getApplication().setApplicationPayments(emptyList());
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
-        assertFalse(paymentStatusService.hasSuccessFulPayment(cd));
+        paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(user);
-        verifyNoInteractions(authTokenGenerator);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(user).getAuthToken();
+        verify(authTokenGenerator).generate();
         verifyNoInteractions(paymentClient);
     }
 
     @Test
     void shouldReturnFalseIfApplicationPaymentReferenceIsNull() {
-
-        CaseDetails cd = mock(CaseDetails.class);
+        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).build();
         caseDetails.getData().getApplication().getApplicationPayments().get(0).getValue().setReference(null);
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
-        assertFalse(paymentStatusService.hasSuccessFulPayment(cd));
+        paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
-        verifyNoInteractions(idamService);
-        verifyNoInteractions(user);
-        verifyNoInteractions(authTokenGenerator);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(user).getAuthToken();
+        verify(authTokenGenerator).generate();
         verifyNoInteractions(paymentClient);
     }
 

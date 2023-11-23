@@ -3,13 +3,13 @@ package uk.gov.hmcts.divorce.document;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -27,6 +27,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -34,16 +35,18 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(MockitoExtension.class)
 public class DocumentRemovalServiceTest {
 
     @Mock
-    private DocumentManagementClient documentManagementClient;
+    private CaseDocumentAccessManagement documentManagementClient;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -55,9 +58,8 @@ public class DocumentRemovalServiceTest {
     private DocumentRemovalService documentRemovalService;
 
     @Test
-    public void shouldDeleteDocumentFromDocManagement() {
+    public void shouldDeleteDivorceDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
-        final String systemRolesCsv = String.join(",", systemRoles);
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -65,27 +67,52 @@ public class DocumentRemovalServiceTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
-
         doNothing().when(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            userId,
-            documentUuid,
+            divorceDocumentListValue.getValue().getDocumentLink(),
             true
         );
 
-        documentRemovalService.deleteDocumentFromDocumentStore(singletonList(divorceDocumentListValue));
+        documentRemovalService.deleteDocument(singletonList(divorceDocumentListValue));
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            systemRolesCsv,
-            userId,
-            documentUuid,
+            divorceDocumentListValue.getValue().getDocumentLink(),
+            true
+        );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
+    }
+
+    @Test
+    public void shouldDeleteScannedDocumentFromDocManagement() {
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
+        final String userId = UUID.randomUUID().toString();
+        final User systemUser = systemUser(systemRoles, userId);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing().when(documentManagementClient).deleteDocument(
+            SYSTEM_USER_USER_ID,
+            TEST_SERVICE_AUTH_TOKEN,
+            scannedDocumentList.get(0).getValue().getUrl(),
+            true
+        );
+
+        documentRemovalService.deleteScannedDocuments(scannedDocumentList);
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(authTokenGenerator).generate();
+        verify(documentManagementClient).deleteDocument(
+            SYSTEM_USER_USER_ID,
+            TEST_SERVICE_AUTH_TOKEN,
+            scannedDocumentList.get(0).getValue().getUrl(),
             true
         );
 
@@ -119,13 +146,11 @@ public class DocumentRemovalServiceTest {
             .deleteDocument(
                 anyString(),
                 anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
+                any(),
                 anyBoolean()
             );
 
-        assertThatThrownBy(() -> documentRemovalService.deleteDocumentFromDocumentStore(
+        assertThatThrownBy(() -> documentRemovalService.deleteDocument(
             singletonList(documentWithType(APPLICATION))
         ))
             .hasMessageContaining("403 User role is not authorised to delete document")
@@ -159,7 +184,7 @@ public class DocumentRemovalServiceTest {
 
         doThrow(feignException).when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> documentRemovalService.deleteDocumentFromDocumentStore(
+        assertThatThrownBy(() -> documentRemovalService.deleteDocument(
             singletonList(documentWithType(APPLICATION))
         ))
             .hasMessageContaining("401 Invalid s2s secret")

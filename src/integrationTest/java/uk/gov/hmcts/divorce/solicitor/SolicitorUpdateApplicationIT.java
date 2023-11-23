@@ -23,8 +23,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
-import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -46,8 +46,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateApplication.SOLICITOR_UPDATE;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDeleteWith;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForSystem;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
@@ -69,7 +69,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class,
     PrdOrganisationWireMock.PropertiesInitializer.class
 })
 public class SolicitorUpdateApplicationIT {
@@ -97,7 +97,7 @@ public class SolicitorUpdateApplicationIT {
     static void setUp() {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
-        DocManagementStoreWireMock.start();
+        CdamWireMock.start();
         PrdOrganisationWireMock.start();
     }
 
@@ -105,7 +105,7 @@ public class SolicitorUpdateApplicationIT {
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
-        DocManagementStoreWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
         PrdOrganisationWireMock.stopAndReset();
     }
 
@@ -148,7 +148,7 @@ public class SolicitorUpdateApplicationIT {
         stubForDocAssembly();
 
         final var documentUuid = FilenameUtils.getName(DOCUMENT_URL);
-        stubDeleteFromDocumentManagementForSystem(documentUuid, OK);
+        stubCdamDeleteWith(documentUuid, OK);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

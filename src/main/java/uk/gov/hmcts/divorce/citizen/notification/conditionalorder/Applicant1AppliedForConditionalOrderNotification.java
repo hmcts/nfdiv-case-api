@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -8,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.AppliedForConditionalOrderDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITO
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class Applicant1AppliedForConditionalOrderNotification
     extends AppliedForConditionalOrderNotification
@@ -32,6 +31,17 @@ public class Applicant1AppliedForConditionalOrderNotification
     private final NotificationService notificationService;
     private final AppliedForConditionalOrderDocumentPack appliedForConditionalOrderDocumentPack;
     private final LetterPrinter letterPrinter;
+
+    public Applicant1AppliedForConditionalOrderNotification(
+        CommonContent commonContent,
+        NotificationService notificationService,
+        AppliedForConditionalOrderDocumentPack appliedForConditionalOrderDocumentPack,
+        LetterPrinter letterPrinter) {
+        super(commonContent);
+        this.appliedForConditionalOrderDocumentPack = appliedForConditionalOrderDocumentPack;
+        this.notificationService = notificationService;
+        this.letterPrinter = letterPrinter;
+    }
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
