@@ -47,7 +47,7 @@ public class GeneralLetterTemplateContentTest {
     private Clock clock;
 
     @InjectMocks
-    private GeneralLetterTemplateContent generalLetterTemplateContent;
+    private GeneralLetterTemplateContentToDelete generalLetterTemplateContent;
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
