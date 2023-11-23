@@ -126,6 +126,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
         log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
+        updateGeneralLetters(caseData);
+
         Applicant applicant = getApplicantByParty(caseData);
 
         letterPrinter.sendLetters(caseData,
@@ -133,9 +135,6 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 applicant,
                 generalLetterDocumentPack.getDocumentPack(caseData, applicant),
                 generalLetterDocumentPack.getLetterId());
-
-        updateGeneralLetters(caseData);
-        sendGeneralLetterAttachments(caseData, details.getId());
 
         //clear general letter field so that on next general letter old data is not shown
         details.getData().setGeneralLetter(null);
@@ -208,46 +207,5 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 .generalLetterDateTime(now(clock))
                 .generalLetterParties(generalLetter.getGeneralLetterParties())
                 .build();
-    }
-
-    private void sendGeneralLetterAttachments(final CaseData caseData, final Long caseId) {
-
-        ListValue<GeneralLetterDetails> generalLetterDetailsListValue = firstElement(caseData.getGeneralLetters());
-
-        if (generalLetterDetailsListValue != null) {
-
-            GeneralLetterDetails letterDetails = generalLetterDetailsListValue.getValue();
-
-            List<ListValue<Document>> documents = letterDetails.getGeneralLetterAttachmentLinks();
-
-            if (!CollectionUtils.isEmpty(documents)) {
-
-                final String caseIdString = caseId.toString();
-
-                GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
-                        .map(element -> element.getValue().getGeneralLetterParties())
-                        .orElse(GeneralParties.OTHER);
-
-                var recipientName = switch (parties) {
-                    case RESPONDENT -> caseData.getApplicant2().getFullName();
-                    case APPLICANT -> caseData.getApplicant1().getFullName();
-                    case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
-                };
-
-                final Print print = new Print(
-                        mapToLetters(documents, GENERAL_LETTER),
-                        caseIdString,
-                        caseIdString,
-                        generalLetterDocumentPack.getLetterId(),
-                        recipientName
-                );
-
-                final UUID letterId = bulkPrintService.print(print);
-
-                log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
-            } else {
-                log.warn("No general letters found for print , for Case ID: {}", caseId);
-            }
-        }
     }
 }
