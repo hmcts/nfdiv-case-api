@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderAnswersTemplateContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -110,6 +111,9 @@ public class SubmitConditionalOrderIT {
     @MockBean
     private ConditionalOrderAnswersTemplateContent templateContentService;
 
+    @MockBean
+    private DocumentGenerator documentGenerator;
+
     @BeforeAll
     static void setUp() {
         DocAssemblyWireMock.start();
@@ -171,7 +175,7 @@ public class SubmitConditionalOrderIT {
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -235,7 +239,7 @@ public class SubmitConditionalOrderIT {
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -459,7 +463,7 @@ public class SubmitConditionalOrderIT {
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -539,7 +543,7 @@ public class SubmitConditionalOrderIT {
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -635,7 +639,7 @@ public class SubmitConditionalOrderIT {
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -683,7 +687,7 @@ public class SubmitConditionalOrderIT {
                 .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -746,7 +750,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(conditionalOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/submitted?page=ConditionalOrderSoT")
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)

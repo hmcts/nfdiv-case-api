@@ -118,7 +118,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         ImmutableMap.of(DocumentType.APPLIED_FOR_CO_LETTER, Optional.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID)),
         ImmutableMap.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID, APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME)
     );
-    public static final String THE_LETTER_ID = "the-letter-id";
+    public static final String THE_LETTER_ID = "applied-for-co-letter";
 
     @Autowired
     private MockMvc mockMvc;
@@ -644,7 +644,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .getResponse()
             .getContentAsString();
 
-        verify(printer, times(2)).sendLetters(any(CaseData.class), anyLong(), any(Applicant.class), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verify(printer, times(2)).sendLetters(any(CaseData.class), anyLong(), any(Applicant.class), eq(TEST_DOCUMENT_PACK_INFO), eq(THE_LETTER_ID));
         verifyNoMoreInteractions(printer);
     }
 }
