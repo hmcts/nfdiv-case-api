@@ -13,8 +13,9 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.*;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.*;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;

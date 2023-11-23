@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterAll;
@@ -21,7 +22,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
-import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -34,12 +34,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -74,6 +78,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -108,6 +114,12 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         "classpath:caseworker-offline-document-verified-other-response.json";
     public static final String FILENAME = "doc1.pdf";
 
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(DocumentType.APPLIED_FOR_CO_LETTER, Optional.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID)),
+        ImmutableMap.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID, APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME)
+    );
+    public static final String THE_LETTER_ID = "the-letter-id";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -124,7 +136,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     private NotificationService notificationService;
 
     @MockBean
-    private AppliedForCoPrinter appliedForCoPrinter;
+    private LetterPrinter printer;
 
     @MockBean
     private AosPackPrinter aosPackPrinter;
@@ -497,7 +509,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    public void shouldTriggerSubmittedCallbackAndSendAosResponseLetterToApplicant() throws Exception {
+    public void shouldTriggerAboutToStartAndSendAosResponseLetterToApplicant() throws Exception {
 
         RetiredFields retiredFields = new RetiredFields();
         retiredFields.setDataVersion(5);
@@ -567,7 +579,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    public void shouldTriggerSubmittedCallbackAndSendConditionalOrderLetters() throws Exception {
+    public void shouldTriggerAboutToStartAndSendConditionalOrderLetters() throws Exception {
 
         RetiredFields retiredFields = new RetiredFields();
         retiredFields.setDataVersion(5);
@@ -632,7 +644,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .getResponse()
             .getContentAsString();
 
-        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
-        verifyNoMoreInteractions(appliedForCoPrinter);
+        verify(printer, times(2)).sendLetters(any(CaseData.class), anyLong(), any(Applicant.class), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verifyNoMoreInteractions(printer);
     }
 }

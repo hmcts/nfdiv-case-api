@@ -21,7 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderAnswersTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderAnswersTemplateContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -131,7 +131,7 @@ public class SubmitConditionalOrderIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
@@ -193,7 +193,7 @@ public class SubmitConditionalOrderIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
@@ -398,7 +398,7 @@ public class SubmitConditionalOrderIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
@@ -441,7 +441,7 @@ public class SubmitConditionalOrderIT {
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -483,7 +483,7 @@ public class SubmitConditionalOrderIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
@@ -564,7 +564,7 @@ public class SubmitConditionalOrderIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
@@ -710,7 +710,7 @@ public class SubmitConditionalOrderIT {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
+        when(templateContentService.getTemplateContent(any(), any(), any())).thenReturn(mockedTemplateContent);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);

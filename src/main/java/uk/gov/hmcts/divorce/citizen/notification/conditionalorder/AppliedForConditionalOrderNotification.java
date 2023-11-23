@@ -1,8 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -54,6 +52,7 @@ public class AppliedForConditionalOrderNotification {
     public AppliedForConditionalOrderNotification(CommonContent commonContent) {
         this.commonContent = commonContent;
     }
+
     protected Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String whichApplicant) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PRONOUNCE_BY_DATE,

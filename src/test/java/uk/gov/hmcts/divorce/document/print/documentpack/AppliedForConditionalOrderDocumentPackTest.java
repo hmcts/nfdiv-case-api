@@ -7,8 +7,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.*;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.*;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLIED_FOR_CO_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 public class AppliedForConditionalOrderDocumentPackTest {
@@ -24,19 +25,19 @@ public class AppliedForConditionalOrderDocumentPackTest {
         )
     );
 
-    private final AppliedForConditionalOrderDocumentPack appliedForConditionalOrderDocumentPack = new AppliedForConditionalOrderDocumentPack();
+    private final AppliedForConditionalOrderDocumentPack appliedForCoDocumentPack = new AppliedForConditionalOrderDocumentPack();
 
     @Test
     public void shouldReturnDocumentPack() {
         CaseData data = validApplicant1CaseData();
-        var documentPack = appliedForConditionalOrderDocumentPack.getDocumentPack(data, data.getApplicant1());
+        var documentPack = appliedForCoDocumentPack.getDocumentPack(data, data.getApplicant1());
 
         assertThat(documentPack).isEqualTo(APPLIED_FOR_CO_PACK);
     }
 
     @Test
     public void shouldReturnCorrectLetterId() {
-        assertThat(appliedForConditionalOrderDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_APPLIED_FOR_CO);
+        assertThat(appliedForCoDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_APPLIED_FOR_CO);
     }
 
 }

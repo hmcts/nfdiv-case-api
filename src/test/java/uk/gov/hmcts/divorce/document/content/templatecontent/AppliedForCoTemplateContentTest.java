@@ -40,7 +40,7 @@ class AppliedForCoTemplateContentTest {
     private Clock clock;
 
     @InjectMocks
-    private AppliedForCoTemplateContent AppliedForCoTemplateContent;
+    private AppliedForCoTemplateContent appliedForCoTemplateContent;
 
     @Test
     void shouldApplyContentFromCaseDataForConditionalOrderCoverLetter() {
@@ -67,7 +67,7 @@ class AppliedForCoTemplateContentTest {
             .conditionalOrder(ConditionalOrder.builder().dateD84FormScanned(localDateTime).build())
             .build();
 
-        final Map<String, Object> result = AppliedForCoTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant1);
+        final Map<String, Object> result = appliedForCoTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
