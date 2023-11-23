@@ -46,7 +46,7 @@ public class JSSwitchToSoleCoSolicitorTemplateContent implements TemplateContent
                                                 final Long caseId,
                                                 final Applicant applicant) {
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-            applicant.getLanguagePreference());
+            caseData.getApplicant1().getLanguagePreference());
 
         templateContent.put(RESPONDENT_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
         templateContent.put(RESPONDENT_SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
@@ -61,7 +61,7 @@ public class JSSwitchToSoleCoSolicitorTemplateContent implements TemplateContent
             : NOT_PROVIDED);
 
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().isRepresented()
-            ? applicant.getSolicitor().getName()
+            ? caseData.getApplicant1().getSolicitor().getName()
             : NOT_REPRESENTED);
 
         templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant1(),

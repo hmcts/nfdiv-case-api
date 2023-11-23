@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import com.google.common.collect.ImmutableMap;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,20 +11,21 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
-import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderJSLetter;
-import uk.gov.hmcts.divorce.common.service.task.GenerateSwitchToSoleConditionalOrderLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.content.JudicialSeparationSwitchToSoleSolicitorContent;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -43,6 +45,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorR
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -50,6 +55,16 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 
 @ExtendWith(MockitoExtension.class)
 class SwitchedToSoleCoTest {
+
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(
+            SWITCH_TO_SOLE_CO_LETTER, Optional.of(SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID)
+        ),
+        ImmutableMap.of(
+            SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME
+        )
+    );
+    public static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
     private SwitchToSoleCoNotification switchToSoleCoNotification;
@@ -67,16 +82,10 @@ class SwitchedToSoleCoTest {
     private SwitchToSoleService switchToSoleService;
 
     @Mock
-    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
+    private LetterPrinter printer;
 
     @Mock
-    private JudicialSeparationSwitchToSoleSolicitorContent generateJudicialSeparationSwitchToSoleSolicitorLetter;
-
-    @Mock
-    private GenerateSwitchToSoleConditionalOrderLetter generateSwitchToSoleCoLetter;
-
-    @Mock
-    private GenerateSwitchToSoleConditionalOrderJSLetter generateSwitchToSoleCoJSLetter;
+    private SwitchToSoleCODocumentPack switchToSoleConditionalOrderDocumentPack;
 
     @InjectMocks
     private SwitchedToSoleCo switchedToSoleCo;
@@ -146,11 +155,16 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
-        verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verifyNoMoreInteractions(printer);
+
     }
 
     @Test
@@ -169,11 +183,15 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
         verify(switchToSoleService).switchApplicantData(caseData);
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
         verifyNoMoreInteractions(switchToSoleService);
+        verifyNoMoreInteractions(printer);
     }
 
     @Test
@@ -191,14 +209,18 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(generateSwitchToSoleCoLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verifyNoMoreInteractions(printer);
         verifyNoInteractions(switchToSoleService);
     }
 
     @Test
-    void shouldTriggerSwitchToSoleEmailNotificationsInSubmittedCallback() {
+    void shouldTriggerSwitchToSoleEmailNotifications() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -206,7 +228,7 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        switchedToSoleCo.submitted(caseDetails, caseDetails);
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
         verifyNoMoreInteractions(notificationDispatcher);
@@ -241,7 +263,7 @@ class SwitchedToSoleCoTest {
     }
 
     @Test
-    void shouldPrintSwitchToSoleCoLetterD84SwitchToSoleInSubmittedCallback() {
+    void shouldPrintSwitchToSoleCoLetterD84SwitchToSole() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
@@ -254,10 +276,13 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        switchedToSoleCo.submitted(caseDetails, caseDetails);
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
 
-        verify(switchToSoleCoPrinter).print(caseData, caseId, caseData.getApplicant2());
-        verifyNoMoreInteractions(switchToSoleCoPrinter);
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verifyNoMoreInteractions(printer);
     }
 
     @Test
@@ -278,12 +303,14 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
-        verify(generateJudicialSeparationSwitchToSoleSolicitorLetter).apply(caseData, caseId, caseData.getApplicant1(),
-            caseData.getApplicant2());
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
     }
 
     @Test
@@ -313,11 +340,13 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(generateJudicialSeparationSwitchToSoleSolicitorLetter).apply(caseData, caseId, caseData.getApplicant1(),
-            caseData.getApplicant2());
-        verifyNoMoreInteractions(switchToSoleCoPrinter);
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verifyNoMoreInteractions(printer);
     }
 
     @Test
@@ -336,12 +365,14 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
-        verify(generateSwitchToSoleCoJSLetter).apply(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-
-        verifyNoInteractions(generateSwitchToSoleCoLetter);
+        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
+        verifyNoMoreInteractions(printer);
     }
 }

@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -53,7 +52,6 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private final SwitchToSoleService switchToSoleService;
     private final SwitchToSoleCODocumentPack switchToSoleConditionalOrderDocumentPack;
     private final LetterPrinter letterPrinter;
-    private final DocumentGenerator documentGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -95,15 +93,15 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             switchToSoleService.switchApplicantData(data);
         }
 
-        var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
+        final var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
 
         log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
 
         notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
-//        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
-//            || D84.equals(data.getDocuments().getScannedSubtypeReceived())
-//            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
+        if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
+            || D84.equals(data.getDocuments().getScannedSubtypeReceived())
+            && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
             var documentPackInfo =
                 switchToSoleConditionalOrderDocumentPack.getDocumentPack(data, null);
@@ -114,7 +112,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                 documentPackInfo,
                 switchToSoleConditionalOrderDocumentPack.getLetterId()
             );
-//        }
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
