@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,13 +46,14 @@ public class AppliedForConditionalOrderNotification {
     static final String PARTNER_DID_NOT_APPLY_DUE_DATE = "partnerDidNotApply due date";
     static final String RESPONSE_DUE_DATE = "responseDueDate";
     static final String CO_OR_FO = "coOrFo";
-
     static final String APPLICANT1 = "applicant 1";
     static final String APPLICANT2 = "applicant 2";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
+    public AppliedForConditionalOrderNotification(CommonContent commonContent) {
+        this.commonContent = commonContent;
+    }
     protected Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String whichApplicant) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PRONOUNCE_BY_DATE,

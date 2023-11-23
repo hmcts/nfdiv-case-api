@@ -2,10 +2,10 @@ package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -24,8 +24,14 @@ public class Applicant2AppliedForConditionalOrderNotification
     extends AppliedForConditionalOrderNotification
     implements ApplicantNotification {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
+
+    public Applicant2AppliedForConditionalOrderNotification(
+        CommonContent commonContent,
+        NotificationService notificationService) {
+        super(commonContent);
+        this.notificationService = notificationService;
+    }
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
