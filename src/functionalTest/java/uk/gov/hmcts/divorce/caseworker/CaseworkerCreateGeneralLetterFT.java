@@ -40,14 +40,4 @@ public class CaseworkerCreateGeneralLetterFT extends FunctionalTestSuite {
                 "classpath:responses/response-caseworker-general-letter-about-to-submit.json"
             )));
     }
-
-    @Test
-    @Disabled("CDAM requires the case to exist")
-    public void shouldSendNotificationsWhenSubmittedCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
-        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-letter-submitted.json");
-
-        final Response response = triggerCallback(caseData, CASEWORKER_CREATE_GENERAL_LETTER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
 }
