@@ -330,6 +330,13 @@ public enum State {
     GeneralConsiderationComplete,
 
     @CCD(
+        label = "Case in bulk list process",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    InBulkList,
+
+    @CCD(
         label = "Issued to bailiff",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
