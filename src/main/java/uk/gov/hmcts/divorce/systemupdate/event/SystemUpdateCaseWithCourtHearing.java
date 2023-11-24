@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntit
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -45,7 +46,7 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_UPDATE_CASE_COURT_HEARING)
-            .forStates(AwaitingPronouncement, OfflineDocumentReceived)
+            .forStates(AwaitingPronouncement, InBulkList, OfflineDocumentReceived)
             .showCondition(NEVER_SHOW)
             .name("Update case with court hearing")
             .description("Update case with court hearing")

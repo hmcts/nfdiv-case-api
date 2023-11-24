@@ -15,13 +15,14 @@ import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 
 @Slf4j
 @Component
 public class PronounceCasesTask implements BulkCaseTask {
 
-    final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived);
+    final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, InBulkList);
     final EnumSet<State> postStates = EnumSet.of(ConditionalOrderPronounced);
 
     @Autowired

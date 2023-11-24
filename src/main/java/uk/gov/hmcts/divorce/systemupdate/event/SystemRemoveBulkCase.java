@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.List;
+import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -29,6 +29,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_REMOVE_BULK_CASE = "system-remove-bulk-case";
+
+    final EnumSet<State> retainStates = EnumSet.of(
+        ConditionalOrderPronounced,
+        Rejected,
+        Withdrawn,
+        Archived
+    );
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,7 +56,7 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
         data.unlinkFromTheBulkCase();
 
         State state = details.getState();
-        if (!retainStates().contains(state)) {
+        if (!retainStates.contains(state)) {
             state = AwaitingPronouncement;
         }
 
@@ -57,14 +64,5 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
             .data(data)
             .state(state)
             .build();
-    }
-
-    private List<State> retainStates() {
-        return List.of(
-            ConditionalOrderPronounced,
-            Rejected,
-            Withdrawn,
-            Archived
-        );
     }
 }
