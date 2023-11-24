@@ -260,6 +260,13 @@ public enum State {
     AwaitingJsNullity,
 
     @CCD(
+        label = "Case in bulk list process",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    InBulkList,
+
+    @CCD(
         label = "Clarification response submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -328,13 +335,6 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     GeneralConsiderationComplete,
-
-    @CCD(
-        label = "Case in bulk list process",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    InBulkList,
 
     @CCD(
         label = "Issued to bailiff",
@@ -440,7 +440,8 @@ public enum State {
         AwaitingApplicant2Response,
         Applicant2Approved,
         Withdrawn,
-        Rejected
+        Rejected,
+        InBulkList
     ));
 
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
@@ -457,6 +458,14 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
+        Applicant2Approved,
+        InBulkList
+    ));
+
+    public static final EnumSet<State> SYSTEM_REMOVE_BULK_CASE_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
         Applicant2Approved
     ));
 
@@ -470,7 +479,8 @@ public enum State {
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
-        Withdrawn
+        Withdrawn,
+        InBulkList
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
@@ -483,7 +493,8 @@ public enum State {
         AwaitingDocuments,
         Submitted,
         Withdrawn,
-        Rejected
+        Rejected,
+        InBulkList
     ));
 
     public static final State[] AOS_STATES = {

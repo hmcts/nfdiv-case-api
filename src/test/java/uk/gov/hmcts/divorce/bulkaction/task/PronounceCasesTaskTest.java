@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
@@ -51,7 +52,7 @@ public class PronounceCasesTaskTest {
 
     @Test
     void shouldPronounceCasesTask() {
-        final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived);
+        final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, InBulkList, OfflineDocumentReceived);
         final EnumSet<State> postStates = EnumSet.of(ConditionalOrderPronounced);
 
         final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
