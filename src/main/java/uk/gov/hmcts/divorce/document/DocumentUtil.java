@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.document;
 
-import com.google.common.collect.Lists;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,8 +22,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
@@ -32,7 +29,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REMINDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
@@ -45,8 +41,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_COVER_LETTER;
 
 public final class DocumentUtil {
-    private static final Map<String, List<DocumentType>> DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY
-        = documentsApplicableForConfidentiality();
 
     private static final Map<DocumentType, ConfidentialDocumentsReceived> DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING
         = getDocumentTypeToConfidentialTypeMapping();
@@ -150,6 +144,9 @@ public final class DocumentUtil {
 
     public static boolean isConfidential(final CaseData caseData, final DocumentType documentType) {
 
+        final boolean isAnApplicantConfidential = caseData.getApplicant1().isConfidentialContactDetails()
+            || caseData.getApplicant2().isConfidentialContactDetails();
+
         if (GENERAL_LETTER.equals(documentType)) {
             if (APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
                 return caseData.getApplicant1().isConfidentialContactDetails();
@@ -157,21 +154,9 @@ public final class DocumentUtil {
             if (RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
                 return caseData.getApplicant2().isConfidentialContactDetails();
             }
-        } else if (DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY.get(APPLICANT1).contains(documentType)) {
-            return caseData.getApplicant1().isConfidentialContactDetails();
-        } else if (DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY.get(APPLICANT2).contains(documentType)) {
-            return caseData.getApplicant2().isConfidentialContactDetails();
-        } else if (isOtherConfidentialDocumentType(documentType)) {
-            return caseData.getApplicant1().isConfidentialContactDetails() || caseData.getApplicant2().isConfidentialContactDetails();
         }
 
-        return false;
-    }
-
-    public static boolean isDocumentApplicableForConfidentiality(final DocumentType documentType, final boolean isApplicant1) {
-        return isApplicant1
-            ? DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY.get(APPLICANT1).contains(documentType)
-            : DOCUMENTS_APPLICABLE_FOR_CONFIDENTIALITY.get(APPLICANT2).contains(documentType);
+        return isAnApplicantConfidential && documentType.isPotentiallyConfidential();
     }
 
     public static ConfidentialDocumentsReceived getConfidentialDocumentType(DocumentType documentType) {
@@ -202,10 +187,6 @@ public final class DocumentUtil {
         return Optional.ofNullable(confidentialDocumentsMap.get(documentType)).orElse(ConfidentialDocumentsReceived.OTHER);
     }
 
-    private static boolean isOtherConfidentialDocumentType(DocumentType documentType) {
-        return DOCUMENTS_TYPE_TO_CONFIDENTIAL_TYPE_MAPPING.containsKey(documentType);
-    }
-
     public static void removeDocumentsBasedOnContactPrivacy(final CaseData caseData, final DocumentType documentType) {
         CaseDocuments caseDocuments = caseData.getDocuments();
         if (isConfidential(caseData, documentType)) {
@@ -213,30 +194,6 @@ public final class DocumentUtil {
         } else {
             caseDocuments.removeDocumentGeneratedWithType(documentType);
         }
-    }
-
-    private static Map<String, List<DocumentType>> documentsApplicableForConfidentiality() {
-        return Map.of(
-            APPLICANT1, Lists.newArrayList(
-                NOTICE_OF_PROCEEDINGS_APP_1,
-                GENERAL_LETTER,
-                AOS_RESPONSE_LETTER,
-                CONDITIONAL_ORDER_REMINDER,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-                FINAL_ORDER_CAN_APPLY_APP1,
-                AOS_OVERDUE_LETTER
-            ),
-            APPLICANT2, Lists.newArrayList(
-                NOTICE_OF_PROCEEDINGS_APP_2,
-                GENERAL_LETTER,
-                CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-                FINAL_ORDER_CAN_APPLY_APP2
-            )
-        );
     }
 
     public static Map<DocumentType, ConfidentialDocumentsReceived> getDocumentTypeToConfidentialTypeMapping() {
