@@ -109,8 +109,6 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
         log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
-        updateGeneralLetters(caseData);
-
         Applicant applicant = getApplicantByParty(caseData);
 
         letterPrinter.sendLetters(caseData,
@@ -118,6 +116,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 applicant,
                 generalLetterDocumentPack.getDocumentPack(caseData, applicant),
                 generalLetterDocumentPack.getLetterId());
+
+        updateGeneralLetters(caseData);
 
         //clear general letter field so that on next general letter old data is not shown
         details.getData().setGeneralLetter(null);

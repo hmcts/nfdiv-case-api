@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +14,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.testutil.ClockTestUtil;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -33,9 +30,6 @@ import java.time.LocalDate;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,7 +46,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -89,7 +82,10 @@ public class CaseworkerCreateGeneralLetterIT {
     private DocumentIdProvider documentIdProvider;
 
     @MockBean
-    private GeneralLetterPrinter generalLetterPrinter;
+    private BulkPrintService bulkPrintService;
+
+    @Autowired
+    private LetterPrinter letterPrinter;
 
     @MockBean
     private Clock clock;
@@ -144,7 +140,6 @@ public class CaseworkerCreateGeneralLetterIT {
 
         assertThatJson(response)
             .isEqualTo(json(expectedResponse("classpath:caseworker-general-letter-response.json")));
-
     }
 
     @Test
@@ -182,38 +177,6 @@ public class CaseworkerCreateGeneralLetterIT {
         assertThatJson(response)
             .isEqualTo(json(expectedResponse("classpath:caseworker-general-letter-confidential-response.json")));
 
-    }
-
-    @Test
-    public void shouldSendProcessedGeneralLetterDocumentsForApplicant() throws Exception {
-        final CaseData caseData = buildCaseDataWithGeneralLetter(APPLICANT);
-
-        final ListValue<GeneralLetterDetails> doc1 = ListValue.<GeneralLetterDetails>builder()
-            .value(GeneralLetterDetails.builder()
-                .generalLetterLink(Document.builder().build())
-                .build())
-            .build();
-
-        caseData.setGeneralLetters(Lists.newArrayList(doc1));
-
-        String response = mockMvc.perform(post(SUBMITTED_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_CREATE_GENERAL_LETTER)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        verify(generalLetterPrinter).sendLetterWithAttachments(any(CaseData.class), anyLong());
     }
 
     @Test

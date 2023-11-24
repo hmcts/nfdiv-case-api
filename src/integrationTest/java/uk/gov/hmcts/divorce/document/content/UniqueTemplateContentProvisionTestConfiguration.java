@@ -5,6 +5,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.time.Clock;
+import uk.gov.hmcts.divorce.document.content.templatecontent.GeneralLetterTemplateContent;
 
 @TestConfiguration
 @ComponentScan(basePackages = {"uk.gov.hmcts.divorce.document.content.templatecontent"})
@@ -16,4 +17,6 @@ public class UniqueTemplateContentProvisionTestConfiguration {
     private Clock clock;
     @MockBean
     private DocmosisCommonContent docmosisCommonContent;
+    @MockBean
+    private GeneralLetterTemplateContent generalLetterTemplateContent;
 }
