@@ -42,7 +42,7 @@ idam-pr:
       - https://frontend-${SERVICE_FQDN}/oauth2/callback
       - https://frontend-${SERVICE_FQDN}/oauth2/callback-applicant2
 
-ccd-cleanup:
+ccd-def-cleanup:
   enabled: true
   change_id: ${CHANGE_ID}
   case_type_ids:

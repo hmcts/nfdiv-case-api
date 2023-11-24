@@ -5,7 +5,7 @@ nfdiv-frontend:
 idam-pr:
   enabled: false
 
-ccd-cleanup:
+ccd-def-cleanup:
   enabled: false
 
 java:
