@@ -44,8 +44,7 @@ idam-pr:
 
 ccd-cleanup:
   enabled: true
-  changeId:
-    - ${CHANGE_ID}
-  caseTypeIds:
+  change_id: ${CHANGE_ID}
+  case_type_ids:
     - NFD
     - NO_FAULT_DIVORCE_BulkAction
