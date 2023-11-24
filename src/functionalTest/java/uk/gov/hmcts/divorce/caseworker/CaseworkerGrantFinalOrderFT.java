@@ -20,7 +20,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -40,36 +39,9 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-grant-final-order-solicitor.json";
 
     @Test
-    public void shouldSendBothSolicitorsEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_SOLICITOR_JSON);
-
-        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
-    public void shouldSendBothApplicantEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
-
-        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
-    public void shouldSendBothApplicantSwitchToSoleEmailsWhenSubmittedCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
-        caseData.put("finalOrderSwitchedToSole", YES);
-
-        final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForDivorce() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
@@ -83,6 +55,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForDivorce()
         throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+        caseData.put("finalOrderSwitchedToSole", YES);
         caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
@@ -95,6 +68,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
         caseData.put("divorceOrDissolution", "dissolution");
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
@@ -113,6 +87,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     public void shouldGenerateGrantFinalOrderDocumentAndCoverLetterWhenAboutToSubmitCallbackIsInvokedForOfflineCase() throws Exception {
         final Map<String, Object> caseData = caseData(
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON);
+        caseData.put("finalOrderSwitchedToSole", YES);
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
@@ -127,6 +102,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForCP() throws Exception {
         final Map<String, Object> caseData = caseData(
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
+        caseData.put("finalOrderSwitchedToSole", YES);
         caseData.put("divorceOrDissolution", "dissolution");
         caseData.put("applicant1LanguagePreferenceWelsh", "Yes");
 
