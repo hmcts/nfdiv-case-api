@@ -458,14 +458,6 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
-        Applicant2Approved,
-        InBulkList
-    ));
-
-    public static final EnumSet<State> SYSTEM_REMOVE_BULK_CASE_STATES = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
         Applicant2Approved
     ));
 

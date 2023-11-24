@@ -15,8 +15,8 @@ import java.util.EnumSet;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.SYSTEM_REMOVE_BULK_CASE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -41,7 +41,7 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_REMOVE_BULK_CASE)
-            .forStates(SYSTEM_REMOVE_BULK_CASE_STATES)
+            .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name("System remove bulk case")
             .description("System remove bulk case")
