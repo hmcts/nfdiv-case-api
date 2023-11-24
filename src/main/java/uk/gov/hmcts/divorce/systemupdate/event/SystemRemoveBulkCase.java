@@ -13,8 +13,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
@@ -34,7 +39,12 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
         ConditionalOrderPronounced,
         Rejected,
         Withdrawn,
-        Archived
+        Archived,
+        OfflineDocumentReceived,
+        AwaitingFinalOrder,
+        FinalOrderPending,
+        FinalOrderComplete,
+        FinalOrderRequested
     );
 
     @Override
