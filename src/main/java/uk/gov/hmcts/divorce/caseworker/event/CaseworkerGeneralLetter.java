@@ -1,17 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import com.google.common.collect.Lists;
-import java.time.Clock;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -24,25 +15,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
-import uk.gov.hmcts.divorce.document.print.BulkPrintService;
-import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 
-
+import java.time.Clock;
 import java.util.Collection;
-import uk.gov.hmcts.divorce.document.print.model.Print;
+import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
@@ -56,8 +44,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
@@ -70,11 +56,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
     private final LetterPrinter letterPrinter;
     private final GeneralLetterDocumentPack generalLetterDocumentPack;
-    private final CaseDataDocumentService caseDataDocumentService;
     private final Clock clock;
     private final DocumentIdProvider documentIdProvider;
-    private final BulkPrintService bulkPrintService;
-
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -153,15 +136,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
         } else if (RESPONDENT.equals(generalLetter.getGeneralLetterParties())) {
             return caseData.getApplicant2();
         } else {
-            List<String> splitName = new ArrayList<>(
-                    Arrays.asList(
-                            generalLetter.getOtherRecipientName().trim().split("\\s+")));
-
-            return Applicant.builder()
-                    .firstName(splitName.remove(0))
-                    .lastName(splitName.remove(splitName.size() - 1))
-                    .middleName(String.join(" ", splitName))
-                    .address(generalLetter.getOtherRecipientAddress()).build();
+            return null;
         }
     }
 
@@ -172,7 +147,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                     ofNullable(caseData.getDocuments().getConfidentialDocumentsGenerated())
                             .flatMap(Collection::stream)
                             .map(ListValue::getValue)
-                            .filter(document -> getConfidentialDocumentType(GENERAL_LETTER).equals(document.getConfidentialDocumentsReceived()))
+                            .filter(document -> getConfidentialDocumentType(GENERAL_LETTER)
+                                    .equals(document.getConfidentialDocumentsReceived()))
                             .findFirst()
                             .map(ConfidentialDivorceDocument::getDocumentLink);
         } else {

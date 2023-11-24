@@ -1,17 +1,21 @@
 package uk.gov.hmcts.divorce.document.content.templatecontent;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.getPostalAddress;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -30,7 +34,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class GeneralLetterTemplateContent implements TemplateContent{
+public class GeneralLetterTemplateContent implements TemplateContent {
 
     private final CommonContent commonContent;
     private final DocmosisCommonContent docmosisCommonContent;
@@ -44,8 +48,14 @@ public class GeneralLetterTemplateContent implements TemplateContent{
 
     @Override
     public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+
+        LanguagePreference languagePreference =
+                GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                        ? caseData.getApplicant2().getLanguagePreference()
+                        : caseData.getApplicant1().getLanguagePreference();
+
         Map<String, Object> templateContent = docmosisCommonContent
-                .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
+                .getBasicDocmosisTemplateContent(languagePreference);
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
 
