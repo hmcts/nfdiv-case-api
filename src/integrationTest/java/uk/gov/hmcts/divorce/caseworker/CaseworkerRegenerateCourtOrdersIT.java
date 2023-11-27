@@ -6,6 +6,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,11 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +115,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
+    @MockBean
+    private Clock clock;
+
     @BeforeAll
     static void setUp() {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
@@ -121,6 +129,14 @@ public class CaseworkerRegenerateCourtOrdersIT {
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
+    }
+
+    @BeforeEach
+    void setClock() {
+        LocalDateTime dateTime = LocalDateTime.of(2022, Month.FEBRUARY, 15, 13, 39);
+        Instant instant = dateTime.atZone(ZoneId.of("Europe/London")).toInstant();
+        when(clock.instant()).thenReturn(instant);
+        when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
     @Test
@@ -226,6 +242,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V3.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(

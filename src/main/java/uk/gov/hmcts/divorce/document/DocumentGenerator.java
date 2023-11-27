@@ -41,14 +41,23 @@ public class DocumentGenerator {
                                              String templateName,
                                              CaseData caseData,
                                              long caseId) {
+        generateAndStoreCaseDocument(documentType, templateId, templateName, caseData, caseId, null);
+    }
+
+    public void generateAndStoreCaseDocument(DocumentType documentType,
+                                             String templateId,
+                                             String templateName,
+                                             CaseData caseData,
+                                             long caseId,
+                                             Applicant applicant) {
         //this is a case document like FO Granted or CO Granted so is not specific to an applicant
-        var templateContent = getTemplateContent(caseId, null, caseData, documentType, templateId);
+        var templateContent = getTemplateContent(caseId, applicant, caseData, documentType, templateId);
 
         var generatedDocument = caseDataDocumentService.renderDocument(templateContent,
-                caseId,
-                templateId,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, templateName, now(clock)));
+            caseId,
+            templateId,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, templateName, now(clock)));
 
         caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
     }
@@ -106,15 +115,16 @@ public class DocumentGenerator {
         Map<String, Object> templateContent = getTemplateContent(caseId, applicant, caseData, documentType, templateId);
 
         Document generatedDocument = caseDataDocumentService.renderDocument(templateContent,
-                caseId,
-                templateId,
-                applicant.getLanguagePreference(),
-                formatDocumentName(caseId, docName, now(clock)));
+            caseId,
+            templateId,
+            applicant.getLanguagePreference(),
+            formatDocumentName(caseId, docName, now(clock)));
 
         caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
 
         return generatedDocument;
     }
+
 
     private Map<String, Object> getTemplateContent(long caseId,
                                                    Applicant applicant,

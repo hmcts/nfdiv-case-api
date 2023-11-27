@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,8 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrder;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinalOrderCoverLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -21,8 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -43,27 +41,21 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_EXPEDITE_FINAL_ORDER = "caseworker-expedite-final-order";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
-    private FinalOrderGrantedNotification finalOrderGrantedNotification;
-
-    @Autowired
-    private GenerateFinalOrderCoverLetter generateFinalOrderCoverLetter;
-
-    @Autowired
-    private GenerateFinalOrder generateFinalOrder;
-
-    @Autowired
-    private Clock clock;
+    private final NotificationDispatcher notificationDispatcher;
+    private final FinalOrderGrantedNotification finalOrderGrantedNotification;
+    private final DocumentGenerator documentGenerator;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -77,7 +69,6 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .endButtonLabel("Submit")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("expediteFinalOrder")
@@ -152,27 +143,21 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         caseData.getFinalOrder().getExpeditedFinalOrderAuthorisation()
             .setExpeditedFinalOrderGeneralOrder(generalOrderToExpediteFinancialOrder.get().getValue());
 
-        generateFinalOrderCoverLetter.apply(details);
-        generateFinalOrder.apply(details);
+        documentGenerator.generateAndStoreCaseDocument(
+            FINAL_ORDER_GRANTED,
+            FINAL_ORDER_TEMPLATE_ID,
+            FINAL_ORDER_DOCUMENT_NAME,
+            caseData,
+            details.getId()
+        );
 
         caseData.getDocuments().setGeneralOrderDocumentNames(null);
+
+        notificationDispatcher.send(finalOrderGrantedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(FinalOrderComplete)
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-
-        final Long caseId = details.getId();
-        final CaseData caseData = details.getData();
-
-        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
-
-        notificationDispatcher.send(finalOrderGrantedNotification, caseData, caseId);
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }
