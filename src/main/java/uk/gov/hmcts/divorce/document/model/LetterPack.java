@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
@@ -23,11 +22,11 @@ public class LetterPack {
     private List<ListValue<Document>> letters;
 
     @CCD(label = "Address")
-    private AddressGlobalUK recipientAddress;
+    private String recipientAddress;
 
     @JsonCreator
     public LetterPack(@JsonProperty("letters") List<ListValue<Document>> letters,
-                      @JsonProperty("recipientAddress") AddressGlobalUK recipientAddress) {
+                      @JsonProperty("recipientAddress") String recipientAddress) {
         this.letters = letters;
         this.recipientAddress = recipientAddress;
     }
