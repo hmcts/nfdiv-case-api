@@ -1,12 +1,13 @@
 package uk.gov.hmcts.divorce.caseworker.service.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.print.FinalOrderGrantedPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -15,8 +16,6 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.nonNull;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -34,20 +33,17 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINA
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class FinalOrderGrantedNotification implements ApplicantNotification {
 
     public static final String FINAL_ORDER_GRANTED_NOTIFICATION_TO_FOR_CASE_ID =
         "Sending Final Order Granted Notification to {} for case id: {}";
 
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private FinalOrderGrantedPrinter printer;
+    private final NotificationService notificationService;
+    private final CommonContent commonContent;
+    private final FinalOrderGrantedDocumentPack finalOrderGrantedDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
@@ -65,7 +61,9 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending Final Order Granted letter to Applicant 1: {}", caseId);
-        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, caseData.getApplicant1());
+        Applicant applicant1 = caseData.getApplicant1();
+        var documentPackInfo = finalOrderGrantedDocumentPack.getDocumentPack(caseData, applicant1);
+        letterPrinter.sendLetters(caseData, caseId, applicant1, documentPackInfo, finalOrderGrantedDocumentPack.getLetterId());
     }
 
     @Override
@@ -95,7 +93,9 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending Final Order Granted letter to Applicant 2: {}", caseId);
-        printer.print(caseData, caseId, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, caseData.getApplicant2());
+        Applicant applicant2 = caseData.getApplicant2();
+        var documentPackInfo = finalOrderGrantedDocumentPack.getDocumentPack(caseData, applicant2);
+        letterPrinter.sendLetters(caseData, caseId, applicant2, documentPackInfo, finalOrderGrantedDocumentPack.getLetterId());
     }
 
     @Override

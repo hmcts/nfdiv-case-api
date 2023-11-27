@@ -56,6 +56,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@Deprecated
 public class ConditionalOrderPronouncedCoverLetterHelper {
 
     public static final String NAME = "name";

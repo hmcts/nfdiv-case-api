@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.legaladvisor.service.conditionalorder;
+package uk.gov.hmcts.divorce.document.print.documentpack;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
@@ -8,8 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
-import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderRefusalDocumentPack;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 
 import java.util.Optional;
 
