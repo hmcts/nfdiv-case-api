@@ -13,7 +13,9 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -34,7 +36,7 @@ public class LetterPrinter {
 
         List<Letter> letters = documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo);
 
-        var currentPacks = caseData.getDocuments().getLetterPacks();
+        var currentPacks = Optional.ofNullable(caseData.getDocuments().getLetterPacks()).orElse(new ArrayList<>());
         var documents = letters.stream().map(this::documentFromLetter).map(this::toListValue).toList();
         var letterPack = LetterPack.builder().letters(documents)
             .recipientAddress(applicant.getCorrespondenceAddressWithoutConfidentialCheck())

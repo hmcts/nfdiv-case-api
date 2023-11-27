@@ -150,8 +150,7 @@ public class CaseDocuments {
         typeParameterOverride = "LetterPack",
         access = {CaseworkerCourtAdminWithSolicitorAccess.class}
     )
-    @Builder.Default
-    private List<ListValue<LetterPack>> letterPacks = new ArrayList<>();
+    private List<ListValue<LetterPack>> letterPacks;
 
 
     @CCD(
