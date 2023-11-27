@@ -38,7 +38,7 @@ public class LetterPrinter {
 
         var currentPacks = Optional.ofNullable(caseData.getDocuments().getLetterPacks()).orElse(new ArrayList<>());
         var documents = letters.stream().map(this::documentFromLetter).map(this::toListValue).toList();
-        var letterPack = LetterPack.builder().letters(documents).build();
+        var letterPack = LetterPack.builder().letters(documents).recipientAddress(applicant.getAddress()).build();
         currentPacks.add(ListValue.<LetterPack>builder().id(UUID.randomUUID().toString()).value(letterPack).build());
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
