@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.model.LetterPack;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -142,6 +143,14 @@ public class CaseDocuments {
         access = {DefaultAccess.class}
     )
     private List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService;
+
+    @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "LetterPack",
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+    )
+    private List<ListValue<LetterPack>> letterPacks;
 
 
     @CCD(
