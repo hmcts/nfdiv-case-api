@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.document.print.documentpack;
 
-import com.google.common.collect.ImmutableMap;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.util.Map;
 import java.util.Optional;
 
-public record DocumentPackInfo(ImmutableMap<DocumentType, Optional<String>> documentPack, ImmutableMap<String, String> templateInfo) {}
+public record DocumentPackInfo(Map<DocumentType, Optional<String>> documentPack, Map<String, String> templateInfo) {}
