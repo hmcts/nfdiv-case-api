@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
@@ -34,8 +35,7 @@ import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
@@ -592,7 +592,7 @@ public class SubmitAosIT {
         caseDetails.setData(data);
         caseDetails.setId(1L);
 
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
@@ -637,7 +637,7 @@ public class SubmitAosIT {
         caseDetails.setData(data);
         caseDetails.setId(1L);
 
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
 
