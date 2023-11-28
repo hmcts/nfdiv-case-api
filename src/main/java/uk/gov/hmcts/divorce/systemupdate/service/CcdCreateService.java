@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.getCaseType;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
@@ -38,7 +38,7 @@ public class CcdCreateService {
         final User user,
         final String serviceAuth) {
 
-        final String userId = user.getUserDetails().getId();
+        final String userId = user.getUserDetails().getUid();
         final String authorization = user.getAuthToken();
 
         try {

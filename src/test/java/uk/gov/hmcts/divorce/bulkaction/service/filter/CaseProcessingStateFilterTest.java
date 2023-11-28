@@ -7,8 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.EnumSet;
 import java.util.List;
