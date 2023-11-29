@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -15,8 +16,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisati
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 
@@ -339,7 +339,7 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldReturnTrueWhenUserHasCreatorRole() {
-        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserDetails.builder().id("user-id").build());
+        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(caseAssignmentApi.getUserRoles(
@@ -360,7 +360,7 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldReturnTrueWhenUserHasApplicant2Role() {
-        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserDetails.builder().id("user-id").build());
+        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(caseAssignmentApi.getUserRoles(
@@ -388,7 +388,7 @@ public class CcdAccessServiceTest {
                 .userId("4").build()
         );
         Long caseId = 123456L;
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().id("id").email("email").build());
+        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().uid("id").sub("email").build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(caseAssignmentApi.getUserRoles(SYSTEM_UPDATE_AUTH_TOKEN, SERVICE_AUTHORIZATION, List.of(caseId.toString())))
@@ -404,7 +404,7 @@ public class CcdAccessServiceTest {
     private User getIdamUser(String authToken, String userId, String email) {
         return new User(
             authToken,
-            UserDetails.builder().id(userId).email(email).build()
+            UserInfo.builder().uid(userId).sub(email).build()
         );
     }
 }

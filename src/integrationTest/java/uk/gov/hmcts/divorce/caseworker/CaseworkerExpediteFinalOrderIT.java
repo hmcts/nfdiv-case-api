@@ -86,8 +86,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -114,6 +114,14 @@ public class CaseworkerExpediteFinalOrderIT {
     public static final String EXPEDITE_FINAL_ORDER_RESPONSE_JSON = "classpath:caseworker-expedite-final-order-response.json";
     public static final String EXPEDITE_FINAL_ORDER_OFFLINE_RESPONSE_JSON
         = "classpath:caseworker-expedite-final-order-offline-response.json";
+
+    private static final String TEST_UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
+
+    private static final String FO_GRANTED_TEMPLATE_NAME = "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx";
+
+    private static final String FO_GRANTED_TEMPLATE_NAME_WELSH = "FL-NFD-GOR-WEL-Final-Order-Granted.docx";
+
+    private static final String FO_GRANTED_COVER_NAME = "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -186,7 +194,9 @@ public class CaseworkerExpediteFinalOrderIT {
         assertThatJson(response)
             .isEqualTo(json(expectedResponse(EXPEDITE_FINAL_ORDER_RESPONSE_JSON)));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), any(), any(), any(), anyLong());
+        verify(notificationService).sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), any(), any(), any(), anyLong());
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -262,7 +272,9 @@ public class CaseworkerExpediteFinalOrderIT {
         assertThatJson(response)
             .isEqualTo(jsonDocument.json());
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), any(), any(), any(), anyLong());
+        verify(notificationService).sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), any(), any(), any(), anyLong());
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -369,7 +381,8 @@ public class CaseworkerExpediteFinalOrderIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse("classpath:caseworker-expedite-final-order-solicitor-response.json")));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq(TEST_SOLICITOR_EMAIL), any(), any(), any(), anyLong());
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), any(), any(), any(), anyLong());
     }
 
     @Test
@@ -398,8 +411,9 @@ public class CaseworkerExpediteFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(TEST_UUID, FO_GRANTED_TEMPLATE_NAME);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -447,8 +461,9 @@ public class CaseworkerExpediteFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(TEST_UUID, FO_GRANTED_TEMPLATE_NAME);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -498,8 +513,9 @@ public class CaseworkerExpediteFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(TEST_UUID, FO_GRANTED_TEMPLATE_NAME_WELSH);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -577,8 +593,10 @@ public class CaseworkerExpediteFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(TEST_UUID, FO_GRANTED_TEMPLATE_NAME);
+        stubForDocAssemblyWith(TEST_UUID, FO_GRANTED_COVER_NAME);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -595,8 +613,6 @@ public class CaseworkerExpediteFinalOrderIT {
 
         verify(bulkPrintService, times(2)).print(any());
         verifyNoMoreInteractions(bulkPrintService);
-
-        verifyNoInteractions(notificationService);
     }
 
     CaseData buildCaseData(ApplicationType applicationType, DivorceOrDissolution divorceOrDissolution) {

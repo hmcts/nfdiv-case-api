@@ -31,6 +31,32 @@ public class DocumentGenerator {
     private final CaseDataDocumentService caseDataDocumentService;
     private final Clock clock;
 
+    public void generateAndStoreCaseDocument(DocumentType documentType,
+                                             String templateId,
+                                             String templateName,
+                                             CaseData caseData,
+                                             long caseId) {
+        generateAndStoreCaseDocument(documentType, templateId, templateName, caseData, caseId, null);
+    }
+
+    public void generateAndStoreCaseDocument(DocumentType documentType,
+                                             String templateId,
+                                             String templateName,
+                                             CaseData caseData,
+                                             long caseId,
+                                             Applicant applicant) {
+        //this is a case document like FO Granted or CO Granted so is not specific to an applicant
+        var templateContent = getTemplateContent(caseId, applicant, caseData, documentType, templateId);
+
+        var generatedDocument = caseDataDocumentService.renderDocument(templateContent,
+            caseId,
+            templateId,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, templateName, now(clock)));
+
+        caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
+    }
+
     public List<Letter> generateDocuments(final CaseData caseData,
                                           final long caseId,
                                           final Applicant applicant,
@@ -81,6 +107,24 @@ public class DocumentGenerator {
                                       final String templateId,
                                       final String docName) {
 
+        Map<String, Object> templateContent = getTemplateContent(caseId, applicant, caseData, documentType, templateId);
+
+        Document generatedDocument = caseDataDocumentService.renderDocument(templateContent,
+            caseId,
+            templateId,
+            applicant.getLanguagePreference(),
+            formatDocumentName(caseId, docName, now(clock)));
+
+        caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
+
+        return generatedDocument;
+    }
+
+    private Map<String, Object> getTemplateContent(long caseId,
+                                                   Applicant applicant,
+                                                   CaseData caseData,
+                                                   DocumentType documentType,
+                                                   String templateId) {
         List<TemplateContent> relevantTemplateContent = allTemplateContentHandlers.stream()
             .filter(handler -> handler.getSupportedTemplates().contains(templateId))
             .toList();
@@ -93,17 +137,7 @@ public class DocumentGenerator {
 
         log.info("Got the relevant template content bean for doctype {} for case {}", documentType, caseId);
 
-        Map<String, Object> templateContent = relevantTemplateContent.get(0).getTemplateContent(caseData, caseId, applicant);
-
-        Document generatedDocument = caseDataDocumentService.renderDocument(templateContent,
-            caseId,
-            templateId,
-            applicant.getLanguagePreference(),
-            formatDocumentName(caseId, docName, now(clock)));
-
-        caseDataDocumentService.updateCaseData(caseData, documentType, generatedDocument, caseId, templateId);
-
-        return generatedDocument;
+        return relevantTemplateContent.get(0).getTemplateContent(caseData, caseId, applicant);
     }
 
 }
