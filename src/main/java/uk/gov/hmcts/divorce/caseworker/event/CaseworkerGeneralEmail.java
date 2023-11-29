@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -111,13 +110,13 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         var caseData = details.getData();
         var generalEmail = caseData.getGeneralEmail();
         final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
-        final UserDetails userDetails = idamService.retrieveUser(userAuth).getUserDetails();
+        final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
         var generalEmailDetails = GeneralEmailDetails
             .builder()
             .generalEmailDateTime(LocalDateTime.now(clock))
             .generalEmailParties(generalEmail.getGeneralEmailParties())
-            .generalEmailCreatedBy(userDetails.getFullName())
+            .generalEmailCreatedBy(userDetails.getName())
             .generalEmailBody(generalEmail.getGeneralEmailDetails())
             .build();
 

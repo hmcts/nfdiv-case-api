@@ -88,6 +88,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialDocumentsTab(configBuilder);
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
+        buildLetterPackTab(configBuilder);
     }
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -483,5 +484,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("amendedApplications=\"*\"")
             .field("amendedApplications");
+    }
+
+    private void buildLetterPackTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("letterPack", "Letter packs")
+            .forRoles(SUPER_USER)
+            .showCondition("letterPacks=\"*\"")
+            .field("letterPacks");
     }
 }

@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.ofNullable;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
@@ -294,5 +295,12 @@ public final class DocumentUtil {
         );
 
         return map;
+    }
+
+    public static void removeExistingDocuments(CaseData caseData, List<DocumentType> documentTypesToRemove) {
+        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
+            caseData.getDocuments().getDocumentsGenerated()
+                    .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
+        }
     }
 }

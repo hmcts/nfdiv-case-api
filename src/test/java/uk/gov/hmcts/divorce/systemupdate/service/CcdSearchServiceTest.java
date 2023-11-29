@@ -15,13 +15,13 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsListConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ class CcdSearchServiceTest {
 
     @Test
     void shouldReturnCasesWithGivenStateBeforeTodayWithoutFlag() {
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final int from = 0;
         final int pageSize = 100;
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
@@ -132,7 +132,7 @@ class CcdSearchServiceTest {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, Submitted))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(totalCases)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
         final SearchResult expected2 = SearchResult.builder().total(totalCases)
@@ -161,7 +161,7 @@ class CcdSearchServiceTest {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, Submitted))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         final List<CaseDetails> caseDetailsList = createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID);
         final List<CaseDetails> duplicateCasesDetailsList = createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID);
@@ -204,7 +204,7 @@ class CcdSearchServiceTest {
             .must(matchQuery(STATE, Holding))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID))
             .build();
         final SearchResult expected2 = SearchResult.builder().total(totalCases).cases(createCaseDetailsList(1, PAGE_SIZE + 1))
@@ -254,7 +254,7 @@ class CcdSearchServiceTest {
     void shouldReturnAllCasesWithGivenStateWhenFlagIsPassed() {
 
         final int totalCases = 101;
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final int from = 0;
         final SearchResult expected = SearchResult.builder().total(totalCases)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
@@ -302,7 +302,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnCasesWithVersionOlderThan() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
 
@@ -338,7 +338,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnBulkCasesWithVersionOlderThan() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
 
@@ -374,7 +374,7 @@ class CcdSearchServiceTest {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery("state", Submitted))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         doThrow(feignException(422, "A reason")).when(coreCaseDataApi)
             .searchCases(
@@ -393,7 +393,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnAllPagesOfCasesInStateAwaitingPronouncement() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
         final SearchResult searchResult2 = SearchResult.builder().total(1)
@@ -428,7 +428,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldNotReturnDuplicateCasesInStateAwaitingPronouncement() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
         final SearchResult searchResult2 = SearchResult.builder().total(1)
@@ -468,7 +468,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldThrowCcdSearchFailedExceptionIfSearchingCasesInAwaitingPronouncementAllPagesFails() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         doThrow(feignException(422, "some error")).when(coreCaseDataApi)
             .searchCases(
@@ -489,7 +489,7 @@ class CcdSearchServiceTest {
     void shouldReturnAllCasesInStatePronouncedWithCasesInErrorListOrEmptyProcessedList() {
 
         final int totalCases = 101;
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expectedSearchResult1 = SearchResult.builder().total(totalCases)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
         final SearchResult expectedSearchResult2 = SearchResult.builder().total(totalCases)
@@ -521,7 +521,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldThrowCcdSearchCaseExceptionIfFeignExceptionIsThrown() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -540,7 +540,7 @@ class CcdSearchServiceTest {
     void shouldReturnAllCasesInStateCreatedOrListedWithCasesToBeRemoved() {
 
         final int totalCases = 101;
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expectedSearchResult1 = SearchResult.builder().total(totalCases)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
         final SearchResult expectedSearchResult2 = SearchResult.builder().total(totalCases)
@@ -572,7 +572,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldThrowCcdSearchCaseExceptionIfFeignExceptionIsThrownWhenFetchingCasesToRemove() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
         doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -595,7 +595,7 @@ class CcdSearchServiceTest {
             "1627504115236368",
             "1627568021302127"
         );
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected = SearchResult.builder()
             .total(caseReferences.size())
             .cases(createCaseDetailsList(caseReferences.size(), TEST_CASE_ID))
@@ -625,7 +625,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnJointApplicationCasesContainingAccessCodePostIssueApplication() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
 
@@ -662,7 +662,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnCasesInAwaitingAosWhereConfirmReadPetitionIsYes() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
 
@@ -695,7 +695,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
 
@@ -732,7 +732,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, TEST_CASE_ID)).build();
 
@@ -770,12 +770,12 @@ class CcdSearchServiceTest {
 
     @Test
     public void shouldReturnBulkCaseDetailsWithGivenCaseId() {
-        final User user = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().id("123").build());
+        final User user = new User(CASEWORKER_AUTH_TOKEN, UserInfo.builder().uid("123").build());
 
         when(coreCaseDataApi.readForCaseWorker(
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            user.getUserDetails().getId(),
+            user.getUserDetails().getUid(),
             BulkActionCaseTypeConfig.JURISDICTION,
             BulkActionCaseTypeConfig.getCaseType(),
             "1"
@@ -791,7 +791,7 @@ class CcdSearchServiceTest {
 
         verify(coreCaseDataApi).readForCaseWorker(CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
-            user.getUserDetails().getId(),
+            user.getUserDetails().getUid(),
             BulkActionCaseTypeConfig.JURISDICTION,
             BulkActionCaseTypeConfig.getCaseType(),
             "1");
@@ -800,7 +800,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldNotReturnMoreThanTheTotalMaxNumberOfCases() {
 
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
             .cases(createCaseDetailsList(PAGE_SIZE, 1)).build();
         final SearchResult searchResult2 = SearchResult.builder().total(PAGE_SIZE)

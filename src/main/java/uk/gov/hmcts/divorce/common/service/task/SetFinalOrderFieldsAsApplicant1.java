@@ -28,23 +28,20 @@ public class SetFinalOrderFieldsAsApplicant1 implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         log.info("Running SetFinalOrderFields task for CaseID {}", details.getId());
+        FinalOrder finalOrder = details.getData().getFinalOrder();
 
-        if (AwaitingFinalOrder.equals(details.getState())) {
+        if (!YesOrNo.YES.equals(finalOrder.getIsFinalOrderOverdue())) {
+            finalOrder.setApplicant1FinalOrderStatementOfTruth(YES);
+        }
+
+        if (AwaitingFinalOrder.equals(details.getState())
+            && isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
+            && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
             log.info("Updating final order fields for CaseID {} (SetFinalOrderFields)", details.getId());
-            CaseData caseData = details.getData();
-            FinalOrder finalOrder = details.getData().getFinalOrder();
 
-            if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
-                && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
-                finalOrder.setApplicant2AppliedForFinalOrderFirst(NO);
-                finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
-                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
-            }
-
-            if (!YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
-                finalOrder.setApplicant1FinalOrderStatementOfTruth(YES);
-                finalOrder.setApplicant2FinalOrderStatementOfTruth(YES);
-            }
+            finalOrder.setApplicant2AppliedForFinalOrderFirst(NO);
+            finalOrder.setApplicant1AppliedForFinalOrderFirst(YES);
+            finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
         }
 
         return details;

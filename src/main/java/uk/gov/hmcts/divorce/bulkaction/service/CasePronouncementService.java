@@ -11,10 +11,10 @@ import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseTask;
 import uk.gov.hmcts.divorce.bulkaction.task.PronounceCasesTask;
 import uk.gov.hmcts.divorce.bulkaction.task.RetryPronounceCasesTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 
