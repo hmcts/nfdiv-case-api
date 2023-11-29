@@ -12,11 +12,11 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
 import uk.gov.hmcts.divorce.bulkaction.task.ProcessFailedToUnlinkBulkCaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class SystemProcessFailedToUnlinkBulkCaseTaskTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
     }

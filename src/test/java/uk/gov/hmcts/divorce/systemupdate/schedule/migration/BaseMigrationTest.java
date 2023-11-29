@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.MigrateRetiredFields;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.SetFailedMigrationVersionToZero;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -16,8 +17,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ class BaseMigrationTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
     }
 
     @Test

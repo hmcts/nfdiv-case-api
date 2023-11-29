@@ -42,6 +42,7 @@ public class LetterPrinter {
             .recipientAddress(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .build();
         currentPacks.add(ListValue.<LetterPack>builder().id(UUID.randomUUID().toString()).value(letterPack).build());
+        caseData.getDocuments().setLetterPacks(currentPacks);
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
 

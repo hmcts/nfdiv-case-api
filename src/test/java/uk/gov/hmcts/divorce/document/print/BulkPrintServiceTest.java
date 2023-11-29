@@ -22,9 +22,9 @@ import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterApi;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.LetterV3;
@@ -598,10 +598,10 @@ class BulkPrintServiceTest {
     }
 
     private User solicitorUser(final List<String> roles, final String userId) {
-        UserDetails userDetails = UserDetails
+        var userDetails = UserInfo
             .builder()
             .roles(roles)
-            .id(userId)
+            .uid(userId)
             .build();
 
         return new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);

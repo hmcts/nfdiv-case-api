@@ -20,9 +20,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -102,10 +102,11 @@ public class CaseworkerGeneralEmailTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
             .thenReturn(new User(
-                    TEST_AUTHORIZATION_TOKEN, UserDetails
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
                     .builder()
-                    .forename("forename")
-                    .surname("lastname")
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
                     .build()
                 )
             );
@@ -157,10 +158,11 @@ public class CaseworkerGeneralEmailTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
             .thenReturn(new User(
-                    TEST_AUTHORIZATION_TOKEN, UserDetails
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
                     .builder()
-                    .forename("forename")
-                    .surname("lastname")
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
                     .build()
                 )
             );
