@@ -86,6 +86,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class CaseworkerRegenerateCourtOrdersIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final String APPLICANT1 = "applicant1";
+    public static final String APPLICANT2 = "applicant2";
 
     @Autowired
     private MockMvc mockMvc;
@@ -177,8 +179,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().firstName("Harry").offline(YES).build())
-            .applicant2(Applicant.builder().firstName("Sally").offline(YES).build())
+            .applicant1(Applicant.builder().firstName(APPLICANT1).offline(YES).build())
+            .applicant2(Applicant.builder().firstName(APPLICANT2).offline(YES).build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .court(BURY_ST_EDMUNDS)
@@ -212,7 +214,6 @@ public class CaseworkerRegenerateCourtOrdersIT {
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSuccess()));
-
     }
 
     @Test
@@ -416,8 +417,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().firstName("Harry").offline(YES).build())
-            .applicant2(Applicant.builder().firstName("Sally").offline(YES).build())
+            .applicant1(Applicant.builder().firstName(APPLICANT1).offline(YES).build())
+            .applicant2(Applicant.builder().firstName(APPLICANT2).offline(YES).build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .court(BURY_ST_EDMUNDS)
@@ -451,7 +452,6 @@ public class CaseworkerRegenerateCourtOrdersIT {
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess()));
-
     }
 
     @Test
@@ -500,8 +500,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().firstName("Harry").offline(YES).solicitorRepresented(YES).build())
-            .applicant2(Applicant.builder().firstName("Sally").offline(YES).solicitorRepresented(YES).build())
+            .applicant1(Applicant.builder().offline(YES).firstName(APPLICANT1).solicitorRepresented(YES).build())
+            .applicant2(Applicant.builder().offline(YES).firstName(APPLICANT2).solicitorRepresented(YES).build())
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .court(BURY_ST_EDMUNDS)

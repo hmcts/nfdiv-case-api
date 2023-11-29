@@ -1,7 +1,7 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.ConditionalOrderCourtDetails;
 import uk.gov.hmcts.divorce.common.config.ConditionalOrderCourtDetailsConfig;
@@ -9,13 +9,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
@@ -38,21 +43,26 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class CertificateOfEntitlementContent {
+public class CertificateOfEntitlementTemplateContent implements TemplateContent {
 
     private static final String IS_SOLE = "isSole";
     private static final String IS_JOINT = "isJoint";
     private static final String COURT_DETAILS = "courtDetails";
     private static final String APPROVAL_DATE = "approvalDate";
 
-    @Autowired
-    private ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
+    private final ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
+    private final DocmosisCommonContent docmosisCommonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID,
+                CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
+    }
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
 
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
@@ -63,13 +73,13 @@ public class CertificateOfEntitlementContent {
 
         final ConditionalOrderCourt conditionalOrderCourt = conditionalOrder.getCourt();
         final ConditionalOrderCourtDetails conditionalOrderCourtDetails = nonNull(conditionalOrderCourt)
-            ? conditionalOrderCourtDetailsConfig.get(conditionalOrderCourt.getCourtId())
-            : null;
+                ? conditionalOrderCourtDetailsConfig.get(conditionalOrderCourt.getCourtId())
+                : null;
 
         final LocalDate decisionDate = conditionalOrder.getDecisionDate();
         final String approvalDate = nonNull(decisionDate)
-            ? decisionDate.format(DATE_TIME_FORMATTER)
-            : null;
+                ? decisionDate.format(DATE_TIME_FORMATTER)
+                : null;
 
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
         templateContent.put(COURT_DETAILS, conditionalOrderCourtDetails);
@@ -89,17 +99,17 @@ public class CertificateOfEntitlementContent {
 
         if (WELSH.equals(applicant1.getLanguagePreference())) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
-                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_CY : CIVIL_PARTNERSHIP_CY);
+                    caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_CY : CIVIL_PARTNERSHIP_CY);
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
-                caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
+                    caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE : CIVIL_PARTNERSHIP);
         }
 
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
         final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
         final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
         final String beforeDateOfHearing = nonNull(dateAndTimeOfHearing)
-            ? dateAndTimeOfHearing.minusDays(7).format(DATE_TIME_FORMATTER) : null;
+                ? dateAndTimeOfHearing.minusDays(7).format(DATE_TIME_FORMATTER) : null;
 
         templateContent.put(DATE_OF_HEARING, dateOfHearing);
         templateContent.put(TIME_OF_HEARING, timeOfHearing);
