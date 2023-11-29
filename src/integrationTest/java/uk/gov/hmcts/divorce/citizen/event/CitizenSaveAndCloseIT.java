@@ -13,11 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.service.notify.NotificationClientException;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -73,9 +73,9 @@ public class CitizenSaveAndCloseIT {
 
     @BeforeEach
     public void setUp() {
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
+        final var userDetails = UserInfo.builder()
+            .sub("test@test.com")
+            .uid("app1")
             .build();
 
         when(idamService.retrieveUser(eq(AUTH_HEADER_VALUE)))
