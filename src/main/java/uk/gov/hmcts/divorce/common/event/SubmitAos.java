@@ -111,6 +111,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
         final CaseDetails<CaseData, State> updateDetails = submitAosService.submitAos(details);
 
+        submitAosService.submitAosNotifications(details);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
             .state(updateDetails.getState())
@@ -121,8 +123,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Submit AoS submitted callback invoked for Case Id: {}", details.getId());
-
-        submitAosService.submitAosNotifications(details);
 
         final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
 

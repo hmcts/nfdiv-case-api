@@ -1,16 +1,25 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -38,7 +47,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class AosResponseLetterTemplateContent {
+@RequiredArgsConstructor
+public class AosResponseLetterTemplateContent implements TemplateContent {
 
     public static final String RELATION = "relation";
     public static final String CIVIL_PARTNER = "civil partner";
@@ -52,17 +62,25 @@ public class AosResponseLetterTemplateContent {
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS = "divorceOrEndCivilPartnershipProcess";
     public static final String WAIT_UNTIL_DATE = "waitUntilDate";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
+    private final HoldingPeriodService holdingPeriodService;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final Clock clock;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(
+            NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED,
+            NFD_NOP_APP1_JS_SOLE_DISPUTED,
+            NFD_NOP_APP1_JS_SOLE_UNDISPUTED,
+            RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID
+        );
+    }
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-
-    @Autowired
-    private Clock clock;
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseData, caseId);
+    }
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {

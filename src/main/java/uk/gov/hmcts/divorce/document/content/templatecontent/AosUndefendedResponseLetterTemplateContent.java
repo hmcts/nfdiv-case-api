@@ -1,14 +1,21 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
+import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -35,18 +42,27 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class AosUndefendedResponseLetterTemplateContent {
-
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+@RequiredArgsConstructor
+public class AosUndefendedResponseLetterTemplateContent implements TemplateContent {
 
     private static final String DATE_TO_WAIT_UNTIL_APPLY_FOR_CO = "dateToWaitUntilApplyForCO";
+
+    private final CommonContent commonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final HoldingPeriodService holdingPeriodService;
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(
+            NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
+            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID
+        );
+    }
+
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseData, caseId);
+    }
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
@@ -64,7 +80,7 @@ public class AosUndefendedResponseLetterTemplateContent {
         templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
         templateContent.put(DATE_TO_WAIT_UNTIL_APPLY_FOR_CO,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-            .format(DATE_TIME_FORMATTER));
+                .format(DATE_TIME_FORMATTER));
 
         if (caseData.isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, DIVORCE_SERVICE);

@@ -32,6 +32,15 @@ public class GenerateD84Form implements CaseTask {
         }
     }
 
+    public void generateD84(final CaseData caseData) {
+        final boolean d84DocumentAlreadyGenerated =
+            documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D84);
+
+        if (!d84DocumentAlreadyGenerated) {
+            addD84ToGeneratedDocuments(caseData);
+        }
+    }
+
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
@@ -54,6 +63,14 @@ public class GenerateD84Form implements CaseTask {
             generateFormHelper.addFormToGeneratedDocuments(caseData, D84, D84_DISPLAY_NAME, D84_FILENAME, D84_FILE_LOCATION);
         } catch (Exception e) {
             log.error("Error encountered whilst adding D84 document to list of generated documents for case id: {}", caseId);
+        }
+    }
+
+    private void addD84ToGeneratedDocuments(CaseData caseData) {
+        try {
+            generateFormHelper.addFormToGeneratedDocuments(caseData, D84, D84_DISPLAY_NAME, D84_FILENAME, D84_FILE_LOCATION);
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not generate d84");
         }
     }
 }
