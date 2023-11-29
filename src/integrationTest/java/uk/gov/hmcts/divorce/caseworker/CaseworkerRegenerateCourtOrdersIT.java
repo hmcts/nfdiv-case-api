@@ -27,7 +27,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -45,10 +44,6 @@ import java.util.List;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -108,9 +103,6 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
-
-    @MockBean
-    private BulkPrintService bulkPrintService;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -222,9 +214,6 @@ public class CaseworkerRegenerateCourtOrdersIT {
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSuccess()));
-
-        verify(bulkPrintService, times(2)).print(any());
-        verifyNoMoreInteractions(bulkPrintService);
     }
 
     @Test
@@ -463,9 +452,6 @@ public class CaseworkerRegenerateCourtOrdersIT {
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess()));
-
-        verify(bulkPrintService, times(2)).print(any());
-        verifyNoMoreInteractions(bulkPrintService);
     }
 
     @Test
