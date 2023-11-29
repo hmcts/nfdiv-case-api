@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForFinalOrderDocume
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter;
 
 import java.time.LocalDate;
 
@@ -80,9 +79,6 @@ class AwaitingFinalOrderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
-
-    @Mock
-    private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
 
     @Mock
     private ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
@@ -442,8 +438,6 @@ class AwaitingFinalOrderNotificationTest {
         caseData.setApplicationType(SOLE_APPLICATION);
 
         awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
-
-        verifyNoInteractions(applyForFinalOrderPrinter);
     }
 
 }

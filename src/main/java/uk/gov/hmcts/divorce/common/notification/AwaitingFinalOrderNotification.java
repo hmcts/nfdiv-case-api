@@ -40,7 +40,6 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     private final CommonContent commonContent;
 
-
     private final NotificationService notificationService;
 
     private final ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
