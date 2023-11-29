@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.content.templatecontent.CertificateOfEntitlementTemplateContent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +48,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 class CertificateOfEntitlementContentIT {
 
     @Autowired
-    private CertificateOfEntitlementContent certificateOfEntitlementContent;
+    private CertificateOfEntitlementTemplateContent certificateOfEntitlementContent;
 
     @Test
     void shouldReturnTemplateSetFromCaseDataAndCourtDetailsConfig() {
@@ -86,7 +87,7 @@ class CertificateOfEntitlementContentIT {
         expectedDetails.setEmail("contactdivorce@justice.gov.uk");
         expectedDetails.setPhone("0300 303 0642");
 
-        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(contentMap).contains(
             entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
@@ -141,7 +142,7 @@ class CertificateOfEntitlementContentIT {
         expectedDetails.setEmail("contactdivorce@justice.gov.uk");
         expectedDetails.setPhone("0300 303 0642");
 
-        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(contentMap).contains(
             entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
@@ -197,7 +198,7 @@ class CertificateOfEntitlementContentIT {
         expectedDetails.setEmail("contactdivorce@justice.gov.uk");
         expectedDetails.setPhone("0300 303 0642");
 
-        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(contentMap).contains(
             entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
