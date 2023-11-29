@@ -37,6 +37,7 @@
     "jurisdictionConnections": [
       "A"
     ],
+    "letterPacks": "${json-unit.ignore}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1HWFNeedHelp": "No",
     "applicant2InviteEmailAddress": "applicant2@test.com",
@@ -46,10 +47,10 @@
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "GeneralLetter-2021-06-17:01:00.pdf",
+            "document_filename": "GeneralLetter-1616591401473378-2021-06-17:01:00.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           },
-          "documentFileName": "GeneralLetter-2021-06-17:01:00.pdf",
+          "documentFileName": "GeneralLetter-1616591401473378-2021-06-17:01:00.pdf",
           "documentType": "generalLetter"
         }
       }
@@ -64,7 +65,7 @@
           "generalLetterParties": "applicant",
           "generalLetterLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "GeneralLetter-2021-06-17:01:00.pdf",
+            "document_filename": "GeneralLetter-1616591401473378-2021-06-17:01:00.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           },
           "generalLetterAttachmentLinks": [

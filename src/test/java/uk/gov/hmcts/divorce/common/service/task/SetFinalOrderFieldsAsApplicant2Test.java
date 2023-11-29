@@ -77,4 +77,36 @@ class SetFinalOrderFieldsAsApplicant2Test {
         assertThat(result.getData().getFinalOrder().getApplicant1AppliedForFinalOrderFirst()).isNull();
         assertThat(result.getData().getFinalOrder().getDateFinalOrderSubmitted()).isNull();
     }
+
+
+
+    @Test
+    void shouldUpdateFinalOrderStatementOfTruthIfCaseIsNotOverdue() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getFinalOrder().setIsFinalOrderOverdue(YesOrNo.NO);
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .state(AwaitingFinalOrder).id(TEST_CASE_ID).data(caseData)
+            .build();
+
+        CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
+        assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(YesOrNo.YES);
+        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+    }
+
+    @Test
+    void shouldNotUpdateFinalOrderStatementOfTruthIfCaseIsOverdue() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getFinalOrder().setIsFinalOrderOverdue(YesOrNo.YES);
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .state(AwaitingFinalOrder).id(TEST_CASE_ID).data(caseData)
+            .build();
+
+        CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
+        assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(null);
+        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+    }
 }
