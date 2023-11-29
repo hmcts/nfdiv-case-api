@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPendingReminderN
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -27,8 +28,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -106,7 +106,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         ReflectionTestUtils.setField(underTest, "submitCOrderReminderOffsetDays", DUE_DATE_OFFSET_DAYS);

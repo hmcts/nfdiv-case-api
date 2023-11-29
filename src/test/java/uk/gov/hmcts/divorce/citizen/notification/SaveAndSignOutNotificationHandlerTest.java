@@ -7,11 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -46,7 +46,7 @@ class SaveAndSignOutNotificationHandlerTest {
     @Test
     void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseData() {
         CaseData caseData = validApplicant2CaseData();
-        User user = new User(USER_TOKEN, UserDetails.builder().email(TEST_USER_EMAIL).build());
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
         when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
         when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
 
@@ -65,7 +65,7 @@ class SaveAndSignOutNotificationHandlerTest {
     @Test
     void shouldCallSendEmailToApp2WhenNotifyApplicantIsInvokedForGivenCaseData() {
         CaseData caseData = validApplicant2CaseData();
-        User user = new User(USER_TOKEN, UserDetails.builder().email(TEST_USER_EMAIL).build());
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
         when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
         when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(false);
 

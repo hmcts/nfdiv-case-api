@@ -9,9 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class PbaServiceTest {
     @Test
     void shouldPopulatePbaDynamicList() {
 
-        UserDetails solUserDetails = UserDetails.builder().email(TEST_SOLICITOR_EMAIL).build();
+        var solUserDetails = UserInfo.builder().sub(TEST_SOLICITOR_EMAIL).build();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);

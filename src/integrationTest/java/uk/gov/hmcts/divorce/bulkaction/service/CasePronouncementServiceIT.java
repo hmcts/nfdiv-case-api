@@ -20,13 +20,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class CasePronouncementServiceIT {
             .id(2L)
             .build();
 
-        var userDetails = UserDetails.builder().id(SYSTEM_USER_USER_ID).build();
+        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
         var user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);

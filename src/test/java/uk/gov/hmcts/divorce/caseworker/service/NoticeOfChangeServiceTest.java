@@ -11,12 +11,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
