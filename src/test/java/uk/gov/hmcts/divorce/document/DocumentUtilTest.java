@@ -26,6 +26,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
@@ -39,7 +40,11 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContac
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
@@ -322,11 +327,49 @@ class DocumentUtilTest {
         assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(0);
     }
 
+    @Test
+    void shouldRemoveGeneratedDocuments() {
+
+        final CaseData caseData = buildCaseDataWithDocuments();
+
+        removeExistingDocuments(caseData,
+                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+
+        assertEquals(1, caseData.getDocuments().getDocumentsGenerated().size());
+        assertEquals(CERTIFICATE_OF_ENTITLEMENT, caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType());
+    }
+
     private DocumentInfo documentInfo() {
         return new DocumentInfo(
             DOC_URL,
             PDF_FILENAME,
             DOC_BINARY_URL
         );
+    }
+
+    private CaseData buildCaseDataWithDocuments() {
+        final CaseData caseData = caseData();
+        caseData.setDocuments(CaseDocuments.builder()
+                .documentsGenerated(Lists.newArrayList(
+                        ListValue.<DivorceDocument>builder()
+                                .id("1")
+                                .value(DivorceDocument.builder()
+                                        .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
+                                        .build())
+                                .build(),
+                        ListValue.<DivorceDocument>builder()
+                                .id("2")
+                                .value(DivorceDocument.builder()
+                                        .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2)
+                                        .build())
+                                .build(),
+                        ListValue.<DivorceDocument>builder()
+                                .id("3")
+                                .value(DivorceDocument.builder()
+                                        .documentType(CERTIFICATE_OF_ENTITLEMENT)
+                                        .build()).build()
+                ))
+                .build());
+        return caseData;
     }
 }
