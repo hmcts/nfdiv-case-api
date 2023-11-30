@@ -12,12 +12,12 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseTask;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +58,7 @@ public class CcdUpdateService {
                             final User user,
                             final String serviceAuth) {
 
-        final String userId = user.getUserDetails().getId();
+        final String userId = user.getUserDetails().getUid();
         final String authorization = user.getAuthToken();
 
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
@@ -88,7 +88,7 @@ public class CcdUpdateService {
 
         log.info("Submit event with retry for Case ID: {}, Event ID: {}", caseId, eventId);
 
-        final String userId = user.getUserDetails().getId();
+        final String userId = user.getUserDetails().getUid();
         final String authorization = user.getAuthToken();
 
         try {
@@ -134,7 +134,7 @@ public class CcdUpdateService {
 
         log.info("Submit event with retry for Case ID: {}, Event ID: {}", caseId, eventId);
 
-        final String userId = authorization.getUserDetails().getId();
+        final String userId = authorization.getUserDetails().getUid();
 
         try {
             final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
@@ -179,7 +179,7 @@ public class CcdUpdateService {
 
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
         try {
-            final String userId = authorization.getUserDetails().getId();
+            final String userId = authorization.getUserDetails().getUid();
 
             final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
                 authorization.getAuthToken(),
@@ -224,7 +224,7 @@ public class CcdUpdateService {
 
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
         try {
-            final String userId = authorization.getUserDetails().getId();
+            final String userId = authorization.getUserDetails().getUid();
 
             final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
                 authorization.getAuthToken(),

@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class DocumentRemovalService {
 
     public void deleteDocument(final List<ListValue<DivorceDocument>> documentsToRemove) {
 
-        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
+        final var systemUser = idamService.retrieveSystemUpdateUserDetails();
 
         documentsToRemove.stream().parallel().forEach(document -> {
             documentManagementClient.deleteDocument(
@@ -41,7 +40,7 @@ public class DocumentRemovalService {
 
     public void deleteScannedDocuments(final List<ListValue<ScannedDocument>> scannedDocsToRemove) {
 
-        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
+        final var systemUser = idamService.retrieveSystemUpdateUserDetails();
 
         scannedDocsToRemove.stream().parallel().forEach(document -> {
             documentManagementClient.deleteDocument(
