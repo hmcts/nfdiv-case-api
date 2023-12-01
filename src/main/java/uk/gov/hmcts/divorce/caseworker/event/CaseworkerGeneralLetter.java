@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
@@ -32,8 +33,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -109,7 +108,9 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
         log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
-        Applicant applicant = getApplicantByParty(caseData);
+        Applicant applicant = GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                ? caseData.getApplicant2()
+                : caseData.getApplicant1();
 
         letterPrinter.sendLetters(caseData,
                 details.getId(),
@@ -125,19 +126,6 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
-    }
-
-    private Applicant getApplicantByParty(CaseData caseData) {
-
-        var generalLetter = caseData.getGeneralLetter();
-
-        if (APPLICANT.equals(generalLetter.getGeneralLetterParties())) {
-            return caseData.getApplicant1();
-        } else if (RESPONDENT.equals(generalLetter.getGeneralLetterParties())) {
-            return caseData.getApplicant2();
-        } else {
-            return null;
-        }
     }
 
     private void updateGeneralLetters(CaseData caseData) {
