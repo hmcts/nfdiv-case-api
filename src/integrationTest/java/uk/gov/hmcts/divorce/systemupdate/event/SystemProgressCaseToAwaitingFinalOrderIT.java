@@ -175,14 +175,15 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
                     objectMapper.writeValueAsString(
                         callbackRequest(caseData, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ConditionalOrderPronounced.name())))
                 .accept(APPLICATION_JSON))
-            .andExpect(jsonPath("$.data.confidentialDocumentsGenerated.length()").value(3))
-            .andExpect(jsonPath("$.data.confidentialDocumentsGenerated[0].value.confidentialDocumentsReceived").value("coversheet"))
+            .andExpect(jsonPath("$.data.confidentialDocumentsGenerated.length()").value(4))
+            .andExpect(jsonPath("$.data.confidentialDocumentsGenerated[0].value.confidentialDocumentsReceived")
+                .value("finalOrderCanApplyApp2"))
             .andExpect(jsonPath("$.data.confidentialDocumentsGenerated[1].value.confidentialDocumentsReceived")
+                .value("coversheet"))
+            .andExpect(jsonPath("$.data.confidentialDocumentsGenerated[2].value.confidentialDocumentsReceived")
                 .value("finalOrderCanApplyApp1"))
-            .andExpect(jsonPath("$.data.confidentialDocumentsGenerated[2].value.confidentialDocumentsReceived").value("coversheet"))
-            .andExpect(jsonPath("$.data.documentsGenerated.length()").value(2))
-            .andExpect(jsonPath("$.data.documentsGenerated[0].value.documentType").value("finalOrderCanApplyApp2"))
-            .andExpect(jsonPath("$.data.documentsGenerated[1].value.documentType").value("d36"));
+            .andExpect(jsonPath("$.data.documentsGenerated.length()").value(1))
+            .andExpect(jsonPath("$.data.documentsGenerated[0].value.documentType").value("d36"));
 
         verify(documentUploadClientApi, times(1)).upload(
             anyString(),
