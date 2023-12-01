@@ -49,7 +49,31 @@
             "document_binary_url": "${json-unit.any-string}"
           },
           "documentFileName": "${json-unit.any-string}",
+          "confidentialDocumentsReceived": "coversheet"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}",
           "confidentialDocumentsReceived": "finalOrderCanApplyApp1"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "confidentialDocumentsReceived": "coversheet"
         }
       }
     ],
