@@ -38,16 +38,6 @@ def secrets = [
                 secret('idam-data-store-client-secret','IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET'),
                 secret('idam-data-store-system-user-username','IDAM_DATA_STORE_SYSTEM_USER_USERNAME'),
                 secret('idam-data-store-system-user-password','IDAM_DATA_STORE_SYSTEM_USER_PASSWORD'),
-                secret('data-store-api-POSTGRES-DATABASE','CCD_DATA_STORE_POSTGRES_DATABASE'),
-                secret('data-store-api-POSTGRES-HOST','CCD_DATA_STORE_POSTGRES_HOST'),
-                secret('data-store-api-POSTGRES-PORT','CCD_DATA_STORE_POSTGRES_PORT'),
-                secret('data-store-api-POSTGRES-USER','CCD_DATA_STORE_POSTGRES_USERNAME'),
-                secret('data-store-api-POSTGRES-PASS','CCD_DATA_STORE_POSTGRES_PASSWORD'),
-                secret('definition-store-api-POSTGRES-DATABASE','CCD_DEF_STORE_POSTGRES_DATABASE'),
-                secret('definition-store-api-POSTGRES-HOST','CCD_DEF_STORE_POSTGRES_HOST'),
-                secret('definition-store-api-POSTGRES-PORT','CCD_DEF_STORE_POSTGRES_PORT'),
-                secret('definition-store-api-POSTGRES-USER','CCD_DEF_STORE_POSTGRES_USERNAME'),
-                secret('definition-store-api-POSTGRES-PASS','CCD_DEF_STORE_POSTGRES_PASSWORD'),
         ],
         'nfdiv-${env}'    :[
                 secret('ccd-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
@@ -238,17 +228,6 @@ withPipeline(type, product, component) {
     env.FEE_API_URL = "http://fees-register-api-ithc.service.core-compute-ithc.internal"
   }
 
-  // TODO replace this with helm operator
-  afterAlways('functionalTest:preview') {
-    if (!checkForKeepHelmLabel(env.BRANCH_NAME)) {
-      sh "./bin/remove-case-type.sh"
-    }
-  }
-
-}
-
-def checkForKeepHelmLabel(branch_name) {
-  return new GithubAPI(this).checkForLabel(env.BRANCH_NAME, "enable_keep_helm")
 }
 
 def setCommonEnvVariables() {

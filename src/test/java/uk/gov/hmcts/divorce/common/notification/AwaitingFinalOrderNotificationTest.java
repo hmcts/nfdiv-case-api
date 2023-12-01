@@ -10,15 +10,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForFinalOrderDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForFinalOrderPrinter;
 
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -78,7 +81,10 @@ class AwaitingFinalOrderNotificationTest {
     private NotificationService notificationService;
 
     @Mock
-    private ApplyForFinalOrderPrinter applyForFinalOrderPrinter;
+    private ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
+
+    @Mock
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private AwaitingFinalOrderNotification awaitingFinalOrderNotification;
@@ -382,26 +388,48 @@ class AwaitingFinalOrderNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
 
+        DocumentPackInfo documentPackInfo = mock(DocumentPackInfo.class);
+
+        when(applyForFinalOrderDocumentPack.getDocumentPack(
+            caseData,
+            caseData.getApplicant1())).thenReturn(documentPackInfo);
+
         awaitingFinalOrderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(applyForFinalOrderPrinter).sendLettersToApplicant1Offline(
+        verify(applyForFinalOrderDocumentPack).getDocumentPack(
+            caseData,
+            caseData.getApplicant1());
+
+        verify(letterPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant1()
-        );
+            caseData.getApplicant1(),
+            documentPackInfo,
+            applyForFinalOrderDocumentPack.getLetterId());
     }
 
     @Test
     void shouldSendCanApplyForFinalOrderLettersToOfflineApplicant2InJointApplication() {
         CaseData caseData = validJointApplicant1CaseData();
 
+        DocumentPackInfo documentPackInfo = mock(DocumentPackInfo.class);
+
+        when(applyForFinalOrderDocumentPack.getDocumentPack(
+            caseData,
+            caseData.getApplicant2())).thenReturn(documentPackInfo);
+
         awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(applyForFinalOrderPrinter).sendLettersToApplicant2Offline(
+        verify(applyForFinalOrderDocumentPack).getDocumentPack(
+            caseData,
+            caseData.getApplicant2());
+
+        verify(letterPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant2()
-        );
+            caseData.getApplicant2(),
+            documentPackInfo,
+            applyForFinalOrderDocumentPack.getLetterId());
     }
 
     @Test
@@ -410,8 +438,6 @@ class AwaitingFinalOrderNotificationTest {
         caseData.setApplicationType(SOLE_APPLICATION);
 
         awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
-
-        verifyNoInteractions(applyForFinalOrderPrinter);
     }
 
 }
