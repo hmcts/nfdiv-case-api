@@ -1,5 +1,7 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +10,10 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-
-import java.util.Map;
-
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
@@ -28,7 +29,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class NoticeOfProceedingJointContent {
+public class NoticeOfProceedingJointTemplateContent implements TemplateContent{
 
     public static final String DUE_DATE = "dueDate";
     public static final String SUBMISSION_RESPONSE_DATE = "submissionResponseDate";
@@ -81,10 +82,17 @@ public class NoticeOfProceedingJointContent {
     @Autowired
     private CommonContent commonContent;
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference,
-                                     Applicant applicant,
-                                     Applicant partner) {
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+    }
+
+    @Override
+    public Map<String, Object> getTemplateContent(final CaseData caseData,
+                                                  final Long ccdCaseReference,
+                                                  Applicant applicant) {
+
+        var partner = caseData.getApplicant1().equals(applicant) ? caseData.getApplicant2() : caseData.getApplicant1();
 
         final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicantLanguagePreference);

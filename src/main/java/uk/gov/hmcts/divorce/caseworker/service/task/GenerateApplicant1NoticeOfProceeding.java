@@ -10,13 +10,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 
 import java.time.Clock;
 import java.util.Map;
+import uk.gov.hmcts.divorce.document.content.templatecontent.NoticeOfProceedingSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
@@ -42,7 +43,7 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private NoticeOfProceedingContent templateContent;
+    private NoticeOfProceedingSoleTemplateContent templateContent;
 
     @Autowired
     private NoticeOfProceedingJointContent jointTemplateContent;
@@ -55,6 +56,9 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private LetterPrinter letterPrinter;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -96,11 +100,14 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
         } else {
             log.info("Generating notice of proceedings for applicant for sole case id {} ", caseId);
 
-            content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
+          //  content = templateContent.apply(caseData, caseId, caseData.getApplicant2(), applicant1.getLanguagePreference());
+            content = templateContent.getTemplateContent(caseData, caseId, applicant1);
             templateId = caseData.getApplication().isCourtServiceMethod()
                 ? NFD_NOP_A1_SOLE_APP1_CIT_CS
                 : NFD_NOP_AL2_SOLE_APP1_CIT_PS;
         }
+
+        letterPrinter.sendLetters(caseData, caseId, );
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
