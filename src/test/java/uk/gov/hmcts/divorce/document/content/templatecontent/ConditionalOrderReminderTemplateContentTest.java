@@ -112,7 +112,8 @@ public class ConditionalOrderReminderTemplateContentTest {
 
     @Test
     public void shouldReturnSupportedTemplates() {
-        assertThat(conditionalOrderReminderTemplateContent.getSupportedTemplates()).isEqualTo(List.of(CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID));
+        assertThat(conditionalOrderReminderTemplateContent.getSupportedTemplates())
+            .isEqualTo(List.of(CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID));
     }
 
     private AddressGlobalUK applicantAddress() {
