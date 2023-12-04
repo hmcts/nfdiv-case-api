@@ -86,7 +86,13 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
             log.info("Sending reminder applicant 1 offline that they can apply for a conditional order: {}", caseId);
             final Applicant applicant = caseData.getApplicant1();
             var documentPackInfo = awaitingConditionalOrderReminderNotificationDocumentPack.getDocumentPack(caseData, applicant);
-            letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId());
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant,
+                documentPackInfo,
+                awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId()
+            );
 
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline(YesOrNo.YES);
@@ -101,7 +107,13 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
             log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
             final Applicant applicant = caseData.getApplicant2();
             var documentPackInfo = awaitingConditionalOrderReminderNotificationDocumentPack.getDocumentPack(caseData, applicant);
-            letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId());
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant,
+                documentPackInfo,
+                awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId()
+            );
 
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline(YesOrNo.YES);
