@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
@@ -84,7 +85,8 @@ public class NoticeOfProceedingJointTemplateContent implements TemplateContent{
 
     @Override
     public List<String> getSupportedTemplates() {
-        return List.of(NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        return List.of(NFD_NOP_JA1_JOINT_APP1APP2_CIT, NFD_NOP_JA1_JOINT_APP1APP2_CIT,
+                NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class NoticeOfProceedingJointTemplateContent implements TemplateContent{
                                                   final Long ccdCaseReference,
                                                   Applicant applicant) {
 
-        var partner = caseData.getApplicant1().equals(applicant) ? caseData.getApplicant2() : caseData.getApplicant1();
+        var partner = caseData.getApplicant1().equals(applicant) ? caseData.getApplicant2() : applicant;
 
         final LanguagePreference applicantLanguagePreference = applicant.getLanguagePreference();
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(applicantLanguagePreference);

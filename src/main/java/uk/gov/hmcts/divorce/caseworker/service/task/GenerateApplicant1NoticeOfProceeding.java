@@ -107,8 +107,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
                 : NFD_NOP_AL2_SOLE_APP1_CIT_PS;
         }
 
-        letterPrinter.sendLetters(caseData, caseId, );
-
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             NOTICE_OF_PROCEEDINGS_APP_1,
@@ -201,16 +199,6 @@ public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
             );
         } else {
             log.info("Generating notice of judicial separation proceedings for applicant for case id {} ", caseId);
-
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                NOTICE_OF_PROCEEDINGS_APP_1,
-                templateContent.apply(caseData, caseId, caseData.getApplicant2(), languagePreference),
-                caseId,
-                isCourtService ? NFD_NOP_APP1_JS_SOLE : NFD_NOP_APP1_JS_SOLE_OS_PS,
-                languagePreference,
-                formatDocumentName(caseId, NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME, now(clock))
-            );
         }
     }
 }

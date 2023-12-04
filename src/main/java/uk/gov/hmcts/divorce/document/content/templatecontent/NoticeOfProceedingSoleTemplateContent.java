@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -26,6 +27,11 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_A1_SOLE_AP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_OS_PS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP2_JS_SOLE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -40,6 +46,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DISPLAY_HEADER_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
@@ -148,7 +155,9 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
 
     @Override
     public List<String> getSupportedTemplates() {
-        return List.of(NFD_NOP_A1_SOLE_APP1_CIT_CS, NFD_NOP_AL2_SOLE_APP1_CIT_PS, NFD_NOP_APP1_JS_SOLE, NFD_NOP_APP1_JS_SOLE_OS_PS);
+        return List.of(NFD_NOP_A1_SOLE_APP1_CIT_CS, NFD_NOP_AL2_SOLE_APP1_CIT_PS, NFD_NOP_APP1_JS_SOLE,
+                NFD_NOP_APP1_JS_SOLE_OS_PS, NFD_NOP_APP2_JS_SOLE, NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
     }
 
     @Override
@@ -156,6 +165,7 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
 
         var languagePreference = applicant.getLanguagePreference();
         var partner = caseData.getApplicant2();
+        var application = caseData.getApplication();
 
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
@@ -169,11 +179,11 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
         templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, partner.getFullName());
 
-        if (caseData.getApplication().getIssueDate() == null) {
+        if (application.getIssueDate() == null) {
             throw new InvalidCcdCaseDataException("Cannot generate notice of proceeding without issue date. Case ID: " + caseId);
         }
 
-        templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(ISSUE_DATE, application.getIssueDate().format(DATE_TIME_FORMATTER));
         if (!isNull(caseData.getDueDate())) {
             templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         }
@@ -182,12 +192,12 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
 
         templateContent.put(
                 SUBMISSION_RESPONSE_DATE,
-                holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
+                holdingPeriodService.getDueDateFor(application.getIssueDate()).format(DATE_TIME_FORMATTER)
         );
 
         templateContent.put(
                 SERVE_PAPERS_BEFORE_DATE,
-                caseData.getApplication().getIssueDate().plusDays(PAPER_SERVE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+                application.getIssueDate().plusDays(PAPER_SERVE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
         );
 
         templateContent.put(APPLICANT_1_ADDRESS, applicant.getPostalAddress());
@@ -204,7 +214,7 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
 
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
-        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
+        final boolean personalServiceMethod = PERSONAL_SERVICE.equals(application.getServiceMethod());
         final boolean isApplicant2Represented = partner.isRepresented();
         templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod && isApplicant2Represented);
 
@@ -212,17 +222,17 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
             generateSoleRespondentRepresentedContent(templateContent, caseData, personalServiceMethod, languagePreference);
         }
 
-        if (!isNull(caseData.getApplication().getReissueDate())) {
+        if (!isNull(application.getReissueDate())) {
             templateContent.put(HAS_CASE_BEEN_REISSUED, true);
-            templateContent.put(REISSUE_DATE, caseData.getApplication().getReissueDate().format(DATE_TIME_FORMATTER));
+            templateContent.put(REISSUE_DATE, application.getReissueDate().format(DATE_TIME_FORMATTER));
             templateContent.put(
                     RESPOND_BY_DATE,
-                    caseData.getApplication().getReissueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+                    application.getReissueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
             );
         } else {
             templateContent.put(
                     RESPOND_BY_DATE,
-                    caseData.getApplication().getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+                    application.getIssueDate().plusDays(RESPONDENT_SOLICITOR_RESPONSE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
             );
         }
 
@@ -230,13 +240,17 @@ public class NoticeOfProceedingSoleTemplateContent implements TemplateContent {
         templateContent.put(CAN_SERVE_BY_EMAIL,
                 !applicant.isApplicantOffline() && !partner.isBasedOverseas());
 
-        templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
-        templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
+        templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(application.getServiceMethod()));
+        templateContent.put(IS_PERSONAL_SERVICE, application.isPersonalServiceMethod());
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
                 config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, applicant.getLanguagePreference());
+
+        if (!application.isCourtServiceMethod()) {
+            templateContent.put(DISPLAY_HEADER_ADDRESS, true);
+        }
 
         return templateContent;
     }

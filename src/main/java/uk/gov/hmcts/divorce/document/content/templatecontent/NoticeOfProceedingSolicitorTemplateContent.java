@@ -20,6 +20,9 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOLIC
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ADDRESS_BASED_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -65,7 +68,9 @@ public class NoticeOfProceedingSolicitorTemplateContent implements TemplateConte
     @Override
     public List<String> getSupportedTemplates() {
         return List.of(NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS, NFD_NOP_AS2_SOLE_APP1_SOL_SS, NFD_NOP_APP1APP2_SOL_JS_JOINT,
-                NFD_NOP_APP1_SOLICITOR_JS_SOLE, NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID);
+                NFD_NOP_APP1_SOLICITOR_JS_SOLE, NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID,
+                NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE, NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE,
+                NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS, NFD_NOP_APP1APP2_SOL_JS_JOINT);
     }
 
     @Override
