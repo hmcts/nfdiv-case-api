@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.legaladvisor.service.printer;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +23,7 @@ import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
