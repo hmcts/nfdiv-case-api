@@ -14,12 +14,12 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsListConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Arrays;
 import java.util.Deque;
@@ -194,7 +194,7 @@ public class CcdSearchService {
     public uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> searchForBulkCaseById(
         String bulkCaseId, User user, String serviceAuth) {
 
-        final String userId = user.getUserDetails().getId();
+        final String userId = user.getUserDetails().getUid();
         final String authorization = user.getAuthToken();
 
         final CaseDetails bulkCaseDetails = coreCaseDataApi.readForCaseWorker(

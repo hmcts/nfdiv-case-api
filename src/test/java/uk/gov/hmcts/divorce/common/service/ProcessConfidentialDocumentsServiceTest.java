@@ -135,12 +135,13 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(2, nonConfidentialDocuments.size());
-        assertEquals(1, confidentialDocuments.size());
+        assertEquals(1, nonConfidentialDocuments.size());
+        assertEquals(2, confidentialDocuments.size());
 
         assertThat(confidentialDocuments.stream()
             .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-            .collect(Collectors.toList()),  containsInAnyOrder(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+            .collect(Collectors.toList()),  containsInAnyOrder(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
+            ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
         );
     }
 

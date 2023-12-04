@@ -8,13 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -248,8 +248,8 @@ class CcdUpdateServiceTest {
     private User getCaseworkerDetails() {
         return new User(
             CASEWORKER_AUTH_TOKEN,
-            UserDetails.builder()
-                .id(CASEWORKER_USER_ID)
+            UserInfo.builder()
+                .uid(CASEWORKER_USER_ID)
                 .build());
     }
 
@@ -263,8 +263,8 @@ class CcdUpdateServiceTest {
     private User systemUpdateUser() {
         return new User(
             SYSTEM_UPDATE_AUTH_TOKEN,
-            UserDetails.builder()
-                .id(SYSTEM_USER_USER_ID)
+            UserInfo.builder()
+                .uid(SYSTEM_USER_USER_ID)
                 .build());
     }
 }

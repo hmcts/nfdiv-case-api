@@ -20,10 +20,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -142,7 +142,7 @@ class CaseworkerIssueApplicationTest {
 
     @Test
     void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 

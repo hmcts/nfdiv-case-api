@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 
@@ -34,7 +34,7 @@ public class SaveAndSignOutNotificationHandler {
         final var partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
 
         notificationService.sendEmail(
-            user.getUserDetails().getEmail(),
+            user.getUserDetails().getSub(),
             SAVE_SIGN_OUT,
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner),
             applicant.getLanguagePreference(),

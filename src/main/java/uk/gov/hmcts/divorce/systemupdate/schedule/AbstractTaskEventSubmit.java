@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 @Component
 @Slf4j

@@ -16,10 +16,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -283,6 +283,6 @@ public class CitizenSwitchToSoleApplicationIT {
     private void setupMocks(boolean isApplicant1) {
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(isApplicant1);
         when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserDetails.builder().build()));
+            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
     }
 }

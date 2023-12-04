@@ -90,14 +90,14 @@ public class RegenerateCourtOrdersPrinterTest {
                 CaseDocuments.builder()
                     .documentsGenerated(
                         asList(
-                            coGrantedCoversheet,
-                            coGrantedDoc,
-                            foGrantedCoverLetter,
-                            foGrantedDoc,
-                            coeCoverLetter,
-                            coeDoc)
-                    )
-                    .build()
+                                coGrantedCoversheet,
+                                coGrantedDoc,
+                                foGrantedCoverLetter,
+                                foGrantedDoc,
+                                coeCoverLetter,
+                                coeDoc)
+                )
+                .build()
             )
             .build();
 
