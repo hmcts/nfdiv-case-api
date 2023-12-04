@@ -2,9 +2,9 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
@@ -39,7 +39,6 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventSubmit {
 
     public static final String NOTIFICATION_FLAG = "applicantsRemindedCanApplyForConditionalOrder";
@@ -49,13 +48,26 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopping due to conflict with another running task";
     private static final int MAX_RETRIES = 5;
 
-    private final CcdSearchService ccdSearchService;
-    private final IdamService idamService;
-    private final AuthTokenGenerator authTokenGenerator;
-    private final AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
-    private final ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
-    private final NotificationDispatcher notificationDispatcher;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private CcdSearchService ccdSearchService;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
+
+    @Autowired
+    private ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;
