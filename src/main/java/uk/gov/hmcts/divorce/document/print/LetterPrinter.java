@@ -8,7 +8,9 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
@@ -53,19 +55,40 @@ public class LetterPrinter {
 
             if ("general-letter".equals(letterName)) {
                 letters.addAll(addAnyAttachmentsToPackForGeneralLetter(caseData));
+
+                GeneralParties parties = caseData.getGeneralLetter().getGeneralLetterParties();
+
+                var recipientName = switch (parties) {
+                    case RESPONDENT -> caseData.getApplicant2().getFullName();
+                    case APPLICANT -> caseData.getApplicant1().getFullName();
+                    case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
+                };
+
+                final String caseIdString = caseId.toString();
+                final Print print = new Print(
+                        letters,
+                        caseIdString,
+                        caseIdString,
+                        letterName,
+                        recipientName
+                );
+
+                final UUID letterId = bulkPrintService.print(print);
+                log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+            } else {
+
+                final String caseIdString = caseId.toString();
+                final Print print = new Print(
+                        letters,
+                        caseIdString,
+                        caseIdString,
+                        letterName,
+                        applicant.getFullName()
+                );
+                final UUID letterId = bulkPrintService.print(print);
+
+                log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
             }
-
-            final String caseIdString = caseId.toString();
-            final Print print = new Print(
-                letters,
-                caseIdString,
-                caseIdString,
-                letterName,
-                applicant.getFullName()
-            );
-            final UUID letterId = bulkPrintService.print(print);
-
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             throw new IllegalArgumentException(
                 "%s letter pack has missing documents. Expected documents with type %s for case %s".formatted(
