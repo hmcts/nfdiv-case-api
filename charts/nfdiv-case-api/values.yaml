@@ -5,6 +5,9 @@ nfdiv-frontend:
 idam-pr:
   enabled: false
 
+ccd-def-cleanup:
+  enabled: false
+
 java:
   applicationPort: 4013
   image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'

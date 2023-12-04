@@ -20,16 +20,15 @@ public class GenerateD36Form {
     @Autowired
     private GenerateFormHelper generateFormHelper;
 
-    public void generateD36Document(final CaseData caseData, Long caseId) {
+    public void generateD36Document(final CaseData caseData) {
         final boolean d36DocumentAlreadyGenerated =
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D36);
 
         if (!d36DocumentAlreadyGenerated) {
             try {
-                log.info("Adding D36 to list of generated documents for case id: {}", caseId);
                 generateFormHelper.addFormToGeneratedDocuments(caseData, D36, D36_DISPLAY_NAME, D36_FILENAME, D36_FILE_LOCATION);
             } catch (Exception e) {
-                log.error("Error encountered whilst adding D36 document to list of generated documents for case id: {}", caseId);
+                log.error("Error encountered whilst adding D36 document to list of generated documents");
             }
         }
     }
