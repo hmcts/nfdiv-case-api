@@ -80,7 +80,7 @@ public class SystemUnlinkApplicantFromCase implements CCDConfig<CaseData, State,
 
         log.info("System unlink user from case (id: {})",  details.getId());
         var citizenUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
-        ccdAccessService.unlinkUserFromCase(details.getId(), citizenUser.getUserDetails().getId());
+        ccdAccessService.unlinkUserFromCase(details.getId(), citizenUser.getUserDetails().getUid());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

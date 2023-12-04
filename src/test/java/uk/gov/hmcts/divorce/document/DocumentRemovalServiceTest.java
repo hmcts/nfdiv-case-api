@@ -12,9 +12,9 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -195,10 +195,10 @@ public class DocumentRemovalServiceTest {
     }
 
     private User systemUser(final List<String> solicitorRoles, final String userId) {
-        final UserDetails userDetails = UserDetails
+        final UserInfo userDetails = UserInfo
             .builder()
             .roles(solicitorRoles)
-            .id(userId)
+            .uid(userId)
             .build();
 
         return new User(SYSTEM_USER_USER_ID, userDetails);

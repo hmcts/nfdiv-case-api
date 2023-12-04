@@ -13,8 +13,8 @@ import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.EntitlementGra
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,7 +22,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -32,13 +31,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseWithCourtHea
 class SystemUpdateCaseWithCourtHearingTest {
 
     @Mock
-    private GenerateCertificateOfEntitlement generateCertificateOfEntitlement;
-
-    @Mock
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
     private EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
+
+    @Mock
+    private DocumentGenerator documentGenerator;
 
     @InjectMocks
     private SystemUpdateCaseWithCourtHearing systemUpdateCaseWithCourtHearing;
@@ -70,7 +69,6 @@ class SystemUpdateCaseWithCourtHearingTest {
         updatedDetails.setId(caseId);
         updatedDetails.setData(caseData);
 
-        when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedDetails);
         doNothing().when(notificationDispatcher).send(entitlementGrantedConditionalOrderNotification, caseData, caseId);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -91,8 +89,6 @@ class SystemUpdateCaseWithCourtHearingTest {
 
         updatedDetails.setId(caseId);
         updatedDetails.setData(validCaseWithCourtHearing());
-
-        when(generateCertificateOfEntitlement.apply(caseDetails)).thenReturn(updatedDetails);
 
         systemUpdateCaseWithCourtHearing.aboutToSubmit(caseDetails, null);
 

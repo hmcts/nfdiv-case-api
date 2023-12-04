@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

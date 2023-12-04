@@ -1,19 +1,23 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.getPostalAddress;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FEEDBACK;
@@ -28,24 +32,32 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class GeneralLetterTemplateContent {
+public class GeneralLetterTemplateContent implements TemplateContent {
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final CommonContent commonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final Clock clock;
 
-    @Autowired
-    private CommonContent commonContent;
 
-    @Autowired
-    private Clock clock;
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(GENERAL_LETTER_TEMPLATE_ID);
+    }
 
-    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, LanguagePreference languagePreference) {
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+
+        LanguagePreference languagePreference =
+                GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                        ? caseData.getApplicant2().getLanguagePreference()
+                        : caseData.getApplicant1().getLanguagePreference();
 
         Map<String, Object> templateContent = docmosisCommonContent
                 .getBasicDocmosisTemplateContent(languagePreference);
 
-        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
 
         var generalLetter = caseData.getGeneralLetter();
 
@@ -53,7 +65,7 @@ public class GeneralLetterTemplateContent {
 
         templateContent.put(FEEDBACK, generalLetter.getGeneralLetterDetails());
         templateContent.put(ISSUE_DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-        templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
+        templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
         return templateContent;

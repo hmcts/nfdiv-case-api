@@ -58,7 +58,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
-import static uk.gov.hmcts.divorce.systemupdate.service.print.CertificateOfEntitlementPrinter.LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -369,8 +368,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
         final Print print = printCaptor.getValue();
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CERTIFICATE_OF_ENTITLEMENT);
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetterType()).isEqualTo("certificate-of-entitlement");
+        assertThat(print.getLetters()).hasSize(2);
     }
 
     @Test
@@ -389,10 +388,12 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant1().setOffline(YES);
+        data.getApplicant1().setFirstName("Applicant1");
         data.getApplicant1().setEmail(null);
         data.getApplicant1().setContactDetailsType(PUBLIC);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setOffline(YES);
+        data.getApplicant2().setFirstName("Applicant2");
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setSolicitorRepresented(NO);
 
