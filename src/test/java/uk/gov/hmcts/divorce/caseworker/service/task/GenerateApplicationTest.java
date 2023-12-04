@@ -11,8 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
-import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationJointContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationSoleContent;
 
 import java.time.Clock;
 import java.util.HashMap;
@@ -47,10 +47,10 @@ class GenerateApplicationTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private ApplicationSoleTemplateContent applicationSoleTemplateContent;
+    private ApplicationSoleContent applicationSoleTemplateContent;
 
     @Mock
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private ApplicationJointContent applicationJointTemplateContent;
 
     @Mock
     private Clock clock;

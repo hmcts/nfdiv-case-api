@@ -9,8 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
-import uk.gov.hmcts.divorce.document.content.ApplicationSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationJointContent;
+import uk.gov.hmcts.divorce.document.content.ApplicationSoleContent;
 
 import java.time.Clock;
 import java.util.Map;
@@ -36,10 +36,10 @@ public class GenerateApplication implements CaseTask {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ApplicationSoleTemplateContent applicationSoleTemplateContent;
+    private ApplicationSoleContent applicationSoleTemplateContent;
 
     @Autowired
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private ApplicationJointContent applicationJointTemplateContent;
 
     @Autowired
     private Clock clock;

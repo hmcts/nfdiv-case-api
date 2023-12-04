@@ -50,7 +50,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class ApplicationJointTemplateContent {
+public class ApplicationJointContent {
 
     @Autowired
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;

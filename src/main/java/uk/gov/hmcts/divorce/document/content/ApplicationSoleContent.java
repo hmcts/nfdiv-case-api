@@ -65,7 +65,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 
 @Component
 @Slf4j
-public class ApplicationSoleTemplateContent {
+public class ApplicationSoleContent {
 
     @Autowired
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
