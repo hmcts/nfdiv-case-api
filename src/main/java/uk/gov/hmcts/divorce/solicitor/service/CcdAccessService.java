@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
@@ -14,7 +15,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisati
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +43,7 @@ public class CcdAccessService {
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
-        String solicitorUserId = solicitorUser.getUserDetails().getId();
+        String solicitorUserId = solicitorUser.getUserDetails().getUid();
 
         log.info("Adding roles {} to case Id {} and user Id {}",
             APPLICANT_1_SOLICITOR,
@@ -142,7 +142,7 @@ public class CcdAccessService {
                 userToken,
                 authTokenGenerator.generate(),
                 List.of(String.valueOf(caseId)),
-                List.of(user.getUserDetails().getId())
+                List.of(user.getUserDetails().getUid())
             )
                 .getCaseAssignmentUserRoles()
                 .stream()
@@ -160,7 +160,7 @@ public class CcdAccessService {
                 userToken,
                 authTokenGenerator.generate(),
                 List.of(String.valueOf(caseId)),
-                List.of(user.getUserDetails().getId())
+                List.of(user.getUserDetails().getUid())
             )
                 .getCaseAssignmentUserRoles()
                 .stream()
@@ -171,7 +171,7 @@ public class CcdAccessService {
 
     public void removeUsersWithRole(Long caseId, List<String> roles) {
         final var userDetails = idamService.retrieveSystemUpdateUserDetails().getUserDetails();
-        log.info("user email: {}, id: {}", userDetails.getEmail(), userDetails.getId());
+        log.info("user id: {}", userDetails.getUid());
         final var auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final var s2sToken = authTokenGenerator.generate();
         final var response = caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));

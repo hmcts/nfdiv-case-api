@@ -24,7 +24,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
     public static String getCaseType() {
         return ofNullable(getenv().get("CHANGE_ID"))
-            .map(num -> CASE_TYPE + "_PR_" + num)
+            .map(num -> CASE_TYPE + "-" + num)
             .orElse(CASE_TYPE);
     }
 
@@ -34,7 +34,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.setCallbackHost(getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
         var caseTypeDescription = ofNullable(getenv().get("CHANGE_ID"))
-            .map(num -> CASE_TYPE_DESCRIPTION + "_PR_" + num)
+            .map(num -> CASE_TYPE_DESCRIPTION + "-" + num)
             .orElse(CASE_TYPE_DESCRIPTION);
 
         configBuilder.caseType(getCaseType(), caseTypeDescription, "Handling of the dissolution of marriage");

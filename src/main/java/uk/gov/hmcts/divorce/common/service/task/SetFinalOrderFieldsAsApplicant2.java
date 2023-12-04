@@ -28,24 +28,22 @@ public class SetFinalOrderFieldsAsApplicant2 implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         log.info("Running SetFinalOrderFieldsAsApplicant2 task for CaseID {}", details.getId());
+        FinalOrder finalOrder = details.getData().getFinalOrder();
 
-        if (AwaitingFinalOrder.equals(details.getState())) {
-            log.info("Updating final order fields for CaseID {} (SetFinalOrderFieldsAsApplicant2)", details.getId());
-            CaseData caseData = details.getData();
-            FinalOrder finalOrder = details.getData().getFinalOrder();
-
-            if (isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
-                && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
-                finalOrder.setApplicant2AppliedForFinalOrderFirst(YES);
-                finalOrder.setApplicant1AppliedForFinalOrderFirst(NO);
-                finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
-            }
-
-            if (!YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
-                finalOrder.setApplicant1FinalOrderStatementOfTruth(YES);
-                finalOrder.setApplicant2FinalOrderStatementOfTruth(YES);
-            }
+        if (!YesOrNo.YES.equals(finalOrder.getIsFinalOrderOverdue())) {
+            finalOrder.setApplicant2FinalOrderStatementOfTruth(YES);
         }
+
+        if (AwaitingFinalOrder.equals(details.getState())
+            && isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
+            && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
+            log.info("Updating final order fields for CaseID {} (SetFinalOrderFieldsAsApplicant2)", details.getId());
+
+            finalOrder.setApplicant2AppliedForFinalOrderFirst(YES);
+            finalOrder.setApplicant1AppliedForFinalOrderFirst(NO);
+            finalOrder.setDateFinalOrderSubmitted(LocalDateTime.now(clock));
+        }
+
         return details;
     }
 }

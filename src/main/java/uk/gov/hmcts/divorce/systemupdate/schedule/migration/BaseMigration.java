@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.MigrateRetiredFields;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.SetFailedMigrationVersionToZero;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -12,7 +13,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
