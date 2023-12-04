@@ -18,13 +18,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.APPLICANT_ADDRESS;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.APPLICANT_FIRST_NAME;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.APPLICANT_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderContent.END_THE_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.APPLICANT_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.APPLICANT_FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.APPLICANT_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent.END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
@@ -37,10 +37,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ConditionalOrderReminderContentIT {
+public class ConditionalOrderReminderTemplateContentIT {
 
     @Autowired
-    private ConditionalOrderReminderContent conditionalOrderReminderContent;
+    private ConditionalOrderReminderTemplateContent conditionalOrderReminderTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForConditionalOrderReminderDocumentDivorceSole() {
@@ -64,11 +64,10 @@ public class ConditionalOrderReminderContentIT {
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        Map<String, Object> templateContent = conditionalOrderReminderContent.apply(
+        Map<String, Object> templateContent = conditionalOrderReminderTemplateContent.getTemplateContent(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2());
+            caseData.getApplicant1());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -95,11 +94,10 @@ public class ConditionalOrderReminderContentIT {
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, END_THE_CIVIL_PARTNERSHIP);
         expectedEntries.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
-        Map<String, Object> templateContent = conditionalOrderReminderContent.apply(
+        Map<String, Object> templateContent = conditionalOrderReminderTemplateContent.getTemplateContent(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant1(),
-            caseData.getApplicant2());
+            caseData.getApplicant1());
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
