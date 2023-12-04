@@ -1,52 +1,33 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.AwaitingConditionalOrderReminderNotificationDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderReminderPrinter;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderReminderDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class AwaitingConditionalOrderReminderNotification implements ApplicantNotification {
 
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private GenerateD84Form generateD84Form;
-
-    @Autowired
-    private GenerateCoversheet generateCoversheet;
-
-    @Autowired
-    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
-
-    @Autowired
-    private GenerateConditionalOrderReminderDocument generateConditionalOrderReminderDocument;
-
-    @Autowired
-    private ConditionalOrderReminderPrinter conditionalOrderReminderPrinter;
+    private final CommonContent commonContent;
+    private final NotificationService notificationService;
+    private final AwaitingConditionalOrderReminderNotificationDocumentPack awaitingConditionalOrderReminderNotificationDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -103,25 +84,9 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
 
         if (!caseData.getSentNotifications().hasAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline()) {
             log.info("Sending reminder applicant 1 offline that they can apply for a conditional order: {}", caseId);
-
-            generateCoversheet.generateCoversheet(
-                caseData,
-                caseId,
-                COVERSHEET_APPLICANT,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
-                caseData.getApplicant1().getLanguagePreference());
-
-            generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
-                caseData,
-                caseId,
-                caseData.getApplicant1(),
-                caseData.getApplicant2());
-
-            generateD84Form.generateD84Document(
-                caseData,
-                caseId);
-
-            conditionalOrderReminderPrinter.sendLetters(caseData, caseId, caseData.getApplicant1());
+            final Applicant applicant = caseData.getApplicant1();
+            var documentPackInfo = awaitingConditionalOrderReminderNotificationDocumentPack.getDocumentPack(caseData, applicant);
+            letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId());
 
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant1Offline(YesOrNo.YES);
@@ -134,25 +99,9 @@ public class AwaitingConditionalOrderReminderNotification implements ApplicantNo
         if (!caseData.getSentNotifications().hasAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline()
             && !caseData.getApplicationType().isSole()) {
             log.info("Sending reminder applicant 2 offline that they can apply for a conditional order for joint case: {}", caseId);
-
-            generateCoversheet.generateCoversheet(
-                caseData,
-                caseId,
-                COVERSHEET_APPLICANT,
-                coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                caseData.getApplicant2().getLanguagePreference());
-
-            generateConditionalOrderReminderDocument.generateConditionalOrderReminder(
-                caseData,
-                caseId,
-                caseData.getApplicant2(),
-                caseData.getApplicant1());
-
-            generateD84Form.generateD84Document(
-                caseData,
-                caseId);
-
-            conditionalOrderReminderPrinter.sendLetters(caseData, caseId, caseData.getApplicant2());
+            final Applicant applicant = caseData.getApplicant2();
+            var documentPackInfo = awaitingConditionalOrderReminderNotificationDocumentPack.getDocumentPack(caseData, applicant);
+            letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId());
 
             caseData.getSentNotifications()
                 .setAwaitingConditionalOrderReminderNotificationSendToApplicant2Offline(YesOrNo.YES);

@@ -5,15 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCoversheet;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.AwaitingConditionalOrderReminderNotificationDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderReminderPrinter;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderReminderDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.HashMap;
 
@@ -48,19 +45,10 @@ class AwaitingConditionalOrderReminderNotificationTest {
     private NotificationService notificationService;
 
     @Mock
-    private GenerateCoversheet generateCoversheet;
+    private AwaitingConditionalOrderReminderNotificationDocumentPack awaitingConditionalOrderReminderNotificationDocumentPack;
 
     @Mock
-    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
-
-    @Mock
-    private GenerateD84Form generateD84Form;
-
-    @Mock
-    private GenerateConditionalOrderReminderDocument generateConditionalOrderReminderDocument;
-
-    @Mock
-    private ConditionalOrderReminderPrinter conditionalOrderReminderPrinter;
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
@@ -91,7 +79,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationInWelshToApplicant1Whenapp1LangPrefIsWelsh() {
+    void shouldSendNotificationInWelshToApplicant1WhenApp1LangPrefIsWelsh() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
@@ -188,7 +176,14 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
         awaitingConditionalOrderReminderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        verify(awaitingConditionalOrderReminderNotificationDocumentPack).getDocumentPack(caseData, caseData.getApplicant1());
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            awaitingConditionalOrderReminderNotificationDocumentPack.getDocumentPack(caseData, caseData.getApplicant1()),
+            awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId()
+        );
     }
 
     @Test
@@ -198,7 +193,14 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
         awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(conditionalOrderReminderPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant2());
+        verify(awaitingConditionalOrderReminderNotificationDocumentPack).getDocumentPack(caseData, caseData.getApplicant2());
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            awaitingConditionalOrderReminderNotificationDocumentPack.getDocumentPack(caseData, caseData.getApplicant2()),
+            awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId()
+        );
     }
 
     @Test
@@ -208,7 +210,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).offline(YES).build());
         awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verifyNoInteractions(conditionalOrderReminderPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 
     @Test
@@ -241,7 +243,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
         awaitingConditionalOrderReminderNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verifyNoInteractions(conditionalOrderReminderPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 
     @Test
@@ -252,6 +254,6 @@ class AwaitingConditionalOrderReminderNotificationTest {
 
         awaitingConditionalOrderReminderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verifyNoInteractions(conditionalOrderReminderPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 }
