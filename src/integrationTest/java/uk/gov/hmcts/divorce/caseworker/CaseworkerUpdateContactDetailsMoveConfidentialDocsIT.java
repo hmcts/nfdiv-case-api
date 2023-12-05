@@ -126,15 +126,14 @@ public class CaseworkerUpdateContactDetailsMoveConfidentialDocsIT {
             .collect(Collectors.toSet()))
             .containsAll(List.of(
                 ConfidentialDocumentsReceived.AOS_RESPONSE_LETTER,
-                ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1)
+                ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1,
+                ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2)
             );
 
         List<ListValue<DivorceDocument>> regularDocs = convertDocs(convertedResponse,
             "documentsGenerated",
             DivorceDocument.class);
-        assertThat(regularDocs).hasSize(1);
-        assertThat(regularDocs.get(0).getValue().getDocumentType()).isEqualTo(DocumentType.FINAL_ORDER_CAN_APPLY_APP2);
-
+        assertThat(regularDocs).hasSize(0);
 
     }
 
@@ -208,15 +207,15 @@ public class CaseworkerUpdateContactDetailsMoveConfidentialDocsIT {
             .collect(Collectors.toSet()))
             .containsAll(List.of(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
-                ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2)
+                ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2,
+                ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1)
             );
 
         List<ListValue<DivorceDocument>> regularDocs = convertDocs(
             convertedResponse,
             "documentsGenerated",
             DivorceDocument.class);
-        assertThat(regularDocs).hasSize(1);
-        assertThat(regularDocs.get(0).getValue().getDocumentType()).isEqualTo(DocumentType.FINAL_ORDER_CAN_APPLY_APP1);
+        assertThat(regularDocs).hasSize(0);
     }
 
     private <T> List<ListValue<T>> convertDocs(AboutToStartOrSubmitCallbackResponse response,

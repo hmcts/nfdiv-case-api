@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
@@ -197,9 +196,9 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+        final ListValue<ConfidentialDivorceDocument> doc2 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
@@ -226,18 +225,19 @@ class DocumentUtilTest {
                 .generalLetterParties(RESPONDENT)
                 .build())
             .documents(CaseDocuments.builder()
-                .confidentialDocumentsGenerated(Lists.newArrayList(doc3, doc4))
-                .documentsGenerated(Lists.newArrayList(doc1, doc2))
+                .confidentialDocumentsGenerated(Lists.newArrayList(doc2, doc3, doc4))
+                .documentsGenerated(Lists.newArrayList(doc1))
                 .build())
             .build();
 
-        List<Letter> nonConfidentialNop1 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
+        List<Letter> confidentialNop1 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
         List<Letter> confidentialNop2 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
         List<Letter> confidentialGeneralLetter = getLettersBasedOnContactPrivacy(caseData, GENERAL_LETTER);
 
-        assertThat(nonConfidentialNop1.size()).isEqualTo(1);
-        assertThat(nonConfidentialNop1.get(0).getConfidentialDivorceDocument()).isNull();
-        assertThat(nonConfidentialNop1.get(0).getDivorceDocument().getDocumentType()).isEqualTo(NOTICE_OF_PROCEEDINGS_APP_1);
+        assertThat(confidentialNop1.size()).isEqualTo(1);
+        assertThat(confidentialNop1.get(0).getDivorceDocument()).isNull();
+        assertThat(confidentialNop1.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
+            .isEqualTo(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1);
 
         assertThat(confidentialNop2.size()).isEqualTo(1);
         assertThat(confidentialNop2.get(0).getDivorceDocument()).isNull();
@@ -248,36 +248,6 @@ class DocumentUtilTest {
         assertThat(confidentialGeneralLetter.get(0).getDivorceDocument()).isNull();
         assertThat(confidentialGeneralLetter.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
             .isEqualTo(ConfidentialDocumentsReceived.GENERAL_LETTER);
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant1WhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_1, true));
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant2WhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_2, false));
-    }
-
-    @Test
-    public void shouldReturnTrueWhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(GENERAL_LETTER, true));
-    }
-
-    @Test
-    public void shouldReturnFalseWhenGivenDocumentTypeIsNotApplicableForConfidentiality() {
-        assertFalse(isDocumentApplicableForConfidentiality(APPLICATION, true));
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant1WhenFOCoverLetterTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, true));
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant2WhenFOCoverLetterTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, false));
     }
 
     @Test
