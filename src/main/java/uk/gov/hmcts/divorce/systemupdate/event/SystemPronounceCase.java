@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -10,16 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
@@ -38,7 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
@@ -48,25 +43,14 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_PRONOUNCE_CASE = "system-pronounce-case";
     private final DocumentGenerator documentGenerator;
-    @Autowired
     private ConditionalOrderPronouncedNotification conditionalOrderPronouncedNotification;
-
-    @Autowired
     private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
-    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-
-    @Autowired
-    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
-
-    @Autowired
-    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -98,11 +82,6 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
             removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseData, details.getId());
             removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
-
-            caseTasks(
-                removeExistingConditionalOrderPronouncedDocument,
-                generateConditionalOrderPronouncedDocument
-            ).run(details);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

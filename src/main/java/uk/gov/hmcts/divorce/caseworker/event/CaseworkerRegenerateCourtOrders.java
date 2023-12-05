@@ -33,7 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
@@ -104,11 +103,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             //TODO: Needs to be split into tasks
             removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseData, details.getId());
             removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
-
-            caseTasks(
-                removeExistingConditionalOrderPronouncedDocument,
-                generateConditionalOrderPronouncedDocument
-            ).run(details);
         }
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {
