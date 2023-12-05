@@ -26,7 +26,7 @@ plugins {
   id 'org.springframework.boot' version '3.1.5'
   id 'com.github.ben-manes.versions' version '0.50.0'
   id 'hmcts.ccd.sdk' version '5.5.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.934'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.940'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -262,7 +262,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.1.1'
-  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11') {
+  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.8.0-ccd-5072.1') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.poi', module: 'poi-ooxml'
@@ -290,7 +290,7 @@ dependencies {
   implementation group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.4'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.0.4'
-  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '4.1.0-RELEASE'
+  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '4.1.1-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
