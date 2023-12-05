@@ -173,12 +173,15 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                 }
 
                 endState = AwaitingAos;
-                log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-                notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
             }
         }
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
+
+        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
+        if (endState != ServiceAdminRefusal) {
+            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+        }
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
