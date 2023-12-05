@@ -27,7 +27,7 @@ public class SetDueDateAfterIssue implements CaseTask {
     private Clock clock;
 
     /**
-     *  Joint applications skip AoS and go straight to 40 week holding.
+     *  Joint applications skip AoS and go straight to 20 week holding.
      *  Sole applications served by the solicitor issue the AoS when they confirm service and the dueDate is not set after issue.
      *  Sole applications served by the court issue the AoS immediately so the dueDate is 16 days.
      */

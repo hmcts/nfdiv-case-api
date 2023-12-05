@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.document.content.templatecontent.AosOverdueLetterTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -73,7 +74,7 @@ public class AosOverdueLetterTemplateContentTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
-        Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> result = templateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         assertThat(result).contains(
             entry("caseReference", formatId(TEST_CASE_ID)),
@@ -107,7 +108,7 @@ public class AosOverdueLetterTemplateContentTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
-        Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> result = templateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
         assertThat(result).contains(
             entry("caseReference", formatId(TEST_CASE_ID)),

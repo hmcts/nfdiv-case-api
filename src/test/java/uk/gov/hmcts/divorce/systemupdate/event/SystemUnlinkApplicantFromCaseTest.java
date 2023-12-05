@@ -15,9 +15,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDateTime;
 
@@ -71,7 +71,7 @@ public class SystemUnlinkApplicantFromCaseTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        User user = new User("dummy-user-token", UserDetails.builder().id(TEST_AUTHORIZATION_TOKEN).build());
+        User user = new User("dummy-user-token", UserInfo.builder().uid(TEST_AUTHORIZATION_TOKEN).build());
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
 
@@ -88,7 +88,7 @@ public class SystemUnlinkApplicantFromCaseTest {
         caseDetails.setState(Holding);
         caseDetails.setId(TEST_CASE_ID);
 
-        User user = new User("dummy-user-token", UserDetails.builder().id(TEST_AUTHORIZATION_TOKEN).build());
+        User user = new User("dummy-user-token", UserInfo.builder().uid(TEST_AUTHORIZATION_TOKEN).build());
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
 
@@ -113,7 +113,7 @@ public class SystemUnlinkApplicantFromCaseTest {
         caseData.setAcknowledgementOfService(acknowledgementOfService);
         caseDetails.setId(TEST_CASE_ID);
 
-        User user = new User("dummy-user-token", UserDetails.builder().id(TEST_AUTHORIZATION_TOKEN).build());
+        User user = new User("dummy-user-token", UserInfo.builder().uid(TEST_AUTHORIZATION_TOKEN).build());
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
 

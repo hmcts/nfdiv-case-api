@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -19,7 +18,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAwaitingFinalOrder.SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -38,7 +36,7 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
     public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, SUBMITTED_URL);
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
@@ -47,7 +45,7 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
     public void shouldPassValidationAndSendEmailsToApplicantAndRespondentWithLanguagePreferenceWelsh() throws IOException {
         Map<String, Object> request = caseData(WELSH_REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, SUBMITTED_URL);
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
@@ -56,13 +54,12 @@ public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuit
     public void shouldPassValidationAndSendEmailsToJointApplicantSolicitors() throws IOException {
         Map<String, Object> request = caseData(JOINT_REPRESENTED_REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, SUBMITTED_URL);
+        Response response = triggerCallback(request, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldGenerateLettersForOfflineApplicants() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("applicant1Offline", YES);

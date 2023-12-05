@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -20,8 +21,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 
@@ -138,7 +138,7 @@ public class SwitchToSoleServiceTest {
             ))
             .build();
 
-        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
@@ -204,7 +204,7 @@ public class SwitchToSoleServiceTest {
             ))
             .build();
 
-        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
@@ -270,7 +270,7 @@ public class SwitchToSoleServiceTest {
             ))
             .build();
 
-        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
@@ -336,7 +336,7 @@ public class SwitchToSoleServiceTest {
             ))
             .build();
 
-        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);

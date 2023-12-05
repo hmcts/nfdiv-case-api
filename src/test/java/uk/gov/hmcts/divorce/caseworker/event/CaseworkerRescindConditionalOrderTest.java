@@ -22,11 +22,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class CaseworkerRescindConditionalOrderTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPronouncement);
 
-        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
+        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveUser(any())).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
@@ -190,7 +190,7 @@ public class CaseworkerRescindConditionalOrderTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPronouncement);
 
-        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
+        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveUser(any())).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 

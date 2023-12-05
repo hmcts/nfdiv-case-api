@@ -1,18 +1,17 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.print.RegenerateCourtOrdersPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class RegenerateCourtOrdersNotification implements ApplicantNotification {
-
-    @Autowired
-    private RegenerateCourtOrdersPrinter printer;
+    private final RegenerateCourtOrdersPrinter printer;
 
     @Override
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {

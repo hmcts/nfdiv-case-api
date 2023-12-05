@@ -57,7 +57,20 @@
     "dateFinalOrderEligibleFrom": "2021-12-21",
     "grantedDate": "2022-02-15T13:39:00.000",
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
+    "letterPacks": "${json-unit.ignore}",
     "confidentialDocumentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421",
+            "document_filename": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421/binary"
+          },
+          "documentFileName": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
+          "confidentialDocumentsReceived": "finalOrderGrantedCoverLetterApp2"
+        }
+      },
       {
         "id": "${json-unit.any-string}",
         "value": {
@@ -72,18 +85,6 @@
       }
     ],
     "documentsGenerated": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421",
-            "document_filename": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/a11dc4a5-30b0-4a91-8fbb-1676cd300421/binary"
-          },
-          "documentFileName": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "finalOrderGrantedCoverLetterApp2"
-        }
-      },
       {
         "id": "${json-unit.any-string}",
         "value": {

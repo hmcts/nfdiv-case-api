@@ -35,11 +35,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -1198,7 +1198,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -1234,7 +1234,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final UserDetails userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
         final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
