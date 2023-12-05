@@ -16,14 +16,13 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.ofNullable;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
@@ -120,8 +119,9 @@ public class LetterPrinter {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
-        return ofNullable(caseData.getGeneralLetter().getGeneralLetterAttachments())
-                .flatMap(Collection::stream)
+        return Optional.ofNullable(caseData.getGeneralLetter().getGeneralLetterAttachments())
+                .orElseGet(Collections::emptyList)
+                .stream()
                 .map(ListValue::getValue)
                 .map(document -> new Letter(DivorceDocument.builder()
                         .documentType(GENERAL_LETTER)
