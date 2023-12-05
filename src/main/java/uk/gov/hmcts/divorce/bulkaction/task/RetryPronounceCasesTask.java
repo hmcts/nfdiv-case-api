@@ -15,17 +15,20 @@ import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkActionCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 
 @Slf4j
 @Component
 public class RetryPronounceCasesTask implements BulkCaseTask {
 
+    // TODO NFDIV-3824: We've introduced a new state (InBulkActionCase) for cases which are linked to bulk lists. They will no longer
+    //  use the AwaitingPronouncement state. AwaitingPronouncement state should be removed once all cases using this state
+    //  (pre- new state InBulkActionCase) have been pronounced and final order granted.
     final EnumSet<State> awaitingPronouncement = EnumSet.of(
         AwaitingPronouncement,
         OfflineDocumentReceived,
-        InBulkList,
+        InBulkActionCase,
         ConditionalOrderPronounced
     );
 

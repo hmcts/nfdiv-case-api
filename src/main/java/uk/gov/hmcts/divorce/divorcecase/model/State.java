@@ -260,11 +260,11 @@ public enum State {
     AwaitingJsNullity,
 
     @CCD(
-        label = "Case in bulk list process",
+        label = "Case in bulk action process",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    InBulkList,
+    InBulkActionCase,
 
     @CCD(
         label = "Clarification response submitted",
@@ -441,7 +441,7 @@ public enum State {
         Applicant2Approved,
         Withdrawn,
         Rejected,
-        InBulkList
+        InBulkActionCase
     ));
 
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
@@ -472,7 +472,7 @@ public enum State {
         AwaitingApplicant2Response,
         Applicant2Approved,
         Withdrawn,
-        InBulkList
+        InBulkActionCase
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
@@ -486,7 +486,7 @@ public enum State {
         Submitted,
         Withdrawn,
         Rejected,
-        InBulkList
+        InBulkActionCase
     ));
 
     public static final State[] AOS_STATES = {

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkActionCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
@@ -56,7 +56,7 @@ public class RetryPronounceCasesTaskTest {
         final EnumSet<State> awaitingPronouncement = EnumSet.of(
             AwaitingPronouncement,
             OfflineDocumentReceived,
-            InBulkList,
+                InBulkActionCase,
             ConditionalOrderPronounced);
         final EnumSet<State> postStates = EnumSet.noneOf(State.class);
 
