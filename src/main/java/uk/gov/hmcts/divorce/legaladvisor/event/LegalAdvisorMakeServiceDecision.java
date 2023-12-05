@@ -152,34 +152,33 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DocumentType.DEEMED_AS_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
             }
-        } else if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
-            endState = ServiceAdminRefusal;
         } else {
-            if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
-                generateAndSetOrderToDeemedOrDispenseDocument(
-                    caseDataCopy,
-                    details.getId(),
-                    DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
-                    DISPENSE_WITH_SERVICE_REFUSED,
-                    SERVICE_REFUSAL_TEMPLATE_ID);
-            } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
-                generateAndSetOrderToDeemedOrDispenseDocument(
-                    caseDataCopy,
-                    details.getId(),
-                    DEEMED_SERVICE_REFUSED_FILE_NAME,
-                    DEEMED_SERVICE_REFUSED,
-                    SERVICE_REFUSAL_TEMPLATE_ID);
-            }
+            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
+                endState = ServiceAdminRefusal;
+            } else {
+                if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
+                    generateAndSetOrderToDeemedOrDispenseDocument(
+                        caseDataCopy,
+                        details.getId(),
+                        DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
+                        DISPENSE_WITH_SERVICE_REFUSED,
+                        SERVICE_REFUSAL_TEMPLATE_ID);
+                } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
+                    generateAndSetOrderToDeemedOrDispenseDocument(
+                        caseDataCopy,
+                        details.getId(),
+                        DEEMED_SERVICE_REFUSED_FILE_NAME,
+                        DEEMED_SERVICE_REFUSED,
+                        SERVICE_REFUSAL_TEMPLATE_ID);
+                }
 
-            endState = AwaitingAos;
+                endState = AwaitingAos;
+                log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
+                notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+            }
         }
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
-
-        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-        if (endState != ServiceAdminRefusal) {
-            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
-        }
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
