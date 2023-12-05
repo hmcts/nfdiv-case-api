@@ -152,6 +152,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DocumentType.DEEMED_AS_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
             }
+        } else if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
+            endState = ServiceAdminRefusal;
         } else {
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(
@@ -169,13 +171,15 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_REFUSAL_TEMPLATE_ID);
             }
 
-            endState = ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason()) ? ServiceAdminRefusal : AwaitingAos;
+            endState = AwaitingAos;
         }
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
 
         log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-        notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+        if (endState != ServiceAdminRefusal) {
+            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+        }
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
