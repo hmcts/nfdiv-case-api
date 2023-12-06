@@ -318,6 +318,10 @@ dependencies {
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.1'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
 
+  //TODO: Remove once these are updated in spring boot/java-logging libraries
+  testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.14'
+  testImplementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.14'
+
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
