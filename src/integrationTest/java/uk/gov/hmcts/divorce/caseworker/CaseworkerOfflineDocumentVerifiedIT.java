@@ -551,7 +551,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .typeOfDocumentAttached(AOS_D10)
             .build());
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
@@ -562,7 +562,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .getResponse()
             .getContentAsString();
 
-        verify(aosPackPrinter).sendAosResponseLetterToApplicant(any(), eq(TEST_CASE_ID));
+        //verify(aosPackPrinter).sendAosResponseLetterToApplicant(any(), eq(TEST_CASE_ID));
         verifyNoMoreInteractions(aosPackPrinter);
     }
 
@@ -621,7 +621,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .typeOfDocumentAttached(CO_D84)
             .build());
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)

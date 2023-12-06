@@ -31,7 +31,6 @@ public class AosResponseDocumentPack implements DocumentPack {
 
     private static final String LETTER_TYPE_AOS_RESPONSE_PACK = "aos-response-pack";
 
-
     private final GenerateD10Form generateD10Form;
     private final GenerateD84Form generateD84Form;
 
