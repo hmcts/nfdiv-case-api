@@ -178,7 +178,7 @@ public class CaseworkerGeneralLetterTest {
         details.setData(caseData);
 
         AboutToStartOrSubmitResponse response = generalLetter.aboutToSubmit(details, details);
-        verify(letterPrinter).sendLetters(caseData, details.getId(), null,
+        verify(letterPrinter).sendLetters(caseData, details.getId(), caseData.getApplicant1(),
                 documentPackInfo, generalLetterDocumentPack.getLetterId());
     }
 
