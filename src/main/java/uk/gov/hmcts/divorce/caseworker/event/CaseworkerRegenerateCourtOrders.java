@@ -33,8 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
@@ -46,8 +44,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
@@ -58,14 +54,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REGENERATE_COURT_ORDERS = "caseworker-regenerate-court-orders";
 
-    private final GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-    private final GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
     private final RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
     private final NotificationDispatcher notificationDispatcher;
-    private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
     private final DocumentGenerator documentGenerator;
     private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocumentPack;
-
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -100,9 +92,13 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating CO Pronounced document for Case Id: {}", details.getId());
 
-            //TODO: Needs to be split into tasks
-            removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseData, details.getId());
-            removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
+            documentGenerator.generateAndStoreCaseDocument(
+                CONDITIONAL_ORDER_GRANTED,
+                CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+                CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+                caseData,
+                details.getId()
+            );
         }
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {
@@ -150,57 +146,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
 
         return SubmittedCallbackResponse.builder().build();
-    }
-
-    private void removeExistingAndGenerateConditionalOrderPronouncedCoversheet(CaseData caseData, long caseId) {
-
-        final List<DocumentType> documentTypesToRemove =
-            List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
-
-        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
-        }
-
-        if (caseData.getApplicant1().isApplicantOffline()) {
-            var app1 = caseData.getApplicant1();
-
-            documentGenerator.generateAndStoreCaseDocument(
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
-                CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                app1);
-        }
-
-        if (caseData.getApplicant2().isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())) {
-            var app2 = caseData.getApplicant2();
-
-            documentGenerator.generateAndStoreCaseDocument(
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-                CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                app2);
-        }
-    }
-
-    private void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
-
-        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType()));
-        }
-
-        documentGenerator.generateAndStoreCaseDocument(
-            CONDITIONAL_ORDER_GRANTED,
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
-            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId());
     }
 
     private void removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(CaseData caseData, long caseId) {

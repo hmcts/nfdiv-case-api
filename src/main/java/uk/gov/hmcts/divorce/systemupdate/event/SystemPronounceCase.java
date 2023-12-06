@@ -13,16 +13,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
-import java.util.List;
 
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -35,12 +31,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
 @Component
 @RequiredArgsConstructor
@@ -79,9 +71,13 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating CO Pronounced document for Case Id: {}", details.getId());
-
-            removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseData, details.getId());
-            removeExistingAndGenerateNewConditionalOrderGrantedDoc(details);
+            documentGenerator.generateAndStoreCaseDocument(
+                CONDITIONAL_ORDER_GRANTED,
+                CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+                CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+                caseData,
+                details.getId()
+            );
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -102,53 +98,5 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private void removeExistingAndGenerateConditionalOrderPronouncedCoversheet(CaseData caseData, long caseId) {
 
-        final List<DocumentType> documentTypesToRemove =
-            List.of(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
-
-        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
-        }
-
-        if (caseData.getApplicant1().isApplicantOffline()) {
-            var app1 = caseData.getApplicant1();
-
-            documentGenerator.generateAndStoreCaseDocument(
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
-                CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                app1);
-        }
-
-        if (caseData.getApplicant2().isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())) {
-            var app2 = caseData.getApplicant2();
-
-            documentGenerator.generateAndStoreCaseDocument(
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
-                CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
-                CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                app2);
-        }
-    }
-    private void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
-
-        if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
-            caseData.getDocuments().getDocumentsGenerated()
-                .removeIf(document -> CONDITIONAL_ORDER_GRANTED.equals(document.getValue().getDocumentType()));
-        }
-
-        documentGenerator.generateAndStoreCaseDocument(
-            CONDITIONAL_ORDER_GRANTED,
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
-            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId());
-    }
 }
