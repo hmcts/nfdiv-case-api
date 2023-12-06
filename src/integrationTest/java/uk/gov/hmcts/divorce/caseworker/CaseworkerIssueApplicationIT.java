@@ -310,6 +310,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setHyphenatedCaseRef("1111-2222-3333-4444");
 
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
@@ -624,6 +625,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setHyphenatedCaseRef("1616-5914-0147-3378");
 
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();

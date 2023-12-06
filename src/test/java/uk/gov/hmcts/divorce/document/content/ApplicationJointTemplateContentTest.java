@@ -80,7 +80,7 @@ class ApplicationJointTemplateContentTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @InjectMocks
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private ApplicationJointContent applicationJointTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDivorce() {

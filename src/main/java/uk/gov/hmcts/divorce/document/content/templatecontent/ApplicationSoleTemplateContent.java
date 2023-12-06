@@ -1,7 +1,12 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant2Represented;
@@ -11,14 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
 import uk.gov.hmcts.divorce.notification.FormatUtil;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.join;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_SOLE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_1_ANSWERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_SOLE_APPLICANT_1_ANSWERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
@@ -63,17 +66,21 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
-public class ApplicationSoleTemplateContent {
+public class ApplicationSoleTemplateContent implements TemplateContent {
 
-    @Autowired
-    private ApplicantTemplateDataProvider applicantTemplateDataProvider;
+    private final ApplicantTemplateDataProvider applicantTemplateDataProvider;
+    private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
-    @Autowired
-    private ApplicationTemplateDataProvider applicationTemplateDataProvider;
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(DIVORCE_APPLICATION_SOLE, JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID);
+    }
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -100,14 +107,14 @@ public class ApplicationSoleTemplateContent {
             templateContent.put(DIVORCE_OR_DISSOLUTION, "divorce application");
             templateContent.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
-                LanguagePreference.WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
+                    LanguagePreference.WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce");
         } else {
             templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH);
             templateContent.put(DIVORCE_OR_DISSOLUTION, "application to end your civil partnership");
             templateContent.put(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP);
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP,
-                LanguagePreference.WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
+                    LanguagePreference.WELSH.equals(languagePreference) ? CIVIL_PARTNERSHIP_CY : CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership");
         }
 
@@ -138,7 +145,7 @@ public class ApplicationSoleTemplateContent {
             templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
         }
         if (null != application.getApplicant1IsApplicant2Represented()
-            && application.getApplicant1IsApplicant2Represented() == Applicant2Represented.YES) {
+                && application.getApplicant1IsApplicant2Represented() == Applicant2Represented.YES) {
             setSolicitorDetails(templateContent, applicant2);
         }
 
@@ -153,7 +160,7 @@ public class ApplicationSoleTemplateContent {
         applicationTemplateDataProvider.mapMarriageDetails(templateContent, application);
 
         templateContent.put(JURISDICTIONS, applicationTemplateDataProvider.deriveJurisdictionList(application, caseId,
-            applicant1.getLanguagePreference()));
+                applicant1.getLanguagePreference()));
 
         return templateContent;
     }
@@ -164,11 +171,11 @@ public class ApplicationSoleTemplateContent {
         String solicitorFirmName = applicant.getSolicitor().getFirmName();
         String solicitorAddress = applicant.getSolicitor().getAddress();
         boolean hasEnteredSolicitorDetails =
-            !isNullOrEmpty(solicitorName)
-            || !isNullOrEmpty(solicitorEmail)
-            || !isNullOrEmpty(solicitorFirmName)
-            || !isNullOrEmpty(solicitorAddress)
-            && !isNullOrEmpty(solicitorAddress.replace("\n", ""));
+                !isNullOrEmpty(solicitorName)
+                        || !isNullOrEmpty(solicitorEmail)
+                        || !isNullOrEmpty(solicitorFirmName)
+                        || !isNullOrEmpty(solicitorAddress)
+                        && !isNullOrEmpty(solicitorAddress.replace("\n", ""));
         templateContent.put(APPLICANT_1_HAS_ENTERED_RESPONDENTS_SOLICITOR_DETAILS, hasEnteredSolicitorDetails);
         if (!isNullOrEmpty(solicitorName)) {
             templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName);
@@ -181,10 +188,10 @@ public class ApplicationSoleTemplateContent {
         }
         if (!isNullOrEmpty(solicitorAddress)) {
             String addressCleanUp =
-                join("\n",
-                    Arrays.stream(applicant.getSolicitor().getAddress().split("\n"))
-                    .filter(value -> !Objects.equals(value, ""))
-                    .toArray(String[]::new));
+                    join("\n",
+                            Arrays.stream(applicant.getSolicitor().getAddress().split("\n"))
+                                    .filter(value -> !Objects.equals(value, ""))
+                                    .toArray(String[]::new));
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, addressCleanUp);
         }
     }

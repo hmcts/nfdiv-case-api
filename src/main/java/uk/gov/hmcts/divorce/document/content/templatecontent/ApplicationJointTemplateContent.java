@@ -1,5 +1,8 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,13 +11,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
@@ -50,7 +51,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class ApplicationJointTemplateContent {
+public class ApplicationJointTemplateContent implements TemplateContent{
 
     @Autowired
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -58,16 +59,15 @@ public class ApplicationJointTemplateContent {
     @Autowired
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    public Map<String, Object> getTemplateContent(final CaseData caseData, final Long caseId, Applicant applicant) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
 
         final Application application = caseData.getApplication();
-        final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
-        final boolean isWelsh = YES.equals(applicant1.getLanguagePreferenceWelsh()) && YES.equals(applicant2.getLanguagePreferenceWelsh());
+        final boolean isWelsh = YES.equals(applicant.getLanguagePreferenceWelsh()) && YES.equals(applicant2.getLanguagePreferenceWelsh());
         final boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
 
         if (isDivorce) {
@@ -95,25 +95,25 @@ public class ApplicationJointTemplateContent {
         }
         templateContent.put(ISSUE_DATE_POPULATED, application.getIssueDate() != null);
 
-        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
         templateContent.put(APPLICANT_1_MARRIAGE_NAME, application.getMarriageDetails().getApplicant1Name());
-        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicant1.getCorrespondenceAddress());
-        if (!applicant1.isConfidentialContactDetails()) {
-            templateContent.put(APPLICANT_1_EMAIL, applicant1.getEmail());
+        templateContent.put(APPLICANT_1_POSTAL_ADDRESS, applicant.getCorrespondenceAddress());
+        if (!applicant.isConfidentialContactDetails()) {
+            templateContent.put(APPLICANT_1_EMAIL, applicant.getEmail());
         }
-        if (null != applicant1.getFinancialOrder()) {
-            templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_1, applicant1.getFinancialOrder().toBoolean());
-            templateContent.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant1, isWelsh));
+        if (null != applicant.getFinancialOrder()) {
+            templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_1, applicant.getFinancialOrder().toBoolean());
+            templateContent.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant, isWelsh));
         }
-        if (null != applicant1.getLegalProceedings()) {
-            templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
-            templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
+        if (null != applicant.getLegalProceedings()) {
+            templateContent.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant.getLegalProceedings().toBoolean());
+            templateContent.put(APPLICANT_1_COURT_CASE_DETAILS, applicant.getLegalProceedingsDetails());
         }
 
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
         templateContent.put(APPLICANT_2_MARRIAGE_NAME, application.getMarriageDetails().getApplicant2Name());
 
-        applicantTemplateDataProvider.mapContactDetails(applicant1, applicant2, templateContent);
+        applicantTemplateDataProvider.mapContactDetails(applicant, applicant2, templateContent);
 
         if (null != applicant2.getFinancialOrder()) {
             templateContent.put(HAS_FINANCIAL_ORDER_APPLICANT_2, applicant2.getFinancialOrder().toBoolean());
@@ -130,5 +130,10 @@ public class ApplicationJointTemplateContent {
             application, caseId, isWelsh ? WELSH : ENGLISH));
 
         return templateContent;
+    }
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(DIVORCE_APPLICATION_JOINT, JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID);
     }
 }

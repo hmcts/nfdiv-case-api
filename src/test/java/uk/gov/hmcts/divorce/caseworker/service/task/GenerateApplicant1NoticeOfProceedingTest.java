@@ -15,10 +15,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointJudicialSeparationContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.NoticeOfProceedingJointJudicialSeparationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.NoticeOfProceedingSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.NoticeOfProceedingSolicitorTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
@@ -59,6 +61,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDI
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateApplicant1NoticeOfProceedingTest {
@@ -67,16 +70,16 @@ class GenerateApplicant1NoticeOfProceedingTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private NoticeOfProceedingContent noticeOfProceedingContent;
+    private NoticeOfProceedingSoleTemplateContent noticeOfProceedingContent;
 
     @Mock
     private NoticeOfProceedingJointContent noticeOfProceedingJointContent;
 
     @Mock
-    private NoticeOfProceedingSolicitorContent noticeOfProceedingSolicitorContent;
+    private NoticeOfProceedingSolicitorTemplateContent noticeOfProceedingSolicitorContent;
 
     @Mock
-    private NoticeOfProceedingJointJudicialSeparationContent noticeOfProceedingJointJudicialSeparationContent;
+    private NoticeOfProceedingJointJudicialSeparationTemplateContent noticeOfProceedingJointJudicialSeparationContent;
 
     @Mock
     private Clock clock;
@@ -126,7 +129,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant2())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -145,7 +148,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().addressLine1("line1").country("France").build());
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -165,7 +168,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -184,7 +187,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -203,7 +206,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -221,7 +224,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -259,8 +262,8 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingJointJudicialSeparationContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(),
-            caseData.getApplicant2())).thenReturn(templateContent);
+        when(noticeOfProceedingJointJudicialSeparationContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1()))
+                .thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -280,7 +283,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -302,7 +305,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -323,7 +326,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -387,7 +390,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -411,7 +414,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -431,7 +434,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingSolicitorContent.apply(caseData, TEST_CASE_ID, true)).thenReturn(templateContent);
+        when(noticeOfProceedingSolicitorContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 
@@ -453,7 +456,7 @@ class GenerateApplicant1NoticeOfProceedingTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1())).thenReturn(templateContent);
 
         final var result = generateApplicant1NoticeOfProceeding.apply(caseDetails(caseData));
 

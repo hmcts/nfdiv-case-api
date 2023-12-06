@@ -90,7 +90,7 @@ public class ApplicationSoleTemplateContentTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @InjectMocks
-    private ApplicationSoleTemplateContent templateContent;
+    private ApplicationSoleContent templateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDivorce() {
