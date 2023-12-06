@@ -218,7 +218,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             response.getData().getDocuments().setScannedSubtypeReceived(null);
 
             log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering submit aos notifications: {}",
+                "CaseworkerOfflineDocumentVerified about to submit callback triggering submit aos notifications: {}",
                 details.getId());
 
             submitAosService.submitAosNotifications(details);
