@@ -7,10 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.AosOverdueDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -62,7 +63,10 @@ class AosReminderNotificationsTest {
     private EmailTemplatesConfig emailTemplatesConfig;
 
     @Mock
-    private AosOverduePrinter aosOverduePrinter;
+    private AosOverdueDocumentPack aosOverdueDocumentPack;
+
+    @Mock
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private AosReminderNotifications aosReminderNotifications;
@@ -208,10 +212,12 @@ class AosReminderNotificationsTest {
 
         aosReminderNotifications.sendToApplicant1Offline(data, TEST_CASE_ID);
 
-        verify(aosOverduePrinter).sendLetterToApplicant(
+        verify(letterPrinter).sendLetters(
             data,
+            TEST_CASE_ID,
             data.getApplicant1(),
-            TEST_CASE_ID
+            aosOverdueDocumentPack.getDocumentPack(data, data.getApplicant1()),
+            aosOverdueDocumentPack.getLetterId()
         );
     }
 

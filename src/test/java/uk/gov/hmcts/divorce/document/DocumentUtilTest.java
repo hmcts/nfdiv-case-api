@@ -141,22 +141,22 @@ class DocumentUtilTest {
     void mapToLettersShouldReturnListOfLettersOfGivenDocumentType() {
 
         final ListValue<Document> doc1 = ListValue.<Document>builder()
-            .value(Document.builder().filename("doc1.pdf").build())
-            .build();
+                .value(Document.builder().filename("doc1.pdf").build())
+                .build();
 
         final ListValue<Document> doc2 = ListValue.<Document>builder()
-            .value(Document.builder().filename("doc2.pdf").build())
-            .build();
+                .value(Document.builder().filename("doc2.pdf").build())
+                .build();
 
         final List<Letter> letters = mapToLetters(asList(doc1, doc2), NOTICE_OF_PROCEEDINGS_APP_1);
 
         assertThat(letters.size()).isEqualTo(2);
         assertThat(
-            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
-            .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
+                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
+                .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
         assertThat(
-            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
-            .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
+                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
+                .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
     }
 
     @Test
