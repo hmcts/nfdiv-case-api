@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -135,6 +137,27 @@ class DocumentUtilTest {
         assertThat(d10IsPresent).isFalse();
     }
 
+    @Test
+    void mapToLettersShouldReturnListOfLettersOfGivenDocumentType() {
+
+        final ListValue<Document> doc1 = ListValue.<Document>builder()
+                .value(Document.builder().filename("doc1.pdf").build())
+                .build();
+
+        final ListValue<Document> doc2 = ListValue.<Document>builder()
+                .value(Document.builder().filename("doc2.pdf").build())
+                .build();
+
+        final List<Letter> letters = mapToLetters(asList(doc1, doc2), NOTICE_OF_PROCEEDINGS_APP_1);
+
+        assertThat(letters.size()).isEqualTo(2);
+        assertThat(
+                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
+                .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
+        assertThat(
+                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
+                .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
+    }
 
     @Test
     public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsApplicant() {
