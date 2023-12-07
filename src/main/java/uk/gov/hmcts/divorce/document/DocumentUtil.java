@@ -128,21 +128,6 @@ public final class DocumentUtil {
             .collect(toList());
     }
 
-    public static List<Letter> mapToLetters(final List<ListValue<Document>> documents, final DocumentType documentType) {
-
-        final AtomicInteger letterIndex = new AtomicInteger();
-
-        return ofNullable(documents)
-                .flatMap(Collection::stream)
-                .map(ListValue::getValue)
-                .map(document -> new Letter(DivorceDocument.builder()
-                        .documentType(documentType)
-                        .documentFileName(document.getFilename())
-                        .documentLink(document)
-                        .build(), letterIndex.incrementAndGet()))
-                .collect(toList());
-    }
-
     public static boolean isConfidential(final CaseData caseData, final DocumentType documentType) {
 
         final boolean isAnApplicantConfidential = caseData.getApplicant1().isConfidentialContactDetails()
