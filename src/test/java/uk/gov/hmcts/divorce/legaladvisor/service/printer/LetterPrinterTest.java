@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,7 +82,18 @@ public class LetterPrinterTest {
     @Test
     public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
-        caseData.setGeneralLetter(GeneralLetter.builder().generalLetterParties(GeneralParties.APPLICANT).build());
+
+        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
+        generalLetters.add(
+            ListValue.<GeneralLetterDetails>builder()
+                .value(
+                    GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .build()
+                ).build()
+        );
+        caseData.setGeneralLetters(generalLetters);
+
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
         DocumentPackInfo documentPackInfo = new DocumentPackInfo(
@@ -116,11 +129,19 @@ public class LetterPrinterTest {
                         .build())
                 .build();
 
-        caseData.setGeneralLetter(GeneralLetter
-                .builder()
-                .generalLetterParties(GeneralParties.APPLICANT)
-                .generalLetterAttachments(List.of(application))
-                .build());
+        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
+        generalLetters.add(
+            ListValue.<GeneralLetterDetails>builder()
+                .value(
+                    GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .generalLetterLink(Document.builder()
+                            .url("generalLetterUrl")
+                            .build())
+                        .build()
+                ).build()
+        );
+        caseData.setGeneralLetters(generalLetters);
 
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
