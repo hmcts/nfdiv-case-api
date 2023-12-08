@@ -42,16 +42,17 @@ public class LetterPrinter {
             .recipientAddress(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .build();
         currentPacks.add(ListValue.<LetterPack>builder().id(UUID.randomUUID().toString()).value(letterPack).build());
+        caseData.getDocuments().setLetterPacks(currentPacks);
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(
-                letters,
-                caseIdString,
-                caseIdString,
-                letterName,
-                applicant.getFullName()
+                    letters,
+                    caseIdString,
+                    caseIdString,
+                    letterName,
+                    applicant.getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 

@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
 import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseProcessingStateFilter;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.divorce.idam.User;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

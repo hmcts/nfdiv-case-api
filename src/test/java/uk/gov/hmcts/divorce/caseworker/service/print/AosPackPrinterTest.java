@@ -284,9 +284,9 @@ class AosPackPrinterTest {
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> nopAppTwo = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
+        final ListValue<ConfidentialDivorceDocument> nopAppTwo = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
                 .build())
             .build();
 
@@ -295,8 +295,8 @@ class AosPackPrinterTest {
                 .contactDetailsType(ContactDetailsType.PRIVATE)
                 .build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(asList(application, nopAppTwo))
-                .confidentialDocumentsGenerated(List.of(nopAppOne, coversheet))
+                .documentsGenerated(singletonList(application))
+                .confidentialDocumentsGenerated(List.of(nopAppOne, coversheet, nopAppTwo))
                 .build())
             .build();
 
@@ -311,7 +311,7 @@ class AosPackPrinterTest {
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(nopAppOne.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(application.getValue());
         assertThat(print.getLetters().get(2).getConfidentialDivorceDocument()).isSameAs(coversheet.getValue());
-        assertThat(print.getLetters().get(3).getDivorceDocument()).isSameAs(nopAppTwo.getValue());
+        assertThat(print.getLetters().get(3).getConfidentialDivorceDocument()).isSameAs(nopAppTwo.getValue());
         assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(application.getValue());
         assertThat(print.getLetters().size()).isEqualTo(5);
     }

@@ -40,7 +40,7 @@ public class GeneralLetterPrinter {
 
             List<ListValue<Document>> documents = Lists.newArrayList(ListValue.<Document>builder()
                     .value(letterDetails.getGeneralLetterLink())
-                .build());
+                    .build());
 
             if (!CollectionUtils.isEmpty(letterDetails.getGeneralLetterAttachmentLinks())) {
                 documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
@@ -49,8 +49,8 @@ public class GeneralLetterPrinter {
             final String caseIdString = caseId.toString();
 
             GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
-                .map(element -> element.getValue().getGeneralLetterParties())
-                .orElse(GeneralParties.OTHER);
+                    .map(element -> element.getValue().getGeneralLetterParties())
+                    .orElse(GeneralParties.OTHER);
 
             var recipientName = switch (parties) {
                 case RESPONDENT -> caseData.getApplicant2().getFullName();
@@ -59,11 +59,11 @@ public class GeneralLetterPrinter {
             };
 
             final Print print = new Print(
-                mapToLetters(documents, GENERAL_LETTER),
-                caseIdString,
-                caseIdString,
-                LETTER_TYPE_GENERAL_LETTER,
-                recipientName
+                    mapToLetters(documents, GENERAL_LETTER),
+                    caseIdString,
+                    caseIdString,
+                    LETTER_TYPE_GENERAL_LETTER,
+                    recipientName
             );
 
             final UUID letterId = bulkPrintService.print(print);

@@ -16,8 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -159,10 +159,11 @@ class CaseworkerAddNoteTest {
     }
 
     private User getCaseworkerUser() {
-        UserDetails userDetails = UserDetails
+        var userDetails = UserInfo
             .builder()
-            .forename("testFname")
-            .surname("testSname")
+            .givenName("testFname")
+            .familyName("testSname")
+            .name("testFname testSname")
             .build();
 
         return new User(TEST_AUTHORIZATION_TOKEN, userDetails);

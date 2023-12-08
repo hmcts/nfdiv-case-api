@@ -40,29 +40,29 @@ class GeneralLetterPrinterTest {
     void shouldPrintGeneralLetterIfRequiredDocumentsArePresent() {
 
         Document generalLetter = Document.builder()
-            .filename("GeneralLetter.pdf")
-            .build();
+                .filename("GeneralLetter.pdf")
+                .build();
 
         ListValue<Document> attachment = ListValue.<Document>builder()
-            .value(Document.builder()
-                .filename("some-attachment.pdf")
-                .build())
-            .build();
+                .value(Document.builder()
+                        .filename("some-attachment.pdf")
+                        .build())
+                .build();
 
         final ListValue<GeneralLetterDetails> doc1 = ListValue.<GeneralLetterDetails>builder()
-            .value(GeneralLetterDetails.builder()
-                    .generalLetterParties(GeneralParties.APPLICANT)
-                    .generalLetterLink(generalLetter)
-                    .generalLetterAttachmentLinks(Lists.newArrayList(attachment))
-                    .build())
-            .build();
+                .value(GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .generalLetterLink(generalLetter)
+                        .generalLetterAttachmentLinks(Lists.newArrayList(attachment))
+                        .build())
+                .build();
 
         final ListValue<GeneralLetterDetails> doc2 = ListValue.<GeneralLetterDetails>builder()
-            .value(GeneralLetterDetails.builder()
-                .generalLetterParties(GeneralParties.APPLICANT)
-                .generalLetterLink(Document.builder().build())
-                .build())
-            .build();
+                .value(GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .generalLetterLink(Document.builder().build())
+                        .build())
+                .build();
 
         final CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
 

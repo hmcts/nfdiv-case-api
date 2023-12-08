@@ -80,14 +80,14 @@ public class GeneralLetterTemplateContentTest {
                 .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
 
         assertThat(templateContent).contains(
-            entry(ISSUE_DATE, "16 March 2022"),
-            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(RELATION, "wife"),
-            entry(RECIPIENT_NAME, "test_first_name test_last_name"),
-            entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
-            entry(IS_JOINT, true),
-            entry(FEEDBACK, "some feedback"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+                entry(ISSUE_DATE, "16 March 2022"),
+                entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                entry(RELATION, "wife"),
+                entry(RECIPIENT_NAME, "test_first_name test_last_name"),
+                entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
+                entry(IS_JOINT, true),
+                entry(FEEDBACK, "some feedback"),
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
         );
     }
 
@@ -103,14 +103,14 @@ public class GeneralLetterTemplateContentTest {
                 caseData.getApplicant2().getLanguagePreference());
 
         assertThat(templateContent).contains(
-            entry(ISSUE_DATE, "16 March 2022"),
-            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(RELATION, "husband"),
-            entry(RECIPIENT_NAME, "test_first_name test_last_name"),
-            entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
-            entry(IS_JOINT, true),
-            entry(FEEDBACK, "some feedback"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+                entry(ISSUE_DATE, "16 March 2022"),
+                entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                entry(RELATION, "husband"),
+                entry(RECIPIENT_NAME, "test_first_name test_last_name"),
+                entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
+                entry(IS_JOINT, true),
+                entry(FEEDBACK, "some feedback"),
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
         );
     }
 
@@ -124,7 +124,7 @@ public class GeneralLetterTemplateContentTest {
                 .addressLine1("New lane")
                 .postTown("Birmingham")
                 .postCode("B1 XXX")
-            .build());
+                .build());
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -135,14 +135,14 @@ public class GeneralLetterTemplateContentTest {
         verifyNoInteractions(commonContent);
 
         assertThat(templateContent).contains(
-            entry(ISSUE_DATE, "16 March 2022"),
-            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(RELATION, "civil partner"),
-            entry(RECIPIENT_NAME, "Other Recipient"),
-            entry(RECIPIENT_ADDRESS, "New lane\nBirmingham\nB1 XXX"),
-            entry(IS_JOINT, false),
-            entry(FEEDBACK, "some feedback"),
-            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
+                entry(ISSUE_DATE, "16 March 2022"),
+                entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                entry(RELATION, "civil partner"),
+                entry(RECIPIENT_NAME, "Other Recipient"),
+                entry(RECIPIENT_ADDRESS, "New lane\nBirmingham\nB1 XXX"),
+                entry(IS_JOINT, false),
+                entry(FEEDBACK, "some feedback"),
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
         );
     }
 }

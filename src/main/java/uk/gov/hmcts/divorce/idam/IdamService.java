@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +27,7 @@ public class IdamService {
 
     public User retrieveUser(String authorisation) {
         final String bearerToken = getBearerToken(authorisation);
-        final UserDetails userDetails = idamClient.getUserDetails(bearerToken);
+        final var userDetails = idamClient.getUserInfo(bearerToken);
 
         return new User(bearerToken, userDetails);
     }

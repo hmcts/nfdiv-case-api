@@ -58,20 +58,20 @@ public class CaseworkerGeneralLetterTest {
         ListValue<DivorceDocument> generalLetterAttachment = new ListValue<>(
             "1",
             DivorceDocument
-                .builder()
-                .documentLink(
-                    Document.builder().build()
-                )
-                .build()
+                    .builder()
+                    .documentLink(
+                            Document.builder().build()
+                    )
+                    .build()
         );
         final CaseData caseData = caseData();
         caseData.setGeneralLetter(
             GeneralLetter
-                .builder()
-                .generalLetterParties(APPLICANT)
-                .generalLetterDetails("some details")
-                .generalLetterAttachments(singletonList(generalLetterAttachment))
-                .build()
+                    .builder()
+                    .generalLetterParties(APPLICANT)
+                    .generalLetterDetails("some details")
+                    .generalLetterAttachments(singletonList(generalLetterAttachment))
+                    .build()
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -87,17 +87,18 @@ public class CaseworkerGeneralLetterTest {
         ListValue<DivorceDocument> generalLetterAttachment = new ListValue<>(
             "1",
             DivorceDocument
-                .builder()
-                .build()
+                    .builder()
+                    .build()
         );
         final CaseData caseData = caseData();
+
         caseData.setGeneralLetter(
-            GeneralLetter
-                .builder()
-                .generalLetterParties(APPLICANT)
-                .generalLetterDetails("some details")
-                .generalLetterAttachments(singletonList(generalLetterAttachment))
-                .build()
+                GeneralLetter
+                    .builder()
+                    .generalLetterParties(APPLICANT)
+                    .generalLetterDetails("some details")
+                    .generalLetterAttachments(singletonList(generalLetterAttachment))
+                    .build()
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -137,10 +138,10 @@ public class CaseworkerGeneralLetterTest {
         final CaseData caseData = caseData();
         caseData.setGeneralLetter(
             GeneralLetter
-                .builder()
-                .generalLetterParties(APPLICANT)
-                .generalLetterDetails("some details")
-                .build()
+                    .builder()
+                    .generalLetterParties(APPLICANT)
+                    .generalLetterDetails("some details")
+                    .build()
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

@@ -18,7 +18,6 @@ import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +42,7 @@ public class GenerateD36FormTest {
         document.links.binary.href = "/binary";
         document.originalDocumentName = "D36";
 
-        generateD36Form.generateD36Document(caseData, TEST_CASE_ID);
+        generateD36Form.generateD36Document(caseData);
         verify(generateFormHelper).addFormToGeneratedDocuments(
             caseData,
             D36,
@@ -72,7 +71,7 @@ public class GenerateD36FormTest {
         caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
         caseData.getDocuments().setDocumentsGenerated(singletonList(d36Document));
 
-        generateD36Form.generateD36Document(caseData, TEST_CASE_ID);
+        generateD36Form.generateD36Document(caseData);
         verifyNoInteractions(generateFormHelper);
     }
 }

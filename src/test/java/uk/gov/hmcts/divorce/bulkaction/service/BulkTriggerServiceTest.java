@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseTriggerService.TriggerResult;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.divorce.idam.User;
 
 import java.util.Arrays;
 import java.util.List;

@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,8 +43,8 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
     public void run() {
         log.info("SystemFindCasesWithSuccessfulPaymentsTask scheduled task started");
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuth = authTokenGenerator.generate();
+        final var user = idamService.retrieveSystemUpdateUserDetails();
+        final var serviceAuth = authTokenGenerator.generate();
 
         try {
             final BoolQueryBuilder query = boolQuery()

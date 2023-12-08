@@ -26,6 +26,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
@@ -37,10 +38,13 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.isDocumentApplicableForConfidentiality;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
@@ -137,22 +141,22 @@ class DocumentUtilTest {
     void mapToLettersShouldReturnListOfLettersOfGivenDocumentType() {
 
         final ListValue<Document> doc1 = ListValue.<Document>builder()
-            .value(Document.builder().filename("doc1.pdf").build())
-            .build();
+                .value(Document.builder().filename("doc1.pdf").build())
+                .build();
 
         final ListValue<Document> doc2 = ListValue.<Document>builder()
-            .value(Document.builder().filename("doc2.pdf").build())
-            .build();
+                .value(Document.builder().filename("doc2.pdf").build())
+                .build();
 
         final List<Letter> letters = mapToLetters(asList(doc1, doc2), NOTICE_OF_PROCEEDINGS_APP_1);
 
         assertThat(letters.size()).isEqualTo(2);
         assertThat(
-            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
-            .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
+                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
+                .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
         assertThat(
-            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
-            .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
+                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
+                .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
     }
 
     @Test
@@ -192,9 +196,9 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+        final ListValue<ConfidentialDivorceDocument> doc2 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
                 .build())
             .build();
 
@@ -221,18 +225,19 @@ class DocumentUtilTest {
                 .generalLetterParties(RESPONDENT)
                 .build())
             .documents(CaseDocuments.builder()
-                .confidentialDocumentsGenerated(Lists.newArrayList(doc3, doc4))
-                .documentsGenerated(Lists.newArrayList(doc1, doc2))
+                .confidentialDocumentsGenerated(Lists.newArrayList(doc2, doc3, doc4))
+                .documentsGenerated(Lists.newArrayList(doc1))
                 .build())
             .build();
 
-        List<Letter> nonConfidentialNop1 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
+        List<Letter> confidentialNop1 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
         List<Letter> confidentialNop2 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
         List<Letter> confidentialGeneralLetter = getLettersBasedOnContactPrivacy(caseData, GENERAL_LETTER);
 
-        assertThat(nonConfidentialNop1.size()).isEqualTo(1);
-        assertThat(nonConfidentialNop1.get(0).getConfidentialDivorceDocument()).isNull();
-        assertThat(nonConfidentialNop1.get(0).getDivorceDocument().getDocumentType()).isEqualTo(NOTICE_OF_PROCEEDINGS_APP_1);
+        assertThat(confidentialNop1.size()).isEqualTo(1);
+        assertThat(confidentialNop1.get(0).getDivorceDocument()).isNull();
+        assertThat(confidentialNop1.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
+            .isEqualTo(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1);
 
         assertThat(confidentialNop2.size()).isEqualTo(1);
         assertThat(confidentialNop2.get(0).getDivorceDocument()).isNull();
@@ -243,36 +248,6 @@ class DocumentUtilTest {
         assertThat(confidentialGeneralLetter.get(0).getDivorceDocument()).isNull();
         assertThat(confidentialGeneralLetter.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
             .isEqualTo(ConfidentialDocumentsReceived.GENERAL_LETTER);
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant1WhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_1, true));
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant2WhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(NOTICE_OF_PROCEEDINGS_APP_2, false));
-    }
-
-    @Test
-    public void shouldReturnTrueWhenGivenDocumentTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(GENERAL_LETTER, true));
-    }
-
-    @Test
-    public void shouldReturnFalseWhenGivenDocumentTypeIsNotApplicableForConfidentiality() {
-        assertFalse(isDocumentApplicableForConfidentiality(APPLICATION, true));
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant1WhenFOCoverLetterTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, true));
-    }
-
-    @Test
-    public void shouldReturnTrueForApplicant2WhenFOCoverLetterTypeIsApplicableForConfidentiality() {
-        assertTrue(isDocumentApplicableForConfidentiality(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2, false));
     }
 
     @Test
@@ -352,11 +327,49 @@ class DocumentUtilTest {
         assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(0);
     }
 
+    @Test
+    void shouldRemoveGeneratedDocuments() {
+
+        final CaseData caseData = buildCaseDataWithDocuments();
+
+        removeExistingDocuments(caseData,
+                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+
+        assertEquals(1, caseData.getDocuments().getDocumentsGenerated().size());
+        assertEquals(CERTIFICATE_OF_ENTITLEMENT, caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType());
+    }
+
     private DocumentInfo documentInfo() {
         return new DocumentInfo(
             DOC_URL,
             PDF_FILENAME,
             DOC_BINARY_URL
         );
+    }
+
+    private CaseData buildCaseDataWithDocuments() {
+        final CaseData caseData = caseData();
+        caseData.setDocuments(CaseDocuments.builder()
+                .documentsGenerated(Lists.newArrayList(
+                        ListValue.<DivorceDocument>builder()
+                                .id("1")
+                                .value(DivorceDocument.builder()
+                                        .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1)
+                                        .build())
+                                .build(),
+                        ListValue.<DivorceDocument>builder()
+                                .id("2")
+                                .value(DivorceDocument.builder()
+                                        .documentType(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2)
+                                        .build())
+                                .build(),
+                        ListValue.<DivorceDocument>builder()
+                                .id("3")
+                                .value(DivorceDocument.builder()
+                                        .documentType(CERTIFICATE_OF_ENTITLEMENT)
+                                        .build()).build()
+                ))
+                .build());
+        return caseData;
     }
 }

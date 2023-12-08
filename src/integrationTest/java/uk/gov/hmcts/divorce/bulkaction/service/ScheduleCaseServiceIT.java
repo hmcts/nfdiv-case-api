@@ -16,12 +16,12 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class ScheduleCaseServiceIT {
             .data(bulkActionCaseData)
             .build();
 
-        var userDetails = UserDetails.builder().id(SYSTEM_USER_USER_ID).build();
+        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
         var user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
@@ -212,7 +212,7 @@ public class ScheduleCaseServiceIT {
             .data(bulkActionCaseData)
             .build();
 
-        var userDetails = UserDetails.builder().id(SYSTEM_USER_USER_ID).build();
+        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
         var user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);

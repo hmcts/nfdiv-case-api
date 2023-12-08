@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,8 +47,8 @@ public class PbaService {
 
     private List<String> retrievePbaNumbers() {
         String solicitorAuthToken = httpServletRequest.getHeader(AUTHORIZATION);
-        UserDetails solUserDetails = idamService.retrieveUser(solicitorAuthToken).getUserDetails();
-        String solicitorEmail = solUserDetails.getEmail();
+        var solUserDetails = idamService.retrieveUser(solicitorAuthToken).getUserDetails();
+        var solicitorEmail = solUserDetails.getSub();
 
         ResponseEntity<PbaOrganisationResponse> responseEntity =
             pbaRefDataClient.retrievePbaNumbers(solicitorAuthToken, authTokenGenerator.generate(), solicitorEmail);

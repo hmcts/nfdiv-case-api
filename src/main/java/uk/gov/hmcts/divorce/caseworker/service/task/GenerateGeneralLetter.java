@@ -59,18 +59,18 @@ public class GenerateGeneralLetter implements CaseTask {
         log.info("Generating general letter for case id: {} ", caseId);
 
         LanguagePreference languagePreference =
-            GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
-            ? caseData.getApplicant2().getLanguagePreference()
-            : caseData.getApplicant1().getLanguagePreference();
+                GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                        ? caseData.getApplicant2().getLanguagePreference()
+                        : caseData.getApplicant1().getLanguagePreference();
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            GENERAL_LETTER,
-            templateContent.apply(caseData, caseId, languagePreference),
-            caseId,
-            GENERAL_LETTER_TEMPLATE_ID,
-            languagePreference,
-            formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
+                caseData,
+                GENERAL_LETTER,
+                templateContent.apply(caseData, caseId, languagePreference),
+                caseId,
+                GENERAL_LETTER_TEMPLATE_ID,
+                languagePreference,
+                formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
         );
 
         updateGeneralLetters(caseData);
@@ -90,35 +90,35 @@ public class GenerateGeneralLetter implements CaseTask {
                     .map(ConfidentialDivorceDocument::getDocumentLink);
         } else {
             generalLetterDocument =
-                ofNullable(caseData.getDocuments().getDocumentsGenerated())
-                    .flatMap(Collection::stream)
-                    .map(ListValue::getValue)
-                    .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
-                    .findFirst()
-                    .map(DivorceDocument::getDocumentLink);
+                    ofNullable(caseData.getDocuments().getDocumentsGenerated())
+                            .flatMap(Collection::stream)
+                            .map(ListValue::getValue)
+                            .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
+                            .findFirst()
+                            .map(DivorceDocument::getDocumentLink);
         }
 
         generalLetterDocument.ifPresent(document -> caseData.setGeneralLetters(addDocumentToTop(
-            caseData.getGeneralLetters(),
-            mapToGeneralLetterDetails(caseData.getGeneralLetter(), document),
-            documentIdProvider.documentId()
+                caseData.getGeneralLetters(),
+                mapToGeneralLetterDetails(caseData.getGeneralLetter(), document),
+                documentIdProvider.documentId()
         )));
     }
 
     private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter, Document generalLetterDocument) {
 
         List<ListValue<Document>> attachments = ofNullable(generalLetter.getGeneralLetterAttachments())
-            .flatMap(Collection::stream)
-            .map(divorceDocument -> ListValue.<Document>builder()
-                .id(documentIdProvider.documentId())
-                .value(divorceDocument.getValue().getDocumentLink()).build())
-            .toList();
+                .flatMap(Collection::stream)
+                .map(divorceDocument -> ListValue.<Document>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(divorceDocument.getValue().getDocumentLink()).build())
+                .toList();
 
         return GeneralLetterDetails.builder()
-            .generalLetterLink(generalLetterDocument)
-            .generalLetterAttachmentLinks(attachments)
-            .generalLetterDateTime(now(clock))
-            .generalLetterParties(generalLetter.getGeneralLetterParties())
-            .build();
+                .generalLetterLink(generalLetterDocument)
+                .generalLetterAttachmentLinks(attachments)
+                .generalLetterDateTime(now(clock))
+                .generalLetterParties(generalLetter.getGeneralLetterParties())
+                .build();
     }
 }

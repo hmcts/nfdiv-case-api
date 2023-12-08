@@ -70,13 +70,13 @@ public class GenerateGeneralLetterTest {
         final var result = generateLetter.apply(caseDetails);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            caseData,
-            DocumentType.GENERAL_LETTER,
-            templateContent,
-            TEST_CASE_ID,
-            GENERAL_LETTER_TEMPLATE_ID,
-            ENGLISH,
-            FILE_NAME
+                caseData,
+                DocumentType.GENERAL_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                GENERAL_LETTER_TEMPLATE_ID,
+                ENGLISH,
+                FILE_NAME
         );
 
         assertThat(result.getData()).isEqualTo(caseData);
@@ -99,13 +99,13 @@ public class GenerateGeneralLetterTest {
         final var result = generateLetter.apply(caseDetails);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            caseData,
-            DocumentType.GENERAL_LETTER,
-            templateContent,
-            TEST_CASE_ID,
-            GENERAL_LETTER_TEMPLATE_ID,
-            ENGLISH,
-            FILE_NAME
+                caseData,
+                DocumentType.GENERAL_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                GENERAL_LETTER_TEMPLATE_ID,
+                ENGLISH,
+                FILE_NAME
         );
 
         assertThat(result.getData()).isEqualTo(caseData);
@@ -127,13 +127,13 @@ public class GenerateGeneralLetterTest {
         final var result = generateLetter.apply(caseDetails);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            caseData,
-            DocumentType.GENERAL_LETTER,
-            templateContent,
-            TEST_CASE_ID,
-            GENERAL_LETTER_TEMPLATE_ID,
-            WELSH,
-            FILE_NAME
+                caseData,
+                DocumentType.GENERAL_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                GENERAL_LETTER_TEMPLATE_ID,
+                WELSH,
+                FILE_NAME
         );
 
         assertThat(result.getData()).isEqualTo(caseData);
@@ -150,18 +150,18 @@ public class GenerateGeneralLetterTest {
         final Map<String, Object> templateContent = new HashMap<>();
 
         when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
-            .thenReturn(templateContent);
+                .thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
 
         verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            caseData,
-            DocumentType.GENERAL_LETTER,
-            templateContent,
-            TEST_CASE_ID,
-            GENERAL_LETTER_TEMPLATE_ID,
-            ENGLISH,
-            FILE_NAME
+                caseData,
+                DocumentType.GENERAL_LETTER,
+                templateContent,
+                TEST_CASE_ID,
+                GENERAL_LETTER_TEMPLATE_ID,
+                ENGLISH,
+                FILE_NAME
         );
 
         assertThat(result.getData()).isEqualTo(caseData);

@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.divorce.idam.User;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -81,7 +81,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
         var caseNote = new CaseNote();
         caseNote.setNote(note);
         caseNote.setDate(LocalDate.now(clock));
-        caseNote.setAuthor(caseworkerUser.getUserDetails().getFullName());
+        caseNote.setAuthor(caseworkerUser.getUserDetails().getName());
 
         if (isEmpty(caseData.getNotes())) {
             List<ListValue<CaseNote>> listValues = new ArrayList<>();

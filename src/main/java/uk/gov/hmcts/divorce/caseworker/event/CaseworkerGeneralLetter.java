@@ -89,8 +89,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
+        log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
         generateGeneralLetter.apply(details);
 
         //clear general letter field so that on next general letter old data is not shown
@@ -102,13 +102,13 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     }
 
     public SubmittedCallbackResponse submitted(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails) {
+            final CaseDetails<CaseData, State> details,
+            final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
 
         sendGeneralLetter.apply(details);
 
         return SubmittedCallbackResponse.builder()
-            .build();
+                .build();
     }
 }

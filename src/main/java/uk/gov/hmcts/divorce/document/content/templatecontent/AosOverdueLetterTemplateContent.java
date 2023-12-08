@@ -1,15 +1,20 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
+import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_JS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -38,26 +43,31 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
-public class AosOverdueLetterTemplateContent {
+public class AosOverdueLetterTemplateContent implements TemplateContent {
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Value("${aos_overdue.arrange_service_offset_days}")
     private int offsetDays;
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference) {
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(AOS_OVERDUE_TEMPLATE_ID, AOS_OVERDUE_JS_TEMPLATE_ID);
+    }
 
-        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseData, caseId);
+    }
+
+    private Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         String bailiffServiceCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF));
         String otherServiceCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE));

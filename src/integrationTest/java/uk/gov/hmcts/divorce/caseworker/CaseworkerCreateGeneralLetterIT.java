@@ -144,7 +144,6 @@ public class CaseworkerCreateGeneralLetterIT {
 
         assertThatJson(response)
             .isEqualTo(json(expectedResponse("classpath:caseworker-general-letter-response.json")));
-
     }
 
     @Test
@@ -189,29 +188,29 @@ public class CaseworkerCreateGeneralLetterIT {
         final CaseData caseData = buildCaseDataWithGeneralLetter(APPLICANT);
 
         final ListValue<GeneralLetterDetails> doc1 = ListValue.<GeneralLetterDetails>builder()
-            .value(GeneralLetterDetails.builder()
-                .generalLetterLink(Document.builder().build())
-                .build())
-            .build();
+                .value(GeneralLetterDetails.builder()
+                        .generalLetterLink(Document.builder().build())
+                        .build())
+                .build();
 
         caseData.setGeneralLetters(Lists.newArrayList(doc1));
 
         String response = mockMvc.perform(post(SUBMITTED_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_CREATE_GENERAL_LETTER)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
+                        .contentType(APPLICATION_JSON)
+                        .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                        .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                        .content(objectMapper.writeValueAsString(
+                                        callbackRequest(
+                                                caseData,
+                                                CASEWORKER_CREATE_GENERAL_LETTER)
+                                )
+                        )
+                        .accept(APPLICATION_JSON))
+                .andExpect(
+                        status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
         verify(generalLetterPrinter).sendLetterWithAttachments(any(CaseData.class), anyLong());
     }
