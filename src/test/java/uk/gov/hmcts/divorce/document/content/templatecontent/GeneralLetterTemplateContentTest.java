@@ -16,12 +16,10 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.getPostalAddress;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FEEDBACK;
@@ -55,12 +53,6 @@ class GeneralLetterTemplateContentTest {
     private GeneralLetterTemplateContent generalLetterTemplateContent;
 
     @Test
-    void shouldBeAbleToHandleGeneralLetterTemplates() {
-        assertThat(generalLetterTemplateContent.getSupportedTemplates())
-                .containsAll(List.of(GENERAL_LETTER_TEMPLATE_ID));
-    }
-
-    @Test
     void shouldProvideCorrectTemplateContentForGeneralLetterForApplicant() {
         CaseData caseData = validApplicant1CaseData();
 
@@ -76,7 +68,7 @@ class GeneralLetterTemplateContentTest {
         final var templateContent = generalLetterTemplateContent.getTemplateContent(
                 caseData,
                 TEST_CASE_ID,
-                caseData.getApplicant1());
+                caseData.getApplicant1().getLanguagePreference());
 
         assertThat(templateContent).containsAllEntriesOf(
                 Map.of(
@@ -105,7 +97,7 @@ class GeneralLetterTemplateContentTest {
         final var templateContent = generalLetterTemplateContent.getTemplateContent(
                 caseData,
                 TEST_CASE_ID,
-                caseData.getApplicant1());
+                caseData.getApplicant1().getLanguagePreference());
 
         assertThat(templateContent).containsAllEntriesOf(
                 Map.of(

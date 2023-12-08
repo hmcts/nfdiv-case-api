@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack.LETTER_TYPE_GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
@@ -52,37 +53,16 @@ public class LetterPrinter {
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
 
-            if ("general-letter".equals(letterName)) {
-                letters.addAll(addAnyAttachmentsToPackForGeneralLetter(caseData));
-
-                GeneralParties parties = caseData.getGeneralLetter().getGeneralLetterParties();
-
-                var recipientName = switch (parties) {
-                    case RESPONDENT -> caseData.getApplicant2().getFullName();
-                    case APPLICANT -> caseData.getApplicant1().getFullName();
-                    case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
-                };
-
-                final String caseIdString = caseId.toString();
-                final Print print = new Print(
-                        letters,
-                        caseIdString,
-                        caseIdString,
-                        letterName,
-                        recipientName
-                );
-
-                final UUID letterId = bulkPrintService.print(print);
-                log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+            if (LETTER_TYPE_GENERAL_LETTER.equals(letterName)) {
+                sendGeneralLetterWithAttachments(caseData, caseId.toString(), letterName, letters);
             } else {
-
                 final String caseIdString = caseId.toString();
                 final Print print = new Print(
-                        letters,
-                        caseIdString,
-                        caseIdString,
-                        letterName,
-                        applicant.getFullName()
+                    letters,
+                    caseIdString,
+                    caseIdString,
+                    letterName,
+                    applicant.getFullName()
                 );
                 final UUID letterId = bulkPrintService.print(print);
 
@@ -96,6 +76,29 @@ public class LetterPrinter {
                     caseId)
             );
         }
+    }
+
+    private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
+        letters.addAll(addAnyAttachmentsToPackForGeneralLetter(caseData));
+
+        GeneralParties parties = caseData.getGeneralLetter().getGeneralLetterParties();
+
+        var recipientName = switch (parties) {
+            case RESPONDENT -> caseData.getApplicant2().getFullName();
+            case APPLICANT -> caseData.getApplicant1().getFullName();
+            case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
+        };
+
+        final Print print = new Print(
+            letters,
+            caseId,
+            caseId,
+            letterName,
+            recipientName
+        );
+
+        final UUID letterId = bulkPrintService.print(print);
+        log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
     }
 
     private ListValue<Document> toListValue(Document document) {

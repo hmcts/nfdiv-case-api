@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 
 import java.util.Optional;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
@@ -20,13 +18,15 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 @Slf4j
 public class GeneralLetterDocumentPack implements DocumentPack {
 
-    private static final String LETTER_TYPE_GENERAL_LETTER = "general-letter";
+    public static final String LETTER_TYPE_GENERAL_LETTER = "general-letter";
 
     @Override
     public DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant) {
 
-        return new DocumentPackInfo(ImmutableMap.of(GENERAL_LETTER, Optional.of(GENERAL_LETTER_TEMPLATE_ID)),
-        ImmutableMap.of(GENERAL_LETTER_TEMPLATE_ID, GENERAL_LETTER_DOCUMENT_NAME));
+        return new DocumentPackInfo(
+            ImmutableMap.of(GENERAL_LETTER, Optional.empty()),
+            ImmutableMap.of()
+        );
     }
 
     @Override
