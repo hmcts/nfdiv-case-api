@@ -20,5 +20,5 @@ public interface PaymentClient {
     Payment getPaymentByReference(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
-        @PathVariable String paymentReference);
+        @PathVariable("paymentReference") String paymentReference);
 }
