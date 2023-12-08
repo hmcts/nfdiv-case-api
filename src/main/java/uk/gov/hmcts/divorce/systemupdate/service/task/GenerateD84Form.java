@@ -18,7 +18,7 @@ public class GenerateD84Form implements CaseTask {
 
     private static final String D84_FILE_LOCATION = "/D84.pdf";
     private static final String D84_FILENAME = "D84.pdf";
-    private static final String D84_DISPLAY_NAME = "D84";
+    public static final String D84_DISPLAY_NAME = "D84";
 
     @Autowired
     private GenerateFormHelper generateFormHelper;

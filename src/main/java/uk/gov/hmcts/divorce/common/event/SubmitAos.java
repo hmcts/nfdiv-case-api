@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosDisputed.SYS
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.SYSTEM_ISSUE_AOS_UNDISPUTED;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
@@ -56,17 +57,10 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         new SolicitorDetailsWithStatementOfTruth()
     );
 
-    @Autowired
-    private SubmitAosService submitAosService;
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
-
-    @Autowired
-    private IdamService idamService;
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final SubmitAosService submitAosService;
+    private final CcdUpdateService ccdUpdateService;
+    private final IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

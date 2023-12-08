@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosResponseLetterPackToApplicant;
-import uk.gov.hmcts.divorce.common.service.task.AddRespondentAnswersLink;
+import uk.gov.hmcts.divorce.common.service.task.GenerateAndLinkRespondentAnswers;
 import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmissionAndDueDate;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmitAosState;
@@ -21,7 +21,7 @@ public class SubmitAosService {
 
     private final SetSubmitAosState setSubmitAosState;
     private final SetSubmissionAndDueDate setSubmissionAndDueDate;
-    private final AddRespondentAnswersLink addRespondentAnswersLink;
+    private final GenerateAndLinkRespondentAnswers generateAndLinkRespondentAnswers;
     private final SendAosNotifications sendAosNotifications;
     private final SendAosResponseLetterPackToApplicant sendAosResponseLetterPackToApplicant;
 
@@ -29,7 +29,7 @@ public class SubmitAosService {
         return caseTasks(
             setSubmitAosState,
             setSubmissionAndDueDate,
-            addRespondentAnswersLink
+            generateAndLinkRespondentAnswers
         ).run(caseDetails);
     }
 
@@ -37,7 +37,7 @@ public class SubmitAosService {
         return caseTasks(
             setSubmitAosState,
             setSubmissionAndDueDate,
-            addRespondentAnswersLink
+            generateAndLinkRespondentAnswers
         ).run(caseDetails);
     }
 
