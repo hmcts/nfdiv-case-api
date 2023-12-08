@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
@@ -72,7 +71,7 @@ public class DocumentGenerator {
         return documentPackInfo.documentPack().entrySet().stream()
             .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
             .flatMap(Optional::stream)
-            .collect(toList());
+            .toList();
     }
 
     private Optional<Letter> toLetter(final Map.Entry<DocumentType, Optional<String>> entry,

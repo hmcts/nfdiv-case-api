@@ -27,4 +27,8 @@
     <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
     <cpe>cpe:/a:json-java_project:json-java</cpe>
   </suppress>
+  <suppress>
+    <notes>Update is available but dependencies need to update it which fixes this vulnerability</notes>
+    <cve>CVE-2023-6378</cve>
+  </suppress>
 </suppressions>

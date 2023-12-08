@@ -1,12 +1,14 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.AosOverdueDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -25,6 +27,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDEN
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class AosReminderNotifications implements ApplicantNotification {
@@ -32,17 +35,15 @@ public class AosReminderNotifications implements ApplicantNotification {
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
 
-    @Autowired
-    private AosOverduePrinter aosOverduePrinter;
+    private final AosOverdueDocumentPack aosOverdueDocumentPack;
+
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -78,7 +79,18 @@ public class AosReminderNotifications implements ApplicantNotification {
     @Override
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
         log.info("Sending AOS overdue letter to applicant for case : {}", caseId);
-        aosOverduePrinter.sendLetterToApplicant(caseData, caseData.getApplicant1(), caseId);
+
+        Applicant applicant1 = caseData.getApplicant1();
+
+        DocumentPackInfo aosDocumentPackInfo = aosOverdueDocumentPack.getDocumentPack(caseData, applicant1);
+
+        letterPrinter.sendLetters(
+            caseData,
+            caseId,
+            applicant1,
+            aosDocumentPackInfo,
+            aosOverdueDocumentPack.getLetterId()
+        );
     }
 
     private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {

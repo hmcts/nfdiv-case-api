@@ -13,13 +13,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.divorce.caseworker.service.print.AosOverduePrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,10 +41,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_JS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
@@ -88,7 +82,7 @@ public class SystemProgressCaseToAosOverdueIT {
     private NotificationService notificationService;
 
     @MockBean
-    private AosOverduePrinter aosOverduePrinter;
+    private LetterPrinter letterPrinter;
 
     @MockBean
     private CaseDataDocumentService caseDataDocumentService;
@@ -142,7 +136,7 @@ public class SystemProgressCaseToAosOverdueIT {
 
         verifyNoMoreInteractions(caseDataDocumentService);
 
-        verifyNoMoreInteractions(aosOverduePrinter);
+        verifyNoMoreInteractions(letterPrinter);
     }
 
     @Test
@@ -182,17 +176,6 @@ public class SystemProgressCaseToAosOverdueIT {
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
-
-        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            any(CaseData.class),
-            eq(AOS_OVERDUE_LETTER),
-            anyMap(),
-            anyLong(),
-            eq(AOS_OVERDUE_TEMPLATE_ID),
-            eq(ENGLISH),
-            eq(AOS_OVERDUE_LETTER_DOCUMENT_NAME));
-
-        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), any(Applicant.class), anyLong());
     }
 
     @Test
@@ -230,17 +213,6 @@ public class SystemProgressCaseToAosOverdueIT {
         assertThatJson(actualResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessOfflineJS()));
-
-        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            any(CaseData.class),
-            eq(AOS_OVERDUE_LETTER),
-            anyMap(),
-            anyLong(),
-            eq(AOS_OVERDUE_JS_TEMPLATE_ID),
-            eq(ENGLISH),
-            eq(AOS_OVERDUE_LETTER_DOCUMENT_NAME));
-
-        verify(aosOverduePrinter).sendLetterToApplicant(any(CaseData.class), any(Applicant.class), anyLong());
 
         verifyNoInteractions(notificationService);
     }

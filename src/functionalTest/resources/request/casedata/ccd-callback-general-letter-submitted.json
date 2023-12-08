@@ -1,0 +1,96 @@
+{
+  "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
+  "applicationType": "soleApplication",
+  "applicant1FirstName": "test_first_name",
+  "applicant1MiddleName": "test_middle_name",
+  "applicant1LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1Address": {
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
+  },
+  "applicant2Address": {
+    "AddressLine1": "221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
+  },
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "accessCode": "",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant1ContactDetailsType": "public",
+  "applicant1Gender": "female",
+  "applicant2FirstName": "test_first_name_2",
+  "applicant2MiddleName": "test_middle_name",
+  "applicant2LastName": "test_last_name_2",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "applicant2ContactDetailsType": "public",
+  "applicant2Gender": "male",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "marriageApplicant2Name": "test_first_name test_last_name",
+  "marriagePlaceOfMarriage": "Somewhere",
+  "marriageDate": "1990-06-10",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": [
+    "A"
+  ],
+  "applicant1LegalProceedings": "Yes",
+  "applicant1FinancialOrder": "No",
+  "applicant2FinancialOrder": "No",
+  "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+  "applicant1StatementOfTruth": "Yes",
+  "applicant2PrayerHasBeenGiven": "Yes",
+  "applicant2StatementOfTruth": "Yes",
+  "applicationFeeOrderSummary": {
+    "PaymentReference": null,
+    "Fees": null,
+    "PaymentTotal": "55000"
+  },
+  "applicationPayments": [
+    {
+      "id": null,
+      "value": {
+        "created": null,
+        "feeCode": "FEE0001",
+        "amount": 55000,
+        "status": "success",
+        "channel": "online",
+        "reference": "paymentRef",
+        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+      }
+    }
+  ],
+  "generalLetters": [
+    {
+      "id": "123456789",
+      "value": {
+        "generalLetterDateTime": "2021-06-17T01:00:00.000",
+        "generalLetterParties": "applicant",
+        "generalLetterLink": {
+          "document_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
+          "document_filename" : "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
+          "document_binary_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
+        },
+        "generalLetterAttachmentLinks": [
+          {
+            "id" : "8c1a4b5e-8a05-41d8-b55d-d0e190356437",
+            "value" : {
+              "document_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c",
+              "document_filename" : "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
+              "document_binary_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c/binary"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
