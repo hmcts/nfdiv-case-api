@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.service.task.SetServiceConfirmed;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetConfirmServiceDueDate;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetConfirmServiceState;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -20,10 +21,14 @@ public class SubmitConfirmService {
     @Autowired
     private SetServiceConfirmed setServiceConfirmed;
 
+    @Autowired
+    private SetConfirmServiceState setConfirmServiceState;
+
     public CaseDetails<CaseData, State> submitConfirmService(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setConfirmServiceDueDate,
-            setServiceConfirmed
+            setServiceConfirmed,
+            setConfirmServiceState
         ).run(caseDetails);
     }
 }
