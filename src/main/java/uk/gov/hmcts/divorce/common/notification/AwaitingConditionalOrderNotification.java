@@ -1,14 +1,15 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForConditionalOrderDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForConditionalOrderPrinter;
 
 import java.util.Map;
 
@@ -32,16 +33,13 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class AwaitingConditionalOrderNotification implements ApplicantNotification {
 
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private ApplyForConditionalOrderPrinter applyForConditionalOrderPrinter;
+    private final CommonContent commonContent;
+    private final NotificationService notificationService;
+    private final LetterPrinter letterPrinter;
+    private final ApplyForConditionalOrderDocumentPack applyForConditionalOrderDocumentPack;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -92,7 +90,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long id) {
         log.info("Notifying applicant 1 offline that they can apply for a conditional order: {}", id);
-        applyForConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        final Applicant applicant1 = caseData.getApplicant1();
+        var documentPackInfo = applyForConditionalOrderDocumentPack.getDocumentPack(caseData, applicant1);
+        letterPrinter.sendLetters(caseData, id, applicant1, documentPackInfo, applyForConditionalOrderDocumentPack.getLetterId());
     }
 
     public void sendToApplicant2(final CaseData caseData, final Long id) {
@@ -137,7 +137,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying applicant 2 offline that they can apply for a conditional order: {}", id);
-            applyForConditionalOrderPrinter.sendLetters(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+            final Applicant applicant2 = caseData.getApplicant2();
+            var documentPackInfo = applyForConditionalOrderDocumentPack.getDocumentPack(caseData, applicant2);
+            letterPrinter.sendLetters(caseData, id, applicant2, documentPackInfo, applyForConditionalOrderDocumentPack.getLetterId());
         }
     }
 
