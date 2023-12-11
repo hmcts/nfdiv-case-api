@@ -9,16 +9,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.D84_DISPLAY_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.D84_FILENAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.D84_FILE_LOCATION;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 
 @Component
 @Slf4j
 public class GenerateD84Form implements CaseTask {
-
-    private static final String D84_FILE_LOCATION = "/D84.pdf";
-    private static final String D84_FILENAME = "D84.pdf";
-    public static final String D84_DISPLAY_NAME = "D84";
 
     @Autowired
     private GenerateFormHelper generateFormHelper;
