@@ -601,29 +601,12 @@ class LegalAdvisorMakeServiceDecisionTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        var dispenseWithServiceRefusedDoc = new Document(
-            DOCUMENT_URL,
-            DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
-            DOCUMENT_URL + "/binary"
-        );
-
-        when(
-            caseDataDocumentService.renderDocument(
-                templateContent,
-                TEST_CASE_ID,
-                SERVICE_REFUSAL_TEMPLATE_ID,
-                ENGLISH,
-                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
-            ))
-            .thenReturn(dispenseWithServiceRefusedDoc);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        verifyNoInteractions(caseDataDocumentService);
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
