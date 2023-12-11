@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

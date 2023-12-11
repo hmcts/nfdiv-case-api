@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
