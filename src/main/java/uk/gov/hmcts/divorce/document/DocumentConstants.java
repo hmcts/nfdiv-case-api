@@ -2,6 +2,9 @@ package uk.gov.hmcts.divorce.document;
 
 public final class DocumentConstants {
 
+    public static final String D84_FILE_LOCATION = "/D84.pdf";
+    public static final String D84_FILENAME = "D84.pdf";
+    public static final String D84_DISPLAY_NAME = "D84";
     public static final String DIVORCE_APPLICATION_SOLE = "DIVORCE_APPLICATION_SOLE";
     public static final String DIVORCE_APPLICATION_JOINT = "DIVORCE_APPLICATION_JOINT";
     public static final String DIVORCE_APPLICATION_DOCUMENT_NAME = "divorce-application";

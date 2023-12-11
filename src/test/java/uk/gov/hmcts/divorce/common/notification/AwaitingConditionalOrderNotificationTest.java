@@ -9,9 +9,10 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForConditionalOrderDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.systemupdate.service.print.ApplyForConditionalOrderPrinter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -72,7 +73,10 @@ class AwaitingConditionalOrderNotificationTest {
     private CommonContent commonContent;
 
     @Mock
-    private ApplyForConditionalOrderPrinter applyForConditionalOrderPrinter;
+    private LetterPrinter letterPrinter;
+
+    @Mock
+    private ApplyForConditionalOrderDocumentPack applyForConditionalOrderDocumentPack;
 
     @InjectMocks
     private AwaitingConditionalOrderNotification notification;
@@ -246,11 +250,14 @@ class AwaitingConditionalOrderNotificationTest {
 
         notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        verify(applyForConditionalOrderPrinter).sendLetters(
+        verify(applyForConditionalOrderDocumentPack).getDocumentPack(caseData, caseData.getApplicant1());
+
+        verify(letterPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant1(),
-            caseData.getApplicant2()
+            applyForConditionalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant1()),
+            applyForConditionalOrderDocumentPack.getLetterId()
         );
     }
 
@@ -301,7 +308,7 @@ class AwaitingConditionalOrderNotificationTest {
 
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verifyNoInteractions(applyForConditionalOrderPrinter);
+        verifyNoInteractions(letterPrinter);
     }
 
     @Test
@@ -312,11 +319,14 @@ class AwaitingConditionalOrderNotificationTest {
 
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        verify(applyForConditionalOrderPrinter).sendLetters(
+        verify(applyForConditionalOrderDocumentPack).getDocumentPack(caseData, caseData.getApplicant2());
+
+        verify(letterPrinter).sendLetters(
             caseData,
             TEST_CASE_ID,
             caseData.getApplicant2(),
-            caseData.getApplicant1()
+            applyForConditionalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant2()),
+            applyForConditionalOrderDocumentPack.getLetterId()
         );
     }
 }

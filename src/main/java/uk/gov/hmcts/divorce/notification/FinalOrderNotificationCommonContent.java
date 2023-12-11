@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.notification;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
@@ -67,7 +67,7 @@ public class FinalOrderNotificationCommonContent {
         return YesOrNo.YES.equals(isFinalOrderOverdue)
             ? Optional.ofNullable(partnerDelayReason)
             .map(DELAY_REASON_STATIC_CONTENT::formatted)
-            .orElse(DELAY_REASON_STATIC_CONTENT.formatted(StringUtils.EMPTY))
-            : StringUtils.EMPTY;
+            .orElse(DELAY_REASON_STATIC_CONTENT.formatted(EMPTY))
+            : EMPTY;
     }
 }

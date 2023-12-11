@@ -3,12 +3,10 @@ package uk.gov.hmcts.divorce.document.print;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
@@ -20,10 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
 @RequiredArgsConstructor
@@ -51,17 +46,13 @@ public class LetterPrinter {
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
 
-            if ("general-letter".equals(letterName)) {
-                letters.addAll(addAnyAttachmentsToPackForGeneralLetter(caseData));
-            }
-
             final String caseIdString = caseId.toString();
             final Print print = new Print(
-                letters,
-                caseIdString,
-                caseIdString,
-                letterName,
-                applicant.getFullName()
+                    letters,
+                    caseIdString,
+                    caseIdString,
+                    letterName,
+                    applicant.getFullName()
             );
             final UUID letterId = bulkPrintService.print(print);
 
@@ -91,25 +82,5 @@ public class LetterPrinter {
         } else {
             return letter.getDocument();
         }
-    }
-
-    private List<Letter> addAnyAttachmentsToPackForGeneralLetter(final CaseData caseData) {
-
-        ListValue<GeneralLetterDetails> generalLetterDetailsListValue = firstElement(caseData.getGeneralLetters());
-
-        List<Letter> attachmentLetters = new ArrayList<>();
-
-        if (generalLetterDetailsListValue != null) {
-
-            GeneralLetterDetails letterDetails = generalLetterDetailsListValue.getValue();
-
-            List<ListValue<Document>> documents = letterDetails.getGeneralLetterAttachmentLinks();
-
-            if (!CollectionUtils.isEmpty(documents)) {
-                attachmentLetters = mapToLetters(documents, GENERAL_LETTER);
-            }
-
-        }
-        return attachmentLetters;
     }
 }
