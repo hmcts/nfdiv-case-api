@@ -14,7 +14,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.divorce.caseworker.service.print.SwitchToSoleCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,6 +22,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -79,7 +80,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -130,7 +130,7 @@ public class SwitchedToSoleCoIT {
     private CaseAssignmentApi caseAssignmentApi;
 
     @MockBean
-    private SwitchToSoleCoPrinter switchToSoleCoPrinter;
+    private BulkPrintService bulkPrintService;
 
     @BeforeAll
     static void setUp() {
@@ -268,7 +268,7 @@ public class SwitchedToSoleCoIT {
         data.setConditionalOrder(ConditionalOrder.builder()
             .d84ApplicationType(SWITCH_TO_SOLE)
             .d84WhoApplying(APPLICANT_1)
-            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
         setupMocks(false, false);
 
@@ -297,7 +297,7 @@ public class SwitchedToSoleCoIT {
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
@@ -319,7 +319,7 @@ public class SwitchedToSoleCoIT {
             .build());
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
@@ -348,7 +348,7 @@ public class SwitchedToSoleCoIT {
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
@@ -378,16 +378,30 @@ public class SwitchedToSoleCoIT {
             .d84WhoApplying(APPLICANT_2)
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
+        setupMocks(false, true);
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(String.valueOf(TEST_CASE_ID)))
+        ).thenReturn(caseRolesResponse);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        verify(switchToSoleCoPrinter)
-            .print(any(CaseData.class), eq(TEST_CASE_ID), eq(data.getApplicant2()));
+        verify(bulkPrintService).print(any(Print.class));
     }
 
     @Test
@@ -460,6 +474,8 @@ public class SwitchedToSoleCoIT {
     public void shouldPrintSwitchToSoleCoLetterIfD84SwitchToSoleTriggeredByApplicant2ForJudicialSeparationAndApplicant1Represented()
         throws Exception {
         CaseData data = validJointApplicant1CaseData();
+        final LocalDate issueDate = getExpectedLocalDate();
+        data.getApplication().setIssueDate(issueDate);
         data.getApplicant1().setSolicitorRepresented(YES);
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
@@ -501,9 +517,5 @@ public class SwitchedToSoleCoIT {
             .when(IGNORING_ARRAY_ORDER)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_CO_APPLICANT_2_RESPONSE)));
-
-
     }
-
-
 }

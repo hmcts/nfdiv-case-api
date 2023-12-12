@@ -19,20 +19,46 @@
       "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
     },
     "coDateD84FormScanned": "2022-01-01T12:12",
-    "documentsGenerated": [{
-      "id": "${json-unit.any-string}",
-      "value": {
-        "documentLink": {
-          "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
-          "document_filename": "doc1.pdf",
-          "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
-        },
-        "documentDateAdded": "${json-unit.any-string}",
-        "documentComment": "Reclassified scanned document",
-        "documentFileName": "doc1.pdf",
-        "documentType": "conditionalOrderApplication"
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          },
+          "documentType": "appliedForCoLetter"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentLink": {
+            "document_binary_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}"
+          },
+          "documentType": "appliedForCoLetter"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+            "document_filename": "doc1.pdf",
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+          },
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentComment": "Reclassified scanned document",
+          "documentFileName": "doc1.pdf",
+          "documentType": "conditionalOrderApplication"
+        }
       }
-    }],
+    ],
     "scannedDocuments": [{
       "value": {
         "type": "form",

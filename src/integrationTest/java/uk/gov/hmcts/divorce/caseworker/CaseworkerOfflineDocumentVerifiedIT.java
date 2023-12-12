@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterAll;
@@ -21,7 +22,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
-import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -34,12 +34,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -74,12 +79,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
@@ -108,6 +114,12 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         "classpath:caseworker-offline-document-verified-other-response.json";
     public static final String FILENAME = "doc1.pdf";
 
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(DocumentType.APPLIED_FOR_CO_LETTER, Optional.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID)),
+        ImmutableMap.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID, APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME)
+    );
+    public static final String THE_LETTER_ID = "applied-for-co-letter";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -124,10 +136,13 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     private NotificationService notificationService;
 
     @MockBean
-    private AppliedForCoPrinter appliedForCoPrinter;
+    private LetterPrinter printer;
 
     @MockBean
     private AosPackPrinter aosPackPrinter;
+
+    @MockBean
+    private CaseDataDocumentService caseDataDocumentService;
 
     @BeforeAll
     static void setUp() {
@@ -497,11 +512,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    public void shouldTriggerSubmittedCallbackAndSendAosResponseLetterToApplicant() throws Exception {
-
-        RetiredFields retiredFields = new RetiredFields();
-        retiredFields.setDataVersion(5);
-
+    public void shouldTriggerAboutToStartAndSendAosResponseLetterToApplicant() throws Exception {
         CaseData data = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(JOINT_APPLICATION)
@@ -530,7 +541,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .dueDate(LOCAL_DATE)
             .noticeOfChange(NoticeOfChange.builder()
                 .build())
-            .retiredFields(retiredFields)
             .caseInvite(CaseInvite.builder()
                 .build())
             .build();
@@ -546,16 +556,33 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             )
             .build();
 
-        data.setDocuments(CaseDocuments.builder()
-            .scannedDocuments(singletonList(doc1))
-            .typeOfDocumentAttached(AOS_D10)
-            .build());
+        data.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(AOS_D10)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label(FILENAME)
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)))
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -567,7 +594,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     }
 
     @Test
-    public void shouldTriggerSubmittedCallbackAndSendConditionalOrderLetters() throws Exception {
+    public void shouldTriggerAboutToStartAndSendConditionalOrderLetters() throws Exception {
 
         RetiredFields retiredFields = new RetiredFields();
         retiredFields.setDataVersion(5);
@@ -616,12 +643,25 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             )
             .build();
 
-        data.setDocuments(CaseDocuments.builder()
-            .scannedDocuments(singletonList(doc1))
-            .typeOfDocumentAttached(CO_D84)
-            .build());
+        data.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(CO_D84)
+                .scannedDocuments(singletonList(doc1))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label(FILENAME)
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                 .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
@@ -632,7 +672,12 @@ public class CaseworkerOfflineDocumentVerifiedIT {
             .getResponse()
             .getContentAsString();
 
-        verify(appliedForCoPrinter, times(2)).print(any(CaseData.class), anyLong(), any(Applicant.class));
-        verifyNoMoreInteractions(appliedForCoPrinter);
+        verify(printer, times(2)).sendLetters(
+            any(CaseData.class),
+            anyLong(),
+            any(Applicant.class),
+            eq(TEST_DOCUMENT_PACK_INFO),
+            eq(THE_LETTER_ID));
+        verifyNoMoreInteractions(printer);
     }
 }

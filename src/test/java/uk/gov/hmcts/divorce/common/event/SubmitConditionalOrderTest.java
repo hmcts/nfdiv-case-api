@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -23,6 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -33,6 +33,8 @@ import java.util.Objects;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -44,7 +46,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -52,6 +53,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDraft
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -86,7 +90,7 @@ class SubmitConditionalOrderTest {
     private Clock clock;
 
     @Mock
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
+    private DocumentGenerator documentGenerator;
 
     @InjectMocks
     private SubmitConditionalOrder submitConditionalOrder;
@@ -173,7 +177,7 @@ class SubmitConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
 
-        verifyNoInteractions(generateConditionalOrderAnswersDocument);
+        verifyNoInteractions(documentGenerator);
     }
 
     @Test
@@ -194,7 +198,13 @@ class SubmitConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
+        verify(documentGenerator).generateAndStoreCaseDocument(
+            eq(CONDITIONAL_ORDER_ANSWERS),
+            eq(CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID),
+            eq(CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME),
+            any(),
+            anyLong(),
+            eq(caseData.getApplicant1()));
     }
 
     @Test
@@ -232,7 +242,12 @@ class SubmitConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
+        verify(documentGenerator).generateAndStoreCaseDocument(eq(CONDITIONAL_ORDER_ANSWERS),
+            eq(CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID),
+            eq(CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME),
+            any(),
+            anyLong(),
+            eq(caseData.getApplicant1()));
     }
 
     @Test
@@ -294,35 +309,35 @@ class SubmitConditionalOrderTest {
     }
 
     @Test
-    void shouldSendApp1NotificationsOnSubmittedCallback() {
-        when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
+    void shouldSendApp1NotificationsOnAboutToSubmit() {
+        setupMocks(clock);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
 
         CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
-        submitConditionalOrder.submitted(caseDetails, null);
+        submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
     void shouldSendApp2NotificationsOnAboutToSubmit() {
-        when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
+        setupMocks(clock);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
 
         CaseData caseData = caseData();
         caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
-        submitConditionalOrder.submitted(caseDetails, null);
+        submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notificationDispatcher).send(app2AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnSubmittedCallback() {
-        setupMocks(null);
+    void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
+        setupMocks(clock);
         CaseData caseData = caseData();
         caseData.setApplicant1(Applicant
             .builder()
@@ -356,7 +371,7 @@ class SubmitConditionalOrderTest {
             .state(ConditionalOrderPronounced)
             .build();
 
-        submitConditionalOrder.submitted(caseDetails, beforeDetails);
+        submitConditionalOrder.aboutToSubmit(caseDetails, beforeDetails);
 
         verify(notificationDispatcher).send(solicitorAppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
