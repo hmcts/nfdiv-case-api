@@ -9,12 +9,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,5 +92,23 @@ public class SetConfirmServiceDueDateTest {
         final CaseDetails<CaseData, State> result = setConfirmServiceDueDate.apply(caseDetails);
 
         assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
+    }
+
+    @Test
+    void shouldNotSetDueDateIfAosPreviouslySubmitted() {
+        final var caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.setAcknowledgementOfService(
+            AcknowledgementOfService.builder().dateAosSubmitted(LocalDateTime.now()).build()
+        );
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> result = setConfirmServiceDueDate.apply(caseDetails);
+        assertThat(result.getData().getDueDate()).isNull();
+
+        verifyNoInteractions(holdingPeriodService);
     }
 }

@@ -31,17 +31,23 @@ public class SetConfirmServiceDueDate implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         CaseData caseData = caseDetails.getData();
-        SolicitorService solicitorService = caseData.getApplication().getSolicitorService();
 
-        var dueDate = solicitorService.getDateOfService().plusDays(dueDateOffsetDays);
+        if (caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            log.info("Skip setting dueDate: AoS previously Submitted for CaseId: {}", caseDetails.getId());
+            return caseDetails;
+        } else {
+            SolicitorService solicitorService = caseData.getApplication().getSolicitorService();
 
-        if (!isEmpty(solicitorService.getServiceProcessedByProcessServer())) {
-            dueDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
+            var dueDate = solicitorService.getDateOfService().plusDays(dueDateOffsetDays);
+
+            if (!isEmpty(solicitorService.getServiceProcessedByProcessServer())) {
+                dueDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
+            }
+
+            caseData.setDueDate(dueDate);
+
+            log.info("Setting dueDate of {}, for CaseId: {}", caseData.getDueDate(), caseDetails.getId());
         }
-
-        caseData.setDueDate(dueDate);
-
-        log.info("Setting dueDate of {}, for CaseId: {}", caseData.getDueDate(), caseDetails.getId());
 
         return caseDetails;
     }
