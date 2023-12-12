@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,6 +28,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -40,7 +43,13 @@ import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -52,13 +61,12 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,6 +79,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -81,8 +90,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosDisputed.SYSTEM_ISSUE_AOS_DISPUTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.SYSTEM_ISSUE_AOS_UNDISPUTED;
 import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -144,12 +153,23 @@ public class SubmitAosIT {
     @MockBean
     private CcdUpdateService ccdUpdateService;
 
+    @MockBean
+    private Clock clock;
+
     @BeforeAll
     static void setUp() {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
         CdamWireMock.start();
         SendLetterWireMock.start();
+    }
+
+    @BeforeEach
+    void setClock() {
+        LocalDateTime dateTime = LocalDateTime.of(2022, Month.FEBRUARY, 15, 13, 39);
+        Instant instant = dateTime.atZone(ZoneId.of("Europe/London")).toInstant();
+        when(clock.instant()).thenReturn(instant);
+        when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
     @AfterAll
@@ -312,7 +332,11 @@ public class SubmitAosIT {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulWithoutDisputeResponse()));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -346,7 +370,8 @@ public class SubmitAosIT {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulWithDisputeResponse()));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(eq("test@test.com"), any(), any(), any(), any());
+        verify(notificationService).sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), any(), any(), any(), any());
     }
 
     @Test
@@ -383,7 +408,11 @@ public class SubmitAosIT {
         assertThatJson(actualResponse)
             .isEqualTo(jsonDocument.json());
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(WELSH), anyLong());
     }
 
     @Test
@@ -418,7 +447,11 @@ public class SubmitAosIT {
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulWithRepresentedRespondent()));
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
@@ -441,6 +474,21 @@ public class SubmitAosIT {
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
+        UUID d84Uuid = UUID.randomUUID();
+        caseData.getDocuments().setDocumentsGenerated(
+            new ArrayList<>(List.of(
+                ListValue.<DivorceDocument>builder().id(d84Uuid.toString())
+                    .value(DivorceDocument.builder()
+                        .documentLink(Document.builder()
+                            .url("http://dm-store-aat.service.core-compute-aat.internal/documents/%s"
+                                .formatted(d84Uuid.toString()))
+                            .binaryUrl("http://dm-store-aat.service.core-compute-aat.internal/documents/%s/binary"
+                                .formatted(d84Uuid.toString()))
+                            .filename("d84.pdf")
+                            .build())
+                        .documentType(DocumentType.D84)
+                        .documentFileName("d84.pdf")
+                        .build()).build())));
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -449,8 +497,9 @@ public class SubmitAosIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx");
-        stubAosPackSendLetter();
+        stubAosPackSendLetter(d84Uuid.toString());
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -466,6 +515,7 @@ public class SubmitAosIT {
 
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-disputed-offline-response.json"));
     }
 
@@ -497,6 +547,7 @@ public class SubmitAosIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx");
         stubAosPackSendLetter();
 
@@ -514,6 +565,7 @@ public class SubmitAosIT {
 
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(expectedResponse("classpath:solicitor-submit-aos-offline-response-with-private-contact.json"));
     }
 
@@ -545,6 +597,7 @@ public class SubmitAosIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx");
         stubAosPackSendLetter();
 
@@ -570,50 +623,6 @@ public class SubmitAosIT {
             .when(IGNORING_ARRAY_ORDER)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(jsonDocument.json());
-    }
-
-    @Test
-    public void givenValidCaseDataDisputeWhenSubmittedCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
-        CaseData data = validCaseDataForAosSubmitted();
-        data.setSupplementaryCaseType(NA);
-        data.setApplicationType(SOLE_APPLICATION);
-        data.getApplication().setIssueDate(LOCAL_DATE);
-        data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
-        data.getApplicant1().setSolicitor(null);
-        data.getApplicant1().setSolicitorRepresented(NO);
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.setDueDate(LOCAL_DATE);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(data);
-        caseDetails.setId(1L);
-
-        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
-
-        doNothing().when(ccdUpdateService).submitEvent(1L, SYSTEM_ISSUE_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
-
-        mockMvc.perform(post(SUBMITTED_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(data, SUBMIT_AOS, AosDrafted.name())))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
-
-        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -652,13 +661,7 @@ public class SubmitAosIT {
             .getResponse()
             .getContentAsString();
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_AOS_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR), anyMap(), eq(ENGLISH), anyLong());
-
-        verifyNoMoreInteractions(notificationService);
+        verify(ccdUpdateService).submitEvent(any(), eq(SYSTEM_ISSUE_AOS_UNDISPUTED), any(), eq(TEST_SERVICE_AUTH_TOKEN));
     }
 
     private ListValue<ScannedDocument> aosScannedDocument() {
@@ -695,10 +698,26 @@ public class SubmitAosIT {
     }
 
     private void stubAosPackSendLetter() throws IOException {
+        stubAosPackSendLetter(List.of(
+            "51afe8e5-0061-42b6-83a2-4c122046901c", // coversheet
+            "c35b1868-e397-457a-aa67-ac1422bb8100", // NOP document id
+            "baf61f9a-38e5-11ed-a261-0242ac120002" // Scanned document id
+        ));
+    }
+
+    private void stubAosPackSendLetter(String uuid) throws IOException {
         final List<String> documentIds = List.of(
-            "baf61f9a-38e5-11ed-a261-0242ac120002", // NOP document id
-            "4cacfcd1-3588-40c2-94da-c22fb59e1068"  // Scanned document id
+            "51afe8e5-0061-42b6-83a2-4c122046901c", // coversheet
+            "c35b1868-e397-457a-aa67-ac1422bb8100", // NOP document id
+            "baf61f9a-38e5-11ed-a261-0242ac120002", // Scanned document id
+            uuid //d84 document id
         );
+
+
+        stubAosPackSendLetter(documentIds);
+    }
+
+    private void stubAosPackSendLetter(List<String> documentIds) throws IOException {
 
         final byte[] pdfAsBytes = loadPdfAsBytes();
 

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.service.print;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -16,25 +16,20 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class AosPackPrinter {
 
     private static final String LETTER_TYPE_RESPONDENT_PACK = "respondent-aos-pack";
     private static final String LETTER_TYPE_APPLICANT_PACK = "applicant-aos-pack";
-    private static final String LETTER_TYPE_AOS_RESPONSE_PACK = "aos-response-pack";
-    private static final int AOS_RESPONSE_LETTERS_COUNT = 2;
 
-    @Autowired
-    private BulkPrintService bulkPrintService;
+    private final BulkPrintService bulkPrintService;
 
     public void sendAosLetterToRespondent(final CaseData caseData, final Long caseId) {
 
@@ -114,65 +109,6 @@ public class AosPackPrinter {
             log.warn(
                 "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
                 List.of(APPLICATION, NOTICE_OF_PROCEEDINGS_APP_1, COVERSHEET, NOTICE_OF_PROCEEDINGS_APP_2),
-                caseId
-            );
-        }
-    }
-
-    public void sendAosResponseLetterToApplicant(final CaseData caseData, final Long caseId) {
-
-        final List<Letter> aosResponseLetters = getLettersBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
-
-        var aosLetters = getLettersBasedOnContactPrivacy(caseData, RESPONDENT_ANSWERS);
-        List<Letter> d84FormLetters = null;
-
-        if (caseData.getApplicant2().isApplicantOffline()) {
-            d84FormLetters = getLettersBasedOnContactPrivacy(caseData, D84);
-        }
-
-        final Letter aosResponseLetter = firstElement(aosResponseLetters);
-
-        final Letter aosLetter = firstElement(aosLetters);
-
-        final Letter d84FormLetter = firstElement(d84FormLetters);
-
-        final List<Letter> aosResponseLetterWithAos = new ArrayList<>();
-
-        final Letter coversheetLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, COVERSHEET));
-
-        if (null != coversheetLetter && caseData.isJudicialSeparationCase()) {
-            aosResponseLetterWithAos.add(coversheetLetter);
-        }
-
-        if (null != aosResponseLetter) {
-            aosResponseLetterWithAos.add(aosResponseLetter);
-        }
-        if (null != aosLetter) {
-            aosResponseLetterWithAos.add(aosLetter);
-        }
-
-        if (null != d84FormLetter) {
-            aosResponseLetterWithAos.add(d84FormLetter);
-        }
-
-        if (!isEmpty(aosResponseLetterWithAos) && aosResponseLetterWithAos.size() >= AOS_RESPONSE_LETTERS_COUNT) {
-
-            log.info("Letter service size {}, for case {}", aosResponseLetterWithAos.size(), caseId);
-            final String caseIdString = caseId.toString();
-            final Print print = new Print(
-                aosResponseLetterWithAos,
-                caseIdString,
-                caseIdString,
-                LETTER_TYPE_AOS_RESPONSE_PACK,
-                caseData.getApplicant1().getFullName()
-            );
-            final UUID letterId = bulkPrintService.print(print);
-
-            log.info("Letter service responded with letter Id {}, size {}, for case {}", letterId, aosResponseLetterWithAos.size(), caseId);
-        } else {
-            log.warn(
-                "Aos response letter for applicant has missing documents. Expected documents with type {} , for case id: {}",
-                List.of(AOS_RESPONSE_LETTER, RESPONDENT_ANSWERS),
                 caseId
             );
         }
