@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.Collection;
 import java.util.stream.Stream;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -26,14 +27,18 @@ public class GenerateAndLinkRespondentAnswers implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
+        final var haveReceivedOfflineRespAnswers = emptyIfNull(caseData.getDocuments().getDocumentsUploaded()).stream()
+            .anyMatch(divorceDocumentListValue -> RESPONDENT_ANSWERS.equals(divorceDocumentListValue.getValue().getDocumentType()));
 
-        documentGenerator.generateAndStoreCaseDocument(
-            RESPONDENT_ANSWERS,
-            RESPONDENT_ANSWERS_TEMPLATE_ID,
-            RESPONDENT_ANSWERS_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId()
-        );
+        if (!haveReceivedOfflineRespAnswers) {
+            documentGenerator.generateAndStoreCaseDocument(
+                RESPONDENT_ANSWERS,
+                RESPONDENT_ANSWERS_TEMPLATE_ID,
+                RESPONDENT_ANSWERS_DOCUMENT_NAME,
+                caseData,
+                caseDetails.getId()
+            );
+        }
 
         Stream.ofNullable(caseData.getDocuments().getDocumentsGenerated())
             .flatMap(Collection::stream)
