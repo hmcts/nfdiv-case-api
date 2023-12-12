@@ -95,19 +95,6 @@ public class AosResponseDocumentPack implements DocumentPack {
         )
     );
 
-    private static final DocumentPackInfo APP_2_OFFLINE_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
-            DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID),
-            DocumentType.RESPONDENT_ANSWERS, Optional.empty(),
-            DocumentType.D84, Optional.empty()
-        ),
-        ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
-            RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
-        )
-    );
-
     private static final DocumentPackInfo SOLICITOR_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
@@ -170,19 +157,6 @@ public class AosResponseDocumentPack implements DocumentPack {
         )
     );
 
-    private static final DocumentPackInfo APP_2_OFFLINE_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
-            DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID),
-            DocumentType.RESPONDENT_ANSWERS, Optional.empty(),
-            DocumentType.D84, Optional.empty()
-        ),
-        ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
-            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
-        )
-    );
-
     @Override
     public DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant) {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
@@ -206,11 +180,7 @@ public class AosResponseDocumentPack implements DocumentPack {
                 }
             }
         } else {
-            if (acknowledgementOfService.isDisputed()) {
-                return isApp2Offline ? APP_2_OFFLINE_DISPUTED_AOS_RESPONSE_PACK : DISPUTED_AOS_RESPONSE_PACK;
-            } else {
-                return isApp2Offline ? APP_2_OFFLINE_UNDISPUTED_AOS_RESPONSE_PACK : UNDISPUTED_AOS_RESPONSE_PACK;
-            }
+            return acknowledgementOfService.isDisputed() ? DISPUTED_AOS_RESPONSE_PACK : UNDISPUTED_AOS_RESPONSE_PACK;
         }
     }
 

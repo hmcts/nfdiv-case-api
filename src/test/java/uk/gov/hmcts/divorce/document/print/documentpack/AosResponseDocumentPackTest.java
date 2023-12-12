@@ -59,8 +59,7 @@ public class AosResponseDocumentPackTest {
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID),
-            DocumentType.RESPONDENT_ANSWERS, Optional.empty(),
-            DocumentType.D84, Optional.empty()
+            DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
             COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
@@ -102,7 +101,7 @@ public class AosResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenApp2OfflineUnDisputedDivorce() {
+    public void shouldReturnCorrectPackWhenUnDisputedDivorce() {
         CaseData data = validApplicant1CaseData();
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);
