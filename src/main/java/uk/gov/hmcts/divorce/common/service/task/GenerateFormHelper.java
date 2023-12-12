@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.document.am.model.Document;
 import uk.gov.hmcts.reform.ccd.document.am.model.UploadResponse;
@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @Slf4j
@@ -31,7 +30,7 @@ public class GenerateFormHelper {
     private CaseDocumentAccessManagement documentUploadClientApi;
 
     @Autowired
-    private HttpServletRequest request;
+    private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
@@ -68,7 +67,7 @@ public class GenerateFormHelper {
                                                String formFileName,
                                                String formFileLocation) throws IOException {
         final String authToken = authTokenGenerator.generate();
-        final String userAuth = request.getHeader(AUTHORIZATION);
+        final String userAuth =  idamService.retrieveSystemUpdateUserDetails().getAuthToken();
 
         final UploadResponse uploadResponse = documentUploadClientApi.upload(
             userAuth,
