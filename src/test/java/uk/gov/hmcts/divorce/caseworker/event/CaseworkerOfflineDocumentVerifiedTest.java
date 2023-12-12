@@ -68,7 +68,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84NVA;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
@@ -222,9 +221,12 @@ class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        verify(submitAosService).submitOfflineAos(details);
         assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
+
+        verify(submitAosService).submitOfflineAos(details);
+        verify(submitAosService).submitAosNotifications(details);
+        verifyNoMoreInteractions(submitAosService);
 
         Document ccdDocument = new Document(
             "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
@@ -322,10 +324,13 @@ class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        verify(submitAosService).submitOfflineAos(details);
         assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+
+        verify(submitAosService).submitOfflineAos(details);
+        verify(submitAosService).submitAosNotifications(details);
+        verifyNoMoreInteractions(submitAosService);
     }
 
     @Test
@@ -371,10 +376,13 @@ class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
-        verify(submitAosService).submitOfflineAos(details);
         assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
+
+        verify(submitAosService).submitOfflineAos(details);
+        verify(submitAosService).submitAosNotifications(details);
+        verifyNoMoreInteractions(submitAosService);
     }
 
     @Test
@@ -477,6 +485,8 @@ class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
@@ -534,6 +544,9 @@ class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+
+        verify(notificationDispatcher)
+            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -593,6 +606,9 @@ class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(response.getData().getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(response.getData().getConditionalOrder().getDateD84FormScanned()).isEqualTo(getExpectedLocalDateTime());
+
+        verify(notificationDispatcher)
+            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -657,6 +673,9 @@ class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNotNull();
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(D84);
+
+        verify(notificationDispatcher)
+            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -720,6 +739,9 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+
+        verify(notificationDispatcher)
+            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -1146,25 +1168,6 @@ class CaseworkerOfflineDocumentVerifiedTest {
         verify(generalReferralService).caseWorkerGeneralReferral(details);
     }
 
-
-    @Test
-    void shouldSendOfflineNotifications() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        CaseData caseData = CaseData.builder()
-            .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).build())
-            .application(Application.builder()
-                .issueDate(LocalDate.of(2022, 1, 1))
-                .stateToTransitionApplicationTo(Holding)
-                .build())
-            .build();
-        details.setData(caseData);
-
-        caseworkerOfflineDocumentVerified.submitted(details, details);
-
-        verify(submitAosService).submitAosNotifications(details);
-        verifyNoMoreInteractions(submitAosService);
-    }
-
     @Test
     void shouldNotSetDynamicListWithScannedDocumentNamesIfScannedSubtypeReceivedIsPopulated() {
         final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
@@ -1310,25 +1313,5 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verifyNoInteractions(notificationDispatcher);
-    }
-
-    @Test
-    void shouldOnlySendNotificationWhenNotSwitchToSoleAndNotJudicialSeparation() {
-        final CaseData caseData = CaseData.builder()
-                .documents(CaseDocuments.builder()
-                .typeOfDocumentAttached(CO_D84)
-                .build())
-            .divorceOrDissolution(DIVORCE)
-            .build();
-
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-
-        caseworkerOfflineDocumentVerified.submitted(details, details);
-
-        verify(notificationDispatcher)
-            .send(app1AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);
-        verifyNoInteractions(ccdUpdateService);
     }
 }

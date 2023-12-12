@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,16 +11,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -45,36 +44,25 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
 
-    @Autowired
-    private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
-
-    @Autowired
-    private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
-
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
-
-    @Autowired
-    private Clock clock;
-
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private CcdAccessService ccdAccessService;
-
-    @Autowired
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
-
-    @Autowired
-    private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+    private final Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+    private final Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+    private final NotificationDispatcher notificationDispatcher;
+    private final Clock clock;
+    private final HttpServletRequest request;
+    private final CcdAccessService ccdAccessService;
+    private final SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
+    private final DocumentGenerator documentGenerator;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,7 +74,6 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .endButtonLabel("Save Conditional Order")
             .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted!=\"Yes\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("ConditionalOrderSoT")
@@ -104,10 +91,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit conditional order about to submit callback invoked for Case Id: {}", details.getId());
-
         final CaseData data = details.getData();
-        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+        var caseId = details.getId();
+
+        log.info("Submit conditional order about to submit callback invoked for Case Id: {}", caseId);
+
+        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
 
         ConditionalOrderQuestions app1Questions = data.getConditionalOrder().getConditionalOrderApplicant1Questions();
         ConditionalOrderQuestions app2Questions = data.getConditionalOrder().getConditionalOrderApplicant2Questions();
@@ -142,32 +131,24 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         }
 
         if (AwaitingLegalAdvisorReferral.equals(state)) {
-            generateConditionalOrderAnswersDocument.apply(details,
-                isApplicant1 ? data.getApplicant1().getLanguagePreference() : data.getApplicant2().getLanguagePreference());
+            documentGenerator.generateAndStoreCaseDocument(
+                CONDITIONAL_ORDER_ANSWERS,
+                CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID,
+                CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME,
+                data,
+                caseId,
+                isApplicant1 ? data.getApplicant1() : data.getApplicant2()
+            );
         }
 
         if (AwaitingLegalAdvisorReferral.equals(state) && data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(state);
             state = WelshTranslationReview;
             log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                data.getApplication().getWelshPreviousState(), details.getId());
+                data.getApplication().getWelshPreviousState(), caseId);
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(state)
-            .build();
-    }
-
-    public SubmittedCallbackResponse submitted(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails) {
-        var data = details.getData();
-        var caseId = details.getId();
-
         log.info("Submit Conditional Order Submitted callback invoked for case id {} ", caseId);
-
-        final boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
 
         if (isApplicant1) {
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, data, caseId);
@@ -179,7 +160,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             notificationDispatcher.send(solicitorAppliedForConditionalOrderNotification, data, caseId);
         }
 
-        return SubmittedCallbackResponse.builder().build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .state(state)
+            .build();
     }
 
     private List<String> validate(ConditionalOrderQuestions appQuestions) {
