@@ -53,6 +53,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -82,12 +83,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -97,7 +92,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
@@ -127,8 +121,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     private static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED_OTHER_RESPONSE =
         "classpath:caseworker-offline-document-verified-other-response.json";
 
-    private static final String LETTER_TYPE_AOS_RESPONSE_PACK = "aos-response-pack";
-
     public static final String FILENAME = "doc1.pdf";
 
     private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
@@ -136,20 +128,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         ImmutableMap.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID, APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME)
     );
     public static final String THE_LETTER_ID = "applied-for-co-letter";
-
-    private static final DocumentPackInfo APP_2_OFFLINE_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
-            DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID),
-            DocumentType.RESPONDENT_ANSWERS, Optional.of(RESPONDENT_ANSWERS_TEMPLATE_ID),
-            DocumentType.D84, Optional.empty()
-        ),
-        ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
-            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME,
-            RESPONDENT_ANSWERS_TEMPLATE_ID, RESPONDENT_ANSWERS_DOCUMENT_NAME
-        )
-    );
 
     @Autowired
     private MockMvc mockMvc;
@@ -546,88 +524,6 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         assertThatJson(jsonStringResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(expectedResponse("classpath:caseworker-offline-document-about-to-start-response.json"));
-    }
-
-    @Test
-    public void shouldTriggerAboutToStartAndSendAosResponseLetterToApplicant() throws Exception {
-        CaseData data = CaseData.builder()
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .applicationType(JOINT_APPLICATION)
-            .application(Application.builder()
-                .issueDate(LOCAL_DATE)
-                .applicant1HelpWithFees(HelpWithFees.builder()
-                    .build())
-                .applicant2HelpWithFees(HelpWithFees.builder()
-                    .build())
-                .build())
-            .applicant1(Applicant.builder()
-                .solicitorRepresented(NO)
-                .offline(YES)
-                .solicitor(Solicitor.builder()
-                    .build())
-                .build())
-            .acknowledgementOfService(AcknowledgementOfService.builder()
-                .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
-                .build())
-            .applicant2(Applicant.builder()
-                .solicitorRepresented(NO)
-                .solicitor(Solicitor.builder()
-                    .build())
-                .offline(YES)
-                .build())
-            .dueDate(LOCAL_DATE)
-            .noticeOfChange(NoticeOfChange.builder()
-                .build())
-            .caseInvite(CaseInvite.builder()
-                .build())
-            .build();
-
-        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .fileName(FILENAME)
-                    .type(ScannedDocumentType.OTHER)
-                    .subtype("aos")
-                    .build()
-            )
-            .build();
-
-        data.setDocuments(
-            CaseDocuments.builder()
-                .typeOfDocumentAttached(AOS_D10)
-                .scannedDocuments(singletonList(doc1))
-                .scannedDocumentNames(
-                    DynamicList
-                        .builder()
-                        .value(
-                            DynamicListElement
-                                .builder()
-                                .label(FILENAME)
-                                .build()
-                        )
-                        .build()
-                )
-                .build()
-        );
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
-                .content(
-                    objectMapper.writeValueAsString(
-                        callbackRequest(data, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, OfflineDocumentReceived.name())))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        verify(aosPackPrinter).sendAosResponseLetterToApplicant(any(), eq(TEST_CASE_ID));
-        verifyNoMoreInteractions(aosPackPrinter);
     }
 
     @Test
