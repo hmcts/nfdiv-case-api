@@ -283,6 +283,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             : AwaitingLegalAdvisorReferral;
 
         if (!caseData.isJudicialSeparationCase()) {
+            log.info(
+                "CaseworkerOfflineDocumentVerified about to submit callback triggering app1 applied for co notifications: {}",
+                details.getId());
+
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
         }
 
