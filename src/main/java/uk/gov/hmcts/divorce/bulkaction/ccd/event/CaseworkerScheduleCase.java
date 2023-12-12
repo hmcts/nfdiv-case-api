@@ -35,7 +35,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_SCHEDULE_CASE)
-            .forStateTransition(Created, Listed)
+            .forStates(Created, Listed)
             .name("Schedule cases for listing")
             .description("Schedule cases for listing")
             .showSummary()
@@ -69,13 +69,12 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         return AboutToStartOrSubmitResponse
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkCaseDetails.getData())
+            .state(Listed)
             .build();
     }
 
-    public SubmittedCallbackResponse submitted(
-        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
-    ) {
+    public SubmittedCallbackResponse submitted(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                               CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails) {
 
         log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
 
