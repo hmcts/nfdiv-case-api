@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
@@ -103,7 +104,7 @@ public final class DocumentUtil {
     }
 
     private static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents,
-                                                       final DocumentType documentType) {
+                                                        final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
@@ -133,11 +134,13 @@ public final class DocumentUtil {
         final boolean isAnApplicantConfidential = caseData.getApplicant1().isConfidentialContactDetails()
             || caseData.getApplicant2().isConfidentialContactDetails();
 
-        if (GENERAL_LETTER.equals(documentType)) {
-            if (APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
+        if (GENERAL_LETTER.equals(documentType) || EMAIL.equals(documentType)) {
+            if (APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                || APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
                 return caseData.getApplicant1().isConfidentialContactDetails();
             }
-            if (RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
+            if (RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                || RESPONDENT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
                 return caseData.getApplicant2().isConfidentialContactDetails();
             }
         }
@@ -242,7 +245,7 @@ public final class DocumentUtil {
     public static void removeExistingDocuments(CaseData caseData, List<DocumentType> documentTypesToRemove) {
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
             caseData.getDocuments().getDocumentsGenerated()
-                    .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
+                .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
         }
     }
 }

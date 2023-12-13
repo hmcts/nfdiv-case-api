@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
@@ -161,6 +162,31 @@ class DocumentUtilTest {
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
 
         assertFalse(isConfidential(caseData, GENERAL_LETTER));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsApplicant() {
+        var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(APPLICANT);
+        caseData.getApplicant1().setContactDetailsType(PRIVATE);
+
+        assertTrue(isConfidential(caseData, EMAIL));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsRespondent() {
+        var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(RESPONDENT);
+        caseData.getApplicant2().setContactDetailsType(PRIVATE);
+
+        assertTrue(isConfidential(caseData, EMAIL));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnFalseeWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOther() {
+        var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(GeneralParties.OTHER);
+        assertFalse(isConfidential(caseData, EMAIL));
     }
 
     @Test
