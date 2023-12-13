@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -29,9 +30,14 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
 
     public static final String SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER = "system-remind-applicants-conditional-order";
 
-    public static NotificationDispatcher notificationDispatcher;
-    public static AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
-    public static ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
+
+    @Autowired
+    private ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -54,26 +60,12 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
 
         log.info("Calling to remind applicant's they can apply for a conditional order for case {} in state {}", id, state);
 
-        try {
-            if (AwaitingConditionalOrder.name().equals(state) || ConditionalOrderDrafted.name().equals(state)) {
-                log.info("Awaiting conditional order notification firing for case {} in state {}", id, state);
-                notificationDispatcher.send(awaitingConditionalOrderReminderNotification, data, id);
-            } else {
-                log.info("Conditional order pending reminder notification firing for case {} in state {}", id, state);
-                notificationDispatcher.send(conditionalOrderPendingReminderNotification, data, id);
-            }
-        } catch (NotificationException | HttpServerErrorException exception) {
-            String err = String.format(
-                "Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception %s for case id %s",
-                exception.getMessage(),
-                id
-            );
-
-            log.error(err);
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(err))
-                .build();
+        if (AwaitingConditionalOrder.equals(state) || ConditionalOrderDrafted.equals(state)) {
+            log.info("Awaiting conditional order notification firing for case {} in state {}", id, state);
+            notificationDispatcher.send(awaitingConditionalOrderReminderNotification, data, id);
+        } else {
+            log.info("Conditional order pending reminder notification firing for case {} in state {}", id, state);
+            notificationDispatcher.send(conditionalOrderPendingReminderNotification, data, id);
         }
 
         log.info(
