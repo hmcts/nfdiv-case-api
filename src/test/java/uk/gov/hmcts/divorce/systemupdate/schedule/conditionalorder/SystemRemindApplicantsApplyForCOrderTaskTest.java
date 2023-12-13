@@ -43,14 +43,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateNFDCase.SYSTEM_UPDATE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
@@ -148,8 +146,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -172,8 +169,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -196,8 +192,7 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
