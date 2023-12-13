@@ -5,17 +5,14 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
 
@@ -70,7 +67,8 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization,
                     AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
-                .forEach(caseDetails -> remindJointApplicants(caseDetails, user, serviceAuthorization));
+                .forEach(caseDetails -> submitEvent(
+                    caseDetails.getId(), SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuthorization));
 
             log.info("SystemRemindApplicantsApplyForCOrderTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
@@ -78,20 +76,5 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
         } catch (final CcdConflictException e) {
             log.info(CCD_CONFLICT_ERROR);
         }
-    }
-
-    private void remindJointApplicants(CaseDetails caseDetails, User user, String serviceAuth) {
-        log.info("Calling to remind applicant's they can apply for a conditional order for case {} in state {}",
-            caseDetails.getId(),
-            caseDetails.getState()
-        );
-
-        try {
-            submitEvent(caseDetails.getId(), SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, serviceAuth);
-
-        } catch (NotificationException | HttpServerErrorException exception) {
-            log.error("Notification for SystemRemindApplicantsApplyForCOrderTask has failed with exception {} for case id {}",
-                exception.getMessage(), caseDetails.getId());
-            }
     }
 }
