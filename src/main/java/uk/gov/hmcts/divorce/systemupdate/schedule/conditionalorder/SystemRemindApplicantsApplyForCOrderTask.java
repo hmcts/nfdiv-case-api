@@ -68,7 +68,6 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
                     )
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
-            Thread.sleep(15000);
             ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuthorization,
                     AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
                 .forEach(caseDetails -> remindJointApplicants(caseDetails, user, serviceAuthorization));
@@ -78,8 +77,6 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
             log.error(CCD_SEARCH_ERROR, e);
         } catch (final CcdConflictException e) {
             log.info(CCD_CONFLICT_ERROR);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 
