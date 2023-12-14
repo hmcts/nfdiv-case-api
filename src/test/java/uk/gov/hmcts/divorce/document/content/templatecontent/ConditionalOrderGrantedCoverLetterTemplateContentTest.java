@@ -16,6 +16,8 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -42,12 +44,13 @@ class ConditionalOrderGrantedCoverLetterTemplateContentTest {
     private ConditionalOrderGrantedCoverLetterTemplateContent conditionalOrderGrantedCoverLetterTemplateContent;
 
     @Test
-    public void shouldBeAbleToHandleFinalOrderCoverLetterTemplate() {
-        assertThat(conditionalOrderGrantedCoverLetterTemplateContent.getSupportedTemplates()).containsOnly(CO_GRANTED_COVER_LETTER_TEMPLATE_ID);
+    public void shouldBeAbleToHandleConditionalOrderCoverLetterTemplate() {
+        assertThat(conditionalOrderGrantedCoverLetterTemplateContent.getSupportedTemplates()).containsOnly(CO_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
-    public void shouldProvideCorrectTemplateContentForFoGrantedCoverLetter() {
+    public void shouldProvideCorrectTemplateContentForCOGrantedCoverLetter() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         setMockClock(clock);

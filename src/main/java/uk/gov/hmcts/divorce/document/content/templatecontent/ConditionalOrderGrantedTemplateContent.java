@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
@@ -58,11 +59,11 @@ public class ConditionalOrderGrantedTemplateContent implements TemplateContent {
     private long finalOrderOffsetDays;
 
     @Override
-    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
-        return apply(caseData, caseId);
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant ) {
+        return apply(caseData, caseId, applicant.getLanguagePreference());
     }
 
-    private Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    private Map<String, Object> apply(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
 
 
         log.info("For ccd case reference {} ", caseId);
@@ -72,7 +73,7 @@ public class ConditionalOrderGrantedTemplateContent implements TemplateContent {
         final boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
-        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         templateContent.put(JUDGE_NAME, conditionalOrder.getPronouncementJudge());
         templateContent.put(COURT_NAME, conditionalOrder.getCourt() != null ? conditionalOrder.getCourt().getLabel() : null);
@@ -88,7 +89,7 @@ public class ConditionalOrderGrantedTemplateContent implements TemplateContent {
             ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant2().getLanguagePreference()));
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference));
         templateContent.put(PLACE_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getPlaceOfMarriage());
         templateContent.put(COUNTRY_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getCountryOfMarriage());
         templateContent.put(MARRIAGE_DATE,
@@ -96,7 +97,7 @@ public class ConditionalOrderGrantedTemplateContent implements TemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-        if (WELSH.equals(caseData.getApplicant1().getLanguagePreference()) || (WELSH.equals(caseData.getApplicant2().getLanguagePreference()))) {
+        if (WELSH.equals(languagePreference)) {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isDivorce ? MARRIAGE_CY : CIVIL_PARTNERSHIP_CY);
         } else {
             templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP);

@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMI
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -127,7 +128,7 @@ class ConditionalOrderGrantedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH);
+            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -196,7 +197,7 @@ class ConditionalOrderGrantedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID, WELSH);
+            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -222,6 +223,6 @@ class ConditionalOrderGrantedTemplateContentTest {
 
     @Test
     public void shouldGetSupportedTemplates() {
-        assertThat(conditionalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
+        assertThat(conditionalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
     }
 }
