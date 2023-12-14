@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant2AppliedForConditionalOrderNotification;
-import uk.gov.hmcts.divorce.common.service.task.GenerateConditionalOrderAnswersDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -20,20 +19,26 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.event.SubmitJointConditionalOrder.SUBMIT_JOINT_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -49,9 +54,6 @@ public class SubmitJointConditionalOrderTest {
     private Clock clock;
 
     @Mock
-    private GenerateConditionalOrderAnswersDocument generateConditionalOrderAnswersDocument;
-
-    @Mock
     private SolicitorAppliedForConditionalOrderNotification solicitorAppliedForConditionalOrderNotification;
 
     @Mock
@@ -59,6 +61,9 @@ public class SubmitJointConditionalOrderTest {
 
     @Mock
     private Applicant2AppliedForConditionalOrderNotification app2AppliedForConditionalOrderNotification;
+
+    @Mock
+    private DocumentGenerator documentGenerator;
 
     @InjectMocks
     private SubmitJointConditionalOrder submitJointConditionalOrder;
@@ -149,7 +154,7 @@ public class SubmitJointConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
 
-        verifyNoInteractions(generateConditionalOrderAnswersDocument);
+        verifyNoInteractions(documentGenerator);
     }
 
     @Test
@@ -177,7 +182,13 @@ public class SubmitJointConditionalOrderTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
 
-        verify(generateConditionalOrderAnswersDocument).apply(caseDetails, ENGLISH);
+        verify(documentGenerator).generateAndStoreCaseDocument(
+            eq(CONDITIONAL_ORDER_ANSWERS),
+            eq(CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID),
+            eq(CONDITIONAL_ORDER_ANSWERS_DOCUMENT_NAME),
+            any(),
+            anyLong(),
+            eq(caseData.getApplicant2()));
 
         verify(notificationDispatcher, times(0))
             .send(app2AppliedForConditionalOrderNotification, caseData, TEST_CASE_ID);

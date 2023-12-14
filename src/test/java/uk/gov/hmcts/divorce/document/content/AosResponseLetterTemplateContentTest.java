@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.templatecontent.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
