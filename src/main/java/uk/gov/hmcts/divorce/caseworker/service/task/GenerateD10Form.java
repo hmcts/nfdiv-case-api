@@ -24,10 +24,17 @@ public class GenerateD10Form implements CaseTask {
     @Autowired
     private GenerateFormHelper generateFormHelper;
 
+    public void apply(final CaseData caseData) {
+        apply(caseData, null);
+    }
+
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
-        final Long caseId = caseDetails.getId();
+        apply(caseDetails.getData(), caseDetails.getId());
+        return caseDetails;
+    }
+
+    private void apply(final CaseData caseData, final Long caseId) {
         final boolean d10DocumentAlreadyGenerated =
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D10);
 
@@ -47,7 +54,5 @@ public class GenerateD10Form implements CaseTask {
                 log.error("Error encountered whilst adding D10 document to list of generated documents for case id: {}", caseId);
             }
         }
-
-        return caseDetails;
     }
 }
