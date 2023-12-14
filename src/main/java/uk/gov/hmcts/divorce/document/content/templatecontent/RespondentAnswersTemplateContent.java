@@ -1,15 +1,19 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION;
@@ -38,7 +42,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class RespondentAnswersTemplateContent {
+public class RespondentAnswersTemplateContent implements TemplateContent {
 
     private static final String RESP_JURISDICTION_AGREE = "respJurisdictionAgree";
     private static final String REASON_HAVE_NO_JURISDICTION = "reasonCourtsOfEnglandAndWalesHaveNoJurisdiction";
@@ -46,6 +50,16 @@ public class RespondentAnswersTemplateContent {
     private static final String RESP_LEGAL_PROCEEDINGS_EXIST = "respLegalProceedingsExist";
     private static final String RESP_LEGAL_PROCEEDINGS_DESCRIPTION = "respLegalProceedingsDescription";
     private static final String RESP_SOLICITOR_REPRESENTED = "respSolicitorRepresented";
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(RESPONDENT_ANSWERS_TEMPLATE_ID);
+    }
+
+    @Override
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        return apply(caseData, caseId);
+    }
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {

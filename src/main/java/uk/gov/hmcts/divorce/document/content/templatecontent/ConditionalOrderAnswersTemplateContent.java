@@ -1,9 +1,10 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
@@ -11,11 +12,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -27,16 +30,23 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class ConditionalOrderAnswersTemplateContent {
+public class ConditionalOrderAnswersTemplateContent implements TemplateContent {
 
     public static final String CO_REASON_INFO_NOT_CORRECT = "reasonInformationNotCorrect";
     public static final String CO_CONFIRM_INFO_STILL_CORRECT = "confirmInformationStillCorrect";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+    }
+
+    public Map<String, Object> getTemplateContent(final CaseData caseData,
+                                                  final Long caseId,
+                                                  final Applicant applicant) {
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
 

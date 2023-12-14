@@ -30,4 +30,14 @@ public class Letter {
         this.document = document;
         this.numCopiesToPrint = numCopiesToPrint;
     }
+
+    public Document getDocumentLink() {
+        if (this.divorceDocument != null) {
+            return this.divorceDocument.getDocumentLink();
+        } else if (this.confidentialDivorceDocument != null) {
+            return this.confidentialDivorceDocument.getDocumentLink();
+        } else {
+            return this.document;
+        }
+    }
 }
