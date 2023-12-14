@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderGrantedTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -64,20 +66,20 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
-class ConditionalOrderPronouncedTemplateContentTest {
+class ConditionalOrderGrantedTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
 
     @Mock
-    private DocmosisCommonContent docmosisCommonContent;
+    private uk.gov.hmcts.divorce.document.content.DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
+    private ConditionalOrderGrantedTemplateContent conditionalOrderGrantedTemplateContent;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(conditionalOrderPronouncedTemplateContent, "finalOrderOffsetDays", 43);
+        ReflectionTestUtils.setField(conditionalOrderGrantedTemplateContent, "finalOrderOffsetDays", 43);
     }
 
     @Test
@@ -125,7 +127,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH);
+            conditionalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -194,7 +196,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, WELSH);
+            conditionalOrderGrantedTemplateContent.apply(caseData, TEST_CASE_ID, WELSH);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -216,5 +218,10 @@ class ConditionalOrderPronouncedTemplateContentTest {
             entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
             entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY));
+    }
+
+    @Test
+    public void shouldGetSupportedTemplates() {
+        assertThat(conditionalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
     }
 }

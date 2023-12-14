@@ -24,8 +24,6 @@ import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import java.time.LocalDateTime;
@@ -37,6 +35,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
@@ -45,6 +47,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
@@ -56,20 +60,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerRegenerateCourtOrdersTest {
 
-    @Mock
-    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-
-    @Mock
-    private GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
 
     @Mock
     private RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
-
-    @Mock
-    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
     @Mock
     private DocumentGenerator documentGenerator;
@@ -179,20 +175,37 @@ public class CaseworkerRegenerateCourtOrdersTest {
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplicant1().setFirstName("Harry");
+        caseData.getApplicant1().setOffline(YesOrNo.YES);
+        caseData.getApplicant2().setFirstName("Sally");
+        caseData.getApplicant2().setOffline(YesOrNo.YES);
         caseDetails.setData(caseData);
-
-        when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
+        caseDetails.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateConditionalOrderPronouncedCoversheetDocument)
-            .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
-        verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
-        verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId(),
+            caseData.getApplicant1()
+        );
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId(),
+            caseData.getApplicant2()
+        );
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED,
+            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId());
     }
 
     @Test
@@ -314,18 +327,11 @@ public class CaseworkerRegenerateCourtOrdersTest {
         updatedCaseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRegenerateCourtOrders.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateConditionalOrderPronouncedCoversheetDocument)
-            .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
-        verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
-        verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
             FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,

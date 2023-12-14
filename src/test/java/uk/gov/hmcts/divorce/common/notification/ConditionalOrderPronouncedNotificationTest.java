@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,12 +12,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
@@ -29,8 +34,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -62,6 +68,12 @@ class ConditionalOrderPronouncedNotificationTest {
     private static final int FINAL_ORDER_OFFSET_DAYS = 43;
     private static final int FINAL_ORDER_RESPONDENT_OFFSET_MONTHS = 3;
 
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(CONDITIONAL_ORDER_GRANTED, Optional.of(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID)),
+        ImmutableMap.of(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME)
+    );
+    public static final String THE_LETTER_ID = "the-letter-id";
+
     @Mock
     private NotificationService notificationService;
 
@@ -69,7 +81,10 @@ class ConditionalOrderPronouncedNotificationTest {
     private CommonContent commonContent;
 
     @Mock
-    private ConditionalOrderPronouncedPrinter printer;
+    private LetterPrinter printer;
+
+    @Mock
+    private ConditionalOrderGrantedDocumentPack conditionalOrderGrantedDocumentPack;
 
     @InjectMocks
     private ConditionalOrderPronouncedNotification notification;
@@ -507,14 +522,17 @@ class ConditionalOrderPronouncedNotificationTest {
     void shouldSendLetterToApplicant1IfOffline() {
         CaseData data = CaseData.builder().build();
 
+        when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant1())).thenReturn(TEST_DOCUMENT_PACK_INFO);
+
         notification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
-        verify(printer).sendLetter(
+        verify(printer).sendLetters(
             eq(data),
             eq(TEST_CASE_ID),
-            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1),
-            eq(data.getApplicant1())
-        );
+            eq(data.getApplicant1()),
+            eq(TEST_DOCUMENT_PACK_INFO),
+            eq(THE_LETTER_ID)
+            );
     }
 
     @Test
@@ -522,13 +540,16 @@ class ConditionalOrderPronouncedNotificationTest {
         CaseData data = CaseData.builder()
             .build();
 
+        when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(TEST_DOCUMENT_PACK_INFO);
+
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verify(printer).sendLetter(
+        verify(printer).sendLetters(
             eq(data),
             eq(TEST_CASE_ID),
-            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2),
-            eq(data.getApplicant2())
+            eq(data.getApplicant2()),
+            eq(TEST_DOCUMENT_PACK_INFO),
+            eq(THE_LETTER_ID)
         );
     }
 
