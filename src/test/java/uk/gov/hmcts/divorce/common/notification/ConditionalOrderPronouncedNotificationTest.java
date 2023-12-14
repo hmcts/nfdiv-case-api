@@ -524,6 +524,8 @@ class ConditionalOrderPronouncedNotificationTest {
 
         when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant1())).thenReturn(TEST_DOCUMENT_PACK_INFO);
 
+        when(conditionalOrderGrantedDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         notification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verify(printer).sendLetters(
@@ -541,6 +543,8 @@ class ConditionalOrderPronouncedNotificationTest {
             .build();
 
         when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(TEST_DOCUMENT_PACK_INFO);
+
+        when(conditionalOrderGrantedDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
 
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
