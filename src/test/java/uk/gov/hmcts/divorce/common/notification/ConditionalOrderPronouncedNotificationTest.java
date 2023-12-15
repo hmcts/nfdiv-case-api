@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
@@ -529,11 +530,11 @@ class ConditionalOrderPronouncedNotificationTest {
         notification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verify(printer).sendLetters(
-            eq(data),
-            eq(TEST_CASE_ID),
-            eq(data.getApplicant1()),
-            eq(TEST_DOCUMENT_PACK_INFO),
-            eq(THE_LETTER_ID)
+            data,
+            TEST_CASE_ID,
+            data.getApplicant1(),
+            TEST_DOCUMENT_PACK_INFO,
+            THE_LETTER_ID
         );
     }
 
@@ -549,11 +550,11 @@ class ConditionalOrderPronouncedNotificationTest {
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verify(printer).sendLetters(
-            eq(data),
-            eq(TEST_CASE_ID),
-            eq(data.getApplicant2()),
-            eq(TEST_DOCUMENT_PACK_INFO),
-            eq(THE_LETTER_ID)
+            data,
+            TEST_CASE_ID,
+            data.getApplicant2(),
+            TEST_DOCUMENT_PACK_INFO,
+            THE_LETTER_ID
         );
     }
 
