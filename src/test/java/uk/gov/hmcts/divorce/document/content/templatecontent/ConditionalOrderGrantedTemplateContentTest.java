@@ -128,7 +128,7 @@ class ConditionalOrderGrantedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
+            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -197,7 +197,7 @@ class ConditionalOrderGrantedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, null);
+            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
