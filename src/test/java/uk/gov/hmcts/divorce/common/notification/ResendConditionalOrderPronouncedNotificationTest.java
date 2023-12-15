@@ -79,7 +79,7 @@ public class ResendConditionalOrderPronouncedNotificationTest {
         data.getApplicant2().setOffline(NO);
         data.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
 
-        when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant1())).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(TEST_DOCUMENT_PACK_INFO);
         when(conditionalOrderGrantedDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
 
         underTest.sendToApplicant2Offline(data, caseId);

@@ -330,6 +330,26 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId(),
+            caseData.getApplicant2()
+        );
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId(),
+            caseData.getApplicant2()
+        );
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED,
+            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+            caseData,
+            caseDetails.getId());
+
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
             FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
             FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
