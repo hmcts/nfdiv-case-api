@@ -255,7 +255,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder().offline(NO).languagePreferenceWelsh(NO).build())
+            .applicant1(Applicant.builder().offline(NO).languagePreferenceWelsh(YES).build())
             .applicant2(Applicant.builder().offline(NO).email("test@email.com").build())
             .conditionalOrder(
                 ConditionalOrder.builder()
@@ -329,7 +329,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .builder()
             .applicationType(SOLE_APPLICATION)
             .divorceOrDissolution(DISSOLUTION)
-            .applicant1(Applicant.builder().offline(NO).languagePreferenceWelsh(NO).build())
+            .applicant1(Applicant.builder().offline(NO).languagePreferenceWelsh(YES).build())
             .applicant2(Applicant.builder().offline(NO).email("test@email.com").build())
             .conditionalOrder(
                 ConditionalOrder.builder()
