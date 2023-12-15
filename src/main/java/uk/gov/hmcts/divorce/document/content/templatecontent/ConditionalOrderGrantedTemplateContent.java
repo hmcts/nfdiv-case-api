@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
-import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class ConditionalOrderGrantedTemplateContent implements TemplateContent {
     private long finalOrderOffsetDays;
 
     @Override
-    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant ) {
+    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
         return apply(caseData, caseId, applicant.getLanguagePreference());
     }
 
