@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.document.content.templatecontent.GeneralLetterTemplateContent;
+import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -66,7 +66,7 @@ public class GenerateGeneralLetter implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 GENERAL_LETTER,
-                templateContent.getTemplateContent(caseData, caseId, languagePreference),
+                templateContent.apply(caseData, caseId, languagePreference),
                 caseId,
                 GENERAL_LETTER_TEMPLATE_ID,
                 languagePreference,

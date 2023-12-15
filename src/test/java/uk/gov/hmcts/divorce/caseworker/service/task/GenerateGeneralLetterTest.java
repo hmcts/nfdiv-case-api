@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.templatecontent.GeneralLetterTemplateContent;
+import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
@@ -64,7 +64,7 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
@@ -93,7 +93,7 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
@@ -121,7 +121,7 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant2()
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2()
                 .getLanguagePreference())).thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
@@ -149,7 +149,7 @@ public class GenerateGeneralLetterTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalLetterTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+        when(generalLetterTemplateContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(templateContent);
 
         final var result = generateLetter.apply(caseDetails);
