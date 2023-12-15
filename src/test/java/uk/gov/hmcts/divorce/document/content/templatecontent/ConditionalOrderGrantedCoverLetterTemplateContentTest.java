@@ -47,7 +47,7 @@ class ConditionalOrderGrantedCoverLetterTemplateContentTest {
     public void shouldBeAbleToHandleConditionalOrderCoverLetterTemplate() {
         assertThat(conditionalOrderGrantedCoverLetterTemplateContent.getSupportedTemplates())
             .containsOnly(CO_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
+                JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
