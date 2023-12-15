@@ -14,8 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 
@@ -56,7 +54,6 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
                 .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR, JUDGE)
                 .aboutToSubmitCallback(this::aboutToSubmit)
-                .submittedCallback(this::submitted)
         );
     }
 
@@ -80,23 +77,12 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             );
         }
 
+        notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .state(state)
             .data(caseData)
             .build();
     }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-        log.info("SystemPronounceCase submitted callback invoked for case id: {}", details.getId());
-
-        try {
-            notificationDispatcher.send(conditionalOrderPronouncedNotification, details.getData(), details.getId());
-        } catch (final NotificationTemplateException e) {
-            log.error("Notification failed with message: {}", e.getMessage(), e);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
-    }
-
 
 }
