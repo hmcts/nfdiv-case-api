@@ -12,9 +12,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
-import uk.gov.hmcts.divorce.document.print.LetterPrinter;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderGrantedDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
@@ -34,9 +35,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -534,7 +535,7 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(data.getApplicant1()),
             eq(TEST_DOCUMENT_PACK_INFO),
             eq(THE_LETTER_ID)
-            );
+        );
     }
 
     @Test

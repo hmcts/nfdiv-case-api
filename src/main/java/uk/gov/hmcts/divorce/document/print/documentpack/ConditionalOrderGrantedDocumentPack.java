@@ -59,7 +59,8 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED,Optional.empty()
         ),
         ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
             JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
         )
     );
@@ -70,7 +71,8 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED,Optional.empty()
         ),
         ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
             JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
         )
     );
@@ -140,6 +142,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME
         )
     );
+
     @Override
     public DocumentPackInfo getDocumentPack(final CaseData caseData, final Applicant applicant) {
         final boolean isApplicant1 = caseData.getApplicant1().equals(applicant);
@@ -154,8 +157,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
                         //Separation
                         return APPLICANT_1_SOL_SEPARATION_CONDITIONAL_ORDER_PACK;
                     }
-                }
-                else {
+                } else {
                     if (caseData.isDivorce()) {
                         //Judicial Separation
                         return APPLICANT_1_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK;
@@ -173,8 +175,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
                         //Separation
                         return APPLICANT_2_SOL_SEPARATION_CONDITIONAL_ORDER_PACK;
                     }
-                }
-                else{
+                } else {
                     if (caseData.isDivorce()) {
                         //Judicial Separation
                         return APPLICANT_2_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK;
