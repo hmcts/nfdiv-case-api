@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,9 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
@@ -18,12 +22,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAcc
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 
 @Data
 @AllArgsConstructor
@@ -172,6 +185,96 @@ public class FinalOrder {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TranslatedToLanguage applicant2FinalOrderLateExplanationTranslatedTo;
+
+    @CCD(
+        label = "Explain why you need to apply for the final order",
+        access = {Applicant2Access.class},
+        typeOverride = TextArea
+    )
+    private String applicant2SolFinalOrderWhyNeedToApply;
+
+    @CCD(
+        label = "Here are your order details",
+        access = {DefaultAccess.class}
+    )
+    private OrderSummary applicant2SolFinalOrderFeeOrderSummary;
+
+    @CCD(
+        label = "Respondent Solicitor Final Order fee (in pounds)",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolFinalOrderFeeInPounds;
+
+    @CCD(
+        label = "How is payment being made?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "SolicitorPaymentMethod",
+        access = {DefaultAccess.class}
+    )
+    private SolicitorPaymentMethod applicant2SolPaymentHowToPay;
+
+    @JsonIgnore
+    public boolean isSolicitorPaymentMethodPba() {
+        return FEE_PAY_BY_ACCOUNT.equals(this.getApplicant2SolPaymentHowToPay());
+    }
+
+    @CCD(
+        label = "Account number",
+        access = {DefaultAccess.class}
+    )
+    private DynamicList pbaNumbers;
+
+    @JsonIgnore
+    public Optional<String> getPbaNumber() {
+        return Optional.ofNullable(pbaNumbers)
+            .map(dynamicList -> dynamicList.getValue().getLabel());
+    }
+
+    @CCD(
+        label = "Fee account reference",
+        hint = "This will appear on your statement to help you identify this payment",
+        access = {DefaultAccess.class}
+    )
+    private String feeAccountReference;
+
+    @CCD(
+        label = "Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<Payment>> finalOrderPayments;
+
+    @JsonIgnore
+    public void updateFinalOrderWithApp2SolPaymentDetails(
+        OrderSummary finalOrderFeeOrderSummary,
+        CaseData caseData,
+        String paymentReference
+    ) {
+        var payment = Payment
+            .builder()
+            .amount(parseInt(finalOrderFeeOrderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode(finalOrderFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .reference(paymentReference)
+            .status(SUCCESS)
+            .build();
+
+        var finalOrder = caseData.getFinalOrder();
+
+        if (isEmpty(finalOrder.getFinalOrderPayments())) {
+            List<ListValue<Payment>> payments = new ArrayList<>();
+            payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
+            finalOrder.setFinalOrderPayments(payments);
+        } else {
+            finalOrder.getFinalOrderPayments()
+                .add(new ListValue<>(UUID.randomUUID().toString(), payment));
+        }
+    }
+
+    @JsonUnwrapped(prefix = "app2SolFoHWF")
+    @CCD(access = {Applicant2Access.class})
+    private HelpWithFees applicant2SolFinalOrderHelpWithFees;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
