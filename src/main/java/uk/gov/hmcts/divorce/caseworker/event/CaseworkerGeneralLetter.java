@@ -1,19 +1,22 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Collection;
@@ -32,16 +35,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_CREATE_GENERAL_LETTER = "caseworker-create-general-letter";
     private static final String CREATE_GENERAL_LETTER_TITLE = "Create general letter";
 
-    @Autowired
-    private GenerateGeneralLetter generateGeneralLetter;
-
-    @Autowired
-    private SendGeneralLetter sendGeneralLetter;
+    private final LetterPrinter letterPrinter;
+    private final GeneralLetterDocumentPack generalLetterDocumentPack;
+    private final GenerateGeneralLetter generateGeneralLetter;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -86,11 +88,13 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
+
+        // Pre-generate letter using existing caseTask to allow letter attachments to be stored on caseData before attempting to send them.
+        // This is to avoid CDAM issues of the letter attachments having empty meta-data resulting in a 403 permissions error.
         generateGeneralLetter.apply(details);
 
         //clear general letter field so that on next general letter old data is not shown
@@ -101,14 +105,24 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             .build();
     }
 
-    public SubmittedCallbackResponse submitted(
-            final CaseDetails<CaseData, State> details,
-            final CaseDetails<CaseData, State> beforeDetails) {
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
 
-        sendGeneralLetter.apply(details);
+        CaseData caseData = details.getData();
 
-        return SubmittedCallbackResponse.builder()
-                .build();
+        // Although we pass in an applicant, the letter printer will ignore the argument as document is pre-generated in aboutToSubmit.
+        Applicant applicant = GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+            ? caseData.getApplicant2()
+            : caseData.getApplicant1();
+
+        letterPrinter.sendLetters(caseData,
+            details.getId(),
+            applicant, // Unused. See above.
+            generalLetterDocumentPack.getDocumentPack(caseData, applicant),
+            generalLetterDocumentPack.getLetterId());
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
