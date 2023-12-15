@@ -112,13 +112,14 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
         CaseData caseData = details.getData();
 
+        // Although we pass in an applicant, the letter printer will ignore the argument as document is pre-generated in aboutToSubmit.
         Applicant applicant = GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
             ? caseData.getApplicant2()
             : caseData.getApplicant1();
 
         letterPrinter.sendLetters(caseData,
             details.getId(),
-            applicant,
+            applicant, // Unused. See above.
             generalLetterDocumentPack.getDocumentPack(caseData, applicant),
             generalLetterDocumentPack.getLetterId());
 
