@@ -175,6 +175,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.getApplicant1().setFirstName("Harry");
         caseData.getApplicant1().setOffline(YesOrNo.YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getApplicant2().setFirstName("Sally");
         caseData.getApplicant2().setOffline(YesOrNo.YES);
         caseDetails.setData(caseData);
@@ -230,6 +231,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.getApplicant1().setFirstName("Harry");
         caseData.getApplicant1().setOffline(YesOrNo.YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getApplicant2().setFirstName("Sally");
         caseData.getApplicant2().setOffline(YesOrNo.YES);
         caseDetails.setData(caseData);
