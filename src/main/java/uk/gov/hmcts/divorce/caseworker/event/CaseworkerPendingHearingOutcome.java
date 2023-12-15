@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -31,7 +32,7 @@ public class CaseworkerPendingHearingOutcome implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_PENDING_HEARING_OUTCOME)
-            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse), PendingHearingOutcome)
+            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse, RespondentFinalOrderRequested), PendingHearingOutcome)
             .name("Pending hearing outcome")
             .description("Pending hearing outcome")
             .showEventNotes()
