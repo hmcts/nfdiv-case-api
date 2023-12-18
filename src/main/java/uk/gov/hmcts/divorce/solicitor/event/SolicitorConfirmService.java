@@ -105,7 +105,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
-            .state(Holding)
+            .state(updateDetails.getState())
             .build();
     }
 
