@@ -314,7 +314,7 @@ public class CaseworkerConfirmServiceIT {
     }
 
     @Test
-    void shouldSetDueDateTo141DaysFromTodayAndDoNotChangeStateWhenSoleApplicationAndAoSSubmitted() throws Exception {
+    void shouldNotChangeDueDateOrStateWhenSoleApplicationAndAoSSubmitted() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -356,7 +356,7 @@ public class CaseworkerConfirmServiceIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.dueDate").value(caseData.getApplication().getIssueDate().plusDays(141).toString()))
+            .andExpect(jsonPath("$.data.dueDate").doesNotExist())
             .andExpect(jsonPath("$.state").value("Holding"));
     }
 }
