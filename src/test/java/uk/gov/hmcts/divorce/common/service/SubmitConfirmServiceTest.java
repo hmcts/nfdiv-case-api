@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.service.task.SetServiceConfirmed;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetConfirmServiceDueDate;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetConfirmServiceState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -26,6 +27,9 @@ public class SubmitConfirmServiceTest {
 
     @Mock
     private SetServiceConfirmed setServiceConfirmed;
+
+    @Mock
+    private SetConfirmServiceState setConfirmServiceState;
 
     @InjectMocks
     private SubmitConfirmService submitConfirmService;
@@ -48,6 +52,7 @@ public class SubmitConfirmServiceTest {
 
         when(setConfirmServiceDueDate.apply(caseDetails)).thenReturn(updatedCaseDetails);
         when(setServiceConfirmed.apply(updatedCaseDetails)).thenReturn(updatedCaseDetails);
+        when(setConfirmServiceState.apply(updatedCaseDetails)).thenReturn(updatedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitConfirmService.submitConfirmService(caseDetails);
 
