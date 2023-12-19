@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
@@ -153,9 +154,5 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         } else {
             return isNotEmpty(applicant.getEmail());
         }
-    }
-
-    private boolean isNotEmpty(String value) {
-        return value != null && !value.trim().isEmpty();
     }
 }
