@@ -84,7 +84,7 @@ public class SolicitorConfirmServiceIT {
     }
 
     @Test
-    void shouldSetDueDateTo141DaysFromToday() throws Exception {
+    void shouldSetDueDateTo14DaysFromToday() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -112,7 +112,7 @@ public class SolicitorConfirmServiceIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(141).toString()));
+            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(16).toString()));
     }
 
     @Test
@@ -222,7 +222,7 @@ public class SolicitorConfirmServiceIT {
     }
 
     @Test
-    void shouldSetDueDateTo141DaysFromTodayAndDoNotChangeStateWhenSoleApplicationAndAoSSubmitted() throws Exception {
+    void shouldNotChangeDueDateOrStateWhenSoleApplicationAndAoSSubmitted() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -265,7 +265,7 @@ public class SolicitorConfirmServiceIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.dueDate").value(caseData.getApplication().getIssueDate().plusDays(141).toString()))
+            .andExpect(jsonPath("$.data.dueDate").doesNotExist())
             .andExpect(jsonPath("$.state").value("Holding"));
     }
 }

@@ -1,21 +1,18 @@
-package uk.gov.hmcts.divorce.common.service.task;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
-import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -27,7 +24,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -35,8 +31,13 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class GenerateSwitchToSoleConditionalOrderLetter {
+public class SwitchToSoleCoTemplateContent implements TemplateContent {
+
+    private final Clock clock;
+    private final CommonContent commonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public static final String GET_A_DIVORCE = "get a divorce";
     public static final String END_YOUR_CIVIL_PARTNERSHIP = "end your civil partnership";
@@ -44,49 +45,25 @@ public class GenerateSwitchToSoleConditionalOrderLetter {
     public static final String CIVIL_PARTNERSHIP_LEGALLY_ENDED = "your civil partnership is legally ended";
     public static final String DIVORCED_OR_CP_LEGALLY_ENDED = "divorcedOrCivilPartnershipLegallyEnded";
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
-
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private Clock clock;
-
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-
-    public void apply(final CaseData caseData,
-                      final Long caseId,
-                      final Applicant applicant,
-                      final Applicant respondent) {
-
-        log.info("Generating coversheet for sole case id {} ", caseId);
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            SWITCH_TO_SOLE_CO_LETTER,
-            templateContent(caseData, caseId, applicant, respondent),
-            caseId,
-            SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID,
-            respondent.getLanguagePreference(),
-            formatDocumentName(caseId, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME, now(clock))
-        );
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID);
     }
 
-    private Map<String, Object> templateContent(final CaseData caseData,
+    @Override
+    public Map<String, Object> getTemplateContent(final CaseData caseData,
                                                 final Long caseId,
-                                                final Applicant applicant,
-                                                final Applicant respondent) {
-
+                                                final Applicant applicant) {
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-                        applicant.getLanguagePreference());
+            caseData.getApplicant1().getLanguagePreference());
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
-        templateContent.put(FIRST_NAME, respondent.getFirstName());
-        templateContent.put(LAST_NAME, respondent.getLastName());
-        templateContent.put(ADDRESS, respondent.getPostalAddress());
+        templateContent.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
+        templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(ADDRESS, caseData.getApplicant2().getPostalAddress());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, applicant, respondent.getLanguagePreference()));
+        templateContent.put(PARTNER,
+            commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()));
 
         templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, caseData.isDivorce() ? GET_A_DIVORCE :  END_YOUR_CIVIL_PARTNERSHIP);
         templateContent.put(DIVORCED_OR_CP_LEGALLY_ENDED, caseData.isDivorce() ? YOU_ARE_DIVORCED : CIVIL_PARTNERSHIP_LEGALLY_ENDED);
