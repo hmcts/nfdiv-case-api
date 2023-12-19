@@ -39,8 +39,8 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
     public static final String SYSTEM_PRONOUNCE_CASE = "system-pronounce-case";
     private final DocumentGenerator documentGenerator;
-    private ConditionalOrderPronouncedNotification conditionalOrderPronouncedNotification;
-    private NotificationDispatcher notificationDispatcher;
+    private final ConditionalOrderPronouncedNotification conditionalOrderPronouncedNotification;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
