@@ -181,6 +181,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
     private void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
+        var applicant = caseData.getApplicant1();
 
         if (!isEmpty(caseData.getDocuments().getDocumentsGenerated())) {
             caseData.getDocuments().getDocumentsGenerated()
@@ -192,7 +193,8 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
             caseData,
-            caseDetails.getId());
+            caseDetails.getId(),
+            applicant);
     }
 
     private void removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(CaseData caseData, long caseId) {
