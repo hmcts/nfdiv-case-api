@@ -343,7 +343,8 @@ public class CaseworkerRegenerateCourtOrdersTest {
             CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
             caseData,
-            caseDetails.getId());
+            caseDetails.getId(),
+            caseData.getApplicant1());
 
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
             FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
@@ -353,7 +354,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
             caseData.getApplicant2()
         );
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED, FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME,
-            caseData, caseDetails.getId());
+            caseData, caseDetails.getId(), caseData.getApplicant1());
     }
 
     @Test
