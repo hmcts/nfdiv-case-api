@@ -460,7 +460,6 @@ public enum State {
 
     public static final EnumSet<State> PRE_RETURN_TO_PREVIOUS_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
-        AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
         Withdrawn
