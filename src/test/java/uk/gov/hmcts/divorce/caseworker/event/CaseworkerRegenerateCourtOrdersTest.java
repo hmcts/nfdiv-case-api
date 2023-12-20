@@ -204,7 +204,8 @@ public class CaseworkerRegenerateCourtOrdersTest {
             CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
             caseData,
-            caseDetails.getId());
+            caseDetails.getId(),
+            caseData.getApplicant1());
     }
 
     @Test
