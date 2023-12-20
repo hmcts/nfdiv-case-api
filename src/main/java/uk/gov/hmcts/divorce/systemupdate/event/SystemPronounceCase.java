@@ -168,6 +168,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                 app2);
         }
     }
+
     private void removeExistingAndGenerateNewConditionalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
 
