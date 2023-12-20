@@ -3,12 +3,11 @@ package uk.gov.hmcts.divorce.document.print;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -18,13 +17,13 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
-import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack.LETTER_TYPE_GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
@@ -83,12 +82,11 @@ public class LetterPrinter {
 
     private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
 
-        ListValue<GeneralLetterDetails> generalLetterDetailsListValue = firstElement(caseData.getGeneralLetters());
-        if (generalLetterDetailsListValue != null) {
-            letters.addAll(addAnyAttachmentsToPackForGeneralLetter(generalLetterDetailsListValue));
+        GeneralLetter generalLetter = caseData.getGeneralLetter();
+        if (generalLetter != null) {
+            letters.addAll(addAnyAttachmentsToPackForGeneralLetter(generalLetter));
 
-            GeneralParties parties = generalLetterDetailsListValue.getValue().getGeneralLetterParties();
-
+            GeneralParties parties = generalLetter.getGeneralLetterParties();
             var recipientName = switch (parties) {
                 case RESPONDENT -> caseData.getApplicant2().getFullName();
                 case APPLICANT -> caseData.getApplicant1().getFullName();
@@ -107,7 +105,7 @@ public class LetterPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             throw new IllegalArgumentException(
-                "Error when sending general letter: GeneralLetterDetails not found for case %s".formatted(caseId)
+                "Error when sending general letter: GeneralLetter is null for case %s".formatted(caseId)
             );
         }
     }
@@ -129,32 +127,19 @@ public class LetterPrinter {
         }
     }
 
-    private List<Letter> addAnyAttachmentsToPackForGeneralLetter(final ListValue<GeneralLetterDetails> generalLetterDetailsListValue) {
+    private List<Letter> addAnyAttachmentsToPackForGeneralLetter(final GeneralLetter generalLetter) {
 
-        List<Letter> attachments = new ArrayList<>();
+        final AtomicInteger letterIndex = new AtomicInteger();
 
-        if (generalLetterDetailsListValue != null) {
-
-            GeneralLetterDetails letterDetails = generalLetterDetailsListValue.getValue();
-
-            List<ListValue<Document>> attachmentsListValues = new ArrayList<>();
-            if (!CollectionUtils.isEmpty(letterDetails.getGeneralLetterAttachmentLinks())) {
-                attachmentsListValues.addAll(letterDetails.getGeneralLetterAttachmentLinks());
-            }
-
-            final AtomicInteger letterIndex = new AtomicInteger();
-            attachments = attachmentsListValues
-                .stream()
-                .map(ListValue::getValue)
-                .map(document -> new Letter(DivorceDocument.builder()
-                    .documentType(GENERAL_LETTER)
-                    .documentFileName(document.getFilename())
-                    .documentLink(document)
-                    .build(), letterIndex.incrementAndGet()))
-                .collect(toList());
-
-        }
-
-        return attachments;
+        return Optional.ofNullable(generalLetter.getGeneralLetterAttachments())
+            .orElseGet(Collections::emptyList)
+            .stream()
+            .map(ListValue::getValue)
+            .map(document -> new Letter(DivorceDocument.builder()
+                .documentType(GENERAL_LETTER)
+                .documentFileName(document.getDocumentFileName())
+                .documentLink(document.getDocumentLink())
+                .build(), letterIndex.incrementAndGet()))
+            .collect(toList());
     }
 }

@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.legaladvisor.service.printer;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -10,14 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
@@ -25,12 +21,10 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -83,25 +77,7 @@ public class LetterPrinterTest {
     public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
-        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
-        generalLetters.add(
-            ListValue.<GeneralLetterDetails>builder()
-                .value(
-                    GeneralLetterDetails.builder()
-                        .generalLetterParties(GeneralParties.RESPONDENT)
-                        .build()
-                ).build()
-        );
-        caseData.setGeneralLetters(generalLetters);
-
-        ListValue<DivorceDocument> generalLetterDivorceDocument = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(GENERAL_LETTER)
-                .build())
-            .build();
-        caseData.setDocuments(CaseDocuments.builder()
-            .documentsGenerated(Lists.newArrayList(generalLetterDivorceDocument))
-            .build());
+        caseData.setGeneralLetter(GeneralLetter.builder().generalLetterParties(GeneralParties.APPLICANT).build());
 
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -128,28 +104,7 @@ public class LetterPrinterTest {
     public void shouldPrintAttachmentsWithGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
-        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
-        generalLetters.add(
-            ListValue.<GeneralLetterDetails>builder()
-                .value(
-                    GeneralLetterDetails.builder()
-                        .generalLetterParties(GeneralParties.APPLICANT)
-                        .generalLetterLink(Document.builder()
-                            .url("generalLetterUrl")
-                            .build())
-                        .build()
-                ).build()
-        );
-        caseData.setGeneralLetters(generalLetters);
-
-        ListValue<DivorceDocument> generalLetterDivorceDocument = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(GENERAL_LETTER)
-                .build())
-            .build();
-        caseData.setDocuments(CaseDocuments.builder()
-            .documentsGenerated(Lists.newArrayList(generalLetterDivorceDocument))
-            .build());
+        caseData.setGeneralLetter(GeneralLetter.builder().generalLetterParties(GeneralParties.APPLICANT).build());
 
         long caseId = TEST_CASE_ID;
 
@@ -195,19 +150,10 @@ public class LetterPrinterTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenGeneralLettersArrayIsEmpty() {
+    public void shouldThrowExceptionWhenGeneralLetterIsNull() {
         CaseData caseData = validApplicant1CaseData();
 
-        caseData.setGeneralLetters(emptyList());
-
-        ListValue<DivorceDocument> generalLetterDivorceDocument = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(GENERAL_LETTER)
-                .build())
-            .build();
-        caseData.setDocuments(CaseDocuments.builder()
-            .documentsGenerated(Lists.newArrayList(generalLetterDivorceDocument))
-            .build());
+        caseData.setGeneralLetter(null);
 
         Applicant applicant = caseData.getApplicant1();
 
