@@ -19,13 +19,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
@@ -120,21 +118,6 @@ public class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldNotSendNotificationAndLogErrorIfNotificationTemplateExceptionIsThrown() {
-
-        final NotificationTemplateException notificationTemplateException = new NotificationTemplateException("Message");
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-        doThrow(notificationTemplateException)
-            .when(notificationDispatcher)
-            .send(notification, caseData, details.getId());
-
-    }
-
-    @Test
     public void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
         final CaseData caseData = caseData();
 
@@ -152,7 +135,7 @@ public class SystemPronounceCaseTest {
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
             caseData,
             details.getId());
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
@@ -181,7 +164,7 @@ public class SystemPronounceCaseTest {
             CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
             caseDataNew,
             detailsNew.getId());
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(notification, caseDataNew, detailsNew.getId());
     }
 
     private void setConditionalOrder(final CaseData caseData) {
