@@ -165,7 +165,7 @@ public enum DocumentType implements HasLabel {
     DISPENSE_WITH_SERVICE_REFUSED("Dispense with service refused", false),
 
     @JsonProperty("email")
-    EMAIL("Email", true),
+    EMAIL("Email", false/*like generalLetter this is handled separately*/),
 
     @JsonProperty("finalOrderCanApply")
     FINAL_ORDER_CAN_APPLY("Final order can apply", true),

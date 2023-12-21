@@ -183,8 +183,17 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnFalseeWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOther() {
+    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOther() {
         var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(GeneralParties.OTHER);
+        assertFalse(isConfidential(caseData, EMAIL));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOtherEvenIfApplicatsConfidential() {
+        var caseData = CaseData.builder().build();
+        caseData.getApplicant1().setContactDetailsType(PRIVATE);
+        caseData.getApplicant2().setContactDetailsType(PRIVATE);
         caseData.getGeneralEmail().setGeneralEmailParties(GeneralParties.OTHER);
         assertFalse(isConfidential(caseData, EMAIL));
     }
