@@ -134,13 +134,20 @@ public final class DocumentUtil {
         final boolean isAnApplicantConfidential = caseData.getApplicant1().isConfidentialContactDetails()
             || caseData.getApplicant2().isConfidentialContactDetails();
 
-        if (GENERAL_LETTER.equals(documentType) || EMAIL.equals(documentType)) {
-            if (APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
-                || APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
+        if (GENERAL_LETTER.equals(documentType)) {
+            if (APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
                 return caseData.getApplicant1().isConfidentialContactDetails();
             }
-            if (RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
-                || RESPONDENT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
+            if (RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())) {
+                return caseData.getApplicant2().isConfidentialContactDetails();
+            }
+        }
+
+        if (EMAIL.equals(documentType)) {
+            if (APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
+                return caseData.getApplicant1().isConfidentialContactDetails();
+            }
+            if (RESPONDENT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
                 return caseData.getApplicant2().isConfidentialContactDetails();
             }
         }
