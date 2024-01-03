@@ -340,14 +340,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
-                log.info(
-                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFO event for case id: {}",
-                    details.getId());
+            log.info(
+                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFO event for case id: {}",
+                details.getId());
 
-                final User user = idamService.retrieveSystemUpdateUserDetails();
-                final String serviceAuth = authTokenGenerator.generate();
-                ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
-            }
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }
