@@ -22,7 +22,6 @@ import java.util.List;
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -118,7 +117,7 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
         State state = updateDetails.getData().isJudicialSeparationCase()
             && !isEmpty(updateDetails.getData().getApplication().getSolicitorService().getServiceProcessedByProcessServer())
             ? AwaitingJsNullity
-            : Holding;
+            : updateDetails.getState();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
