@@ -29,6 +29,7 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.util.List;
@@ -244,16 +245,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         generalReferralService.caseWorkerGeneralReferral(details);
 
-        if (SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering Switched To Sole FO event for case id: {}",
-                details.getId());
-
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(state)
@@ -288,17 +279,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 details.getId());
 
             notificationDispatcher.send(app1AppliedForConditionalOrderNotification, caseData, details.getId());
-        }
-
-        if (SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
-
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
-                details.getId());
-
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -340,5 +320,34 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, filename);
         }
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+
+        final CaseData caseData = details.getData();
+
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {
+            log.info(
+                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleCO event for case id: {}",
+                details.getId()
+            );
+
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
+
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFO event for case id: {}",
+                    details.getId());
+
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
+                ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
+            }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
