@@ -57,18 +57,6 @@ public class CaseworkerOfflineDocumentVerifiedFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendAppliedForCoLetterIfD84Selected() throws IOException {
-        final Map<String, Object> caseData = caseData(CASEWORKER_D84_REQUEST);
-        caseData.put("coDateD84FormScanned", "2022-01-01T12:12");
-        caseData.put("coApplicant1SubmittedDate", "2022-01-18T12:12:12.123");
-        caseData.put("dueDate", "2022-01-18");
-
-        final Response response = triggerCallback(caseData, CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
-
-    @Test
     public void shouldSendAosLetterForApp1SolJSDisputed() throws IOException {
         final Map<String, Object> caseData = caseData(CASEWORKER_D10_JS_SOL_DISPUTED_REQUEST);
         caseData.put("coDateD84FormScanned", "2022-01-01T12:12");

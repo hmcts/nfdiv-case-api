@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.document.am.model.Document;
 import uk.gov.hmcts.reform.ccd.document.am.model.UploadResponse;
@@ -25,11 +25,10 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,9 +36,6 @@ public class GenerateFormHelperTest {
 
     @Mock
     private CaseDocumentAccessManagement documentUploadClientApi;
-
-    @Mock
-    private HttpServletRequest request;
 
     @Mock
     private IdamService idamService;
@@ -71,10 +67,13 @@ public class GenerateFormHelperTest {
         final UploadResponse uploadResponse = mock(UploadResponse.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
+        final User user = mock(User.class);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(user);
+        when(user.getAuthToken()).thenReturn(SYSTEM_UPDATE_AUTH_TOKEN);
         when(uploadResponse.getDocuments()).thenReturn(singletonList(document));
         when(documentUploadClientApi.upload(
-            eq(CASEWORKER_AUTH_TOKEN),
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
             eq(SERVICE_AUTHORIZATION),
             anyString(),
             anyString(),
@@ -89,7 +88,7 @@ public class GenerateFormHelperTest {
             "/D10.pdf");
 
         verify(documentUploadClientApi).upload(
-            eq(CASEWORKER_AUTH_TOKEN),
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
             eq(SERVICE_AUTHORIZATION),
             eq("D10"),
             eq("D10.pdf"),

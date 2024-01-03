@@ -26,7 +26,7 @@
     "howToRespondApplication": "disputeDivorce",
     "coRespondentAnswersLink": {
       "document_url": "${json-unit.any-string}",
-      "document_filename": "respondentAnswers.pdf",
+      "document_filename": "respondentAnswers-1616591401473378-2022-02-15:13:39.pdf",
       "document_binary_url": "${json-unit.any-string}"
     },
     "documentsGenerated": [
@@ -35,10 +35,10 @@
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002",
-            "document_filename": "aosResponseLetter.pdf",
+            "document_filename": "aosResponseLetter-1616591401473378-2022-02-15:13:39.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002/binary"
           },
-          "documentFileName": "aosResponseLetter.pdf",
+          "documentFileName": "aosResponseLetter-1616591401473378-2022-02-15:13:39.pdf",
           "documentType": "aosResponseLetter"
         }
       },
@@ -46,12 +46,36 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002",
+            "document_filename": "coversheet-1616591401473378-2022-02-15:13:39.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002/binary"
+          },
+          "documentFileName": "coversheet-1616591401473378-2022-02-15:13:39.pdf",
+          "documentType": "coversheet"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
-            "document_filename": "respondentAnswers.pdf",
+            "document_filename": "respondentAnswers-1616591401473378-2022-02-15:13:39.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
           },
-          "documentFileName": "respondentAnswers.pdf",
+          "documentFileName": "respondentAnswers-1616591401473378-2022-02-15:13:39.pdf",
           "documentType": "respondentAnswers"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "d84.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "d84.pdf",
+          "documentType": "d84"
         }
       }
     ],
