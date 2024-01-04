@@ -88,7 +88,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialDocumentsTab(configBuilder);
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
-        buildLetterPackTab(configBuilder);
+
+        // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
+        //buildLetterPackTab(configBuilder);
     }
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
