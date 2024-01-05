@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -16,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJointFinalOrderNotification.DELAY_REASON_IF_OVERDUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
@@ -145,8 +145,8 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
         return YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())
             ? Optional.ofNullable(caseData.getFinalOrder().getApplicant1FinalOrderLateExplanation())
                 .map(APP_1_OVERDUE_CONTENT::formatted)
-                .orElse(APP_1_OVERDUE_CONTENT.formatted(StringUtils.EMPTY))
-            : StringUtils.EMPTY;
+                .orElse(APP_1_OVERDUE_CONTENT.formatted(EMPTY))
+            : EMPTY;
     }
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {

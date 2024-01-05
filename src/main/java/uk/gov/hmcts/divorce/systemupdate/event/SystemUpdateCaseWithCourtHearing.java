@@ -66,21 +66,18 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
         log.info("System update case court hearing about to submit callback invoked for case id: {}", details.getId());
 
         removeExistingDocuments(
-                caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
-                        CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
+            caseData,
+            List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
 
         documentGenerator.generateCertificateOfEntitlement(details);
 
         notificationDispatcher.send(
             entitlementGrantedConditionalOrderNotification,
-                caseData,
+            caseData,
             details.getId()
         );
 
-        removeExistingDocuments(
-                caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT));
+        removeExistingDocuments(caseData, List.of(CERTIFICATE_OF_ENTITLEMENT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

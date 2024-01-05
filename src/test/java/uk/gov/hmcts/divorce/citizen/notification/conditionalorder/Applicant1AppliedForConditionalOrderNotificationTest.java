@@ -1,12 +1,12 @@
 package uk.gov.hmcts.divorce.citizen.notification.conditionalorder;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.print.AppliedForCoPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -15,6 +15,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.AppliedForConditionalOrderDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -23,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.join;
 import static org.hamcrest.Matchers.allOf;
@@ -48,6 +53,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
@@ -95,6 +102,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 @ExtendWith(SpringExtension.class)
 class Applicant1AppliedForConditionalOrderNotificationTest {
 
+    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
+        ImmutableMap.of(DocumentType.APPLIED_FOR_CO_LETTER, Optional.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID)),
+        ImmutableMap.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID, APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME)
+    );
+    public static final String THE_LETTER_ID = "the-letter-id";
+
     @Mock
     private NotificationService notificationService;
 
@@ -102,7 +115,10 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
     private CommonContent commonContent;
 
     @Mock
-    private AppliedForCoPrinter appliedForCoPrinter;
+    private LetterPrinter printer;
+
+    @Mock
+    private AppliedForConditionalOrderDocumentPack appliedForConditionalOrderDocumentPack;
 
     @Mock
     private Clock clock;
@@ -537,9 +553,12 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
         data.setApplicant1(Applicant.builder().build());
 
+        when(appliedForConditionalOrderDocumentPack.getDocumentPack(data, data.getApplicant1())).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(appliedForConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         notification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
-        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant1());
+        verify(printer).sendLetters(data, TEST_CASE_ID, data.getApplicant1(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
     }
 
     @Test
@@ -548,8 +567,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verifyNoInteractions(appliedForCoPrinter);
-
+        verifyNoInteractions(printer);
     }
 
     @Test
@@ -557,9 +575,12 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         CaseData data = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
         data.setApplicant2(Applicant.builder().build());
 
+        when(appliedForConditionalOrderDocumentPack.getDocumentPack(data, data.getApplicant2())).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(appliedForConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verify(appliedForCoPrinter).print(data, TEST_CASE_ID, data.getApplicant2());
+        verify(printer).sendLetters(data, TEST_CASE_ID, data.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
     }
 
     private CaseData caseData(DivorceOrDissolution divorceOrDissolution, ApplicationType applicationType) {
