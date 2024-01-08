@@ -47,9 +47,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -123,7 +123,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         CaseData data = details.getData();
         log.info("Retrieving order summary");
         //Should be using correct EVENT key for paymentService - not sure what this should be yet.  Investigate and update.
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
 
         data.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
 
