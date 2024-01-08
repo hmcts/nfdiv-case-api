@@ -11,9 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 @Slf4j
 public class Applicant2SolFinalOrderExplainWhyNeedToApply implements CcdPageConfiguration {
 
-    private static final String FINALISE_YOUR_DIVORCE = "Finalising your divorce";
     private static final String ALWAYS_HIDE = "FOExplainWhyNeedToApplyApp2StatementOfTruth=\"ALWAYS_HIDE\"";
-
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
