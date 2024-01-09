@@ -147,20 +147,4 @@ public class LetterPrinter {
             return letter.getDocument();
         }
     }
-
-    private List<Letter> addAnyAttachmentsToPackForGeneralLetter(final GeneralLetter generalLetter) {
-
-        final AtomicInteger letterIndex = new AtomicInteger();
-
-        return Optional.ofNullable(generalLetter.getGeneralLetterAttachments())
-            .orElseGet(Collections::emptyList)
-            .stream()
-            .map(ListValue::getValue)
-            .map(document -> new Letter(DivorceDocument.builder()
-                .documentType(GENERAL_LETTER)
-                .documentFileName(document.getDocumentFileName())
-                .documentLink(document.getDocumentLink())
-                .build(), letterIndex.incrementAndGet()))
-            .collect(toList());
-    }
 }
