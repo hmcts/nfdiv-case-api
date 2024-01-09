@@ -9,24 +9,19 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack.LETTER_TYPE_GENERAL_LETTER;
