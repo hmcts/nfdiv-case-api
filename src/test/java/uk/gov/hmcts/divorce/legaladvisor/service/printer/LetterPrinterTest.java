@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.legaladvisor.service.printer;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,9 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -21,6 +23,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,7 +80,21 @@ public class LetterPrinterTest {
     public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
-        caseData.setGeneralLetter(GeneralLetter.builder().generalLetterParties(GeneralParties.APPLICANT).build());
+        Document generalLetter = Document.builder()
+            .filename("GeneralLetter.pdf")
+            .build();
+
+        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
+        generalLetters.add(
+            ListValue.<GeneralLetterDetails>builder()
+                .value(
+                    GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .generalLetterLink(generalLetter)
+                        .build()
+                ).build()
+        );
+        caseData.setGeneralLetters(generalLetters);
 
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -104,8 +121,28 @@ public class LetterPrinterTest {
     public void shouldPrintAttachmentsWithGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
-        caseData.setGeneralLetter(GeneralLetter.builder().generalLetterParties(GeneralParties.APPLICANT).build());
+        Document generalLetter = Document.builder()
+            .filename("GeneralLetter.pdf")
+            .build();
 
+        ListValue<Document> attachment = ListValue.<Document>builder()
+            .value(Document.builder()
+                .filename("some-attachment.pdf")
+                .build())
+            .build();
+
+        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
+        generalLetters.add(
+            ListValue.<GeneralLetterDetails>builder()
+                .value(
+                    GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .generalLetterLink(generalLetter)
+                        .generalLetterAttachmentLinks(Lists.newArrayList(attachment))
+                        .build()
+                ).build()
+        );
+        caseData.setGeneralLetters(generalLetters);
         long caseId = TEST_CASE_ID;
 
         Applicant applicant = caseData.getApplicant1();
@@ -153,7 +190,7 @@ public class LetterPrinterTest {
     public void shouldThrowExceptionWhenGeneralLetterIsNull() {
         CaseData caseData = validApplicant1CaseData();
 
-        caseData.setGeneralLetter(null);
+        caseData.setGeneralLetters(null);
 
         Applicant applicant = caseData.getApplicant1();
 

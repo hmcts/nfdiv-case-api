@@ -162,24 +162,4 @@ public class CaseworkerGeneralLetterTest {
             generalLetterDocumentPack.getLetterId()
         );
     }
-
-    @Test
-    void shouldRemoveGeneralLetterInAboutToStart() {
-
-        final CaseData caseData = caseData();
-        caseData.setGeneralLetter(
-            GeneralLetter
-                .builder()
-                .generalLetterParties(APPLICANT)
-                .generalLetterDetails("some details")
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalLetter.aboutToStart(details);
-        assertThat(response.getData().getGeneralLetter()).isNull();
-    }
 }

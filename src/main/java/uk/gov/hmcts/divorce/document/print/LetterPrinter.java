@@ -1,13 +1,16 @@
 package uk.gov.hmcts.divorce.document.print;
 
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -24,8 +27,10 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack.LETTER_TYPE_GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
@@ -82,16 +87,32 @@ public class LetterPrinter {
 
     private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
 
-        GeneralLetter generalLetter = caseData.getGeneralLetter();
-        if (generalLetter != null) {
-            letters.addAll(addAnyAttachmentsToPackForGeneralLetter(generalLetter));
+        ListValue<GeneralLetterDetails> generalLetterDetailsListValue = firstElement(caseData.getGeneralLetters());
 
-            GeneralParties parties = generalLetter.getGeneralLetterParties();
+        if (generalLetterDetailsListValue != null) {
+
+            GeneralLetterDetails letterDetails = generalLetterDetailsListValue.getValue();
+
+            List<ListValue<Document>> documents = Lists.newArrayList(ListValue.<Document>builder()
+                .value(letterDetails.getGeneralLetterLink())
+                .build());
+
+            if (!CollectionUtils.isEmpty(letterDetails.getGeneralLetterAttachmentLinks())) {
+                documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
+            }
+
+            GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
+                .map(element -> element.getValue().getGeneralLetterParties())
+                .orElse(GeneralParties.OTHER);
+
             var recipientName = switch (parties) {
                 case RESPONDENT -> caseData.getApplicant2().getFullName();
                 case APPLICANT -> caseData.getApplicant1().getFullName();
                 case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
             };
+
+            List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
+            letters.addAll(generalLetters);
 
             final Print print = new Print(
                 letters,

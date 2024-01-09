@@ -54,7 +54,6 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             .description(CREATE_GENERAL_LETTER_TITLE)
             .showSummary()
             .showEventNotes()
-            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
@@ -68,18 +67,6 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                 .mandatory(GeneralLetter::getGeneralLetterDetails)
                 .optional(GeneralLetter::getGeneralLetterAttachments)
                 .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_LETTER, details.getId());
-        CaseData caseData = details.getData();
-
-        // Clear general letter field so that no stale data is shown
-        caseData.setGeneralLetter(null);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
@@ -109,6 +96,8 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
         // Pre-generate letter using existing caseTask to allow letter attachments to be stored on caseData before attempting to send them.
         // This is to avoid CDAM issues of the letter attachments having empty meta-data resulting in a 403 permissions error.
         generateGeneralLetter.apply(details);
+
+        details.getData().setGeneralLetter(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
