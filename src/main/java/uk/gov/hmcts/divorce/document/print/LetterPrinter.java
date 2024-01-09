@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.document.print;
 
-import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -88,10 +87,7 @@ public class LetterPrinter {
 
             GeneralLetterDetails letterDetails = generalLetterDetailsListValue.getValue();
 
-            List<ListValue<Document>> documents = Lists.newArrayList(ListValue.<Document>builder()
-                .value(letterDetails.getGeneralLetterLink())
-                .build());
-
+            List<ListValue<Document>> documents = new ArrayList<>();
             if (!CollectionUtils.isEmpty(letterDetails.getGeneralLetterAttachmentLinks())) {
                 documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
             }
