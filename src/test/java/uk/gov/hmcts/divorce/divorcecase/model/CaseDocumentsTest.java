@@ -331,6 +331,30 @@ class CaseDocumentsTest {
     }
 
     @Test
+    void shouldMapScannedDocumentToConfidentialDocument() {
+
+        final CaseDocuments caseDocuments = CaseDocuments.builder().build();
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+
+        final ScannedDocument scannedDocument = ScannedDocument.builder()
+            .url(Document.builder().build())
+            .fileName("D36.pdf")
+            .build();
+
+        final ConfidentialDivorceDocument expectedResponse = ConfidentialDivorceDocument.builder()
+            .documentLink(scannedDocument.getUrl())
+            .documentFileName(scannedDocument.getFileName())
+            .documentDateAdded(LocalDate.now(clock))
+            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.FINAL_ORDER_APPLICATION)
+            .documentComment("Reclassified scanned document")
+            .build();
+
+        assertThat(caseDocuments.mapScannedDocumentToConfidentialDocument(scannedDocument, FINAL_ORDER_APPLICATION, clock))
+            .isEqualTo(expectedResponse);
+    }
+
+    @Test
     public void shouldRemoveGivenConfidentialDocumentType() {
         final CaseDocuments caseDocuments = CaseDocuments.builder()
             .confidentialDocumentsGenerated(Lists.newArrayList(

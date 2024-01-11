@@ -123,7 +123,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
 
             if (isNotEmpty(documentType)) {
-                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+                caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, documentType, clock, scannedDocument);
                 caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
             }
         }

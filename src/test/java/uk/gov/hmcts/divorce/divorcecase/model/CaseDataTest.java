@@ -344,8 +344,88 @@ class CaseDataTest {
         final Document document = Document.builder().build();
         ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
 
-        caseData.reclassifyScannedDocumentToChosenDocumentType(DocumentType.FINAL_ORDER_APPLICATION, clock, scannedDocument);
+        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.FINAL_ORDER_APPLICATION, clock, scannedDocument);
 
         assertThat(caseData.getFinalOrder().getScannedD36Form()).isEqualTo(document);
+    }
+
+    @Test
+    void shouldSetConfidentialDocumentsUploadedConfidentialCaseD10() {
+        final CaseData caseData = new CaseData();
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+
+        final Document document = Document.builder().build();
+        ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
+
+        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.RESPONDENT_ANSWERS, clock, scannedDocument);
+
+        assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldSetScannedD84FormOnFinalOrderAndSetConfidentialDocumentsUploadedConfidentialCase() {
+        final CaseData caseData = new CaseData();
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+
+        final Document document = Document.builder().build();
+        ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
+
+        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.CONDITIONAL_ORDER_APPLICATION, clock, scannedDocument);
+
+        assertThat(caseData.getConditionalOrder().getScannedD84Form()).isEqualTo(document);
+        assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldSetScannedD36FormOnFinalOrderAndSetConfidentialDocumentsUploadedConfidentialCase() {
+        final CaseData caseData = new CaseData();
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+
+        final Document document = Document.builder().build();
+        ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
+
+        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.FINAL_ORDER_APPLICATION, clock, scannedDocument);
+
+        assertThat(caseData.getFinalOrder().getScannedD36Form()).isEqualTo(document);
+        assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldSetScannedD84FormOnFinalOrder() {
+        final CaseData caseData = new CaseData();
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+        final Document document = Document.builder().build();
+        ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
+
+        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.CONDITIONAL_ORDER_APPLICATION, clock, scannedDocument);
+
+        assertThat(caseData.getConditionalOrder().getScannedD84Form()).isEqualTo(document);
+        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldSetDocumentsUploadedForNonConfidentialD10Case() {
+        final CaseData caseData = new CaseData();
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        final Clock clock = mock(Clock.class);
+        setMockClock(clock);
+
+        final Document document = Document.builder().build();
+        ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
+
+        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.RESPONDENT_ANSWERS, clock, scannedDocument);
+
+        assertThat(caseData.getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
     }
 }

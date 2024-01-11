@@ -327,6 +327,19 @@ public class CaseDocuments {
             .build();
     }
 
+    @JsonIgnore
+    public ConfidentialDivorceDocument mapScannedDocumentToConfidentialDocument(final ScannedDocument scannedDocument,
+                                                                                final DocumentType documentType,
+                                                                                final Clock clock) {
+        return ConfidentialDivorceDocument.builder()
+            .documentLink(scannedDocument.getUrl())
+            .documentFileName(scannedDocument.getFileName())
+            .documentDateAdded(LocalDate.now(clock))
+            .confidentialDocumentsReceived(getConfidentialDocumentType(documentType))
+            .documentComment("Reclassified scanned document")
+            .build();
+    }
+
     public Optional<ListValue<DivorceDocument>> getDocumentGeneratedWithType(final DocumentType documentType) {
         return !isEmpty(this.getDocumentsGenerated())
             ? this.getDocumentsGenerated().stream()

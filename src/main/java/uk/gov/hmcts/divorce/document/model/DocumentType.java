@@ -56,7 +56,7 @@ public enum DocumentType implements HasLabel {
     CONDITIONAL_ORDER_ANSWERS("Conditional order answers", false),
 
     @JsonProperty("conditionalOrderApplication")
-    CONDITIONAL_ORDER_APPLICATION("Conditional order application (D84)", false),
+    CONDITIONAL_ORDER_APPLICATION("Conditional order application (D84)", true),
 
     @JsonProperty("conditionalOrderCanApply")
     CONDITIONAL_ORDER_CAN_APPLY("Conditional order can apply", true),
@@ -177,7 +177,7 @@ public enum DocumentType implements HasLabel {
     FINAL_ORDER_CAN_APPLY_APP2("Final order can apply - Applicant 2", true),
 
     @JsonProperty("finalOrderApplication")
-    FINAL_ORDER_APPLICATION("Final Order application (D36)", false),
+    FINAL_ORDER_APPLICATION("Final Order application (D36)", true),
 
     @JsonProperty("finalOrderGranted")
     FINAL_ORDER_GRANTED("Final order granted", false),
@@ -221,7 +221,7 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("respondentAnswers")
     @JsonAlias("applicant2Answers")
-    RESPONDENT_ANSWERS("Respondent answers", false),
+    RESPONDENT_ANSWERS("Respondent answers", true),
 
     @JsonProperty("aos")
     @Deprecated

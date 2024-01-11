@@ -1,0 +1,66 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicationType": "soleApplication",
+    "supplementaryCaseType": "notApplicable",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1Gender": "female",
+    "applicant1ContactDetailsType": "public",
+    "applicant1FinancialOrder": "No",
+    "applicant2LegalProceedings": "Yes",
+    "applicant2LegalProceedingsDetails": "some description",
+    "applicant2Offline": "Yes",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "issueDate": "${json-unit.any-string}",
+    "dateAosSubmitted": "${json-unit.any-string}",
+    "howToRespondApplication": "disputeDivorce",
+    "typeOfDocumentAttached": "D10",
+    "dueDate": "${json-unit.any-string}",
+    "statementOfTruth": "Yes",
+    "confidentialDocumentsUploaded": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "confidentialDocumentsReceived": "respondentAnswers",
+          "documentComment": "Reclassified scanned document",
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "doc1.pdf",
+          "documentLink": {
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary",
+            "document_filename": "doc1.pdf",
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d"
+          }
+        }
+      }
+    ],
+    "scannedDocuments": [
+      {
+        "value": {
+          "type": "other",
+          "subtype": "aos",
+          "url": {
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+            "document_filename": "doc1.pdf",
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+          },
+          "fileName": "doc1.pdf"
+        }
+      }
+    ],
+    "scannedDocumentNames": {
+      "value": {
+        "label": "doc1.pdf"
+      },
+      "valueLabel": "doc1.pdf"
+    },
+    "dataVersion": 5,
+    "warnings": []
+  },
+  "state": "Holding"
+}

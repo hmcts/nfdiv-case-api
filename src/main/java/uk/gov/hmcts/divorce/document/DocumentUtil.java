@@ -27,9 +27,11 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTE
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL_COVER_LETTER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
@@ -38,6 +40,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_REFUSAL_COVER_LETTER;
 
@@ -180,6 +183,9 @@ public final class DocumentUtil {
             Map.of(
                 FINAL_ORDER_CAN_APPLY_APP1, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP1,
                 FINAL_ORDER_CAN_APPLY_APP2, ConfidentialDocumentsReceived.FINAL_ORDER_CAN_APPLY_APP2,
+                FINAL_ORDER_APPLICATION, ConfidentialDocumentsReceived.FINAL_ORDER_APPLICATION,
+                RESPONDENT_ANSWERS, ConfidentialDocumentsReceived.RESPONDENT_ANSWERS,
+                CONDITIONAL_ORDER_APPLICATION, ConfidentialDocumentsReceived.CONDITIONAL_ORDER_APPLICATION,
                 AOS_OVERDUE_LETTER, ConfidentialDocumentsReceived.AOS_OVERDUE_LETTER)
         );
 

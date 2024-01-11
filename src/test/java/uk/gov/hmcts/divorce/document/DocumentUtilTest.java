@@ -45,13 +45,16 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -257,7 +260,10 @@ class DocumentUtilTest {
             NOTICE_OF_PROCEEDINGS_APP_2,
             GENERAL_LETTER,
             FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+            FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+            FINAL_ORDER_APPLICATION,
+            RESPONDENT_ANSWERS,
+            CONDITIONAL_ORDER_APPLICATION
         );
 
         assertThat(documentTypes.stream().map(DocumentUtil::getConfidentialDocumentType)
@@ -267,7 +273,10 @@ class DocumentUtilTest {
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
                 ConfidentialDocumentsReceived.GENERAL_LETTER,
                 ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-                ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2
+                ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
+                ConfidentialDocumentsReceived.FINAL_ORDER_APPLICATION,
+                ConfidentialDocumentsReceived.RESPONDENT_ANSWERS,
+                ConfidentialDocumentsReceived.CONDITIONAL_ORDER_APPLICATION
             );
     }
 

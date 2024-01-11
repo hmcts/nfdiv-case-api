@@ -319,7 +319,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
 
-            caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, filename);
+            caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, documentType, clock, filename);
         }
     }
 

@@ -1,0 +1,88 @@
+{
+  "data": {
+    "applicant1ContactDetailsType": "public",
+    "applicant1Email": "test@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1FirstName": "test_first_name",
+    "applicant1Gender": "female",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1LastName": "test_last_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1Offline": "Yes",
+    "applicant2ContactDetailsType": "private",
+    "applicant2Email": "test@test.com",
+    "applicant2FinancialOrder": "No",
+    "applicant2FirstName": "test_first_name",
+    "applicant2Gender": "female",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2LastName": "test_last_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2Offline": "Yes",
+    "applicationType": "jointApplication",
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "coScannedD84Form": {
+      "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary",
+      "document_filename": "doc1.pdf",
+      "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d"
+    },
+    "confidentialDocumentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "confidentialDocumentsReceived": "conditionalOrderApplication",
+          "documentComment": "Reclassified scanned document",
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "doc1.pdf",
+          "documentLink": {
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary",
+            "document_filename": "doc1.pdf",
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d"
+          }
+        }
+      }
+    ],
+    "confidentialDocumentsUploaded": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "confidentialDocumentsReceived": "conditionalOrderApplication",
+          "documentComment": "Reclassified scanned document",
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "doc1.pdf",
+          "documentLink": {
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary",
+            "document_filename": "doc1.pdf",
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d"
+          }
+        }
+      }
+    ],
+    "dataVersion": 5,
+    "divorceOrDissolution": "divorce",
+    "scannedDocumentNames": {
+      "value": {
+        "label": "doc1.pdf"
+      },
+      "valueLabel": "doc1.pdf"
+    },
+    "scannedDocuments": [
+      {
+        "value": {
+          "fileName": "doc1.pdf",
+          "type": "form",
+          "url": {
+            "document_binary_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary",
+            "document_filename": "doc1.pdf",
+            "document_url": "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d"
+          }
+        }
+      }
+    ],
+    "sentNotifications": {},
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "supplementaryCaseType": "notApplicable",
+    "typeOfDocumentAttached": "D84",
+    "warnings": []
+  },
+  "state": "AwaitingLegalAdvisorReferral"
+}
