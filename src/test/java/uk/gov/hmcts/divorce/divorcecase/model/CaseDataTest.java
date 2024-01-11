@@ -376,7 +376,12 @@ class CaseDataTest {
         final Document document = Document.builder().build();
         ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
 
-        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.CONDITIONAL_ORDER_APPLICATION, clock, scannedDocument);
+        caseData.reclassifyScannedDocumentToChosenDocumentType(
+            caseData,
+            DocumentType.CONDITIONAL_ORDER_APPLICATION,
+            clock,
+            scannedDocument
+        );
 
         assertThat(caseData.getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded().size()).isEqualTo(1);
@@ -407,7 +412,12 @@ class CaseDataTest {
         final Document document = Document.builder().build();
         ScannedDocument scannedDocument = ScannedDocument.builder().url(document).build();
 
-        caseData.reclassifyScannedDocumentToChosenDocumentType(caseData, DocumentType.CONDITIONAL_ORDER_APPLICATION, clock, scannedDocument);
+        caseData.reclassifyScannedDocumentToChosenDocumentType(
+            caseData,
+            DocumentType.CONDITIONAL_ORDER_APPLICATION,
+            clock,
+            scannedDocument
+        );
 
         assertThat(caseData.getConditionalOrder().getScannedD84Form()).isEqualTo(document);
         assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
