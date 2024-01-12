@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
@@ -30,7 +29,6 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
@@ -59,18 +57,18 @@ public class GenerateGeneralLetter implements CaseTask {
         log.info("Generating general letter for case id: {} ", caseId);
 
         LanguagePreference languagePreference =
-                GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
-                        ? caseData.getApplicant2().getLanguagePreference()
-                        : caseData.getApplicant1().getLanguagePreference();
+            GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+                ? caseData.getApplicant2().getLanguagePreference()
+                : caseData.getApplicant1().getLanguagePreference();
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                GENERAL_LETTER,
+            caseData,
+            GENERAL_LETTER,
                 templateContent.apply(caseData, caseId, languagePreference),
-                caseId,
-                GENERAL_LETTER_TEMPLATE_ID,
-                languagePreference,
-                formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
+            caseId,
+            GENERAL_LETTER_TEMPLATE_ID,
+            languagePreference,
+            formatDocumentName(GENERAL_LETTER_DOCUMENT_NAME, now(clock))
         );
 
         updateGeneralLetters(caseData);
@@ -79,46 +77,39 @@ public class GenerateGeneralLetter implements CaseTask {
     }
 
     private void updateGeneralLetters(CaseData caseData) {
-        Optional<Document> generalLetterDocument;
-        if (isConfidential(caseData, GENERAL_LETTER)) {
-            generalLetterDocument =
-                ofNullable(caseData.getDocuments().getConfidentialDocumentsGenerated())
+
+        if (!isConfidential(caseData, GENERAL_LETTER)) {
+
+            Optional<Document> generalLetterDocument =
+                ofNullable(caseData.getDocuments().getDocumentsGenerated())
                     .flatMap(Collection::stream)
                     .map(ListValue::getValue)
-                    .filter(document -> getConfidentialDocumentType(GENERAL_LETTER).equals(document.getConfidentialDocumentsReceived()))
+                    .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
                     .findFirst()
-                    .map(ConfidentialDivorceDocument::getDocumentLink);
-        } else {
-            generalLetterDocument =
-                    ofNullable(caseData.getDocuments().getDocumentsGenerated())
-                            .flatMap(Collection::stream)
-                            .map(ListValue::getValue)
-                            .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
-                            .findFirst()
-                            .map(DivorceDocument::getDocumentLink);
-        }
+                    .map(DivorceDocument::getDocumentLink);
 
-        generalLetterDocument.ifPresent(document -> caseData.setGeneralLetters(addDocumentToTop(
+            generalLetterDocument.ifPresent(document -> caseData.setGeneralLetters(addDocumentToTop(
                 caseData.getGeneralLetters(),
                 mapToGeneralLetterDetails(caseData.getGeneralLetter(), document),
                 documentIdProvider.documentId()
-        )));
+            )));
+        }
     }
 
     private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter, Document generalLetterDocument) {
 
         List<ListValue<Document>> attachments = ofNullable(generalLetter.getGeneralLetterAttachments())
-                .flatMap(Collection::stream)
-                .map(divorceDocument -> ListValue.<Document>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(divorceDocument.getValue().getDocumentLink()).build())
-                .toList();
+            .flatMap(Collection::stream)
+            .map(divorceDocument -> ListValue.<Document>builder()
+                .id(documentIdProvider.documentId())
+                .value(divorceDocument.getValue().getDocumentLink()).build())
+            .toList();
 
         return GeneralLetterDetails.builder()
-                .generalLetterLink(generalLetterDocument)
-                .generalLetterAttachmentLinks(attachments)
-                .generalLetterDateTime(now(clock))
-                .generalLetterParties(generalLetter.getGeneralLetterParties())
-                .build();
+            .generalLetterLink(generalLetterDocument)
+            .generalLetterAttachmentLinks(attachments)
+            .generalLetterDateTime(now(clock))
+            .generalLetterParties(generalLetter.getGeneralLetterParties())
+            .build();
     }
 }

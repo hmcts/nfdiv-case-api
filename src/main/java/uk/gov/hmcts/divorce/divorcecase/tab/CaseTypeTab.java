@@ -293,7 +293,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
-            .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PRIVATE);
+            .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
+            .field(CaseData::getConfidentialGeneralEmails)
+        ;
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
