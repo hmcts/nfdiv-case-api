@@ -79,6 +79,7 @@ public class LetterPrinter {
         }
     }
 
+    // TODO: Aaron NFDIV-3784 How do we handle confidential general letters, as Nigels branch stops them being added to generalLetters array.
     private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
 
         ListValue<GeneralLetterDetails> generalLetterDetailsListValue = firstElement(caseData.getGeneralLetters());

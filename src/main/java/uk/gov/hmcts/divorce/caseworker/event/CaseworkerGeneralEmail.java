@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -128,9 +127,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
         if (isConfidential(caseData, EMAIL)) {
             if (isEmpty(caseData.getConfidentialGeneralEmails())) {
-                List<ListValue<GeneralEmailDetails>> confidentiaGeneralEmailListValues = new ArrayList<>();
-                confidentiaGeneralEmailListValues.add(generalEmailDetailsListValue);
-                caseData.setConfidentialGeneralEmails(confidentiaGeneralEmailListValues);
+                caseData.setConfidentialGeneralEmails(List.of(generalEmailDetailsListValue));
             } else {
                 caseData.getConfidentialGeneralEmails().add(0, generalEmailDetailsListValue);
             }

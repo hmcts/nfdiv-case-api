@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.content.GeneralLetterTemplateContent;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
@@ -29,6 +30,7 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
@@ -64,7 +66,7 @@ public class GenerateGeneralLetter implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             GENERAL_LETTER,
-                templateContent.apply(caseData, caseId, languagePreference),
+            templateContent.apply(caseData, caseId, languagePreference),
             caseId,
             GENERAL_LETTER_TEMPLATE_ID,
             languagePreference,
@@ -77,23 +79,30 @@ public class GenerateGeneralLetter implements CaseTask {
     }
 
     private void updateGeneralLetters(CaseData caseData) {
-
-        if (!isConfidential(caseData, GENERAL_LETTER)) {
-
-            Optional<Document> generalLetterDocument =
+        Optional<Document> generalLetterDocument;
+        if (isConfidential(caseData, GENERAL_LETTER)) {
+            generalLetterDocument =
+                ofNullable(caseData.getDocuments().getConfidentialDocumentsGenerated())
+                    .flatMap(Collection::stream)
+                    .map(ListValue::getValue)
+                    .filter(document -> getConfidentialDocumentType(GENERAL_LETTER).equals(document.getConfidentialDocumentsReceived()))
+                    .findFirst()
+                    .map(ConfidentialDivorceDocument::getDocumentLink);
+        } else {
+            generalLetterDocument =
                 ofNullable(caseData.getDocuments().getDocumentsGenerated())
                     .flatMap(Collection::stream)
                     .map(ListValue::getValue)
                     .filter(document -> GENERAL_LETTER.equals(document.getDocumentType()))
                     .findFirst()
                     .map(DivorceDocument::getDocumentLink);
-
-            generalLetterDocument.ifPresent(document -> caseData.setGeneralLetters(addDocumentToTop(
-                caseData.getGeneralLetters(),
-                mapToGeneralLetterDetails(caseData.getGeneralLetter(), document),
-                documentIdProvider.documentId()
-            )));
         }
+
+        generalLetterDocument.ifPresent(document -> caseData.setGeneralLetters(addDocumentToTop(
+            caseData.getGeneralLetters(),
+            mapToGeneralLetterDetails(caseData.getGeneralLetter(), document),
+            documentIdProvider.documentId()
+        )));
     }
 
     private GeneralLetterDetails mapToGeneralLetterDetails(GeneralLetter generalLetter, Document generalLetterDocument) {
