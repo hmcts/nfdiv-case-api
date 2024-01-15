@@ -31,7 +31,7 @@ public class Applicant2SolFinalOrderExplainWhyNeedToApply implements CcdPageConf
             )
             .label(
                 "FORequestText",
-                "I want permission to apply for a final order on behalf of the respondent, and to finalise the divorce."
+                "*I want permission to apply for a final order on behalf of the respondent, and to finalise the divorce.*"
             )
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant2SolFinalOrderWhyNeedToApply)
