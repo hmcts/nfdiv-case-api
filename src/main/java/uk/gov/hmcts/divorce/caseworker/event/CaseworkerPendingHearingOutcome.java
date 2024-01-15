@@ -32,7 +32,10 @@ public class CaseworkerPendingHearingOutcome implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_PENDING_HEARING_OUTCOME)
-            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse, RespondentFinalOrderRequested), PendingHearingOutcome)
+            .forStateTransition(
+                EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse, RespondentFinalOrderRequested),
+                PendingHearingOutcome
+            )
             .name("Pending hearing outcome")
             .description("Pending hearing outcome")
             .showEventNotes()
