@@ -34,6 +34,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -194,6 +195,26 @@ public class FinalOrder {
     private String applicant2SolFinalOrderWhyNeedToApply;
 
     @CCD(
+        label = "Respondent Solicitor Applied For Final Order",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    private YesOrNo applicant2SolAppliedForFinalOrder = NO;
+
+    @CCD(
+        label = "Date Respondent Solicitor Applied For Final Order",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime dateApplicant2SolAppliedForFinalOrder;
+
+    @CCD(
+        label = "Respondent Solicitor Responsible For Final Order Application",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolResponsibleForFinalOrder;
+
+    @CCD(
         label = "Here are your order details",
         access = {DefaultAccess.class}
     )
@@ -224,8 +245,14 @@ public class FinalOrder {
     )
     private DynamicList pbaNumbers;
 
+    @CCD(
+        label = "Respondent Solicitor PBA Number for Final Order",
+        access = {DefaultAccess.class}
+    )
+    private String finalOrderPbaNumber;
+
     @JsonIgnore
-    public Optional<String> getPbaNumber() {
+    public Optional<String> getFinalOrderPbaNumber() {
         return Optional.ofNullable(pbaNumbers)
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
@@ -235,7 +262,7 @@ public class FinalOrder {
         hint = "This will appear on your statement to help you identify this payment",
         access = {DefaultAccess.class}
     )
-    private String feeAccountReference;
+    private String applicant2SolFinalOrderFeeAccountReference;
 
     @CCD(
         label = "Payments",
@@ -249,7 +276,8 @@ public class FinalOrder {
     public void updateFinalOrderWithApp2SolPaymentDetails(
         OrderSummary finalOrderFeeOrderSummary,
         CaseData caseData,
-        String paymentReference
+        String paymentReference,
+        String pbaNumber
     ) {
         var payment = Payment
             .builder()
@@ -270,6 +298,8 @@ public class FinalOrder {
             finalOrder.getFinalOrderPayments()
                 .add(new ListValue<>(UUID.randomUUID().toString(), payment));
         }
+
+        finalOrder.setFinalOrderPbaNumber(pbaNumber);
     }
 
     @JsonUnwrapped(prefix = "app2SolFoHWF")
