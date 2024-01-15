@@ -17,7 +17,12 @@ public class HelpWithFeesPageForApplicant2SolFinalOrder implements CcdPageConfig
             .showCondition("applicant2SolPaymentHowToPay=\"feesHelpWith\"")
             .complex(CaseData::getFinalOrder)
                 .complex(FinalOrder::getApplicant2SolFinalOrderHelpWithFees)
-                    .mandatory(HelpWithFees::getReferenceNumber, "applicant2SolPaymentHowToPay=\"feesHelpWith\"",null,"Respondent help with fees reference")
+                    .mandatory(
+                        HelpWithFees::getReferenceNumber,
+                        "applicant2SolPaymentHowToPay=\"feesHelpWith\"",
+                        null,
+                        "Respondent help with fees reference"
+                    )
                 .done()
             .done();
     }
