@@ -36,7 +36,10 @@ public class Applicant2SolApplyForFinalOrderDetails implements CcdPageConfigurat
             .done()
             .done()
             .complex(CaseData::getFinalOrder)
-            .mandatoryWithLabel(FinalOrder::getDoesApplicant2WantToApplyForFinalOrder, "Does the respondent want to apply for a final order?")
+            .mandatoryWithLabel(
+                FinalOrder::getDoesApplicant2WantToApplyForFinalOrder,
+                "Does the respondent want to apply for a final order?"
+            )
             .done();
     }
 
