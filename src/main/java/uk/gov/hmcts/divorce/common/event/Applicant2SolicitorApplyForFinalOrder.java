@@ -31,11 +31,14 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
@@ -58,6 +61,9 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public static final String FINAL_ORDER_REQUESTED_APP2_SOL = "final-order-requested-app2-sol";
 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
+
+    @Autowired
+    private Clock clock;
 
     @Autowired
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
@@ -122,7 +128,6 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
         CaseData data = details.getData();
         log.info("Retrieving order summary");
-        //Should be using correct EVENT key for paymentService - not sure what this should be yet.  Investigate and update.
         final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
 
         data.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
@@ -143,7 +148,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("App2 Sol Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         data.getApplication().setPreviousState(beforeDetails.getState());
@@ -163,7 +168,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         final var finalOrderFeeOrderSummary = updatedFo.getApplicant2SolFinalOrderFeeOrderSummary();
 
         if (updatedFo.isSolicitorPaymentMethodPba()) {
-            final Optional<String> pbaNumber = updatedFo.getPbaNumber();
+            final Optional<String> pbaNumber = updatedFo.getFinalOrderPbaNumber();
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
                     updatedData,
@@ -171,11 +176,16 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
                     updatedData.getApplicant2().getSolicitor(),
                     pbaNumber.get(),
                     updatedFo.getApplicant2SolFinalOrderFeeOrderSummary(),
-                    updatedFo.getFeeAccountReference()
+                    updatedFo.getApplicant2SolFinalOrderFeeAccountReference()
                 );
 
                 if (response.getHttpStatus() == CREATED) {
-                    updatedFo.updateFinalOrderWithApp2SolPaymentDetails(finalOrderFeeOrderSummary, updatedData, response.getPaymentReference());
+                    updatedFo.updateFinalOrderWithApp2SolPaymentDetails(
+                        finalOrderFeeOrderSummary,
+                        updatedData,
+                        response.getPaymentReference(),
+                        pbaNumber.get()
+                    );
                 } else {
                     return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                         .data(details.getData())
@@ -193,6 +203,10 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
                     .build();
             }
         }
+
+        updatedFo.setApplicant2SolAppliedForFinalOrder(YES);
+        updatedFo.setDateApplicant2SolAppliedForFinalOrder(LocalDateTime.now(clock));
+        updatedFo.setApplicant2SolResponsibleForFinalOrder(updatedData.getApplicant2().getSolicitor().getName());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedData)
