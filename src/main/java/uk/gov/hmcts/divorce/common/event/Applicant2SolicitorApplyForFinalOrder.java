@@ -227,7 +227,10 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         }
 
         if (RespondentFinalOrderRequested.equals(details.getState())) {
-            log.info("Sending Apply for Final Order notifications as case in RespondentFinalOrderRequested state for Case Id: {}", details.getId());
+            log.info(
+                "Sending Apply for Final Order notifications as case in RespondentFinalOrderRequested state for Case Id: {}",
+                details.getId()
+            );
             notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
 

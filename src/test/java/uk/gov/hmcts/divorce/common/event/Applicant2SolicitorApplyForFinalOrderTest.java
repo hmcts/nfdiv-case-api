@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -41,24 +42,17 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APPLICANT2_FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinalOrder.FINAL_ORDER_REQUESTED_APP2_SOL;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -71,7 +65,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAwaitingFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
@@ -191,7 +184,14 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, caseData.getApplicant2().getSolicitor(), PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2().getSolicitor(),
+            PBA_NUMBER,
+            orderSummary,
+            FEE_ACCOUNT_REF
+        ))
             .thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
@@ -227,10 +227,14 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             applicant2SolicitorApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verify(applyForFinalOrderService).applyForFinalOrderAsApplicant2(caseDetails);
-        assertThat(aboutToSubmitResponse.getData().getApplication().getPreviousState()).isEqualTo(AwaitingFinalOrder);
-        assertThat(aboutToSubmitResponse.getData().getFinalOrder().getApplicant2SolAppliedForFinalOrder()).isEqualTo(YES);
-        assertThat(aboutToSubmitResponse.getData().getFinalOrder().getDateApplicant2SolAppliedForFinalOrder()).isEqualTo(LocalDateTime.now(clock));
-        assertThat(aboutToSubmitResponse.getData().getFinalOrder().getApplicant2SolResponsibleForFinalOrder()).isEqualTo(caseData.getApplicant2().getSolicitor().getName());
+
+        CaseData responseData = aboutToSubmitResponse.getData();
+        FinalOrder responseFo = responseData.getFinalOrder();
+
+        assertThat(responseData.getApplication().getPreviousState()).isEqualTo(AwaitingFinalOrder);
+        assertThat(responseFo.getApplicant2SolAppliedForFinalOrder()).isEqualTo(YES);
+        assertThat(responseFo.getDateApplicant2SolAppliedForFinalOrder()).isEqualTo(LocalDateTime.now(clock));
+        assertThat(responseFo.getApplicant2SolResponsibleForFinalOrder()).isEqualTo(caseData.getApplicant2().getSolicitor().getName());
 
         verifyNoInteractions(notificationDispatcher);
     }
