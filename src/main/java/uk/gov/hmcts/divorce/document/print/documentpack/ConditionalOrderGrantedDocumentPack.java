@@ -9,18 +9,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
@@ -37,54 +32,47 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
 
     private static final DocumentPackInfo APPLICANT_2_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED,Optional.empty()
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
 
     private static final DocumentPackInfo APPLICANT_1_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED,Optional.empty()
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         )
     );
 
     private static final DocumentPackInfo APPLICANT_2_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED,Optional.empty()
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         )
     );
 
     private static final DocumentPackInfo APPLICANT_1_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
         ImmutableMap.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID),
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(CO_GRANTED_COVER_LETTER_TEMPLATE_ID),
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
 
@@ -94,8 +82,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED,Optional.empty()
         ),
         ImmutableMap.of(
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
 
@@ -105,8 +92,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         )
     );
 
@@ -116,8 +102,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME,
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID, SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         )
     );
 
@@ -127,8 +112,7 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
 
@@ -138,10 +122,17 @@ public class ConditionalOrderGrantedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME,
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
+
+
+    // TODO: Aaron - Work out all of the possible outcomes for the coverletter, rework the getDocumentPack to account for these.
+    //  Use the master ConditionalOrderPronouncedCoverLetterHelper class to figure it out.
+
+    // Each Map should contain 2 entries:
+    // Cover letter for specific applicant (getDocumentPack should determine which one to use)
+    // Pre-generated conditional order granted document
 
     @Override
     public DocumentPackInfo getDocumentPack(final CaseData caseData, final Applicant applicant) {
