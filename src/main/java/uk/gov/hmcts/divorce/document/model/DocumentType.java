@@ -241,7 +241,7 @@ public enum DocumentType implements HasLabel {
     AOS_OVERDUE_LETTER("Aos overdue letter", true),
 
     @JsonProperty("generalLetter")
-    GENERAL_LETTER("General letter", false /*this is handled separately*/),
+    GENERAL_LETTER("General letter", true),
 
     @JsonProperty("generalApplication")
     GENERAL_APPLICATION("General application", false),
