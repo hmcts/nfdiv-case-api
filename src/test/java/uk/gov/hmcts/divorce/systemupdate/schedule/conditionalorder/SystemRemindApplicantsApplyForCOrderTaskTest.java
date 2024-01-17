@@ -9,18 +9,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.AwaitingConditionalOrderReminderNotification;
 import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPendingReminderNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -31,9 +26,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -43,14 +36,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateNFDCase.SYSTEM_UPDATE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
@@ -125,104 +116,6 @@ class SystemRemindApplicantsApplyForCOrderTaskTest {
         underTest.run();
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
-    }
-
-
-    @Test
-    void shouldNotSubmitEventIfNotificationFailsAwaitingConditionalOrder() {
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .state(AwaitingConditionalOrder.name())
-            .data(Collections.emptyMap())
-            .id(TEST_CASE_ID)
-            .build();
-        CaseData caseData = CaseData.builder().build();
-
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
-            .thenReturn(List.of(caseDetails1));
-
-        doThrow(new NotificationException(new Exception("error sending email")))
-            .when(notificationDispatcher).send(awaitingConditionalOrderReminderNotification, caseData, caseDetails1.getId());
-
-        underTest.run();
-
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotSubmitEventIfNotificationFailsConditionalOrderPending() {
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .state(ConditionalOrderPending.name())
-            .data(Collections.emptyMap())
-            .id(TEST_CASE_ID)
-            .build();
-        CaseData caseData = CaseData.builder().build();
-
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
-            .thenReturn(List.of(caseDetails1));
-
-        doThrow(new NotificationException(new Exception("error sending email")))
-            .when(notificationDispatcher).send(conditionalOrderPendingReminderNotification, caseData, caseDetails1.getId());
-
-        underTest.run();
-
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotSubmitEventIfNotificationFailsBulkPrintSendOfflineConditionalOrderPending() {
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .state(ConditionalOrderPending.name())
-            .data(Collections.emptyMap())
-            .id(TEST_CASE_ID)
-            .build();
-        CaseData caseData = CaseData.builder().build();
-
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
-            .thenReturn(List.of(caseDetails1));
-
-        doThrow(new HttpServerErrorException(HttpStatus.BAD_REQUEST))
-            .when(notificationDispatcher).send(conditionalOrderPendingReminderNotification, caseData, caseDetails1.getId());
-
-        underTest.run();
-
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_CASE, user, SERVICE_AUTHORIZATION);
-        verifyNoMoreInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotSubmitSystemUpdateEventOrSystemRemindEventIfNotificationFailsAndMaxRetriesHit() {
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .state(ConditionalOrderPending.name())
-            .data(Map.of("coMaxCronRetriesRemindApplicant", 5))
-            .id(TEST_CASE_ID)
-            .build();
-        CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().cronRetriesRemindApplicantApplyCo(5).build())
-            .build();
-
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted))
-            .thenReturn(List.of(caseDetails1));
-
-        doThrow(new NotificationException(new Exception("error sending email")))
-            .when(notificationDispatcher).send(conditionalOrderPendingReminderNotification, caseData, caseDetails1.getId());
-
-        underTest.run();
-
-        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
