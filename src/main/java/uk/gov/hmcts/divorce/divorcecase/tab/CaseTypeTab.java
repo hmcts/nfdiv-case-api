@@ -108,7 +108,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelState", null, "#### Case State:  ${[STATE]}");
     }
 
-    //TODO: Need to revisit this tab once the field stated in the ticket NFDIV-595 are available
     private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("aosDetails", "AoS")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE,
@@ -203,7 +202,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("correspondence", "Correspondence")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field(CaseData::getGeneralEmails)
-            .field(CaseData::getGeneralLetters);
+            .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PUBLIC);
     }
 
     private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -296,7 +295,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
-            .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE);
+            .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
+            .field(CaseData::getConfidentialGeneralEmails)
+            .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);;
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

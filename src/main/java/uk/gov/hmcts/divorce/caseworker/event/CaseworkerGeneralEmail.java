@@ -37,6 +37,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 
 @Component
 @Slf4j
@@ -122,10 +124,19 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 .value(generalEmailDetails)
                 .build();
 
-        if (isEmpty(caseData.getGeneralEmails())) {
-            caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+
+        if (isConfidential(caseData, EMAIL)) {
+            if (isEmpty(caseData.getConfidentialGeneralEmails())) {
+                caseData.setConfidentialGeneralEmails(List.of(generalEmailDetailsListValue));
+            } else {
+                caseData.getConfidentialGeneralEmails().add(0, generalEmailDetailsListValue);
+            }
         } else {
-            caseData.getGeneralEmails().add(0, generalEmailDetailsListValue);
+            if (isEmpty(caseData.getGeneralEmails())) {
+                caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            } else {
+                caseData.getGeneralEmails().add(0, generalEmailDetailsListValue);
+            }
         }
 
         generalEmailNotification.send(caseData, details.getId());
