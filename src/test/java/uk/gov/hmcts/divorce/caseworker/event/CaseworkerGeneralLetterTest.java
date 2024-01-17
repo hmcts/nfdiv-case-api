@@ -11,13 +11,14 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendGeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -37,7 +38,10 @@ public class CaseworkerGeneralLetterTest {
     private GenerateGeneralLetter generateGeneralLetter;
 
     @Mock
-    private SendGeneralLetter sendGeneralLetter;
+    private GeneralLetterDocumentPack generalLetterDocumentPack;
+
+    @Mock
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private CaseworkerGeneralLetter generalLetter;
@@ -129,7 +133,6 @@ public class CaseworkerGeneralLetterTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalLetter.aboutToSubmit(details, details);
         verify(generateGeneralLetter).apply(details);
-        assertThat(response.getData().getGeneralLetter()).isNull();
     }
 
     @Test
@@ -144,11 +147,19 @@ public class CaseworkerGeneralLetterTest {
                     .build()
         );
 
+        var documentPackInfo = generalLetterDocumentPack.getDocumentPack(caseData, null);
+
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
         SubmittedCallbackResponse response = generalLetter.submitted(details, details);
-        verify(sendGeneralLetter).apply(details);
+        verify(letterPrinter).sendLetters(
+            caseData,
+            details.getId(),
+            caseData.getApplicant1(),
+            documentPackInfo,
+            generalLetterDocumentPack.getLetterId()
+        );
     }
 }
