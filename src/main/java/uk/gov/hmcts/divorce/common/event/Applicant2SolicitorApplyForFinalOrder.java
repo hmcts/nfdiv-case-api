@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.event.page.Applicant2FinalOrderExplainTheDelay;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolFinalOrderExplainWhyNeedToApply;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
@@ -44,7 +43,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderR
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -90,7 +88,6 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         final List<CcdPageConfiguration> pages = List.of(
             new Applicant2SolApplyForFinalOrderDetails(),
             new Applicant2SolFinalOrderExplainWhyNeedToApply(),
-            new Applicant2FinalOrderExplainTheDelay(),
             solFinalOrderPayment,
             new HelpWithFeesPageForApplicant2SolFinalOrder(),
             new SolFinalOrderPayAccount(),
@@ -107,10 +104,10 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
             .forStates(AwaitingFinalOrder)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
-            .showCondition("finalOrderReminderSentApplicant2=\"Yes\"")
+            .showCondition("applicationType=\"soleApplication\" AND finalOrderReminderSentApplicant2=\"Yes\"")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2_SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
@@ -167,7 +164,8 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         final var finalOrderFeeOrderSummary = updatedFo.getApplicant2SolFinalOrderFeeOrderSummary();
 
         if (updatedFo.isSolicitorPaymentMethodPba()) {
-            final Optional<String> pbaNumber = updatedFo.getFinalOrderPbaNumber();
+            final Optional<String> pbaNumber = Optional.ofNullable(updatedFo.getPbaNumbers())
+                .map(dynamicList -> dynamicList.getValue().getLabel());
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
                     updatedData,
