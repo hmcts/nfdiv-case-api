@@ -144,7 +144,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("App2 Sol Apply for Final Order about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
         CaseData data = details.getData();
         data.getApplication().setPreviousState(beforeDetails.getState());
@@ -214,7 +214,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Apply for Final Order submitted callback invoked for Case Id: {}", details.getId());
+        log.info("{} submitted callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
         final CaseData data = details.getData();
         final State previousState = data.getApplication().getPreviousState();
