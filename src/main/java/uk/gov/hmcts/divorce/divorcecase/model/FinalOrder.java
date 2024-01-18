@@ -251,12 +251,6 @@ public class FinalOrder {
     )
     private String finalOrderPbaNumber;
 
-    @JsonIgnore
-    public Optional<String> getFinalOrderPbaNumber() {
-        return Optional.ofNullable(pbaNumbers)
-            .map(dynamicList -> dynamicList.getValue().getLabel());
-    }
-
     @CCD(
         label = "Fee account reference",
         hint = "This will appear on your statement to help you identify this payment",
