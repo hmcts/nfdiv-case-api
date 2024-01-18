@@ -180,12 +180,12 @@ class DocumentUtilTest {
 
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsOther() {
+    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsOther() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralLetter().setGeneralLetterParties(GeneralParties.OTHER);
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
 
-        assertFalse(isConfidential(caseData, GENERAL_LETTER));
+        assertTrue(isConfidential(caseData, GENERAL_LETTER));
     }
 
     @Test
