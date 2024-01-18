@@ -155,12 +155,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
             .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
             .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
+
             .label("Applicant2Solicitor-PaymentHeading", "applicant2SolAppliedForFinalOrder=\"Yes\"", "### Respondent Solicitor")
             .field("applicant2SolFinalOrderFeeOrderSummary", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("applicant2SolPaymentHowToPay", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("finalOrderPbaNumber", "applicant2SolAppliedForFinalOrder=\"Yes\" AND finalOrderPbaNumber=\"*\"")
+            .field("finalOrderPbaNumber", "applicant2SolAppliedForFinalOrder=\"Yes\" AND applicant2SolPaymentHowToPay=\"feePayByAccount\"")
             .field("applicant2SolFinalOrderFeeAccountReference", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("app2SolFoHWFReferenceNumber", "applicant2SolAppliedForFinalOrder=\"Yes\" AND app2SolFoHWFReferenceNumber=\"*\"")
+            .field("app2SolFoHWFReferenceNumber", "applicant2SolAppliedForFinalOrder=\"Yes\" AND applicant2SolPaymentHowToPay=\"feesHelpWith\"")
+
             .field("generalApplicationFeeOrderSummary")
             .field("generalApplicationFeePaymentMethod")
             .field("generalApplicationFeeAccountNumber")
