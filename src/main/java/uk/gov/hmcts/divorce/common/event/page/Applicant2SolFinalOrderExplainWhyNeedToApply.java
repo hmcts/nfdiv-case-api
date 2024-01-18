@@ -35,15 +35,15 @@ public class Applicant2SolFinalOrderExplainWhyNeedToApply implements CcdPageConf
             )
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant2SolFinalOrderWhyNeedToApply)
-                .done()
+            .done()
             .label(
                 "FOExplainWhyNeedToApplyApp2StatementOfTruth",
                 "The respondent believes that the facts stated in the application are true."
             )
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
-                .mandatory(Solicitor::getName)
-                .mandatory(Solicitor::getFirmName)
+                    .mandatory(Solicitor::getName)
+                    .mandatory(Solicitor::getFirmName)
                 .done()
             .done();
     }

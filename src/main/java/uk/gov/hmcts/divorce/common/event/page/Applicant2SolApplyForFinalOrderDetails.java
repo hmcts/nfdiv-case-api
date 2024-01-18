@@ -26,20 +26,20 @@ public class Applicant2SolApplyForFinalOrderDetails implements CcdPageConfigurat
             .page("Applicant2SolicitorApplyForFinalOrder", this::midEvent)
             .pageLabel(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .complex(CaseData::getLabelContent)
-            .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
-            .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, ALWAYS_HIDE)
             .done()
             .complex(CaseData::getApplication)
-            .complex(Application::getMarriageDetails)
-            .readonlyNoSummary(MarriageDetails::getApplicant1Name, ALWAYS_HIDE)
-            .readonlyNoSummary(MarriageDetails::getApplicant2Name, ALWAYS_HIDE)
-            .done()
+                .complex(Application::getMarriageDetails)
+                    .readonlyNoSummary(MarriageDetails::getApplicant1Name, ALWAYS_HIDE)
+                    .readonlyNoSummary(MarriageDetails::getApplicant2Name, ALWAYS_HIDE)
+                .done()
             .done()
             .complex(CaseData::getFinalOrder)
-            .mandatoryWithLabel(
-                FinalOrder::getDoesApplicant2WantToApplyForFinalOrder,
+                .mandatoryWithLabel(
+                    FinalOrder::getDoesApplicant2WantToApplyForFinalOrder,
                 "Does the respondent want to apply for a final order?"
-            )
+                )
             .done();
     }
 

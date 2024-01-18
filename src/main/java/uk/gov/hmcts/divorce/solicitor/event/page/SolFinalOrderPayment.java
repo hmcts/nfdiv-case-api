@@ -31,11 +31,8 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
         pageBuilder
             .page("SolFinalOrderPayment", this::midEvent)
             .pageLabel("Payment for this final order")
-            .complex(CaseData::getFinalOrder)
-                .readonlyNoSummary(FinalOrder::getApplicant2SolFinalOrderFeeInPounds, ALWAYS_HIDE)
-            .done()
             .label(
-                "LabelSolPaymentPara-1",
+                "FOApp2SolAmountToPay",
                 "Amount to pay: **£${applicant2SolFinalOrderFeeInPounds}**")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant2SolPaymentHowToPay)
