@@ -194,21 +194,21 @@ public class FinalOrder {
     private String applicant2SolFinalOrderWhyNeedToApply;
 
     @CCD(
-        label = "Respondent Solicitor Applied For Final Order",
+        label = "Respondent solicitor applied for final order?",
         access = {DefaultAccess.class}
     )
     @Builder.Default
     private YesOrNo applicant2SolAppliedForFinalOrder = NO;
 
     @CCD(
-        label = "Date Respondent Solicitor Applied For Final Order",
+        label = "Date respondent solicitor applied for final order",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateApplicant2SolAppliedForFinalOrder;
 
     @CCD(
-        label = "Respondent Solicitor Responsible For Final Order Application",
+        label = "Respondent solicitor responsible for final order application",
         access = {DefaultAccess.class}
     )
     private String applicant2SolResponsibleForFinalOrder;
@@ -220,7 +220,7 @@ public class FinalOrder {
     private OrderSummary applicant2SolFinalOrderFeeOrderSummary;
 
     @CCD(
-        label = "Respondent Solicitor Final Order fee (in pounds)",
+        label = "Respondent solicitor final order fee (in pounds)",
         access = {DefaultAccess.class}
     )
     private String applicant2SolFinalOrderFeeInPounds;
@@ -245,7 +245,7 @@ public class FinalOrder {
     private DynamicList pbaNumbers;
 
     @CCD(
-        label = "Respondent Solicitor PBA Number for Final Order",
+        label = "Respondent solicitor PBA number for final order",
         access = {DefaultAccess.class}
     )
     private String finalOrderPbaNumber;
