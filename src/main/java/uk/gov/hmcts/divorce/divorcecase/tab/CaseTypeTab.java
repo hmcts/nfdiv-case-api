@@ -69,6 +69,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
         + "applicant2SolicitorRepresented=\"Yes\" AND doesApplicant2WantToApplyForFinalOrder=\"Yes\"";
 
+    public static final String APPLICANT_2_SOL_APPLIED_FOR_FO = "applicant2SolAppliedForFinalOrder=\"Yes\"";
+
+    public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_PBA = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
+        + "applicant2SolPaymentHowToPay=\"feePayByAccount\"";
+
+    public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
+        + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildWarningsTab(configBuilder);
@@ -157,15 +165,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
             .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
             .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
-            .label("Applicant2Solicitor-PaymentHeading", "applicant2SolAppliedForFinalOrder=\"Yes\"", "### Respondent Solicitor")
-            .field("applicant2SolFinalOrderFeeOrderSummary", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("applicant2SolPaymentHowToPay", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("finalOrderPbaNumber", "applicant2SolAppliedForFinalOrder=\"Yes\" AND applicant2SolPaymentHowToPay=\"feePayByAccount\"")
-            .field("applicant2SolFinalOrderFeeAccountReference", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field(
-                "app2SolFoHWFReferenceNumber",
-                "applicant2SolAppliedForFinalOrder=\"Yes\" AND applicant2SolPaymentHowToPay=\"feesHelpWith\""
-            )
+            .label("Applicant2Solicitor-PaymentHeading", APPLICANT_2_SOL_APPLIED_FOR_FO, "### Respondent Solicitor")
+            .field("applicant2SolFinalOrderFeeOrderSummary", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("applicant2SolPaymentHowToPay", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("finalOrderPbaNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
+            .field("applicant2SolFinalOrderFeeAccountReference", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("app2SolFoHWFReferenceNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_HWF)
             .field("generalApplicationFeeOrderSummary")
             .field("generalApplicationFeePaymentMethod")
             .field("generalApplicationFeeAccountNumber")
