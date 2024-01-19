@@ -13,9 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolFinalOrderExplainWhyNeedToApply;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
-import uk.gov.hmcts.divorce.common.notification.FinalOrderRequestedNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
-import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -30,16 +28,12 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -60,22 +54,13 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
     @Autowired
-    private Clock clock;
-
-    @Autowired
     private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
-
-    @Autowired
-    private FinalOrderRequestedNotification finalOrderRequestedNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
     @Autowired
     private ApplyForFinalOrderService applyForFinalOrderService;
-
-    @Autowired
-    private GeneralReferralService generalReferralService;
 
     @Autowired
     private PaymentService paymentService;
@@ -136,8 +121,6 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .errors(null)
-            .warnings(null)
             .build();
     }
 
@@ -146,18 +129,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
         log.info("{} about to submit callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
-        CaseData data = details.getData();
-        data.getApplication().setPreviousState(beforeDetails.getState());
-
-        final List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(data, true);
-        if (!errors.isEmpty()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(data)
-                .errors(errors)
-                .build();
-        }
-
-        CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
+        CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(details);
         CaseData updatedData = updatedDetails.getData();
         var updatedFo = updatedData.getFinalOrder();
 
@@ -201,10 +173,6 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
             }
         }
 
-        updatedFo.setApplicant2SolAppliedForFinalOrder(YES);
-        updatedFo.setDateApplicant2SolAppliedForFinalOrder(LocalDateTime.now(clock));
-        updatedFo.setApplicant2SolResponsibleForFinalOrder(updatedData.getApplicant2().getSolicitor().getName());
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedData)
             .state(updatedDetails.getState())
@@ -216,23 +184,9 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
         log.info("{} submitted callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
-        final CaseData data = details.getData();
-        final State previousState = data.getApplication().getPreviousState();
-
-        if (AwaitingFinalOrder.equals(previousState)) {
-            log.info("Sending Applicant 2 Applied For Final Order Notification for Case Id: {}", details.getId());
-            notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
-        }
-
-        if (RespondentFinalOrderRequested.equals(details.getState())) {
-            log.info(
-                "Sending Apply for Final Order notifications as case in RespondentFinalOrderRequested state for Case Id: {}",
-                details.getId()
-            );
-            notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
-        }
-
-        generalReferralService.caseWorkerGeneralReferral(details);
+        log.info("Sending Applicant 2 Applied For Final Order Notification for Case Id: {}", details.getId());
+        //Awaiting confirmation that this is the correct notification - suspect a new notification may need to be created
+        notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }
