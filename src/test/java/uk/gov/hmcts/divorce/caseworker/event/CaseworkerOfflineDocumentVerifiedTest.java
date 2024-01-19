@@ -1234,7 +1234,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
@@ -1272,7 +1272,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_FO, user, TEST_SERVICE_AUTH_TOKEN);
     }

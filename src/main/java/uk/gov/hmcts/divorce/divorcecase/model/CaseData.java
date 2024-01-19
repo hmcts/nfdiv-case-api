@@ -272,6 +272,14 @@ public class CaseData {
     private List<ListValue<GeneralEmailDetails>> generalEmails;
 
     @CCD(
+        label = "Confidential general emails",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralEmailDetails",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
+    private List<ListValue<GeneralEmailDetails>> confidentialGeneralEmails;
+
+    @CCD(
         typeOverride = CasePaymentHistoryViewer,
         access = {SystemUpdateAndSuperUserAccess.class}
     )

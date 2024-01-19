@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -30,8 +29,6 @@ import java.util.UUID;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -40,6 +37,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 
 @Component
 @Slf4j
@@ -101,10 +100,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Caseworker create general email about to submit callback invoked for Case Id: {}", details.getId());
 
         var caseData = details.getData();
@@ -127,52 +124,46 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 .value(generalEmailDetails)
                 .build();
 
-        if (isEmpty(caseData.getGeneralEmails())) {
-            List<ListValue<GeneralEmailDetails>> generalEmailListValues = new ArrayList<>();
-            generalEmailListValues.add(generalEmailDetailsListValue);
-            caseData.setGeneralEmails(generalEmailListValues);
+
+        if (isConfidential(caseData, EMAIL)) {
+            if (isEmpty(caseData.getConfidentialGeneralEmails())) {
+                caseData.setConfidentialGeneralEmails(List.of(generalEmailDetailsListValue));
+            } else {
+                caseData.getConfidentialGeneralEmails().add(0, generalEmailDetailsListValue);
+            }
         } else {
-            caseData.getGeneralEmails().add(0, generalEmailDetailsListValue);
+            if (isEmpty(caseData.getGeneralEmails())) {
+                caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            } else {
+                caseData.getGeneralEmails().add(0, generalEmailDetailsListValue);
+            }
         }
 
         generalEmailNotification.send(caseData, details.getId());
 
-        caseData.setGeneralEmail(null); // clear existing general email
+        // clear existing general email to avoid stale data being displayed in UI on next use of event.
+        caseData.setGeneralEmail(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
     }
 
-    private boolean validEmailExists(CaseData caseData) {
+    public boolean validEmailExists(CaseData caseData) {
+        GeneralParties recipient = caseData.getGeneralEmail().getGeneralEmailParties();
 
-        GeneralParties choice = caseData.getGeneralEmail().getGeneralEmailParties();
-        boolean validEmailExists = false;
+        return switch (recipient) {
+            case APPLICANT -> isEmailValid(caseData.getApplicant1());
+            case RESPONDENT -> isEmailValid(caseData.getApplicant2());
+            case OTHER -> isNotEmpty(caseData.getGeneralEmail().getGeneralEmailOtherRecipientEmail());
+        };
+    }
 
-        if (APPLICANT.equals(choice)) {
-            Applicant applicant = caseData.getApplicant1();
-            if (applicant.isRepresented()) {
-                if (isNotEmpty(applicant.getSolicitor().getEmail())) {
-                    validEmailExists = true;
-                }
-            } else if (isNotEmpty(applicant.getEmail())) {
-                validEmailExists = true;
-            }
-        } else if (RESPONDENT.equals(choice)) {
-            Applicant respondent = caseData.getApplicant2();
-            if (respondent.isRepresented()) {
-                if (isNotEmpty(respondent.getSolicitor().getEmail())) {
-                    validEmailExists = true;
-                }
-            } else if (isNotEmpty(respondent.getEmail())) {
-                validEmailExists = true;
-            }
+    private boolean isEmailValid(Applicant applicant) {
+        if (applicant.isRepresented()) {
+            return isNotEmpty(applicant.getSolicitor().getEmail());
         } else {
-            if (isNotEmpty(caseData.getGeneralEmail().getGeneralEmailOtherRecipientEmail())) {
-                validEmailExists = true;
-            }
+            return isNotEmpty(applicant.getEmail());
         }
-
-        return validEmailExists;
     }
 }

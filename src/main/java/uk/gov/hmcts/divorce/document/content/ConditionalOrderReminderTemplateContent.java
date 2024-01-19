@@ -4,10 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
@@ -16,7 +19,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class ConditionalOrderReminderContent {
+public class ConditionalOrderReminderTemplateContent implements TemplateContent {
 
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorceOrEndCivilPartnership";
@@ -28,7 +31,8 @@ public class ConditionalOrderReminderContent {
     public static final String END_THE_CIVIL_PARTNERSHIP = "end the civil partnership";
 
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId, Applicant applicant, Applicant partner) {
+    @Override
+    public Map<String, Object> getTemplateContent(final CaseData caseData, final Long caseId, Applicant applicant) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -48,5 +52,10 @@ public class ConditionalOrderReminderContent {
         }
 
         return templateContent;
+    }
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID);
     }
 }
