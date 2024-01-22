@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -186,6 +187,64 @@ class Applicant2SolicitorApplyForFinalOrderTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getFinalOrder().getFinalOrderPayments()).hasSize(2);
+    }
+
+    @Test
+    void shouldReturnErrorIfFinalOrderPaymentIfPaymentFails() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = validCaseDataForAwaitingFinalOrder();
+        caseData.getApplicant2().setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .organisationPolicy(organisationPolicy())
+            .build());
+        caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getFinalOrder().setPbaNumbers(
+            DynamicList.builder()
+                .value(DynamicListElement.builder().label(PBA_NUMBER).build())
+                .build()
+        );
+        caseData.getFinalOrder().setApplicant2SolFinalOrderFeeAccountReference(FEE_ACCOUNT_REF);
+        caseData.getFinalOrder().setApplicant2FinalOrderStatementOfTruth(YES);
+        caseData.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        PbaResponse pbaResponse = new PbaResponse(HttpStatus.BAD_REQUEST, "Payment Failed", "1234");
+        when(paymentService.processPbaPayment(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2().getSolicitor(),
+            PBA_NUMBER,
+            orderSummary,
+            FEE_ACCOUNT_REF
+        ))
+            .thenReturn(pbaResponse);
+
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant2SolicitorApplyForFinalOrder.aboutToSubmit(caseDetails, new CaseDetails<>());
+
+        assertThat(response.getErrors()).contains("Payment Failed");
+        assertThat(response.getErrors()).hasSize(1);
+    }
+
+    @Test
+    void shouldReturnErrorIfFinalOrderPaymentMissingPbaNumber() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = validCaseDataForAwaitingFinalOrder();
+        caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant2SolicitorApplyForFinalOrder.aboutToSubmit(caseDetails, new CaseDetails<>());
+
+        assertThat(response.getErrors()).contains("PBA number not present when payment method is 'Solicitor fee account (PBA)'");
+        assertThat(response.getErrors()).hasSize(1);
     }
 
     @Test
