@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderStat
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
+import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2Sol;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -33,6 +34,9 @@ class ApplyForFinalOrderServiceTest {
 
     @Mock
     private SetFinalOrderFieldsAsApplicant2 setFinalOrderFieldsAsApplicant2;
+
+    @Mock
+    private SetFinalOrderFieldsAsApplicant2Sol setFinalOrderFieldsAsApplicant2Sol;
 
     @Mock
     private ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
@@ -68,6 +72,19 @@ class ApplyForFinalOrderServiceTest {
         verify(progressApplicant2FinalOrderState).apply(caseDetails);
     }
 
+    @Test
+    void shouldRunCorrectTasksForApplyForFinalOrderAsApplicant2Sol() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
+
+        when(setFinalOrderFieldsAsApplicant2Sol.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(progressApplicant2FinalOrderState.apply(caseDetails)).thenReturn(expectedCaseDetails);
+
+        applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(caseDetails);
+
+        verify(setFinalOrderFieldsAsApplicant2Sol).apply(caseDetails);
+        verify(progressApplicant2FinalOrderState).apply(caseDetails);
+    }
     @Test
     void shouldAddErrorWhenApplicant1HasAlreadyAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
