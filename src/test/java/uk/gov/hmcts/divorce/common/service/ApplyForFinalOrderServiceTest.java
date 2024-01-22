@@ -85,6 +85,7 @@ class ApplyForFinalOrderServiceTest {
         verify(setFinalOrderFieldsAsApplicant2Sol).apply(caseDetails);
         verify(progressApplicant2FinalOrderState).apply(caseDetails);
     }
+
     @Test
     void shouldAddErrorWhenApplicant1HasAlreadyAppliedForFinalOrder() {
         final CaseData caseData = CaseData.builder()
