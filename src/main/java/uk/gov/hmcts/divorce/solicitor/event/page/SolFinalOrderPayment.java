@@ -20,8 +20,6 @@ import java.util.List;
 @Slf4j
 public class SolFinalOrderPayment implements CcdPageConfiguration {
 
-    private static final String ALWAYS_HIDE = "applicant2SolPaymentHowToPay=\"ALWAYS_HIDE\"";
-
     @Autowired
     private PbaService pbaService;
 
