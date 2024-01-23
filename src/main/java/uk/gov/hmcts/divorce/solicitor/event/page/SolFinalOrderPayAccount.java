@@ -15,7 +15,7 @@ public class SolFinalOrderPayAccount implements CcdPageConfiguration {
             .pageLabel("Pay on account")
             .showCondition("applicant2SolPaymentHowToPay=\"feePayByAccount\"")
             .complex(CaseData::getFinalOrder)
-                .mandatoryWithLabel(FinalOrder::getPbaNumbers, "Select your account number")
+                .mandatoryWithLabel(FinalOrder::getFinalOrderPbaNumbers, "Select your account number")
                 .mandatoryWithLabel(FinalOrder::getApplicant2SolFinalOrderFeeAccountReference, "Enter your payment reference")
             .done();
     }

@@ -242,7 +242,7 @@ public class FinalOrder {
         label = "Account number",
         access = {DefaultAccess.class}
     )
-    private DynamicList pbaNumbers;
+    private DynamicList finalOrderPbaNumbers;
 
     @CCD(
         label = "Respondent solicitor PBA number for final order",

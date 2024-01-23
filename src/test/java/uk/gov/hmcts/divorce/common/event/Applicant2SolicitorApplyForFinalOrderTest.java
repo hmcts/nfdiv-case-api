@@ -153,7 +153,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getFinalOrder().setFinalOrderPayments(payments);
         caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        caseData.getFinalOrder().setPbaNumbers(
+        caseData.getFinalOrder().setFinalOrderPbaNumbers(
             DynamicList.builder()
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()
@@ -199,7 +199,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             .organisationPolicy(organisationPolicy())
             .build());
         caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        caseData.getFinalOrder().setPbaNumbers(
+        caseData.getFinalOrder().setFinalOrderPbaNumbers(
             DynamicList.builder()
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
                 .build()

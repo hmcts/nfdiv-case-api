@@ -58,7 +58,7 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
             final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
             log.info("PBA Numbers {}, Case Id: {}", pbaNumbersDynamicList, caseId);
-            caseData.getFinalOrder().setPbaNumbers(pbaNumbersDynamicList);
+            caseData.getFinalOrder().setFinalOrderPbaNumbers(pbaNumbersDynamicList);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)

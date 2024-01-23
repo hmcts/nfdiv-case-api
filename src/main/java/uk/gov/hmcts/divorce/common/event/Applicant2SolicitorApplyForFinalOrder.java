@@ -136,7 +136,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         final var finalOrderFeeOrderSummary = updatedFo.getApplicant2SolFinalOrderFeeOrderSummary();
 
         if (updatedFo.isSolicitorPaymentMethodPba()) {
-            final Optional<String> pbaNumber = Optional.ofNullable(updatedFo.getPbaNumbers())
+            final Optional<String> pbaNumber = Optional.ofNullable(updatedFo.getFinalOrderPbaNumbers())
                 .map(dynamicList -> dynamicList.getValue().getLabel());
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
