@@ -36,6 +36,7 @@
     "dueDate": "2022-08-28",
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "applicationType": "soleApplication"
+    "applicationType": "soleApplication",
+    "applicant2SolAppliedForFinalOrder":  "No"
   }
 }

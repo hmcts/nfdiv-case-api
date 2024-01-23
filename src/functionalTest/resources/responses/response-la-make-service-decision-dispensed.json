@@ -39,6 +39,7 @@
     "dataVersion": "${json-unit.any-number}",
     "issueDate": "${json-unit.any-string}",
     "dueDate": "${json-unit.any-string}",
+    "applicant2SolAppliedForFinalOrder":  "No",
     "warnings":[]
   },
   "state": "Holding"

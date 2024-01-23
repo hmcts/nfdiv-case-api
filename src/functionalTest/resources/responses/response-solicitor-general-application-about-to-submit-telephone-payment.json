@@ -73,6 +73,7 @@
       }
     }],
     "dataVersion": 5,
+    "applicant2SolAppliedForFinalOrder":  "No",
     "warnings": []
   },
   "state": "GeneralApplicationReceived"
