@@ -1,0 +1,56 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicationType": "soleApplication",
+    "issueDate": "2022-06-17",
+    "coGranted": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "supplementaryCaseType": "notApplicable",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant2FirstName": "Olive",
+    "applicant2LastName": "Oil",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant1FinancialOrder": "No",
+    "divorceWho": "wife",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "marriageFormationType": "oppositeSexCouple",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "applicant2SolPaymentHowToPay": "feePayByAccount",
+    "pbaNumbers": {
+      "list_items": [
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0087672"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0082311"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA3344555"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA4564561"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0023444"
+        }
+      ]
+    },
+    "dataVersion": "${json-unit.any-number}",
+    "applicant2SolAppliedForFinalOrder": "No",
+    "warnings": []
+  }
+}
