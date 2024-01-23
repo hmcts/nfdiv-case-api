@@ -25,7 +25,7 @@
     "marriageFormationType": "oppositeSexCouple",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant2SolPaymentHowToPay": "feePayByAccount",
-    "pbaNumbers": {
+    "finalOrderPbaNumbers": {
       "list_items": [
         {
           "code": "${json-unit.any-string}",
