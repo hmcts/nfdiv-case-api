@@ -110,7 +110,8 @@
     },
     "granted": [
       "Yes"
-    ]
+    ],
+    "applicant2SolAppliedForFinalOrder":  "No"
   },
   "state": "FinalOrderComplete"
 }
