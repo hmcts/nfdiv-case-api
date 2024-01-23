@@ -72,7 +72,8 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "supplementaryCaseType": "notApplicable"
+    "supplementaryCaseType": "notApplicable",
+    "applicant2SolAppliedForFinalOrder": "No"
   },
   "state": "FinalOrderComplete"
 }
