@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
@@ -141,22 +142,22 @@ class DocumentUtilTest {
     void mapToLettersShouldReturnListOfLettersOfGivenDocumentType() {
 
         final ListValue<Document> doc1 = ListValue.<Document>builder()
-                .value(Document.builder().filename("doc1.pdf").build())
-                .build();
+            .value(Document.builder().filename("doc1.pdf").build())
+            .build();
 
         final ListValue<Document> doc2 = ListValue.<Document>builder()
-                .value(Document.builder().filename("doc2.pdf").build())
-                .build();
+            .value(Document.builder().filename("doc2.pdf").build())
+            .build();
 
         final List<Letter> letters = mapToLetters(asList(doc1, doc2), NOTICE_OF_PROCEEDINGS_APP_1);
 
         assertThat(letters.size()).isEqualTo(2);
         assertThat(
-                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
-                .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
+            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
+            .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
         assertThat(
-                letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
-                .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
+            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
+            .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
     }
 
     @Test
@@ -179,12 +180,46 @@ class DocumentUtilTest {
 
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsOther() {
+    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsOther() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralLetter().setGeneralLetterParties(GeneralParties.OTHER);
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
 
-        assertFalse(isConfidential(caseData, GENERAL_LETTER));
+        assertTrue(isConfidential(caseData, GENERAL_LETTER));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsApplicant() {
+        var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(APPLICANT);
+        caseData.getApplicant1().setContactDetailsType(PRIVATE);
+
+        assertTrue(isConfidential(caseData, EMAIL));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsRespondent() {
+        var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(RESPONDENT);
+        caseData.getApplicant2().setContactDetailsType(PRIVATE);
+
+        assertTrue(isConfidential(caseData, EMAIL));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOther() {
+        var caseData = CaseData.builder().build();
+        caseData.getGeneralEmail().setGeneralEmailParties(GeneralParties.OTHER);
+        assertFalse(isConfidential(caseData, EMAIL));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOtherEvenIfApplicatsConfidential() {
+        var caseData = CaseData.builder().build();
+        caseData.getApplicant1().setContactDetailsType(PRIVATE);
+        caseData.getApplicant2().setContactDetailsType(PRIVATE);
+        caseData.getGeneralEmail().setGeneralEmailParties(GeneralParties.OTHER);
+        assertFalse(isConfidential(caseData, EMAIL));
     }
 
     @Test

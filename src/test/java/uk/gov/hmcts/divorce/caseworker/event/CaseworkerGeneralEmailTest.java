@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -176,6 +178,49 @@ public class CaseworkerGeneralEmailTest {
                 tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details 2"),
                 tuple(getExpectedLocalDateTime(), RESPONDENT, "forename lastname", "some details 1")
             );
+
+        verify(generalEmailNotification).send(caseData, TEST_CASE_ID);
+    }
+
+
+    @Test
+    void shouldSetConfidentialGeneralEmailDetails() {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getConfidentialGeneralEmails())
+            .extracting("value")
+            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
+            .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
+
+        assertNull(response.getData().getGeneralEmails());
 
         verify(generalEmailNotification).send(caseData, TEST_CASE_ID);
     }

@@ -17,12 +17,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterPrinter;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.testutil.ClockTestUtil;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -42,6 +48,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralLetter.CASEWORKER_CREATE_GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
@@ -89,7 +96,10 @@ public class CaseworkerCreateGeneralLetterIT {
     private DocumentIdProvider documentIdProvider;
 
     @MockBean
-    private GeneralLetterPrinter generalLetterPrinter;
+    private BulkPrintService bulkPrintService;
+
+    @MockBean
+    private LetterPrinter letterPrinter;
 
     @MockBean
     private Clock clock;
@@ -189,11 +199,28 @@ public class CaseworkerCreateGeneralLetterIT {
 
         final ListValue<GeneralLetterDetails> doc1 = ListValue.<GeneralLetterDetails>builder()
                 .value(GeneralLetterDetails.builder()
-                        .generalLetterLink(Document.builder().build())
-                        .build())
+                    .generalLetterLink(Document.builder().build())
+                    .generalLetterParties(APPLICANT)
+                    .build())
                 .build();
 
         caseData.setGeneralLetters(Lists.newArrayList(doc1));
+
+        ListValue<DivorceDocument> generalLetterDivorceDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(GENERAL_LETTER)
+                .build())
+            .build();
+
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(generalLetterDivorceDocument))
+            .build());
+
+        caseData.setGeneralLetter(GeneralLetter
+            .builder()
+            .generalLetterParties(APPLICANT)
+            .build()
+        );
 
         String response = mockMvc.perform(post(SUBMITTED_URL)
                         .contentType(APPLICATION_JSON)
@@ -212,7 +239,12 @@ public class CaseworkerCreateGeneralLetterIT {
                 .getResponse()
                 .getContentAsString();
 
-        verify(generalLetterPrinter).sendLetterWithAttachments(any(CaseData.class), anyLong());
+        verify(letterPrinter).sendLetters(
+            any(CaseData.class),
+            anyLong(),
+            any(Applicant.class),
+            any(DocumentPackInfo.class),
+            any(String.class));
     }
 
     @Test

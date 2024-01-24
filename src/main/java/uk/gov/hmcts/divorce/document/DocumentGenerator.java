@@ -17,6 +17,7 @@ import java.time.Clock;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.util.CollectionUtils.firstElement;
@@ -71,7 +72,7 @@ public class DocumentGenerator {
         return documentPackInfo.documentPack().entrySet().stream()
             .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
             .flatMap(Optional::stream)
-            .toList();
+            .collect(Collectors.toList());
     }
 
     private Optional<Letter> toLetter(final Map.Entry<DocumentType, Optional<String>> entry,
