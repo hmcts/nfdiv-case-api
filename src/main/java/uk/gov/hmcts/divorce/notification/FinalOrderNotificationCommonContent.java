@@ -51,6 +51,16 @@ public class FinalOrderNotificationCommonContent {
         return templateVars;
     }
 
+    public Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
+        Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, id, applicant);
+
+        commonContent.setIsDivorceAndIsDissolutionVariables(caseData, templateVars);
+
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
+
+        return templateVars;
+    }
+
     public String getNowPlus14Days(Applicant applicant) {
         return LocalDate.now(clock).plusDays(FINAL_ORDER_OFFSET_DAYS)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()));
