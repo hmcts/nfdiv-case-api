@@ -51,8 +51,8 @@ public class FinalOrderNotificationCommonContent {
         return templateVars;
     }
 
-    public Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, id, applicant);
+    public Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
+        Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, id, caseData.getApplicant2());
 
         commonContent.setIsDivorceAndIsDissolutionVariables(caseData, templateVars);
 
