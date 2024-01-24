@@ -44,7 +44,6 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinal
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
@@ -174,11 +173,6 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             FEE_ACCOUNT_REF
         ))
             .thenReturn(pbaResponse);
-
-        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
-        expectedCaseDetails.setId(TEST_CASE_ID);
-        expectedCaseDetails.setData(caseData);
-        expectedCaseDetails.setState(Submitted);
 
         when(applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(caseDetails)).thenReturn(caseDetails);
 
