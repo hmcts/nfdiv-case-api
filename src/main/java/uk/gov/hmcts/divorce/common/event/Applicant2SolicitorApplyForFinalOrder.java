@@ -54,7 +54,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
     @Autowired
-    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+    private Applicant2AppliedForFinalOrderNotification applicant2SolicitorAppliedForFinalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -186,7 +186,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
         log.info("Sending Applicant 2 Applied For Final Order Notification for Case Id: {}", details.getId());
         //Awaiting confirmation that this is the correct notification - suspect a new notification may need to be created
-        notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
+        notificationDispatcher.send(applicant2SolicitorAppliedForFinalOrderNotification, details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }
