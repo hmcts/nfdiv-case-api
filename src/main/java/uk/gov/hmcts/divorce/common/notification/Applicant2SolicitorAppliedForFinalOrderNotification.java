@@ -37,14 +37,7 @@ public class Applicant2SolicitorAppliedForFinalOrderNotification implements Appl
     }
 
     private Map<String, String> getTemplateVars(final CaseData caseData, Long caseId) {
-        Map<String, String> templateVars = finalOrderNotificationCommonContent
-            .applicant2SolicitorTemplateVars(caseData, caseId, caseData.getApplicant2());
-
-        templateVars.put(DELAY_REASON_IF_OVERDUE,
-            FinalOrderNotificationCommonContent.getPartnerDelayReason(
-                caseData.getFinalOrder().getIsFinalOrderOverdue(),
-                caseData.getFinalOrder().getApplicant2FinalOrderLateExplanation()));
-
-        return templateVars;
+        return finalOrderNotificationCommonContent
+            .applicant2SolicitorTemplateVars(caseData, caseId);
     }
 }
