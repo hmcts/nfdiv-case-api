@@ -101,8 +101,7 @@
         }
       },
       "expeditedFinalOrderJudgeName": "JudgeName"
-    },
-    "applicant2SolAppliedForFinalOrder":  "No"
+    }
   },
   "state" : "FinalOrderComplete"
 }

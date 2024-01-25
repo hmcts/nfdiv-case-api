@@ -38,8 +38,7 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings":[],
-    "dueDate": "${json-unit.any-string}",
-    "applicant2SolAppliedForFinalOrder":  "No"
+    "dueDate": "${json-unit.any-string}"
   },
   "state": "AwaitingAos"
 }

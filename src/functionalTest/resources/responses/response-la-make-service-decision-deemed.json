@@ -40,8 +40,7 @@
     "dataVersion": "${json-unit.any-number}",
     "issueDate": "${json-unit.any-string}",
     "warnings": [],
-    "dueDate": "${json-unit.any-string}",
-    "applicant2SolAppliedForFinalOrder":  "No"
+    "dueDate": "${json-unit.any-string}"
   },
   "state": "Holding"
 }
