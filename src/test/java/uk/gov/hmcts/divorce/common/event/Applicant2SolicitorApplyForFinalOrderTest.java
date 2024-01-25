@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2SolicitorAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
@@ -71,7 +71,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         .build();
 
     @Mock
-    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+    private Applicant2SolicitorAppliedForFinalOrderNotification applicant2SolicitorAppliedForFinalOrderNotification;
 
     @Mock
     private SolFinalOrderPayment solFinalOrderPayment;
@@ -250,6 +250,6 @@ class Applicant2SolicitorApplyForFinalOrderTest {
 
         applicant2SolicitorApplyForFinalOrder.submitted(caseDetails, null);
 
-        verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant2SolicitorAppliedForFinalOrderNotification, caseData, caseDetails.getId());
     }
 }

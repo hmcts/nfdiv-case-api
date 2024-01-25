@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolApplyForFinalOrderDetails;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolFinalOrderExplainWhyNeedToApply;
-import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.notification.Applicant2SolicitorAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -54,7 +54,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
     @Autowired
-    private Applicant2AppliedForFinalOrderNotification applicant2SolicitorAppliedForFinalOrderNotification;
+    private Applicant2SolicitorAppliedForFinalOrderNotification applicant2SolicitorAppliedForFinalOrderNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -185,7 +185,6 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         log.info("{} submitted callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
         log.info("Sending Applicant 2 Applied For Final Order Notification for Case Id: {}", details.getId());
-        //Awaiting confirmation that this is the correct notification - suspect a new notification may need to be created
         notificationDispatcher.send(applicant2SolicitorAppliedForFinalOrderNotification, details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
