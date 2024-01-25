@@ -63,7 +63,6 @@
     "coCronRetriesRemindApplicantApplyCo": 0,
     "dataVersion": "${json-unit.any-number}",
     "issueDate": "2021-04-28",
-    "applicant2SolAppliedForFinalOrder": "No",
     "warnings": []
   }
 }

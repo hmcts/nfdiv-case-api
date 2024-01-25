@@ -19,7 +19,6 @@
     "stateToTransitionApplicationTo": "IssuedToBailiff",
     "typeOfDocumentAttached": "Other",
     "dataVersion": 5,
-    "applicant2SolAppliedForFinalOrder": "No",
     "warnings": []
   },
   "state": "IssuedToBailiff"
