@@ -24,6 +24,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
@@ -67,6 +69,7 @@ class SendAosResponseLetterPackToApplicantTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setState(AosDrafted);
         caseDetails.setId(TEST_CASE_ID);
 
         sendAosResponseLetterPackToApplicant.apply(caseDetails);
@@ -82,6 +85,7 @@ class SendAosResponseLetterPackToApplicantTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setState(AosDrafted);
         caseDetails.setId(TEST_CASE_ID);
 
         sendAosResponseLetterPackToApplicant.apply(caseDetails);
@@ -97,6 +101,7 @@ class SendAosResponseLetterPackToApplicantTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setState(AosDrafted);
         caseDetails.setId(TEST_CASE_ID);
 
         when(aosResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1())).thenReturn(DISPUTED_AOS_RESPONSE_PACK);
@@ -107,5 +112,21 @@ class SendAosResponseLetterPackToApplicantTest {
         verify(letterPrinter).sendLetters(caseData, TEST_CASE_ID, caseData.getApplicant1(), DISPUTED_AOS_RESPONSE_PACK, AOS_LETTER_ID);
 
         verifyNoMoreInteractions(letterPrinter);
+    }
+
+    @Test
+    void shouldNotSendAosResponsePackToApplicantIfStateIsAwaitingConditionalOrder() {
+        final var caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingConditionalOrder);
+        caseDetails.setId(TEST_CASE_ID);
+
+        sendAosResponseLetterPackToApplicant.apply(caseDetails);
+
+        verifyNoInteractions(letterPrinter);
     }
 }

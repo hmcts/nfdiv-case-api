@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -10,7 +11,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+
 @Component
+@Slf4j
 public class SendAosNotifications implements CaseTask {
 
     @Autowired
@@ -26,10 +30,14 @@ public class SendAosNotifications implements CaseTask {
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         final var data = details.getData();
 
-        if (data.getAcknowledgementOfService().isDisputed()) {
-            notificationDispatcher.send(soleApplicationDisputedNotification, data, details.getId());
+        if (!details.getState().equals(AwaitingConditionalOrder)) {
+            if (data.getAcknowledgementOfService().isDisputed()) {
+                notificationDispatcher.send(soleApplicationDisputedNotification, data, details.getId());
+            } else {
+                notificationDispatcher.send(soleApplicationNotDisputedNotification, data, details.getId());
+            }
         } else {
-            notificationDispatcher.send(soleApplicationNotDisputedNotification, data, details.getId());
+            log.info("Not sending notifications as case is in Awaiting Conditional Order for case id {}", details.getId());
         }
 
         return details;

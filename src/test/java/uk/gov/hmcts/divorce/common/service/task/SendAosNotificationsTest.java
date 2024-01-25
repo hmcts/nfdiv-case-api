@@ -14,9 +14,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +48,7 @@ class SendAosNotificationsTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(AosDrafted);
         caseDetails.setData(caseData);
 
         sendAosNotifications.apply(caseDetails);
@@ -64,11 +68,31 @@ class SendAosNotificationsTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(AosDrafted);
         caseDetails.setData(caseData);
 
         sendAosNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotifications() {
+
+        final CaseData caseData = CaseData.builder()
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(AwaitingConditionalOrder);
+        caseDetails.setData(caseData);
+
+        sendAosNotifications.apply(caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 }
