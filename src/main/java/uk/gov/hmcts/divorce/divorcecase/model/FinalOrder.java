@@ -197,8 +197,7 @@ public class FinalOrder {
         label = "Respondent solicitor applied for final order?",
         access = {DefaultAccess.class}
     )
-    @Builder.Default
-    private YesOrNo applicant2SolAppliedForFinalOrder = NO;
+    private YesOrNo applicant2SolAppliedForFinalOrder;
 
     @CCD(
         label = "Date respondent solicitor applied for final order",
