@@ -17,7 +17,6 @@
     "applicant2UserId": "3",
     "dataVersion": "${json-unit.ignore}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "applicant2SolAppliedForFinalOrder": "No",
     "warnings": []
   }
 }
