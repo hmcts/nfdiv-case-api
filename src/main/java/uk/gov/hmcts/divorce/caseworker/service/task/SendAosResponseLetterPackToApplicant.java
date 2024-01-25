@@ -45,8 +45,8 @@ public class SendAosResponseLetterPackToApplicant implements CaseTask {
             );
 
         } else {
-            log.info("Not sending aos response letter pack to bulk print as applicant1 is not offline." +
-                "or case is in Awaiting Conditional Order state - Case id: {}", caseId);
+            log.info("Not sending aos response letter pack to bulk print as applicant1 is not offline"
+                + " or case is in Awaiting Conditional Order state - Case id: {}", caseId);
         }
         return caseDetails;
     }
