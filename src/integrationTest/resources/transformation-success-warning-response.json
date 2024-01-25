@@ -158,8 +158,7 @@
       "applicant2NameDifferentToMarriageCertificateOtherDetails": "",
       "marriageMarriageCertificateIsIncorrectDetails": "",
       "paperFormChequeOrPostalOrderPayment": "No",
-      "paperFormDebitCreditCardPaymentPhone": "No",
-      "applicant2SolAppliedForFinalOrder":  "No"
+      "paperFormDebitCreditCardPaymentPhone": "No"
     }
   },
   "warnings": [

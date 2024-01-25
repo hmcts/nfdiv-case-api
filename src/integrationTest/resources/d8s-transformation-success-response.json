@@ -154,8 +154,7 @@
       "applicant1SolicitorRepresented": "Yes",
       "marriageIssueApplicationWithoutMarriageCertificate": "No",
       "paperFormChequeOrPostalOrderPayment": "No",
-      "paperFormDebitCreditCardPaymentPhone": "No",
-      "applicant2SolAppliedForFinalOrder":  "No"
+      "paperFormDebitCreditCardPaymentPhone": "No"
     }
   },
   "warnings": []
