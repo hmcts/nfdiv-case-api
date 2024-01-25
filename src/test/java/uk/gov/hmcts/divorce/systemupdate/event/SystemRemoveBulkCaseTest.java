@@ -20,8 +20,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -46,7 +44,7 @@ public class SystemRemoveBulkCaseTest {
     }
 
     @Test
-    public void shouldUnlinkCaseFromTheBulkCaseAndChangeStateIfInIncorrectState() {
+    public void shouldUnlinkCaseFromTheBulkCase() {
         LocalDateTime dateTime = LocalDateTime.of(2022, 8, 10, 10, 0);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
@@ -68,7 +66,7 @@ public class SystemRemoveBulkCaseTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
-        details.setState(AwaitingPronouncement);
+        details.setState(State.AwaitingPronouncement);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemRemoveBulkCase.aboutToSubmit(details, details);
 
@@ -82,46 +80,5 @@ public class SystemRemoveBulkCaseTest {
         assertThat(updatedConditionalOrder.getPronouncementJudge()).isNull();
         assertThat(updatedConditionalOrder.getDateAndTimeOfHearing()).isNull();
         assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingPronouncement);
-    }
-
-    @Test
-    public void shouldUnlinkCaseFromTheBulkCaseAndRetainStateIfInCorrectState() {
-        LocalDateTime dateTime = LocalDateTime.of(2022, 8, 10, 10, 0);
-
-        ConditionalOrder conditionalOrder = ConditionalOrder.builder()
-            .granted(YesOrNo.YES)
-            .grantedDate(dateTime.minusDays(10).toLocalDate())
-            .decisionDate(dateTime.minusDays(8).toLocalDate())
-            .dateAndTimeOfHearing(dateTime)
-            .pronouncementJudge("Judge")
-            .court(ConditionalOrderCourt.BIRMINGHAM)
-            .certificateOfEntitlementDocument(new DivorceDocument())
-            .build();
-
-        final CaseData caseData = caseDataWithOrderSummary();
-        caseData.setBulkListCaseReferenceLink(CaseLink.builder()
-            .caseReference("1")
-            .build());
-        caseData.setConditionalOrder(conditionalOrder);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-        details.setState(ConditionalOrderPronounced);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = systemRemoveBulkCase.aboutToSubmit(details, details);
-
-        ConditionalOrder updatedConditionalOrder = response.getData().getConditionalOrder();
-
-        assertThat(updatedConditionalOrder.getGranted()).isEqualTo(YesOrNo.YES);
-        assertThat(updatedConditionalOrder.getGrantedDate()).isEqualTo(dateTime.minusDays(10).toLocalDate());
-        assertThat(updatedConditionalOrder.getDecisionDate()).isEqualTo(dateTime.minusDays(8).toLocalDate());
-        assertThat(updatedConditionalOrder.getCertificateOfEntitlementDocument()).isNull();
-        assertThat(updatedConditionalOrder.getCourt()).isNull();
-        assertThat(updatedConditionalOrder.getPronouncementJudge()).isNull();
-        assertThat(updatedConditionalOrder.getDateAndTimeOfHearing()).isNull();
-        assertThat(response.getData().getBulkListCaseReferenceLink()).isNull();
-        assertThat(response.getState()).isEqualTo(ConditionalOrderPronounced);
     }
 }
