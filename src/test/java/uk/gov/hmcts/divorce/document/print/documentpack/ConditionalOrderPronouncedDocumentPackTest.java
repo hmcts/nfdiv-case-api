@@ -1,48 +1,24 @@
 package uk.gov.hmcts.divorce.document.print.documentpack;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack.LETTER_TYPE_CO_PRONOUNCED;
 
 
 class ConditionalOrderPronouncedDocumentPackTest {
-
-    private static final DocumentPackInfo APPLICANT_1_DIV_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED, Optional.empty()
-        ),
-        ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
-        )
-    );
-    private static final DocumentPackInfo APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
-        ImmutableMap.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED, Optional.empty()
-        ),
-        ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
-        )
-    );
 
     private final ConditionalOrderPronouncedDocumentPack finalOrderGrantedDocumentPack = new ConditionalOrderPronouncedDocumentPack();
 
@@ -51,44 +27,61 @@ class ConditionalOrderPronouncedDocumentPackTest {
         assertThat(finalOrderGrantedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
     }
 
-    @Test
-    public void testGetDocumentPackForDivorceWithJudicialSeparationAndRepresentedApplicant1() {
-        // Mocking necessary objects and setting up the scenario
-        CaseData caseData = Mockito.mock(CaseData.class);
-        Applicant applicant1 = Mockito.mock(Applicant.class);
-
-        Mockito.when(caseData.isJudicialSeparationCase()).thenReturn(true);
-        Mockito.when(caseData.isDivorce()).thenReturn(true);
-        Mockito.when(caseData.getApplicant1()).thenReturn(applicant1);
-        Mockito.when(caseData.getApplicationType()).thenReturn(ApplicationType.SOLE_APPLICATION);
-        Mockito.when(applicant1.isRepresented()).thenReturn(true);
-
-        ConditionalOrderPronouncedDocumentPack documentPack = new ConditionalOrderPronouncedDocumentPack();
-
-        // Test the scenario
-        DocumentPackInfo result = documentPack.getDocumentPack(caseData, applicant1);
-        assertNotNull(result);
-        assertEquals(APPLICANT_1_DIV_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK, result);
+    private static Stream<Object[]> provideTestCases() {
+        return Stream.of(
+            // Parameters: isApplicant1, isJudicialSeparation, isDivorce, applicationType, isRepresented, documentPackField
+            new Object[] {true, true, false, ApplicationType.JOINT_APPLICATION, true,
+                "APPLICANT_1_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, false, false, ApplicationType.JOINT_APPLICATION, false,
+                "APPLICANT_1_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, false, false, ApplicationType.SOLE_APPLICATION, false, "APPLICANT_1_SOLE_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, true, true, ApplicationType.SOLE_APPLICATION, false,
+                "APPLICANT_1_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, true, true, ApplicationType.SOLE_APPLICATION, true,
+                "APPLICANT_1_DIV_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, true, true, ApplicationType.SOLE_APPLICATION, false,
+                "APPLICANT_1_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, true, false, ApplicationType.JOINT_APPLICATION, true,
+                "APPLICANT_2_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, false, false, ApplicationType.JOINT_APPLICATION, false,
+                "APPLICANT_2_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, false, false, ApplicationType.SOLE_APPLICATION, false, "APPLICANT_2_SOLE_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, true, true, ApplicationType.SOLE_APPLICATION, false,
+                "APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, true, true, ApplicationType.SOLE_APPLICATION, true,
+                "APPLICANT_2_DIV_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, true, true, ApplicationType.SOLE_APPLICATION, false,
+                "APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"}
+            );
     }
 
-    @Test
-    public void testGetDocumentPackForDivorceWithJudicialSeparationAndNotRepresentedApplicant2() {
-        // Mocking necessary objects and setting up the scenario
-        CaseData caseData = Mockito.mock(CaseData.class);
-        Applicant applicant2 = Mockito.mock(Applicant.class);
+    @ParameterizedTest
+    @MethodSource("provideTestCases")
+    void testGetDocumentPackApplicant1(boolean isApplicant1, boolean isJudicialSeparation, boolean isDivorce,
+                                              ApplicationType applicationType, boolean isRepresented, String documentPackField)
+        throws NoSuchFieldException, IllegalAccessException {
 
-        Mockito.when(caseData.isJudicialSeparationCase()).thenReturn(true);
-        Mockito.when(caseData.isDivorce()).thenReturn(true);
-        Mockito.when(caseData.getApplicant1()).thenReturn(Mockito.mock(Applicant.class));
-        Mockito.when(caseData.getApplicationType()).thenReturn(ApplicationType.SOLE_APPLICATION);
-        Mockito.when(applicant2.isRepresented()).thenReturn(false);
+        CaseData caseData = mock(CaseData.class);
+        Applicant applicant = mock(Applicant.class);
+        Applicant otherApplicant = mock(Applicant.class);
+
+        when(caseData.isJudicialSeparationCase()).thenReturn(isJudicialSeparation);
+        when(caseData.isDivorce()).thenReturn(isDivorce);
+        if (isApplicant1) {
+            when(caseData.getApplicant1()).thenReturn(applicant);
+        } else {
+            when(caseData.getApplicant1()).thenReturn(otherApplicant);
+        }
+        when(applicant.isRepresented()).thenReturn(isRepresented);
+        when(caseData.getApplicationType()).thenReturn(applicationType);
 
         ConditionalOrderPronouncedDocumentPack documentPack = new ConditionalOrderPronouncedDocumentPack();
+        Field field = ConditionalOrderPronouncedDocumentPack.class.getDeclaredField(documentPackField);
+        field.setAccessible(true);
+        DocumentPackInfo expectedPackInfo = (DocumentPackInfo) field.get(documentPack);
+        DocumentPackInfo result = documentPack.getDocumentPack(caseData, applicant);
 
-        // Test the scenario
-        DocumentPackInfo result = documentPack.getDocumentPack(caseData, applicant2);
         assertNotNull(result);
-        assertEquals(APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK, result);
+        assertEquals(expectedPackInfo, result);
     }
-
 }
