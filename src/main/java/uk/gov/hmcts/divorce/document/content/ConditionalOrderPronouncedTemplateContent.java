@@ -58,8 +58,9 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
 
     public Map<String, Object> getTemplateContent(CaseData caseData,
                                                   Long caseId, Applicant applicant) {
-        return apply (caseData, caseId, applicant.getLanguagePreference());
+        return apply(caseData, caseId, applicant.getLanguagePreference());
     }
+
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long caseId,
                                      final LanguagePreference languagePreference) {
@@ -106,7 +107,7 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
 
     @Override
     public List<String> getSupportedTemplates() {
-        return List.of(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID );
+        return List.of(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
     }
 
 }

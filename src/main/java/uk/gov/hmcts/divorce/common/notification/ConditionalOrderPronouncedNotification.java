@@ -14,12 +14,12 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
@@ -56,6 +56,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
 
     private ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack;
     private LetterPrinter letterPrinter;
+
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
         log.info("Notifying applicant 1 that their conditional order application has been pronounced: {}", caseId);

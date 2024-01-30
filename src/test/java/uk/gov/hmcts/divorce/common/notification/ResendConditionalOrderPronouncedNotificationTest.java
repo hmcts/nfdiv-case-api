@@ -1,22 +1,19 @@
 package uk.gov.hmcts.divorce.common.notification;
 
-import java.util.Optional;
-
 import com.google.common.collect.ImmutableMap;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.common.notification.ResendConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
-import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -52,7 +49,6 @@ class ResendConditionalOrderPronouncedNotificationTest {
             JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
-
 
     @Mock
     private ConditionalOrderPronouncedDocumentPack conditionalOrderGrantedDocumentPack;
@@ -97,10 +93,10 @@ class ResendConditionalOrderPronouncedNotificationTest {
     @Test
     void shouldSendToApplicant2IfRegenerated() {
         CaseData data = caseData();
-        when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant1()))
+        when(conditionalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant2()))
             .thenReturn(APPLICANT_2_TEST_PACK_INFO);
         when(conditionalOrderGrantedDocumentPack.getLetterId()).thenReturn(LETTER_ID);
-        data.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
+        data.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
 
         ArgumentCaptor<CaseData> captorData = ArgumentCaptor.forClass(CaseData.class);
         ArgumentCaptor<Long> captorCaseId = ArgumentCaptor.forClass(Long.class);
@@ -108,7 +104,7 @@ class ResendConditionalOrderPronouncedNotificationTest {
         ArgumentCaptor<DocumentPackInfo> captorDocumentPackInfo = ArgumentCaptor.forClass(DocumentPackInfo.class);
         ArgumentCaptor<String> captorLetterId = ArgumentCaptor.forClass(String.class);
 
-        notification.sendToApplicant1Offline(data, TEST_CASE_ID);
+        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
         verify(letterPrinter).sendLetters(
             captorData.capture(),
@@ -120,7 +116,7 @@ class ResendConditionalOrderPronouncedNotificationTest {
 
         assertEquals(data, captorData.getValue());
         assertEquals(TEST_CASE_ID, captorCaseId.getValue());
-        assertEquals(data.getApplicant1(), captorApplicant.getValue());
+        assertEquals(data.getApplicant2(), captorApplicant.getValue());
         assertEquals(APPLICANT_2_TEST_PACK_INFO, captorDocumentPackInfo.getValue());
         assertEquals(LETTER_ID, captorLetterId.getValue());
     }

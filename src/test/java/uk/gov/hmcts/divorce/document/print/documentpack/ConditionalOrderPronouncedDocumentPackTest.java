@@ -1,9 +1,17 @@
 package uk.gov.hmcts.divorce.document.print.documentpack;
 
+import com.google.common.collect.ImmutableMap;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME;
@@ -13,12 +21,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack.LETTER_TYPE_CO_PRONOUNCED;
 
-import com.google.common.collect.ImmutableMap;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 class ConditionalOrderPronouncedDocumentPackTest {
 
@@ -41,7 +43,9 @@ class ConditionalOrderPronouncedDocumentPackTest {
             JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
+
     private final ConditionalOrderPronouncedDocumentPack finalOrderGrantedDocumentPack = new ConditionalOrderPronouncedDocumentPack();
+
     @Test
     void getCorrectLetterId() {
         assertThat(finalOrderGrantedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
