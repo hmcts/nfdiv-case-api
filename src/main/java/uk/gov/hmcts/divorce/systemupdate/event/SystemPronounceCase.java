@@ -70,12 +70,12 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, SUPER_USER)
                 .grantHistoryOnly(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR, JUDGE)
                 .aboutToSubmitCallback(this::aboutToSubmit)
-                .submittedCallback(this::submitted)
         );
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
 
@@ -83,49 +83,12 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
         final State state = caseData.isJudicialSeparationCase() ? SeparationOrderGranted : ConditionalOrderPronounced;
 
-        generateConditionalOrderGrantedDocs(details, beforeDetails);
+        notificationDispatcher.send(conditionalOrderPronouncedNotification, details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .state(state)
-            .data(caseData)
+            .data(details.getData())
             .build();
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-        log.info("SystemPronounceCase submitted callback invoked for case id: {}", details.getId());
-
-        try {
-            notificationDispatcher.send(conditionalOrderPronouncedNotification, details.getData(), details.getId());
-        } catch (final NotificationTemplateException e) {
-            log.error("Notification failed with message: {}", e.getMessage(), e);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
-    }
-
-    private void generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,
-                                                     final CaseDetails<CaseData, State> beforeDetails) {
-
-        final CaseData newCaseData = details.getData();
-
-        generateCoversheetDocument.apply(details);
-
-        if (newCaseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
-            ConditionalOrder oldCO = beforeDetails.getData().getConditionalOrder();
-            ConditionalOrder newCO = newCaseData.getConditionalOrder();
-
-            if (!newCO.getPronouncementJudge().equals(oldCO.getPronouncementJudge())
-                || !newCO.getCourt().equals(oldCO.getCourt())
-                || !newCO.getDateAndTimeOfHearing().equals(oldCO.getDateAndTimeOfHearing())) {
-
-                caseTasks(
-                    removeExistingConditionalOrderPronouncedDocument,
-                    generateConditionalOrderPronouncedDocument
-                ).run(details);
-            }
-
-        } else {
-            caseTasks(generateConditionalOrderPronouncedDocument).run(details);
-        }
-    }
 }
