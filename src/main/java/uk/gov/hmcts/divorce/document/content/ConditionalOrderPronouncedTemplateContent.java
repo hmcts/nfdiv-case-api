@@ -1,18 +1,25 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -37,7 +44,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
-public class ConditionalOrderPronouncedTemplateContent {
+@RequiredArgsConstructor
+public class ConditionalOrderPronouncedTemplateContent implements TemplateContent {
 
     @Autowired
     private CommonContent commonContent;
@@ -48,6 +56,10 @@ public class ConditionalOrderPronouncedTemplateContent {
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
 
+    public Map<String, Object> getTemplateContent(CaseData caseData,
+                                                  Long caseId, Applicant applicant) {
+        return apply (caseData, caseId, applicant.getLanguagePreference());
+    }
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long caseId,
                                      final LanguagePreference languagePreference) {
@@ -91,4 +103,10 @@ public class ConditionalOrderPronouncedTemplateContent {
 
         return templateContent;
     }
+
+    @Override
+    public List<String> getSupportedTemplates() {
+        return List.of(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID );
+    }
+
 }
