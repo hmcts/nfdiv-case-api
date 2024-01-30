@@ -48,10 +48,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String IS_SOLE = "applicationType=\"soleApplication\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
-    private static final String IS_JOINT_AND_HWF_ENTERED = "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
+    private static final String IS_JOINT_AND_HWF_ENTERED =
+        "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"";
     private static final String IS_NEW_PAPER_CASE = "newPaperCase=\"Yes\"";
-    private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
-    private static final String APPLICANT_1_CONTACT_DETAILS_PRIVATE = "applicant1ContactDetailsType=\"private\"";
     private static final String APPLICANTS_CONTACT_DETAILS_PUBLIC =
         "applicant1ContactDetailsType!=\"private\" AND applicant2ContactDetailsType!=\"private\"";
     private static final String APPLICANTS_CONTACT_DETAILS_PRIVATE =
@@ -190,7 +189,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("documentsGenerated")
             .field("applicant1DocumentsUploaded")
             .field("applicant2DocumentsUploaded")
-            .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
+            .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PUBLIC)
             .field(CaseData::getGeneralOrders)
             .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
@@ -296,9 +295,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
-            .field("scannedDocuments", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
+            .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
             .field(CaseData::getConfidentialGeneralEmails)
-            .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
+            .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);;
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
