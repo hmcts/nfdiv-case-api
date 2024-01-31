@@ -118,7 +118,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
         letterPrinter.sendLetters(caseData,
             details.getId(),
-            applicant,
+            applicant, // Unused. See above.
             generalLetterDocumentPack.getDocumentPack(caseData, applicant),
             generalLetterDocumentPack.getLetterId());
 
