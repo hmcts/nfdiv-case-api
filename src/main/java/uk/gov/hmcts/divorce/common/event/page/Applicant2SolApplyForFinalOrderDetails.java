@@ -26,6 +26,7 @@ public class Applicant2SolApplyForFinalOrderDetails implements CcdPageConfigurat
             .page("Applicant2SolicitorApplyForFinalOrder", this::midEvent)
             .pageLabel(APPLICANT2_APPLY_FOR_FINAL_ORDER)
             .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getApplicant2, ALWAYS_HIDE)
                 .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
                 .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, ALWAYS_HIDE)
             .done()

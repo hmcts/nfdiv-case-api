@@ -490,6 +490,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dateApplicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("applicant2SolFinalOrderWhyNeedToApply", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field("labelContentApplicant2", NEVER_SHOW)
             .field("doesApplicant2WantToApplyForFinalOrder")
             .field("applicant2FinalOrderExplanation")
             .field("applicant2FinalOrderLateExplanation")
