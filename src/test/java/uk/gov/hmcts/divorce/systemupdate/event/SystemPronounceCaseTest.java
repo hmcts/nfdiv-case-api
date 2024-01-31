@@ -86,7 +86,7 @@ class SystemPronounceCaseTest {
         assertThat(response.getState()).isEqualTo(ConditionalOrderPronounced);
 
         verify(generateConditionalOrderPronouncedDocument).apply(details);
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
