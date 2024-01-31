@@ -1,11 +1,10 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -36,6 +35,8 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -43,11 +44,8 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
-@ExtendWith(SpringExtension.class)
-public class SystemPronounceCaseTest {
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
+@ExtendWith(MockitoExtension.class)
+class SystemPronounceCaseTest {
 
     @Mock
     private ConditionalOrderPronouncedNotification notification;
@@ -57,9 +55,6 @@ public class SystemPronounceCaseTest {
 
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-
-    @Mock
-    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
 
     @Mock
     private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
@@ -109,7 +104,7 @@ public class SystemPronounceCaseTest {
         assertThat(response.getState()).isEqualTo(SeparationOrderGranted);
 
         verify(generateConditionalOrderPronouncedDocument).apply(details);
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
@@ -120,30 +115,11 @@ public class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        underTest.submitted(details, details);
-
         verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
-    void shouldNotSendNotificationAndLogErrorIfNotificationTemplateExceptionIsThrown() {
-
-        final NotificationTemplateException notificationTemplateException = new NotificationTemplateException("Message");
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-        doThrow(notificationTemplateException)
-            .when(notificationDispatcher)
-            .send(notification, caseData, details.getId());
-
-        underTest.submitted(details, details);
-
-    }
-
-    @Test
-    public void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
+    void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
         final CaseData caseData = caseData();
 
         setConditionalOrder(caseData);
@@ -156,11 +132,11 @@ public class SystemPronounceCaseTest {
         underTest.aboutToSubmit(details, details);
 
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
-    public void shouldRegenerateCoDocWhenDocumentAlreadyExistsAndChangesToConditionalOrder() {
+    void shouldRegenerateCoDocWhenDocumentAlreadyExistsAndChangesToConditionalOrder() {
         final CaseData caseDataOld = caseData();
         setConditionalOrder(caseDataOld);
 
@@ -185,7 +161,7 @@ public class SystemPronounceCaseTest {
 
         verify(removeExistingConditionalOrderPronouncedDocument).apply(detailsNew);
         verify(generateConditionalOrderPronouncedDocument).apply(detailsNew);
-        verifyNoInteractions(notificationDispatcher);
+        verify(notificationDispatcher).send(notification, caseDataNew, detailsNew.getId());
     }
 
     private void setConditionalOrder(final CaseData caseData) {
