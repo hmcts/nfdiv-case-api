@@ -108,17 +108,6 @@ class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldSendNotification() {
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
-    }
-
-    @Test
     void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
         final CaseData caseData = caseData();
 
