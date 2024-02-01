@@ -38,8 +38,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class ConditionalOrderPronouncedNotification implements ApplicantNotification {
 
     public static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
@@ -50,12 +50,12 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Value("${final_order.respondent_eligible_from_offset_months}")
     private long finalOrderRespondentOffsetMonth;
 
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    private ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack;
-    private LetterPrinter letterPrinter;
+    private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
