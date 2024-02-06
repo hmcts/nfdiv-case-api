@@ -304,7 +304,7 @@ class ApplicantTest {
                 .build())
             .build();
 
-        assertThat(applicant.getPostalAddress()).isEqualTo("solicitor address");
+        assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck()).isEqualTo("solicitor address");
     }
 
     @Test
@@ -323,7 +323,7 @@ class ApplicantTest {
                 .build())
             .build();
 
-        assertThat(applicant.getPostalAddress())
+        assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
     }
 
@@ -334,7 +334,7 @@ class ApplicantTest {
             .contactDetailsType(PUBLIC)
             .build();
 
-        assertThat(applicant.getPostalAddress()).isNull();
+        assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck()).isNull();
     }
 
     @Test
@@ -353,7 +353,7 @@ class ApplicantTest {
                 .build())
             .build();
 
-        assertThat(applicant.getPostalAddress())
+        assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
     }
 
@@ -372,7 +372,7 @@ class ApplicantTest {
                 .build())
             .build();
 
-        assertThat(applicant.getPostalAddress())
+        assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .isEqualTo("Correspondence Apartment\nCorrespondence Street,Line 2,\nLine 3,\nPost Town\nPost Code");
     }
 

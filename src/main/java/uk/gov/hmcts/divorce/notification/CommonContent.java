@@ -277,7 +277,7 @@ public class CommonContent {
 
         templateContent.put("firstName", applicant.getFirstName());
         templateContent.put("lastName", applicant.getLastName());
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateContent.put(DATE, date);
 
