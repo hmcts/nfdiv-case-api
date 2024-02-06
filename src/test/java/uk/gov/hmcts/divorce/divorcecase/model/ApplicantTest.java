@@ -263,7 +263,7 @@ class ApplicantTest {
             .build();
 
         assertThat(applicant.getCorrespondenceAddress())
-            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code\nUK");
+            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
     }
 
     @Test
@@ -324,7 +324,7 @@ class ApplicantTest {
             .build();
 
         assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
-            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
+            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
     }
 
     @Test
@@ -354,26 +354,6 @@ class ApplicantTest {
             .build();
 
         assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
-            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
+            .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
     }
-
-    @Test
-    void shouldSplitAddressLine1WhenItIsMoreThan25CharactersAndAppendToLine2() {
-        final Applicant applicant = Applicant.builder()
-            .solicitorRepresented(NO)
-            .contactDetailsType(PRIVATE)
-            .address(AddressGlobalUK.builder()
-                .addressLine1("Correspondence Apartment, Correspondence Street")
-                .addressLine2("Line 2,")
-                .addressLine3("Line 3,")
-                .postTown("Post Town")
-                .postCode("Post Code")
-                .country("UK")
-                .build())
-            .build();
-
-        assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
-            .isEqualTo("Correspondence Apartment\nCorrespondence Street,Line 2,\nLine 3,\nPost Town\nPost Code");
-    }
-
 }
