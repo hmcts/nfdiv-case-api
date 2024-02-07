@@ -46,7 +46,7 @@ public class CaseworkerAddAdminClarification implements CCDConfig<CaseData, Stat
         final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info(
-            "Caseworker add admin clarification about to submit Callback invoked: {}, Case Id: {}", details.getState(), details.getId()
+            "******Caseworker add admin clarification about to submit Callback invoked: {}, Case Id: {}", details.getState(), details.getId()
         );
         CaseData caseData = details.getData();
 
