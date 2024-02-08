@@ -19,6 +19,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkActionCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -41,11 +42,14 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
     private final EntitlementGrantedConditionalOrderNotification entitlementGrantedConditionalOrderNotification;
     private final DocumentGenerator documentGenerator;
 
+    // TODO NFDIV-3824: We've introduced a new state (InBulkActionCase) for cases which are linked to bulk lists. They will no longer
+    //  use the AwaitingPronouncement state. AwaitingPronouncement state should be removed once all cases using this state
+    //  (pre- new state InBulkActionCase) have been pronounced and final order granted.
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_UPDATE_CASE_COURT_HEARING)
-            .forStates(AwaitingPronouncement, OfflineDocumentReceived)
+            .forStates(AwaitingPronouncement, InBulkActionCase, OfflineDocumentReceived)
             .showCondition(NEVER_SHOW)
             .name("Update case with court hearing")
             .description("Update case with court hearing")

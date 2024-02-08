@@ -99,7 +99,7 @@ public class LetterPrinter {
             var recipientName = switch (parties) {
                 case RESPONDENT -> caseData.getApplicant2().getFullName();
                 case APPLICANT -> caseData.getApplicant1().getFullName();
-                case OTHER -> caseData.getGeneralLetter().getOtherRecipientName();
+                case OTHER -> parties.name();
             };
 
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
