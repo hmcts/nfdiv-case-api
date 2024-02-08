@@ -521,6 +521,13 @@ public class TestDataHelper {
         return caseData;
     }
 
+    public static CaseData validCaseDataForReIssueApplication() {
+        CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
+        return caseData;
+    }
+
     public static CaseData validCaseDataForAosSubmitted() {
         CaseData caseData = validCaseDataForIssueApplication();
 
