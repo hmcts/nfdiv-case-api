@@ -31,7 +31,14 @@ public class SystemCancelCaseInvite implements CCDConfig<CaseData, State, UserRo
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(SYSTEM_CANCEL_CASE_INVITE)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AwaitingAos, AosOverdue, ConditionalOrderPending, Archived))
+            .forStates(ArrayUtils.addAll(
+                AOS_STATES,
+                AwaitingApplicant2Response,
+                AwaitingAos,
+                AosOverdue,
+                ConditionalOrderPending,
+                Archived)
+            )
             .name("Cancel User Case Invite")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SUPER_USER)
