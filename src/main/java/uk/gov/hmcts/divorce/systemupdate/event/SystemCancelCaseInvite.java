@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -30,7 +31,7 @@ public class SystemCancelCaseInvite implements CCDConfig<CaseData, State, UserRo
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(SYSTEM_CANCEL_CASE_INVITE)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AwaitingAos, AosOverdue, ConditionalOrderPending))
+            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AwaitingAos, AosOverdue, ConditionalOrderPending, Archived))
             .name("Cancel User Case Invite")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SUPER_USER)
