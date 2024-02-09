@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRegenerateCourtOrdersTest {
+class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
@@ -189,10 +189,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateConditionalOrderPronouncedCoversheetDocument)
-            .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -249,6 +248,7 @@ public class CaseworkerRegenerateCourtOrdersTest {
             FINAL_ORDER_DOCUMENT_NAME,
             caseData,
             caseDetails.getId());
+        verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -322,8 +322,6 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateConditionalOrderPronouncedCoversheetDocument)
-            .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
@@ -335,17 +333,6 @@ public class CaseworkerRegenerateCourtOrdersTest {
         );
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED, FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME,
             caseData, caseDetails.getId());
-    }
-
-    @Test
-    void shouldTriggerNotificationsInSubmittedCallback() {
-        final CaseData caseData = new CaseData();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        caseworkerRegenerateCourtOrders.submitted(caseDetails, null);
-
         verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, TEST_CASE_ID);
     }
 

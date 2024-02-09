@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalO
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -52,9 +54,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 @Slf4j
 public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REGENERATE_COURT_ORDERS = "caseworker-regenerate-court-orders";
+    public static final String REGENERATE_COURT_ORDERS = "Regenerate court orders";
 
     private final GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-    private final GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheetDocument;
     private final RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
     private final NotificationDispatcher notificationDispatcher;
     private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
@@ -67,21 +69,25 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         new PageBuilder(configBuilder
             .event(CASEWORKER_REGENERATE_COURT_ORDERS)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Regenerate court orders")
-            .description("Regenerate court orders")
+            .name(REGENERATE_COURT_ORDERS)
+            .description(REGENERATE_COURT_ORDERS)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR))
             .page("regenerateCourtOrderDocs")
-            .pageLabel("Regenerate court orders")
-            .label("regenerateCourtOrdersWarningLabel", "Updating court orders recreates the Certificate of Entitlement, "
-                + "Conditional Order and Final Order, "
-                + "based on the latest case data. "
-                + "Any other court orders e.g. conditional order refusals, will remain unchanged.\r\n\r\n"
-                + "If there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated "
-                + "court orders.\r\n\r\nPrevious versions of court orders will not be stored against the case.");
+            .pageLabel(REGENERATE_COURT_ORDERS)
+            .label("regenerateCourtOrdersWarningLabel", """
+                Updating court orders recreates the Certificate of Entitlement,
+                Conditional Order, and Final Order,
+                based on the latest case data.
+                Any other court orders e.g. conditional order refusals, will remain unchanged.
+
+                If there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated
+                court orders.
+
+                Previous versions of court orders will not be stored against the case.
+                """);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -94,9 +100,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating CO Pronounced document for Case Id: {}", details.getId());
-
-            //TODO: Needs to be split into tasks
-            generateConditionalOrderPronouncedCoversheetDocument.removeExistingAndGenerateConditionalOrderPronouncedCoversheet(details);
 
             caseTasks(
                 removeExistingConditionalOrderPronouncedDocument,
@@ -113,6 +116,10 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
 
+            removeExistingDocuments(
+                caseData,
+                List.of(CERTIFICATE_OF_ENTITLEMENT));
+
             documentGenerator.generateCertificateOfEntitlement(details);
 
             removeExistingDocuments(
@@ -123,32 +130,30 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             var applicant1 = caseData.getApplicant1();
             var applicant2 = caseData.getApplicant2();
 
-            ImmutableMap.of(applicant1, applicant1.isApplicantOffline(),
-                            applicant2, applicant2.isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress()))
-                    .entrySet().stream().filter(ImmutableMap.Entry::getValue)
-                    .forEach(applicant -> documentGenerator.generateDocuments(caseData, details.getId(), applicant.getKey(),
-                            certificateOfEntitlementDocumentPack.getDocumentPack(caseData, applicant.getKey())));
+            Map<Applicant, Boolean> applicantStatusMap = Map.of(
+                applicant1, applicant1.isApplicantOffline(),
+                applicant2, applicant2.isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())
+            );
+
+            applicantStatusMap.entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .forEach(applicantEntry -> {
+                    Applicant applicant = applicantEntry.getKey();
+                    documentGenerator.generateDocuments(
+                        caseData,
+                        details.getId(),
+                        applicant,
+                        certificateOfEntitlementDocumentPack.getDocumentPack(caseData, applicant)
+                    );
+                });
 
             log.info("Completed generating certificate of entitlement pdf for CaseID: {}", details.getId());
         }
-
-        removeExistingDocuments(
-                caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT));
+        notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker regenerate court orders submitted callback invoked for case id: {}", details.getId());
-
-        final CaseData caseData = details.getData();
-        notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
-
-        return SubmittedCallbackResponse.builder().build();
     }
 
     private void removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(CaseData caseData, long caseId) {
