@@ -31,7 +31,7 @@
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
   "applicant2SolicitorRepresented": "No",
   "applicant2LanguagePreferenceWelsh": "No",
-  "applicant2ContactDetailsType": "public",
+  "applicant2ContactDetailsType": "private",
   "applicant2Gender": "female",
   "applicant1IsApplicant2Represented": "notSure",
   "marriageApplicant1Name": "test_first_name test_last_name",
