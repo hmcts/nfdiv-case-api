@@ -113,10 +113,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             log.info("Regenerating certificate of entitlement document for Case Id: {}", details.getId());
 
-            removeExistingDocuments(
-                caseData,
-                List.of(CERTIFICATE_OF_ENTITLEMENT));
-
+            //this generates and adds to both certificateOfEntitlement on case data and documentsGenerated
             documentGenerator.generateCertificateOfEntitlement(details);
 
             removeExistingDocuments(
@@ -131,6 +128,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
                 applicant1, applicant1.isApplicantOffline(),
                 applicant2, applicant2.isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())
             );
+
 
             applicantStatusMap.entrySet().stream()
                 .filter(Map.Entry::getValue)
@@ -147,6 +145,12 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             log.info("Completed generating certificate of entitlement pdf for CaseID: {}", details.getId());
         }
         notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
+
+        // the send calls letter print which needs the doc in generateddocuments
+        // so clean up generated documents for certificate of entitlement here and not before
+        removeExistingDocuments(
+            caseData,
+            List.of(CERTIFICATE_OF_ENTITLEMENT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
