@@ -74,8 +74,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOIN
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkActionCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
@@ -405,6 +407,27 @@ class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getState().name()).isEqualTo(AwaitingAmendedApplication.name());
         assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isNull();
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
+    }
+
+    // TODO: NFDIV - InBulkActionCase is on hold until we figure out how to properly allow caseworkers to edit cases in bulk lists.
+    //  If chosen, we override it to be AwaitPronouncement. This test should be removed once new logic is added to allow use of state.
+    @Test
+    void shouldOverrideStateToAwaitingPronouncementIfStateIsInBulkActionCase() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder().typeOfDocumentAttached(OTHER).scannedSubtypeReceived(D84NVA).build())
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(InBulkActionCase)
+                .build())
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .build())
+            .build();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState().name()).isEqualTo(AwaitingPronouncement.name());
     }
 
     @Test
