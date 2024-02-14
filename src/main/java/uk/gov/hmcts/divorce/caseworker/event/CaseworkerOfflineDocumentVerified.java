@@ -199,7 +199,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
 
-            // TODO: NFDIV - InBulkActionCase is on hold until we figure out how to properly allow caseworkers to edit
+            // TODO: NFDIV-3869 - InBulkActionCase is on hold until we figure out how to properly allow caseworkers to edit
             //  cases in bulk lists. If chosen, we override it to be AwaitPronouncement. This test should be removed once new logic is
             //  added to allow use of state.
             if (State.InBulkActionCase.equals(state)) {

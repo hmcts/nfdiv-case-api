@@ -409,7 +409,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
     }
 
-    // TODO: NFDIV - InBulkActionCase is on hold until we figure out how to properly allow caseworkers to edit cases in bulk lists.
+    // TODO: NFDIV-3869 - InBulkActionCase is on hold until we figure out how to properly allow caseworkers to edit cases in bulk lists.
     //  If chosen, we override it to be AwaitPronouncement. This test should be removed once new logic is added to allow use of state.
     @Test
     void shouldOverrideStateToAwaitingPronouncementIfStateIsInBulkActionCase() {
