@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.2.2'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1041'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1049'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -220,7 +220,7 @@ dependencyManagement {
     //CVE-2020-23064
     dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.18'
     //CVE-2023-5072
-    dependency group: 'org.json', name: 'json', version: '20231013'
+    dependency group: 'org.json', name: 'json', version: '20240205'
   }
 }
 
@@ -259,8 +259,8 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.1.1'
-  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.10.0') {
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.2.6'
+  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.10.1') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.poi', module: 'poi-ooxml'
@@ -271,7 +271,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.4'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.3'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.1'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.2'
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.7.3'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
@@ -318,7 +318,7 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
 
-  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.1'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.2'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
