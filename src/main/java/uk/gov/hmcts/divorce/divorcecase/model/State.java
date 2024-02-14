@@ -260,6 +260,13 @@ public enum State {
     AwaitingJsNullity,
 
     @CCD(
+        label = "Case in bulk action process",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    InBulkActionCase,
+
+    @CCD(
         label = "Clarification response submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
