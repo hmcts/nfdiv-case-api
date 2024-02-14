@@ -52,7 +52,10 @@ public class RetryPronounceCasesTaskTest {
 
     @Test
     void shouldRetryPronounceCasesTask() {
-        final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced);
+        final EnumSet<State> awaitingPronouncement = EnumSet.of(
+            AwaitingPronouncement,
+            OfflineDocumentReceived,
+            ConditionalOrderPronounced);
         final EnumSet<State> postStates = EnumSet.noneOf(State.class);
 
         final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");

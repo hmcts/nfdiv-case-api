@@ -21,7 +21,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceiv
 @Component
 public class RetryPronounceCasesTask implements BulkCaseTask {
 
-    final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived, ConditionalOrderPronounced);
+    final EnumSet<State> awaitingPronouncement = EnumSet.of(
+        AwaitingPronouncement,
+        OfflineDocumentReceived,
+        ConditionalOrderPronounced
+    );
+
     final EnumSet<State> postStates = EnumSet.noneOf(State.class);
 
     @Autowired

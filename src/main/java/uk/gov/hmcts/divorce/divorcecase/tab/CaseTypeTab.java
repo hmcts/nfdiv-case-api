@@ -69,6 +69,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
         + "applicant2SolicitorRepresented=\"Yes\" AND doesApplicant2WantToApplyForFinalOrder=\"Yes\"";
 
+    public static final String APPLICANT_2_SOL_APPLIED_FOR_FO = "applicant2SolAppliedForFinalOrder=\"Yes\"";
+
+    public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_PBA = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
+        + "applicant2SolPaymentHowToPay=\"feePayByAccount\"";
+
+    public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
+        + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildWarningsTab(configBuilder);
@@ -157,6 +165,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
             .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
             .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
+            .label("Applicant2Solicitor-PaymentHeading", APPLICANT_2_SOL_APPLIED_FOR_FO, "### Respondent Solicitor")
+            .field("applicant2SolFinalOrderFeeOrderSummary", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("applicant2SolPaymentHowToPay", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("finalOrderPbaNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
+            .field("applicant2SolFinalOrderFeeAccountReference", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("app2SolFoHWFReferenceNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_HWF)
             .field("generalApplicationFeeOrderSummary")
             .field("generalApplicationFeePaymentMethod")
             .field("generalApplicationFeeAccountNumber")
@@ -472,6 +486,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelFinalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\"",
                 "### Applicant 2")
+            .field("applicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field("dateApplicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field("applicant2SolFinalOrderWhyNeedToApply", "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field("labelContentApplicant2", NEVER_SHOW)
             .field("doesApplicant2WantToApplyForFinalOrder")
             .field("applicant2FinalOrderExplanation")
             .field("applicant2FinalOrderLateExplanation")
@@ -482,7 +501,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorName", IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field("applicant2SolicitorFirmName", IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field("scannedD36Form");
-
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

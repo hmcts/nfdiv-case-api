@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_WELSH_TRANSLATION;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CASE_STATE;
@@ -61,7 +62,11 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Supplementary evidence handled").id(EVIDENCE_HANDLED).build(),
         SearchField.<UserRole>builder().label("Applicant Welsh Translation").id(APPLICANT_WELSH_TRANSLATION).build(),
         SearchField.<UserRole>builder().label("Respondent Welsh Translation").id(RESPONDENT_WELSH_TRANSLATION).build(),
-        SearchField.<UserRole>builder().label("Scanned Document Subtype Received").id(SCANNED_SUBTYPE_RECEIVED).build()
+        SearchField.<UserRole>builder().label("Scanned Document Subtype Received").id(SCANNED_SUBTYPE_RECEIVED).build(),
+        SearchField.<UserRole>builder()
+            .label("Respondent Solicitor Applied For Final Order")
+            .id(APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER)
+            .build()
         );
 
     @Override
