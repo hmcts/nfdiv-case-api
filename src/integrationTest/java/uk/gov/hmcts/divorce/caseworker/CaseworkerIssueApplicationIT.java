@@ -1740,6 +1740,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
         caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
         caseData.getApplicant2().setSolicitorRepresented(NO);

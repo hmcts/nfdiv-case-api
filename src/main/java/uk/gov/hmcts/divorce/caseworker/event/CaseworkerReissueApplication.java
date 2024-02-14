@@ -46,6 +46,8 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
     public static final String BLANK_LABEL = " ";
     public static final String REISSUE_NOT_POSSIBLE_ERROR_MESSAGE =
         "Acknowledgement of Service has been submitted therefore this case cannot be reissued";
+    public static final String REISSUE_ISSUE_ERROR_MESSAGE =
+        "Case has not been issued therefore it cannot be reissued";
 
     @Autowired
     private ReIssueApplicationService reIssueApplicationService;
@@ -88,6 +90,14 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
         if (caseData.getAcknowledgementOfService() != null && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
             log.info("Reissue validation failed because AOS has already been submitted. Case ID: {}", details.getId());
             validationErrors.add(REISSUE_NOT_POSSIBLE_ERROR_MESSAGE);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .build();
+        }
+
+        if (caseData.getApplication().getIssueDate() == null) {
+            log.info("Reissue event not available because issue date is null. Case ID: {}", details.getId());
+            validationErrors.add(REISSUE_ISSUE_ERROR_MESSAGE);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(validationErrors)
                 .build();

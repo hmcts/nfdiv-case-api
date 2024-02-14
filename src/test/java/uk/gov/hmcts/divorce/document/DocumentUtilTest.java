@@ -223,6 +223,26 @@ class DocumentUtilTest {
     }
 
     @Test
+    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsNOPAndApplicantsAreNotConfidential() {
+        var caseData = CaseData.builder().build();
+        caseData.getApplicant1().setContactDetailsType(PUBLIC);
+        assertFalse(isConfidential(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
+
+        caseData.getApplicant2().setContactDetailsType(PUBLIC);
+        assertFalse(isConfidential(caseData, NOTICE_OF_PROCEEDINGS_APP_2));
+    }
+
+    @Test
+    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsNOPAndApplicantsAreConfidential() {
+        var caseData = CaseData.builder().build();
+        caseData.getApplicant1().setContactDetailsType(PRIVATE);
+        assertTrue(isConfidential(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
+
+        caseData.getApplicant2().setContactDetailsType(PRIVATE);
+        assertTrue(isConfidential(caseData, NOTICE_OF_PROCEEDINGS_APP_2));
+    }
+
+    @Test
     public void shouldReturnConfidentialLettersWhenDocumentIsApplicableForConfidentialityAndApplicantContactIsPrivate() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
@@ -251,7 +271,7 @@ class DocumentUtilTest {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
-                .contactDetailsType(PUBLIC)
+                .contactDetailsType(PRIVATE)
                 .build())
             .applicant2(Applicant.builder()
                 .contactDetailsType(PRIVATE)
