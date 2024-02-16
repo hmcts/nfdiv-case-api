@@ -487,7 +487,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER)
             .node("data.letterPacks")
             .isArray()
-            .hasSize(2);
+            .hasSize(6);
         verifyNoInteractions(notificationService);
     }
 
