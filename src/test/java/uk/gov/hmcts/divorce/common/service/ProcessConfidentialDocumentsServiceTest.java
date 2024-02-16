@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -121,7 +122,7 @@ public class ProcessConfidentialDocumentsServiceTest {
 
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentsToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
+    public void processDocumentsShouldMoveNOPDocumentToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
@@ -135,13 +136,12 @@ public class ProcessConfidentialDocumentsServiceTest {
         List<ListValue<DivorceDocument>> nonConfidentialDocuments = caseData.getDocuments().getDocumentsGenerated();
         List<ListValue<ConfidentialDivorceDocument>> confidentialDocuments = caseData.getDocuments().getConfidentialDocumentsGenerated();
 
-        assertEquals(1, nonConfidentialDocuments.size());
-        assertEquals(2, confidentialDocuments.size());
+        assertEquals(2, nonConfidentialDocuments.size());
+        assertEquals(1, confidentialDocuments.size());
 
         assertThat(confidentialDocuments.stream()
             .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-            .collect(Collectors.toList()),  containsInAnyOrder(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
-            ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
+            .collect(Collectors.toList()),  contains(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
         );
     }
 

@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForReIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerReissueApplicationTest {
@@ -53,7 +54,7 @@ class CaseworkerReissueApplicationTest {
     @Test
     void shouldReturnErrorForAboutToSubmitIfInvalidReissueOptionExceptionIsThrown() {
 
-        final CaseData caseData = validCaseDataForIssueApplication();
+        final CaseData caseData = validCaseDataForReIssueApplication();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
@@ -69,9 +70,25 @@ class CaseworkerReissueApplicationTest {
     }
 
     @Test
-    void shouldReturnErrorIfAosHasAlreadyBeenSubmitted() {
+    void shouldReturnErrorIfCaseNotIssued() {
 
         final CaseData caseData = validCaseDataForIssueApplication();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReissue.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().get(0))
+            .isEqualTo("Case has not been issued therefore it cannot be reissued");
+    }
+
+    @Test
+    void shouldReturnErrorIfAosHasAlreadyBeenSubmitted() {
+
+        final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.of(2021, 10, 26, 10, 0, 0));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -88,7 +105,7 @@ class CaseworkerReissueApplicationTest {
     @Test
     void shouldNotReturnErrorIfAosIsYetToBeSubmitted() {
 
-        final CaseData caseData = validCaseDataForIssueApplication();
+        final CaseData caseData = validCaseDataForReIssueApplication();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
