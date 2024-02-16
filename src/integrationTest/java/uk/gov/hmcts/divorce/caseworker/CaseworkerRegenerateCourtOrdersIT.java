@@ -27,7 +27,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -43,7 +46,9 @@ import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,6 +63,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -74,6 +80,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISAT
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -81,7 +88,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
-    IdamWireMock.PropertiesInitializer.class
+    IdamWireMock.PropertiesInitializer.class,
+    CdamWireMock.PropertiesInitializer.class
 })
 public class CaseworkerRegenerateCourtOrdersIT {
 
@@ -91,6 +99,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private BulkPrintService bulkPrintService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -107,6 +118,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
     @MockBean
     private Clock clock;
 
@@ -115,12 +129,14 @@ public class CaseworkerRegenerateCourtOrdersIT {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
         DocAssemblyWireMock.start();
         IdamWireMock.start();
+        CdamWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
+        CdamWireMock.stopAndReset();
     }
 
     @BeforeEach
@@ -131,8 +147,12 @@ public class CaseworkerRegenerateCourtOrdersIT {
         when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
+    private byte[] loadPdfAsBytes() throws IOException {
+        return resourceAsBytes("classpath:Test.pdf");
+    }
+
     @Test
-    public void shouldRegenerateCourtOrdersAndCoverLettersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOffline()
+    void shouldRegenerateCourtOrdersAndCoverLettersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOffline()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -157,6 +177,10 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
 
+
+        byte[] byteArray = loadPdfAsBytes();
+        stubCdamDownloadBinaryWith("81759115-d69e-4818-a0c5-a1f343d4f914", byteArray);
+        stubCdamDownloadBinaryWith("5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d", byteArray);
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
                 "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
@@ -212,12 +236,18 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .getContentAsString();
 
         assertThatJson(actualResponse)
-            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSuccess()));
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER)
+            .node("data.letterPacks")
+            .isArray()
+            .hasSize(6);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
-    public void shouldRegenerateCourtOrdersWithoutCoverLettersForOnlineApplicants()
+    void shouldRegenerateCourtOrdersWithoutCoverLettersForOnlineApplicants()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -292,7 +322,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
     }
 
     @Test
-    public void shouldRegenerateCourtOrdersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistForDigitalCivilPartnershipCase()
+    void shouldRegenerateCourtOrdersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistForDigitalCivilPartnershipCase()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -370,7 +400,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
     }
 
     @Test
-    public void shouldRegenerateRequiredDocsWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOfflineJudicialSeparation()
+    void shouldRegenerateRequiredDocsWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOfflineJudicialSeparation()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -452,10 +482,17 @@ public class CaseworkerRegenerateCourtOrdersIT {
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess()));
+
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER)
+            .node("data.letterPacks")
+            .isArray()
+            .hasSize(2);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
-    public void shouldRegenerateCourtOrdersAndCoverLettersWhenOfflineJudicialSeparationAndApplicantsAreRepresented()
+    void shouldRegenerateCourtOrdersAndCoverLettersWhenOfflineJudicialSeparationAndApplicantsAreRepresented()
         throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -476,6 +513,13 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+
+        String testString = "a simple test";
+        // Convert the string to byte array
+        byte[] byteArray = testString.getBytes();
+        stubCdamDownloadBinaryWith("81759115-d69e-4818-a0c5-a1f343d4f914", byteArray);
+        stubCdamDownloadBinaryWith("5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d", byteArray);
+        stubCdamDownloadBinaryWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002", byteArray);
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -533,9 +577,10 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .getContentAsString();
 
         assertThatJson(actualResponse)
-            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineSolicitorJudicialSeparationSuccess()));
 
+        verifyNoInteractions(notificationService);
     }
 
     private String expectedCcdAboutToSubmitCallbackSuccess() throws IOException {
