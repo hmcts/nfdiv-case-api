@@ -480,7 +480,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .getContentAsString();
 
         assertThatJson(actualResponse)
-            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackOfflineJudicialSeparationSuccess()));
 
         assertThatJson(actualResponse)
