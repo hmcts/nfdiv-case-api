@@ -158,6 +158,14 @@ public final class DocumentUtil {
             }
         }
 
+        if (NOTICE_OF_PROCEEDINGS_APP_1.equals(documentType)) {
+            return caseData.getApplicant1().isConfidentialContactDetails();
+        }
+
+        if (NOTICE_OF_PROCEEDINGS_APP_2.equals(documentType)) {
+            return caseData.getApplicant2().isConfidentialContactDetails();
+        }
+
         return isAnApplicantConfidential && documentType.isPotentiallyConfidential();
     }
 
