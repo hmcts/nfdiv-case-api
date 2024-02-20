@@ -168,6 +168,7 @@ uk:
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '8fa6008b-1541-44bc-9ddd-45fa4cd3222c'
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'cdee584c-db6a-4c3a-b2eb-5956940cab58'
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310'
+            APPLICANT_NAME_UPDATED: 'ef8c96ed-a05e-4c96-9d85-39024a40e167'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
@@ -285,7 +286,7 @@ uk:
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '8fa6008b-1541-44bc-9ddd-45fa4cd3222c' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'cdee584c-db6a-4c3a-b2eb-5956940cab58' #TODO - Welsh translation needed
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '7d86d77b-125e-4ea6-ac09-d9aa0b755714'
-
+            APPLICANT_NAME_UPDATED: 'ef8c96ed-a05e-4c96-9d85-39024a40e167' #TODO - Welsh translation needed
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
