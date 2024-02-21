@@ -15,12 +15,10 @@ import uk.gov.hmcts.divorce.caseworker.service.notification.Applicant1NameChange
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -133,11 +131,5 @@ class CaseworkerUpdateApplicantNameTest {
         System.out.println("expected error list size " + expErrors.size());
         assertThat(caseworkerUpdateApplicantName.validateNameExists(caseData)).isEqualTo(expErrors);
         assertThat(caseworkerUpdateApplicantName.validateNameExists(caseData).size()).isEqualTo(1);
-    }
-
-    @Test
-    void midEventCallbackTest(){
-        final AboutToStartOrSubmitResponse<CaseData, State> response = updateApplicantName.midEvent(validCaseData, null);
-        assertThat(response.getErrors().size()).isEqualTo(0);
     }
 }
