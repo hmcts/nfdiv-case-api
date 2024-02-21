@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ORDER_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
@@ -81,6 +82,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put("dueDateString", ". You can apply from 20 June 2021.");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -104,6 +106,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
         expectedEntries.put("dueDateString", ".");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -127,6 +130,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
         expectedEntries.put("dueDateString", ".");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -150,6 +154,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put("dueDateString", " on 20 June 2021.");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -174,6 +179,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
         expectedEntries.put("dueDateString", ".");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -198,6 +204,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
         expectedEntries.put("dueDateString", ".");
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -224,6 +231,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -251,6 +259,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -276,6 +285,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -303,6 +313,7 @@ public class ServiceOrderTemplateContentTest {
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -360,6 +371,7 @@ public class ServiceOrderTemplateContentTest {
         caseData.getApplicant2().setFirstName("resp full");
         caseData.getApplicant2().setLastName("name");
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 20));
         return caseData;
     }
 
