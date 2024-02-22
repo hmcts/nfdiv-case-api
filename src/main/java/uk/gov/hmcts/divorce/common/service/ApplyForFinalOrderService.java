@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderStat
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
+import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2Sol;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
@@ -29,6 +30,9 @@ public class ApplyForFinalOrderService {
     private SetFinalOrderFieldsAsApplicant2 setFinalOrderFieldsAsApplicant2;
 
     @Autowired
+    private SetFinalOrderFieldsAsApplicant2Sol setFinalOrderFieldsAsApplicant2Sol;
+
+    @Autowired
     private ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
 
     @Autowired
@@ -46,6 +50,14 @@ public class ApplyForFinalOrderService {
 
         return CaseTaskRunner.caseTasks(
             setFinalOrderFieldsAsApplicant2,
+            progressApplicant2FinalOrderState
+        ).run(caseDetails);
+    }
+
+    public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant2Sol(final CaseDetails<CaseData, State> caseDetails) {
+
+        return CaseTaskRunner.caseTasks(
+            setFinalOrderFieldsAsApplicant2Sol,
             progressApplicant2FinalOrderState
         ).run(caseDetails);
     }

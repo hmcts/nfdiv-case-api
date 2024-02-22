@@ -296,4 +296,9 @@ public class CommonContent {
             templateVars.put(IN_TIME, YES);
         }
     }
+
+    public void setIsDivorceAndIsDissolutionVariables(CaseData caseData, Map<String, String> templateVars) {
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+    }
 }
