@@ -1,12 +1,13 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.Map;
@@ -35,22 +36,21 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
-@Component
-@Slf4j
-public class ConditionalOrderPronouncedTemplateContent {
 
-    @Autowired
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class ConditionalOrderGrantedTemplateContent {
+
     private CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long caseId,
-                                     final LanguagePreference languagePreference) {
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
+
 
         log.info("For ccd case reference {} ", caseId);
 
@@ -59,7 +59,7 @@ public class ConditionalOrderPronouncedTemplateContent {
         final boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
-        Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(languagePreference);
 
         templateContent.put(JUDGE_NAME, conditionalOrder.getPronouncementJudge());
         templateContent.put(COURT_NAME, conditionalOrder.getCourt() != null ? conditionalOrder.getCourt().getLabel() : null);

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content;
+package uk.gov.hmcts.divorce.document.content.templatecontent;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +28,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMI
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -64,20 +66,20 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
-class ConditionalOrderPronouncedTemplateContentTest {
+class ConditionalOrderGrantedTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
 
     @Mock
-    private DocmosisCommonContent docmosisCommonContent;
+    private uk.gov.hmcts.divorce.document.content.DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
+    private ConditionalOrderGrantedTemplateContent conditionalOrderGrantedTemplateContent;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(conditionalOrderPronouncedTemplateContent, "finalOrderOffsetDays", 43);
+        ReflectionTestUtils.setField(conditionalOrderGrantedTemplateContent, "finalOrderOffsetDays", 43);
     }
 
     @Test
@@ -125,7 +127,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH);
+            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -194,7 +196,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, WELSH);
+            conditionalOrderGrantedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -216,5 +218,11 @@ class ConditionalOrderPronouncedTemplateContentTest {
             entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
             entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY));
+    }
+
+    @Test
+    public void shouldGetSupportedTemplates() {
+        assertThat(conditionalOrderGrantedTemplateContent.getSupportedTemplates())
+            .containsOnly(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
     }
 }

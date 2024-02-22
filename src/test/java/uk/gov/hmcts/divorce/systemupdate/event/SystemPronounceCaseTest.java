@@ -1,11 +1,10 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -17,25 +16,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedCoversheet;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -43,11 +38,8 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 public class SystemPronounceCaseTest {
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @Mock
     private ConditionalOrderPronouncedNotification notification;
@@ -56,13 +48,7 @@ public class SystemPronounceCaseTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
-
-    @Mock
-    private GenerateConditionalOrderPronouncedCoversheet generateCoversheetDocument;
-
-    @Mock
-    private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
+    private DocumentGenerator documentGenerator;
 
     @InjectMocks
     private SystemPronounceCase underTest;
@@ -90,7 +76,11 @@ public class SystemPronounceCaseTest {
 
         assertThat(response.getState()).isEqualTo(ConditionalOrderPronounced);
 
-        verify(generateConditionalOrderPronouncedDocument).apply(details);
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED,
+            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+            caseData,
+            details.getId());
         verifyNoInteractions(notificationDispatcher);
     }
 
@@ -108,7 +98,11 @@ public class SystemPronounceCaseTest {
 
         assertThat(response.getState()).isEqualTo(SeparationOrderGranted);
 
-        verify(generateConditionalOrderPronouncedDocument).apply(details);
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED,
+            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+            caseData,
+            details.getId());
         verifyNoInteractions(notificationDispatcher);
     }
 
@@ -120,26 +114,7 @@ public class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        underTest.submitted(details, details);
-
         verify(notificationDispatcher).send(notification, caseData, details.getId());
-    }
-
-    @Test
-    void shouldNotSendNotificationAndLogErrorIfNotificationTemplateExceptionIsThrown() {
-
-        final NotificationTemplateException notificationTemplateException = new NotificationTemplateException("Message");
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-        doThrow(notificationTemplateException)
-            .when(notificationDispatcher)
-            .send(notification, caseData, details.getId());
-
-        underTest.submitted(details, details);
-
     }
 
     @Test
@@ -155,8 +130,12 @@ public class SystemPronounceCaseTest {
 
         underTest.aboutToSubmit(details, details);
 
-        verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
-        verifyNoInteractions(notificationDispatcher);
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED,
+            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+            caseData,
+            details.getId());
+        verify(notificationDispatcher).send(notification, caseData, details.getId());
     }
 
     @Test
@@ -178,14 +157,14 @@ public class SystemPronounceCaseTest {
             .data(caseDataNew)
             .build();
 
-        when(removeExistingConditionalOrderPronouncedDocument.apply(detailsNew)).thenReturn(detailsNew);
-        when(generateConditionalOrderPronouncedDocument.apply(detailsNew)).thenReturn(detailsNew);
-
         underTest.aboutToSubmit(detailsNew, detailsOld);
 
-        verify(removeExistingConditionalOrderPronouncedDocument).apply(detailsNew);
-        verify(generateConditionalOrderPronouncedDocument).apply(detailsNew);
-        verifyNoInteractions(notificationDispatcher);
+        verify(documentGenerator).generateAndStoreCaseDocument(CONDITIONAL_ORDER_GRANTED,
+            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID,
+            CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME,
+            caseDataNew,
+            detailsNew.getId());
+        verify(notificationDispatcher).send(notification, caseDataNew, detailsNew.getId());
     }
 
     private void setConditionalOrder(final CaseData caseData) {

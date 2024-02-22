@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ConditionalOrderPronouncedTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderGrantedTemplateContent;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATIO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 
+// TODO: Aaron - Add unit test class back for this from master.
 @Component
 @Slf4j
 public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
@@ -25,7 +26,7 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ConditionalOrderPronouncedTemplateContent conditionalOrderPronouncedTemplateContent;
+    private ConditionalOrderGrantedTemplateContent conditionalOrderPronouncedTemplateContent;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
