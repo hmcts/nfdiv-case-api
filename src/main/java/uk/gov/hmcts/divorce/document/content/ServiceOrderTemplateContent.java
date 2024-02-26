@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ORDER_TYPE;
@@ -113,6 +114,7 @@ public class ServiceOrderTemplateContent {
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
         templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed ? YES : NO);
         templateContent.put(ORDER_TYPE, caseData.isJudicialSeparationCase() ? SEPARATION_ORDER : CONDITIONAL_ORDER);
+        templateContent.put(ISSUE_DATE_POPULATED, caseData.getApplication().getIssueDate() != null);
 
         if (serviceApplicationDecisionDate != null) {
             templateContent.put(SERVICE_APPLICATION_DECISION_DATE,
