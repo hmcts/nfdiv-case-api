@@ -470,7 +470,9 @@ public enum State {
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
-        Withdrawn
+        Withdrawn,
+        AwaitingClarification,
+        AwaitingAmendedApplication
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
