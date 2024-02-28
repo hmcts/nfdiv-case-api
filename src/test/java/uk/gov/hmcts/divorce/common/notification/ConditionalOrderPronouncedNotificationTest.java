@@ -1,34 +1,27 @@
 package uk.gov.hmcts.divorce.common.notification;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
-import uk.gov.hmcts.divorce.document.print.LetterPrinter;
-import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,9 +30,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
@@ -66,7 +56,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class ConditionalOrderPronouncedNotificationTest {
@@ -80,32 +69,8 @@ class ConditionalOrderPronouncedNotificationTest {
     @Mock
     private CommonContent commonContent;
 
-    private static final DocumentPackInfo APPLICANT_1_TEST_PACK_INFO = new DocumentPackInfo(
-        ImmutableMap.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED, Optional.empty()
-        ),
-        ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
-        )
-    );
-    private static final DocumentPackInfo APPLICANT_2_TEST_PACK_INFO = new DocumentPackInfo(
-        ImmutableMap.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, Optional.of(JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID),
-            CONDITIONAL_ORDER_GRANTED, Optional.empty()
-        ),
-        ImmutableMap.of(
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
-        )
-    );
-
-    public static final String LETTER_ID = "letterId";
-
     @Mock
-    private LetterPrinter letterPrinter;
-
-    @Mock
-    private ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack;
+    private ConditionalOrderPronouncedPrinter printer;
 
     @InjectMocks
     private ConditionalOrderPronouncedNotification notification;
@@ -540,65 +505,32 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldPrintLetterToApplicant1IfOffline() {
-
-        CaseData data = caseData();
-        when(conditionalOrderPronouncedDocumentPack.getDocumentPack(data, data.getApplicant1()))
-            .thenReturn(APPLICANT_1_TEST_PACK_INFO);
-        when(conditionalOrderPronouncedDocumentPack.getLetterId()).thenReturn(LETTER_ID);
-
-        ArgumentCaptor<CaseData> captorData = ArgumentCaptor.forClass(CaseData.class);
-        ArgumentCaptor<Long> captorCaseId = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<Applicant> captorApplicant = ArgumentCaptor.forClass(Applicant.class);
-        ArgumentCaptor<DocumentPackInfo> captorDocumentPackInfo = ArgumentCaptor.forClass(DocumentPackInfo.class);
-        ArgumentCaptor<String> captorLetterId = ArgumentCaptor.forClass(String.class);
+    void shouldSendLetterToApplicant1IfOffline() {
+        CaseData data = CaseData.builder().build();
 
         notification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
-        verify(letterPrinter).sendLetters(
-            captorData.capture(),
-            captorCaseId.capture(),
-            captorApplicant.capture(),
-            captorDocumentPackInfo.capture(),
-            captorLetterId.capture()
+        verify(printer).sendLetter(
+            eq(data),
+            eq(TEST_CASE_ID),
+            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1),
+            eq(data.getApplicant1())
         );
-
-        assertEquals(data, captorData.getValue());
-        assertEquals(TEST_CASE_ID, captorCaseId.getValue());
-        assertEquals(data.getApplicant1(), captorApplicant.getValue());
-        assertEquals(APPLICANT_1_TEST_PACK_INFO, captorDocumentPackInfo.getValue());
-        assertEquals(LETTER_ID, captorLetterId.getValue());
     }
 
     @Test
     void shouldSendLetterToApplicant2IfOffline() {
-
-        CaseData data = validApplicant2CaseData();
-        when(conditionalOrderPronouncedDocumentPack.getDocumentPack(data, data.getApplicant2()))
-            .thenReturn(APPLICANT_2_TEST_PACK_INFO);
-        when(conditionalOrderPronouncedDocumentPack.getLetterId()).thenReturn(LETTER_ID);
-
-        ArgumentCaptor<CaseData> captorData = ArgumentCaptor.forClass(CaseData.class);
-        ArgumentCaptor<Long> captorCaseId = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<Applicant> captorApplicant = ArgumentCaptor.forClass(Applicant.class);
-        ArgumentCaptor<DocumentPackInfo> captorDocumentPackInfo = ArgumentCaptor.forClass(DocumentPackInfo.class);
-        ArgumentCaptor<String> captorLetterId = ArgumentCaptor.forClass(String.class);
+        CaseData data = CaseData.builder()
+            .build();
 
         notification.sendToApplicant2Offline(data, TEST_CASE_ID);
 
-        verify(letterPrinter).sendLetters(
-            captorData.capture(),
-            captorCaseId.capture(),
-            captorApplicant.capture(),
-            captorDocumentPackInfo.capture(),
-            captorLetterId.capture()
+        verify(printer).sendLetter(
+            eq(data),
+            eq(TEST_CASE_ID),
+            eq(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2),
+            eq(data.getApplicant2())
         );
-
-        assertEquals(data, captorData.getValue());
-        assertEquals(TEST_CASE_ID, captorCaseId.getValue());
-        assertEquals(data.getApplicant2(), captorApplicant.getValue());
-        assertEquals(APPLICANT_2_TEST_PACK_INFO, captorDocumentPackInfo.getValue());
-        assertEquals(LETTER_ID, captorLetterId.getValue());
     }
 
     @Test
