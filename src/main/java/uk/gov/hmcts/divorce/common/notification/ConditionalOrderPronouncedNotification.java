@@ -1,25 +1,26 @@
 package uk.gov.hmcts.divorce.common.notification;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.document.print.LetterPrinter;
-import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.divorce.systemupdate.service.print.ConditionalOrderPronouncedPrinter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
@@ -39,7 +40,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class ConditionalOrderPronouncedNotification implements ApplicantNotification {
 
     public static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
@@ -50,12 +50,14 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Value("${final_order.respondent_eligible_from_offset_months}")
     private long finalOrderRespondentOffsetMonth;
 
-    private final NotificationService notificationService;
+    @Autowired
+    private NotificationService notificationService;
 
-    private final CommonContent commonContent;
+    @Autowired
+    private CommonContent commonContent;
 
-    private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack;
-    private final LetterPrinter letterPrinter;
+    @Autowired
+    private ConditionalOrderPronouncedPrinter conditionalOrderPronouncedPrinter;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -86,9 +88,12 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending conditional order letter to applicant 1 for case: {}", caseId);
-        final Applicant applicant1 = caseData.getApplicant1();
-        var documentPackInfo = conditionalOrderPronouncedDocumentPack.getDocumentPack(caseData, applicant1);
-        letterPrinter.sendLetters(caseData, caseId, applicant1, documentPackInfo, conditionalOrderPronouncedDocumentPack.getLetterId());
+        conditionalOrderPronouncedPrinter.sendLetter(
+            caseData,
+            caseId,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1,
+            caseData.getApplicant1()
+        );
     }
 
     @Override
@@ -123,9 +128,12 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         log.info("Sending conditional order letter to applicant 2 for case: {}", caseId);
-        Applicant applicant2 = caseData.getApplicant2();
-        var documentPackInfo = conditionalOrderPronouncedDocumentPack.getDocumentPack(caseData, applicant2);
-        letterPrinter.sendLetters(caseData, caseId, applicant2, documentPackInfo, conditionalOrderPronouncedDocumentPack.getLetterId());
+        conditionalOrderPronouncedPrinter.sendLetter(
+            caseData,
+            caseId,
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2,
+            caseData.getApplicant2()
+        );
     }
 
     private Map<String, String> templateVars(final CaseData caseData,
