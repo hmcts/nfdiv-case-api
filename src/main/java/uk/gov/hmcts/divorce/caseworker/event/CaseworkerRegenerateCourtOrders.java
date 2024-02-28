@@ -33,8 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
@@ -106,7 +104,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating Final Order Granted document for Case Id: {}", details.getId());
-            removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(caseData, details.getId());
+            removeExistingNewFinalOrderGrantedCoverLetters(caseData);
             removeExistingAndGenerateNewFinalOrderGrantedDoc(details);
         }
 
@@ -157,7 +155,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .build();
     }
 
-    private void removeExistingAndGenerateNewFinalOrderGrantedCoverLetters(CaseData caseData, long caseId) {
+    private void removeExistingNewFinalOrderGrantedCoverLetters(CaseData caseData) {
 
         final List<DocumentType> documentTypesToRemove =
             List.of(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
@@ -167,29 +165,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
                 .removeIf(document -> documentTypesToRemove.contains(document.getValue().getDocumentType()));
         }
 
-        if (caseData.getApplicant1().isApplicantOffline()) {
-            var app1 = caseData.getApplicant1();
-
-            documentGenerator.generateAndStoreCaseDocument(
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-                FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-                FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                app1);
-        }
-
-        if (caseData.getApplicant2().isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())) {
-            var app2 = caseData.getApplicant2();
-
-            documentGenerator.generateAndStoreCaseDocument(
-                FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-                FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-                FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-                caseData,
-                caseId,
-                app2);
-        }
     }
 
     private void removeExistingAndGenerateNewFinalOrderGrantedDoc(CaseDetails<CaseData, State> caseDetails) {
