@@ -228,21 +228,6 @@ class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId(),
-            caseData.getApplicant1());
-
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId(),
-            caseData.getApplicant2()
-        );
-
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED,
             FINAL_ORDER_TEMPLATE_ID,
             FINAL_ORDER_DOCUMENT_NAME,
@@ -324,13 +309,6 @@ class CaseworkerRegenerateCourtOrdersTest {
 
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId(),
-            caseData.getApplicant2()
-        );
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED, FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME,
             caseData, caseDetails.getId());
         verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, TEST_CASE_ID);
