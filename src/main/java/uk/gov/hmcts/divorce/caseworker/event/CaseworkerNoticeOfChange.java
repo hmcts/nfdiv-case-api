@@ -196,7 +196,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     }
 
     private void updateSolicitorInformation(CaseData data, UserRole orgPolicyCaseAssignedRole, Applicant applicant) {
-        if (!data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) {
+        if (data.getNoticeOfChange().getAreTheyRepresented() == null || !data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) {
             Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(new Solicitor(), orgPolicyCaseAssignedRole);
             applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(NO);
