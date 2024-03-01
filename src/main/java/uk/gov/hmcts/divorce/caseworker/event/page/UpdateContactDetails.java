@@ -102,7 +102,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, APPLICANTS_OR_APPLICANT1S))
                     .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                     .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
-                    .optionalWithLabel(Solicitor::getAddressOverseas, getLabel(SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optionalWithLabel(Solicitor::getAddressOverseas,
+                        getLabel(SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL, APPLICANTS_OR_APPLICANT1S))
                     .optional(Solicitor::getAgreeToReceiveEmailsCheckbox)
                 .done()
             .done();
@@ -125,7 +126,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                    .optionalWithLabel(Solicitor::getAddressOverseas, getLabel(SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getAddressOverseas,
+                        getLabel(SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .done()
             .done();
     }
