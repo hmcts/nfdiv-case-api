@@ -123,7 +123,7 @@ public class Applicant {
     @CCD(label = "Address")
     private AddressGlobalUK address;
 
-    @CCD(label = "Is the address outside of the UK?")
+    @CCD(label = "Is this an international address?")
     private YesOrNo addressOverseas;
 
     @CCD(
