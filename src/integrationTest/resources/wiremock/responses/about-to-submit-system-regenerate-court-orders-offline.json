@@ -113,18 +113,6 @@
           "documentFileName": "${json-unit.any-string}",
           "documentType": "finalOrderGranted"
         }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
-            "document_filename": "conditionalOrderGranted.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa/binary"
-          },
-          "documentFileName": "conditionalOrderGranted.pdf",
-          "documentType": "conditionalOrderGranted"
-        }
       }
     ],
     "dataVersion": 5,

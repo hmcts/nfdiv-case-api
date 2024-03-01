@@ -119,27 +119,6 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
                     List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
                             CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2));
 
-            var applicant1 = caseData.getApplicant1();
-            var applicant2 = caseData.getApplicant2();
-
-            Map<Applicant, Boolean> applicantStatusMap = Map.of(
-                applicant1, applicant1.isApplicantOffline(),
-                applicant2, applicant2.isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())
-            );
-
-
-            applicantStatusMap.entrySet().stream()
-                .filter(Map.Entry::getValue)
-                .forEach(applicantEntry -> {
-                    Applicant applicant = applicantEntry.getKey();
-                    documentGenerator.generateDocuments(
-                        caseData,
-                        details.getId(),
-                        applicant,
-                        certificateOfEntitlementDocumentPack.getDocumentPack(caseData, applicant)
-                    );
-                });
-
             log.info("Completed generating certificate of entitlement pdf for CaseID: {}", details.getId());
         }
         notificationDispatcher.send(regenerateCourtOrdersNotification, caseData, details.getId());
