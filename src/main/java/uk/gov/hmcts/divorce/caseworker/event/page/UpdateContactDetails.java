@@ -44,7 +44,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String GENDER_LABEL = "What is the ${%s} gender?";
     private static final String GENDER_HINT_LABEL = "The ${%s} gender is collected for statistical purposes only";
     private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
-    private static final String ADDRESS_OVERSEAS_LABEL = "is ${} address outside of the UK?";
+    private static final String ADDRESS_OVERSEAS_LABEL = "is ${} address international?";
     private static final String ADDRESS_LABEL = "${%s} home address";
     private static final String EMAIL_LABEL = "${%s} email address";
     private static final String SOLICITOR_DETAILS_LABEL = "### ${%s} solicitor's details";

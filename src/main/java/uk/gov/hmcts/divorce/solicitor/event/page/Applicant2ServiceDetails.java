@@ -112,6 +112,10 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     null,
                     "${labelContentApplicant2UC} postal address",
                     "This address will be used to notify them about the application")
+                .mandatory(Applicant::getAddressOverseas,
+                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
+                    null,
+                    "Is ${labelContentApplicant2UC} postal address international?")
             .done();
     }
 

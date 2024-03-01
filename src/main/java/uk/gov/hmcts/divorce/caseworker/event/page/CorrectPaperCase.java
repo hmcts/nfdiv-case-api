@@ -118,7 +118,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                 "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
                 .mandatory(Applicant::getContactDetailsType)
-                .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentApplicantsOrApplicant1s} address outside of the UK?")
+                .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentApplicantsOrApplicant1s} address international?")
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentApplicantsOrApplicant1s} address")
                 .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentApplicantsOrApplicant1s} phone number")
                 .optionalWithLabel(Applicant::getEmail, "${labelContentApplicantsOrApplicant1s} email address")
@@ -152,7 +152,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                     "Have they changed their name since they ${labelContentGotMarriedOrFormedCivilPartnership}?")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
-                .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentRespondentsOrApplicant2s} address outside of the UK?")
+                .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentRespondentsOrApplicant2s} address international?")
                 .mandatoryWithLabel(Applicant::getAddress, "${labelContentRespondentsOrApplicant2s} address")
                 .optionalWithLabel(Applicant::getPhoneNumber, "${labelContentRespondentsOrApplicant2s} phone number")
                 .optionalWithLabel(Applicant::getEmail, "${labelContentRespondentsOrApplicant2s} email address")
