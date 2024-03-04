@@ -90,7 +90,7 @@
         "value": {
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/90ac37a0-b723-4722-9723-86157e4ee450",
-            "document_filename": "${json-unit.any-string}",
+            "document_filename": "judicialSeparationOrderGranted.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/90ac37a0-b723-4722-9723-86157e4ee450/binary"
           },
           "documentFileName": "judicialSeparationOrderGranted.pdf",
@@ -105,7 +105,7 @@
             "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/94e63858-bda1-11ed-afa1-0242ac120002/binary"
           },
-          "documentFileName": "judicialSeparationOrderGrantedSolicitorCoversheet-1616591401473378-2022-02-15:13:39.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "coGrantedCoversheetApp2"
         }
       },
@@ -117,56 +117,8 @@
             "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/94e63858-bda1-11ed-afa1-0242ac120002/binary"
           },
-          "documentFileName": "judicialSeparationOrderGrantedSolicitorCoversheet-1616591401473378-2022-02-15:13:39.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "coGrantedCoversheet"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d/binary"
-          },
-          "documentFileName": "certificateOfEntitlementCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "certificateOfEntitlementCoverLetter"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d/binary"
-          },
-          "documentFileName": "certificateOfEntitlementCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "certificateOfEntitlementCoverLetterApp2"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921/binary"
-          },
-          "documentFileName": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "finalOrderGrantedCoverLetterApp2"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921/binary"
-          },
-          "documentFileName": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "finalOrderGrantedCoverLetterApp1"
         }
       }
     ],
