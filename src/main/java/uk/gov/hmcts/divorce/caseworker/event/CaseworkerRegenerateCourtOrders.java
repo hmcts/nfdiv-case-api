@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPr
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
