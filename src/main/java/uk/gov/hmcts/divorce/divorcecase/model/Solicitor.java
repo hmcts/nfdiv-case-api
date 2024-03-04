@@ -110,10 +110,8 @@ public class Solicitor {
             String ukPostcodeRegex = "([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})";
             Matcher matcher = Pattern.compile(ukPostcodeRegex).matcher(this.address);
             if (matcher.find()) {
-                boolean endsWithNewLine = this.address.endsWith("\n");
                 String postcode =  matcher.group(1);
-                String addressPostcodeStripped = this.address.replace(postcode, "").trim();
-                addressPostcodeStripped = addressPostcodeStripped
+                String addressPostcodeStripped = this.address.replace(postcode, "")
                     .replace("\n\n", "\n")
                     .replace(",,", ",")
                     .replace("\n,\n", "\n")
@@ -124,7 +122,7 @@ public class Solicitor {
                     addressPostcodeStripped += ",";
                 }
                 addressPostcodeStripped += "\n" + postcode;
-                return endsWithNewLine ? addressPostcodeStripped + "\n" : addressPostcodeStripped;
+                return this.address.endsWith("\n") ? addressPostcodeStripped + "\n" : addressPostcodeStripped;
             }
         }
 
