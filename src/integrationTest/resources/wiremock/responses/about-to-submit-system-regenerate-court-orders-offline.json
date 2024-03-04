@@ -34,60 +34,12 @@
         "id": "${json-unit.any-string}",
         "value": {
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533/binary"
-          },
-          "documentFileName": "conditionalOrderGrantedCoversheet-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "coGrantedCoversheetApp2"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921/binary"
-          },
-          "documentFileName": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "finalOrderGrantedCoverLetterApp2"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/411bfbe3-af6c-4458-92f7-7854d3d1de24",
             "document_filename": "${json-unit.any-string}",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/411bfbe3-af6c-4458-92f7-7854d3d1de24/binary"
           },
-          "documentFileName": "certificateOfEntitlementCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "certificateOfEntitlementCoverLetterApp2"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533/binary"
-          },
-          "documentFileName": "conditionalOrderGrantedCoversheet-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "coGrantedCoversheet"
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921/binary"
-          },
-          "documentFileName": "FinalOrderGrantedCoverLetter-1616591401473378-2022-02-15:13:39.pdf",
-          "documentType": "finalOrderGrantedCoverLetterApp1"
         }
       },
       {
@@ -113,10 +65,69 @@
           "documentFileName": "${json-unit.any-string}",
           "documentType": "finalOrderGranted"
         }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921/binary"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "finalOrderGrantedCoverLetterApp2"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/959ddaf2-75d8-4d49-8a2d-bc29d451f921/binary"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "finalOrderGrantedCoverLetterApp1"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
+            "document_filename": "conditionalOrderGranted.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/d2fcd6f7-5365-4b8a-af15-ce3c949173aa/binary"
+          },
+          "documentFileName": "conditionalOrderGranted.pdf",
+          "documentType": "conditionalOrderGranted"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533/binary"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coGrantedCoversheetApp2"
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/b3d8d9de-8706-4b6e-881c-d8b400d6c533/binary"
+          },
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "coGrantedCoversheet"
+        }
       }
     ],
     "dataVersion": 5,
-    "warnings": [],
-    "sentNotifications": {}
+    "warnings": []
   }
 }
