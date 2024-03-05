@@ -120,7 +120,7 @@ public class Solicitor {
                     .trim();
                 if (addressPostcodeStripped.substring(0, addressPostcodeStripped.lastIndexOf("\n") - 1).endsWith(",")
                         && !addressPostcodeStripped.endsWith(",")) {
-                        addressPostcodeStripped += ",";
+                    addressPostcodeStripped += ",";
                 }
                 addressPostcodeStripped += "\n" + postcode;
                 return this.address.endsWith("\n") ? addressPostcodeStripped + "\n" : addressPostcodeStripped;
