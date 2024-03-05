@@ -101,7 +101,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
 
         if (caseData.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent()) {
             log.info("Regenerating Final Order Granted document for Case Id: {}", details.getId());
-            removeExistingNewFinalOrderGrantedCoverLetters(caseData);
+            removeExistingFinalOrderGrantedCoverLetters(caseData);
             removeExistingAndGenerateNewFinalOrderGrantedDoc(details);
         }
 
@@ -131,7 +131,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .build();
     }
 
-    private void removeExistingNewFinalOrderGrantedCoverLetters(CaseData caseData) {
+    private void removeExistingFinalOrderGrantedCoverLetters(CaseData caseData) {
 
         final List<DocumentType> documentTypesToRemove =
             List.of(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
