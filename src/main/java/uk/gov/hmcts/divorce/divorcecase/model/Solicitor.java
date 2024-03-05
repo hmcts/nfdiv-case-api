@@ -118,7 +118,8 @@ public class Solicitor {
                     .replace(", , ", ", ")
                     .replace(" \n, \n", "\n")
                     .trim();
-                if (addressPostcodeStripped.substring(0, addressPostcodeStripped.lastIndexOf("\n") - 1).endsWith(",")
+
+                if (addressPostcodeStripped.substring(0, addressPostcodeStripped.indexOf("\n")).endsWith(",")
                         && !addressPostcodeStripped.endsWith(",")) {
                     addressPostcodeStripped += ",";
                 }
