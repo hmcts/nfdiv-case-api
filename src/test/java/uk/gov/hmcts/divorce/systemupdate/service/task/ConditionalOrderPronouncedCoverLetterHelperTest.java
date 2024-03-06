@@ -145,7 +145,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder()
                 .name("App1 Sol")
-                .address("221B Baker Street,\n London,\n NW1 6XE,\n UK")
+                .address("221B Baker Street,\n London,\n NW1 6XE,\n UK\n")
                 .build()
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -156,7 +156,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         applicant1TemplateVars.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         applicant1TemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         applicant1TemplateVars.put(NAME, "App1 Sol");
-        applicant1TemplateVars.put(ADDRESS, "221B Baker Street,\n London,\n UK,\n NW1 6XE");
+        applicant1TemplateVars.put(ADDRESS, "221B Baker Street,\n London,\n UK,\n NW1 6XE\n");
         applicant1TemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         applicant1TemplateVars.put(IS_DIVORCE, true);
