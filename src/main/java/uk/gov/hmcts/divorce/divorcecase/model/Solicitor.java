@@ -122,7 +122,7 @@ public class Solicitor {
                     .replace(" \n  \n", " \n")
                     .replace("\n \n ", "\n ")
                     .replace(" \n \n", " \n")
-                    .trim();
+                    .stripTrailing();
 
                 if (addressPostcodeStripped.contains("\n")) {
                     String upToFirstNewLine = addressPostcodeStripped.substring(0, addressPostcodeStripped.indexOf("\n"));
