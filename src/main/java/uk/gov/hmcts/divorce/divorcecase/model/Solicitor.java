@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -106,7 +107,7 @@ public class Solicitor {
     }
 
     public String getAddress() {
-        if (YesOrNo.YES == getAddressOverseas() || this.address == null || this.address.equals("")) {
+        if (YesOrNo.YES == getAddressOverseas() || StringUtils.isEmpty(this.address)) {
             return this.address;
         }
         String ukPostcodeRegex = "([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})";
