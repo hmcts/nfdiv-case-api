@@ -116,15 +116,37 @@ public class Solicitor {
                     .replace(",,", ",")
                     .replace("\n,\n", "\n")
                     .replace(", , ", ", ")
-                    .replace(" \n, \n", "\n")
+                    .replace(" \n, \n", " \n")
+                    .replace("\n ,\n", "\n")
+                    .replace(", \n ,", ",")
+                    .replace(" \n  \n", " \n")
+                    .replace("\n \n ", "\n ")
+                    .replace(" \n \n", " \n")
                     .trim();
 
-                if (addressPostcodeStripped.substring(0, addressPostcodeStripped.indexOf("\n")).endsWith(",")
-                        && !addressPostcodeStripped.endsWith(",")) {
+                if (addressPostcodeStripped.contains("\n")) {
+                    String upToFirstNewLine = addressPostcodeStripped.substring(0, addressPostcodeStripped.indexOf("\n"));
+                    if (upToFirstNewLine.endsWith(",") && !addressPostcodeStripped.endsWith(",")) {
+                        addressPostcodeStripped += ",";
+                    } else if (upToFirstNewLine.endsWith(", ")
+                        && (!addressPostcodeStripped.endsWith(",") && !addressPostcodeStripped.endsWith(", "))) {
+                        addressPostcodeStripped += ", ";
+                    } else if (upToFirstNewLine.endsWith(" ") && !addressPostcodeStripped.endsWith(" ")) {
+                        addressPostcodeStripped += " ";
+                    }
+                    addressPostcodeStripped += "\n";
+                    if (addressPostcodeStripped.substring(0, upToFirstNewLine.length() + 2).endsWith(" ")) {
+                        addressPostcodeStripped += " ";
+                    }
+                } else if (this.address.substring(0, this.address.indexOf(postcode)).endsWith(",")
+                    && !addressPostcodeStripped.endsWith(",")) {
                     addressPostcodeStripped += ",";
+                } else if (this.address.substring(0, this.address.indexOf(postcode)).endsWith(", ")
+                    && !addressPostcodeStripped.endsWith(", ")) {
+                    addressPostcodeStripped += ", ";
                 }
-                addressPostcodeStripped += "\n" + postcode;
-                return this.address.endsWith("\n") ? addressPostcodeStripped + "\n" : addressPostcodeStripped;
+                addressPostcodeStripped += this.address.endsWith("\n") ? postcode + "\n" : postcode;
+                return addressPostcodeStripped;
             }
         }
 
