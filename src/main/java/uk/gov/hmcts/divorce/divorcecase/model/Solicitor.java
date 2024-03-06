@@ -106,50 +106,15 @@ public class Solicitor {
     }
 
     public String getAddress() {
-        if ((YesOrNo.NO == getAddressOverseas() || null == getAddressOverseas()) && (this.address != null && !this.address.equals(""))) {
-            String ukPostcodeRegex = "([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})";
-            Matcher matcher = Pattern.compile(ukPostcodeRegex).matcher(this.address);
-            if (matcher.find()) {
-                String postcode =  matcher.group(1);
-                String addressPostcodeStripped = this.address.replace(postcode, "")
-                    .replace("\n\n", "\n")
-                    .replace(",,", ",")
-                    .replace("\n,\n", "\n")
-                    .replace(", , ", ", ")
-                    .replace(" \n, \n", " \n")
-                    .replace("\n ,\n", "\n")
-                    .replace(", \n ,", ",")
-                    .replace(" \n  \n", " \n")
-                    .replace("\n \n ", "\n ")
-                    .replace(" \n \n", " \n")
-                    .stripTrailing();
-
-                if (addressPostcodeStripped.contains("\n")) {
-                    String upToFirstNewLine = addressPostcodeStripped.substring(0, addressPostcodeStripped.indexOf("\n"));
-                    if (upToFirstNewLine.endsWith(",") && !addressPostcodeStripped.endsWith(",")) {
-                        addressPostcodeStripped += ",";
-                    } else if (upToFirstNewLine.endsWith(", ")
-                        && (!addressPostcodeStripped.endsWith(",") && !addressPostcodeStripped.endsWith(", "))) {
-                        addressPostcodeStripped += ", ";
-                    } else if (upToFirstNewLine.endsWith(" ") && !addressPostcodeStripped.endsWith(" ")) {
-                        addressPostcodeStripped += " ";
-                    }
-                    addressPostcodeStripped += "\n";
-                    if (addressPostcodeStripped.substring(0, upToFirstNewLine.length() + 2).endsWith(" ")) {
-                        addressPostcodeStripped += " ";
-                    }
-                } else if (this.address.substring(0, this.address.indexOf(postcode)).endsWith(",")
-                    && !addressPostcodeStripped.endsWith(",")) {
-                    addressPostcodeStripped += ",";
-                } else if (this.address.substring(0, this.address.indexOf(postcode)).endsWith(", ")
-                    && !addressPostcodeStripped.endsWith(", ")) {
-                    addressPostcodeStripped += ", ";
-                }
-                addressPostcodeStripped += this.address.endsWith("\n") ? postcode + "\n" : postcode;
-                return addressPostcodeStripped;
-            }
+        if (YesOrNo.YES == getAddressOverseas() || this.address == null || this.address.equals("")) {
+            return this.address;
         }
-
+        String ukPostcodeRegex = "([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})";
+        Matcher matcher = Pattern.compile(ukPostcodeRegex).matcher(this.address);
+        if (matcher.find()) {
+            String postcode =  matcher.group(1);
+            return this.address.substring(0, this.address.indexOf(postcode) + postcode.length());
+        }
         return this.address;
     }
 }
