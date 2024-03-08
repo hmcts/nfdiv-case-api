@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service.print;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -59,6 +60,9 @@ public class RegenerateCourtOrdersPrinter {
             final String recipientName = isApplicant1 ? caseData.getApplicant1().getFullName() :
                     caseData.getApplicant2().getFullName();
 
+            final YesOrNo correspondenceAddressOverseas = isApplicant1 ? caseData.getApplicant1().getCorrespondenceAddressOverseas() :
+                caseData.getApplicant2().getCorrespondenceAddressOverseas();
+
             final String caseIdString = caseId.toString();
             final Print print =
                     new Print(
@@ -66,7 +70,8 @@ public class RegenerateCourtOrdersPrinter {
                             caseIdString,
                             caseIdString,
                             LETTER_TYPE_REGENERATE_COURT_ORDERS,
-                            recipientName
+                            recipientName,
+                            correspondenceAddressOverseas
                     );
             final UUID letterId = bulkPrintService.print(print);
 
