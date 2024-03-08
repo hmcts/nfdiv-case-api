@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
@@ -63,7 +62,6 @@ public class LetterPrinterTest {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
-        applicant.setAddressOverseas(YesOrNo.NO);
         DocumentPackInfo documentPackInfo = getDocumentPackInfo();
 
         List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList();
@@ -100,7 +98,6 @@ public class LetterPrinterTest {
 
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
-        applicant.setAddressOverseas(YesOrNo.NO);
         DocumentPackInfo documentPackInfo = new DocumentPackInfo(
             ImmutableMap.of(DocumentType.GENERAL_LETTER, Optional.empty()),
             ImmutableMap.of()
@@ -149,7 +146,6 @@ public class LetterPrinterTest {
         long caseId = TEST_CASE_ID;
 
         Applicant applicant = caseData.getApplicant1();
-        applicant.setAddressOverseas(YesOrNo.NO);
 
         DocumentPackInfo documentPackInfo = new DocumentPackInfo(
             ImmutableMap.of(DocumentType.GENERAL_LETTER, Optional.empty()),
