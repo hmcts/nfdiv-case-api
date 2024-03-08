@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -121,7 +122,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -196,7 +197,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
@@ -272,7 +273,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
@@ -351,7 +352,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.printWithD10Form(print);
@@ -407,7 +408,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         given(resource.getInputStream()).willThrow(new IOException("Corrupt data"));
@@ -437,7 +438,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -467,7 +468,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -524,7 +525,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -579,7 +580,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
-            false
+            YesOrNo.NO
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
