@@ -276,7 +276,7 @@ public class Applicant {
 
     @JsonIgnore
     public YesOrNo getCorrespondenceAddressOverseas() {
-        return this.isRepresented() ? NO : this.addressOverseas;
+        return this.isRepresented() ? this.getSolicitor().getAddressOverseas() : this.addressOverseas;
     }
 
     @JsonIgnore
