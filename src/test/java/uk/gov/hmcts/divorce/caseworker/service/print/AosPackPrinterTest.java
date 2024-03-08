@@ -110,6 +110,7 @@ class AosPackPrinterTest {
             .applicant2(
                 Applicant.builder()
                     .email("testresp@test.com")
+                    .addressOverseas(NO)
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
                     .build())
@@ -149,6 +150,7 @@ class AosPackPrinterTest {
             .applicant2(
                 Applicant.builder()
                     .email("testresp@test.com")
+                    .addressOverseas(NO)
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
                     .contactDetailsType(ContactDetailsType.PRIVATE)
@@ -197,6 +199,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().addressOverseas(NO).build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3)).build())
             .build();
 
@@ -241,6 +244,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().addressOverseas(NO).build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3, doc4)).build())
             .build();
 
@@ -290,9 +294,11 @@ class AosPackPrinterTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .contactDetailsType(ContactDetailsType.PRIVATE)
+                .addressOverseas(NO)
                 .build())
             .applicant2(Applicant.builder()
                 .contactDetailsType(ContactDetailsType.PRIVATE)
+                .addressOverseas(NO)
                 .build())
             .documents(CaseDocuments.builder()
                 .documentsGenerated(singletonList(application))
@@ -344,6 +350,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().addressOverseas(NO).build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc1, doc2, doc3, doc4)).build())
             .build();
 
@@ -457,7 +464,7 @@ class AosPackPrinterTest {
             .build();
 
         final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).addressOverseas(NO).build())
             .documents(CaseDocuments.builder()
                 .confidentialDocumentsGenerated(List.of(doc1))
                 .documentsGenerated(asList(doc2, doc3))
