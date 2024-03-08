@@ -130,8 +130,8 @@ class RegenerateCourtOrdersNotificationTest {
             .build());
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .certificateOfEntitlementDocument(certificateOfEntitlement.getValue()).
-            build());
+            .certificateOfEntitlementDocument(certificateOfEntitlement.getValue())
+            .build());
 
         when(conditionalOrderPronouncedDocPack.getDocumentPack(caseData, caseData.getApplicant2()))
             .thenReturn(APPLICANT_1_CONDITIONAL_ORDER_PRONOUNCED_PACK);
@@ -195,8 +195,8 @@ class RegenerateCourtOrdersNotificationTest {
             .build());
 
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .certificateOfEntitlementDocument(certificateOfEntitlement.getValue()).
-            build());
+            .certificateOfEntitlementDocument(certificateOfEntitlement.getValue())
+            .build());
 
         when(conditionalOrderPronouncedDocPack.getDocumentPack(caseData, caseData.getApplicant2()))
             .thenReturn(APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK);
