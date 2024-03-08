@@ -84,7 +84,7 @@ public class RegenerateCourtOrdersPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
-            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).addressOverseas(NO).build())
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .applicant2(Applicant.builder().build())
             .documents(
                 CaseDocuments.builder()
