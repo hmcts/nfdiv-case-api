@@ -63,7 +63,8 @@ public class LetterPrinter {
                     caseIdString,
                     caseIdString,
                     letterName,
-                    applicant.getFullName()
+                    applicant.getFullName(),
+                    applicant.getAddressOverseas().toBoolean()
                 );
                 final UUID letterId = bulkPrintService.print(print);
 
@@ -102,6 +103,12 @@ public class LetterPrinter {
                 case OTHER -> parties.name();
             };
 
+            var addressOverseas = switch (parties) {
+                case RESPONDENT -> caseData.getApplicant2().getAddressOverseas().toBoolean();
+                case APPLICANT -> caseData.getApplicant1().getAddressOverseas().toBoolean();
+                case OTHER -> false;
+            };
+
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
             letters.addAll(generalLetters);
 
@@ -110,7 +117,8 @@ public class LetterPrinter {
                 caseId,
                 caseId,
                 letterName,
-                recipientName
+                recipientName,
+                addressOverseas
             );
 
             final UUID letterId = bulkPrintService.print(print);

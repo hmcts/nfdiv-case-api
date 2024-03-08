@@ -33,6 +33,7 @@ public class BulkPrintService {
     private static final String CASE_REFERENCE_NUMBER_KEY = "caseReferenceNumber";
     private static final String CASE_IDENTIFIER_KEY = "caseIdentifier";
     private static final String RECIPIENTS = "recipients";
+    private static final String IS_INTERNATIONAL = "isInternational";
 
     @Autowired
     private SendLetterApi sendLetterApi;
@@ -108,7 +109,8 @@ public class BulkPrintService {
                     LETTER_TYPE_KEY, print.getLetterType(),
                     CASE_REFERENCE_NUMBER_KEY, print.getCaseRef(),
                     CASE_IDENTIFIER_KEY, print.getCaseId(),
-                    RECIPIENTS, print.getRecipients()
+                    RECIPIENTS, print.getRecipients(),
+                    IS_INTERNATIONAL, print.getIsInternational()
                 )))
             .letterId;
 

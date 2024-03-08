@@ -15,7 +15,7 @@ class PrintTest {
         final String letterType = RandomStringUtils.random(20, true, false);
         final String recipientName = RandomStringUtils.random(20, true, false);
 
-        Print print = new Print(null, caseId, null, letterType, recipientName);
+        Print print = new Print(null, caseId, null, letterType, recipientName, false);
 
         final List<String> recipients = print.getRecipients();
         final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
