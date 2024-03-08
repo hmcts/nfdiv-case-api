@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
@@ -125,7 +123,6 @@ public class Applicant {
     @CCD(label = "Address")
     private AddressGlobalUK address;
 
-    @Getter(AccessLevel.NONE)
     @CCD(label = "Is this an international address?")
     private YesOrNo addressOverseas;
 
@@ -278,7 +275,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    public YesOrNo getAddressOverseas() {
+    public YesOrNo getCorrespondenceAddressOverseas() {
         return this.isRepresented() ? NO : this.addressOverseas;
     }
 

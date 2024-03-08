@@ -65,7 +65,7 @@ public class LetterPrinter {
                     caseIdString,
                     letterName,
                     applicant.getFullName(),
-                    applicant.getAddressOverseas()
+                    applicant.getCorrespondenceAddressOverseas()
                 );
                 final UUID letterId = bulkPrintService.print(print);
 
@@ -104,9 +104,9 @@ public class LetterPrinter {
                 case OTHER -> parties.name();
             };
 
-            YesOrNo addressOverseas = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getAddressOverseas();
-                case APPLICANT -> caseData.getApplicant1().getAddressOverseas();
+            YesOrNo correspondenceAddressOverseas = switch (parties) {
+                case RESPONDENT -> caseData.getApplicant2().getCorrespondenceAddressOverseas();
+                case APPLICANT -> caseData.getApplicant1().getCorrespondenceAddressOverseas();
                 case OTHER -> YesOrNo.NO;
             };
 
@@ -119,7 +119,7 @@ public class LetterPrinter {
                 caseId,
                 letterName,
                 recipientName,
-                addressOverseas
+                correspondenceAddressOverseas
             );
 
             final UUID letterId = bulkPrintService.print(print);

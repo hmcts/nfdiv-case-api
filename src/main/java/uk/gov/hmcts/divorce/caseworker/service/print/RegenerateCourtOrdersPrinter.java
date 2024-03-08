@@ -60,8 +60,8 @@ public class RegenerateCourtOrdersPrinter {
             final String recipientName = isApplicant1 ? caseData.getApplicant1().getFullName() :
                     caseData.getApplicant2().getFullName();
 
-            final YesOrNo addressOverseas = isApplicant1 ? caseData.getApplicant1().getAddressOverseas() :
-                caseData.getApplicant2().getAddressOverseas();
+            final YesOrNo correspondenceAddressOverseas = isApplicant1 ? caseData.getApplicant1().getCorrespondenceAddressOverseas() :
+                caseData.getApplicant2().getCorrespondenceAddressOverseas();
 
             final String caseIdString = caseId.toString();
             final Print print =
@@ -71,7 +71,7 @@ public class RegenerateCourtOrdersPrinter {
                             caseIdString,
                             LETTER_TYPE_REGENERATE_COURT_ORDERS,
                             recipientName,
-                            addressOverseas
+                            correspondenceAddressOverseas
                     );
             final UUID letterId = bulkPrintService.print(print);
 
