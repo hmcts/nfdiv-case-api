@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import com.google.common.collect.ImmutableMap;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,8 +9,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack;
@@ -20,6 +25,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
@@ -100,6 +106,33 @@ class RegenerateCourtOrdersNotificationTest {
     void testSendToApplicant1Offline() {
         // Prepare test data
         CaseData caseData = new CaseData();
+
+        ListValue<DivorceDocument> conditionalOrderGranted = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_GRANTED)
+                .build())
+            .build();
+
+        ListValue<DivorceDocument> finalOrderDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(FINAL_ORDER_GRANTED)
+                .build())
+            .build();
+
+        ListValue<DivorceDocument> certificateOfEntitlement = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CERTIFICATE_OF_ENTITLEMENT)
+                .build())
+            .build();
+
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(conditionalOrderGranted, finalOrderDocument, certificateOfEntitlement))
+            .build());
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .certificateOfEntitlementDocument(certificateOfEntitlement.getValue()).
+            build());
+
         when(conditionalOrderPronouncedDocPack.getDocumentPack(caseData, caseData.getApplicant2()))
             .thenReturn(APPLICANT_1_CONDITIONAL_ORDER_PRONOUNCED_PACK);
         when(conditionalOrderPronouncedDocPack.getLetterId()).thenReturn(LETTER_ID);
@@ -137,8 +170,35 @@ class RegenerateCourtOrdersNotificationTest {
 
     @Test
     void testSendToApplicant2Offline() {
-        CaseData data = caseData();
-        when(conditionalOrderPronouncedDocPack.getDocumentPack(data, data.getApplicant2()))
+        CaseData caseData = caseData();
+
+        ListValue<DivorceDocument> conditionalOrderGranted = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CONDITIONAL_ORDER_GRANTED)
+                .build())
+            .build();
+
+        ListValue<DivorceDocument> finalOrderDocument = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(FINAL_ORDER_GRANTED)
+                .build())
+            .build();
+
+        ListValue<DivorceDocument> certificateOfEntitlement = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(CERTIFICATE_OF_ENTITLEMENT)
+                .build())
+            .build();
+
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(conditionalOrderGranted, finalOrderDocument, certificateOfEntitlement))
+            .build());
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .certificateOfEntitlementDocument(certificateOfEntitlement.getValue()).
+            build());
+
+        when(conditionalOrderPronouncedDocPack.getDocumentPack(caseData, caseData.getApplicant2()))
             .thenReturn(APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK);
         when(conditionalOrderPronouncedDocPack.getLetterId()).thenReturn(LETTER_ID);
 
@@ -148,7 +208,7 @@ class RegenerateCourtOrdersNotificationTest {
         ArgumentCaptor<DocumentPackInfo> captorDocumentPackInfo = ArgumentCaptor.forClass(DocumentPackInfo.class);
         ArgumentCaptor<String> captorLetterId = ArgumentCaptor.forClass(String.class);
 
-        notification.sendToApplicant2Offline(data, TEST_CASE_ID);
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
         verify(letterPrinter, times(3)).sendLetters(
             captorData.capture(),
@@ -158,13 +218,35 @@ class RegenerateCourtOrdersNotificationTest {
             captorLetterId.capture()
         );
 
-        Assertions.assertEquals(data, captorData.getValue());
+        Assertions.assertEquals(caseData, captorData.getValue());
         Assertions.assertEquals(TEST_CASE_ID, captorCaseId.getValue());
-        Assertions.assertEquals(data.getApplicant2(), captorApplicant.getValue());
+        Assertions.assertEquals(caseData.getApplicant2(), captorApplicant.getValue());
         Assertions.assertEquals(APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK, captorDocumentPackInfo.getValue());
         Assertions.assertEquals(LETTER_ID, captorLetterId.getValue());
     }
 
+    @Test
+    void shouldNotSendIfDocumentIsNotPresentOnCaseToOfflineApplicant1() {
+        // Prepare test data, where the document is not present on the case
+        CaseData caseData = new CaseData();
 
+        // Call the method under test
+        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        // Verify that the letterPrinter is not called
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
+    void shouldNotSendIfDocumentIsNotPresentOnCaseToOfflineApplicant2() {
+        // Prepare test data, where the document is not present on the case
+        CaseData caseData = new CaseData();
+
+        // Call the method under test
+        notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        // Verify that the letterPrinter is not called
+        verifyNoInteractions(letterPrinter);
+    }
 }
 
