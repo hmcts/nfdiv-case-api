@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderPronouncedPrinterTest {
+class ConditionalOrderPronouncedPrinterTest {
 
     @Mock
     private BulkPrintService bulkPrintService;

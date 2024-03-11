@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ResendConditionalOrderPronouncedNotificationTest {
+class ResendConditionalOrderPronouncedNotificationTest {
 
     @Mock
     private ConditionalOrderPronouncedPrinter conditionalOrderPronouncedPrinter;
@@ -26,7 +26,7 @@ public class ResendConditionalOrderPronouncedNotificationTest {
     private ResendConditionalOrderPronouncedNotification underTest;
 
     @Test
-    public void shouldSendLetterToOfflineApplicant1WhenCoPronouncedCoverLetterRegenerated() {
+    void shouldSendLetterToOfflineApplicant1WhenCoPronouncedCoverLetterRegenerated() {
         final var caseId = TEST_CASE_ID;
         final var data = validJointApplicant1CaseData();
         data.getApplicant1().setOffline(YES);
@@ -43,7 +43,7 @@ public class ResendConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    public void shouldNotSendLetterToApplicant1WhenCoPronouncedCoverLetterRegeneratedIsNO() {
+    void shouldNotSendLetterToApplicant1WhenCoPronouncedCoverLetterRegeneratedIsNO() {
         final var caseId = TEST_CASE_ID;
         final var data = validJointApplicant1CaseData();
         data.getApplicant1().setOffline(YES);
@@ -55,7 +55,7 @@ public class ResendConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    public void shouldSendLetterToOfflineApplicant2WhenCoPronouncedCoverLetterRegenerated() {
+    void shouldSendLetterToOfflineApplicant2WhenCoPronouncedCoverLetterRegenerated() {
         final var caseId = TEST_CASE_ID;
         final var data = validJointApplicant1CaseData();
         data.getApplicant2().setOffline(NO);
@@ -72,7 +72,7 @@ public class ResendConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    public void shouldNotSendLetterToApplicant2WhenCoPronouncedCoverLetterRegeneratedIsNO() {
+    void shouldNotSendLetterToApplicant2WhenCoPronouncedCoverLetterRegeneratedIsNO() {
         final var caseId = TEST_CASE_ID;
         final var data = validJointApplicant1CaseData();
         data.getApplicant2().setOffline(YES);

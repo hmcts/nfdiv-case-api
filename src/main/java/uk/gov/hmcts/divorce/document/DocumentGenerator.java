@@ -164,7 +164,7 @@ public class DocumentGenerator {
                         .stream()
                         .filter(doc -> doc.getValue().getDocumentType().equals(CERTIFICATE_OF_ENTITLEMENT))
                         .findFirst().orElseThrow();
-
+        // Update the case data with the regenerated certificate of entitlement, copy from generated document
         caseData.getConditionalOrder().setCertificateOfEntitlementDocument(regeneratedCertificateOfEntitlement.getValue());
     }
 }
