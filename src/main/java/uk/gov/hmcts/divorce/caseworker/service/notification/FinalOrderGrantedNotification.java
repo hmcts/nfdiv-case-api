@@ -64,6 +64,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         Applicant applicant1 = caseData.getApplicant1();
         var documentPackInfo = finalOrderGrantedDocumentPack.getDocumentPack(caseData, applicant1);
         letterPrinter.sendLetters(caseData, caseId, applicant1, documentPackInfo, finalOrderGrantedDocumentPack.getLetterId());
+
     }
 
     @Override

@@ -37,8 +37,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT1;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
@@ -46,15 +44,13 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_EN
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRegenerateCourtOrdersTest {
+class CaseworkerRegenerateCourtOrdersTest {
 
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
@@ -189,10 +185,9 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateConditionalOrderPronouncedCoversheetDocument)
-            .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -229,26 +224,12 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_1,
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId(),
-            caseData.getApplicant1());
-
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId(),
-            caseData.getApplicant2()
-        );
-
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED,
             FINAL_ORDER_TEMPLATE_ID,
             FINAL_ORDER_DOCUMENT_NAME,
             caseData,
             caseDetails.getId());
+        verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -322,30 +303,10 @@ public class CaseworkerRegenerateCourtOrdersTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
 
-        verify(generateConditionalOrderPronouncedCoversheetDocument)
-            .removeExistingAndGenerateConditionalOrderPronouncedCoversheet(caseDetails);
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
-        verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED_COVER_LETTER_APP_2,
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID,
-            FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME,
-            caseData,
-            caseDetails.getId(),
-            caseData.getApplicant2()
-        );
         verify(documentGenerator).generateAndStoreCaseDocument(FINAL_ORDER_GRANTED, FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME,
             caseData, caseDetails.getId());
-    }
-
-    @Test
-    void shouldTriggerNotificationsInSubmittedCallback() {
-        final CaseData caseData = new CaseData();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        caseworkerRegenerateCourtOrders.submitted(caseDetails, null);
-
         verify(notificationDispatcher).send(regenerateCourtOrdersNotification, caseData, TEST_CASE_ID);
     }
 
