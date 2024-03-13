@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -196,12 +197,12 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     }
 
     private void updateSolicitorInformation(CaseData data, UserRole orgPolicyCaseAssignedRole, Applicant applicant) {
-        if (data.getNoticeOfChange().getAreTheyRepresented() == null || !data.getNoticeOfChange().getAreTheyRepresented().toBoolean()) {
+        if (!YesOrNo.YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
             Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(new Solicitor(), orgPolicyCaseAssignedRole);
             applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(NO);
             applicant.setOffline(YES);
-        } else if (data.getNoticeOfChange().getAreTheyDigital() == null || !data.getNoticeOfChange().getAreTheyDigital().toBoolean()) {
+        } else if (!YesOrNo.YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
             Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(applicant.getSolicitor(), orgPolicyCaseAssignedRole);
             applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(YES);
