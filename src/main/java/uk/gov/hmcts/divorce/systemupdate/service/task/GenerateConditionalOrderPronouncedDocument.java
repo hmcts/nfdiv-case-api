@@ -50,7 +50,7 @@ public class GenerateConditionalOrderPronouncedDocument implements CaseTask {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             CONDITIONAL_ORDER_GRANTED,
-            conditionalOrderPronouncedTemplateContent.apply(caseData, caseId, caseData.getApplicant1().getLanguagePreference()),
+            conditionalOrderPronouncedTemplateContent.apply(caseData, caseId, caseData.getApplicant1()),
             caseId,
             caseData.isJudicialSeparationCase()
                 ? JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID

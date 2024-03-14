@@ -7,11 +7,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -29,7 +31,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
@@ -44,6 +48,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SOLE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDGE_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
@@ -52,6 +57,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_FIRM;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -95,6 +104,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
+            .languagePreferenceWelsh(YesOrNo.NO)
             .build();
         final Applicant applicant2 = Applicant.builder()
             .firstName(APPLICANT_2_FIRST_NAME)
@@ -125,7 +135,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH);
+            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -164,6 +174,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
+            .languagePreferenceWelsh(YesOrNo.YES)
             .build();
         final Applicant applicant2 = Applicant.builder()
             .firstName(APPLICANT_2_FIRST_NAME)
@@ -194,7 +205,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .build();
 
         final Map<String, Object> result =
-            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, WELSH);
+            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, applicant1);
 
         assertThat(result).contains(
             entry(IS_SOLE, true),
@@ -216,5 +227,52 @@ class ConditionalOrderPronouncedTemplateContentTest {
             entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
             entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY));
+    }
+
+    @Test
+    void templateVarsForJSSolicitorShouldUpdateTemplateContentCorrectly() {
+        // Given
+        CaseData caseData = buildCaseDataWithSolicitor();
+
+        // When
+        Map<String, Object> templateContentMap = new HashMap<>();
+        conditionalOrderPronouncedTemplateContent.templateVarsForJSSolicitor(
+            templateContentMap, caseData, caseData.getApplicant1());
+
+        // Then
+        assertThat(templateContentMap).contains(
+            entry(SOLICITOR_NAME, "Solicitor Name"),
+            entry(SOLICITOR_FIRM, "Solicitor Firm"),
+            entry(SOLICITOR_ADDRESS, "Solicitor Address"),
+            entry(IS_JOINT, false),
+            entry(APPLICANT_1_FULL_NAME, "Applicant 1 Full Name"),
+            entry(APPLICANT_2_FULL_NAME, "Applicant 2 Full Name"),
+            entry(APPLICANT_1_SOLICITOR_NAME, "Solicitor Name"),
+            entry(APPLICANT_2_SOLICITOR_NAME, "Not Represented"),
+            entry(SOLICITOR_REFERENCE, "Solicitor Ref")
+        );
+    }
+
+    private CaseData buildCaseDataWithSolicitor() {
+        Applicant applicant1 = Applicant.builder()
+            .firstName("Applicant 1")
+            .lastName("Full Name")
+            .solicitor(Solicitor.builder()
+                .name("Solicitor Name")
+                .firmName("Solicitor Firm")
+                .address("Solicitor Address")
+                .reference("Solicitor Ref")
+                .build())
+            .build();
+
+        Applicant applicant2 = Applicant.builder()
+            .firstName("Applicant 2")
+            .lastName("Full Name")
+            .build();
+
+        return CaseData.builder()
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
     }
 }
