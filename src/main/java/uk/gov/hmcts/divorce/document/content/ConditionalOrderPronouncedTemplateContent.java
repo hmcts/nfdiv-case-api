@@ -150,7 +150,7 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
     }
 
     private void addSolicitorInfo(CaseData caseData, Applicant applicant, Map<String, Object> templateContent) {
-        if(caseData.isJudicialSeparationCase() && applicant.isRepresented()) {
+        if (caseData.isJudicialSeparationCase() && applicant.isRepresented()) {
             templateVarsForJSSolicitor(templateContent, caseData, applicant);
         }
     }
