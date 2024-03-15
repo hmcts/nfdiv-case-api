@@ -12,25 +12,35 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -70,15 +80,20 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getTemplateFormatDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
 class ConditionalOrderPronouncedTemplateContentTest {
+
+    @Mock
+    Clock clock;
 
     @Mock
     private CommonContent commonContent;
@@ -351,6 +366,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
                 .address("Solicitor Address")
                 .reference("Solicitor Ref")
                 .build())
+            .solicitorRepresented(YES)
             .build();
 
         Applicant applicant2 = Applicant.builder()
@@ -362,6 +378,43 @@ class ConditionalOrderPronouncedTemplateContentTest {
             .applicant1(applicant1)
             .applicant2(applicant2)
             .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
             .build();
     }
+
+    @Test
+    void shouldCallTemplateVarsForJSSolicitorForJudicialSeparationCaseWithoutRepresentation() {
+        CaseData caseData = buildCaseDataWithSolicitor();
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        Applicant representedApplicant = caseData.getApplicant1();
+        representedApplicant.setLanguagePreferenceWelsh(NO);
+
+        Map<String, Object> basicDocmosisTemplateContent = new HashMap<>();
+        basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        when(commonContent.getPartner(any(), any(), eq(ENGLISH))).thenReturn("civil partner");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(basicDocmosisTemplateContent);
+
+        Map<String, Object> result = conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, representedApplicant);
+
+        assertThat(result).contains(
+            entry(IS_JOINT, true),
+            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(APPLICANT_1_FULL_NAME, representedApplicant.getFullName()),
+            entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
+            entry(APPLICANT_1_SOLICITOR_NAME, "Solicitor Name"),
+            entry(APPLICANT_2_SOLICITOR_NAME, "Not represented"),
+            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
+            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
+            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
+            entry(DocmosisTemplateConstants.CASE_REFERENCE, "1616-5914-0147-3378")
+        );
+    }
+
 }
