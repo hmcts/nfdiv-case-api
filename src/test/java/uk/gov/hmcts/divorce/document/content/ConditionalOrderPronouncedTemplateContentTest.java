@@ -319,6 +319,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
         );
 
     }
+
     @Test
     void templateVarsForJSSolicitorShouldUpdateTemplateContentCorrectly() {
         CaseData caseData = buildCaseDataWithSolicitor();
