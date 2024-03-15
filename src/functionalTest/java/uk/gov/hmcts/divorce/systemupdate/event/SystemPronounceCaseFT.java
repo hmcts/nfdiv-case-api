@@ -18,11 +18,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SystemPronounceCaseFT extends FunctionalTestSuite {
+class SystemPronounceCaseFT extends FunctionalTestSuite {
 
     private static final String SOLE_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case.json";
@@ -56,11 +55,10 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
         "classpath:responses/response-system-pronounce-case-offline-represented.json";
 
     @Test
-    public void shouldGenerateCOGrantedDocForSoleCase() throws IOException {
+    void shouldGenerateCOGrantedDocForSoleCase() throws IOException {
         Map<String, Object> request = caseData(SOLE_REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
-
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString())
@@ -70,16 +68,16 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendPronouncementNotificationToSoleApplicant() throws IOException {
+    void shouldSendPronouncementNotificationToSoleApplicant() throws IOException {
         Map<String, Object> request = caseData(SOLE_REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, SUBMITTED_URL);
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocForJointCase() throws IOException {
+    void shouldGenerateCOGrantedDocForJointCase() throws IOException {
         Map<String, Object> request = caseData(JOINT_REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
@@ -93,16 +91,16 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendPronouncementNotificationToJointApplicant() throws IOException {
+    void shouldSendPronouncementNotificationToJointApplicant() throws IOException {
         Map<String, Object> request = caseData(JOINT_REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, SUBMITTED_URL);
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocForSoleCaseAndApplicantRepresented() throws IOException {
+    void shouldGenerateCOGrantedDocForSoleCaseAndApplicantRepresented() throws IOException {
         Map<String, Object> request = caseData(SOLE_REPRESENTED_REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
@@ -116,16 +114,16 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendPronouncementNotificationToSoleApplicantSolicitor() throws IOException {
+    void shouldSendPronouncementNotificationToSoleApplicantSolicitor() throws IOException {
         Map<String, Object> request = caseData(SOLE_REPRESENTED_REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, SUBMITTED_URL);
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
+    void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
@@ -141,7 +139,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitorsWhenRepresented()
+    void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitorsWhenRepresented()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
@@ -157,7 +155,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsWhenContactIsPrivate()
+    void shouldGenerateCOGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantsWhenContactIsPrivate()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
@@ -176,7 +174,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
+    void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicants()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
@@ -193,7 +191,7 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitors()
+    void shouldGenerateJSGrantedDocAndCoversheetAndSendPronouncementLettersToApplicantSolicitors()
         throws IOException {
 
         Map<String, Object> request = caseData(OFFLINE_REPRESENTED_REQUEST);
