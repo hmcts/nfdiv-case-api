@@ -63,6 +63,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
@@ -231,7 +232,7 @@ public class SwitchedToSoleCoIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
-        doThrow(new FeignException.NotFound("some error", feignRequest, null, null))
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
             .when(caseAssignmentApi).getUserRoles(
                 BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
@@ -248,7 +249,41 @@ public class SwitchedToSoleCoIT {
             .getResponse()
             .getContentAsString();
 
-        assertThatJson(actualResponse).inPath("$.errors").isEqualTo("[\"some error\"]");
+        assertThatJson(actualResponse).inPath("$.errors").isEqualTo("[\"404 Error Message\"]");
+    }
+
+    @Test
+    public void shouldFailIfSwitchUserRolesReturnsExceptionWhenTriggeredByOfflineDocVerified() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setNewPaperCase(NO);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .d84WhoApplying(APPLICANT_2)
+            .build());
+        setupMocks(false, true);
+
+        when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(false);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(caseAssignmentApi).getUserRoles(
+                BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(TEST_CASE_ID)));
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse).inPath("$.errors").isEqualTo("[\"404 Error Message\"]");
     }
 
     @Test
