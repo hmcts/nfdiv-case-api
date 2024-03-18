@@ -32,7 +32,9 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Component
 @Slf4j
 /**
- * Any cases which are in 'ConditionalOrderPronounced' state and where the applicants are offline
+ * SystemRedoPronouncedCoverLettersTask introduced as a one off fix for NFDIV-3935Any cases which are in 'ConditionalOrderPronounced' state
+ * and where the applicants are offline where some cases had the details missing off the cover letter to offline applicants due to defect
+ * The cases picked for this are in resource file but this task will check the state again before sending as some cases have moved on already
  * 'Conditional order pronounced cover letters' should be regenerated with address on the top and sent to respective applicant.
  */
 public class SystemRedoPronouncedCoverLettersTask implements Runnable {
