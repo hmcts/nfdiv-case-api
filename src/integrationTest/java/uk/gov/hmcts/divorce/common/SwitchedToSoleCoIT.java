@@ -2,6 +2,9 @@ package uk.gov.hmcts.divorce.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,6 +42,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -51,6 +55,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -212,6 +217,38 @@ public class SwitchedToSoleCoIT {
         assertThatJson(actualResponse)
             .inPath("$.data.switchedToSoleCo")
             .isEqualTo(YES);
+    }
+
+    @Test
+    public void shouldFailIfSwitchUserRolesReturnsExceptionWhenTriggeredByApplicant2() throws Exception {
+        CaseData data = validJointApplicant1CaseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
+            .build());
+        setupMocks(false, true);
+
+        when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(true);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("some error", feignRequest, null, null))
+            .when(caseAssignmentApi).getUserRoles(
+                BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(TEST_CASE_ID)));
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO, "ConditionalOrderPending")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse).inPath("$.errors").isEqualTo("[\"some error\"]");
     }
 
     @Test

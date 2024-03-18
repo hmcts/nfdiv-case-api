@@ -1,6 +1,9 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import com.google.common.collect.ImmutableMap;
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +28,13 @@ import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPa
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -374,5 +381,27 @@ class SwitchedToSoleCoTest {
         verify(switchToSoleService).switchApplicantData(caseData);
         verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
         verifyNoMoreInteractions(printer);
+    }
+
+    @Test
+    void shouldFailIfSwitchUserRolesReturnsExceptionWhenTriggeredByApplicant2() {
+        final long caseId = TEST_CASE_ID;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
+        when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(true);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(switchToSoleService).switchUserRoles(caseData, caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).contains("404 Error Message");
+        verifyNoMoreInteractions(switchToSoleService);
     }
 }
