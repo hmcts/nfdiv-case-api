@@ -487,6 +487,41 @@ public class SwitchToSoleServiceTest {
         assertThat(throwable.getMessage()).isEqualTo("404 Error Message");
     }
 
+    @Test
+    void shouldFailOnCaseAssignmentApiExceptionWhenSwitchingSolicitorAndCitizenUserRoles() throws FeignException {
+        final long caseId = TEST_CASE_ID;
+        final CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .solicitorRepresented(YES)
+                    .build()
+            )
+            .applicant2(
+                Applicant.builder()
+                    .solicitorRepresented(NO)
+                    .build()
+            )
+            .build();
+
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(caseAssignmentApi).getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(caseId)));
+
+        FeignException throwable = catchThrowableOfType(
+            () -> switchToSoleService.switchUserRoles(caseData, caseId),
+            FeignException.NotFound.class
+        );
+
+        assertThat(throwable.status()).isEqualTo(404);
+        assertThat(throwable.getMessage()).isEqualTo("404 Error Message");
+    }
+
     private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(String userId, UserRole role) {
         return CaseAssignmentUserRolesRequest.builder()
             .caseAssignmentUserRolesWithOrganisation(
