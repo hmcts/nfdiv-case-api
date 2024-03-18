@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+
+import java.util.Collections;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -96,7 +99,14 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
         // triggered by citizen users
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
-            switchToSoleService.switchUserRoles(caseData, caseId);
+            try {
+                switchToSoleService.switchUserRoles(caseData, caseId);
+            } catch (final FeignException e) {
+                log.error("Failed to switch user roles for case id {} ", caseId, e);
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(Collections.singletonList(e.getMessage()))
+                    .build();
+            }
             switchToSoleService.switchApplicantData(caseData);
         }
 
