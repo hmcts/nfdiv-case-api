@@ -54,8 +54,10 @@ class GenerateConditionalOrderPronouncedDocumentTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
-
-        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH))
+        Applicant applicantTest = Applicant.builder()
+            .languagePreferenceWelsh(NO)
+            .build();
+        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, applicantTest))
             .thenReturn(templateContent);
 
         generateConditionalOrderPronouncedDocument.apply(caseDetails);
@@ -74,11 +76,12 @@ class GenerateConditionalOrderPronouncedDocumentTest {
     void shouldGenerateConditionalOrderGrantedDocAndUpdateCaseDataForJudicialSeparation() {
 
         final Map<String, Object> templateContent = new HashMap<>();
+        Applicant applicant1 = Applicant.builder()
+            .languagePreferenceWelsh(NO)
+            .build();
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
-            .applicant1(Applicant.builder()
-                .languagePreferenceWelsh(NO)
-                .build())
+            .applicant1(applicant1)
             .supplementaryCaseType(JUDICIAL_SEPARATION)
             .build();
 
@@ -86,7 +89,7 @@ class GenerateConditionalOrderPronouncedDocumentTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, ENGLISH))
+        when(conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, applicant1))
             .thenReturn(templateContent);
 
         generateConditionalOrderPronouncedDocument.apply(caseDetails);
