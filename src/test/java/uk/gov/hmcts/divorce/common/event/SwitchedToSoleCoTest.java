@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
@@ -394,6 +395,31 @@ class SwitchedToSoleCoTest {
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
         when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(true);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(switchToSoleService).switchUserRoles(caseData, caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).contains("404 Error Message");
+        verifyNoMoreInteractions(switchToSoleService);
+    }
+
+    @Test
+    void shouldFailIfSwitchUserRolesReturnsExceptionWhenTriggeredByOfflineDocVerified() {
+        final long caseId = TEST_CASE_ID;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplication().setNewPaperCase(NO);
+        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(false);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app1-token");
 
         final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
         doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))

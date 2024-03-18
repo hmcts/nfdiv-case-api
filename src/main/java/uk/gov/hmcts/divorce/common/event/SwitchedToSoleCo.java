@@ -98,7 +98,14 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         // triggered by system update user coming from Offline Document Verified
         if (OfflineWhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
             if (!data.getApplication().isPaperCase()) {
-                switchToSoleService.switchUserRoles(data, caseId);
+                try {
+                    switchToSoleService.switchUserRoles(data, caseId);
+                } catch (final FeignException e) {
+                    log.error("Failed to switch user roles for case id {} ", caseId, e);
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .errors(Collections.singletonList(e.getMessage()))
+                        .build();
+                }
             }
             switchToSoleService.switchApplicantData(data);
         }
