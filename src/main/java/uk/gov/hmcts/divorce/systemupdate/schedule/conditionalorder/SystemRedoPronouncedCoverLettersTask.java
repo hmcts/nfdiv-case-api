@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
