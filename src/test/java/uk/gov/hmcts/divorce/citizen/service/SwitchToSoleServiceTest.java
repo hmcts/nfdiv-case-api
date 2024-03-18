@@ -1,5 +1,8 @@
 package uk.gov.hmcts.divorce.citizen.service;
 
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,10 +26,13 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -385,6 +391,30 @@ public class SwitchToSoleServiceTest {
                 getCaseAssignmentRequest("2", APPLICANT_2_SOLICITOR)
             );
         verifyNoMoreInteractions(caseAssignmentApi);
+    }
+
+    @Test
+    void shouldFailOnCaseAssignmentApiExceptionWhenSwitchingCitizenUserRoles() throws FeignException {
+        final long caseId = TEST_CASE_ID;
+        final CaseData caseData = CaseData.builder().build();
+
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(caseAssignmentApi).getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(caseId)));
+
+        FeignException throwable = catchThrowableOfType(
+            () -> switchToSoleService.switchUserRoles(caseData, caseId),
+            FeignException.NotFound.class
+        );
+
+        assertThat(throwable.status()).isEqualTo(404);
+        assertThat(throwable.getMessage()).isEqualTo("404 Error Message");
     }
 
     private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(String userId, UserRole role) {

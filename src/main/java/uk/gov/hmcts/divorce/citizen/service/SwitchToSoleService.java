@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.service;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class SwitchToSoleService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void switchUserRoles(final CaseData caseData, final Long caseId) {
+    public void switchUserRoles(final CaseData caseData, final Long caseId) throws FeignException {
         if (caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
             switchSolicitorUserRoles(caseId);
         } else if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant2().isRepresented()) {
@@ -66,11 +67,10 @@ public class SwitchToSoleService {
         }
     }
 
-    private void switchCitizenUserRoles(final Long caseId) {
+    private void switchCitizenUserRoles(final Long caseId) throws FeignException {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
-        final CaseAssignmentUserRolesResource response =
-            caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
+        CaseAssignmentUserRolesResource response = caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
 
         final List<CaseAssignmentUserRole> creatorUser = response.getCaseAssignmentUserRoles().stream()
             .filter(caseAssignmentUserRole -> CREATOR.getRole().equals(caseAssignmentUserRole.getCaseRole()))
