@@ -11,7 +11,7 @@ class CaseIdCheckerTest {
 
     @Test
     void testIsCaseIdValid_ValidCaseId() {
-        boolean isValid = caseIdChecker.isCaseIdValid(6277876);
+        boolean isValid = caseIdChecker.isCaseIdValid(1649438598227525L);
         assertTrue(isValid);
     }
 
