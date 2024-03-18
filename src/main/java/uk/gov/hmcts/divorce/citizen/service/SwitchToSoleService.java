@@ -92,7 +92,7 @@ public class SwitchToSoleService {
         addCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, APPLICANT_2);
     }
 
-    private void switchSolicitorUserRoles(final Long caseId) {
+    private void switchSolicitorUserRoles(final Long caseId) throws FeignException {
         final String auth = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
         final CaseAssignmentUserRolesResource response =
