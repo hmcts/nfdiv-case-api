@@ -36,6 +36,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -132,6 +133,34 @@ public class SwitchedToSoleFinalOrderTest {
             .build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
         when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(true);
+
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(switchToSoleService).switchUserRoles(caseData, caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).contains("404 Error Message");
+        verifyNoMoreInteractions(switchToSoleService);
+    }
+
+    @Test
+    void shouldFailIfSwitchUserRolesReturnsExceptionWhenTriggeredByOfflineDocVerified() {
+        final long caseId = TEST_CASE_ID;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplication().setNewPaperCase(NO);
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
+        caseData.setFinalOrder(FinalOrder.builder()
+            .d36ApplicationType(SWITCH_TO_SOLE)
+            .d36WhoApplying(APPLICANT_2)
+            .build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("app2-token");
+        when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(false);
 
         final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
         doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))

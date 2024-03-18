@@ -116,7 +116,14 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
             && OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
 
             if (!caseData.getApplication().isPaperCase()) {
-                switchToSoleService.switchUserRoles(caseData, caseId);
+                try {
+                    switchToSoleService.switchUserRoles(caseData, caseId);
+                } catch (final FeignException e) {
+                    log.error("Failed to switch user roles for case id {} ", caseId, e);
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .errors(Collections.singletonList(e.getMessage()))
+                        .build();
+                }
             }
             switchToSoleService.switchApplicantData(caseData);
         }

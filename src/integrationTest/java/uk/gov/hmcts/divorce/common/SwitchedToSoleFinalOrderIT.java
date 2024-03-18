@@ -58,6 +58,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
@@ -175,6 +176,39 @@ public class SwitchedToSoleFinalOrderIT {
         setupMocks(false, false);
 
         when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(true);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
+        doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
+            .when(caseAssignmentApi).getUserRoles(
+                BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(TEST_CASE_ID)));
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response).inPath("$.errors").isEqualTo("[\"404 Error Message\"]");
+    }
+
+    @Test
+    public void shouldFailIfSwitchUserRolesReturnsExceptionWhenTriggeredByOfflineDocVerified() throws Exception {
+
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setNewPaperCase(NO);
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
+        data.setFinalOrder(FinalOrder.builder()
+            .d36ApplicationType(SWITCH_TO_SOLE)
+            .d36WhoApplying(APPLICANT_2)
+            .build());
+        setupMocks(false, false);
+
+        when(ccdAccessService.isApplicant2(any(), anyLong())).thenReturn(false);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         final Request feignRequest = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
         doThrow(new FeignException.NotFound("404 Error Message", feignRequest, null, null))
