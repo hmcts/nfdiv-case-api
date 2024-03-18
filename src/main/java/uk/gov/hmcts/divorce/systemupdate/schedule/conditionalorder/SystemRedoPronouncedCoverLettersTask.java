@@ -20,6 +20,7 @@ import java.util.List;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemResendCOPronouncedCoverLetter.SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER;
@@ -31,7 +32,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Component
 @Slf4j
 /**
- * Any cases which are in 'ConditionalOrderPronounced' state and where the applicants are offline and have contact details private
+ * Any cases which are in 'ConditionalOrderPronounced' state and where the applicants are offline
  * 'Conditional order pronounced cover letters' should be regenerated with address on the top and sent to respective applicant.
  */
 public class SystemRedoPronouncedCoverLettersTask implements Runnable {
@@ -54,7 +55,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     @Autowired
     private CaseIdChecker caseIdChecker;
 
-    public static final String NOTIFICATION_FLAG = "coverLetterResent";
+    public static final String NOTIFICATION_FLAG = "coPronouncedCoverLetterResent";
 
     @Override
     public void run() {
