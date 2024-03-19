@@ -34,7 +34,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 
@@ -118,7 +117,8 @@ class SystemRedoPronouncedCoverLettersTaskTest {
         task.run();
         // Verify that the logger's error method is called with the expected message
         verify(logger)
-            .error(eq("SystemRedoPronouncedCoverLettersTask stopped after search error"), isNull(), isA(CcdSearchCaseException.class));
+            .error(eq("SystemRedoPronouncedCoverLettersTask stopped after search error"), isNull(),
+                isA(CcdSearchCaseException.class));
     }
 
     @Test
@@ -145,7 +145,7 @@ class SystemRedoPronouncedCoverLettersTaskTest {
     @Test
     void testReadIdsFromFile() throws IOException {
         // Create an instance of your class
-        SystemRedoPronouncedCoverLettersTask taskInstance = new SystemRedoPronouncedCoverLettersTask(); // Replace YourClass with the actual class name
+        SystemRedoPronouncedCoverLettersTask taskInstance = new SystemRedoPronouncedCoverLettersTask();
 
         // Call the method to read IDs from the file
         List<Long> idList = taskInstance.loadCaseIds();
