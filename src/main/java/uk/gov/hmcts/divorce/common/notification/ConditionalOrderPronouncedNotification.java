@@ -134,7 +134,9 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
                                              final Applicant partner) {
 
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
-
+        if (isNull(conditionalOrder)) {
+            throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "conditionalOrder", caseId));
+        }
         if (isNull(conditionalOrder.getCourt())) {
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "coCourt", caseId));
         }

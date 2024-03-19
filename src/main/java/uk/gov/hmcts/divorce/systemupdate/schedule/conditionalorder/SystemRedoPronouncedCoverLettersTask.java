@@ -28,7 +28,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemResendCOPronouncedCoverLetter.SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRedoPronouncedCoverLetter.SYSTEM_REDO_PRONOUNCED_COVER_LETTER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT1_OFFLINE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.APPLICANT2_OFFLINE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -110,7 +110,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     private void triggerRedoCoPronouncedCoverLetterForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
             log.info("Submitting Redo CO Pronounced letter for Case {}", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_REDO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
         } catch (final CcdManagementException e) {
             logError("Submit event failed for case id: {}, continuing to next case", caseDetails.getId(), e);
         } catch (final IllegalArgumentException e) {
