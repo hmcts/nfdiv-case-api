@@ -77,7 +77,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
                 .description("Switched to sole final order")
                 .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
                 .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
-                .retries(120, 120)
+                .retries(0, 0, 0)
                 .aboutToSubmitCallback(this::aboutToSubmit)
                 .submittedCallback(this::submitted)
         );
