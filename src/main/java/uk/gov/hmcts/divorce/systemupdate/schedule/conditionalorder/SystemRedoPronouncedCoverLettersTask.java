@@ -68,7 +68,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
             List<Long> caseIds = loadCaseIds();
             final BoolQueryBuilder query =
                 boolQuery()
-                    .filter(QueryBuilders.termsQuery("case_id", caseIds))
+                    .filter(QueryBuilders.termsQuery("reference", caseIds))
                     .must(
                         boolQuery()
                             .should(matchQuery(STATE, AwaitingFinalOrder))
