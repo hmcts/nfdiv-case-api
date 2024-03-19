@@ -3,8 +3,11 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -15,7 +18,11 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -51,24 +58,19 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private CaseIdChecker caseIdChecker;
-
     public static final String NOTIFICATION_FLAG = "coPronouncedCoverLetterResent";
 
     @Override
     public void run() {
         log.info("SystemRedoPronouncedCoverLettersTask started");
-
+        try {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
-        try {
+            List<Long> caseIds = loadCaseIds();
             final BoolQueryBuilder query =
                 boolQuery()
+                    .filter(QueryBuilders.termsQuery("case_id", caseIds))
                     .must(
                         boolQuery()
                             .should(matchQuery(STATE, AwaitingFinalOrder))
@@ -91,36 +93,44 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
 
             final List<CaseDetails> casesToBeUpdated =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, ConditionalOrderPronounced, AwaitingFinalOrder);
-
-            for (final CaseDetails caseDetails : casesToBeUpdated) {
+            int maxCasesToUpdate = Math.min(casesToBeUpdated.size(), 50); // Limit to 50 cases or the size of casesToBeUpdated if it's smaller
+            for (int i = 0; i < maxCasesToUpdate; i++) {
+                CaseDetails caseDetails = casesToBeUpdated.get(i);
                 triggerRedoCoPronouncedCoverLetterForEligibleCases(user, serviceAuth, caseDetails);
             }
 
             log.info("SystemRedoPronouncedCoverLettersTask completed.");
         } catch (final CcdSearchCaseException e) {
-            log.error("SystemRedoPronouncedCoverLettersTask stopped after search error", e);
+            logError("SystemRedoPronouncedCoverLettersTask stopped after search error", null, e);
         } catch (final CcdConflictException e) {
-            log.info("SystemRedoPronouncedCoverLettersTask stopping "
-                + "due to conflict with another running task"
-            );
+            logError("SystemRedoPronouncedCoverLettersTask stopping due to conflict with another running task", null, e);
+        } catch (IOException e) {
+            logError("SystemRedoPronouncedCoverLettersTask stopped after file read error", null, e);
         }
     }
 
     private void triggerRedoCoPronouncedCoverLetterForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
-
-            if (isCaseEligibleToResendTheCoverLetters(caseDetails.getId())) {
-                log.info("Submitting Redo CO Pronounced letter for Case {}", caseDetails.getId());
-                ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
-            }
+            log.info("Submitting Redo CO Pronounced letter for Case {}", caseDetails.getId());
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
         } catch (final CcdManagementException e) {
-            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+            logError("Submit event failed for case id: {}, continuing to next case", caseDetails.getId(), e);
         } catch (final IllegalArgumentException e) {
-            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+            logError("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId(), e);
         }
     }
 
-    private boolean isCaseEligibleToResendTheCoverLetters(final Long id) {
-        return caseIdChecker.isCaseIdValid(id);
+    public List<Long> loadCaseIds() throws IOException {
+        ClassPathResource resource = new ClassPathResource("relevant_ids.txt");
+        String content = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        return Arrays.stream(content.split("\\s*,\\s*"))
+            .map(String::trim) // Trim leading and trailing whitespace
+            .filter(s -> !s.isEmpty()) // Filter out empty strings
+            .map(Long::parseLong)
+            .toList();
+    }
+
+    public void logError(String message, Long arg, Exception e) {
+        log.error(message, arg, e);
     }
 }

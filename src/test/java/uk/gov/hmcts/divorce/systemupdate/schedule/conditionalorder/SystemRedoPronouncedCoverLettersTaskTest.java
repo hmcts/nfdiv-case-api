@@ -1,72 +1,138 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
-import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedCOPronouncedCoverLetters;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.systemupdate.event.SystemResendCOPronouncedCoverLetter;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemResendCOPronouncedCoverLetter.SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER;
-import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
-import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
-@ExtendWith(SpringExtension.class)
+import static org.mockito.Mockito.*;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+
+
+@ExtendWith(MockitoExtension.class)
 class SystemRedoPronouncedCoverLettersTaskTest {
 
     @Mock
-    private HttpServletRequest httpServletRequest;
+    private CcdSearchService ccdSearchService;
 
     @Mock
-    private RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
+    private CcdUpdateService ccdUpdateService;
 
     @Mock
-    private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private SystemResendCOPronouncedCoverLetter underTest;
+    private SystemRedoPronouncedCoverLettersTask task;
 
-    @Test
-    void shouldAddConfigurationToConfigBuilder() {
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
+    @Mock
+    private Logger logger;
 
-        underTest.configure(configBuilder);
+    private User user;
 
-        assertThat(getEventsFrom(configBuilder).values())
-            .extracting(Event::getId)
-            .contains(SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER);
+    @BeforeEach
+    void setUp() {
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+    }
+
+    private void injectDependencies(SystemRedoPronouncedCoverLettersTask thisTask) {
+        setField(thisTask, "ccdSearchService", ccdSearchService);
+        setField(thisTask, "ccdUpdateService", ccdUpdateService);
+        setField(thisTask, "idamService", idamService);
+        setField(thisTask, "authTokenGenerator", authTokenGenerator);
+    }
+
+    private void setField(Object targetObject, String fieldName, Object value) {
+        try {
+            Field field = targetObject.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(targetObject, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to set field: " + fieldName, e);
+        }
+    }
+
+
+    private List<CaseDetails> createCaseDetailsList(final int size) {
+
+        final List<CaseDetails> caseDetails = new ArrayList<>();
+
+        for (int index = 0; index < size; index++) {
+            caseDetails.add(mock(CaseDetails.class));
+        }
+
+        return caseDetails;
     }
 
     @Test
-    void shouldRegenerateAndSendCoverLetters() {
-        final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
+    void run_ProcessesUpTo50Cases() {
+        // Mock data
+        List<CaseDetails> casesToBeUpdated = createCaseDetailsList(51);
+        when(ccdSearchService.searchForAllCasesWithQuery(any(), any(), any(), any(), any())).thenReturn(casesToBeUpdated);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
+        // Call the method under test
+        task.run();
 
-        when(regenerateCoverLetters.apply(details)).thenReturn(details);
-        when(sendRegeneratedCoverLetters.apply(details)).thenReturn(details);
-
-        underTest.aboutToSubmit(details, details);
-
-        verify(regenerateCoverLetters).apply(details);
-        verify(sendRegeneratedCoverLetters).apply(details);
+        // Verify that only up to 50 cases are processed
+        verify(ccdUpdateService, times(50)).submitEvent(any(), any(), any(), any()); // Expect 3 calls to submitEvent
     }
+
+    @Test
+    void run_SearchCaseException_LogsError() throws CcdConflictException {
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn("token");
+
+        doThrow(new CcdSearchCaseException("Search error", null)).when(ccdSearchService)
+            .searchForAllCasesWithQuery(any(), any(), any(), any(), any());
+        task.run();
+        // Verify that the logger's error method is called with the expected message
+        Mockito.verify(logger)
+            .error(eq("SystemRedoPronouncedCoverLettersTask stopped after search error"), isNull(), isA(CcdSearchCaseException.class));
+    }
+
+    @Test
+    void run_IOException_LogsError() throws CcdSearchCaseException, CcdConflictException, IOException {
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn("token");
+
+        // Create an instance of your class
+        SystemRedoPronouncedCoverLettersTask taskInstance = spy(new SystemRedoPronouncedCoverLettersTask());
+        //using spy so that we can mock the loadCaseIds() method but need to injectDependencies on taskInstance then
+        injectDependencies(taskInstance);
+        // Mock the behavior of loadCaseIds()
+        doThrow(new IOException("IO error")).when(taskInstance).loadCaseIds();
+
+        // Call the method that uses loadCaseIds()
+        taskInstance.run();
+
+        // Verify that the IO error is logged
+        Mockito.verify(logger).error(eq("SystemRedoPronouncedCoverLettersTask stopped after file read error"), isNull(),
+            isA(IOException.class));
+    }
+
 }
+
