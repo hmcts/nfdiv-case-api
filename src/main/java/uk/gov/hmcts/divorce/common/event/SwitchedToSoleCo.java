@@ -89,6 +89,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         // triggered by system update user coming from Offline Document Verified
         if (OfflineWhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
             if (!data.getApplication().isPaperCase()) {
+                log.info("Request made via paper to switch to sole for online case id: {}", caseId);
                 switchToSoleService.switchUserRoles(data, caseId);
             }
             switchToSoleService.switchApplicantData(data);
