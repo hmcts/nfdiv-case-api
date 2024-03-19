@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -22,12 +21,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRegenerateCourtOrders.CASEWORKER_REGENERATE_COURT_ORDERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemResendCOPronouncedCoverLetter.SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER;
@@ -41,8 +38,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 /**
  * SystemRedoPronouncedCoverLettersTask introduced as a one off fix for NFDIV-3935Any cases which are in 'ConditionalOrderPronounced' state
  * and where the applicants are offline where some cases had the details missing off the cover letter to offline applicants due to defect
- * The cases picked for this are in resource file but this task will check the state again before sending as some cases have moved on already
- * 'Conditional order pronounced cover letters' should be regenerated with address on the top and sent to respective applicant.
+ * The cases picked for this are in resource file but this task will check the state again before sending as some cases have moved on
+ * already,'Conditional order pronounced cover letters' should be regenerated with address on the top and sent to respective applicant.
  */
 public class SystemRedoPronouncedCoverLettersTask implements Runnable {
 
@@ -64,8 +61,8 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     public void run() {
         log.info("SystemRedoPronouncedCoverLettersTask started");
         try {
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuth = authTokenGenerator.generate();
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
 
             List<Long> caseIds = loadCaseIds();
             final BoolQueryBuilder query =
@@ -93,7 +90,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
 
             final List<CaseDetails> casesToBeUpdated =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, ConditionalOrderPronounced, AwaitingFinalOrder);
-            int maxCasesToUpdate = Math.min(casesToBeUpdated.size(), 50); // Limit to 50 cases or the size of casesToBeUpdated if it's smaller
+            int maxCasesToUpdate = Math.min(casesToBeUpdated.size(), 50); // Limit to 50 cases or the size of casesToBeUpdated
             for (int i = 0; i < maxCasesToUpdate; i++) {
                 CaseDetails caseDetails = casesToBeUpdated.get(i);
                 triggerRedoCoPronouncedCoverLetterForEligibleCases(user, serviceAuth, caseDetails);
