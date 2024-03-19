@@ -22,6 +22,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
@@ -62,8 +64,6 @@ class SystemRedoPronouncedCoverLettersTaskTest {
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
     }
 
     private void injectDependencies(SystemRedoPronouncedCoverLettersTask thisTask) {
@@ -140,6 +140,19 @@ class SystemRedoPronouncedCoverLettersTaskTest {
         // Verify that the IO error is logged
         verify(logger).error(eq("SystemRedoPronouncedCoverLettersTask stopped after file read error"), isNull(),
             isA(IOException.class));
+    }
+
+    @Test
+    void testReadIdsFromFile() throws IOException {
+        // Create an instance of your class
+        SystemRedoPronouncedCoverLettersTask taskInstance = new SystemRedoPronouncedCoverLettersTask(); // Replace YourClass with the actual class name
+
+        // Call the method to read IDs from the file
+        List<Long> idList = taskInstance.loadCaseIds();
+
+        // Validate that the list of IDs is not empty
+        assertNotNull(idList);
+        assertFalse(idList.isEmpty());
     }
 
 }

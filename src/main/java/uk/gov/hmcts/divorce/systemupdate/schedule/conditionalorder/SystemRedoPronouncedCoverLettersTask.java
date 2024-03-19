@@ -19,8 +19,9 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -120,11 +121,15 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     public List<Long> loadCaseIds() throws IOException {
         ClassPathResource resource = new ClassPathResource("relevant_ids.txt");
         String content = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
-        return Arrays.stream(content.split("\\s*,\\s*"))
-            .map(String::trim) // Trim leading and trailing whitespace
-            .filter(s -> !s.isEmpty()) // Filter out empty strings
-            .map(Long::parseLong)
-            .toList();
+        StringTokenizer tokenizer = new StringTokenizer(content, ",");
+        List<Long> idList = new ArrayList<>();
+
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken().trim(); // Trim whitespace from each token
+            idList.add(Long.valueOf(token));
+        }
+
+        return idList;
     }
 
     public void logError(String message, Long arg, Exception e) {
