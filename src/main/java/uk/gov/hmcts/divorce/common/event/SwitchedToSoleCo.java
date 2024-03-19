@@ -63,7 +63,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             .description("Application type switched to sole post CO submission")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
-            .retries(0, 0, 0)
+            .retries(0)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
@@ -81,6 +81,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
         // triggered by citizen users
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            log.info("Request made by applicant to switch to sole for case id: {}", caseId);
             switchToSoleService.switchUserRoles(data, caseId);
             switchToSoleService.switchApplicantData(data);
         }
