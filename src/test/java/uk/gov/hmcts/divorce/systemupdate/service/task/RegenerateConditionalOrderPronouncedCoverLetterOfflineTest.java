@@ -16,8 +16,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -36,6 +37,7 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
     @Test
     void apply_shouldRegenerateConditionalOrderPronouncedCoversheetForApplicant1AndSetFlag() {
         // Given
