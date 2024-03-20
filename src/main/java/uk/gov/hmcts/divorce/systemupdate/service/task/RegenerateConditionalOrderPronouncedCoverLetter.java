@@ -25,61 +25,18 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-        if (caseData.getApplicant1().isApplicantOffline()) {
-            removeAndRegenerated(caseId, caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, coverLetterHelper);
-        }
-        if (caseData.getApplicant2().isApplicantOffline()) {
-            removeAndRegenerated(caseId, caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, coverLetterHelper);
-        }
         if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant1().isConfidentialContactDetails()) {
-
-            boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
-
-            if (anyDocRemoved) {
-                log.info("Regenerating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
-                coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
-                    caseData,
-                    caseId,
-                    caseData.getApplicant1(),
-                    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
-                );
-
-                caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
-            }
+            removeAndRegenerateApplicant1(caseId, caseData, coverLetterHelper);
         }
-
-        if (caseData.getApplicant2().isApplicantOffline() && caseData.getApplicant2().isConfidentialContactDetails()) {
-            boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
-
-            if (anyDocRemoved) {
-                if (caseData.getApplicationType().isSole()) {
-                    log.info("Generating respondent conditional order pronounced coversheet for case id {} ", caseId);
-                    coverLetterHelper.generateConditionalOrderPronouncedCoversheetOfflineRespondent(
-                        caseData,
-                        caseId,
-                        caseData.getApplicant2(),
-                        caseData.getApplicant1()
-                    );
-                } else {
-                    log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
-                    coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
-                        caseData,
-                        caseId,
-                        caseData.getApplicant2(),
-                        CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
-                    );
-                }
-
-                caseData.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
-            }
+        if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant2().isConfidentialContactDetails()) {
+            removeAndRegenerateApplicant2(caseId, caseData, coverLetterHelper);
         }
-
         return caseDetails;
     }
 
-    static void removeAndRegenerated(Long caseId, CaseData caseData, DocumentType docType,
+    static void removeAndRegenerateApplicant1(Long caseId, CaseData caseData,
                                      ConditionalOrderPronouncedCoverLetterHelper helper) {
-        boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, docType);
+        boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
 
         if (anyDocRemoved) {
             log.info("Regenerating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
@@ -91,6 +48,33 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
             );
 
             caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
+        }
+    }
+
+    static void removeAndRegenerateApplicant2(Long caseId, CaseData caseData,
+                                              ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper) {
+        boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+
+        if (anyDocRemoved) {
+            if (caseData.getApplicationType().isSole()) {
+                log.info("Generating respondent conditional order pronounced coversheet for case id {} ", caseId);
+                coverLetterHelper.generateConditionalOrderPronouncedCoversheetOfflineRespondent(
+                    caseData,
+                    caseId,
+                    caseData.getApplicant2(),
+                    caseData.getApplicant1()
+                );
+            } else {
+                log.info("Generating applicant 2 conditional order pronounced coversheet for case id {} ", caseId);
+                coverLetterHelper.generateConditionalOrderPronouncedCoversheet(
+                    caseData,
+                    caseId,
+                    caseData.getApplicant2(),
+                    CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
+                );
+            }
+
+            caseData.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
         }
     }
 

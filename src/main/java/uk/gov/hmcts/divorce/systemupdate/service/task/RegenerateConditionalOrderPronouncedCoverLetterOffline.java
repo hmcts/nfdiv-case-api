@@ -8,10 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
-import static uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter.removeAndRegenerated;
-
+import static uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter.removeAndRegenerateApplicant1;
+import static uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter.removeAndRegenerateApplicant2;
 
 @Component
 @Slf4j
@@ -28,10 +26,10 @@ public class RegenerateConditionalOrderPronouncedCoverLetterOffline implements C
         final CaseData caseData = caseDetails.getData();
 
         if (caseData.getApplicant1().isApplicantOffline()) {
-            removeAndRegenerated(caseId, caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, coverLetterHelper);
+            removeAndRegenerateApplicant1(caseId, caseData, coverLetterHelper);
         }
         if (caseData.getApplicant2().isApplicantOffline()) {
-            removeAndRegenerated(caseId, caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, coverLetterHelper);
+            removeAndRegenerateApplicant2(caseId, caseData, coverLetterHelper);
         }
 
         return caseDetails;
