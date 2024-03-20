@@ -77,7 +77,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
                 .description("Switched to sole final order")
                 .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
                 .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
-                .retries(120, 120)
+                .retries(0)
                 .aboutToSubmitCallback(this::aboutToSubmit)
                 .submittedCallback(this::submitted)
         );
@@ -96,6 +96,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
         // triggered by citizen users
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
+            log.info("Request made by applicant to switch to sole for case id: {}", caseId);
             switchToSoleService.switchUserRoles(caseData, caseId);
             switchToSoleService.switchApplicantData(caseData);
         }
@@ -106,6 +107,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
             && OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
 
             if (!caseData.getApplication().isPaperCase()) {
+                log.info("Request made via paper to switch to sole for online case id: {}", caseId);
                 switchToSoleService.switchUserRoles(caseData, caseId);
             }
             switchToSoleService.switchApplicantData(caseData);
