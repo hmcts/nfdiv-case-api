@@ -25,7 +25,12 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-
+        if (caseData.getApplicant1().isApplicantOffline()) {
+            removeAndRegenerated(caseId, caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, coverLetterHelper);
+        }
+        if (caseData.getApplicant2().isApplicantOffline()) {
+            removeAndRegenerated(caseId, caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, coverLetterHelper);
+        }
         if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant1().isConfidentialContactDetails()) {
 
             boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
@@ -72,7 +77,24 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
         return caseDetails;
     }
 
-    private boolean removeExistingCoverLetterIfAny(final CaseData caseData, final DocumentType documentType) {
+    static void removeAndRegenerated(Long caseId, CaseData caseData, DocumentType docType,
+                                     ConditionalOrderPronouncedCoverLetterHelper helper) {
+        boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData, docType);
+
+        if (anyDocRemoved) {
+            log.info("Regenerating applicant 1 conditional order pronounced coversheet for case id {} ", caseId);
+            helper.generateConditionalOrderPronouncedCoversheet(
+                caseData,
+                caseId,
+                caseData.getApplicant1(),
+                CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
+            );
+
+            caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
+        }
+    }
+
+    private static boolean removeExistingCoverLetterIfAny(final CaseData caseData, final DocumentType documentType) {
         return caseData.getDocuments().getDocumentsGenerated()
             .removeIf(doc -> documentType.equals(doc.getValue().getDocumentType()));
     }
