@@ -58,7 +58,7 @@ public class SystemRedoPronouncedCoverLetter implements CCDConfig<CaseData, Stat
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         final Long caseId = details.getId();
 
-        log.info("SystemResendCOPronouncedCoverLetter about to submit callback invoked for case id: {}", caseId);
+        log.info("SystemRedoPronouncedCoverLetter about to submit callback invoked for case id: {}", caseId);
 
         final CaseDetails<CaseData, State> response
             = caseTasks(
