@@ -28,7 +28,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
         if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant1().isConfidentialContactDetails()) {
             removeAndRegenerateApplicant1(caseId, caseData, coverLetterHelper);
         }
-        if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant2().isConfidentialContactDetails()) {
+        if (caseData.getApplicant2().isApplicantOffline() && caseData.getApplicant2().isConfidentialContactDetails()) {
             removeAndRegenerateApplicant2(caseId, caseData, coverLetterHelper);
         }
         return caseDetails;
