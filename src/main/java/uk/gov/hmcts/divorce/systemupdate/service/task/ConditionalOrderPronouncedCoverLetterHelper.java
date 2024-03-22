@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -185,7 +186,12 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
 
         templateContent.put(DATE_OF_HEARING, dateOfHearing);
         templateContent.put(TIME_OF_HEARING, timeOfHearing);
-        templateContent.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+        String courtLabel = null;
+        if (conditionalOrder != null && conditionalOrder.getCourt() != null) {
+            courtLabel = conditionalOrder.getCourt().getLabel();
+        }
+        templateContent.put(COURT_NAME, courtLabel);
         templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
 
         return templateContent;

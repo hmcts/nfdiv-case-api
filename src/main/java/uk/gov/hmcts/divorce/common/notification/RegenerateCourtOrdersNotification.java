@@ -29,7 +29,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
         log.info("Sending Regenerated Court Orders to applicant 1 for case : {}", caseId);
 
-        if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
+        if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             DocumentPackInfo certOfEntitlementDocPackInfo
                 = certificateOfEntitlementDocPack.getDocumentPack(caseData, caseData.getApplicant1());
 
@@ -54,7 +54,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
             );
         }
 
-        if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
+        if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             DocumentPackInfo conditionalOrderPronouncedDocPackInfo =
                 conditionalOrderPronouncedDocPack.getDocumentPack(caseData, caseData.getApplicant1());
 
@@ -72,7 +72,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
     public void sendToApplicant2Offline(CaseData caseData, Long caseId) {
         log.info("Sending Regenerated Court Orders to applicant 2 for case : {}", caseId);
 
-        if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
+        if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
             DocumentPackInfo documentPackInfo = certificateOfEntitlementDocPack.getDocumentPack(caseData, caseData.getApplicant2());
 
             letterPrinter.sendLetters(
@@ -96,7 +96,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
             );
         }
 
-        if (isNotEmpty(caseData.getConditionalOrder().getCertificateOfEntitlementDocument())) {
+        if (caseData.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent()) {
             DocumentPackInfo conditionalOrderPronouncedDocPackInfo =
                 conditionalOrderPronouncedDocPack.getDocumentPack(caseData, caseData.getApplicant2());
 
