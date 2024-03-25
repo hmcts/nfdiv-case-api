@@ -227,6 +227,26 @@ class CaseDocumentsTest {
     }
 
     @Test
+    void shouldReturnTrueWhenDocRemoved() {
+        final CaseDocuments caseDocuments = CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(
+                ListValue.<DivorceDocument>builder()
+                    .id("1")
+                    .value(DivorceDocument.builder()
+                        .documentType(APPLICATION)
+                        .build())
+                    .build(),
+                ListValue.<DivorceDocument>builder()
+                    .id("2")
+                    .value(DivorceDocument.builder()
+                        .documentType(AMENDED_APPLICATION)
+                        .build()).build()
+            ))
+            .build();
+
+        assertTrue(caseDocuments.removeDocumentGeneratedWithType(APPLICATION));
+    }
+    @Test
     void shouldReturnFirstUploadedDocumentOfGivenType() {
 
         final Document documentLink1 = Document.builder()

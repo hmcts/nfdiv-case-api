@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
@@ -78,8 +79,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
         }
     }
 
-    private static boolean removeExistingCoverLetterIfAny(final CaseData caseData, final DocumentType documentType) {
-        return caseData.getDocuments().getDocumentsGenerated()
-            .removeIf(doc -> documentType.equals(doc.getValue().getDocumentType()));
+    static boolean removeExistingCoverLetterIfAny(final CaseData caseData, final DocumentType documentType) {
+        return removeDocumentsBasedOnContactPrivacy(caseData, documentType);
     }
 }

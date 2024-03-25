@@ -166,6 +166,14 @@ public final class DocumentUtil {
             return caseData.getApplicant2().isConfidentialContactDetails();
         }
 
+        if (CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1.equals(documentType)) {
+            return caseData.getApplicant1().isConfidentialContactDetails();
+        }
+
+        if (CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2.equals(documentType)) {
+            return caseData.getApplicant2().isConfidentialContactDetails();
+        }
+
         return isAnApplicantConfidential && documentType.isPotentiallyConfidential();
     }
 
@@ -197,12 +205,12 @@ public final class DocumentUtil {
         return Optional.ofNullable(confidentialDocumentsMap.get(documentType)).orElse(ConfidentialDocumentsReceived.OTHER);
     }
 
-    public static void removeDocumentsBasedOnContactPrivacy(final CaseData caseData, final DocumentType documentType) {
+    public static boolean removeDocumentsBasedOnContactPrivacy(final CaseData caseData, final DocumentType documentType) {
         CaseDocuments caseDocuments = caseData.getDocuments();
         if (isConfidential(caseData, documentType)) {
-            caseDocuments.removeConfidentialDocumentGeneratedWithType(getConfidentialDocumentType(documentType));
+            return caseDocuments.removeConfidentialDocumentGeneratedWithType(getConfidentialDocumentType(documentType));
         } else {
-            caseDocuments.removeDocumentGeneratedWithType(documentType);
+            return caseDocuments.removeDocumentGeneratedWithType(documentType);
         }
     }
 
