@@ -1288,7 +1288,7 @@ public class TestDataHelper {
                 .build())
             .build();
 
-        if(applicant1.isConfidentialContactDetails() && applicant2.isConfidentialContactDetails()) {
+        if (applicant1.isConfidentialContactDetails() && applicant2.isConfidentialContactDetails()) {
             return CaseData.builder()
                 .divorceOrDissolution(DIVORCE)
                 .applicant1(applicant1)
@@ -1315,7 +1315,7 @@ public class TestDataHelper {
                 .grantedDate(LOCAL_DATE)
                 .build())
             .documents(builder()
-                .documentsGenerated(Lists.newArrayList(coGrantedDoc,coCoverLetterApp1, coCoverLetterApp2))
+                .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
                 .build())
             .build();
     }
