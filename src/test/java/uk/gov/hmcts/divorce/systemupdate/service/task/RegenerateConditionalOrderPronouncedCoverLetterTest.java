@@ -158,7 +158,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
             data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
         verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
-            data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+            data, caseDetails.getId(), data.getApplicant2(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
 
     }
 }
