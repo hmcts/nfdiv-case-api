@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -171,9 +171,6 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     @Test
     public void testRemoveExistingCoverLetterIfAny() {
 
-        DocumentType documentTypeToRemove = DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1; // Example document type
-
-
         final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
             .value(ConfidentialDivorceDocument.builder()
                 .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
@@ -195,6 +192,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         when(caseData.getDocuments()).thenReturn(caseDocuments);
         when(caseDocuments.removeConfidentialDocumentGeneratedWithType(isA(ConfidentialDocumentsReceived.class)))
             .thenReturn(true);
+        DocumentType documentTypeToRemove = CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
         // Call the method to be tested
         boolean documentRemoved = RegenerateConditionalOrderPronouncedCoverLetter
             .removeExistingCoverLetterIfAny(caseData, documentTypeToRemove);

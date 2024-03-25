@@ -246,6 +246,7 @@ class CaseDocumentsTest {
 
         assertTrue(caseDocuments.removeDocumentGeneratedWithType(APPLICATION));
     }
+
     @Test
     void shouldReturnFirstUploadedDocumentOfGivenType() {
 
