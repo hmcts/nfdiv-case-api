@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentTy
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.mapToLetters;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeConfidentialDocuments;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -375,6 +376,34 @@ class DocumentUtilTest {
             .build());
 
         removeDocumentsBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
+
+        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().size()).isEqualTo(0);
+        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldRemoveDocumentsFromConfidentialDocs() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setContactDetailsType(PRIVATE);
+
+        caseData.setDocuments(CaseDocuments.builder()
+            .documentsGenerated(Lists.newArrayList(
+                ListValue.<DivorceDocument>builder()
+                    .value(
+                        DivorceDocument.builder()
+                            .documentType(NOTICE_OF_PROCEEDINGS_APP_1)
+                            .build())
+                    .build()))
+            .confidentialDocumentsGenerated(Lists.newArrayList(
+                ListValue.<ConfidentialDivorceDocument>builder()
+                    .value(
+                        ConfidentialDivorceDocument.builder()
+                            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2)
+                            .build())
+                    .build()))
+            .build());
+
+        removeConfidentialDocuments(caseData, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
 
         assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().size()).isEqualTo(0);
         assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);

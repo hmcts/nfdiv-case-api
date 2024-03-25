@@ -214,6 +214,11 @@ public final class DocumentUtil {
         }
     }
 
+    public static boolean removeConfidentialDocuments(final CaseData caseData, final DocumentType documentType) {
+        CaseDocuments caseDocuments = caseData.getDocuments();
+        return caseDocuments.removeConfidentialDocumentGeneratedWithType(getConfidentialDocumentType(documentType));
+    }
+
     public static Map<DocumentType, ConfidentialDocumentsReceived> getDocumentTypeToConfidentialTypeMapping() {
         Map<DocumentType, ConfidentialDocumentsReceived> map = new HashMap<>(
             Map.of(

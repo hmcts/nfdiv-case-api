@@ -56,7 +56,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public static final String NOTIFICATION_FLAG = "coPronouncedCoverLetterResent";
+    public static final String NOTIFICATION_FLAG = "coPronouncedConfidentialCoverLetterResent";
 
     @Override
     public void run() {

@@ -8,23 +8,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -165,41 +157,6 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
         underTest.apply(caseDetails);
 
         verifyNoInteractions(coverLetterHelper);
-    }
-
-
-    @Test
-    public void testRemoveExistingCoverLetterIfAny() {
-
-        final ListValue<ConfidentialDivorceDocument> doc1 = ListValue.<ConfidentialDivorceDocument>builder()
-            .value(ConfidentialDivorceDocument.builder()
-                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
-                .build())
-            .build();
-
-        final ListValue<ConfidentialDivorceDocument> doc2 = ListValue.<ConfidentialDivorceDocument>builder()
-            .value(ConfidentialDivorceDocument.builder()
-                .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
-                .build())
-            .build();
-
-
-        CaseDocuments caseDocuments = mock(CaseDocuments.class);
-        CaseData caseData = mock(CaseData.class);
-        caseDocuments.setConfidentialDocumentsGenerated(List.of(doc1, doc2));
-
-        when(caseData.getApplicant1()).thenReturn(Applicant.builder().contactDetailsType(PRIVATE).build());
-        when(caseData.getDocuments()).thenReturn(caseDocuments);
-        when(caseDocuments.removeConfidentialDocumentGeneratedWithType(isA(ConfidentialDocumentsReceived.class)))
-            .thenReturn(true);
-        DocumentType documentTypeToRemove = CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
-        // Call the method to be tested
-        boolean documentRemoved = RegenerateConditionalOrderPronouncedCoverLetter
-            .removeExistingCoverLetterIfAny(caseData, documentTypeToRemove);
-
-        // Assertions
-        assertTrue(documentRemoved); // Expecting document to be removed
-        verify(caseData.getDocuments()).removeConfidentialDocumentGeneratedWithType(isA(ConfidentialDocumentsReceived.class));
     }
 }
 
