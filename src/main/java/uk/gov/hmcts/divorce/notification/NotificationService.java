@@ -65,7 +65,7 @@ public class NotificationService {
                 notificationClientException
             );
             final String message = notificationClientException.getMessage()
-                + format(" NotificationService exception for Case ID: %s", caseId);
+                + format(" Exception for Case ID: %s", caseId);
             throw new NotificationException(message, notificationClientException);
         }
     }
