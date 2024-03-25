@@ -42,7 +42,7 @@ public class SendRegeneratedCOPronouncedCoverLettersTest {
 
         underTest.apply(caseDetails);
 
-        assertThat(caseDetails.getData().getApplication().getCoPronouncedCoverLetterResent()).isEqualTo(YES);
+        assertThat(caseDetails.getData().getApplication().getCoPronouncedConfidentialCoverLetterResent()).isEqualTo(YES);
 
         verify(notificationDispatcher).send(resendCoverLetterNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
