@@ -126,7 +126,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     }
 
     @Test
-    public void shouldNotRegenerateCoverLettersForIfCoverLettersAreAlreadyMovedToConfidentialList() {
+    public void shouldNowRegenerateCoverLettersForIfCoverLettersAreAlreadyMovedToConfidentialList() {
         CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
         data.setApplicationType(JOINT_APPLICATION);
 
@@ -155,7 +155,11 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
 
         underTest.apply(caseDetails);
 
-        verifyNoInteractions(coverLetterHelper);
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
+            data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1);
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
+            data, caseDetails.getId(), data.getApplicant1(), CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2);
+
     }
 }
 
