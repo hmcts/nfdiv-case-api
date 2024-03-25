@@ -15,6 +15,8 @@ import uk.gov.service.notify.SendEmailResponse;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @Service
 @Slf4j
 public class NotificationService {
@@ -62,7 +64,8 @@ public class NotificationService {
                 notificationClientException.getMessage(),
                 notificationClientException
             );
-            throw new NotificationException(notificationClientException);
+            final String message = notificationClientException.getMessage() + format(" NotificationService exception for Case ID: %s", caseId);
+            throw new NotificationException(message, notificationClientException);
         }
     }
 }
