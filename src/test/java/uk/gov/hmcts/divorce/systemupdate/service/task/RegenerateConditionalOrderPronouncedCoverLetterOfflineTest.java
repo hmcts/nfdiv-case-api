@@ -14,14 +14,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,18 +82,13 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
             .applicant1(Applicant.builder().offline(YES).build())
             .applicant2(Applicant.builder().offline(NO).build())
             .documents(CaseDocuments.builder()
-                .documentsGenerated(Lists.newArrayList(
-                    ListValue.<DivorceDocument>builder()
+                .confidentialDocumentsGenerated(Lists.newArrayList(
+                    ListValue.<ConfidentialDivorceDocument>builder()
                         .id("1")
-                        .value(DivorceDocument.builder()
-                            .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
+                        .value(ConfidentialDivorceDocument.builder()
+                            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
                             .build())
-                        .build(),
-                    ListValue.<DivorceDocument>builder()
-                        .id("2")
-                        .value(DivorceDocument.builder()
-                            .documentType(APPLICATION)
-                            .build()).build()
+                        .build()
                 ))
                 .build())
             .build();

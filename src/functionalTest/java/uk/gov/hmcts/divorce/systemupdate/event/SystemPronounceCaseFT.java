@@ -160,6 +160,7 @@ class SystemPronounceCaseFT extends FunctionalTestSuite {
 
         Map<String, Object> request = caseData(OFFLINE_NOT_REPRESENTED_REQUEST);
         request.put("applicant2ContactDetailsType", "private");
+        request.put("applicant1ContactDetailsType", "private");
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
