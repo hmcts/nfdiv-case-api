@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedCOPronouncedCover
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetterOffline;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -31,7 +31,7 @@ class SystemRedoPronouncedCoverLetterTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLettersOffline;
+    private RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
 
     @Mock
     private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
@@ -57,12 +57,12 @@ class SystemRedoPronouncedCoverLetterTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        when(regenerateCoverLettersOffline.apply(details)).thenReturn(details);
+        when(regenerateCoverLetters.apply(details)).thenReturn(details);
         when(sendRegeneratedCoverLetters.apply(details)).thenReturn(details);
 
         underTest.aboutToSubmit(details, details);
 
-        verify(regenerateCoverLettersOffline).apply(details);
+        verify(regenerateCoverLetters).apply(details);
         verify(sendRegeneratedCoverLetters).apply(details);
     }
 }
