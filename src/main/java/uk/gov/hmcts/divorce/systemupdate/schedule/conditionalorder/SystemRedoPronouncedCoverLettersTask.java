@@ -119,7 +119,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     }
 
     public List<Long> loadCaseIds() throws IOException {
-        ClassPathResource resource = new ClassPathResource("relevant_ids_outlier.txt");
+        ClassPathResource resource = new ClassPathResource("relevant_ids_none.txt");
         String content = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         StringTokenizer tokenizer = new StringTokenizer(content, ",");
         List<Long> idList = new ArrayList<>();
