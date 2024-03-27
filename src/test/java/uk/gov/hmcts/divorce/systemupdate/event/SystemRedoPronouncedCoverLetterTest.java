@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedCOPronouncedCover
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetterOffline;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -31,7 +31,7 @@ class SystemRedoPronouncedCoverLetterTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
+    private RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLetters;
 
     @Mock
     private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;

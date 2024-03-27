@@ -26,10 +26,12 @@ public class RegenerateConditionalOrderPronouncedCoverLetterOffline implements C
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (caseData.getApplicant1().isApplicantOffline() && !YesOrNo.YES.equals(caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated())) {
+        if (caseData.getApplicant1().isApplicantOffline()
+            && !YesOrNo.YES.equals(caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated())) {
             removeAndRegenerateApplicant1(caseId, caseData, coverLetterHelper);
         }
-        if (caseData.getApplicant2().isApplicantOffline() && !YesOrNo.YES.equals(caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated())) {
+        if (caseData.getApplicant2().isApplicantOffline()
+            && !YesOrNo.YES.equals(caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated())) {
             removeAndRegenerateApplicant2(caseId, caseData, coverLetterHelper);
         }
 
