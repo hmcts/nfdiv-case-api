@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
@@ -73,6 +74,39 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
             caseData.getApplicant1(),
             CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
         );
+        assertSame(caseDetails, result);
+    }
+
+
+    @Test
+    void apply_shouldNotRegenerateConditionalOrderPronouncedCoversheetForApplicant1WhenRegeneratedAlready() {
+        // Given
+        final CaseData caseData = createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1();
+        caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
+        final CaseDetails<CaseData, State> caseDetails = createCaseDetails(caseData);
+
+        // When
+        final CaseDetails<CaseData, State> result = task.apply(caseDetails);
+
+        // Then
+        verifyNoInteractions(coverLetterHelper);
+        assertSame(caseDetails, result);
+    }
+
+    @Test
+    void apply_shouldNotRegenerateConditionalOrderPronouncedCoversheetForApplicant2WhenRegeneratedAlready() {
+        // Given
+        final CaseData caseData = createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1();
+        caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
+        final CaseDetails<CaseData, State> caseDetails = createCaseDetails(caseData);
+
+        // When
+        final CaseDetails<CaseData, State> result = task.apply(caseDetails);
+
+        // Then
+        verifyNoInteractions(coverLetterHelper);
         assertSame(caseDetails, result);
     }
 
