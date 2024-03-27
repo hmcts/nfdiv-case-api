@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedCOPronouncedCover
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetterOffline;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -32,7 +32,7 @@ public class SystemRedoPronouncedCoverLetter implements CCDConfig<CaseData, Stat
     public static final String SYSTEM_REDO_PRONOUNCED_COVER_LETTER = "system-redo-pronounced-letter";
 
     @Autowired
-    private RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
+    private RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLettersOffline;
 
     @Autowired
     private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
@@ -62,7 +62,7 @@ public class SystemRedoPronouncedCoverLetter implements CCDConfig<CaseData, Stat
 
         final CaseDetails<CaseData, State> response
             = caseTasks(
-                regenerateCoverLetters,
+                regenerateCoverLettersOffline,
                 sendRegeneratedCoverLetters
             )
             .run(details);

@@ -442,6 +442,12 @@ public class Application {
     private YesOrNo coPronouncedConfidentialCoverLetterResent;
 
     @CCD(
+        label = "CO Pronounced confidential cover letters resent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo coPronouncedForceConfidentialCoverLetterResent;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption",

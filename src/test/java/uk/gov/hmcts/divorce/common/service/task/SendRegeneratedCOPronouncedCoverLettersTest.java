@@ -60,6 +60,6 @@ public class SendRegeneratedCOPronouncedCoverLettersTest {
 
         underTest.apply(caseDetails);
 
-        assertThat(caseDetails.getData().getApplication().getCoPronouncedConfidentialCoverLetterResent()).isEqualTo(NO);
+        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResent()).isEqualTo(NO);
     }
 }
