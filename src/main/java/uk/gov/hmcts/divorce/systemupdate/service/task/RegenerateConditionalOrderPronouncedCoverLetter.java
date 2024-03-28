@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.removeConfidentialDocuments;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
@@ -81,6 +81,6 @@ public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask
 
     // this is for removing confidential cover letter only for NFDIV-3935 then will disabled
     static boolean removeExistingCoverLetterIfAny(final CaseData caseData, final DocumentType documentType) {
-        return removeConfidentialDocuments(caseData, documentType);
+        return removeDocumentsBasedOnContactPrivacy(caseData, documentType);
     }
 }
