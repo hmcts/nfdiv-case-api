@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -24,8 +26,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_WITHDRAWN = "caseworker-withdrawn";
+public class SuperuserWithdrawn implements CCDConfig<CaseData, State, UserRole> {
+    public static final String SUPERUSER_WITHDRAWN = "superuser-withdrawn";
 
     @Autowired
     private WithdrawCaseService withdrawCaseService;
@@ -33,16 +35,15 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_WITHDRAWN)
-            .forStateTransition(POST_SUBMISSION_STATES, Withdrawn)
+            .event(SUPERUSER_WITHDRAWN)
+            .forStateTransition(EnumSet.complementOf(POST_SUBMISSION_STATES), Withdrawn)
             .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE,
-                CASE_WORKER)
+            .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(
                 SOLICITOR,
-                SUPER_USER,
+                CASE_WORKER,
                 LEGAL_ADVISOR,
                 JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit));
@@ -51,7 +52,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker withdrawn about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Superuser withdrawn about to submit callback invoked for Case Id: {}", details.getId());
 
         withdrawCaseService.withdraw(details);
 

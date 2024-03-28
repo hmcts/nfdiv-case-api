@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,35 +15,35 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerWithdrawn.CASEWORKER_WITHDRAWN;
+import static uk.gov.hmcts.divorce.systemupdate.event.SuperuserWithdrawn.SUPERUSER_WITHDRAWN;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerWithdrawnTest {
+class SuperuserWithdrawnTest {
 
     @Mock
     private WithdrawCaseService withdrawCaseService;
 
     @InjectMocks
-    private CaseworkerWithdrawn caseworkerWithdrawn;
+    private SuperuserWithdrawn superuserWithdrawn;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerWithdrawn.configure(configBuilder);
+        superuserWithdrawn.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_WITHDRAWN);
+            .contains(SUPERUSER_WITHDRAWN);
     }
 
     @Test
     public void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
         final var caseDetails = new CaseDetails<CaseData, State>();
 
-        caseworkerWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+        superuserWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
         verify(withdrawCaseService).withdraw(caseDetails);
     }
