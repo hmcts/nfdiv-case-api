@@ -118,7 +118,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
         expectedEntries.put("isDivorce", true);
-        expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
+        expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
         expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
         expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
         expectedEntries.put("issueDate", "1 January 2020");
@@ -185,7 +185,7 @@ public class AosResponseLetterTemplateContentTest {
         expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
         expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
         expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
-        expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nPost Code");
+        expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
         expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
         expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
         expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);

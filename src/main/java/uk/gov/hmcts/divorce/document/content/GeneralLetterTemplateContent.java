@@ -65,12 +65,12 @@ public class GeneralLetterTemplateContent {
         switch (generalLetter.getGeneralLetterParties()) {
             case APPLICANT -> {
                 templateContent.put(RECIPIENT_NAME, getRecipientName(caseData.getApplicant1()));
-                templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().getPostalAddress());
+                templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
                 templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
             }
             case RESPONDENT -> {
                 templateContent.put(RECIPIENT_NAME, getRecipientName(caseData.getApplicant2()));
-                templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant2().getPostalAddress());
+                templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck());
                 templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
             }
             default -> {

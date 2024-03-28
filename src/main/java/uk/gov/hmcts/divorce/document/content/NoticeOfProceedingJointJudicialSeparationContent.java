@@ -54,7 +54,7 @@ public class NoticeOfProceedingJointJudicialSeparationContent {
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
 
         if (!WELSH.equals(applicantLanguagePreference)) {

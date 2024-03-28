@@ -179,8 +179,8 @@ public class NoticeOfProceedingContent {
             caseData.getApplication().getIssueDate().plusDays(PAPER_SERVE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
         );
 
-        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
-        templateContent.put(APPLICANT_2_ADDRESS, caseData.getApplicant2().getPostalAddress());
+        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
+        templateContent.put(APPLICANT_2_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck());
 
         templateContent.put(
             APPLICANT_1_SOLICITOR_NAME,

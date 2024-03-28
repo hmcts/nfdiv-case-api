@@ -72,7 +72,7 @@ class AppliedForCoTemplateContentTest {
         assertThat(result).contains(
             entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
-            entry(ADDRESS, applicant1.getPostalAddress()),
+            entry(ADDRESS, applicant1.getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(DATE_D84_RECEIVED, "8 November 2021"),
             entry(GRANTED_DATE, LocalDate.now().plusWeeks(4).format(DATE_TIME_FORMATTER))

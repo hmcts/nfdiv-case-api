@@ -60,7 +60,7 @@ public class SwitchToSoleCoTemplateContent implements TemplateContent {
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
-        templateContent.put(ADDRESS, caseData.getApplicant2().getPostalAddress());
+        templateContent.put(ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(PARTNER,
             commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference()));

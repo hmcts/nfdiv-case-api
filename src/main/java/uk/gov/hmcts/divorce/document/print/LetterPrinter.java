@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
@@ -63,7 +64,8 @@ public class LetterPrinter {
                     caseIdString,
                     caseIdString,
                     letterName,
-                    applicant.getFullName()
+                    applicant.getFullName(),
+                    applicant.getCorrespondenceAddressIsOverseas()
                 );
                 final UUID letterId = bulkPrintService.print(print);
 
@@ -102,6 +104,12 @@ public class LetterPrinter {
                 case OTHER -> parties.name();
             };
 
+            YesOrNo correspondenceAddressOverseas = switch (parties) {
+                case RESPONDENT -> caseData.getApplicant2().getCorrespondenceAddressIsOverseas();
+                case APPLICANT -> caseData.getApplicant1().getCorrespondenceAddressIsOverseas();
+                case OTHER -> YesOrNo.NO;
+            };
+
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
             letters.addAll(generalLetters);
 
@@ -110,7 +118,8 @@ public class LetterPrinter {
                 caseId,
                 caseId,
                 letterName,
-                recipientName
+                recipientName,
+                correspondenceAddressOverseas
             );
 
             final UUID letterId = bulkPrintService.print(print);

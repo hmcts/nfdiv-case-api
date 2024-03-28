@@ -156,7 +156,7 @@ class NoticeOfProceedingJointContentTest {
                         entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE),
                         entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE),
                         entry("ctscContactDetails", ctscContactDetails),
-                        entry(ADDRESS, "line1\nline2"),
+                        entry(ADDRESS, "line1\nline2\nUK"),
                         entry(DISPLAY_EMAIL_CONFIRMATION, true)
             );
     }
@@ -237,7 +237,7 @@ class NoticeOfProceedingJointContentTest {
                         entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP),
                         entry(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP),
                         entry("ctscContactDetails", ctscContactDetails),
-                        entry(ADDRESS, "line1\nline2"),
+                        entry(ADDRESS, "line1\nline2\nUK"),
                         entry(DISPLAY_EMAIL_CONFIRMATION, true)
             );
     }

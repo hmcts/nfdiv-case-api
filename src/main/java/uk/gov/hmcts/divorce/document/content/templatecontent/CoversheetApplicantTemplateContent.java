@@ -34,7 +34,7 @@ public class CoversheetApplicantTemplateContent implements TemplateContent {
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put("applicantFirstName", applicant.getFirstName());
         templateContent.put("applicantLastName", applicant.getLastName());
-        templateContent.put("applicantAddress", applicant.getPostalAddress());
+        templateContent.put("applicantAddress", applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         return templateContent;
     }
 

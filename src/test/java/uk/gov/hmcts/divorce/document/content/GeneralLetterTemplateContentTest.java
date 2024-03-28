@@ -84,7 +84,7 @@ public class GeneralLetterTemplateContentTest {
                 entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
                 entry(RELATION, "wife"),
                 entry(RECIPIENT_NAME, "test_first_name test_last_name"),
-                entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
+                entry(RECIPIENT_ADDRESS, "line 1\ntown\nUK\npostcode"),
                 entry(IS_JOINT, true),
                 entry(FEEDBACK, "some feedback"),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)
@@ -107,7 +107,7 @@ public class GeneralLetterTemplateContentTest {
                 entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
                 entry(RELATION, "husband"),
                 entry(RECIPIENT_NAME, "test_first_name test_last_name"),
-                entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
+                entry(RECIPIENT_ADDRESS, "line 1\ntown\nUK\npostcode"),
                 entry(IS_JOINT, true),
                 entry(FEEDBACK, "some feedback"),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT)

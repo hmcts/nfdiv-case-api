@@ -41,7 +41,7 @@ public class FinalOrderGrantedCoverLetterTemplateContent implements TemplateCont
             applicant.getLanguagePreference());
 
         templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
