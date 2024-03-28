@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -86,7 +87,7 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
         return CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .applicant1(Applicant.builder().offline(NO).build())
-            .applicant2(Applicant.builder().offline(YES).build())
+            .applicant2(Applicant.builder().offline(YES).contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
                 .confidentialDocumentsGenerated(Lists.newArrayList(
                     ListValue.<ConfidentialDivorceDocument>builder()
