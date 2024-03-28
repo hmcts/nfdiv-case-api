@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -20,10 +21,9 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 
 @ExtendWith(MockitoExtension.class)
 class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
@@ -40,9 +40,9 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
     }
 
     @Test
-    void apply_shouldRegenerateConditionalOrderPronouncedCoversheetForApplicant1AndSetFlag() {
+    void apply_shouldRegenerateConditionalOrderPronouncedCoversheetForApplicant2AndSetFlag() {
         // Given
-        final CaseData caseData = createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1();
+        final CaseData caseData = createCaseDataWithApplicant2OfflineAndExistingCoverSheetApp2();
         final CaseDetails<CaseData, State> caseDetails = createCaseDetails(caseData);
 
         // When
@@ -52,52 +52,18 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
         verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
             caseData,
             1L,
-            caseData.getApplicant1(),
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
+            caseData.getApplicant2(),
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
         );
-        assertEquals(YES, caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated());
+        assertEquals(YES, caseData.getApplicant2().getCoPronouncedCoverLetterRegenerated());
         assertSame(caseDetails, result);
     }
 
     @Test
-    void apply_shouldRegenerateConditionalOrderPronouncedCoversheetForApplicant1WhenDocumentRemoved() {
+    void apply_shouldRegenerateConditionalOrderPronouncedCoversheetForApplicant2WhenRegeneratedAlready() {
         // Given
-        final CaseData caseData = createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1();
-        final CaseDetails<CaseData, State> caseDetails = createCaseDetails(caseData);
-        final CaseDetails<CaseData, State> result = task.apply(caseDetails);
-
-        // Then
-        assertSame(YES, caseData.getApplicant1().getCoPronouncedCoverLetterRegenerated());
-        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
-            caseData,
-            1L,
-            caseData.getApplicant1(),
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1
-        );
-        assertSame(caseDetails, result);
-    }
-
-
-    @Test
-    void apply_shouldNotRegenerateConditionalOrderPronouncedCoversheetForApplicant1WhenRegeneratedAlready() {
-        // Given
-        final CaseData caseData = createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1();
-        caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
-        final CaseDetails<CaseData, State> caseDetails = createCaseDetails(caseData);
-
-        // When
-        final CaseDetails<CaseData, State> result = task.apply(caseDetails);
-
-        // Then
-        verifyNoInteractions(coverLetterHelper);
-        assertSame(caseDetails, result);
-    }
-
-    @Test
-    void apply_shouldNotRegenerateConditionalOrderPronouncedCoversheetForApplicant2WhenRegeneratedAlready() {
-        // Given
-        final CaseData caseData = createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1();
-        caseData.getApplicant1().setCoPronouncedCoverLetterRegenerated(YES);
+        final CaseData caseData = createCaseDataWithApplicant2OfflineAndExistingCoverSheetApp2();
+        caseData.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setCoPronouncedCoverLetterRegenerated(YES);
         final CaseDetails<CaseData, State> caseDetails = createCaseDetails(caseData);
@@ -106,21 +72,27 @@ class RegenerateConditionalOrderPronouncedCoverLetterOfflineTest {
         final CaseDetails<CaseData, State> result = task.apply(caseDetails);
 
         // Then
-        verifyNoInteractions(coverLetterHelper);
+        verify(coverLetterHelper).generateConditionalOrderPronouncedCoversheet(
+            caseData,
+            1L,
+            caseData.getApplicant2(),
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2
+        );
         assertSame(caseDetails, result);
     }
 
-    // Helper method to create CaseData with applicant 1 offline and existing cover sheet App1
-    private CaseData createCaseDataWithApplicant1OfflineAndExistingCoverSheetApp1() {
+    // Helper method to create CaseData with applicant 2 offline and existing cover sheet App2
+    private CaseData createCaseDataWithApplicant2OfflineAndExistingCoverSheetApp2() {
         return CaseData.builder()
-            .applicant1(Applicant.builder().offline(YES).build())
-            .applicant2(Applicant.builder().offline(NO).build())
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .applicant1(Applicant.builder().offline(NO).build())
+            .applicant2(Applicant.builder().offline(YES).build())
             .documents(CaseDocuments.builder()
                 .confidentialDocumentsGenerated(Lists.newArrayList(
                     ListValue.<ConfidentialDivorceDocument>builder()
                         .id("1")
                         .value(ConfidentialDivorceDocument.builder()
-                            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
+                            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
                             .build())
                         .build()
                 ))

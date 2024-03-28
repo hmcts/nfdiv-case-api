@@ -30,10 +30,10 @@ public class SendRegeneratedCOPronouncedCoverLetters implements CaseTask {
 
         try {
             notificationDispatcher.send(resendCoverLetterNotification, data, details.getId());
-            data.getApplication().setCoPronouncedForceConfidentialCoverLetterResent(YES);
+            data.getApplication().setCoPronouncedForceConfidentialCoverLetterResentAgain(YES);
         } catch (final NotificationTemplateException e) {
             log.error("SystemResendCOPronouncedCoverLetter Notification failed with message: {}", e.getMessage(), e);
-            data.getApplication().setCoPronouncedForceConfidentialCoverLetterResent(NO);
+            data.getApplication().setCoPronouncedForceConfidentialCoverLetterResentAgain(NO);
         }
 
         return details;

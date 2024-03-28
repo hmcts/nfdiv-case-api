@@ -56,7 +56,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public static final String NOTIFICATION_FLAG = "coPronouncedForceConfidentialCoverLetterResent";
+    public static final String NOTIFICATION_FLAG = "coPronouncedForceConfidentialCoverLetterResentAgain";
 
     @Override
     public void run() {
@@ -86,8 +86,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
                                     .must(matchQuery(String.format(DATA, APPLICANT2_OFFLINE), YES))
                             )
                             .minimumShouldMatch(1)
-                    )
-                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YES));
+                    ).mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YES));
 
             final List<CaseDetails> casesToBeUpdated =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, ConditionalOrderPronounced, AwaitingFinalOrder);
@@ -119,7 +118,7 @@ public class SystemRedoPronouncedCoverLettersTask implements Runnable {
     }
 
     public List<Long> loadCaseIds() throws IOException {
-        ClassPathResource resource = new ClassPathResource("relevant_ids_none.txt");
+        ClassPathResource resource = new ClassPathResource("relevant_ids_outliers.txt");
         String content = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         StringTokenizer tokenizer = new StringTokenizer(content, ",");
         List<Long> idList = new ArrayList<>();
