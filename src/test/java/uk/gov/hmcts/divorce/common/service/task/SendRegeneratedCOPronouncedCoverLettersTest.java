@@ -38,18 +38,18 @@ public class SendRegeneratedCOPronouncedCoverLettersTest {
     @Test
     public void shouldSendRegeneratedLetters() {
         final CaseData caseData = caseData();
-        Applicant applicant1 = Applicant.builder()
+        Applicant applicant2 = Applicant.builder()
             .coPronouncedCoverLetterRegenerated(YES)
             .offline(YesOrNo.YES)
             .solicitorRepresented(YesOrNo.NO)
             .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
-        caseData.setApplicant1(applicant1);
+        caseData.setApplicant2(applicant2);
         caseDetails.setData(caseData);
         underTest.apply(caseDetails);
 
-        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResent()).isEqualTo(YES);
+        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResentAgain()).isEqualTo(YES);
 
         verify(notificationDispatcher).send(resendCoverLetterNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -67,6 +67,6 @@ public class SendRegeneratedCOPronouncedCoverLettersTest {
 
         underTest.apply(caseDetails);
 
-        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResent()).isEqualTo(NO);
+        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResentAgain()).isEqualTo(NO);
     }
 }
