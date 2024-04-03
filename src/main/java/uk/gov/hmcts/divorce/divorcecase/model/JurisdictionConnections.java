@@ -51,13 +51,13 @@ public enum JurisdictionConnections implements HasLabel {
 
     @JsonProperty("G")
     @JsonPropertyDescription("APP_1_DOMICILED")
-    APP_1_DOMICILED("Only the applicant or applicant 1 is domiciled in England and Wales",
-        "Dim ond domisil  y ceisydd neu ceisydd 1 sydd yng Nghymru neu Loegr"),
+    APP_1_DOMICILED("The applicant or applicant 1 is domiciled in England and Wales",
+        "Mae domisil y ceisydd neu geisydd 1 yng Nghymru a Lloegr"),
 
     @JsonProperty("H")
     @JsonPropertyDescription("APP_2_DOMICILED")
-    APP_2_DOMICILED("Only applicant 2 (in a joint) or the respondent (in a sole) is domiciled in England and Wales",
-        "Dim ond domisil ceisydd 2 neu yr atebydd sydd yng Nghymru neu Loegr"),
+    APP_2_DOMICILED("Applicant 2 (in a joint) or the respondent (in a sole) is domiciled in England and Wales",
+        "Mae Ceisydd 2 (mewn cais ar y cyd) neu’r atebydd (mewn cais unigol) â’i ddomisil yng Nghymru a Lloegr"),
 
     @JsonProperty("I")
     @JsonPropertyDescription("RESIDUAL_JURISDICTION_CP")

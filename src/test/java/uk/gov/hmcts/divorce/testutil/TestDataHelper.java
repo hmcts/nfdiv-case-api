@@ -1262,6 +1262,20 @@ public class TestDataHelper {
                 .build())
             .build();
 
+        ListValue<ConfidentialDivorceDocument> coConfidentialCoverLetterApp1 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(
+                    ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
+                .build())
+            .build();
+
+        ListValue<ConfidentialDivorceDocument> coConfidentialCoverLetterApp2 = ListValue.<ConfidentialDivorceDocument>builder()
+            .value(ConfidentialDivorceDocument.builder()
+                .confidentialDocumentsReceived(
+                    ConfidentialDocumentsReceived.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2)
+                .build())
+            .build();
+
         ListValue<DivorceDocument> coCoverLetterApp1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1)
@@ -1274,6 +1288,23 @@ public class TestDataHelper {
                 .build())
             .build();
 
+        if (applicant1.isConfidentialContactDetails() && applicant2.isConfidentialContactDetails()) {
+            return CaseData.builder()
+                .divorceOrDissolution(DIVORCE)
+                .applicant1(applicant1)
+                .applicant2(applicant2)
+                .conditionalOrder(ConditionalOrder.builder()
+                    .court(ConditionalOrderCourt.BIRMINGHAM)
+                    .dateAndTimeOfHearing(LOCAL_DATE_TIME)
+                    .grantedDate(LOCAL_DATE)
+                    .build())
+                .documents(builder()
+                    .documentsGenerated(Lists.newArrayList(coGrantedDoc))
+                    .confidentialDocumentsGenerated(
+                        Lists.newArrayList(coConfidentialCoverLetterApp1, coConfidentialCoverLetterApp2))
+                    .build())
+                .build();
+        }
         return CaseData.builder()
             .divorceOrDissolution(DIVORCE)
             .applicant1(applicant1)
