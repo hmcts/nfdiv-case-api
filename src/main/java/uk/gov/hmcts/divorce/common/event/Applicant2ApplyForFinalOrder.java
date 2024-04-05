@@ -138,7 +138,10 @@ public class Applicant2ApplyForFinalOrder implements CCDConfig<CaseData, State, 
             notificationDispatcher.send(finalOrderRequestedNotification, details.getData(), details.getId());
         }
 
-        generalReferralService.caseWorkerGeneralReferral(details);
+        var isRespondentOnSoleCase = data.getApplicationType().isSole();
+        if (!isRespondentOnSoleCase) {
+            generalReferralService.caseWorkerGeneralReferral(details);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }
