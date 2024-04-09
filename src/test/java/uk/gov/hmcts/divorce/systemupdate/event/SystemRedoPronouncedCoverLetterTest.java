@@ -31,7 +31,7 @@ class SystemRedoPronouncedCoverLetterTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLettersOffline;
+    private RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLetters;
 
     @Mock
     private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
@@ -57,12 +57,12 @@ class SystemRedoPronouncedCoverLetterTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        when(regenerateCoverLettersOffline.apply(details)).thenReturn(details);
+        when(regenerateCoverLetters.apply(details)).thenReturn(details);
         when(sendRegeneratedCoverLetters.apply(details)).thenReturn(details);
 
         underTest.aboutToSubmit(details, details);
 
-        verify(regenerateCoverLettersOffline).apply(details);
+        verify(regenerateCoverLetters).apply(details);
         verify(sendRegeneratedCoverLetters).apply(details);
     }
 }
