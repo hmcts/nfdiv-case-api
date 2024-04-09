@@ -298,19 +298,21 @@ public class CaseDocuments {
     }
 
     @JsonIgnore
-    public void removeDocumentGeneratedWithType(final DocumentType documentType) {
+    public boolean removeDocumentGeneratedWithType(final DocumentType documentType) {
         if (!isEmpty(this.getDocumentsGenerated())) {
-            this.getDocumentsGenerated()
+            return this.getDocumentsGenerated()
                 .removeIf(document -> documentType.equals(document.getValue().getDocumentType()));
         }
+        return false;
     }
 
     @JsonIgnore
-    public void removeConfidentialDocumentGeneratedWithType(final ConfidentialDocumentsReceived documentType) {
+    public boolean removeConfidentialDocumentGeneratedWithType(final ConfidentialDocumentsReceived documentType) {
         if (!isEmpty(this.getConfidentialDocumentsGenerated())) {
-            this.getConfidentialDocumentsGenerated()
+            return this.getConfidentialDocumentsGenerated()
                 .removeIf(document -> documentType.equals(document.getValue().getConfidentialDocumentsReceived()));
         }
+        return false;
     }
 
     @JsonIgnore
