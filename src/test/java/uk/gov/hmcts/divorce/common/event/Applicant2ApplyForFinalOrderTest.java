@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -157,12 +158,22 @@ class Applicant2ApplyForFinalOrderTest {
     }
 
     @Test
-    void shouldPassCaseDetailsToGeneralReferralService() {
-        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+    void shouldPassJointCaseDetailsToGeneralReferralService() {
+        final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         applicant2ApplyForFinalOrder.submitted(caseDetails, null);
 
         verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
+    }
+
+    @Test
+    void shouldNotPassSoleCaseDetailsToGeneralReferralService() {
+        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+
+        applicant2ApplyForFinalOrder.submitted(caseDetails, null);
+
+        verify(generalReferralService, never()).caseWorkerGeneralReferral(same(caseDetails));
     }
 }

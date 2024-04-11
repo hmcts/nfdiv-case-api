@@ -6,7 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.ResendConditionalOrderPronouncedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -36,13 +38,18 @@ public class SendRegeneratedCOPronouncedCoverLettersTest {
     @Test
     public void shouldSendRegeneratedLetters() {
         final CaseData caseData = caseData();
+        Applicant applicant2 = Applicant.builder()
+            .coPronouncedCoverLetterRegenerated(YES)
+            .offline(YesOrNo.YES)
+            .solicitorRepresented(YesOrNo.NO)
+            .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
+        caseData.setApplicant2(applicant2);
         caseDetails.setData(caseData);
-
         underTest.apply(caseDetails);
 
-        assertThat(caseDetails.getData().getApplication().getCoPronouncedCoverLetterResent()).isEqualTo(YES);
+        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResentAgain()).isEqualTo(YES);
 
         verify(notificationDispatcher).send(resendCoverLetterNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
@@ -60,6 +67,6 @@ public class SendRegeneratedCOPronouncedCoverLettersTest {
 
         underTest.apply(caseDetails);
 
-        assertThat(caseDetails.getData().getApplication().getCoPronouncedCoverLetterResent()).isEqualTo(NO);
+        assertThat(caseDetails.getData().getApplication().getCoPronouncedForceConfidentialCoverLetterResentAgain()).isEqualTo(NO);
     }
 }

@@ -336,6 +336,20 @@ class CaseworkerNoticeOfChangeTest {
             APPLICANT_1_SOLICITOR.getRole());
     }
 
+    @Test
+    public void shouldHandleNullRepresentationGracefully() {
+        var details = getCaseDetails();
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyRepresented(null)
+            .build());
+
+        var result = noticeOfChange.aboutToSubmit(details, getCaseDetails());
+
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
+    }
+
     private CaseDetails<CaseData, State> getCaseDetails() {
         final var details = new CaseDetails<CaseData, State>();
         final var data = caseData();
