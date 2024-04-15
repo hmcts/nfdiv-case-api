@@ -14,8 +14,6 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForSt
 @Component
 public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
-    private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
     private static final String SOLE_APPLICATION = "applicationType=\"soleApplication\"";
