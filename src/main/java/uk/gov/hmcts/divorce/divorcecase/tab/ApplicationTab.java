@@ -113,9 +113,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsType=\"private\"",
                 "#### ${labelContentTheApplicantOrApplicant1UC}'s contact details are confidential")
-            .field("applicant1PhoneNumber", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
-            .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
-            .field("applicant1Address", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant1CannotUpload")
             .field("applicant1CannotUploadSupportingDocument")
             .field("applicant1KnowsApplicant2Address",
@@ -170,9 +167,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelApplicant2DetailsAreConfidential-Heading",
                 "applicant2ContactDetailsType=\"private\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
-            .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
-            .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
-            .field("applicant2Address", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("applicant2AgreedToReceiveEmails")
             .field("applicant2CannotUpload")
             .field("applicant2CannotUploadSupportingDocument")
