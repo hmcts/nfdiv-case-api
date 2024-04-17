@@ -24,6 +24,7 @@ uk:
           signInProfessionalUsersUrl: ${NOTIFY_TEMPLATE_SIGN_IN_PROFESSIONAL_USERS_URL:https://manage-case.aat.platform.hmcts.net/cases/case-details/}
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
+          webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
         templates:
           english:
             SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
