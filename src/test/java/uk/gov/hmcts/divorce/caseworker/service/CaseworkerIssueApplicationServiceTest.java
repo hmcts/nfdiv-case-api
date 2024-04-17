@@ -6,18 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
+import uk.gov.hmcts.divorce.caseworker.service.task.*;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
@@ -57,6 +46,9 @@ class CaseworkerIssueApplicationServiceTest {
 
     @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
+
+    @Mock
+    private SendFinancialOrderRequestedNotifications sendFinancialOrderRequestedNotifications;
 
     @Mock
     private SetDueDateAfterIssue setDueDateAfterIssue;
@@ -108,6 +100,7 @@ class CaseworkerIssueApplicationServiceTest {
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
         verifyNoInteractions(sendApplicationIssueNotifications);
+        verifyNoInteractions(sendFinancialOrderRequestedNotifications);
     }
 
     @Test
@@ -129,5 +122,6 @@ class CaseworkerIssueApplicationServiceTest {
         verify(sendAosPackToApplicant).apply(caseDetails);
         verify(sendAosPackToRespondent).apply(caseDetails);
         verify(sendApplicationIssueNotifications).apply(caseDetails);
+        verify(sendFinancialOrderRequestedNotifications).apply(caseDetails);
     }
 }
