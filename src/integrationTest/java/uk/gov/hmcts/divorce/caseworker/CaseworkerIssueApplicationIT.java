@@ -103,7 +103,16 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.*;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDeleteWith;
 import static uk.gov.hmcts.divorce.testutil.CdamWireMock.stubCdamDownloadBinaryWith;
@@ -137,8 +146,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForFinancialOrder;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
 
 
@@ -1276,7 +1285,7 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldSendFinancialOrderRequestedNotificationToBothPartiesInJointApplication() throws Exception{
+    void shouldSendFinancialOrderRequestedNotificationToBothPartiesInJointApplication() throws Exception {
         final CaseData caseData = validCaseDataForFinancialOrder();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setIssueDate(LocalDate.of(2024, 4, 17));
@@ -1334,7 +1343,7 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldSendDifferentFinancialOrderRequestedNotificationsToPartiesInSoleApplicationType() throws Exception{
+    void shouldSendDifferentFinancialOrderRequestedNotificationsToPartiesInSoleApplicationType() throws Exception {
         final CaseData caseData = validCaseDataForFinancialOrder();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setIssueDate(LocalDate.of(2024, 4, 17));

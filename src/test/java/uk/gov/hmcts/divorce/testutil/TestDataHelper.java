@@ -539,7 +539,7 @@ public class TestDataHelper {
         return caseData;
     }
 
-    public static CaseData validCaseDataForFinancialOrder(){
+    public static CaseData validCaseDataForFinancialOrder() {
         CaseData caseData = validCaseDataForIssueApplication();
 
         caseData.getApplicant1().setFinancialOrder(YES);
