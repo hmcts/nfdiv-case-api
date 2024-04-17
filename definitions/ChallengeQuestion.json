@@ -1,0 +1,22 @@
+[
+    {
+      "Answer": "${marriageDate}",
+      "AnswerFieldType": "Text",
+      "CaseTypeID": "NFD",
+      "DisplayOrder": 1,
+      "ID": "NoCChallenge",
+      "LiveFrom": "01/04/2024",
+      "QuestionId": "caseRef",
+      "QuestionText": "Enter the Case Reference"
+    },
+    {
+      "Answer": "${applicant1LastName}",
+      "AnswerFieldType": "Text",
+      "CaseTypeID": "NFD",
+      "DisplayOrder": 2,
+      "ID": "NoCChallenge",
+      "LiveFrom": "01/04/2024",
+      "QuestionId": "lastName",
+      "QuestionText": "Enter marriage date in YYYY-MM-DD format eg. 2011-03-08 "
+    }
+  ]
