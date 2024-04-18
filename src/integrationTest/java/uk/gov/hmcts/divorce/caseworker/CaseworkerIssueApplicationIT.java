@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -67,6 +68,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -215,6 +217,9 @@ public class CaseworkerIssueApplicationIT {
 
     @MockBean
     private DocumentIdProvider documentIdProvider;
+
+    @MockBean
+    private PaymentService paymentService;
 
     @MockBean
     private NotificationService notificationService;
@@ -1295,6 +1300,8 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(275.0);
+
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -1352,6 +1359,8 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().getAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(275.0);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)

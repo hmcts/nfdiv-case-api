@@ -47,6 +47,7 @@ public class PaymentService {
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
     public static final String EVENT_ISSUE = "issue";
+    public static final String EVENT_MISC = "miscellaneous";
     public static final String SERVICE_DIVORCE = "divorce";
     public static final String SERVICE_OTHER = "other";
     public static final String KEYWORD_BAILIFF = "BailiffServeDoc";
@@ -54,6 +55,7 @@ public class PaymentService {
     public static final String KEYWORD_DIVORCE = "DivorceCivPart";
     public static final String KEYWORD_DIVORCE_AMEND_PETITION = "DivorceAmendPetition";
     public static final String KEYWORD_DEF = "DEF";
+    public static final String KEYWORD_FINANCIALORDERNOTICE = "FinancialOrderOnNotice";
     public static final String KEYWORD_NOTICE = "GAOnNotice";
     public static final String KEYWORD_WITHOUT_NOTICE = "GeneralAppWithoutNotice";
 

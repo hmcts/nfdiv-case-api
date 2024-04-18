@@ -9,12 +9,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIALORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
+import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_FINANCIALORDERNOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -27,7 +33,7 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
     private CommonContent commonContent;
 
     @Autowired
-    private EmailTemplatesConfig config;
+    private PaymentService paymentService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -37,8 +43,12 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
 
         log.info("Sending financial order requested notification to applicant 1 for case : {}", caseId);
 
+        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
+
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+
+        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
 
         notificationService.sendEmail(
             email,
@@ -55,8 +65,12 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
         final String email = caseData.getApplicant2EmailAddress();
         final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
+        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
+
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+
+        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
 
         if (caseData.getApplicationType().isSole()) {
             if (isNotBlank(email)) {
