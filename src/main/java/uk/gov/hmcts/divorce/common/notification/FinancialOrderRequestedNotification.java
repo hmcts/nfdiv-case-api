@@ -69,6 +69,8 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
                     languagePreference,
                     caseId
                 );
+            } else {
+                log.info("Respondent email is blank. Financial Order Notification will not be sent.");
             }
         } else {
             log.info("Sending financial order requested notification to applicant 2 for case : {}", caseId);
