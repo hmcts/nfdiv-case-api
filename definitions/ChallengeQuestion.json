@@ -2,7 +2,7 @@
     {
       "Answer": "${marriageDate}:[APPONESOLICITOR]",
       "AnswerFieldType": "Text",
-      "CaseTypeID": "NFD",
+      "CaseTypeID": "NFD-3686",
       "DisplayOrder": 1,
       "ID": "NoCChallenge",
       "LiveFrom": "01/04/2024",
@@ -12,7 +12,7 @@
     {
       "Answer": "${applicant1FirstName}:[APPONESOLICITOR]",
       "AnswerFieldType": "Text",
-      "CaseTypeID": "NFD",
+      "CaseTypeID": "NFD-3686",
       "DisplayOrder": 2,
       "ID": "NoCChallenge",
       "LiveFrom": "01/04/2024",
@@ -22,8 +22,8 @@
     {
       "Answer": "${applicant1LastName}:[APPONESOLICITOR]",
       "AnswerFieldType": "Text",
-      "CaseTypeID": "NFD",
-      "DisplayOrder": 2,
+      "CaseTypeID": "NFD-3686",
+      "DisplayOrder": 3,
       "ID": "NoCChallenge",
       "LiveFrom": "01/04/2024",
       "QuestionId": "applicantLastName",
