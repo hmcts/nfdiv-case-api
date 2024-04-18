@@ -52,6 +52,7 @@ public class FinancialOrderRequestedNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithSoleAndJointFinancialOrderContent() {
         CaseData data = validCaseDataForFinancialOrder();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());

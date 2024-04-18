@@ -3,6 +3,8 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -14,6 +16,10 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIALORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FINANCIAL_ORDER_NOT_REQUESTED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FINANCIAL_ORDER_REQUESTED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
@@ -42,12 +48,8 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
 
         log.info("Sending financial order requested notification to applicant 1 for case : {}", caseId);
 
-        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
-
         final Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
-
-        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
+            populateTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
 
         notificationService.sendEmail(
             email,
@@ -64,12 +66,8 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
         final String email = caseData.getApplicant2EmailAddress();
         final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
-        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
-
         final Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
-
-        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
+            populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
 
         if (caseData.getApplicationType().isSole()) {
             if (isNotBlank(email)) {
@@ -96,5 +94,26 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
                 caseId
             );
         }
+    }
+
+    public Map<String, String> populateTemplateVars(final CaseData caseData,
+                                                    final Long id,
+                                                    final Applicant applicant,
+                                                    final Applicant partner) {
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, id, applicant, partner);
+
+        if (YesOrNo.YES.equals(applicant.getFinancialOrder())) {
+            templateVars.put(FINANCIAL_ORDER_REQUESTED,YES);
+            templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,NO);
+        } else {
+            templateVars.put(FINANCIAL_ORDER_REQUESTED,NO);
+            templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,YES);
+        }
+
+        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
+        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
+
+        return templateVars;
     }
 }
