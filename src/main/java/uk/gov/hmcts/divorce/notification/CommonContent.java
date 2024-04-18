@@ -95,6 +95,7 @@ public class CommonContent {
     public static final String DATE_OF_HEARING_MINUS_SEVEN_DAYS = "date of hearing minus seven days";
     public static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
     public static final String CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS = "CO pronouncement date plus 43 days plus 3 months";
+    public static final String CUSTOM_TEXT1 = "customtext1";
     public static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
     public static final String DATE_PLUS_14_DAYS = "date plus 14 days";
 
