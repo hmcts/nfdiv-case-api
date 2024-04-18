@@ -128,12 +128,11 @@ task buildCCDXlsx(type: Exec) {
   outputs.dir layout.buildDirectory.dir('ccd-config')
 }
 
-task copyDefinitions(type: Copy) {
+task generateJSONCCDDefinition(type: Copy) {
+  from tasks.generateCCDConfig.outputs
   from file('definitions')
   into layout.buildDirectory.dir('definitions/NFD')
 }
-
-generateCCDConfig.finalizedBy copyDefinitions
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"

@@ -48,7 +48,7 @@ public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserR
         new PageBuilder(configBuilder
             .event(NOTICE_OF_CHANGE_REQUESTED)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Solicitor Notice Of Change Requested")
+            .name("Notice Of Change Requested")
             .grant(CREATE_READ_UPDATE, ORGANISATION_CASE_ACCESS_ADMINISTRATOR)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
             .submittedCallback(this::submitted))
