@@ -20,7 +20,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.CUSTOM_TEXT1;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIALORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
@@ -52,12 +51,11 @@ public class FinancialOrderRequestedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithSoleAndJointFinancialOrderContent() {
-        final CaseData data = validCaseDataForFinancialOrder();
+        CaseData data = validCaseDataForFinancialOrder();
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
         divorceTemplateVars.put(FEES_FINANCIALORDER, formatAmount(275.0));
-        divorceTemplateVars.put(CUSTOM_TEXT1,"Test");
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -81,7 +79,6 @@ public class FinancialOrderRequestedNotificationTest {
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
         divorceTemplateVars.put(FEES_FINANCIALORDER, formatAmount(275.0));
-        divorceTemplateVars.put(CUSTOM_TEXT1,"Test");
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
@@ -105,7 +102,6 @@ public class FinancialOrderRequestedNotificationTest {
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
         divorceTemplateVars.put(FEES_FINANCIALORDER, formatAmount(275.0));
-        divorceTemplateVars.put(CUSTOM_TEXT1,"Test");
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 

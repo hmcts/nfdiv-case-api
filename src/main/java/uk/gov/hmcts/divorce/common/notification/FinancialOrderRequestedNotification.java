@@ -3,8 +3,6 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -15,7 +13,6 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.notification.CommonContent.CUSTOM_TEXT1;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIALORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
@@ -37,22 +34,6 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
     @Autowired
     private PaymentService paymentService;
 
-    private static final String REQUESTED_ORDER_DIVORCE = "You have told the court you want to apply for a financial order. "
-        + "You can do the application later, when you know whether you can reach an agreement. It"
-        + " will be dealt with separately to the main divorce application.";
-
-    private static final String REQUESTED_ORDER_DISSOLUTION = "You have told the court you want to apply for a financial order. "
-        + "You can do the application later, when you know whether you can reach an agreement. It"
-        + " will be dealt with separately to the main application to end your civil partnership.";
-
-    private static final String NOT_REQ_ORDER_DIVORCE = "You can apply for a financial order later, when you know whether "
-        + "you can reach an agreement on how to settle your finances. It will be dealt with separately "
-        + "to the main divorce application.";
-
-    private static final String NOT_REQ_ORDER_DISSOLUTION = "You can apply for a financial order later, when you know whether "
-        + "you can reach an agreement on how to settle your finances. It will be dealt with separately "
-        + "to the main application to end your civil partnership.";
-
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
 
@@ -61,8 +42,12 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
 
         log.info("Sending financial order requested notification to applicant 1 for case : {}", caseId);
 
+        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
+
         final Map<String, String> templateVars =
-            populateTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+
+        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
 
         notificationService.sendEmail(
             email,
@@ -79,8 +64,12 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
         final String email = caseData.getApplicant2EmailAddress();
         final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
 
+        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
+
         final Map<String, String> templateVars =
-            populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+            commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+
+        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
 
         if (caseData.getApplicationType().isSole()) {
             if (isNotBlank(email)) {
@@ -107,24 +96,5 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
                 caseId
             );
         }
-    }
-
-    public Map<String, String> populateTemplateVars(final CaseData caseData,
-                                                final Long id,
-                                                final Applicant applicant,
-                                                final Applicant partner) {
-        final Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, id, applicant, partner);
-
-        if (YesOrNo.YES.equals(applicant.getFinancialOrder())) {
-            templateVars.put(CUSTOM_TEXT1, caseData.isDivorce() ? REQUESTED_ORDER_DIVORCE : REQUESTED_ORDER_DISSOLUTION);
-        } else {
-            templateVars.put(CUSTOM_TEXT1, caseData.isDivorce() ? NOT_REQ_ORDER_DIVORCE : NOT_REQ_ORDER_DISSOLUTION);
-        }
-
-        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
-        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
-
-        return templateVars;
     }
 }
