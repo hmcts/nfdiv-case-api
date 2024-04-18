@@ -25,11 +25,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.ORGANISATION_CASE_ACCESS_ADMINISTRATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.noticeofchange.model.CheckNocRequest.checkNocRequest;
+import static uk.gov.hmcts.divorce.noticeofchange.model.NocRequest.nocRequest;
 
 @Slf4j
 @Component
-public class RequestNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
+public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
@@ -40,15 +40,15 @@ public class RequestNoticeOfChange implements CCDConfig<CaseData, State, UserRol
     @Autowired
     private IdamService idamService;
 
-    public static final String REQUEST_NOTICE_OF_CHANGE = "nocRequest";
+    public static final String NOTICE_OF_CHANGE_REQUESTED = "solicitor-notice-of-change-requested";
     public static final int NOC_AUTO_APPROVED = 1;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(REQUEST_NOTICE_OF_CHANGE)
+            .event(NOTICE_OF_CHANGE_REQUESTED)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Notice Of Change Request")
+            .name("Solicitor Notice Of Change Requested")
             .grant(CREATE_READ_UPDATE, ORGANISATION_CASE_ACCESS_ADMINISTRATOR)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
             .submittedCallback(this::submitted))
@@ -78,7 +78,7 @@ public class RequestNoticeOfChange implements CCDConfig<CaseData, State, UserRol
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
-        assignCaseAccessClient.requestNoticeOfChange(sysUserToken, s2sToken, checkNocRequest(details));
+        assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, nocRequest(details));
 
         return SubmittedCallbackResponse.builder().build();
     }
