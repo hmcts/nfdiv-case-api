@@ -158,7 +158,6 @@ withPipeline(type, product, component) {
   afterAlways('checkout') {
     builder.setupToolVersion()
     builder.gradle('generateCCDConfig')
-    builder.gradle('generateJSONCCDDefinition')
     generateDefinitions()
   }
 
@@ -200,7 +199,6 @@ withPipeline(type, product, component) {
 
     // re-run to generate prod definition
     builder.gradle('generateCCDConfig --rerun-tasks')
-    builder.gradle('generateJSONCCDDefinition')
     generateDefinitions()
   }
 
