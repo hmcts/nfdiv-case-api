@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -254,8 +255,7 @@ public class CaseData {
     private String hyphenatedCaseRef;
 
     @CCD(access = {AacSystemUserAccess.class})
-    @JsonUnwrapped
-    private ChangeOrganisationRequest changeOrganisationRequest;
+    private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest;
 
     @CCD(
         access = {CaseworkerAccess.class}
