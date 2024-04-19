@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ChangeOrganisationRequest;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -53,7 +53,7 @@ public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserR
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
             .submittedCallback(this::submitted))
             .page("nocRequest")
-            .complex(CaseData::getChangeOrganisationRequestField)
+            .complex(CaseData::getChangeOrganisationRequest)
                 .complex(ChangeOrganisationRequest::getOrganisationToAdd)
                     .optional(Organisation::getOrganisationId)
                     .optional(Organisation::getOrganisationName)
