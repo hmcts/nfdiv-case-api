@@ -240,7 +240,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
             .field("solStatementOfReconciliationCertify")
             .field("solStatementOfReconciliationDiscussed")
-            .field("solSignStatementOfTruth")
+            .field("solSignStatementOfTruth", "applicant1SolicitorRepresented=\"Yes\"")
             .field("solStatementOfReconciliationName")
             .field("solStatementOfReconciliationFirm")
             .field("statementOfReconciliationComments");
