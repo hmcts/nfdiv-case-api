@@ -40,7 +40,7 @@ public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserR
     @Autowired
     private IdamService idamService;
 
-    public static final String NOTICE_OF_CHANGE_REQUESTED = "solicitor-notice-of-change-requested";
+    public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
     public static final int NOC_AUTO_APPROVED = 1;
 
     @Override

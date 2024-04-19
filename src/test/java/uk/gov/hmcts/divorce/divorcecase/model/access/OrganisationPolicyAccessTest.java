@@ -11,6 +11,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.D;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -30,14 +31,17 @@ class OrganisationPolicyAccessTest {
         final SetMultimap<HasRole, Permission> grants = new OrganisationPolicyAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(22)
+            .hasSize(24)
             .contains(
                 entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, C),
                 entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, R),
                 entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, U),
+                entry(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, D),
                 entry(NOC_APPROVER, C),
                 entry(NOC_APPROVER, R),
                 entry(NOC_APPROVER, U),
+                entry(NOC_APPROVER, D),
+                entry(APPLICANT_1_SOLICITOR, R),
                 entry(APPLICANT_2_SOLICITOR, R),
                 entry(CITIZEN, C),
                 entry(CITIZEN, R),
