@@ -255,7 +255,7 @@ public class CaseData {
     private String hyphenatedCaseRef;
 
     @CCD(access = {AacSystemUserAccess.class})
-    private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest;
+    private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
 
     @CCD(
         access = {CaseworkerAccess.class}

@@ -25,11 +25,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.NOC_APPROVER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.noticeofchange.model.NocRequest.nocRequest;
+import static uk.gov.hmcts.divorce.noticeofchange.model.NocApiRequest.nocRequest;
 
 @Slf4j
 @Component
-public class NoticeOfChangeApplied implements CCDConfig<CaseData, State, UserRole> {
+public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
@@ -53,22 +53,22 @@ public class NoticeOfChangeApplied implements CCDConfig<CaseData, State, UserRol
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
             .submittedCallback(this::submitted))
             .page("nocRequest")
-            .complex(CaseData::getChangeOrganisationRequest)
-            .complex(ChangeOrganisationRequest::getOrganisationToAdd)
-            .optional(Organisation::getOrganisationId)
-            .optional(Organisation::getOrganisationName)
-            .done()
-            .complex(ChangeOrganisationRequest::getOrganisationToRemove)
-            .optional(Organisation::getOrganisationId)
-            .optional(Organisation::getOrganisationName)
-            .done()
-            .optional(ChangeOrganisationRequest::getRequestTimestamp)
-            .optional(ChangeOrganisationRequest::getCaseRoleId)
-            .optional(
-                ChangeOrganisationRequest::getApprovalStatus,
-                NEVER_SHOW,
-                NOC_AUTO_APPROVED
-            )
+            .complex(CaseData::getChangeOrganisationRequestField)
+                .complex(ChangeOrganisationRequest::getOrganisationToAdd)
+                    .optional(Organisation::getOrganisationId)
+                    .optional(Organisation::getOrganisationName)
+                .done()
+                .complex(ChangeOrganisationRequest::getOrganisationToRemove)
+                    .optional(Organisation::getOrganisationId)
+                    .optional(Organisation::getOrganisationName)
+                .done()
+                .optional(ChangeOrganisationRequest::getRequestTimestamp)
+                .optional(ChangeOrganisationRequest::getCaseRoleId)
+                .optional(
+                    ChangeOrganisationRequest::getApprovalStatus,
+                    NEVER_SHOW,
+                    NOC_AUTO_APPROVED
+                )
             .done();
     }
 

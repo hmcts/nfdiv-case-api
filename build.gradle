@@ -128,12 +128,6 @@ task buildCCDXlsx(type: Exec) {
   outputs.dir layout.buildDirectory.dir('ccd-config')
 }
 
-task generateJSONCCDDefinition(type: Copy) {
-  from tasks.generateCCDConfig.outputs
-  from file('definitions')
-  into layout.buildDirectory.dir('definitions/NFD')
-}
-
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
   setTestClassesDirs(sourceSets.functionalTest.output.classesDirs)
@@ -195,8 +189,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
-  '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
-  '**/uk/gov/hmcts/divorce/noticeofchange/**'
+  '**/uk/gov/hmcts/divorce/divorcecase/tab/**'
 ]
 
 sonarqube {

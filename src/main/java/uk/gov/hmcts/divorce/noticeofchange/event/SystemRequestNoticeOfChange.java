@@ -25,11 +25,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.ORGANISATION_CASE_ACCESS_ADMINISTRATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.noticeofchange.model.NocRequest.nocRequest;
+import static uk.gov.hmcts.divorce.noticeofchange.model.NocApiRequest.nocRequest;
 
 @Slf4j
 @Component
-public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserRole> {
+public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
@@ -53,7 +53,7 @@ public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserR
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
             .submittedCallback(this::submitted))
             .page("nocRequest")
-            .complex(CaseData::getChangeOrganisationRequest)
+            .complex(CaseData::getChangeOrganisationRequestField)
                 .complex(ChangeOrganisationRequest::getOrganisationToAdd)
                     .optional(Organisation::getOrganisationId)
                     .optional(Organisation::getOrganisationName)
@@ -61,7 +61,7 @@ public class NoticeOfChangeRequested implements CCDConfig<CaseData, State, UserR
                 .complex(ChangeOrganisationRequest::getOrganisationToRemove)
                     .optional(Organisation::getOrganisationId)
                     .optional(Organisation::getOrganisationName)
-                    .done()
+                .done()
                 .optional(ChangeOrganisationRequest::getRequestTimestamp)
                 .optional(ChangeOrganisationRequest::getCaseRoleId)
                 .optional(

@@ -11,13 +11,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 @Builder
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NocRequest {
+public class NocApiRequest {
 
     @JsonProperty(value = "case_details")
     private final CaseDetails caseDetails;
 
-    public static NocRequest nocRequest(CaseDetails caseDetails) {
-        return NocRequest.builder().caseDetails(caseDetails).build();
+    public static NocApiRequest nocRequest(CaseDetails caseDetails) {
+        return NocApiRequest.builder().caseDetails(caseDetails).build();
     }
 
 }

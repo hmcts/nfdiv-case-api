@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.gov.hmcts.divorce.noticeofchange.model.NocRequest;
+import uk.gov.hmcts.divorce.noticeofchange.model.NocApiRequest;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -19,7 +19,7 @@ public interface AssignCaseAccessClient {
     AboutToStartOrSubmitCallbackResponse checkNocApproval(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestBody NocRequest nocRequest
+        @RequestBody NocApiRequest nocApiRequest
     );
 
     @PostMapping(value = "/noc/apply-decision", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -27,6 +27,6 @@ public interface AssignCaseAccessClient {
     AboutToStartOrSubmitCallbackResponse applyNoticeOfChange(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestBody NocRequest nocRequest
+        @RequestBody NocApiRequest nocApiRequest
     );
 }

@@ -25,7 +25,7 @@ public class CaseRoleID implements HasRole {
     }
 
     public String getCaseTypePermissions() {
-        return value.getCode().toString();
+        return value.getLabel();
     }
 
     public CaseRoleID(@JsonProperty("value") DynamicListElement value,
