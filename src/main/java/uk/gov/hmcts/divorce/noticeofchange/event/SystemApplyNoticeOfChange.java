@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -66,9 +65,11 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
                 .done()
                 .optional(ChangeOrganisationRequest::getRequestTimestamp)
                 .optional(ChangeOrganisationRequest::getCaseRoleId)
-                .complex(ChangeOrganisationRequest::getApprovalStatus)
-                    .optional(ChangeOrganisationApprovalStatus::getValue, NEVER_SHOW, NOC_AUTO_APPROVED)
-                .done()
+                .optional(
+                    ChangeOrganisationRequest::getApprovalStatus,
+                    NEVER_SHOW,
+                    NOC_AUTO_APPROVED
+                )
             .done();
     }
 
