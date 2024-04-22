@@ -10,6 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
+import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.PaymentClient;
 import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
@@ -32,6 +33,7 @@ import java.util.TimeZone;
 )
 @EnableFeignClients(
     clients = {
+        AssignCaseAccessClient.class,
         IdamApi.class,
         ServiceAuthorisationApi.class,
         CaseUserApi.class,
