@@ -54,21 +54,21 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
             .submittedCallback(this::submitted))
             .page("nocRequest")
             .complex(CaseData::getChangeOrganisationRequestField)
-            .complex(ChangeOrganisationRequest::getOrganisationToAdd)
-            .optional(Organisation::getOrganisationId)
-            .optional(Organisation::getOrganisationName)
-            .done()
-            .complex(ChangeOrganisationRequest::getOrganisationToRemove)
-            .optional(Organisation::getOrganisationId)
-            .optional(Organisation::getOrganisationName)
-            .done()
-            .optional(ChangeOrganisationRequest::getRequestTimestamp)
-            .optional(ChangeOrganisationRequest::getCaseRoleId)
-            .optional(
-                ChangeOrganisationRequest::getApprovalStatus,
-                NEVER_SHOW,
-                NOC_AUTO_APPROVED
-            )
+                .complex(ChangeOrganisationRequest::getOrganisationToAdd)
+                    .optional(Organisation::getOrganisationId)
+                    .optional(Organisation::getOrganisationName)
+                .done()
+                .complex(ChangeOrganisationRequest::getOrganisationToRemove)
+                    .optional(Organisation::getOrganisationId)
+                    .optional(Organisation::getOrganisationName)
+                .done()
+                    .optional(ChangeOrganisationRequest::getRequestTimestamp)
+                    .optional(ChangeOrganisationRequest::getCaseRoleId)
+                .optional(
+                    ChangeOrganisationRequest::getApprovalStatus,
+                    NEVER_SHOW,
+                    NOC_AUTO_APPROVED
+                )
             .done();
     }
 
