@@ -75,13 +75,15 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
         log.info("Applying notice of change for case id: {}", details.getId());
-        log.info("NOC Approval Status for case id: {}", details.getData().getChangeOrganisationRequestField().getApprovalStatus());
+        if (details.getData() != null) {
+            log.info("NOC Approval Status for case id: {}", details.getData().getChangeOrganisationRequestField().getApprovalStatus());
+        }
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
-        AboutToStartOrSubmitCallbackResponse response = assignCaseAccessClient.
-            applyNoticeOfChange(sysUserToken, s2sToken, nocRequest(details));
+        AboutToStartOrSubmitCallbackResponse response = assignCaseAccessClient
+            .applyNoticeOfChange(sysUserToken, s2sToken, nocRequest(details));
 
         if (response != null && response.getErrors() != null && !response.getErrors().isEmpty()) {
             for (String error : response.getErrors()) {
