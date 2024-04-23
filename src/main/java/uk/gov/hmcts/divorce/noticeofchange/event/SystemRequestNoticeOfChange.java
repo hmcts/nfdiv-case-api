@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -41,7 +42,6 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
     private IdamService idamService;
 
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
-    public static final int NOC_AUTO_APPROVED = 1;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -67,7 +67,7 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
                 .optional(
                     ChangeOrganisationRequest::getApprovalStatus,
                     NEVER_SHOW,
-                    NOC_AUTO_APPROVED
+                    ChangeOrganisationApprovalStatus.APPROVED
                 )
             .done();
     }
