@@ -57,7 +57,6 @@ class SystemApplyNoticeOfChangeTest {
     @Test
     public void shouldApplyNoticeOfChangeByDelegatingToAssignCaseAccessClient() {
         final var details = new CaseDetails<CaseData, State>();
-        final var beforeDetails = new CaseDetails<CaseData, State>();
         final User systemUser = mock(User.class);
         final NocApiRequest nocApiRequest = NocApiRequest.nocRequest(details);
 
@@ -65,7 +64,7 @@ class SystemApplyNoticeOfChangeTest {
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        systemApplyNoticeOfChange.submitted(details, beforeDetails);
+        systemApplyNoticeOfChange.aboutToStart(details);
 
         verify(assignCaseAccessClient).applyNoticeOfChange(
             TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, nocApiRequest

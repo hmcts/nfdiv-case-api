@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -16,7 +18,8 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+
+import java.util.Map;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -52,7 +55,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .name("Notice Of Change Applied")
             .grant(CREATE_READ_UPDATE, NOC_APPROVER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
-            .submittedCallback(this::submitted))
+            .aboutToStartCallback(this::aboutToStart))
             .page("nocRequest")
             .complex(CaseData::getChangeOrganisationRequestField)
                 .complex(ChangeOrganisationRequest::getOrganisationToAdd)
@@ -73,7 +76,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .done();
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("Applying notice of change for case id: {}", details.getId());
         if (details.getData() != null) {
             log.info("NOC Approval Status for case id: {}", details.getData().getChangeOrganisationRequestField().getApprovalStatus());
@@ -82,15 +85,18 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
-        AboutToStartOrSubmitCallbackResponse response = assignCaseAccessClient
-            .applyNoticeOfChange(sysUserToken, s2sToken, nocRequest(details));
+        AboutToStartOrSubmitCallbackResponse response = assignCaseAccessClient.applyNoticeOfChange(
+            sysUserToken, s2sToken, nocRequest(details)
+        );
 
-        if (response != null && response.getErrors() != null && !response.getErrors().isEmpty()) {
-            for (String error : response.getErrors()) {
-                log.info(error);
-            }
+        if (response == null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
         }
 
-        return SubmittedCallbackResponse.builder().build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(objectMapper.convertValue(response.getData(), CaseData.class))
+            .errors(response.getErrors())
+            .build();
     }
 }
