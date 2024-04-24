@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -92,6 +93,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(objectMapper.convertValue(response.getData(), CaseData.class))
             .errors(response.getErrors())
