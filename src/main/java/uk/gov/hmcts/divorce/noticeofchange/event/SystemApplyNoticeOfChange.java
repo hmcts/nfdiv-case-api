@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -51,7 +52,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .name("Notice Of Change Applied")
             .grant(CREATE_READ_UPDATE, NOC_APPROVER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
-            .submittedCallback(this::submitted))
+            .aboutToStartCallback(this::aboutToStart))
             .page("applyNoc")
             .complex(CaseData::getChangeOrganisationRequestField)
                 .complex(ChangeOrganisationRequest::getOrganisationToAdd)
@@ -72,7 +73,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .done();
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("Applying notice of change for case id: {}", details.getId());
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
@@ -80,6 +81,6 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
-        return SubmittedCallbackResponse.builder().build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 }
