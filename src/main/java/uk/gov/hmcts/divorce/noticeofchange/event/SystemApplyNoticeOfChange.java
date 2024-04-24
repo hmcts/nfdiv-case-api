@@ -1,10 +1,5 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
-<<<<<<< HEAD
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-=======
->>>>>>> parent of dd9b6b78f (Fix Apply NOC event)
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,10 +16,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
-<<<<<<< HEAD
-=======
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
->>>>>>> parent of dd9b6b78f (Fix Apply NOC event)
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
