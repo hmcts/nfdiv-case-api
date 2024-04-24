@@ -222,6 +222,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialApplicant", "Confidential Applicant")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
+            .showCondition("applicant1ContactDetailsType=\"private\"")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
             .field("applicant1Address");
@@ -230,7 +231,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialRespondentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialRespondent", "Confidential Respondent")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition("applicationType=\"soleApplication\"")
+            .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
             .field("applicant2Address");
@@ -239,7 +240,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialApplicant2Tab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialApplicant2", "Confidential Applicant 2")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_2_SOLICITOR, SUPER_USER)
-            .showCondition("applicationType=\"jointApplication\"")
+            .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
             .field("applicant2Address");
