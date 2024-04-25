@@ -9,7 +9,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
 
 @Component
@@ -40,7 +45,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("applicationType=\"soleApplication\"");
 
-        addDynamicContentAndHeaders(tabBuilderForSoleApplication);
+        addDynamicContentHiddenAndHeaderFields(tabBuilderForSoleApplication);
 
         addApplicant1PersonalDetails(tabBuilderForSoleApplication);
         addApplicant1ContactDetails(tabBuilderForSoleApplication);
@@ -54,11 +59,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildSoleApplicationTabWithApplicant1ContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab("applicationDetailsSoleApplicant1", "Application")
-            .forRoles(APPLICANT_1_SOLICITOR)
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab(
+            "applicationDetailsSoleApplicant1", "Application"
+            ).forRoles(APPLICANT_1_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\"");
 
-        addDynamicContentAndHeaders(tabBuilderForSoleApplication);
+        addDynamicContentHiddenAndHeaderFields(tabBuilderForSoleApplication);
 
         addApplicant1PersonalDetails(tabBuilderForSoleApplication);
         addApplicant1ContactDetails(tabBuilderForSoleApplication);
@@ -71,11 +77,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildSoleApplicationTabWithApplicant2ContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab("applicationDetailsSoleApplicant2", "Application")
-            .forRoles(APPLICANT_2_SOLICITOR)
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab(
+            "applicationDetailsSoleApplicant2", "Application"
+            ).forRoles(APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\"");
 
-        addDynamicContentAndHeaders(tabBuilderForSoleApplication);
+        addDynamicContentHiddenAndHeaderFields(tabBuilderForSoleApplication);
 
         addApplicant1PersonalDetails(tabBuilderForSoleApplication);
         addApplicant1Representation(tabBuilderForSoleApplication);
@@ -88,11 +95,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildJointApplicationTabWithAllContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab("applicationDetailsJoint", "Application")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab(
+            "applicationDetailsJoint", "Application"
+            ).forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("applicationType=\"jointApplication\"");
 
-        addDynamicContentAndHeaders(tabBuilderForJointApplication);
+        addDynamicContentHiddenAndHeaderFields(tabBuilderForJointApplication);
         addApplicant1PersonalDetails(tabBuilderForJointApplication);
         addApplicant1ContactDetails(tabBuilderForJointApplication);
         addApplicant1Representation(tabBuilderForJointApplication);
@@ -108,11 +116,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildJointApplicationTabWithApplicant1ContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab("applicationDetailsJointApplicant1", "Application")
-            .forRoles(APPLICANT_1_SOLICITOR)
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab(
+            "applicationDetailsJointApplicant1", "Application"
+            ).forRoles(APPLICANT_1_SOLICITOR)
             .showCondition("applicationType=\"jointApplication\"");
 
-        addDynamicContentAndHeaders(tabBuilderForJointApplication);
+        addDynamicContentHiddenAndHeaderFields(tabBuilderForJointApplication);
         addApplicant1PersonalDetails(tabBuilderForJointApplication);
         addApplicant1ContactDetails(tabBuilderForJointApplication);
         addApplicant1Representation(tabBuilderForJointApplication);
@@ -127,11 +136,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildJointApplicationTabWithApplicant2ContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab("applicationDetailsJointApplicant2", "Application")
-            .forRoles(APPLICANT_2_SOLICITOR)
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilderForJointApplication = configBuilder.tab(
+            "applicationDetailsJointApplicant2", "Application"
+            ).forRoles(APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"jointApplication\"");
 
-        addDynamicContentAndHeaders(tabBuilderForJointApplication);
+        addDynamicContentHiddenAndHeaderFields(tabBuilderForJointApplication);
         addApplicant1PersonalDetails(tabBuilderForJointApplication);
         addApplicant1ContactDetails(tabBuilderForJointApplication);
         addApplicant1Representation(tabBuilderForJointApplication);
@@ -145,7 +155,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addService(tabBuilderForJointApplication);
     }
 
-    private void addDynamicContentAndHeaders(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addDynamicContentHiddenAndHeaderFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         addDynamicContentHiddenFields(tabBuilder);
         addHeaderFields(tabBuilder);
     }
