@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -64,7 +65,8 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(0)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -82,24 +84,31 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         // triggered by citizen users
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             log.info("Request made by applicant to switch to sole for case id: {}", caseId);
-            switchToSoleService.switchUserRoles(data, caseId);
+            // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
+            // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
             switchToSoleService.switchApplicantData(data);
+            switchToSoleService.switchUserRoles(data, caseId);
         }
 
         // triggered by system update user coming from Offline Document Verified
         if (OfflineWhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
+            // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
+            // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
+            switchToSoleService.switchApplicantData(data);
             if (!data.getApplication().isPaperCase()) {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);
                 switchToSoleService.switchUserRoles(data, caseId);
             }
-            switchToSoleService.switchApplicantData(data);
         }
 
         final var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
 
-        log.info("SwitchedToSoleCO submitted callback invoked for case id: {}", details.getId());
-
-        notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
+        // If notificationDispatcher call fails, it retries.  When it retries it pulls data from live, which has not been swapped.
+        // This can cause the aboutToSubmit to fail (expected data swap not present on live data as not yet Submitted, potentially causing
+        // Null Pointers or other errors during App1 Notification creation), resulting in swapped user roles but no swapped data,
+        // which causes a data breach if either app logs in.
+        // Notification call moved to submitted callback to prevent this, as swapped data will then have been committed.
+        // notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(data.getDocuments().getScannedSubtypeReceived())
@@ -120,5 +129,17 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             .data(data)
             .state(state)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("SWITCH_TO_SOLE_CO submitted callback invoked for case id: {}", details.getId());
+
+        // Send notification during submitted callback to prevent untimely failure of aboutToSubmit should an issue occur and subsequent
+        // potential data breach scenario
+        notificationDispatcher.send(switchToSoleCoNotification, details.getData(), details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
