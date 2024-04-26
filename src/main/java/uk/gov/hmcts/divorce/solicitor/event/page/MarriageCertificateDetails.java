@@ -1,5 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
+
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -39,6 +43,16 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
         final CaseData data = details.getData();
         if (data.getApplication().getMarriageDetails().getMarriedInUk().toBoolean()) {
             data.getApplication().getMarriageDetails().setPlaceOfMarriage(UK);
+        }
+
+        final List<String> validationErrors = validateMarriageDate(data, "MarriageDate");
+        if (!validationErrors.isEmpty()) {
+            State state = details.getState();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(validationErrors)
+                .state(state)
+                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

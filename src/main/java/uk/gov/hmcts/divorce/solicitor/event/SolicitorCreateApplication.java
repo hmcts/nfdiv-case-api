@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
 @Slf4j
 @Component
@@ -95,7 +96,21 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
                 .errors(List.of("Application type must be selected (cannot be null)"))
                 .build();
         }
+        CaseData data = details.getData();
+        final List<String> validationErrors = validateMarriageDate(data, "MarriageDate");
 
+        if (!validationErrors.isEmpty()) {
+            log.info("Validation errors: ");
+            for (String error : validationErrors) {
+                log.info(error);
+            }
+            State state = details.getState();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(validationErrors)
+                .state(state)
+                .build();
+        }
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
