@@ -39,7 +39,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
-import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
@@ -250,9 +250,17 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getApplicant2().setOffline(YES);
         }
 
-        final State state = respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
+        // Should only hit RespondentFinalOrderRequested if Sole, eligible for FO, and from respondent.
+        // Otherwise, it should be FinalOrderRequested.
+        // Neither of these states will be accepted by SwitchedToSoleFinalOrder - see submitted() method
+        final State state = caseData.getApplicationType().isSole()
+            && respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
 
-        generalReferralService.caseWorkerGeneralReferral(details);
+        // Here we check for FO Overdue, and if so we trigger a CWGeneralReferral, which should result in state: AwaitingGeneralReferral
+        // Skip this for Sole and respondentRequested - respondent cannot be overdue on a sole case
+        if (!(caseData.getApplicationType().isSole() && respondentRequested)) {
+            generalReferralService.caseWorkerGeneralReferral(details);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -349,12 +357,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
             log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFO event for case id: {}",
+                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFoOffline event for case id: {}",
                 details.getId());
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
+
+            //For D36, case state will currently be RespondentFinalOrderRequested or FinalOrderRequested
+            //SWITCH_TO_SOLE_FO event only accepts AwaitingJointFinalOrder as a valid state!  This call will fail.
+            //Created new Event to handle this call - SWITCH_TO_SOLE_FO_OFFLINE
+            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO_OFFLINE, user, serviceAuth);
         }
 
         return SubmittedCallbackResponse.builder().build();
