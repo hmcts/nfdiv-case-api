@@ -323,11 +323,13 @@ public class TestDataHelper {
     }
 
     public static CaseData caseData() {
+        MarriageDetails marriageDetails = MarriageDetails.builder().date(LOCAL_DATE).build();
         return CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .supplementaryCaseType(NA)
+            .application(Application.builder().marriageDetails(marriageDetails).build())
             .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
