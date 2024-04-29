@@ -113,34 +113,13 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenDateIsOverOneHundredYearsAgo() {
-        LocalDate oneHundredYearsAndOneDayAgo = LocalDate.now()
-            .minus(100, YEARS)
-            .minus(1, DAYS);
-
-        CaseData caseData = CaseData.builder()
-            .application(
-                Application.builder()
-                    .marriageDetails(MarriageDetails.builder()
-                        .date(oneHundredYearsAndOneDayAgo)
-                        .build())
-                    .build()
-            )
-            .build();
-
-        List<String> response = validateMarriageDate(caseData, "field");
-
-        assertThat(response).isEqualTo(List.of("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO));
-    }
-
-    @Test
     public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
 
         CaseData caseData = CaseData.builder()
             .application(
                 Application.builder()
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minus(360, DAYS))
+                        .date(LocalDate.now().minus(1, YEARS))
                         .build())
                     .build()
             )

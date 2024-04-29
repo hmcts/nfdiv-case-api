@@ -25,8 +25,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class ValidationUtil {
 
-    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
-    public static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
+    public static final String LESS_THAN_ONE_YEAR_AGO
+        = " can not be less than one year ago.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
@@ -111,8 +111,6 @@ public final class ValidationUtil {
 
         if (marriageDate == null) {
             return List.of(field + EMPTY);
-        } else if (isOverOneHundredYearsAgo(marriageDate)) {
-            return List.of(field + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
         } else if (isInTheFuture(marriageDate)) {
             return List.of(field + IN_THE_FUTURE);
         }
@@ -153,10 +151,6 @@ public final class ValidationUtil {
     private static boolean isLessThanOneYearAgo(LocalDate date) {
         return !date.isAfter(LocalDate.now())
             && date.isAfter(LocalDate.now().minusYears(1).minusDays(1));
-    }
-
-    private static boolean isOverOneHundredYearsAgo(LocalDate date) {
-        return date.isBefore(LocalDate.now().minus(100, YEARS));
     }
 
     private static boolean isInTheFuture(LocalDate date) {
