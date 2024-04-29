@@ -77,6 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FINANCIAL_ORDER_P
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -140,7 +141,7 @@ public class DraftApplicationSoleTemplateContentTest {
             entry(FINANCIAL_ORDER_POLICY_HINT, TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
-            entry(MARRIAGE_DATE, null),
+            entry(MARRIAGE_DATE, LOCAL_DATE),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
             entry(RESPONDENT_SOLICITOR_EMAIL, "sol@solbros.com"),
@@ -195,7 +196,7 @@ public class DraftApplicationSoleTemplateContentTest {
             entry(APPLICANT_2_FINANCIAL_ORDER, "children of the applicant and the respondent."),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
-            entry(MARRIAGE_DATE, null),
+            entry(MARRIAGE_DATE, LOCAL_DATE),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
@@ -234,7 +235,7 @@ public class DraftApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
-            entry(MARRIAGE_DATE, null),
+            entry(MARRIAGE_DATE, LOCAL_DATE),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(RESPONDENT_SOLICITOR_NAME, NOT_GIVEN),
             entry(RESPONDENT_SOLICITOR_EMAIL, NOT_GIVEN),
@@ -278,7 +279,7 @@ public class DraftApplicationSoleTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
-            entry(MARRIAGE_DATE, null),
+            entry(MARRIAGE_DATE, LOCAL_DATE),
             entry(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName()),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
