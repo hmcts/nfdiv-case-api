@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.SetMultimap;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -55,7 +53,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
-import static uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCreateApplicationTest {
