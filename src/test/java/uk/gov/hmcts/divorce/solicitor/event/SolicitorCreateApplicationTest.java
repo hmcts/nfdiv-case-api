@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCreateApplicationTest {
@@ -115,7 +116,7 @@ class SolicitorCreateApplicationTest {
 
     @Test
     void shouldPopulateMissingRequirementsFieldsInCaseData() {
-        final CaseData caseData = caseData();
+        final CaseData caseData = caseDataWithMarriageDate();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
