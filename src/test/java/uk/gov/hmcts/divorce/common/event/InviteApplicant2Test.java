@@ -70,6 +70,7 @@ public class InviteApplicant2Test {
     @Test
     void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         CaseData caseData = caseData();
+        caseData.getApplication().getMarriageDetails().setDate(null);
         caseData.getApplicant1().setFinancialOrder(null);
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
 
