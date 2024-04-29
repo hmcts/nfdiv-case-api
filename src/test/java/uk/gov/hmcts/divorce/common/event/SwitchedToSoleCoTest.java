@@ -228,10 +228,9 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+        switchedToSoleCo.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
-        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
