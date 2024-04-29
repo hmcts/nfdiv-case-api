@@ -11,6 +11,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -38,6 +41,8 @@ public class MarriageCertificateDetailsTest {
             response.getData().getApplication().getMarriageDetails().getPlaceOfMarriage(),
             "UK"
         );
+        assertNotNull(response);
+        assertTrue(response.getErrors().isEmpty());
     }
 
     @Test
@@ -59,5 +64,8 @@ public class MarriageCertificateDetailsTest {
             response.getData().getApplication().getMarriageDetails().getPlaceOfMarriage(),
             "Maldives"
         );
+        assertNotNull(response);
+        assertFalse(response.getErrors().isEmpty());
+        assertEquals(caseData, response.getData());
     }
 }
