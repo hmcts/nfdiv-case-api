@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -185,7 +186,6 @@ class SolicitorCreateApplicationTest {
             .data(caseData)
             .build();
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorCreateApplication.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).contains("MarriageDate" + LESS_THAN_ONE_YEAR_AGO);
+        assertTrue(response.getErrors().contains("MarriageDate" + LESS_THAN_ONE_YEAR_AGO));
     }
 }
