@@ -6,5 +6,6 @@
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "divorceWho": "wife",
   "marriageFormationType": "oppositeSexCouple",
-  "solPaymentHowToPay": "feePayByAccount"
+  "solPaymentHowToPay": "feePayByAccount",
+  "marriageDate": "20-04-2009"
 }
