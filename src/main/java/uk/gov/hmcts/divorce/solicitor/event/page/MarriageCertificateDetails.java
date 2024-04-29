@@ -1,9 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
-import java.util.List;
-
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
-
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -12,6 +8,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
 public class MarriageCertificateDetails implements CcdPageConfiguration {
 
