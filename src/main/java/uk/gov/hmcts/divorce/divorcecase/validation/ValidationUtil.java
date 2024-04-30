@@ -148,8 +148,7 @@ public final class ValidationUtil {
     }
 
     private static boolean isLessThanOneYearAgo(LocalDate date) {
-        return !date.isAfter(LocalDate.now())
-            && date.isAfter(LocalDate.now().minusYears(1).minusDays(1));
+        return date.isAfter(LocalDate.now().minusYears(1).minusDays(1));
     }
 
     private static boolean isInTheFuture(LocalDate date) {

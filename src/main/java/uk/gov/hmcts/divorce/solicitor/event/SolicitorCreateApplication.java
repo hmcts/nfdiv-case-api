@@ -101,9 +101,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
-            for (String error : validationErrors) {
-                log.info(error);
-            }
+            validationErrors.forEach(log::info);
             State state = details.getState();
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
