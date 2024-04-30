@@ -83,7 +83,6 @@ case_progression:
 
 submit_aos:
   dispute_offset_days: ${DISPUTE_DUE_DATE_OFFSET_DAYS:37}
-  disputedAOS_fee: '270'
 
 submit_co:
   reminder_offset_days: ${SUBMIT_CO_REMINDER_OFFSET_DAYS:14}

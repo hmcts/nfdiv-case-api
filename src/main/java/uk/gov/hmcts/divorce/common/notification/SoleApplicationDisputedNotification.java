@@ -40,7 +40,6 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
-    static final String DISPUTED_AOS_FEE = "disputedAOSFee"; //var in notify template
 
     @Autowired
     private NotificationService notificationService;
@@ -50,9 +49,6 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     @Value("${submit_aos.dispute_offset_days}")
     private int disputeDueDateOffsetDays;
-
-    @Value("${submit_aos.disputedAOS_fee}")
-    private String disputedAOSFee; //will pull this in from fee service separate task
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -71,12 +67,10 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending Aos disputed notification to respondent");
 
-        Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(DISPUTED_AOS_FEE,disputedAOSFee);
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
-            templateVars,
+            disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference(),
             id
         );

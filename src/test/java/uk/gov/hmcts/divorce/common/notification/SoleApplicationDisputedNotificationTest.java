@@ -20,7 +20,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.common.notification.SoleApplicationDisputedNotification.DISPUTED_AOS_FEE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -60,7 +59,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSu
 class SoleApplicationDisputedNotificationTest {
 
     private static final int DISPUTE_DUE_DATE_OFFSET_DAYS = 37;
-    private static final String DISPUTE_FEE = "270";
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
 
@@ -198,7 +196,6 @@ class SoleApplicationDisputedNotificationTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.getApplication().setIssueDate(LocalDate.now());
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
-        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", DISPUTE_FEE);
         data.getApplicant2().setEmail(null);
 
         final Map<String, String> templateVars = getMainTemplateVars();
@@ -216,8 +213,7 @@ class SoleApplicationDisputedNotificationTest {
                     data.getApplication().getIssueDate()
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE)
+                hasEntry(IS_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
