@@ -64,8 +64,7 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        Long caseId = details.getId();
-        log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", caseId);
+        log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", details.getId());
         CaseData caseData = details.getData();
 
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -74,12 +73,10 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
 
         // triggered by system update user coming from Offline Document Verified
         if (OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
-            // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
-            // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
             switchToSoleService.switchApplicantData(caseData);
             if (!caseData.getApplication().isPaperCase()) {
-                log.info("Request made via paper to switch to sole for online case id: {}", caseId);
-                switchToSoleService.switchUserRoles(caseData, caseId);
+                log.info("Request made via paper to switch to sole for online case id: {}", details.getId());
+                switchToSoleService.switchUserRoles(caseData, details.getId());
             }
         }
 
@@ -90,12 +87,10 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        Long caseId = details.getId();
-        CaseData caseData = details.getData();
 
-        log.info("SWITCH_TO_SOLE_FO_OFFLINE submitted callback invoked for case id: {}", caseId);
+        log.info("SWITCH_TO_SOLE_FO_OFFLINE submitted callback invoked for case id: {}", details.getId());
 
-        notificationDispatcher.send(switchedToSoleFoNotification, caseData, caseId);
+        notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
 
         generalReferralService.caseWorkerGeneralReferral(details);
 
