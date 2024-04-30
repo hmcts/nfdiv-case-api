@@ -64,27 +64,27 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        Long offlineCaseId = details.getId();
-        log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", offlineCaseId);
-        CaseData offlineCaseData = details.getData();
+        Long caseId = details.getId();
+        log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", caseId);
+        CaseData caseData = details.getData();
 
-        offlineCaseData.setApplicationType(SOLE_APPLICATION);
-        offlineCaseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
-        offlineCaseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         // triggered by system update user coming from Offline Document Verified
-        if (OfflineWhoApplying.APPLICANT_2.equals(offlineCaseData.getFinalOrder().getD36WhoApplying())) {
+        if (OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
             // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
             // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
-            switchToSoleService.switchApplicantData(offlineCaseData);
-            if (!offlineCaseData.getApplication().isPaperCase()) {
-                log.info("Request made via paper to switch to sole for online case id: {}", offlineCaseId);
-                switchToSoleService.switchUserRoles(offlineCaseData, offlineCaseId);
+            switchToSoleService.switchApplicantData(caseData);
+            if (!caseData.getApplication().isPaperCase()) {
+                log.info("Request made via paper to switch to sole for online case id: {}", caseId);
+                switchToSoleService.switchUserRoles(caseData, caseId);
             }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(offlineCaseData)
+            .data(caseData)
             .build();
     }
 
