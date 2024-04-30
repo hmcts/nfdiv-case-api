@@ -84,7 +84,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         Long caseId = details.getId();
-        log.info("Switched To Sole FO aboutToSubmit callback invoked for Case Id: {}", caseId);
+        log.info("{} aboutToSubmit callback invoked for Case Id: {}", SWITCH_TO_SOLE_FO, caseId);
         CaseData caseData = details.getData();
 
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -110,11 +110,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("SWITCH_TO_SOLE_FO submitted callback invoked for case id: {}", details.getId());
-
-        notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
-
-        generalReferralService.caseWorkerGeneralReferral(details);
+        switchToSoleService.switchToSoleFinalOrderSubmitted(SWITCH_TO_SOLE_FO, details);
 
         return SubmittedCallbackResponse.builder().build();
     }

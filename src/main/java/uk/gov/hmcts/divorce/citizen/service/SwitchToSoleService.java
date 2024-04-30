@@ -3,9 +3,12 @@ package uk.gov.hmcts.divorce.citizen.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,11 +17,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SwitchedToSole;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -53,6 +58,15 @@ public class SwitchToSoleService {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private GeneralReferralService generalReferralService;
+
+    @Autowired
+    private SwitchedToSoleFoNotification switchedToSoleFoNotification;
 
     public void switchUserRoles(final CaseData caseData, final Long caseId) {
         if (caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
@@ -386,5 +400,13 @@ public class SwitchToSoleService {
         application.setApplicant2NeedsHelpWithFees(null);
         application.setSolStatementOfReconciliationCertify(null);
         application.setSolStatementOfReconciliationDiscussed(null);
+    }
+
+    public void switchToSoleFinalOrderSubmitted(String event, CaseDetails<CaseData, State> details) {
+        log.info("{} submitted callback invoked for case id: {}", event, details.getId());
+
+        notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
+
+        generalReferralService.caseWorkerGeneralReferral(details);
     }
 }
