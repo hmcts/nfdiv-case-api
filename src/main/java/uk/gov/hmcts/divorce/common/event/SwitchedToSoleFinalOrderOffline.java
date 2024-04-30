@@ -90,10 +90,12 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
+        Long caseId = details.getId();
+        CaseData caseData = details.getData();
 
-        log.info("SWITCH_TO_SOLE_FO_OFFLINE submitted callback invoked for case id: {}", details.getId());
+        log.info("SWITCH_TO_SOLE_FO_OFFLINE submitted callback invoked for case id: {}", caseId);
 
-        notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
+        notificationDispatcher.send(switchedToSoleFoNotification, caseData, caseId);
 
         generalReferralService.caseWorkerGeneralReferral(details);
 
