@@ -43,6 +43,8 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 @Slf4j
 public class PaymentService {
 
+    public static final String PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE =
+        "Payment Reference: {} Generating error message for {} error code";
     private static final String DEFAULT_CHANNEL = "default";
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
@@ -215,14 +217,14 @@ public class PaymentService {
         if (httpStatus == HttpStatus.FORBIDDEN) {
             switch (errorCode) {
                 case CA_E0001:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0001.value(), pbaNumber);
                     break;
                 case CA_E0004:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
@@ -230,7 +232,7 @@ public class PaymentService {
                     break;
 
                 case CA_E0003:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
@@ -238,7 +240,7 @@ public class PaymentService {
                     break;
 
                 default:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
@@ -324,4 +326,16 @@ public class PaymentService {
 
         return feeResponse.getAmount();
     }
+
+    public Double getServiceCostOrDefault(String service, String event, String keyword, Double defaultValue) {
+        try {
+            return getServiceCost(service, event, keyword);
+        } catch (Exception e) {
+            // Log the exception
+            log.error("Failed to retrieve service cost for service: {}, event: {}, keyword: {}", service, event, keyword, e);
+            // Return the default value in case of failure for better resilience
+            return defaultValue;
+        }
+    }
+
 }

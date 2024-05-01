@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.Map;
 
@@ -33,6 +34,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
+import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEF;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -48,11 +53,14 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     @Autowired
     private CommonContent commonContent;
 
+    @Autowired
+    private PaymentService paymentService;
+
     @Value("${submit_aos.dispute_offset_days}")
     private int disputeDueDateOffsetDays;
 
-    @Value("${submit_aos.disputedAOS_fee}")
-    private String disputedAOSFee; //will pull this in from fee service separate task
+    @Value("${submit_aos.disputedAOS_fee}:245.00")
+    private double disputedAOSFee; //this is the default value in case paymentservice fails
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -71,8 +79,12 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending Aos disputed notification to respondent");
 
+        //floor to nearest £ because we know always in £ not in double so don't want decimal points in letter
+        String disputedAOSFeeStr = String.valueOf(
+            (int)Math.floor(paymentService.getServiceCostOrDefault(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_DEF, disputedAOSFee)));
+
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(DISPUTED_AOS_FEE,disputedAOSFee);
+        templateVars.put(DISPUTED_AOS_FEE,disputedAOSFeeStr);
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,

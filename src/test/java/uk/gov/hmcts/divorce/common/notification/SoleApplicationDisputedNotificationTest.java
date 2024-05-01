@@ -10,12 +10,15 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.time.LocalDate;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,6 +48,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDEN
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEF;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -72,6 +78,9 @@ class SoleApplicationDisputedNotificationTest {
 
     @InjectMocks
     private SoleApplicationDisputedNotification soleApplicationDisputedNotification;
+
+    @Mock
+    private PaymentService paymentService;
 
     @Test
     void shouldSendAosDisputedEmailToSoleApplicantWithDivorceContent() {
@@ -198,13 +207,14 @@ class SoleApplicationDisputedNotificationTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.getApplication().setIssueDate(LocalDate.now());
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
-        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", DISPUTE_FEE);
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", Double.parseDouble(DISPUTE_FEE));
         data.getApplicant2().setEmail(null);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
-
+        when(paymentService.getServiceCostOrDefault(anyString(), anyString(), anyString(), anyDouble()))
+            .thenReturn(Double.parseDouble(DISPUTE_FEE));
         soleApplicationDisputedNotification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
@@ -321,5 +331,47 @@ class SoleApplicationDisputedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleRespondentWithFeeContent() {
+        // Setup test data
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplication().setIssueDate(LocalDate.now());
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", Double.parseDouble(DISPUTE_FEE));
+        data.getApplicant2().setEmail(null);
+
+        // Mock paymentService behavior
+        double mockedDisputedAOSFee = 100.0;
+        when(paymentService.getServiceCostOrDefault(eq(SERVICE_OTHER), eq(EVENT_ENFORCEMENT), eq(KEYWORD_DEF), anyDouble()))
+            .thenReturn(mockedDisputedAOSFee);
+
+        // Mock commonContent behavior
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        // Perform the action
+        soleApplicationDisputedNotification.sendToApplicant2(data, TEST_CASE_ID);
+
+        // Verify the behavior
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, NO),
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(DISPUTED_AOS_FEE, String.valueOf((int)Math.floor(mockedDisputedAOSFee))) // Verify the fee passed to the email template
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 }
