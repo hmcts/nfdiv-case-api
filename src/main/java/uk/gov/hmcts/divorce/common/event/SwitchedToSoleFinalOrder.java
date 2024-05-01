@@ -110,7 +110,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        switchToSoleService.switchToSoleFinalOrderSubmittedHelper(SWITCH_TO_SOLE_FO, details);
+        switchToSoleService.switchToSoleFinalOrderSubmitted(SWITCH_TO_SOLE_FO, details);
 
         return SubmittedCallbackResponse.builder().build();
     }

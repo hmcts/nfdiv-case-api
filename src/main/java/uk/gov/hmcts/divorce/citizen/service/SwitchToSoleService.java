@@ -402,12 +402,11 @@ public class SwitchToSoleService {
         application.setSolStatementOfReconciliationDiscussed(null);
     }
 
-    public void switchToSoleFinalOrderSubmittedHelper(String event, CaseDetails<CaseData, State> details) {
+    public void switchToSoleFinalOrderSubmitted(String event, CaseDetails<CaseData, State> details) {
         log.info("{} submitted callback invoked for case id: {}", event, details.getId());
 
         notificationDispatcher.send(switchedToSoleFoNotification, details.getData(), details.getId());
 
         generalReferralService.caseWorkerGeneralReferral(details);
     }
-
 }
