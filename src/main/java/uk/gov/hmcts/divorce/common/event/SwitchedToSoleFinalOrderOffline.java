@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -29,23 +29,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SWITCH_TO_SOLE_FO_OFFLINE = "switch-to-sole-fo-offline";
 
-    @Autowired
-    private SwitchToSoleService switchToSoleService;
+    private final SwitchToSoleService switchToSoleService;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private SwitchedToSoleFoNotification switchedToSoleFoNotification;
+    private final SwitchedToSoleFoNotification switchedToSoleFoNotification;
 
-    @Autowired
-    private GeneralReferralService generalReferralService;
+    private final GeneralReferralService generalReferralService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
