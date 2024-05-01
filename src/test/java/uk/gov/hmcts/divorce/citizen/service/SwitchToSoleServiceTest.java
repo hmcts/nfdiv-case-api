@@ -5,20 +5,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
-import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -32,13 +27,11 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -67,15 +60,6 @@ public class SwitchToSoleServiceTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
-
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
-
-    @Mock
-    private GeneralReferralService generalReferralService;
-
-    @Mock
-    private SwitchedToSoleFoNotification switchedToSoleFoNotification;
 
     @InjectMocks
     private SwitchToSoleService switchToSoleService;
@@ -401,21 +385,6 @@ public class SwitchToSoleServiceTest {
                 getCaseAssignmentRequest("2", APPLICANT_2_SOLICITOR)
             );
         verifyNoMoreInteractions(caseAssignmentApi);
-    }
-
-    @Test
-    void shouldSendNotificationsAndPassDetailsToGeneralReferralService() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        switchToSoleService.switchToSoleFinalOrderSubmittedHelper(SWITCH_TO_SOLE_FO, caseDetails);
-
-        verify(notificationDispatcher).send(switchedToSoleFoNotification, caseDetails.getData(), caseId);
-        verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
     }
 
     private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(String userId, UserRole role) {

@@ -11,12 +11,16 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -39,6 +43,15 @@ public class SwitchedToSoleFinalOrderTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private SwitchedToSoleFoNotification switchedToSoleFoNotification;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private SwitchedToSoleFinalOrder switchedToSoleFinalOrder;
@@ -94,7 +107,7 @@ public class SwitchedToSoleFinalOrderTest {
     }
 
     @Test
-    void shouldPassEventStringAndCaseDetailsToServiceHelperMethodInSubmittedCallback() {
+    void shouldSendNotificationsInSubmittedCallback() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -104,6 +117,16 @@ public class SwitchedToSoleFinalOrderTest {
 
         switchedToSoleFinalOrder.submitted(caseDetails, caseDetails);
 
-        verify(switchToSoleService).switchToSoleFinalOrderSubmittedHelper(SWITCH_TO_SOLE_FO, caseDetails);
+        verify(notificationDispatcher).send(switchedToSoleFoNotification, caseDetails.getData(), caseId);
+    }
+
+    @Test
+    void shouldPassCaseDetailsToGeneralReferralService() {
+        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+
+        switchedToSoleFinalOrder.submitted(caseDetails, null);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
     }
 }

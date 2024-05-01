@@ -19,11 +19,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
@@ -126,7 +128,7 @@ public class SwitchedToSoleFinalOrderOfflineTest {
     }
 
     @Test
-    void shouldPassEventStringAndCaseDetailsToServiceHelperMethodInSubmittedCallback() {
+    void shouldSendNotificationsInSubmittedCallback() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -136,6 +138,16 @@ public class SwitchedToSoleFinalOrderOfflineTest {
 
         switchedToSoleFinalOrderOffline.submitted(caseDetails, caseDetails);
 
-        verify(switchToSoleService).switchToSoleFinalOrderSubmittedHelper(SWITCH_TO_SOLE_FO_OFFLINE, caseDetails);
+        verify(notificationDispatcher).send(switchedToSoleFoNotification, caseDetails.getData(), caseId);
+    }
+
+    @Test
+    void shouldPassCaseDetailsToGeneralReferralService() {
+        final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+
+        switchedToSoleFinalOrderOffline.submitted(caseDetails, null);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(same(caseDetails));
     }
 }
