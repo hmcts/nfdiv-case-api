@@ -298,7 +298,7 @@ public class SwitchedToSoleCoIT {
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
@@ -320,7 +320,7 @@ public class SwitchedToSoleCoIT {
             .build());
         data.getApplicant2().setLanguagePreferenceWelsh(YES);
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
