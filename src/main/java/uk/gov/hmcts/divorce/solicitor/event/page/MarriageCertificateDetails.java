@@ -9,6 +9,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
+
 public class MarriageCertificateDetails implements CcdPageConfiguration {
 
     private static final String UK = "UK";
@@ -39,6 +43,16 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
         final CaseData data = details.getData();
         if (data.getApplication().getMarriageDetails().getMarriedInUk().toBoolean()) {
             data.getApplication().getMarriageDetails().setPlaceOfMarriage(UK);
+        }
+
+        final List<String> validationErrors = validateMarriageDate(data, "MarriageDate");
+        if (!validationErrors.isEmpty()) {
+            State state = details.getState();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(validationErrors)
+                .state(state)
+                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
