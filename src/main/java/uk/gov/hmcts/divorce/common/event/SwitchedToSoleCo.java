@@ -73,7 +73,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         Long caseId = details.getId();
-        log.info("SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
+        log.info("{} aboutToSubmit callback invoked for Case Id: {}", SWITCH_TO_SOLE_CO, caseId);
         CaseData data = details.getData();
 
         data.setApplicationType(SOLE_APPLICATION);
@@ -110,6 +110,25 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         // Notification call moved to submitted callback to prevent this, as swapped data will then have been committed.
         // notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
 
+        //letterPrinter call also moved to submitted callback
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .state(state)
+            .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        CaseData data = details.getData();
+        Long caseId = details.getId();
+
+        log.info("{} submitted callback invoked for case id: {}", SWITCH_TO_SOLE_CO, caseId);
+
+        // Send notification during submitted callback to prevent untimely failure of aboutToSubmit should an issue occur and subsequent
+        // potential data breach scenario
+        notificationDispatcher.send(switchToSoleCoNotification, data, caseId);
+
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(data.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
@@ -124,21 +143,6 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                 switchToSoleConditionalOrderDocumentPack.getLetterId()
             );
         }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .state(state)
-            .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("SWITCH_TO_SOLE_CO submitted callback invoked for case id: {}", details.getId());
-
-        // Send notification during submitted callback to prevent untimely failure of aboutToSubmit should an issue occur and subsequent
-        // potential data breach scenario
-        notificationDispatcher.send(switchToSoleCoNotification, details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }
