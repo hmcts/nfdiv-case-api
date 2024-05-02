@@ -58,7 +58,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     @Value("${submit_aos.dispute_offset_days}")
     private int disputeDueDateOffsetDays;
 
-    @Value("${submit_aos.disputedAOS_fee}:245.00")
+    @Value("${submit_aos.disputedAOS_fee:245.00}")
     private double disputedAOSFee; //this is the default value in case paymentservice fails
 
     @Override
