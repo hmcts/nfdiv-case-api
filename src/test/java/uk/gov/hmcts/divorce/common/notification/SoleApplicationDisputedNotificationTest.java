@@ -367,7 +367,8 @@ class SoleApplicationDisputedNotificationTest {
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(DISPUTED_AOS_FEE, String.valueOf((int)Math.floor(mockedDisputedAOSFee))) // Verify the fee passed to the email template
+                hasEntry(DISPUTED_AOS_FEE,
+                    String.valueOf((int)Math.floor(mockedDisputedAOSFee))) // Verify the fee passed to the email template
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
