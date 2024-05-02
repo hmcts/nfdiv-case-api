@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
 import java.util.Optional;
 
@@ -119,7 +120,7 @@ class SwitchedToSoleCoTest {
     }
 
     @Test
-    void shouldSetApplicationTypeToSoleAndSendNotificationToApplicant2() {
+    void shouldSetApplicationTypeToSoleAndSwitchUserRolesAndDataWhenS2STriggeredByApplicant2() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -141,6 +142,26 @@ class SwitchedToSoleCoTest {
     }
 
     @Test
+    void shouldSendNotificationButNoLetterWhenTriggeredOnlineByCitizen() {
+        final long caseId = TEST_CASE_ID;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setSwitchedToSoleCo(YES);
+        caseData.getLabelContent().setApplicant2("respondent");
+        caseData.getConditionalOrder().setSwitchedToSole(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        switchedToSoleCo.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseId);
+        verifyNoInteractions(printer);
+    }
+
+    @Test
     void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSole() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
@@ -155,16 +176,34 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
+    }
+
+    @Test
+    void shouldSendNotificationsAndLetterToRespondentIfD84SwitchToSole() {
+        final long caseId = TEST_CASE_ID;
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .d84ApplicationType(SWITCH_TO_SOLE)
+            .build()
+        );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
+        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+
+        switchedToSoleCo.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseId);
         verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
         verifyNoMoreInteractions(printer);
-
     }
 
     @Test
@@ -183,15 +222,10 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
         verify(switchToSoleService).switchApplicantData(caseData);
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
         verifyNoMoreInteractions(switchToSoleService);
-        verifyNoMoreInteractions(printer);
     }
 
     @Test
@@ -209,28 +243,9 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
-        verifyNoMoreInteractions(printer);
         verifyNoInteractions(switchToSoleService);
-    }
-
-    @Test
-    void shouldTriggerSwitchToSoleEmailNotifications() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        switchedToSoleCo.submitted(caseDetails, caseDetails);
-
-        verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -259,119 +274,5 @@ class SwitchedToSoleCoTest {
 
         var response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getState()).isEqualTo(AwaitingLegalAdvisorReferral);
-    }
-
-    @Test
-    void shouldPrintSwitchToSoleCoLetterD84SwitchToSole() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .d84ApplicationType(SWITCH_TO_SOLE)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
-        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
-        verifyNoMoreInteractions(printer);
-    }
-
-    @Test
-    void shouldSwitchToSoleSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
-
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .d84ApplicationType(SWITCH_TO_SOLE)
-            .d84WhoApplying(APPLICANT_2)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
-        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(switchToSoleService).switchUserRoles(caseData, caseId);
-        verify(switchToSoleService).switchApplicantData(caseData);
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
-    }
-
-    @Test
-    void shouldNotSwitchToSoleSwitchUserDataAndRolesIfApplicant1TriggeredD84SwitchToSoleInJudicialSeparation() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = CaseData.builder()
-            .supplementaryCaseType(JUDICIAL_SEPARATION)
-            .build();
-
-        Applicant applicant = Applicant.builder()
-                .solicitorRepresented(NO)
-                    .build();
-        caseData.setApplicant1(applicant);
-
-        Applicant respondent = Applicant.builder()
-            .solicitorRepresented(YES)
-            .build();
-        caseData.setApplicant2(respondent);
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .d84ApplicationType(SWITCH_TO_SOLE)
-            .d84WhoApplying(APPLICANT_1)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
-        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
-        verifyNoMoreInteractions(printer);
-    }
-
-    @Test
-    void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD84SwitchToSoleInJudicialSeparation() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(CO_D84).build());
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .d84ApplicationType(SWITCH_TO_SOLE)
-            .d84WhoApplying(APPLICANT_2)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
-
-        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(switchToSoleService).switchUserRoles(caseData, caseId);
-        verify(switchToSoleService).switchApplicantData(caseData);
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
-        verifyNoMoreInteractions(printer);
     }
 }
