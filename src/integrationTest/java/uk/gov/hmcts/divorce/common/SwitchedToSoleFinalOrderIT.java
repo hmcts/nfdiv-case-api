@@ -151,9 +151,6 @@ public class SwitchedToSoleFinalOrderIT {
 
     @Test
     public void shouldSwitchUserRolesAndDataWhenTriggeredByApplicant2() throws Exception {
-        CaseData data = validJointApplicant1CaseData();
-        setupMocks(false, true);
-
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
                 CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
@@ -167,6 +164,9 @@ public class SwitchedToSoleFinalOrderIT {
             TEST_SERVICE_AUTH_TOKEN,
             List.of(String.valueOf(TEST_CASE_ID)))
         ).thenReturn(caseRolesResponse);
+
+        CaseData data = validJointApplicant1CaseData();
+        setupMocks(false, true);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
