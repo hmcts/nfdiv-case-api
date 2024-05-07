@@ -322,6 +322,18 @@ public class TestDataHelper {
         return applicant;
     }
 
+    public static CaseData caseDataWithMarriageDate() {
+        MarriageDetails marriageDetails = MarriageDetails.builder().date(LOCAL_DATE).build();
+        return CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .divorceOrDissolution(DIVORCE)
+            .supplementaryCaseType(NA)
+            .application(Application.builder().marriageDetails(marriageDetails).build())
+            .caseInvite(new CaseInvite(null, null, null))
+            .build();
+    }
+
     public static CaseData caseData() {
         return CaseData.builder()
             .applicationType(SOLE_APPLICATION)
