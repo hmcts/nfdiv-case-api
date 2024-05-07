@@ -15,7 +15,8 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIALORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FINANCIAL_ORDER_NOT_REQUESTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FINANCIAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -23,8 +24,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_FINANCIALORDERNOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_CONSENT_ORDER;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_FINANCIAL_ORDER_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
@@ -111,9 +114,10 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
             templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,YES);
         }
 
-        String financialOrderCost = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIALORDERNOTICE));
-        templateVars.put(FEES_FINANCIALORDER, financialOrderCost);
-
+        String financialOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIAL_ORDER_NOTICE));
+        templateVars.put(FEES_FINANCIAL_ORDER, financialOrderFees);
+        String consentOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_CONSENT_ORDER));
+        templateVars.put(FEES_CONSENT_ORDER, consentOrderFees);
         return templateVars;
     }
 }

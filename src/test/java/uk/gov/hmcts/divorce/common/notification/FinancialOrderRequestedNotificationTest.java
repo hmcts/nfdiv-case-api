@@ -20,7 +20,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIALORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
@@ -56,7 +57,8 @@ public class FinancialOrderRequestedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        divorceTemplateVars.put(FEES_FINANCIALORDER, formatAmount(275.0));
+        divorceTemplateVars.put(FEES_FINANCIAL_ORDER, formatAmount(275.0));
+        divorceTemplateVars.put(FEES_CONSENT_ORDER, formatAmount(58.0));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -79,7 +81,8 @@ public class FinancialOrderRequestedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        divorceTemplateVars.put(FEES_FINANCIALORDER, formatAmount(275.0));
+        divorceTemplateVars.put(FEES_FINANCIAL_ORDER, formatAmount(275.0));
+        divorceTemplateVars.put(FEES_CONSENT_ORDER, formatAmount(58.0));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
@@ -102,7 +105,8 @@ public class FinancialOrderRequestedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
-        divorceTemplateVars.put(FEES_FINANCIALORDER, formatAmount(275.0));
+        divorceTemplateVars.put(FEES_FINANCIAL_ORDER, formatAmount(275.0));
+        divorceTemplateVars.put(FEES_CONSENT_ORDER, formatAmount(58.0));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
