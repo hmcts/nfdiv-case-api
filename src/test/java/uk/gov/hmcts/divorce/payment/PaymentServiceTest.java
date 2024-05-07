@@ -575,7 +575,6 @@ class PaymentServiceTest {
                 anyString(),
                 anyString()
             );
-
         assertThatThrownBy(() -> paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_INVALID))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);

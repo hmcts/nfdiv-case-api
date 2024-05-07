@@ -325,7 +325,13 @@ public class PaymentService {
             );
             return feeResponse.getAmount();
 
-        } catch (Exception e) {
+        }
+        catch (FeignException e) {
+            //just rethrow
+            throw e;
+        }
+        catch (Exception e) {
+
             // Log the exception
             log.error("Failed to retrieve service cost for service: {}, event: {}, keyword: {}", service, event, keyword, e);
             throw new ServiceCostRetrievalException(
