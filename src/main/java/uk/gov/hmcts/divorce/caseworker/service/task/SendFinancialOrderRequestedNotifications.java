@@ -25,8 +25,8 @@ public class SendFinancialOrderRequestedNotifications implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final Long caseId = caseDetails.getId();
 
-        if ((YesOrNo.YES.equals(caseData.getApplicant1().getFinancialOrder())
-            || YesOrNo.YES.equals(caseData.getApplicant2().getFinancialOrder()))) {
+        if (YesOrNo.YES.equals(caseData.getApplicant1().getFinancialOrder())
+            || YesOrNo.YES.equals(caseData.getApplicant2().getFinancialOrder())) {
             notificationDispatcher.send(financialOrderRequestedNotification, caseData, caseId);
         }
         return caseDetails;
