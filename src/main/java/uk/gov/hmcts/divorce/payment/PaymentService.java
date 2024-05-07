@@ -323,15 +323,8 @@ public class PaymentService {
                 service,
                 keyword
             );
+            return feeResponse.getAmount();
 
-            if (feeResponse != null) {
-                return feeResponse.getAmount();
-            } else {
-                // Log an error if feeResponse is null
-                log.error("Fee response is null for service: {}, event: {}, keyword: {}", service, event, keyword);
-                throw new ServiceCostRetrievalException(
-                    "Fee response is null for service: " + service + ", event: " + event + ", keyword: " + keyword, null);
-            }
         } catch (Exception e) {
             // Log the exception
             log.error("Failed to retrieve service cost for service: {}, event: {}, keyword: {}", service, event, keyword, e);
