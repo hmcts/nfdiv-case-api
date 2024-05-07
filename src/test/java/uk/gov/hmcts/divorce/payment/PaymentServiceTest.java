@@ -7,7 +7,6 @@ import feign.Request;
 import feign.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
