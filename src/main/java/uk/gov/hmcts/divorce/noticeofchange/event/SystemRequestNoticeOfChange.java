@@ -67,7 +67,7 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
                 .optional(
                     ChangeOrganisationRequest::getApprovalStatus,
                     NEVER_SHOW,
-                    ChangeOrganisationApprovalStatus.APPROVED
+                    ChangeOrganisationApprovalStatus.APPROVED.getValue()
                 )
             .done();
     }
