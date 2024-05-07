@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-public class AosOverdueLetterTemplateContentTest {
+class AosOverdueLetterTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -58,6 +59,7 @@ public class AosOverdueLetterTemplateContentTest {
 
     private static final LocalDate ISSUE_DATE = LocalDate.of(2022, 2, 2);
 
+    @SneakyThrows
     @BeforeEach
     public void setup() {
         ReflectionTestUtils.setField(templateContent, "offsetDays", 28);
@@ -65,7 +67,7 @@ public class AosOverdueLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContent() {
+    void shouldSuccessfullyApplyDivorceContent() {
 
         CaseData caseData = buildCaseData(DIVORCE);
 
@@ -100,7 +102,7 @@ public class AosOverdueLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionContent() {
+    void shouldSuccessfullyApplyDissolutionContent() {
         CaseData caseData = buildCaseData(DISSOLUTION);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("civil partner");

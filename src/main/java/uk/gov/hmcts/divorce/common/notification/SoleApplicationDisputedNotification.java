@@ -80,7 +80,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
         //floor to nearest £ because we know always in £ not in double so don't want decimal points in letter
         String disputedAOSFeeStr = String.valueOf(
-            (int)Math.floor(paymentService.getServiceCostOrDefault(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_DEF, disputedAOSFee)));
+            (int)Math.floor(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_DEF)));
 
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(DISPUTED_AOS_FEE,disputedAOSFeeStr);

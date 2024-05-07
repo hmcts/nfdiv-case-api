@@ -43,8 +43,6 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 @Slf4j
 public class PaymentService {
 
-    public static final String PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE =
-        "Payment Reference: {} Generating error message for {} error code";
     private static final String DEFAULT_CHANNEL = "default";
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
@@ -66,6 +64,8 @@ public class PaymentService {
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
     public static final String CA_E0003 = "CA-E0003";
+    public static final String PAYMENT_REFERENCE_ERROR_MESSAGE =
+        "Payment Reference: {} Generating error message for {} error code";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -108,7 +108,7 @@ public class PaymentService {
 
         log.info("Processing PBA payment for case id {}", caseId);
 
-        ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
+        ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity;
 
         try {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
@@ -213,39 +213,39 @@ public class PaymentService {
         HttpStatus httpStatus,
         String errorCode
     ) {
-        String errorMessage = null;
+        String errorMessage;
         if (httpStatus == HttpStatus.FORBIDDEN) {
             switch (errorCode) {
-                case CA_E0001:
-                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
+                case CA_E0001 -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0001.value(), pbaNumber);
-                    break;
-                case CA_E0004:
-                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
+                }
+                case CA_E0004 -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0004.value(), pbaNumber);
-                    break;
+                }
 
-                case CA_E0003:
-                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
+                case CA_E0003 -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0003.value(), pbaNumber);
-                    break;
+                }
 
-                default:
-                    log.info(PAYMENT_REFERENCE_GENERATING_ERROR_MESSAGE_FOR_ERROR_CODE,
+                default -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = GENERAL.value();
-                    break;
+                }
             }
         } else {
             errorMessage = GENERAL.value();
@@ -314,28 +314,29 @@ public class PaymentService {
     }
 
     public Double getServiceCost(String service, String event, String keyword) {
-
-        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
-            DEFAULT_CHANNEL,
-            event,
-            FAMILY,
-            FAMILY_COURT,
-            service,
-            keyword
-        );
-
-        return feeResponse.getAmount();
-    }
-
-    public Double getServiceCostOrDefault(String service, String event, String keyword, Double defaultValue) {
         try {
-            return getServiceCost(service, event, keyword);
+            final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                event,
+                FAMILY,
+                FAMILY_COURT,
+                service,
+                keyword
+            );
+
+            if (feeResponse != null) {
+                return feeResponse.getAmount();
+            } else {
+                // Log an error if feeResponse is null
+                log.error("Fee response is null for service: {}, event: {}, keyword: {}", service, event, keyword);
+                throw new ServiceCostRetrievalException(
+                    "Fee response is null for service: " + service + ", event: " + event + ", keyword: " + keyword, null);
+            }
         } catch (Exception e) {
             // Log the exception
             log.error("Failed to retrieve service cost for service: {}, event: {}, keyword: {}", service, event, keyword, e);
-            // Return the default value in case of failure for better resilience
-            return defaultValue;
+            throw new ServiceCostRetrievalException(
+                "Failed to retrieve service cost for service: " + service + ", event: " + event + ", keyword: " + keyword, e);
         }
     }
-
 }

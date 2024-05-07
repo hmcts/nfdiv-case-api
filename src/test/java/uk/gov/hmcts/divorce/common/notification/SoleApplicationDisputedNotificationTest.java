@@ -213,7 +213,7 @@ class SoleApplicationDisputedNotificationTest {
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
-        when(paymentService.getServiceCostOrDefault(anyString(), anyString(), anyString(), anyDouble()))
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString()))
             .thenReturn(Double.parseDouble(DISPUTE_FEE));
         soleApplicationDisputedNotification.sendToApplicant2(data, TEST_CASE_ID);
 
@@ -345,7 +345,7 @@ class SoleApplicationDisputedNotificationTest {
 
         // Mock paymentService behavior
         double mockedDisputedAOSFee = 100.0;
-        when(paymentService.getServiceCostOrDefault(eq(SERVICE_OTHER), eq(EVENT_ENFORCEMENT), eq(KEYWORD_DEF), anyDouble()))
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_DEF))
             .thenReturn(mockedDisputedAOSFee);
 
         // Mock commonContent behavior
