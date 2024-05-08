@@ -120,6 +120,7 @@ public class CommonContent {
     public static final String PRONOUNCE_BY_DATE = "pronounceByDate";
     public static final int CO_SUBMISSION_DATE_PLUS_DAYS = 56;
 
+    public static final String DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE = "digitalFinalOrderCertificateCopyFee";
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
