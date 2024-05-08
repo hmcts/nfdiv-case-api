@@ -45,11 +45,6 @@ public class FinancialOrderRequestedNotificationTest {
     @InjectMocks
     private FinancialOrderRequestedNotification financialOrderRequestedNotification;
 
-    @BeforeEach
-    public void setup() {
-        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(275.0);
-    }
-
     @Test
     void shouldSendEmailToApplicant1WithSoleAndJointFinancialOrderContent() {
         CaseData data = validCaseDataForFinancialOrder();
@@ -59,6 +54,7 @@ public class FinancialOrderRequestedNotificationTest {
         divorceTemplateVars.putAll(getMainTemplateVars());
         divorceTemplateVars.put(FEES_FINANCIAL_ORDER, formatAmount(275.0));
         divorceTemplateVars.put(FEES_CONSENT_ORDER, formatAmount(58.0));
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(275.0);
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -83,6 +79,7 @@ public class FinancialOrderRequestedNotificationTest {
         divorceTemplateVars.putAll(getMainTemplateVars());
         divorceTemplateVars.put(FEES_FINANCIAL_ORDER, formatAmount(275.0));
         divorceTemplateVars.put(FEES_CONSENT_ORDER, formatAmount(58.0));
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(275.0);
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
