@@ -48,11 +48,12 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
 
         final String email = caseData.getApplicant1().getEmail();
         final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+        boolean isApplicant = true;
 
         log.info("Sending financial order requested notification to applicant 1 for case : {}", caseId);
 
         final Map<String, String> templateVars =
-            populateTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
+            populateTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), isApplicant);
 
         notificationService.sendEmail(
             email,
@@ -68,9 +69,10 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
 
         final String email = caseData.getApplicant2EmailAddress();
         final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
+        boolean isApplicant = false;
 
         final Map<String, String> templateVars =
-            populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1());
+            populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), isApplicant);
 
         if (caseData.getApplicationType().isSole()) {
             if (isNotBlank(email)) {
@@ -102,10 +104,13 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
     public Map<String, String> populateTemplateVars(final CaseData caseData,
                                                     final Long id,
                                                     final Applicant applicant,
-                                                    final Applicant partner) {
+                                                    final Applicant partner,
+                                                    boolean isApplicant) {
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, applicant, partner);
 
+        //Populate variables in templateVars depending on whether notification
+        //is to be sent to the applicant or the respondent.
         if (YesOrNo.YES.equals(applicant.getFinancialOrder())) {
             templateVars.put(FINANCIAL_ORDER_REQUESTED,YES);
             templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,NO);
@@ -114,10 +119,18 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
             templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,YES);
         }
 
-        String financialOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_MISC, KEYWORD_FINANCIAL_ORDER_NOTICE));
-        templateVars.put(FEES_FINANCIAL_ORDER, financialOrderFees);
-        String consentOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_CONSENT_ORDER));
-        templateVars.put(FEES_CONSENT_ORDER, consentOrderFees);
+        //If Applicant or Joint ApplicationType, then populate fees in templateVars
+        if (isApplicant || !caseData.getApplicationType().isSole()) {
+            String financialOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER,
+                                                                                   EVENT_MISC,
+                                                                                   KEYWORD_FINANCIAL_ORDER_NOTICE));
+            templateVars.put(FEES_FINANCIAL_ORDER, financialOrderFees);
+
+            String consentOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER,
+                                                                                 EVENT_GENERAL,
+                                                                                 KEYWORD_CONSENT_ORDER));
+            templateVars.put(FEES_CONSENT_ORDER, consentOrderFees);
+        }
         return templateVars;
     }
 }
