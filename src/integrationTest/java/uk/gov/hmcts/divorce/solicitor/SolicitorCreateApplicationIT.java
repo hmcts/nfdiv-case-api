@@ -30,6 +30,7 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
@@ -74,6 +75,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -257,7 +259,7 @@ class SolicitorCreateApplicationIT {
     }
 
     private CaseData caseDataWithApplicant1Org() {
-        CaseData caseData = caseData();
+        CaseData caseData = caseDataWithMarriageDate();
         caseData.getApplicant1()
             .setSolicitor(Solicitor.builder()
                 .email(TEST_SOLICITOR_EMAIL)
@@ -281,6 +283,7 @@ class SolicitorCreateApplicationIT {
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
+        caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009,4,20));
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email("sol1@example.com")
