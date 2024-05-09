@@ -55,21 +55,21 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .aboutToStartCallback(this::aboutToStart))
             .page("applyNoc")
             .complex(CaseData::getChangeOrganisationRequestField)
-                .complex(ChangeOrganisationRequest::getOrganisationToAdd)
-                    .optional(Organisation::getOrganisationId)
-                    .optional(Organisation::getOrganisationName)
-                .done()
-                .complex(ChangeOrganisationRequest::getOrganisationToRemove)
-                    .optional(Organisation::getOrganisationId)
-                    .optional(Organisation::getOrganisationName)
-                .done()
-                .optional(ChangeOrganisationRequest::getRequestTimestamp)
-                .optional(ChangeOrganisationRequest::getCaseRoleId)
-                .optional(
-                    ChangeOrganisationRequest::getApprovalStatus,
-                    NEVER_SHOW,
-                    NOC_AUTO_APPROVED
-                )
+            .complex(ChangeOrganisationRequest::getOrganisationToAdd)
+            .optional(Organisation::getOrganisationId)
+            .optional(Organisation::getOrganisationName)
+            .done()
+            .complex(ChangeOrganisationRequest::getOrganisationToRemove)
+            .optional(Organisation::getOrganisationId)
+            .optional(Organisation::getOrganisationName)
+            .done()
+            .optional(ChangeOrganisationRequest::getRequestTimestamp)
+            .optional(ChangeOrganisationRequest::getCaseRoleId)
+            .optional(
+                ChangeOrganisationRequest::getApprovalStatus,
+                NEVER_SHOW,
+                NOC_AUTO_APPROVED
+            )
             .done();
     }
 
@@ -83,14 +83,16 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
         //need to check response and log issues properly
-        log.info(response.toString());
-        if(!response.getErrors().isEmpty()) {
-            log.error(response.getErrors().toString());
+        if (null != response) {
+            log.info(response.toString());
+            if (!response.getErrors().isEmpty()) {
+                log.error(response.getErrors().toString());
+            }
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(details.getState())
-            .build();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .state(details.getState())
+                .build();
     }
 }
