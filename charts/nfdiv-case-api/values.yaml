@@ -16,8 +16,8 @@ java:
   terminationGracePeriodSeconds: 120
   autoscaling:
     enabled: true
-    maxReplicas: 9
-    minReplicas: 6
+    maxReplicas: 6
+    minReplicas: 3
     targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
   keyVaults:
     nfdiv:
