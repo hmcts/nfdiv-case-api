@@ -21,7 +21,6 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAmendCase.CASEWORK
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.LESS_THAN_ONE_YEAR_SINCE_SUBMISSION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +57,9 @@ class CaseworkerAmendCaseTest {
     void shouldNotReturnErrorIfMarriageDateMoreThanOneYearPriorToApplicationSubmittedDate() {
         final CaseData caseData = caseDataWithMarriageDate();
         caseData.getApplication().setDateSubmitted(LocalDateTime.now());
-        caseData.getApplication().getMarriageDetails().setDate(LocalDate.from(caseData.getApplication().getDateSubmitted().minusYears(1).minusDays(1)));
+        caseData.getApplication().getMarriageDetails().setDate(
+            LocalDate.from(caseData.getApplication().getDateSubmitted().minusYears(1).minusDays(1))
+        );
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(State.Submitted);
