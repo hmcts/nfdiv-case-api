@@ -85,7 +85,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         //need to check response and log issues properly
         if (null != response) {
             log.info(response.toString());
-            if (!response.getErrors().isEmpty()) {
+            if (null != response.getErrors() && !response.getErrors().isEmpty()) {
                 log.error(response.getErrors().toString());
             }
         }
