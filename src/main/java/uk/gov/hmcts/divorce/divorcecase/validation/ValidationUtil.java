@@ -24,8 +24,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class ValidationUtil {
 
-    public static final String LESS_THAN_ONE_YEAR_AGO
-        = " can not be less than one year ago.";
+    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
+    public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION = " can not be less than one year prior to application submission.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
@@ -105,6 +105,10 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateMarriageDate(CaseData caseData, String field) {
+        return validateMarriageDate(caseData, field, false);
+    }
+
+    public static List<String> validateMarriageDate(CaseData caseData, String field, Boolean compareToApplicationSubmissionDate) {
 
         LocalDate marriageDate = caseData.getApplication().getMarriageDetails().getDate();
 
@@ -114,8 +118,15 @@ public final class ValidationUtil {
             return List.of(field + IN_THE_FUTURE);
         }
 
-        if (!caseData.isJudicialSeparationCase() && isLessThanOneYearAgo(marriageDate)) {
-            return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+        if (!caseData.isJudicialSeparationCase()) {
+            if (compareToApplicationSubmissionDate) {
+                LocalDate applicationSubmissionDate = LocalDate.from(caseData.getApplication().getDateSubmitted());
+                if (isLessThanOneYearPriorToApplicationSubmission(applicationSubmissionDate, marriageDate)) {
+                    return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
+                }
+            } else if (isLessThanOneYearAgo(marriageDate)) {
+                return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+            }
         }
 
         return emptyList();
@@ -149,6 +160,10 @@ public final class ValidationUtil {
 
     private static boolean isLessThanOneYearAgo(LocalDate date) {
         return date.isAfter(LocalDate.now().minusYears(1).minusDays(1));
+    }
+
+    private static boolean isLessThanOneYearPriorToApplicationSubmission(LocalDate applicationSubmissionDate, LocalDate marriageDate) {
+        return marriageDate.isAfter(applicationSubmissionDate.minusYears(1).minusDays(1));
     }
 
     private static boolean isInTheFuture(LocalDate date) {
