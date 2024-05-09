@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -78,8 +79,18 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
-        assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
+        AboutToStartOrSubmitCallbackResponse response =
+            assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
+        //need to check response and log issues properly
+        log.info(response.toString());
+        if(!response.getErrors().isEmpty()) {
+            log.error(response.getErrors().toString());
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .state(details.getState())
+            .build();
     }
 }
