@@ -90,9 +90,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             }
         }
 
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .state(details.getState())
-                .build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .state(details.getState())
+            .build();
     }
 }
