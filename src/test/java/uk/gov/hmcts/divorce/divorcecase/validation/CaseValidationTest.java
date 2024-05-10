@@ -121,7 +121,7 @@ public class CaseValidationTest {
             .application(
                 Application.builder()
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minus(1, YEARS))
+                        .date(LocalDate.now().minusYears(1))
                         .build())
                     .build()
             )
@@ -133,13 +133,13 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenDateIsLessThanOneYearAgo() {
+    public void shouldNotReturnErrorWhenDateIsMoreThanOneYearAgo() {
 
         CaseData caseData = CaseData.builder()
             .application(
                 Application.builder()
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minus(2, YEARS))
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
                         .build())
                     .build()
             )
@@ -158,7 +158,7 @@ public class CaseValidationTest {
                 Application.builder()
                     .dateSubmitted(LocalDateTime.now())
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minus(1, YEARS))
+                        .date(LocalDate.now().minusYears(1))
                         .build())
                     .build()
             )
@@ -177,7 +177,7 @@ public class CaseValidationTest {
                 Application.builder()
                     .dateSubmitted(LocalDateTime.now())
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minusYears(2))
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
                         .build())
                     .build()
             )
