@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class CaseValidationTest {
 
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
-    public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION = " can not be less than one year prior to application submission.";
+    private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION = " can not be less than one year prior to application submission.";
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
