@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -123,8 +124,9 @@ public final class ValidationUtil {
 
         if (!caseData.isJudicialSeparationCase()) {
             if (compareToApplicationSubmittedDate) {
-                LocalDate applicationSubmittedDate = LocalDate.from(caseData.getApplication().getDateSubmitted());
-                if (isLessThanOneYearPriorToApplicationSubmission(applicationSubmittedDate, marriageDate)) {
+                LocalDateTime applicationSubmittedDate = caseData.getApplication().getDateSubmitted();
+                if (applicationSubmittedDate == null ||
+                    isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
                     return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
                 }
             } else if (isLessThanOneYearAgo(marriageDate)) {
