@@ -51,6 +51,7 @@
     "divorceOrDissolution": "divorce",
     "supplementaryCaseType": "notApplicable",
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "dueDate": "2021-04-28",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
