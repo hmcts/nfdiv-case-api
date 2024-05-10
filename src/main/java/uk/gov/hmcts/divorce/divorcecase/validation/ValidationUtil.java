@@ -39,6 +39,7 @@ public final class ValidationUtil {
     public static List<String> validateBasicCase(CaseData caseData) {
         return validateBasicCase(caseData, false);
     }
+
     public static List<String> validateBasicCase(CaseData caseData, boolean compareMarriageDateToSubmittedDate) {
         return flattenLists(
             notNull(caseData.getApplicationType(), "ApplicationType"),
@@ -125,8 +126,8 @@ public final class ValidationUtil {
         if (!caseData.isJudicialSeparationCase()) {
             if (compareToApplicationSubmittedDate) {
                 LocalDateTime applicationSubmittedDate = caseData.getApplication().getDateSubmitted();
-                if (applicationSubmittedDate == null ||
-                    isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
+                if (applicationSubmittedDate == null
+                    || isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
                     return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
                 }
             } else if (isLessThanOneYearAgo(marriageDate)) {
