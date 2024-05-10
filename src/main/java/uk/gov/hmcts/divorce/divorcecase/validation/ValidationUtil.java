@@ -36,6 +36,9 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateBasicCase(CaseData caseData) {
+        return validateBasicCase(caseData, false);
+    }
+    public static List<String> validateBasicCase(CaseData caseData, boolean compareMarriageDateToSubmittedDate) {
         return flattenLists(
             notNull(caseData.getApplicationType(), "ApplicationType"),
             notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
@@ -55,7 +58,7 @@ public final class ValidationUtil {
             !caseData.getApplicant1().isApplicantOffline()
                 ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
-            validateMarriageDate(caseData, "MarriageDate"),
+            validateMarriageDate(caseData, "MarriageDate", compareMarriageDateToSubmittedDate),
             validateJurisdictionConnections(caseData)
         );
     }
@@ -108,7 +111,7 @@ public final class ValidationUtil {
         return validateMarriageDate(caseData, field, false);
     }
 
-    public static List<String> validateMarriageDate(CaseData caseData, String field, Boolean compareToApplicationSubmissionDate) {
+    public static List<String> validateMarriageDate(CaseData caseData, String field, Boolean compareToApplicationSubmittedDate) {
 
         LocalDate marriageDate = caseData.getApplication().getMarriageDetails().getDate();
 
@@ -119,9 +122,9 @@ public final class ValidationUtil {
         }
 
         if (!caseData.isJudicialSeparationCase()) {
-            if (compareToApplicationSubmissionDate) {
-                LocalDate applicationSubmissionDate = LocalDate.from(caseData.getApplication().getDateSubmitted());
-                if (isLessThanOneYearPriorToApplicationSubmission(applicationSubmissionDate, marriageDate)) {
+            if (compareToApplicationSubmittedDate) {
+                LocalDate applicationSubmittedDate = LocalDate.from(caseData.getApplication().getDateSubmitted());
+                if (isLessThanOneYearPriorToApplicationSubmission(applicationSubmittedDate, marriageDate)) {
                     return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
                 }
             } else if (isLessThanOneYearAgo(marriageDate)) {
