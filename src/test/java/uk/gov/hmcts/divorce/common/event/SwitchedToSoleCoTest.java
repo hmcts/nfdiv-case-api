@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.event;
 
-import com.google.common.collect.ImmutableMap;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,13 +17,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.print.LetterPrinter;
-import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
-import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-
-import java.util.Optional;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -34,6 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCoSendLetters.SWITCH_TO_SOLE_CO_SEND_LETTERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
@@ -42,26 +42,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICAN
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class SwitchedToSoleCoTest {
-
-    private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
-        ImmutableMap.of(
-            SWITCH_TO_SOLE_CO_LETTER, Optional.of(SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID)
-        ),
-        ImmutableMap.of(
-            SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME
-        )
-    );
-    public static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
     private SwitchToSoleCoNotification switchToSoleCoNotification;
@@ -79,10 +69,13 @@ class SwitchedToSoleCoTest {
     private SwitchToSoleService switchToSoleService;
 
     @Mock
-    private LetterPrinter printer;
+    private IdamService idamService;
 
     @Mock
-    private SwitchToSoleCODocumentPack switchToSoleConditionalOrderDocumentPack;
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @InjectMocks
     private SwitchedToSoleCo switchedToSoleCo;
@@ -99,7 +92,7 @@ class SwitchedToSoleCoTest {
     }
 
     @Test
-    void shouldSetApplicationTypeToSoleAndSendNotificationToApplicant1() {
+    void shouldSetApplicationTypeToSole() {
         final long caseId = TEST_CASE_ID;
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -154,7 +147,7 @@ class SwitchedToSoleCoTest {
         switchedToSoleCo.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseId);
-        verifyNoInteractions(printer);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -192,14 +185,14 @@ class SwitchedToSoleCoTest {
             .data(caseData)
             .build();
 
-        when(switchToSoleConditionalOrderDocumentPack.getDocumentPack(caseData, null)).thenReturn(TEST_DOCUMENT_PACK_INFO);
-        when(switchToSoleConditionalOrderDocumentPack.getLetterId()).thenReturn(THE_LETTER_ID);
+        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserInfo.builder().build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         switchedToSoleCo.submitted(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(switchToSoleCoNotification, caseData, caseId);
-        verify(printer).sendLetters(caseData, caseId, caseData.getApplicant2(), TEST_DOCUMENT_PACK_INFO, THE_LETTER_ID);
-        verifyNoMoreInteractions(printer);
+        verify(ccdUpdateService).submitEvent(caseId, SWITCH_TO_SOLE_CO_SEND_LETTERS, user, TEST_SYSTEM_AUTHORISATION_TOKEN);
     }
 
     @Test
@@ -234,6 +227,20 @@ class SwitchedToSoleCoTest {
             .d84WhoApplying(APPLICANT_1)
             .build()
         );
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(caseId)
+            .data(caseData)
+            .build();
+
+        switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(switchToSoleService);
+    }
+
+    @Test
+    void shouldNotSwitchUserDataOrRolesIfApplicant1TriggeredSwitchToSole() {
+        final long caseId = TEST_CASE_ID;
+        CaseData caseData = validJointApplicant1CaseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(caseId)
             .data(caseData)

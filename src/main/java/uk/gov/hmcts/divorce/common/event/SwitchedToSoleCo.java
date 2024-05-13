@@ -14,14 +14,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.print.LetterPrinter;
-import uk.gov.hmcts.divorce.document.print.documentpack.SwitchToSoleCODocumentPack;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCoSendLetters.SWITCH_TO_SOLE_CO_SEND_LETTERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -51,8 +54,9 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private final SwitchToSoleCoNotification switchToSoleCoNotification;
     private final NotificationDispatcher notificationDispatcher;
     private final SwitchToSoleService switchToSoleService;
-    private final SwitchToSoleCODocumentPack switchToSoleConditionalOrderDocumentPack;
-    private final LetterPrinter letterPrinter;
+    private final IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
+    private final CcdUpdateService ccdUpdateService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -84,16 +88,12 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         // triggered by citizen users
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             log.info("Request made by applicant to switch to sole for case id: {}", caseId);
-            // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
-            // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
             switchToSoleService.switchApplicantData(data);
             switchToSoleService.switchUserRoles(data, caseId);
         }
 
         // triggered by system update user coming from Offline Document Verified
         if (OfflineWhoApplying.APPLICANT_2.equals(data.getConditionalOrder().getD84WhoApplying())) {
-            // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
-            // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
             switchToSoleService.switchApplicantData(data);
             if (!data.getApplication().isPaperCase()) {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);
@@ -102,15 +102,6 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         }
 
         final var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;
-
-        // If notificationDispatcher call fails, it retries.  When it retries it pulls data from live, which has not been swapped.
-        // This can cause the aboutToSubmit to fail (expected data swap not present on live data as not yet Submitted, potentially causing
-        // Null Pointers or other errors during App1 Notification creation), resulting in swapped user roles but no swapped data,
-        // which causes a data breach if either app logs in.
-        // Notification call moved to submitted callback to prevent this, as swapped data will then have been committed.
-        // notificationDispatcher.send(switchToSoleCoNotification, data, details.getId());
-
-        //letterPrinter call also moved to submitted callback
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -125,23 +116,17 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
         log.info("{} submitted callback invoked for case id: {}", SWITCH_TO_SOLE_CO, caseId);
 
-        // Send notification during submitted callback to prevent untimely failure of aboutToSubmit should an issue occur and subsequent
-        // potential data breach scenario
         notificationDispatcher.send(switchToSoleCoNotification, data, caseId);
 
         if (CO_D84.equals(data.getDocuments().getTypeOfDocumentAttached())
             || D84.equals(data.getDocuments().getScannedSubtypeReceived())
             && SWITCH_TO_SOLE.equals(data.getConditionalOrder().getD84ApplicationType())) {
 
-            var documentPackInfo =
-                switchToSoleConditionalOrderDocumentPack.getDocumentPack(data, null);
-            letterPrinter.sendLetters(
-                data,
-                caseId,
-                data.getApplicant2(),
-                documentPackInfo,
-                switchToSoleConditionalOrderDocumentPack.getLetterId()
-            );
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+
+            ccdUpdateService
+                .submitEvent(caseId, SWITCH_TO_SOLE_CO_SEND_LETTERS, user, serviceAuth);
         }
 
         return SubmittedCallbackResponse.builder().build();
