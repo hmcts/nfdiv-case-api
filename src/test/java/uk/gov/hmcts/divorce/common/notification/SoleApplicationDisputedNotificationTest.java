@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -47,7 +48,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDEN
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEF;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
@@ -344,7 +345,7 @@ class SoleApplicationDisputedNotificationTest {
 
         // Mock paymentService behavior
         double mockedDisputedAOSFee = 100.0;
-        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_DEF))
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DEF))
             .thenReturn(mockedDisputedAOSFee);
 
         // Mock commonContent behavior

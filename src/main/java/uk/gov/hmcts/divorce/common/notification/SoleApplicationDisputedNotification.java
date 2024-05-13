@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEF;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
@@ -80,7 +80,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
         //floor to nearest £ because we know always in £ not in double so don't want decimal points in letter
         String disputedAOSFeeStr = String.valueOf(
-            (int)Math.floor(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_DEF)));
+            (int)Math.floor(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DEF)));
 
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(DISPUTED_AOS_FEE,disputedAOSFeeStr);
