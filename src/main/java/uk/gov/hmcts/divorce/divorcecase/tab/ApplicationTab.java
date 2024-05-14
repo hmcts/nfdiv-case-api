@@ -17,9 +17,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
     private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC_OVERSEAS = "applicant1ContactDetailsType!=\"private\" AND "
         + "applicant1AddressOverseas=\"Yes\"";
+    private static final String APPLICANT_1_REPRESENTED_OVERSEAS = "applicant1SolicitorRepresented=\"Yes\" AND "
+        + "applicant1SolicitorAddressOverseas=\"Yes\"";
     private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
     private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC_OVERSEAS = "applicant2ContactDetailsType!=\"private\" AND "
         + "applicant2AddressOverseas=\"Yes\"";
+    private static final String APPLICANT_2_REPRESENTED_OVERSEAS = "applicant2SolicitorRepresented=\"Yes\" AND "
+        + "applicant2SolicitorAddressOverseas=\"Yes\"";
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
     private static final String SOLE_APPLICATION = "applicationType=\"soleApplication\"";
@@ -136,6 +140,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorAddress", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorAddressOverseas", APPLICANT_1_REPRESENTED_OVERSEAS)
             .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
@@ -195,6 +200,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorName", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAddressOverseas", APPLICANT_2_REPRESENTED_OVERSEAS)
             .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented!=\"No\"")
