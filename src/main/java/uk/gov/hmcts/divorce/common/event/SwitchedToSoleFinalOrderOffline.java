@@ -72,7 +72,6 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
         // triggered by system update user coming from Offline Document Verified
         if (OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
             // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
-            // If role swap fails, aboutToSubmit still fails, and data changes are not committed.
             switchToSoleService.switchApplicantData(caseData);
             if (!caseData.getApplication().isPaperCase()) {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);

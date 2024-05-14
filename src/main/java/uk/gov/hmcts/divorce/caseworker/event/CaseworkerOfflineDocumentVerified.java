@@ -251,12 +251,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
 
         // Should only hit RespondentFinalOrderRequested if Sole, eligible for FO, and from respondent.
-        // Otherwise, it should be FinalOrderRequested.
-        // Neither of these states will be accepted by SwitchedToSoleFinalOrder - see submitted() method
         final State state = caseData.getApplicationType().isSole()
             && respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
 
-        // Here we check for FO Overdue, and if so we trigger a CWGeneralReferral, which should result in state: AwaitingGeneralReferral
         // Skip this for Sole and respondentRequested - respondent cannot be overdue on a sole case
         if (!(caseData.getApplicationType().isSole() && respondentRequested)) {
             generalReferralService.caseWorkerGeneralReferral(details);
@@ -363,9 +360,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
 
-            //For D36, case state will currently be RespondentFinalOrderRequested or FinalOrderRequested
-            //SWITCH_TO_SOLE_FO event only accepts AwaitingJointFinalOrder as a valid state!  This call will fail.
-            //Created new Event to handle this call - SWITCH_TO_SOLE_FO_OFFLINE
             ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO_OFFLINE, user, serviceAuth);
         }
 
