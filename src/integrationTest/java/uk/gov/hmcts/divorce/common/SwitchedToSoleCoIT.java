@@ -28,6 +28,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -51,6 +52,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -60,6 +62,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCoSendLetters.SWITCH_TO_SOLE_CO_SEND_LETTERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -69,6 +72,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_SWITCHED_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_OTHER_PARTY_MADE_SOLE_APPLICATION_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.SYSTEM_ISSUE_AOS_UNDISPUTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
@@ -80,6 +84,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -128,6 +133,9 @@ public class SwitchedToSoleCoIT {
 
     @MockBean
     private CaseAssignmentApi caseAssignmentApi;
+
+    @MockBean
+    private CcdUpdateService ccdUpdateService;
 
     @MockBean
     private BulkPrintService bulkPrintService;
@@ -386,22 +394,25 @@ public class SwitchedToSoleCoIT {
                 CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
             ))
             .build();
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
         when(caseAssignmentApi.getUserRoles(
             BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             List.of(String.valueOf(TEST_CASE_ID)))
         ).thenReturn(caseRolesResponse);
 
+        User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+        doNothing().when(ccdUpdateService).submitEvent(1L, SWITCH_TO_SOLE_CO_SEND_LETTERS, user, TEST_SERVICE_AUTH_TOKEN);
+
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_SYSTEM_AUTHORISATION_TOKEN)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_CO)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        verify(bulkPrintService).print(any(Print.class));
+        verify(ccdUpdateService).submitEvent(any(), eq(SWITCH_TO_SOLE_CO_SEND_LETTERS), any(), eq(TEST_SERVICE_AUTH_TOKEN));
     }
 
     private void setupMocks(boolean isApplicant1, boolean isApplicant2) throws IOException {
