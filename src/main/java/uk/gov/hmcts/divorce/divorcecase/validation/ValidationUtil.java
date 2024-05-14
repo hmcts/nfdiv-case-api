@@ -25,8 +25,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class ValidationUtil {
 
-    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
-    public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION = " can not be less than one year prior to application submission.";
+    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
+    public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
+        " can not be less than one year and one day prior to application submission.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
