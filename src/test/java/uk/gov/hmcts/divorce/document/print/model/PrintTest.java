@@ -22,5 +22,21 @@ class PrintTest {
         final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
 
         Assertions.assertLinesMatch(recipients, expected_recipients);
+        Assertions.assertEquals(print.getIsInternational(), false);
+    }
+
+    @Test
+    void shouldCreateRecipientlistWithInternationalFlagSet() {
+        final String caseId = UUID.randomUUID().toString();
+        final String letterType = RandomStringUtils.random(20, true, false);
+        final String recipientName = RandomStringUtils.random(20, true, false);
+
+        Print print = new Print(null, caseId, null, letterType, recipientName, YesOrNo.YES);
+
+        final List<String> recipients = print.getRecipients();
+        final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
+
+        Assertions.assertLinesMatch(recipients, expected_recipients);
+        Assertions.assertEquals(print.getIsInternational(), true);
     }
 }
