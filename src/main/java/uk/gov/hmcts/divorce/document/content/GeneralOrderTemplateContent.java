@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SITTING_VENUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -39,7 +40,6 @@ public class GeneralOrderTemplateContent {
     private static final String RESPONDENT = "Respondent";
     private static final String SITTING = "sitting";
     private static final String SITTING_CONTENT = ", sitting";
-    private static final String SITTING_VENUE = "sittingVenue";
     private static final String JUDGE_NAME = "%s %s";
     private static final String AN_ASSISTANT_JUDGES_CLERK = "an %s";
     private static final String A_PROPER_OFFICER_OF_THE_COURT = "a %s";
