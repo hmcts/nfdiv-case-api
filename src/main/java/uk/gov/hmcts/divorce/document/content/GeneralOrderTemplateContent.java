@@ -39,6 +39,7 @@ public class GeneralOrderTemplateContent {
     private static final String RESPONDENT = "Respondent";
     private static final String SITTING = "sitting";
     private static final String SITTING_CONTENT = ", sitting";
+    private static final String SITTING_VENUE = "sittingVenue";
     private static final String JUDGE_NAME = "%s %s";
     private static final String AN_ASSISTANT_JUDGES_CLERK = "an %s";
     private static final String A_PROPER_OFFICER_OF_THE_COURT = "a %s";
@@ -98,6 +99,10 @@ public class GeneralOrderTemplateContent {
         } else {
             templateContent.put(APPLICANT_HEADING, APPLICANT_1);
             templateContent.put(RESPONDENT_HEADING, APPLICANT_2);
+        }
+
+        if (StringUtils.isNotBlank(generalOrder.getGeneralOrderJudgeOrLegalAdvisorVenue())) {
+            templateContent.put(SITTING_VENUE, generalOrder.getGeneralOrderJudgeOrLegalAdvisorVenue());
         }
 
         return templateContent;
