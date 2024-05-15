@@ -51,6 +51,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
@@ -550,6 +551,42 @@ class CommonContentTest {
                 entry(DATE, localDate),
                 entry(IS_JOINT, false),
                 entry(IS_DIVORCE, false)
+            );
+    }
+
+    @Test
+    void shouldSetDivorceNotDissolution() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
+        Map<String, String> templateContent = new HashMap<>();
+
+        commonContent.setIsDivorceAndIsDissolutionVariables(caseData, templateContent);
+
+        assertThat(templateContent)
+            .isNotEmpty()
+            .contains(
+                entry(IS_DIVORCE, "yes"),
+                entry(IS_DISSOLUTION, "no")
+            );
+    }
+
+    @Test
+    void shouldSetDissolutionNotDivorce() {
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .build();
+
+        Map<String, String> templateContent = new HashMap<>();
+
+        commonContent.setIsDivorceAndIsDissolutionVariables(caseData, templateContent);
+
+        assertThat(templateContent)
+            .isNotEmpty()
+            .contains(
+                entry(IS_DIVORCE, "no"),
+                entry(IS_DISSOLUTION, "yes")
             );
     }
 }
