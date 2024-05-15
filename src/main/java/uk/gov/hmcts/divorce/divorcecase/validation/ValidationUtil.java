@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,8 +25,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class ValidationUtil {
 
-    public static final String LESS_THAN_ONE_YEAR_AGO
-        = " can not be less than one year ago.";
+    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
+    public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
+        " can not be less than one year and one day prior to application submission.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
@@ -36,6 +38,10 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateBasicCase(CaseData caseData) {
+        return validateBasicCase(caseData, false);
+    }
+
+    public static List<String> validateBasicCase(CaseData caseData, boolean compareMarriageDateToSubmittedDate) {
         return flattenLists(
             notNull(caseData.getApplicationType(), "ApplicationType"),
             notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
@@ -55,7 +61,7 @@ public final class ValidationUtil {
             !caseData.getApplicant1().isApplicantOffline()
                 ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
-            validateMarriageDate(caseData, "MarriageDate"),
+            validateMarriageDate(caseData, "MarriageDate", compareMarriageDateToSubmittedDate),
             validateJurisdictionConnections(caseData)
         );
     }
@@ -105,6 +111,10 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateMarriageDate(CaseData caseData, String field) {
+        return validateMarriageDate(caseData, field, false);
+    }
+
+    public static List<String> validateMarriageDate(CaseData caseData, String field, Boolean compareToApplicationSubmittedDate) {
 
         LocalDate marriageDate = caseData.getApplication().getMarriageDetails().getDate();
 
@@ -114,8 +124,16 @@ public final class ValidationUtil {
             return List.of(field + IN_THE_FUTURE);
         }
 
-        if (!caseData.isJudicialSeparationCase() && isLessThanOneYearAgo(marriageDate)) {
-            return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+        if (!caseData.isJudicialSeparationCase()) {
+            if (compareToApplicationSubmittedDate) {
+                LocalDateTime applicationSubmittedDate = caseData.getApplication().getDateSubmitted();
+                if (applicationSubmittedDate == null
+                    || isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
+                    return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
+                }
+            } else if (isLessThanOneYearAgo(marriageDate)) {
+                return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+            }
         }
 
         return emptyList();
@@ -149,6 +167,10 @@ public final class ValidationUtil {
 
     private static boolean isLessThanOneYearAgo(LocalDate date) {
         return date.isAfter(LocalDate.now().minusYears(1).minusDays(1));
+    }
+
+    private static boolean isLessThanOneYearPriorToApplicationSubmission(LocalDate applicationSubmissionDate, LocalDate marriageDate) {
+        return marriageDate.isAfter(applicationSubmissionDate.minusYears(1).minusDays(1));
     }
 
     private static boolean isInTheFuture(LocalDate date) {
