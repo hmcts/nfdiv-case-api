@@ -34,7 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
@@ -50,6 +49,7 @@ public class CaseValidationTest {
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
         " can not be less than one year and one day prior to application submission.";
+    public static final String SUBMITTED_DATE_IS_NULL = "Application submitted date is null.";
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
