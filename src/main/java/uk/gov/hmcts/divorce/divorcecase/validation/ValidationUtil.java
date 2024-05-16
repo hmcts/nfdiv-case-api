@@ -28,6 +28,7 @@ public final class ValidationUtil {
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
         " can not be less than one year and one day prior to application submission.";
+    public static final String SUBMITTED_DATE_IS_NULL = "Application submitted date is null.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
@@ -127,8 +128,9 @@ public final class ValidationUtil {
         if (!caseData.isJudicialSeparationCase()) {
             if (compareToApplicationSubmittedDate) {
                 LocalDateTime applicationSubmittedDate = caseData.getApplication().getDateSubmitted();
-                if (applicationSubmittedDate == null
-                    || isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
+                if (applicationSubmittedDate == null) {
+                    return List.of(SUBMITTED_DATE_IS_NULL);
+                } else if (isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
                     return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
                 }
             } else if (isLessThanOneYearAgo(marriageDate)) {
