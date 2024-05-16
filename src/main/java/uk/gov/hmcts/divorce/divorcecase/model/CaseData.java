@@ -13,7 +13,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -40,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOrganisationRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.isNull;

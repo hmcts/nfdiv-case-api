@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.cftlib;
 
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -66,6 +68,14 @@ public class CftLibConfig implements CFTLibConfigurer {
 
         // Generate CCD definitions
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
+
+        File source = new File("ccd-definitions");
+        File dest = new File("build/definitions/NFD");
+        try {
+            FileUtils.copyDirectory(source, dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Import CCD definitions
         lib.importJsonDefinition(new File("build/definitions/NFD"));

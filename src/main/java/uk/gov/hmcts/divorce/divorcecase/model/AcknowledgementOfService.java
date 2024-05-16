@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AosAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;

@@ -1,20 +1,20 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOrganisationRequest;
+import uk.gov.hmcts.divorce.noticeofchange.model.Organisation;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -30,16 +30,12 @@ import static uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest.acaRequest;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
-
-    @Autowired
-    private AssignCaseAccessClient assignCaseAccessClient;
-
-    @Autowired
-    private IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
+    private final AssignCaseAccessClient assignCaseAccessClient;
+    private final IdamService idamService;
 
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
 
