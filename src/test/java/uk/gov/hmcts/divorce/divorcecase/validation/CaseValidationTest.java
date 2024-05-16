@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
@@ -49,7 +50,6 @@ public class CaseValidationTest {
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
         " can not be less than one year and one day prior to application submission.";
-    public static final String SUBMITTED_DATE_IS_NULL = "Application submitted date is null.";
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
@@ -168,6 +168,61 @@ public class CaseValidationTest {
         List<String> response = validateMarriageDate(caseData, "field", true);
 
         assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL));
+    }
+
+    public void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCreatedDateNull() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL));
+    }
+
+    @Test
+    public void shouldReturnErrorApplicationSubmissionDateIsNullAndMarriageDateMoreThanYearFromCreatedDate() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .createdDate(LocalDate.now())
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(emptyList());
+    }
+
+    @Test
+    public void shouldReturnErrorApplicationSubmissionDateIsNullAndMarriageDateJustAYearBeforeCreatedDate() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .createdDate(LocalDate.now())
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION));
     }
 
     @Test
