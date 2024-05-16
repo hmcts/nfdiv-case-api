@@ -1,6 +1,7 @@
 {
   "data": {
     "applicationType": "soleApplication",
+    "dateSubmitted": "${json-unit.any-string}",
     "divorceOrDissolution": "divorce",
     "supplementaryCaseType": "notApplicable",
     "applicant1FirstName": "test_first_name",

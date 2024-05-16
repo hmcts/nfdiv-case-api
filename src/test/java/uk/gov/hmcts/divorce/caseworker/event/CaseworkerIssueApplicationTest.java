@@ -26,6 +26,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -238,6 +239,7 @@ class CaseworkerIssueApplicationTest {
     @Test
     void shouldIssueApplicationPersonalServiceNonConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
@@ -262,6 +264,7 @@ class CaseworkerIssueApplicationTest {
     @Test
     void shouldIssueApplicationSolicitorServiceNonConfidential() {
         final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
         caseDetails.setData(caseData);
@@ -286,6 +289,7 @@ class CaseworkerIssueApplicationTest {
     private CaseData caseDataWithAllMandatoryFields() {
         var caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
         caseData.setApplicant2(Applicant
             .builder()
             .firstName("app2FirstName")

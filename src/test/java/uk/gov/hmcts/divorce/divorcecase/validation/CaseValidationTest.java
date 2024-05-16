@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 public class CaseValidationTest {
 
-    private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
+    private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
+    private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
+        " can not be less than one year and one day prior to application submission.";
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
@@ -119,7 +122,7 @@ public class CaseValidationTest {
             .application(
                 Application.builder()
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minus(1, YEARS))
+                        .date(LocalDate.now().minusYears(1))
                         .build())
                     .build()
             )
@@ -128,6 +131,62 @@ public class CaseValidationTest {
         List<String> response = validateMarriageDate(caseData, "field");
 
         assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_AGO));
+    }
+
+    @Test
+    public void shouldNotReturnErrorWhenDateIsMoreThanOneYearAgo() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field");
+
+        assertThat(response).isEqualTo(emptyList());
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDateIsLessThanOneYearSinceApplicationSubmission() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .dateSubmitted(LocalDateTime.now())
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION));
+    }
+
+    @Test
+    public void shouldNotReturnErrorsWhenDateIsMoreThanOneYearSinceApplicationSubmission() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .dateSubmitted(LocalDateTime.now())
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(emptyList());
     }
 
     @Test
