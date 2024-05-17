@@ -520,6 +520,7 @@ public class TestDataHelper {
 
         final Application application = caseData.getApplication();
         application.setServiceMethod(COURT_SERVICE);
+        application.setDateSubmitted(LocalDateTime.now());
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
         application.setApplicant1StatementOfTruth(YES);
