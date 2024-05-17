@@ -257,6 +257,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         // Skip this for Sole and respondentRequested - respondent cannot be overdue on a sole case
         if (!(caseData.getApplicationType().isSole() && respondentRequested)) {
             log.info("Triggering Caseworker general referral service for CaseID: {}.", details.getId());
+            details.setState(state);
             generalReferralService.caseWorkerGeneralReferral(details);
         } else {
             log.info("CaseID {} is Sole and Respondent Requsted FO.  Skipping general referral check.", details.getId());
