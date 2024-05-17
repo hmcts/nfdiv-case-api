@@ -49,8 +49,8 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
         configBuilder
             .event(SWITCH_TO_SOLE_FO_OFFLINE)
             .forState(FinalOrderRequested)
-            .name("Switched to sole final order via D36")
-            .description("Switched to sole final order via D36")
+            .name("Switched to sole FO via D36")
+            .description("Switched to sole FO via D36")
             .grant(CREATE_READ_UPDATE, CREATOR, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .retries(0)
