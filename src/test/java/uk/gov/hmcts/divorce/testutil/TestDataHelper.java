@@ -926,6 +926,7 @@ public class TestDataHelper {
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
             .generalOrderJudgeOrLegalAdvisorName("some name")
+            .generalOrderJudgeOrLegalAdvisorVenue("Petty France, London")
             .build();
     }
 
