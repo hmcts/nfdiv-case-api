@@ -44,7 +44,7 @@ public final class ApplicationValidation {
 
     public static List<String> validateIssue(CaseData caseData) {
         return flattenLists(
-            validateBasicCase(caseData),
+            validateBasicCase(caseData, true),
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails()),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails())
