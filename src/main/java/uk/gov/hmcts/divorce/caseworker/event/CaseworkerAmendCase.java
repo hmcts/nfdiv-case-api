@@ -58,6 +58,7 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_AMEND_CASE, details.getId());
         CaseData caseData = details.getData();
 
+        log.info("Validating Marriage Date for Case Id: {}", details.getId());
         final List<String> caseValidationErrors = validateMarriageDate(caseData, "MarriageDate", true);
 
         if (!isEmpty(caseValidationErrors)) {

@@ -153,7 +153,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenApplicationSubmissionDateIsNull() {
+    public void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCurrentDateWithin1YearAnd1DayOfMarriageDate() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -167,33 +167,15 @@ public class CaseValidationTest {
 
         List<String> response = validateMarriageDate(caseData, "field", true);
 
-        assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL));
-    }
-
-    public void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCreatedDateNull() {
-
-        CaseData caseData = CaseData.builder()
-            .application(
-                Application.builder()
-                    .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minusYears(1))
-                        .build())
-                    .build()
-            )
-            .build();
-
-        List<String> response = validateMarriageDate(caseData, "field", true);
-
-        assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL));
+        assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL, "field" + LESS_THAN_ONE_YEAR_AGO));
     }
 
     @Test
-    public void shouldReturnErrorApplicationSubmissionDateIsNullAndMarriageDateMoreThanYearFromCreatedDate() {
+    public void shouldNotReturnErrorWhenApplicationSubmissionDateIsNullAndMarriageDateMoreThan1YearAnd1DayFromCurrentDate() {
 
         CaseData caseData = CaseData.builder()
             .application(
                 Application.builder()
-                    .createdDate(LocalDate.now())
                     .marriageDetails(MarriageDetails.builder()
                         .date(LocalDate.now().minusYears(1).minusDays(1))
                         .build())
@@ -204,25 +186,6 @@ public class CaseValidationTest {
         List<String> response = validateMarriageDate(caseData, "field", true);
 
         assertThat(response).isEqualTo(emptyList());
-    }
-
-    @Test
-    public void shouldReturnErrorApplicationSubmissionDateIsNullAndMarriageDateJustAYearBeforeCreatedDate() {
-
-        CaseData caseData = CaseData.builder()
-            .application(
-                Application.builder()
-                    .createdDate(LocalDate.now())
-                    .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minusYears(1))
-                        .build())
-                    .build()
-            )
-            .build();
-
-        List<String> response = validateMarriageDate(caseData, "field", true);
-
-        assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION));
     }
 
     @Test
