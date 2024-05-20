@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
@@ -147,6 +148,42 @@ public class CaseValidationTest {
             .build();
 
         List<String> response = validateMarriageDate(caseData, "field");
+
+        assertThat(response).isEqualTo(emptyList());
+    }
+
+    @Test
+    public void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCurrentDateWithin1YearAnd1DayOfMarriageDate() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL, "field" + LESS_THAN_ONE_YEAR_AGO));
+    }
+
+    @Test
+    public void shouldNotReturnErrorWhenApplicationSubmissionDateIsNullAndMarriageDateMoreThan1YearAnd1DayFromCurrentDate() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
 
         assertThat(response).isEqualTo(emptyList());
     }

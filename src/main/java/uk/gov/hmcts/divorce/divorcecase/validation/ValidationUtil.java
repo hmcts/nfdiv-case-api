@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -23,11 +24,13 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Slf4j
 public final class ValidationUtil {
 
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
         " can not be less than one year and one day prior to application submission.";
+    public static final String SUBMITTED_DATE_IS_NULL = "Application submitted date is null.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
@@ -126,9 +129,13 @@ public final class ValidationUtil {
 
         if (!caseData.isJudicialSeparationCase()) {
             if (compareToApplicationSubmittedDate) {
-                LocalDateTime applicationSubmittedDate = caseData.getApplication().getDateSubmitted();
-                if (applicationSubmittedDate == null
-                    || isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationSubmittedDate), marriageDate)) {
+                LocalDateTime submittedDate = caseData.getApplication().getDateSubmitted();
+                if (null == submittedDate) {
+                    log.info("Submitted Date is Null, Comparing Marriage Date with Current Date.");
+                    if (isLessThanOneYearAgo(marriageDate)) {
+                        return List.of(SUBMITTED_DATE_IS_NULL, field + LESS_THAN_ONE_YEAR_AGO);
+                    }
+                } else if (isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(submittedDate), marriageDate)) {
                     return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
                 }
             } else if (isLessThanOneYearAgo(marriageDate)) {

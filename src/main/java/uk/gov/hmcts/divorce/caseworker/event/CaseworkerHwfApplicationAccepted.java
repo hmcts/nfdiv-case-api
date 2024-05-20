@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -9,6 +10,9 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -26,6 +30,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED = "caseworker-hwf-application-accepted";
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -52,6 +59,8 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
         } else {
             details.setState(Submitted);
         }
+
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

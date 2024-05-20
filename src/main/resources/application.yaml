@@ -340,7 +340,7 @@ docmosis:
       JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V1.docx
       JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V1.docx
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V2.docx
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V1.docx
       SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V4.docx #TODO: update content
@@ -410,7 +410,7 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V1.docx #TODO: update template once available
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V2.docx #TODO: update template once available
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V2.docx
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Cy.docx
