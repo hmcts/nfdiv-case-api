@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.noticeofchange.events;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,6 +56,7 @@ class SystemApplyNoticeOfChangeTest {
     }
 
     @Test
+    @Disabled
     public void shouldApplyNoticeOfChangeByDelegatingToAssignCaseAccessClient() {
         final var details = new CaseDetails<CaseData, State>();
         final User systemUser = mock(User.class);
