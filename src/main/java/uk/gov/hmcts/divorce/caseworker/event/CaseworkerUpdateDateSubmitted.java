@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerUpdateDateSubmitted implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_UPDATE_DATE_SUBMITTED = "caseworker-update-date-submitted";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
