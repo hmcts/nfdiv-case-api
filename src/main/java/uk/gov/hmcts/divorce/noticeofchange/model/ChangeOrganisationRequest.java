@@ -40,7 +40,7 @@ public class ChangeOrganisationRequest<R extends HasRole> {
             using = LocalDateTimeDeserializer.class
     )
     @JsonFormat(
-            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
     )
     @JsonProperty("RequestTimestamp")
     private LocalDateTime requestTimestamp;
