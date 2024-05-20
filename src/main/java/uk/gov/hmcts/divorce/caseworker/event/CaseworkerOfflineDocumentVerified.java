@@ -183,7 +183,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
-        var caseData = details.getData();
+        CaseData caseData = details.getData();
         log.info("Scanned subtype received is {} for case {}", caseData.getDocuments().getScannedSubtypeReceived(), details.getId());
         log.info("Type of document attached is {} for case {}", caseData.getDocuments().getTypeOfDocumentAttached(), details.getId());
 
@@ -191,10 +191,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             return processD10AndSendNotifications(details);
 
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            return processD84AndSendNotifications(details, caseData);
+            return processD84AndSendNotifications(details);
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            return processD36AndSendNotifications(details, caseData);
+            return processD36AndSendNotifications(details);
 
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
@@ -225,9 +225,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details,
-                                                                                         CaseData caseData) {
+    private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying FO D36 for case {}", details.getId());
+        CaseData caseData = details.getData();
 
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
@@ -260,9 +260,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> processD84AndSendNotifications(CaseDetails<CaseData, State> details,
-                                                                                         CaseData caseData) {
+    private AboutToStartOrSubmitResponse<CaseData, State> processD84AndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying CO D84 for case {}", details.getId());
+        CaseData caseData = details.getData();
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
