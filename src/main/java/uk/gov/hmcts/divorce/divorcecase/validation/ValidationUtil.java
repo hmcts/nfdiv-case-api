@@ -128,13 +128,12 @@ public final class ValidationUtil {
 
         if (!caseData.isJudicialSeparationCase()) {
             if (compareToApplicationSubmittedDate) {
-                // Get the submitted date or created date if submitted date is null
-                LocalDate applicationDate = Optional.ofNullable(caseData.getApplication().getDateSubmitted())
-                    .map(LocalDateTime::toLocalDate)
-                    .orElse(caseData.getApplication().getCreatedDate());
-                if (null == applicationDate) {
-                    return List.of(SUBMITTED_DATE_IS_NULL);
-                } else if (isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(applicationDate), marriageDate)) {
+                LocalDateTime submittedDate = caseData.getApplication().getDateSubmitted();
+                if (null == submittedDate) {
+                    if (isLessThanOneYearAgo(marriageDate)) {
+                        return List.of(SUBMITTED_DATE_IS_NULL, field + LESS_THAN_ONE_YEAR_AGO);
+                    }
+                } else if (isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(submittedDate), marriageDate)) {
                     return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
                 }
             } else if (isLessThanOneYearAgo(marriageDate)) {
