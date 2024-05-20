@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -16,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Slf4j
 public final class ValidationUtil {
 
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
@@ -130,6 +131,7 @@ public final class ValidationUtil {
             if (compareToApplicationSubmittedDate) {
                 LocalDateTime submittedDate = caseData.getApplication().getDateSubmitted();
                 if (null == submittedDate) {
+                    log.info("Submitted Date is Null, Comparing Marriage Date with Current Date.");
                     if (isLessThanOneYearAgo(marriageDate)) {
                         return List.of(SUBMITTED_DATE_IS_NULL, field + LESS_THAN_ONE_YEAR_AGO);
                     }

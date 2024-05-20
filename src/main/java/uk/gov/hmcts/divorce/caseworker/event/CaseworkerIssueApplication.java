@@ -96,6 +96,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         CaseData caseData = details.getData();
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
+        log.info("Validating Issue for Case Id: {}", details.getId());
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
         if (!isEmpty(caseValidationErrors)) {
