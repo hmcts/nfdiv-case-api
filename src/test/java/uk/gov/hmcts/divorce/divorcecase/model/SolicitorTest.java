@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.noticeofchange.model.Organisation;
+import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,7 +51,7 @@ class SolicitorTest {
 
         assertThat(solicitor.hasOrgId()).isFalse();
     }
-    
+
     @Test
     void shouldReturnFalseIfOrganisationPolicyIsNull() {
 

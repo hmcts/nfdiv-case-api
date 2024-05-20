@@ -48,8 +48,8 @@ public class Organisation {
             return this;
         }
 
-        public uk.gov.hmcts.ccd.sdk.type.Organisation build() {
-            return new uk.gov.hmcts.ccd.sdk.type.Organisation(this.organisationId, this.organisationName);
+        public Organisation build() {
+            return new Organisation(this.organisationId, this.organisationName);
         }
 
         public String toString() {
