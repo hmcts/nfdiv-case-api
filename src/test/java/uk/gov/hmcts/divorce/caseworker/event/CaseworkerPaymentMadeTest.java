@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -17,16 +18,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.Clock;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPaymentMade.CASEWORKER_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerPaymentMadeTest {
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private CaseworkerPaymentMade caseworkerPaymentMade;
@@ -44,6 +51,8 @@ public class CaseworkerPaymentMadeTest {
 
     @Test
     void shouldSetCaseStatusToAwaitingDocumentsWhenSoleCaseAndApplicantWantToServeByAlternativeMeansToRespondent() {
+        setMockClock(clock);
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData
@@ -64,10 +73,13 @@ public class CaseworkerPaymentMadeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerPaymentMade.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getData().getApplication().getDateSubmitted()).isNotNull();
     }
 
     @Test
     void shouldSetCaseStatusToSubmittedWhenSoleCaseAndRespondentAddressIsKnown() {
+        setMockClock(clock);
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData
@@ -93,10 +105,13 @@ public class CaseworkerPaymentMadeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerPaymentMade.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(Submitted);
+        assertThat(response.getData().getApplication().getDateSubmitted()).isNotNull();
     }
 
     @Test
     void shouldSetCaseStatusToSubmittedWhenJointCase() {
+        setMockClock(clock);
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData
@@ -110,5 +125,6 @@ public class CaseworkerPaymentMadeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerPaymentMade.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(Submitted);
+        assertThat(response.getData().getApplication().getDateSubmitted()).isNotNull();
     }
 }
