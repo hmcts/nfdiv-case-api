@@ -358,7 +358,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO_OFFLINE, user, serviceAuth);
             } else if (!(caseData.getApplicationType().isSole()
                 && OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying()))) {
-                    log.info("Triggering Caseworker general referral service for CaseID: {}.", details.getId());
                     generalReferralService.caseWorkerGeneralReferral(details);
                 } else {
                     log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());

@@ -43,6 +43,8 @@ public class GeneralReferralService {
 
             ccdUpdateService
                 .submitEventWithRetry(caseId, CASEWORKER_GENERAL_REFERRAL, setGeneralReferralDetails, user, serviceAuthorization);
+        } else {
+            log.info("CaseID {} Does not meet Requested & Overdue status.  Skipping general referral event.", details.getId());
         }
     }
 
