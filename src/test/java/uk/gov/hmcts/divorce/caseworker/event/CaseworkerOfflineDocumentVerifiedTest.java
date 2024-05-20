@@ -1190,7 +1190,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
             .build();
         details.setData(caseData);
 
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(generalReferralService).caseWorkerGeneralReferral(details);
     }
@@ -1298,6 +1298,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_FO_OFFLINE, user, TEST_SERVICE_AUTH_TOKEN);
+        verifyNoInteractions(generalReferralService);
     }
 
     @Test
