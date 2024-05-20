@@ -1176,7 +1176,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseData.getDocuments().setScannedSubtypeReceived(D36);
         details.setData(caseData);
 
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(generalReferralService).caseWorkerGeneralReferral(details);
     }
