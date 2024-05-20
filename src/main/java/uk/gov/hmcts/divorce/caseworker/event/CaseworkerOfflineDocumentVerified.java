@@ -261,7 +261,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             details.setData(caseData);
             generalReferralService.caseWorkerGeneralReferral(details);
         } else {
-            log.info("CaseID {} is Sole and Respondent Requsted FO.  Skipping general referral check.", details.getId());
+            log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
