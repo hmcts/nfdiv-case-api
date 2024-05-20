@@ -254,16 +254,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         final State state = caseData.getApplicationType().isSole()
             && respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
 
-        // Skip this for Sole and respondentRequested - respondent cannot be overdue on a sole case
-        if (!(caseData.getApplicationType().isSole() && respondentRequested)) {
-            log.info("Triggering Caseworker general referral service for CaseID: {}.", details.getId());
-            details.setState(state);
-            details.setData(caseData);
-            generalReferralService.caseWorkerGeneralReferral(details);
-        } else {
-            log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(state)
@@ -356,16 +346,25 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             final String serviceAuth = authTokenGenerator.generate();
             ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
 
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFoOffline event for case id: {}",
-                details.getId());
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            // Skip this for Sole and respondentRequested - respondent cannot be overdue on a sole case
+            if (!(caseData.getApplicationType().isSole() && OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying()))) {
+                log.info("Triggering Caseworker general referral service for CaseID: {}.", details.getId());
+                generalReferralService.caseWorkerGeneralReferral(details);
+            } else {
+                log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
+            }
+            
+            if (SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFoOffline event for case id: {}",
+                    details.getId());
 
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
 
-            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO_OFFLINE, user, serviceAuth);
+                ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO_OFFLINE, user, serviceAuth);
+            }
         }
 
         return SubmittedCallbackResponse.builder().build();
