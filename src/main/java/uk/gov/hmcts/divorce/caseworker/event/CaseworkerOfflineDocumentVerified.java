@@ -194,7 +194,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             return processD84AndSendNotifications(details, caseData);
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            return processD36AndSendNotifications(details);
+            return processD36AndSendNotifications(details, caseData);
 
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
@@ -225,10 +225,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details) {
-
+    private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details,
+                                                                                         CaseData caseData) {
         log.info("Verifying FO D36 for case {}", details.getId());
-        CaseData caseData = details.getData();
 
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
@@ -258,6 +257,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         // Skip this for Sole and respondentRequested - respondent cannot be overdue on a sole case
         if (!(caseData.getApplicationType().isSole() && respondentRequested)) {
             log.info("Triggering Caseworker general referral service for CaseID: {}.", details.getId());
+            details.setState(state);
+            details.setData(caseData);
             generalReferralService.caseWorkerGeneralReferral(details);
         } else {
             log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
