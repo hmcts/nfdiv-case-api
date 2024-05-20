@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAcc
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOrganisationRequest;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -39,7 +40,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
-import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOrganisationRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.isNull;

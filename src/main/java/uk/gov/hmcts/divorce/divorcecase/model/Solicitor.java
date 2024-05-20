@@ -14,9 +14,9 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
+import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
 
 import java.util.Set;
-import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
