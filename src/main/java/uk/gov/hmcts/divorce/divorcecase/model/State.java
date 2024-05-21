@@ -443,6 +443,17 @@ public enum State {
         Rejected
     ));
 
+    public static final EnumSet<State> SUBMITTED_AWAITING_DOCUMENTS_AND_POST_SUBMISSION_STATES = EnumSet.complementOf(EnumSet.of(
+        Submitted,
+        AwaitingDocuments,
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        Withdrawn,
+        Rejected
+    ));
+
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
         Draft,
         AwaitingApplicant1Response,
