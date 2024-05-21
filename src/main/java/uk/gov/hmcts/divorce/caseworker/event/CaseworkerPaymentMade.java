@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Slf4j
 @Component
 public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
@@ -43,7 +45,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_PAYMENT_MADE, details.getId());
         CaseData caseData = details.getData();
 
         details.setState(caseworkerHwfApplicationAndPaymentHelper.getState(caseData));
