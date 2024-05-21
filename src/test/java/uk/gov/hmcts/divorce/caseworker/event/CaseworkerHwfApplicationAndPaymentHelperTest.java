@@ -14,11 +14,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
 @ExtendWith(MockitoExtension.class)
@@ -110,8 +112,8 @@ class CaseworkerHwfApplicationAndPaymentHelperTest {
     }
 
     @Test
-    void shouldNotSetDueDateIfDueDateAlreadySet() {
-        final LocalDateTime submittedDateTime = LocalDateTime.now();
+    void shouldNotSetDueDateIfDueDateAlreadySetButSetDateSubmittedIfNull() {
+        setMockClock(clock);
 
         final CaseData caseData = CaseData
             .builder()
@@ -119,15 +121,14 @@ class CaseworkerHwfApplicationAndPaymentHelperTest {
             .application(
                 Application
                     .builder()
-                    .dateSubmitted(submittedDateTime)
                     .build()
             )
-            .dueDate(submittedDateTime.toLocalDate())
+            .dueDate(LocalDate.now())
             .build();
 
         final CaseData response = caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData);
 
-        assertThat(response.getApplication().getDateSubmitted()).isEqualTo(submittedDateTime);
-        assertThat(response.getDueDate()).isEqualTo(submittedDateTime.toLocalDate());
+        assertThat(response.getApplication().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(response.getDueDate()).isEqualTo(LocalDate.now());
     }
 }
