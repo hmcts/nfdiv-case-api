@@ -9,8 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.SUBMITTED_AWAITING_DOCUMENTS_AND_POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
