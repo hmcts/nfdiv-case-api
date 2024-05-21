@@ -60,7 +60,13 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
             details.setState(Submitted);
         }
 
-        caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
+        if (null == caseData.getApplication().getDateSubmitted()) {
+            caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
+        }
+
+        if (null == caseData.getDueDate()) {
+            caseData.setDueDate(caseData.getApplication().getDateOfSubmissionResponse());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

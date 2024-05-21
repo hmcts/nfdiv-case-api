@@ -19,6 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerHwfApplicationAccepted.CASEWORKER_HWF_APPLICATION_ACCEPTED;
@@ -75,6 +77,7 @@ class CaseworkerHwfApplicationAcceptedTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
         assertThat(response.getData().getApplication().getDateSubmitted()).isNotNull();
+        assertThat(response.getData().getDueDate()).isNotNull();
     }
 
     @Test
@@ -108,6 +111,7 @@ class CaseworkerHwfApplicationAcceptedTest {
 
         assertThat(response.getState()).isEqualTo(Submitted);
         assertThat(response.getData().getApplication().getDateSubmitted()).isNotNull();
+        assertThat(response.getData().getDueDate()).isNotNull();
     }
 
     @Test
@@ -129,5 +133,61 @@ class CaseworkerHwfApplicationAcceptedTest {
 
         assertThat(response.getState()).isEqualTo(Submitted);
         assertThat(response.getData().getApplication().getDateSubmitted()).isNotNull();
+        assertThat(response.getData().getDueDate()).isNotNull();
+    }
+
+    @Test
+    void shouldNotSetDateSubmittedIfDateSubmittedAlreadySetButSetDueDateIfNull() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        final LocalDateTime submittedDateTime = LocalDateTime.now();
+
+        final CaseData caseData = CaseData
+            .builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .application(
+            Application
+                .builder()
+                .dateSubmitted(submittedDateTime)
+                .build()
+            )
+            .build();
+
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerHwfApplicationAccepted
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getDateSubmitted()).isEqualTo(submittedDateTime);
+        assertThat(response.getData().getDueDate()).isNotNull();
+    }
+
+    @Test
+    void shouldNotSetDueDateIfDueDateAlreadySet() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        final LocalDateTime submittedDateTime = LocalDateTime.now();
+
+        final CaseData caseData = CaseData
+            .builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .application(
+                Application
+                    .builder()
+                    .dateSubmitted(submittedDateTime)
+                    .build()
+            )
+            .dueDate(submittedDateTime.toLocalDate())
+            .build();
+
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerHwfApplicationAccepted
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getDateSubmitted()).isEqualTo(submittedDateTime);
+        assertThat(response.getData().getDueDate()).isEqualTo(submittedDateTime.toLocalDate());
     }
 }
