@@ -24,7 +24,7 @@ public class CaseworkerUpdateDateSubmitted implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_DATE_SUBMITTED)
-            .forStates(SUBMITTED_AWAITING_DOCUMENTS_AND_POST_SUBMISSION_STATES)
+            .forAllStates()
             .name("Update Date Submitted")
             .description("Update Date Submitted")
             .showSummary()
