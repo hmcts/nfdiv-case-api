@@ -32,7 +32,7 @@ public class PreviousOrganisation {
             using = LocalDateTimeDeserializer.class
     )
     @JsonFormat(
-            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+            with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES
     )
     private LocalDateTime fromTimeStamp;
     @JsonProperty("ToTimestamp")
@@ -43,7 +43,7 @@ public class PreviousOrganisation {
             using = LocalDateTimeDeserializer.class
     )
     @JsonFormat(
-            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+            with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES
     )
     private LocalDateTime toTimeStamp;
     @JsonProperty("OrganisationName")
