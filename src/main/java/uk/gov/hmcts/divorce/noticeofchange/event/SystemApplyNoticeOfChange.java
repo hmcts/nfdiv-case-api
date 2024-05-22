@@ -10,12 +10,20 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -36,6 +44,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     private final  ObjectMapper objectMapper;
     private final  AssignCaseAccessClient assignCaseAccessClient;
     private final  IdamService idamService;
+    private final OrganisationClient organisationClient;
 
     public static final String NOTICE_OF_CHANGE_APPLIED = "notice-of-change-applied";
 
@@ -55,38 +64,55 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
 
-        //    User aacToken = idamService.retrieveUser(httpServletRequest.getHeader(AUTHORIZATION));
         String s2sToken = authTokenGenerator.generate();
-
-        //        String loggedInUserEmail = details.getData().getChangeOrganisationRequestField().getCreatedBy();
-        //       OrganisationUser user = organisationClient.findUserByEmail(sysUserToken, s2sToken, loggedInUserEmail);
-        //
-        //        String nocSolicitorOrgName = organisationClient
-        //                .getOrganisationByUserId(sysUserToken, s2sToken, user.getUserIdentifier())
-        //                .getName();
-        //
-        //        var organisationId = details.getData().getChangeOrganisationRequestField().getOrganisationToAdd().getOrganisationId();
-        //
-        //        final var loggedInUserDetails =
-        //        Optional.ofNullable(organisationClient.getOrganisationUsers(sysUserToken, s2sToken, organisationId))
-        //                .map(FindUsersByOrganisationResponse::getUsers)
-        //                .orElse(Collections.emptyList());
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
         CaseData responseData = objectMapper.convertValue(response.getData(), CaseData.class);
 
-        if (APPLICANT_1_SOLICITOR.getRole().equals(details.getData().getChangeOrganisationRequestField().getCaseRoleId().getRole())) {
-         //   responseData.getApplicant1().getSolicitor().getOrganisationPolicy()
-        //   .getOrganisation().setOrganisationName(nocSolicitorOrgName);
-        } else {
-        // responseData.getApplicant2().getSolicitor()
-        // .getOrganisationPolicy().getOrganisation().setOrganisationName(nocSolicitorOrgName);
-        }
+        updateChangeOfRepresentation(responseData, sysUserToken, s2sToken);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
             .state(details.getState())
             .build();
+    }
+
+    private void updateChangeOfRepresentation(CaseData caseData, String sysUserToken, String s2sToken) {
+        var changeOrganisationRequest = caseData.getChangeOrganisationRequestField();
+        var loggedInUserEmail = changeOrganisationRequest.getCreatedBy().toLowerCase();
+        var applicant1Solicitor = caseData.getApplicant1().getSolicitor();
+        var applicant2Solicitor = caseData.getApplicant2().getSolicitor();
+        var organisationId = changeOrganisationRequest.getOrganisationToAdd().getOrganisationId();
+
+        List<ProfessionalUser> organisationUsers =
+                Optional.ofNullable(organisationClient.getOrganisationUsers(sysUserToken, s2sToken, organisationId))
+                        .map(FindUsersByOrganisationResponse::getUsers)
+                        .orElse(Collections.emptyList());
+
+        final var nocRequestingUser = organisationUsers.stream()
+                .filter(user -> user.getEmail().equalsIgnoreCase(loggedInUserEmail))
+                .findFirst()
+                .orElseThrow();
+
+        String nocSolicitorOrgName = organisationClient
+                .getOrganisationByUserId(sysUserToken, s2sToken, nocRequestingUser.getUserIdentifier())
+                .getName();
+
+        if (APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole())) {
+            updateOrgPolicyAndSolicitorDetails(applicant1Solicitor, nocSolicitorOrgName, nocRequestingUser, loggedInUserEmail);
+        } else {
+            updateOrgPolicyAndSolicitorDetails(applicant2Solicitor, nocSolicitorOrgName, nocRequestingUser, loggedInUserEmail);
+        }
+    }
+
+    private static void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, String nocSolicitorOrgName,
+                                                           ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
+        applicantSolicitor.getOrganisationPolicy()
+                .getOrganisation().setOrganisationName(nocSolicitorOrgName);
+        applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
+        applicantSolicitor.setEmail(loggedInUserEmail);
+        applicantSolicitor.getOrganisationPolicy().getOrganisation().setOrganisationName(nocSolicitorOrgName);
     }
 }

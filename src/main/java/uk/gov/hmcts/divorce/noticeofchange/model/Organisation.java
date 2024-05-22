@@ -1,3 +1,8 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package uk.gov.hmcts.divorce.noticeofchange.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -53,8 +58,8 @@ public class Organisation {
         }
 
         public String toString() {
-            return "Organisation.OrganisationBuilder(organisationId=" + this.organisationId
-                    + ", organisationName=" + this.organisationName + ")";
+            return "Organisation.OrganisationBuilder(organisationId="
+                    + this.organisationId + ", organisationName=" + this.organisationName + ")";
         }
     }
 }

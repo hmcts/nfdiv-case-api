@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.noticeofchange.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -38,9 +37,6 @@ public class ChangeOrganisationRequest<R extends HasRole> {
     )
     @JsonDeserialize(
             using = LocalDateTimeDeserializer.class
-    )
-    @JsonFormat(
-            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
     )
     @JsonProperty("RequestTimestamp")
     private LocalDateTime requestTimestamp;
@@ -86,74 +82,9 @@ public class ChangeOrganisationRequest<R extends HasRole> {
         ChangeOrganisationRequestBuilder() {
         }
 
-        @JsonProperty("OrganisationToAdd")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> organisationToAdd(Organisation organisationToAdd) {
-            this.organisationToAdd = organisationToAdd;
-            return this;
-        }
-
-        @JsonProperty("OrganisationToRemove")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> organisationToRemove(Organisation organisationToRemove) {
-            this.organisationToRemove = organisationToRemove;
-            return this;
-        }
-
-        @JsonProperty("CaseRoleId")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> caseRoleId(R caseRoleId) {
-            this.caseRoleId = caseRoleId;
-            return this;
-        }
-
-        @JsonProperty("Reason")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> reason(String reason) {
-            this.reason = reason;
-            return this;
-        }
-
-        @JsonProperty("NotesReason")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> notesReason(String notesReason) {
-            this.notesReason = notesReason;
-            return this;
-        }
-
-        @JsonProperty("ApprovalStatus")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R>
-            approvalStatus(ChangeOrganisationApprovalStatus approvalStatus) {
-            this.approvalStatus = approvalStatus;
-            return this;
-        }
-
-        @JsonProperty("RequestTimestamp")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> requestTimestamp(LocalDateTime requestTimestamp) {
-            this.requestTimestamp = requestTimestamp;
-            return this;
-        }
-
-        @JsonProperty("ApprovalRejectionTimestamp")
-        public ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R>
-            approvalRejectionTimestamp(LocalDateTime approvalRejectionTimestamp) {
-            this.approvalRejectionTimestamp = approvalRejectionTimestamp;
-            return this;
-        }
-
-        @JsonProperty("CreatedBy")
-        public  ChangeOrganisationRequest.ChangeOrganisationRequestBuilder<R> createdBy(String createdBy) {
-            this.createdBy = createdBy;
-            return this;
-        }
-
         public  ChangeOrganisationRequest<R> build() {
             return new  ChangeOrganisationRequest<>(this.organisationToAdd, this.organisationToRemove, this.caseRoleId, this.reason,
                     this.notesReason, this.approvalStatus, this.requestTimestamp, this.approvalRejectionTimestamp, this.createdBy);
-        }
-
-        public String toString() {
-            return "ChangeOrganisationRequest.ChangeOrganisationRequestBuilder(organisationToAdd="
-                    + this.organisationToAdd + ", organisationToRemove=" + this.organisationToRemove
-                    + ", caseRoleId=" + this.caseRoleId + ", reason=" + this.reason + ", notesReason="
-                    + this.notesReason + ", approvalStatus=" + this.approvalStatus + ", requestTimestamp="
-                    + this.requestTimestamp + ", approvalRejectionTimestamp="
-                    + this.approvalRejectionTimestamp + ", createdBy=" + this.createdBy + ")";
         }
     }
 }

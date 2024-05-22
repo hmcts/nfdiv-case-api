@@ -1,6 +1,6 @@
 [
   {
-    "Answer": "${applicant1FirstName}:[APPONESOLICITOR],${applicant2FirstName}:[APPTWOSOLICITOR]",
+    "Answer": "${applicant1FirstName}:[APPONESOLICITOR]",
     "AnswerFieldType": "Text",
     "CaseTypeID": "NFD",
     "DisplayOrder": 1,
