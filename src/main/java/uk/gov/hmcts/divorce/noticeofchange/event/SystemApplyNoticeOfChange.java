@@ -69,9 +69,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
-        CaseData responseData = objectMapper.convertValue(response.getData(), CaseData.class);
+        updateChangeOfRepresentation(details.getData(), sysUserToken, s2sToken);
 
-        updateChangeOfRepresentation(responseData, sysUserToken, s2sToken);
+        CaseData responseData = objectMapper.convertValue(response.getData(), CaseData.class);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
