@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
+@Slf4j
 public class MarriageCertificateDetails implements CcdPageConfiguration {
 
     private static final String UK = "UK";
@@ -45,6 +47,7 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
             data.getApplication().getMarriageDetails().setPlaceOfMarriage(UK);
         }
 
+        log.info("Validating Marriage Date for Case Id: {}", details.getId());
         final List<String> validationErrors = validateMarriageDate(data, "MarriageDate");
         if (!validationErrors.isEmpty()) {
             State state = details.getState();
