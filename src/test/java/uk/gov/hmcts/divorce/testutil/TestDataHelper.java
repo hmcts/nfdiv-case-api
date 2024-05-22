@@ -520,6 +520,7 @@ public class TestDataHelper {
 
         final Application application = caseData.getApplication();
         application.setServiceMethod(COURT_SERVICE);
+        application.setDateSubmitted(LocalDateTime.now());
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
         application.setApplicant1StatementOfTruth(YES);
@@ -925,6 +926,7 @@ public class TestDataHelper {
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
             .generalOrderJudgeOrLegalAdvisorName("some name")
+            .generalOrderJudgeOrLegalAdvisorVenue("Petty France, London")
             .build();
     }
 

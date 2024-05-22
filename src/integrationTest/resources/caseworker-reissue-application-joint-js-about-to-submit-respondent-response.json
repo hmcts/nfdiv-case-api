@@ -16,6 +16,7 @@
     "applicant1LegalProceedings": "No",
     "supplementaryCaseType": "judicialSeparation",
     "previousReissueOption": "offlineAos",
+    "dateSubmitted": "${json-unit.any-string}",
     "reissueDate": "2021-06-17",
     "issueDate": "${json-unit.ignore}",
     "sentNotifications": {},
