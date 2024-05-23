@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.noticeofchange.model;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +18,14 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     }
 
     public LocalDateTime deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        String dateString = (String)jp.readValueAs(String.class);
+        String dateString = jp.readValueAs(String.class);
+
+        int maxWidth = dateString.substring(dateString.lastIndexOf(".")).length();
+
         DateTimeFormatter formatter =
-                (new DateTimeFormatterBuilder()).appendPattern("yyyy-MM-dd'T'HH:mm:ss").optionalStart().appendFraction(ChronoField.MILLI_OF_SECOND,
-                        1, 9, true).optionalEnd().toFormatter();
+                (new DateTimeFormatterBuilder()).appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .optionalStart().appendFraction(ChronoField.MILLI_OF_SECOND,
+                        1, maxWidth, true).optionalEnd().toFormatter();
         return LocalDateTime.parse(dateString, formatter);
     }
 }
