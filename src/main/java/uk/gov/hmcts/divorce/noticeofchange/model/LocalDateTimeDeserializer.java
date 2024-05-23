@@ -20,12 +20,10 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     public LocalDateTime deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         String dateString = jp.readValueAs(String.class);
 
-        int maxWidth = dateString.substring(dateString.lastIndexOf(".")).length();
-
         DateTimeFormatter formatter =
-                (new DateTimeFormatterBuilder()).appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                (new DateTimeFormatterBuilder()).append(DateTimeFormatter.ISO_DATE_TIME)
                         .optionalStart().appendFraction(ChronoField.MILLI_OF_SECOND,
-                        1, maxWidth, true).optionalEnd().toFormatter();
+                        1, 3, true).optionalEnd().toFormatter();
         return LocalDateTime.parse(dateString, formatter);
     }
 }

@@ -6,11 +6,9 @@
 package uk.gov.hmcts.divorce.noticeofchange.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.ComplexType;
 import uk.gov.hmcts.ccd.sdk.type.AddressUK;
@@ -30,10 +28,6 @@ public class PreviousOrganisation {
     @JsonDeserialize(
             using = LocalDateTimeDeserializer.class
     )
-    @JsonFormat(
-            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS",
-            with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES
-    )
     private LocalDateTime fromTimeStamp;
     @JsonProperty("ToTimestamp")
     @JsonSerialize(
@@ -41,10 +35,6 @@ public class PreviousOrganisation {
     )
     @JsonDeserialize(
             using = LocalDateTimeDeserializer.class
-    )
-    @JsonFormat(
-            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS",
-            with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES
     )
     private LocalDateTime toTimeStamp;
     @JsonProperty("OrganisationName")
@@ -76,9 +66,6 @@ public class PreviousOrganisation {
         @JsonDeserialize(
                 using = LocalDateTimeDeserializer.class
         )
-        @JsonFormat(
-                pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
-        )
         public PreviousOrganisationBuilder fromTimeStamp(LocalDateTime fromTimeStamp) {
             this.fromTimeStamp = fromTimeStamp;
             return this;
@@ -87,9 +74,6 @@ public class PreviousOrganisation {
         @JsonProperty("ToTimestamp")
         @JsonDeserialize(
                 using = LocalDateTimeDeserializer.class
-        )
-        @JsonFormat(
-                pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
         )
         public PreviousOrganisationBuilder toTimeStamp(LocalDateTime toTimeStamp) {
             this.toTimeStamp = toTimeStamp;
