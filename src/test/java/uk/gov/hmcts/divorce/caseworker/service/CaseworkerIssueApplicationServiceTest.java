@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendFinancialOrderRequestedNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
@@ -57,6 +58,9 @@ class CaseworkerIssueApplicationServiceTest {
 
     @Mock
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
+
+    @Mock
+    private SendFinancialOrderRequestedNotifications sendFinancialOrderRequestedNotifications;
 
     @Mock
     private SetDueDateAfterIssue setDueDateAfterIssue;
@@ -108,6 +112,7 @@ class CaseworkerIssueApplicationServiceTest {
         verifyNoInteractions(sendAosPackToApplicant);
         verifyNoInteractions(sendAosPackToRespondent);
         verifyNoInteractions(sendApplicationIssueNotifications);
+        verifyNoInteractions(sendFinancialOrderRequestedNotifications);
     }
 
     @Test
@@ -129,5 +134,6 @@ class CaseworkerIssueApplicationServiceTest {
         verify(sendAosPackToApplicant).apply(caseDetails);
         verify(sendAosPackToRespondent).apply(caseDetails);
         verify(sendApplicationIssueNotifications).apply(caseDetails);
+        verify(sendFinancialOrderRequestedNotifications).apply(caseDetails);
     }
 }

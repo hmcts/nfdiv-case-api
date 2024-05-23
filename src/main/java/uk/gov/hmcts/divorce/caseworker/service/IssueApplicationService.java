@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendFinancialOrderRequestedNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
@@ -52,6 +53,9 @@ public class IssueApplicationService {
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Autowired
+    private SendFinancialOrderRequestedNotifications sendFinancialOrderRequestedNotifications;
+
+    @Autowired
     private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Autowired
@@ -89,7 +93,8 @@ public class IssueApplicationService {
         caseTasks(
             sendAosPackToRespondent,
             sendAosPackToApplicant,
-            sendApplicationIssueNotifications
+            sendApplicationIssueNotifications,
+            sendFinancialOrderRequestedNotifications
         ).run(caseDetails);
     }
 }
