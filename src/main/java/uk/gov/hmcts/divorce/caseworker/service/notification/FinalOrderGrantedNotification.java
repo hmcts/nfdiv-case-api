@@ -165,10 +165,8 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
-        if (YesOrNo.YES.equals(caseData.getFinalOrder().getFinalOrderSwitchedToSole())) {
-            templateVars.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE,
-                formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)));
-        }
+        templateVars.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE,
+            formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)));
 
         return templateVars;
     }
