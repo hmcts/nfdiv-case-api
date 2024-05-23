@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -11,15 +12,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -27,12 +22,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Slf4j
 @Component
 public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED = "caseworker-hwf-application-accepted";
 
     @Autowired
-    private Clock clock;
+    private CaseworkerHwfApplicationAndPaymentHelper caseworkerHwfApplicationAndPaymentHelper;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,18 +45,11 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_HWF_APPLICATION_ACCEPTED, details.getId());
         CaseData caseData = details.getData();
 
-        if (caseData.getApplicationType().isSole()
-            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            && YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
-            details.setState(AwaitingDocuments);
-        } else {
-            details.setState(Submitted);
-        }
-
-        caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
+        details.setState(caseworkerHwfApplicationAndPaymentHelper.getState(caseData));
+        details.setData(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
