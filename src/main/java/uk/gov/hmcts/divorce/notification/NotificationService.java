@@ -33,7 +33,7 @@ public class NotificationService {
     public void sendEmail(
         String destinationAddress,
         EmailTemplateName template,
-        Map<String, String> templateVars,
+        Map<String, ?> templateVars,
         LanguagePreference languagePreference,
         Long caseId
     ) {

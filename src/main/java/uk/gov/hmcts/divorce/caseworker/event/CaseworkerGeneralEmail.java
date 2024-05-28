@@ -2,30 +2,32 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.service.notify.NotificationClientException;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Collections.singletonList;
+import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -48,6 +50,9 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
+
+    @Autowired
+    private DocumentIdProvider documentIdProvider;
 
     @Autowired
     private GeneralEmailNotification generalEmailNotification;
@@ -80,6 +85,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailDetails)
+            .optional(GeneralEmail::getGeneralEmailAttachments)
             .done();
     }
 
@@ -95,6 +101,16 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 .build();
         }
 
+        final boolean invalidGeneralEmailAttachments = ofNullable(caseData.getGeneralEmail().getGeneralEmailAttachments())
+            .flatMap(Collection::stream)
+            .anyMatch(divorceDocument -> ObjectUtils.isEmpty(divorceDocument.getValue().getDocumentLink()));
+
+        if (invalidGeneralEmailAttachments) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList("Please ensure all General Email attachments have been uploaded before continuing"))
+                .build();
+        }
+        //Check for number of email attachments supported and return if greater than the limit - TO DO
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -109,12 +125,20 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
+        List<ListValue<Document>> attachments = ofNullable(generalEmail.getGeneralEmailAttachments())
+            .flatMap(Collection::stream)
+            .map(divorceDocument -> ListValue.<Document>builder()
+                .id(documentIdProvider.documentId())
+                .value(divorceDocument.getValue().getDocumentLink()).build())
+            .toList();
+
         var generalEmailDetails = GeneralEmailDetails
             .builder()
             .generalEmailDateTime(LocalDateTime.now(clock))
             .generalEmailParties(generalEmail.getGeneralEmailParties())
             .generalEmailCreatedBy(userDetails.getName())
             .generalEmailBody(generalEmail.getGeneralEmailDetails())
+            .generalEmailAttachmentLinks(attachments)
             .build();
 
         ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
@@ -139,7 +163,13 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             }
         }
 
-        generalEmailNotification.send(caseData, details.getId());
+        try {
+            generalEmailNotification.send(caseData, details.getId());
+        } catch (NotificationClientException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // clear existing general email to avoid stale data being displayed in UI on next use of event.
         caseData.setGeneralEmail(null);
