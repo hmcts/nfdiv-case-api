@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -51,8 +52,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
@@ -83,12 +88,12 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @AutoConfigureMockMvc
 @DirtiesContext
 @ContextConfiguration(initializers = {IdamWireMock.PropertiesInitializer.class})
-public class SwitchedToSoleFinalOrderIT {
+public class SwitchedToSoleFinalOrderOfflineIT {
 
-    private static final String SWITCH_TO_SOLE_FO_APPLICANT_1_RESPONSE =
-        "classpath:switch-to-sole-fo-applicant1-response.json";
-    private static final String SWITCH_TO_SOLE_FO_APPLICANT_2_RESPONSE =
-        "classpath:switch-to-sole-fo-applicant2-response.json";
+    private static final String SWITCH_TO_SOLE_FO_OFFLINE_APPLICANT_1_RESPONSE =
+        "classpath:switch-to-sole-fo-offline-applicant1-response.json";
+    private static final String SWITCH_TO_SOLE_FO_OFFLINE_APPLICANT_2_RESPONSE =
+        "classpath:switch-to-sole-fo-offline-applicant2-response.json";
 
     private static final String BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN = "Bearer " + TEST_SYSTEM_AUTHORISATION_TOKEN;
 
@@ -127,30 +132,17 @@ public class SwitchedToSoleFinalOrderIT {
     }
 
     @Test
-    public void shouldNotSwitchUserRolesOrDataWhenTriggeredByApplicant1() throws Exception {
+    public void shouldSwitchApplicationTypeToSoleAndSwitchApplicantRolesAndDataIfD84SwitchToSoleTriggeredByApplicant2()
+        throws Exception {
+
         CaseData data = validJointApplicant1CaseData();
-        setupMocks(true, false);
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
+        data.setFinalOrder(FinalOrder.builder()
+            .d36ApplicationType(SWITCH_TO_SOLE)
+            .d36WhoApplying(APPLICANT_2)
+            .build());
+        setupMocks(false, false);
 
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "AwaitingFinalOrder")))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .when(TREATING_NULL_AS_ABSENT)
-            .when(IGNORING_ARRAY_ORDER)
-            .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_APPLICANT_1_RESPONSE)));
-    }
-
-    @Test
-    public void shouldSwitchUserRolesAndDataWhenTriggeredByApplicant2() throws Exception {
         final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
                 CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
@@ -165,14 +157,11 @@ public class SwitchedToSoleFinalOrderIT {
             List.of(String.valueOf(TEST_CASE_ID)))
         ).thenReturn(caseRolesResponse);
 
-        CaseData data = validJointApplicant1CaseData();
-        setupMocks(false, true);
-
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "AwaitingFinalOrder")))
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO_OFFLINE, "AwaitingFinalOrder")))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -183,7 +172,68 @@ public class SwitchedToSoleFinalOrderIT {
             .when(TREATING_NULL_AS_ABSENT)
             .when(IGNORING_ARRAY_ORDER)
             .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_APPLICANT_2_RESPONSE)));
+            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_OFFLINE_APPLICANT_2_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSwitchApplicationTypeToSoleAndSwitchApplicantDataNotRolesIfD84SwitchToSoleTriggeredByApplicant2OnNewPaperCase()
+        throws Exception {
+
+        CaseData data = validJointApplicant1CaseData();
+        data.getApplication().setNewPaperCase(YES);
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
+        data.setFinalOrder(FinalOrder.builder()
+            .d36ApplicationType(SWITCH_TO_SOLE)
+            .d36WhoApplying(APPLICANT_2)
+            .build());
+        setupMocks(false, false);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO_OFFLINE, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_OFFLINE_APPLICANT_2_RESPONSE)));
+    }
+
+    @Test
+    public void shouldNotSwitchApplicantDataOnSwitchToSoleIfD84SwitchToSoleTriggeredByApplicant1()
+        throws Exception {
+
+        CaseData data = validJointApplicant1CaseData();
+        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
+        data.setFinalOrder(FinalOrder.builder()
+            .d36ApplicationType(SWITCH_TO_SOLE)
+            .d36WhoApplying(APPLICANT_1)
+            .build());
+        setupMocks(false, false);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO_OFFLINE, "ConditionalOrderPending")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_OFFLINE_APPLICANT_1_RESPONSE)));
     }
 
     @Test
@@ -198,7 +248,7 @@ public class SwitchedToSoleFinalOrderIT {
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(dataAfterSwitchToSoleFo, SWITCH_TO_SOLE_FO)))
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(dataAfterSwitchToSoleFo, SWITCH_TO_SOLE_FO_OFFLINE)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -225,7 +275,7 @@ public class SwitchedToSoleFinalOrderIT {
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(dataAfterSwitchToSoleFo, SWITCH_TO_SOLE_FO)))
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(dataAfterSwitchToSoleFo, SWITCH_TO_SOLE_FO_OFFLINE)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 

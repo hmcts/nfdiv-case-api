@@ -58,7 +58,7 @@ import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
-import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
@@ -1176,7 +1176,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseData.getDocuments().setScannedSubtypeReceived(D36);
         details.setData(caseData);
 
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(generalReferralService).caseWorkerGeneralReferral(details);
     }
@@ -1190,7 +1190,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
             .build();
         details.setData(caseData);
 
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        caseworkerOfflineDocumentVerified.submitted(details, details);
 
         verify(generalReferralService).caseWorkerGeneralReferral(details);
     }
@@ -1297,7 +1297,8 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
 
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_FO, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_FO_OFFLINE, user, TEST_SERVICE_AUTH_TOKEN);
+        verifyNoInteractions(generalReferralService);
     }
 
     @Test
