@@ -39,8 +39,12 @@ public class GeneralReferralService {
             final String serviceAuthorization = authTokenGenerator.generate();
             final String caseId = details.getId().toString();
 
+            log.info("CaseID {} FO Requested and Overdue.  Triggering Caseworker general referral event.", details.getId());
+
             ccdUpdateService
                 .submitEventWithRetry(caseId, CASEWORKER_GENERAL_REFERRAL, setGeneralReferralDetails, user, serviceAuthorization);
+        } else {
+            log.info("CaseID {} Does not meet Requested & Overdue status.  Skipping general referral event.", details.getId());
         }
     }
 
@@ -48,6 +52,8 @@ public class GeneralReferralService {
         final State state = details.getState();
         final boolean requestedState = FinalOrderRequested.equals(state) || RespondentFinalOrderRequested.equals(state);
         final boolean finalOrderOverdue = YesOrNo.YES.equals(details.getData().getFinalOrder().getIsFinalOrderOverdue());
+        log.info("CaseID {} Final Order Requested: {}", details.getId(), requestedState);
+        log.info("CaseID {} Final Order Overdue: {}", details.getId(), finalOrderOverdue);
         return requestedState && finalOrderOverdue;
     }
 }
