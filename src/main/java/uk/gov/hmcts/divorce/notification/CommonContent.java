@@ -56,6 +56,7 @@ public class CommonContent {
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL = "signin url";
+    public static final String WEBFORM_URL = "webformUrl";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String SIGN_IN_PROFESSIONAL_USERS_URL = "signInProfessionalUsersUrl";
@@ -119,6 +120,7 @@ public class CommonContent {
     public static final String PRONOUNCE_BY_DATE = "pronounceByDate";
     public static final int CO_SUBMISSION_DATE_PLUS_DAYS = 56;
 
+    public static final String DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE = "digitalFinalOrderCertificateCopyFee";
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
@@ -143,6 +145,7 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
+        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
         return templateVars;
     }
 
