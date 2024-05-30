@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,7 +17,8 @@ import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOrganisationRequest;
 import uk.gov.hmcts.divorce.noticeofchange.model.Organisation;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -47,7 +49,7 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
             .name("Notice Of Change Requested")
             .grant(CREATE_READ_UPDATE, ORGANISATION_CASE_ACCESS_ADMINISTRATOR)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
-            .submittedCallback(this::submitted))
+            .aboutToSubmitCallback(this::aboutToSubmit))
             .page("nocRequest")
             .complex(CaseData::getChangeOrganisationRequestField)
                 .complex(ChangeOrganisationRequest::getOrganisationToAdd)
@@ -68,14 +70,34 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
             .done();
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
         log.info("Notice of change requested for case id: {}", details.getId());
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
+        if (caseInvalidForNoticeOfChange(details)) {
+            /* Setting approval status to rejected stops NoC being applied. However, the sol is shown a result page which suggests
+               NoC is still pending and needs manual approval (could be confusing to the sol).
+
+            details.getData().getChangeOrganisationRequestField().setApprovalStatus(
+                ChangeOrganisationApprovalStatus.REJECTED
+            );
+            */
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of("Case state is not valid for notice of change"))
+                .build();
+        }
+
         assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
 
-        return SubmittedCallbackResponse.builder().build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .build();
+    }
+
+    private boolean caseInvalidForNoticeOfChange(CaseDetails<CaseData, State> details) {
+        return details.getData().isJudicialSeparationCase();
     }
 }
