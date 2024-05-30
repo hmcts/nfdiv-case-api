@@ -74,8 +74,6 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
-        assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
-
-        return SubmittedCallbackResponse.builder().build();
+        return assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
     }
 }

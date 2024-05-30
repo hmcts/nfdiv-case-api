@@ -15,8 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
-import uk.gov.hmcts.divorce.noticeofchange.model.Organisation;
-import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
@@ -108,28 +106,20 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         if (APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole())) {
             updateOrgPolicyAndSolicitorDetails(applicant1Solicitor, nocSolicitorOrgName,
-                    nocRequestingUser, loggedInUserEmail, organisationId);
+                    nocRequestingUser, loggedInUserEmail);
         } else {
             updateOrgPolicyAndSolicitorDetails(applicant2Solicitor, nocSolicitorOrgName,
-                    nocRequestingUser, loggedInUserEmail, organisationId);
+                    nocRequestingUser, loggedInUserEmail);
         }
     }
 
     private static void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, String nocSolicitorOrgName,
-                                                           ProfessionalUser nocRequestingUser, String loggedInUserEmail,
-                                                           String organisationId) {
+                                                           ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
 
-        OrganisationPolicy<UserRole> updatedOrganisationPolicy = OrganisationPolicy
-                .<UserRole>builder()
-                .organisation(Organisation
-                        .builder()
-                        .organisationId(organisationId)
-                        .organisationName(nocSolicitorOrgName)
-                        .build())
-                .build();
+        applicantSolicitor.getOrganisationPolicy()
+                .getOrganisation().setOrganisationName(nocSolicitorOrgName);
 
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
-        applicantSolicitor.setOrganisationPolicy(updatedOrganisationPolicy);
     }
 }

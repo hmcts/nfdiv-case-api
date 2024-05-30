@@ -193,7 +193,7 @@ class SystemApplyNoticeOfChangeTest {
         changeOrganisationRequest.setCreatedBy(TEST_SOLICITOR_EMAIL);
         changeOrganisationRequest.setOrganisationToAdd(Organisation
                 .builder().organisationId(TEST_ORGANISATION_ID).organisationName(TEST_ORGANISATION_NAME).build());
-        changeOrganisationRequest.setOrganisationToAdd(Organisation
+        changeOrganisationRequest.setOrganisationToRemove(Organisation
                 .builder().organisationId(TEST_ORGANISATION_ID).organisationName(TEST_ORGANISATION_NAME).build());
         return changeOrganisationRequest;
     }
