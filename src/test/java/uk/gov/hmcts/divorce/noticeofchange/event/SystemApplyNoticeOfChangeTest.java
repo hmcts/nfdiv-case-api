@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.noticeofchange.event;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,13 +46,14 @@ import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChang
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
 class SystemApplyNoticeOfChangeTest {
 
-    private static final String TEST_ORGANISATION_ID = "organisation_id";
     private static final String TEST_ORGANISATION_NAME = "organisation_name";
     private static final String TEST_ORGANISATION_USER_ID = "user_id";
 
@@ -72,7 +72,6 @@ class SystemApplyNoticeOfChangeTest {
     @InjectMocks
     private SystemApplyNoticeOfChange systemApplyNoticeOfChange;
 
-    @BeforeEach
     public void setup() {
         User systemUser = mock(User.class);
         List<ProfessionalUser> professionalUsers = new ArrayList<>();
@@ -85,7 +84,7 @@ class SystemApplyNoticeOfChangeTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_ID))
+        when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORG_ID))
                 .thenReturn(findUsersByOrganisationResponse);
         when(organisationClient.getOrganisationByUserId(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_USER_ID))
                 .thenReturn(organisationsResponse);
@@ -104,6 +103,7 @@ class SystemApplyNoticeOfChangeTest {
 
     @Test
     void shouldApplyNoticeOfChangeForApplicant1Solicitor() {
+        setup();
         CaseData applicant1CaseData = buildCaseDataApplicant1();
         var details =  CaseDetails.<CaseData, State>builder().data(applicant1CaseData).build();
         AcaRequest acaRequest = AcaRequest.acaRequest(details);
@@ -125,12 +125,13 @@ class SystemApplyNoticeOfChangeTest {
         );
 
         assertEquals(TEST_ORGANISATION_NAME, updatedOrganisation.getOrganisationName());
-        assertEquals(TEST_ORGANISATION_ID, updatedOrganisation.getOrganisationId());
+        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
     }
 
     @Test
     void shouldApplyNoticeOfChangeForApplicant2Solicitor() {
+        setup();
         CaseData applicant2CaseData = buildCaseDataApplicant2();
         var details =  CaseDetails.<CaseData, State>builder().data(applicant2CaseData).build();
         AcaRequest acaRequest = AcaRequest.acaRequest(details);
@@ -152,12 +153,13 @@ class SystemApplyNoticeOfChangeTest {
         );
 
         assertEquals(TEST_ORGANISATION_NAME, updatedOrganisation.getOrganisationName());
-        assertEquals(TEST_ORGANISATION_ID, updatedOrganisation.getOrganisationId());
+        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
     }
 
     private CaseData buildCaseDataApplicant1() {
         final Applicant applicant1 = TestDataHelper.applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPONESOLICITOR]",
                 "APPLICANT_1_SOLICITOR");
 
@@ -192,9 +194,9 @@ class SystemApplyNoticeOfChangeTest {
         changeOrganisationRequest.setCaseRoleId(CaseRoleID.builder().value(dynamicListItem).listItems(dynamicListItemList).build());
         changeOrganisationRequest.setCreatedBy(TEST_SOLICITOR_EMAIL);
         changeOrganisationRequest.setOrganisationToAdd(Organisation
-                .builder().organisationId(TEST_ORGANISATION_ID).organisationName(TEST_ORGANISATION_NAME).build());
+                .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
         changeOrganisationRequest.setOrganisationToRemove(Organisation
-                .builder().organisationId(TEST_ORGANISATION_ID).organisationName(TEST_ORGANISATION_NAME).build());
+                .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
         return changeOrganisationRequest;
     }
 
