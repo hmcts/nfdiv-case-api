@@ -127,6 +127,13 @@ public enum State {
     AwaitingBailiffReferral,
 
     @CCD(
+        label = "Bailiff service refused",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    BailiffServiceRefused,
+
+    @CCD(
         label = "Awaiting bailiff service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -489,7 +496,7 @@ public enum State {
     ));
 
     public static final State[] AOS_STATES = {
-        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral,
+        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffServiceRefused,
         AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
         AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
         GeneralApplicationReceived, PendingHearingOutcome
@@ -502,6 +509,7 @@ public enum State {
         AwaitingServicePayment,
         AwaitingServiceConsideration,
         AwaitingBailiffReferral,
+        BailiffServiceRefused,
         AosOverdue,
         AosDrafted,
         AwaitingBailiffService,
