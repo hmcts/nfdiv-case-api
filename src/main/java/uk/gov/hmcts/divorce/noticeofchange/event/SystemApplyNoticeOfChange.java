@@ -23,6 +23,8 @@ import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -69,7 +71,20 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
-        CaseData responseData = objectMapper.convertValue(response.getData(), CaseData.class);
+        Map<String, Object> data = response.getData();
+        List<String> responseErrors = response.getErrors();
+
+        if (Objects.isNull(data) || !Objects.isNull(responseErrors)) {
+            log.info("Notice of change failed with the following error(s) for CaseID {}:", details.getId());
+            responseErrors.forEach(log::info);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(details.getData())
+                    .state(details.getState())
+                    .errors(responseErrors)
+                    .build();
+        }
+
+        CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
         updateChangeOfRepresentation(details, responseData, sysUserToken, s2sToken);
 

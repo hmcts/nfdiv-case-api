@@ -38,8 +38,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.NOTICE_OF_CHANGE_APPLIED;
@@ -67,13 +67,15 @@ class SystemApplyNoticeOfChangeTest {
     private OrganisationClient organisationClient;
 
     @Mock
+    private User systemUser;
+
+    @Mock
     private ObjectMapper objectMapper;
 
     @InjectMocks
     private SystemApplyNoticeOfChange systemApplyNoticeOfChange;
 
     public void setup() {
-        User systemUser = mock(User.class);
         List<ProfessionalUser> professionalUsers = new ArrayList<>();
         professionalUsers.add(ProfessionalUser.builder().email(TEST_SOLICITOR_EMAIL).userIdentifier(TEST_ORGANISATION_USER_ID).build());
         FindUsersByOrganisationResponse findUsersByOrganisationResponse = FindUsersByOrganisationResponse
@@ -155,6 +157,30 @@ class SystemApplyNoticeOfChangeTest {
         assertEquals(TEST_ORGANISATION_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
+    }
+
+    @Test
+    void shouldNotApplyNoticeOfChangeWhenErrorsThrown() {
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        var details =  CaseDetails.<CaseData, State>builder().build();
+        AcaRequest acaRequest = AcaRequest.acaRequest(details);
+
+        List<String> errors = List.of("One of the org policies is missing for NoC");
+        AboutToStartOrSubmitCallbackResponse response = AboutToStartOrSubmitCallbackResponse
+                .builder().errors(errors).build();
+        when(assignCaseAccessClient.applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest))
+                .thenReturn(response);
+
+        systemApplyNoticeOfChange.aboutToStart(details);
+
+        verify(assignCaseAccessClient).applyNoticeOfChange(
+                TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
+        );
+
+        verifyNoInteractions(objectMapper);
     }
 
     private CaseData buildCaseDataApplicant1() {
