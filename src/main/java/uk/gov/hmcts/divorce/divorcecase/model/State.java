@@ -127,13 +127,6 @@ public enum State {
     AwaitingBailiffReferral,
 
     @CCD(
-        label = "Bailiff service refused",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    BailiffServiceRefused,
-
-    @CCD(
         label = "Awaiting bailiff service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -265,6 +258,13 @@ public enum State {
         access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingJsNullity,
+
+    @CCD(
+        label = "Bailiff service refused",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    BailiffServiceRefused,
 
     @CCD(
         label = "Case in bulk action process",
