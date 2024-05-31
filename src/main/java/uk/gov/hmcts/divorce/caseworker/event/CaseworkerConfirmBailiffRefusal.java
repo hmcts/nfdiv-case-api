@@ -49,7 +49,7 @@ public class CaseworkerConfirmBailiffRefusal implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CONFIRM_BAILIFF_REFUSAL)
-            .forStateTransition(BailiffServiceRefused, AwaitingAos)
+            .forState(BailiffServiceRefused)
             .name("Confirm bailiff refusal")
             .description("Confirm bailiff refusal")
             .showEventNotes()
@@ -90,6 +90,7 @@ public class CaseworkerConfirmBailiffRefusal implements CCDConfig<CaseData, Stat
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
+            .state(AwaitingAos)
             .build();
     }
 }
