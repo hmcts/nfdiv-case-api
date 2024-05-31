@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.document.content.BailiffNotApprovedOrderContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffServiceRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -49,7 +49,7 @@ public class CaseworkerConfirmBailiffRefusal implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CONFIRM_BAILIFF_REFUSAL)
-            .forState(BailiffServiceRefused)
+            .forState(BailiffRefused)
             .name("Confirm bailiff refusal")
             .description("Confirm bailiff refusal")
             .showEventNotes()

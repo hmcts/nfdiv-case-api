@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAIL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffServiceRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
@@ -111,7 +111,7 @@ class CaseworkerMakeBailiffDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeBailiffDecision.aboutToSubmit(details, details);
 
-        assertThat(response.getState()).isEqualTo(BailiffServiceRefused);
+        assertThat(response.getState()).isEqualTo(BailiffRefused);
 
         assertThat(response.getData().getAlternativeService().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());

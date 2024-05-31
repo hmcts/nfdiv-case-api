@@ -22,7 +22,7 @@ import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffServiceRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -109,7 +109,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
             log.info("Sending ServiceApplicationNotification (granted) case ID: {}", details.getId());
             notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         } else {
-            endState = BailiffServiceRefused;
+            endState = BailiffRefused;
         }
 
         log.info("Setting end state of case id {} to {}", details.getId(), endState);

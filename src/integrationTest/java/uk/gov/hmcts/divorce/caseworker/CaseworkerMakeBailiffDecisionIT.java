@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecisio
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffServiceRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
@@ -198,7 +198,7 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(BailiffServiceRefused.name())
+                jsonPath("$.state").value(BailiffRefused.name())
             )
             .andExpect(
                 jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
