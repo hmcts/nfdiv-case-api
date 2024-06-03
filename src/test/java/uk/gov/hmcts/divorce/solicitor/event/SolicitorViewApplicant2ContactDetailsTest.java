@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant2ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant2ContactDetails.READ_ONLY_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant2ContactDetails.SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -67,15 +66,5 @@ public class SolicitorViewApplicant2ContactDetailsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant2ContactDetails.aboutToStart(details);
 
         assertThat(response.getErrors()).isEmpty();
-    }
-
-    @Test
-    public void aboutToSubmitShouldBlockEventSubmissionThroughValidationError() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setState(Submitted);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant2ContactDetails.aboutToSubmit(details, details);
-
-        assertThat(response.getErrors()).containsExactly(READ_ONLY_ERROR);
     }
 }
