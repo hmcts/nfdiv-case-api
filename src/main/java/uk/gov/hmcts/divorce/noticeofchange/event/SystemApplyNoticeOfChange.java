@@ -65,8 +65,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         log.info("Applying notice of change for case id: {}", details.getId());
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-
         String s2sToken = authTokenGenerator.generate();
+
+        updateChangeOfRepresentation(details, sysUserToken, s2sToken);
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
@@ -74,9 +75,10 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         Map<String, Object> data = response.getData();
         List<String> responseErrors = response.getErrors();
 
-        if (Objects.isNull(data) || !Objects.isNull(responseErrors)) {
+        if (!Objects.isNull(responseErrors)) {
             log.info("Notice of change failed with the following error(s) for CaseID {}:", details.getId());
             responseErrors.forEach(log::info);
+
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())
                     .state(details.getState())
@@ -86,23 +88,18 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
-        updateChangeOfRepresentation(details, responseData, sysUserToken, s2sToken);
-
-        details.setData(responseData);
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(responseData)
             .state(details.getState())
             .build();
     }
 
-    private void updateChangeOfRepresentation(CaseDetails<CaseData, State> details,
-                                              CaseData responseData, String sysUserToken, String s2sToken) {
+    private void updateChangeOfRepresentation(CaseDetails<CaseData, State> details, String sysUserToken, String s2sToken) {
         var caseData = details.getData();
         var changeOrganisationRequest = caseData.getChangeOrganisationRequestField();
         var loggedInUserEmail = changeOrganisationRequest.getCreatedBy().toLowerCase();
-        var applicant1Solicitor = responseData.getApplicant1().getSolicitor();
-        var applicant2Solicitor = responseData.getApplicant2().getSolicitor();
+        var applicant1Solicitor = caseData.getApplicant1().getSolicitor();
+        var applicant2Solicitor = caseData.getApplicant2().getSolicitor();
         var organisationId = changeOrganisationRequest.getOrganisationToAdd().getOrganisationId();
 
         List<ProfessionalUser> organisationUsers =
