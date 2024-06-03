@@ -29,7 +29,7 @@ public class SolicitorViewApplicant1ContactDetails implements CCDConfig<CaseData
 
     public static final String SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO = "solicitor-view-applicant-1-contact-info";
     public static final String CONFIDENTIAL_APPLICANT_ERROR = """
-            The respondents contact details are confidential. Please complete a general application
+            The applicants contact details are confidential. Please complete a general application
             to seek permission to obtain the address from the court.
         """;
 
