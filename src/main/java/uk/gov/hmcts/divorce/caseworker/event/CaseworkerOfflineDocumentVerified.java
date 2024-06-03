@@ -32,20 +32,27 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_CONFIDENTIAL_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -101,44 +108,45 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
             .complex(CaseData::getDocuments)
-            .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
+                .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
                 .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"", true)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-            .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
-            .mandatory(AcknowledgementOfService::getHowToRespondApplication,
-                "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
+                .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
+                .label("scannedAosLabel", "Confidential Acknowledgement Of Service", "scannedSubtypeReceived=\"ConfidentialD10\"")
+                .mandatory(AcknowledgementOfService::getHowToRespondApplication,
+                    "typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"ConfidentialD10\" "
+                    + "OR scannedSubtypeReceived=\"D10\" OR scannedSubtypeReceived=\"ConfidentialD10\"")
             .done()
             .complex(CaseData::getDocuments)
-            .mandatory(CaseDocuments::getScannedDocumentNames,
+                .mandatory(CaseDocuments::getScannedDocumentNames,
                     "scannedSubtypeReceived!=\"*\" "
-                        + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")")
+                        + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"ConfidentialD10\" "
+                        + "OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")")
             .done()
             .complex(CaseData::getConditionalOrder)
-            .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
-            .mandatory(ConditionalOrder::getD84ApplicationType,
-                "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
-            .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
+                .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
+                .mandatory(ConditionalOrder::getD84ApplicationType,
+                    "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
+                .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
-            .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
-            .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
-            .mandatory(FinalOrder::getD36ApplicationType,
-                "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
-            .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
-                + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
+                .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
+                .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
+                .mandatory(FinalOrder::getD36ApplicationType,
+                    "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
+                .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
+                    + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getStateToTransitionApplicationTo)
+                .mandatory(Application::getStateToTransitionApplicationTo)
             .done()
-
-
             .page("stateToTransitionToJoint")
             .showCondition("applicationType=\"jointApplication\" AND typeOfDocumentAttached!=\"D84\" OR scannedSubtypeReceived!=\"D84\"")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getStateToTransitionApplicationTo)
+                .mandatory(Application::getStateToTransitionApplicationTo)
             .done();
     }
 
@@ -153,18 +161,32 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
         } else if (D36.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(FO_D36);
+        } else if (CONFIDENTIAL_D10.equals(scannedSubtypeReceived)) {
+            caseData.getDocuments().setTypeOfDocumentAttached(AOS_CONFIDENTIAL_D10);
+        } else if (CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL.equals(scannedSubtypeReceived)) {
+            caseData.getDocuments().setTypeOfDocumentAttached(CONFIDENTIAL);
         }
 
         if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
             List<DynamicListElement> scannedDocumentNames =
-                emptyIfNull(caseData.getDocuments().getScannedDocuments())
-                    .stream()
-                    .map(scannedDocListValue ->
-                        DynamicListElement
-                            .builder()
-                            .label(scannedDocListValue.getValue().getFileName())
-                            .code(UUID.randomUUID()).build()
-                    ).toList();
+                Stream.concat(
+                    emptyIfNull(caseData.getDocuments().getScannedDocuments())
+                        .stream()
+                        .map(scannedDocListValue ->
+                            DynamicListElement
+                                .builder()
+                                .label(scannedDocListValue.getValue().getFileName())
+                                .code(UUID.randomUUID()).build()
+                        ),
+                    emptyIfNull(caseData.getDocuments().getConfidentialScannedDocuments())
+                        .stream()
+                        .map(confidentialScannedDocListValue ->
+                            DynamicListElement
+                                .builder()
+                                .label(confidentialScannedDocListValue.getValue().getFileName())
+                                .code(UUID.randomUUID()).build()
+                        )
+                ).toList();
 
             DynamicList scannedDocNamesDynamicList = DynamicList
                 .builder()
@@ -187,8 +209,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         log.info("Scanned subtype received is {} for case {}", caseData.getDocuments().getScannedSubtypeReceived(), details.getId());
         log.info("Type of document attached is {} for case {}", caseData.getDocuments().getTypeOfDocumentAttached(), details.getId());
 
-        if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+        if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())
+            || AOS_CONFIDENTIAL_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD10AndSendNotifications(details);
+
+        // } else if (CONFIDENTIAL.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            //caseData.getApplicant2().setContactDetailsType(PRIVATE); // How do we know which applicant the C8 relates to?
 
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD84AndSendNotifications(details);
@@ -299,6 +325,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private AboutToStartOrSubmitResponse<CaseData, State> processD10AndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying AOS D10 for case {}", details.getId());
         var caseData = details.getData();
+
+        if (AOS_CONFIDENTIAL_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            caseData.getApplicant2().setContactDetailsType(PRIVATE); // If D10 is Confidential, set App2 to private
+        }
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
 
