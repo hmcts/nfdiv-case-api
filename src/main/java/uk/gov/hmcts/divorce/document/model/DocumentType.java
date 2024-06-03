@@ -221,7 +221,7 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("respondentAnswers")
     @JsonAlias("applicant2Answers")
-    RESPONDENT_ANSWERS("Respondent answers", false),
+    RESPONDENT_ANSWERS("Respondent answers", true),
 
     @JsonProperty("aos")
     @Deprecated
