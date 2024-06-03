@@ -109,6 +109,14 @@ public class CaseDocuments {
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
     @CCD(
+        label = "Confidential Scanned documents",
+        typeOverride = Collection,
+        typeParameterOverride = "ScannedDocument",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
+    private List<ListValue<ScannedDocument>> confidentialScannedDocuments;
+
+    @CCD(
         label = "Upload Answer Received supporting documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
@@ -170,6 +178,12 @@ public class CaseDocuments {
     @AllArgsConstructor
     public enum ScannedDocumentSubtypes implements HasLabel {
 
+        @JsonProperty("Confidential")
+        CONFIDENTIAL("Confidential"),
+
+        @JsonProperty("ConfidentialD10")
+        CONFIDENTIAL_D10("Confidential D10"),
+
         @JsonProperty("D10")
         D10("D10"),
 
@@ -197,6 +211,12 @@ public class CaseDocuments {
     @Getter
     @AllArgsConstructor
     public enum OfflineDocumentReceived implements HasLabel {
+
+        @JsonProperty("Confidential")
+        CONFIDENTIAL("Confidential"),
+
+        @JsonProperty("ConfidentialD10")
+        AOS_CONFIDENTIAL_D10("Acknowledgement of service (Confidential D10)"),
 
         @JsonProperty("D10")
         AOS_D10("Acknowledgement of service (D10)"),
