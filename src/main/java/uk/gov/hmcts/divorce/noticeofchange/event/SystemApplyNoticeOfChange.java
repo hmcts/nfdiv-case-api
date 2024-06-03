@@ -88,8 +88,6 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
-        updateChangeOfRepresentation(details, responseData, sysUserToken, s2sToken);
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
             .state(details.getState())
