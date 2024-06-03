@@ -310,6 +310,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
             .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
+            .field("confidentialScannedDocuments")
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);;
     }
