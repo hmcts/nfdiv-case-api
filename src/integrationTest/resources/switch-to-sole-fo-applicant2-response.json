@@ -35,10 +35,7 @@
     "applicant2HWFNeedHelp": "No",
     "divorceWho": "wife",
     "applicant2InviteEmailAddress": "test@test.com",
-    "d36ApplicationType": "switchToSole",
-    "d36WhoApplying": "applicant2",
     "finalOrderSwitchedToSole": "Yes",
-    "typeOfDocumentAttached": "D36",
     "dataVersion": 5,
     "warnings": []
   }
