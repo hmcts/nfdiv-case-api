@@ -28,6 +28,7 @@ public class RegenerateApplication implements CCDConfig<CaseData, State, UserRol
     public static final String REGENERATE_APPLICATION = "regenerate-application";
 
     private final GenerateApplication generateApplication;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
