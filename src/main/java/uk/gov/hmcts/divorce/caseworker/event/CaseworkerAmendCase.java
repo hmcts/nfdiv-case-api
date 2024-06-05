@@ -1,12 +1,14 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.AmendCase;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -22,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
 @Slf4j
@@ -29,6 +32,9 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_AMEND_CASE = "caseworker-amend-case";
     private final CcdPageConfiguration amendCase = new AmendCase();
+
+    @Autowired
+    private GenerateApplication generateApplication;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -65,6 +71,14 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(caseValidationErrors)
+                .build();
+        }
+
+        if (null != caseData.getApplication().getIssueDate()) {
+            final CaseDetails<CaseData, State> result = caseTasks(generateApplication).run(details);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(result.getData())
                 .build();
         }
 
