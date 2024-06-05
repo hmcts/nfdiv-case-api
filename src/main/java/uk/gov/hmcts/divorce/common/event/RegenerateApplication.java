@@ -34,7 +34,7 @@ public class RegenerateApplication implements CCDConfig<CaseData, State, UserRol
         configBuilder
             .event(REGENERATE_APPLICATION)
             .forAllStates()
-            .name("RegenerateApplication")
+            .name("Regenerate D8")
             .description("Regenerate D8")
             .grant(CREATE_READ_UPDATE, CREATOR, SYSTEMUPDATE)
             .grantHistoryOnly(LEGAL_ADVISOR, SUPER_USER, JUDGE)
