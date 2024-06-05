@@ -8,10 +8,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 
@@ -20,15 +24,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateFinRemAndJurisdiction.CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION;
+import static uk.gov.hmcts.divorce.common.event.RegenerateApplication.REGENERATE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerUpdateFinRemAndJurisdictionTest {
 
     @Mock
-    private GenerateApplication generateApplication;
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @InjectMocks
     private CaseworkerUpdateFinRemAndJurisdiction caseworkerUpdateFinRemAndJurisdiction;
@@ -50,13 +64,15 @@ class CaseworkerUpdateFinRemAndJurisdictionTest {
         caseData.getApplication().setIssueDate(LocalDate.now());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(State.AwaitingAos);
+        caseDetails.setId(TEST_CASE_ID);
 
-        when(generateApplication.apply(caseDetails)).thenReturn(caseDetails);
+        final User user = new User(TEST_AUTHORIZATION_TOKEN, UserInfo.builder().build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
-        caseworkerUpdateFinRemAndJurisdiction.aboutToSubmit(caseDetails, caseDetails);
+        caseworkerUpdateFinRemAndJurisdiction.submitted(caseDetails, caseDetails);
 
-        verify(generateApplication).apply(caseDetails);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, REGENERATE_APPLICATION, user, TEST_SYSTEM_AUTHORISATION_TOKEN);
     }
 
     @Test
@@ -64,10 +80,9 @@ class CaseworkerUpdateFinRemAndJurisdictionTest {
         final CaseData caseData = validCaseDataForIssueApplication();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(State.AwaitingAos);
 
-        caseworkerUpdateFinRemAndJurisdiction.aboutToSubmit(caseDetails, caseDetails);
+        caseworkerUpdateFinRemAndJurisdiction.submitted(caseDetails, caseDetails);
 
-        verifyNoInteractions(generateApplication);
+        verifyNoInteractions(ccdUpdateService);
     }
 }
