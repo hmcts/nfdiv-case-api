@@ -27,7 +27,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,16 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerConfirmBailiffRefusal.CASEWORKER_CONFIRM_BAILIFF_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -70,7 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class
 })
-public class CaseworkerMakeBailiffDecisionIT {
+public class CaseworkerConfirmBailiffRefusalIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -102,90 +97,24 @@ public class CaseworkerMakeBailiffDecisionIT {
         IdamWireMock.stopAndReset();
     }
 
-    @Test
-    public void shouldChangeCaseStateToAwaitingBailiffServiceAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff()
-        throws Exception {
-        setMockClock(clock);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved.docx");
-
+    private CaseData setUpCaseData(LocalDate serviceDecisionDate) {
         final CaseData caseData = caseData();
-        caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_BAILIFF_DECISION)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk())
-            .andExpect(
-                jsonPath("$.state").value(AwaitingBailiffService.name()))
-            .andExpect(
-                jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
-            );
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_GRANTED), anyMap(), eq(ENGLISH), anyLong());
+        caseData.getAlternativeService().setReceivedServiceApplicationDate(serviceDecisionDate);
+        caseData.getAlternativeService().setServiceApplicationDecisionDate(serviceDecisionDate);
+        caseData.getAlternativeService().setServiceApplicationGranted(NO);
+        return caseData;
     }
 
     @Test
-    public void shouldGenerateWelshDocumentAndNotificationWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
+    public void shouldChangeCaseStateToAwaitingAos() throws Exception {
         setMockClock(clock);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved_Cy.docx");
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-        caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_BAILIFF_DECISION)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_GRANTED), anyMap(), eq(WELSH), anyLong());
-    }
-
-    @Test
-    public void shouldChangeCaseStateToBailiffRefusedAndSetDecisionDateWhenServiceApplicationIsNotGrantedAndServiceTypeIsBailiff()
-        throws Exception {
-        setMockClock(clock);
-
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
 
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
-        caseData.getAlternativeService().setServiceApplicationGranted(NO);
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
+        LocalDate serviceDecisionDate = LocalDate.of(2022, 1, 1);
+        CaseData caseData = setUpCaseData(serviceDecisionDate);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -194,7 +123,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_BAILIFF_DECISION)
+                            CASEWORKER_CONFIRM_BAILIFF_REFUSAL)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -202,12 +131,62 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(BailiffRefused.name())
+                jsonPath("$.state").value(AwaitingAos.name())
             )
             .andExpect(
-                jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
+                jsonPath("$.data.alternativeServiceOutcomes[0].value.serviceApplicationDecisionDate")
+                    .value(serviceDecisionDate.toString())
             );
 
-        verifyNoInteractions(notificationService);
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SERVICE_APPLICATION_REJECTED),
+            anyMap(),
+            eq(ENGLISH),
+            anyLong()
+        );
+    }
+
+    @Test
+    public void shouldSendWelshEmailIfChosenLanguagePreferenceIsWelsh() throws Exception {
+        setMockClock(clock);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved_Cy.docx");
+
+        LocalDate serviceDecisionDate = LocalDate.of(2022, 1, 1);
+        CaseData caseData = setUpCaseData(serviceDecisionDate);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_CONFIRM_BAILIFF_REFUSAL)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(AwaitingAos.name())
+            )
+            .andExpect(
+                jsonPath("$.data.alternativeServiceOutcomes[0].value.serviceApplicationDecisionDate")
+                    .value(serviceDecisionDate.toString())
+            );
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SERVICE_APPLICATION_REJECTED),
+            anyMap(),
+            eq(WELSH),
+            anyLong()
+        );
     }
 }
