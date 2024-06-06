@@ -111,9 +111,12 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
+        templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -231,9 +234,12 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
+        templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
