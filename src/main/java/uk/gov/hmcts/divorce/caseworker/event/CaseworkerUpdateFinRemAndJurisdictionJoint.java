@@ -29,8 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION = "caseworker-update-fin-rem-and-jurisdiction";
+public class CaseworkerUpdateFinRemAndJurisdictionJoint implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION_JOINT = "caseworker-update-fin-rem-and-jurisd-joint";
 
     private static final String NEVER_SHOW = "jurisdictionConnections=\"NEVER_SHOW\"";
 
@@ -41,10 +41,10 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION)
+            .event(CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION_JOINT)
             .forAllStates()
             .name("Update FinRem and Jurisdiction")
-            .showCondition("applicationType=\"soleApplication\"")
+            .showCondition("applicationType=\"jointApplication\"")
             .description("Update FinRem and Jurisdiction")
             .showSummary()
             .showEventNotes()
@@ -73,12 +73,19 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
                 .mandatory(Applicant::getFinancialOrder)
                 .mandatory(Applicant::getFinancialOrdersFor, "applicant1FinancialOrder=\"Yes\"")
                 .done()
+            .complex(CaseData::getApplicant2)
+                .label("Label-CorrectApplicant2FODetails",
+                    "### ${labelContentRespondentsOrApplicant2s} financial order details")
+                .mandatoryWithLabel(Applicant::getFinancialOrder,
+                    "Does ${labelContentTheApplicant2} wish to apply for a financial order?")
+                .mandatory(Applicant::getFinancialOrdersFor, "applicant2FinancialOrder=\"Yes\"")
+                .done()
             .done();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION, details.getId());
+        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION_JOINT, details.getId());
 
         if (null != details.getData().getApplication().getIssueDate()) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
