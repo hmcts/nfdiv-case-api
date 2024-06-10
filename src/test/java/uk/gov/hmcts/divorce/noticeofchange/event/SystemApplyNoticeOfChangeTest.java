@@ -127,7 +127,7 @@ class SystemApplyNoticeOfChangeTest {
             TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
-        assertEquals(TEST_ORGANISATION_NAME, updatedOrganisation.getOrganisationName());
+        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
     }
@@ -162,11 +162,12 @@ class SystemApplyNoticeOfChangeTest {
 
     @Test
     void shouldNotApplyNoticeOfChangeWhenErrorsThrown() {
+        setup();
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        var details =  CaseDetails.<CaseData, State>builder().build();
+        var details =  CaseDetails.<CaseData, State>builder().data(buildCaseDataApplicant1()).build();
         AcaRequest acaRequest = AcaRequest.acaRequest(details);
 
         List<String> errors = List.of("One of the org policies is missing for NoC");
