@@ -11,6 +11,8 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseRoleID;
@@ -22,8 +24,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
-import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOrganisationRequest;
-import uk.gov.hmcts.divorce.noticeofchange.model.Organisation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
@@ -154,7 +155,7 @@ class SystemApplyNoticeOfChangeTest {
                 TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
-        assertEquals(TEST_ORGANISATION_NAME, updatedOrganisation.getOrganisationName());
+        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
     }
@@ -220,7 +221,7 @@ class SystemApplyNoticeOfChangeTest {
         changeOrganisationRequest.setCaseRoleId(CaseRoleID.builder().value(dynamicListItem).listItems(dynamicListItemList).build());
         changeOrganisationRequest.setCreatedBy(TEST_SOLICITOR_EMAIL);
         changeOrganisationRequest.setOrganisationToAdd(Organisation
-                .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
+                .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORG_NAME).build());
         changeOrganisationRequest.setOrganisationToRemove(Organisation
                 .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
         return changeOrganisationRequest;

@@ -116,20 +116,19 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
                 .getOrganisationByUserId(sysUserToken, s2sToken, nocRequestingUser.getUserIdentifier())
                 .getName();
 
+        changeOrganisationRequest.getOrganisationToAdd().setOrganisationName(nocSolicitorOrgName);
+
         if (APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole())) {
-            updateOrgPolicyAndSolicitorDetails(applicant1Solicitor, nocSolicitorOrgName,
+            updateOrgPolicyAndSolicitorDetails(applicant1Solicitor,
                     nocRequestingUser, loggedInUserEmail);
         } else {
-            updateOrgPolicyAndSolicitorDetails(applicant2Solicitor, nocSolicitorOrgName,
+            updateOrgPolicyAndSolicitorDetails(applicant2Solicitor,
                     nocRequestingUser, loggedInUserEmail);
         }
     }
 
-    private static void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, String nocSolicitorOrgName,
+    private static void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor,
                                                            ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
-
-        applicantSolicitor.getOrganisationPolicy()
-                .getOrganisation().setOrganisationName(nocSolicitorOrgName);
 
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);

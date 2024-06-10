@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -20,8 +22,6 @@ import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetSolicitorTemplateContent;
-import uk.gov.hmcts.divorce.noticeofchange.model.Organisation;
-import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
 
 import java.time.Clock;
 import java.time.LocalDate;

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.divorce.noticeofchange.model.OrganisationPolicy;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
