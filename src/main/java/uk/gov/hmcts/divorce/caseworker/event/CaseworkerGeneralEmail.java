@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.io.IOException;
@@ -45,6 +46,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 @Component
 @Slf4j
 public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRole> {
+
+    public static final int MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS = 10;
 
     public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
 
@@ -76,6 +79,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
             .page("createGeneralEmail", this::midEvent)
@@ -110,7 +114,13 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 .errors(singletonList("Please ensure all General Email attachments have been uploaded before continuing"))
                 .build();
         }
-        //Check for number of email attachments supported and return if greater than the limit - TO DO
+
+        if (caseData.getGeneralEmail().getGeneralEmailAttachments().size() > MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(String.format("Number of attachments on General Email cannot exceed %s",MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS)))
+                .build();
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -139,6 +149,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .generalEmailCreatedBy(userDetails.getName())
             .generalEmailBody(generalEmail.getGeneralEmailDetails())
             .generalEmailAttachmentLinks(attachments)
+            .generalEmailToOtherName(generalEmail.getGeneralEmailOtherRecipientName())
+            .generalEmailToOtherEmail(generalEmail.getGeneralEmailOtherRecipientEmail())
             .build();
 
         ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
@@ -163,6 +175,24 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             }
         }
 
+        // clear existing general email to avoid stale data being displayed in UI on next use of event.
+        caseData.setGeneralEmail(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
+
+        CaseData caseData = details.getData();
+
+        //Likely the attached document isn't available in CDAM before aboutToSubmit callback has completed so
+        //to avoid CDAM issues during notification, moving the send call to submitted callback
+
         try {
             generalEmailNotification.send(caseData, details.getId());
         } catch (NotificationClientException e) {
@@ -171,12 +201,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             throw new RuntimeException(e);
         }
 
-        // clear existing general email to avoid stale data being displayed in UI on next use of event.
-        caseData.setGeneralEmail(null);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
+        return SubmittedCallbackResponse.builder().build();
     }
 
     public boolean validEmailExists(CaseData caseData) {
