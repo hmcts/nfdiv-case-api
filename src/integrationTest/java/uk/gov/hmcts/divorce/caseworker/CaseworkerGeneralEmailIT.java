@@ -17,7 +17,10 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 
@@ -330,7 +333,7 @@ public class CaseworkerGeneralEmailIT {
     ListValue<GeneralEmailDetails> getGeneralEmailsObject(GeneralParties party) {
         GeneralEmailDetails generalEmailDetails;
 
-        if(OTHER == party) {
+        if (OTHER == party) {
             generalEmailDetails = GeneralEmailDetails
                 .builder()
                 .generalEmailDateTime(LOCAL_DATE_TIME)
