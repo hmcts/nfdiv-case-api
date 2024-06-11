@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import java.util.Optional;
+
 @Component
 @Slf4j
 public class SetDefaultOrganisationPolicies implements CaseTask {
@@ -19,36 +21,44 @@ public class SetDefaultOrganisationPolicies implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
 
-        setSolicitor(caseData.getApplicant1());
-        setSolicitor(caseData.getApplicant2());
+        initializeSolicitor(caseData.getApplicant1());
+        initializeSolicitor(caseData.getApplicant2());
 
-        final Solicitor applicant1Solicitor = caseData.getApplicant1().getSolicitor();
-        final Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
+        Solicitor app1Solicitor = caseData.getApplicant1().getSolicitor();
+        Solicitor app2Solicitor = caseData.getApplicant2().getSolicitor();
 
-        setDefaultOrgPolicy(applicant1Solicitor, UserRole.APPLICANT_1_SOLICITOR);
-        setDefaultOrgPolicy(applicant2Solicitor, UserRole.APPLICANT_2_SOLICITOR);
+        initializeOrgPolicy(app1Solicitor);
+        initializeOrgPolicy(app2Solicitor);
+
+        setDefaultOrgPolicyFields(app1Solicitor.getOrganisationPolicy(), UserRole.APPLICANT_1_SOLICITOR);
+        setDefaultOrgPolicyFields(app2Solicitor.getOrganisationPolicy(), UserRole.APPLICANT_2_SOLICITOR);
 
         return caseDetails;
     }
 
-    private void setSolicitor(Applicant applicant) {
-        if (applicant.getSolicitor() == null) {
-            applicant.setSolicitor(new Solicitor());
-        }
+    private void initializeSolicitor(Applicant applicant) {
+        applicant.setSolicitor(
+            Optional.ofNullable(applicant.getSolicitor())
+                .orElseGet(Solicitor::new)
+        );
     }
 
-    private void setDefaultOrgPolicy(Solicitor solicitor, UserRole solicitorRole) {
-        if (solicitor.getOrganisationPolicy() == null) {
-            solicitor.setOrganisationPolicy(new OrganisationPolicy<UserRole>());
-        }
-        OrganisationPolicy<UserRole> organisationPolicy = solicitor.getOrganisationPolicy();
+    private void initializeOrgPolicy(Solicitor solicitor) {
+        solicitor.setOrganisationPolicy(
+            Optional.ofNullable(solicitor.getOrganisationPolicy())
+                .orElseGet(OrganisationPolicy::new)
+        );
+    }
 
-        if (organisationPolicy.getOrgPolicyCaseAssignedRole() == null) {
-            organisationPolicy.setOrgPolicyCaseAssignedRole(solicitorRole);
-        }
+    private void setDefaultOrgPolicyFields(OrganisationPolicy<UserRole> organisationPolicy, UserRole solicitorRole) {
+        organisationPolicy.setOrgPolicyCaseAssignedRole(
+            Optional.ofNullable(organisationPolicy.getOrgPolicyCaseAssignedRole())
+                .orElse(solicitorRole)
+        );
 
-        if (organisationPolicy.getOrganisation() == null) {
-            organisationPolicy.setOrganisation(new Organisation(null, null));
-        }
+        organisationPolicy.setOrganisation(
+            Optional.ofNullable(organisationPolicy.getOrganisation())
+                .orElse(new Organisation(null, null))
+        );
     }
 }
