@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAcc
 
 import java.time.LocalDateTime;
 
-import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -152,9 +151,8 @@ public class AcknowledgementOfService {
         noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();
 
         if (applicant.isRepresented()) {
-            final OrganisationPolicy<UserRole> organisationPolicy = applicant.getSolicitor().getOrganisationPolicy();
-
-            if (nonNull(organisationPolicy) && nonNull(organisationPolicy.getOrganisation())) {
+            if (applicant.getSolicitor().hasOrgName()) {
+                final OrganisationPolicy<UserRole> organisationPolicy = applicant.getSolicitor().getOrganisationPolicy();
                 noticeOfProceedingsSolicitorFirm = organisationPolicy.getOrganisation().getOrganisationName();
             } else {
                 noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmName();

@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -93,5 +94,13 @@ public class Solicitor {
             return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationId());
         }
         return false;
+    }
+
+    @JsonIgnore
+    public boolean hasOrgName() {
+        return Optional.ofNullable(organisationPolicy)
+            .map(policy -> policy.getOrganisation())
+            .map(org -> org.getOrganisationName())
+            .isPresent();
     }
 }

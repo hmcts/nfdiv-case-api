@@ -148,8 +148,7 @@ public class Applicant {
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
-    @Builder.Default
-    private Solicitor solicitor = new Solicitor();
+    private Solicitor solicitor;
 
     @CCD(
         label = "Does the applicant wish to apply for a financial order?"
