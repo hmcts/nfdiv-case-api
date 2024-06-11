@@ -95,6 +95,8 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
+        caseData.setPartyToEmail(APPLICANT);
+
         var generalEmailDetails = GeneralEmailDetails
             .builder()
             .generalEmailDateTime(LOCAL_DATE_TIME)
@@ -134,6 +136,8 @@ public class GeneralEmailNotificationTest {
         marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
+
+        caseData.setPartyToEmail(RESPONDENT);
 
         var generalEmailDetails = GeneralEmailDetails
             .builder()
@@ -176,6 +180,8 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
+        caseData.setPartyToEmail(RESPONDENT);
+
         var generalEmailDetails = GeneralEmailDetails
             .builder()
             .generalEmailDateTime(LOCAL_DATE_TIME)
@@ -212,6 +218,8 @@ public class GeneralEmailNotificationTest {
         marriageDetails.setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
+
+        caseData.setPartyToEmail(APPLICANT);
 
         var generalEmailDetails = GeneralEmailDetails
             .builder()
@@ -256,6 +264,8 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
+        caseData.setPartyToEmail(RESPONDENT);
+
         var generalEmailDetails = GeneralEmailDetails
             .builder()
             .generalEmailDateTime(LOCAL_DATE_TIME)
@@ -293,6 +303,8 @@ public class GeneralEmailNotificationTest {
         marriageDetails.setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
+
+        caseData.setPartyToEmail(OTHER);
 
         var generalEmailDetails = GeneralEmailDetails
             .builder()
@@ -344,6 +356,8 @@ public class GeneralEmailNotificationTest {
             .willReturn(new ByteArrayInputStream(firstFile));
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
+
+        caseData.setPartyToEmail(APPLICANT);
 
         List<ListValue<Document>> attachments = ofNullable(documentWithType(DocumentType.APPLICATION))
             .map(divorceDocument -> ListValue.<Document>builder()

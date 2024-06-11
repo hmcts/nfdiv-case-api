@@ -122,6 +122,8 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmails(List.of(getGeneralEmailsObject(APPLICANT)));
 
+        caseData.setPartyToEmail(APPLICANT);
+
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -168,6 +170,8 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmails(List.of(getGeneralEmailsObject(APPLICANT)));
 
+        caseData.setPartyToEmail(APPLICANT);
+
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -209,6 +213,8 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant2(applicant2);
 
         caseData.setGeneralEmails(List.of(getGeneralEmailsObject(RESPONDENT)));
+
+        caseData.setPartyToEmail(RESPONDENT);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -257,6 +263,8 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmails(List.of(getGeneralEmailsObject(RESPONDENT)));
 
+        caseData.setPartyToEmail(RESPONDENT);
+
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -298,6 +306,8 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
 
         caseData.setGeneralEmails(List.of(getGeneralEmailsObject(OTHER)));
+
+        caseData.setPartyToEmail(OTHER);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)

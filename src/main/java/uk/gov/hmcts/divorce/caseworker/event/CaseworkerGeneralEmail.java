@@ -184,6 +184,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         }
 
         // clear existing general email to avoid stale data being displayed in UI on next use of event.
+        caseData.setPartyToEmail(generalEmail.getGeneralEmailParties());
         caseData.setGeneralEmail(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -70,7 +70,13 @@ public class GeneralEmailNotification {
         Map<String, String> templateVars = templateVars(caseData, caseId);
         List<ListValue<Document>> documents = new ArrayList<>();
 
-        GeneralEmailDetails generalEmailDetails = firstElement(caseData.getGeneralEmails()).getValue();
+        GeneralEmailDetails generalEmailDetails;
+        if (isConfidentialEmail(caseData)) {
+            generalEmailDetails = firstElement(caseData.getConfidentialGeneralEmails()).getValue();
+        } else {
+            generalEmailDetails = firstElement(caseData.getGeneralEmails()).getValue();
+        }
+
         if (generalEmailDetails != null) {
 
             if (!CollectionUtils.isEmpty(generalEmailDetails.getGeneralEmailAttachmentLinks())) {
@@ -162,5 +168,15 @@ public class GeneralEmailNotification {
         } else {
             throw new NotificationClientException("No body retrieved for document resource: " + document.getUrl());
         }
+    }
+
+    private boolean isConfidentialEmail(CaseData caseData) {
+        if (APPLICANT.equals(caseData.getPartyToEmail())) {
+            return caseData.getApplicant1().isConfidentialContactDetails();
+        }
+        if (RESPONDENT.equals(caseData.getPartyToEmail())) {
+            return caseData.getApplicant2().isConfidentialContactDetails();
+        }
+        return false;
     }
 }
