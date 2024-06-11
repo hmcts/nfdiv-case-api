@@ -43,6 +43,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_AMEND_APPLICATION_TYPE = "caseworker-amend-application-type";
+    private static final Set<DissolveDivorce> DISSOLVE_DIVORCE_SET = Set.of(DissolveDivorce.DISSOLVE_DIVORCE);
+    private static final Set<EndCivilPartnership> END_CIVIL_PARTNERSHIP_SET = Set.of(EndCivilPartnership.END_CIVIL_PARTNERSHIP);
+    private static final Set<JudicialSeparation> JUDICIAL_SEPARATION_SET = Set.of(JudicialSeparation.JUDICIAL_SEPARATION);
+    private static final Set<Separation> SEPARATION_SET = Set.of(Separation.SEPARATION);
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
@@ -65,12 +69,8 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
 
         log.info("Caseworker Amend Application Type about to submit callback invoked for case id: {}", details.getId());
         CaseData caseData = details.getData();
-        ApplicantPrayer applicant1Prayer = caseData.getApplicant1().getApplicantPrayer();
-        ApplicantPrayer applicant2Prayer = caseData.getApplicant2().getApplicantPrayer();
-        Set<DissolveDivorce> dissolveDivorce = Set.of(DissolveDivorce.DISSOLVE_DIVORCE);
-        Set<EndCivilPartnership> endCivilPartnership = Set.of(EndCivilPartnership.END_CIVIL_PARTNERSHIP);
-        Set<JudicialSeparation> judicialSeparation = Set.of(JudicialSeparation.JUDICIAL_SEPARATION);
-        Set<Separation> separation = Set.of(Separation.SEPARATION);
+        ApplicantPrayer app1Prayer = caseData.getApplicant1().getApplicantPrayer();
+        ApplicantPrayer app2Prayer = caseData.getApplicant2().getApplicantPrayer();
 
         if (isNull(caseData.getDivorceOrDissolution())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -82,37 +82,37 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         if (caseData.isJudicialSeparationCase()) {
             if (caseData.isDivorce()) {
                 caseData.setSupplementaryCaseType(SEPARATION);
-                if (applicant1Prayer.getPrayerJudicialSeparation().equals(judicialSeparation)) {
-                    applicant1Prayer.setPrayerSeparation(separation);
+                if (app1Prayer.getPrayerJudicialSeparation().equals(JUDICIAL_SEPARATION_SET)) {
+                    app1Prayer.setPrayerSeparation(SEPARATION_SET);
                 }
-                if (applicant2Prayer.getPrayerJudicialSeparation().equals(judicialSeparation)) {
-                    applicant2Prayer.setPrayerSeparation(separation);
+                if (app2Prayer.getPrayerJudicialSeparation().equals(JUDICIAL_SEPARATION_SET)) {
+                    app2Prayer.setPrayerSeparation(SEPARATION_SET);
                 }
             } else {
                 caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-                if (applicant1Prayer.getPrayerSeparation().equals(separation)) {
-                    applicant1Prayer.setPrayerJudicialSeparation(judicialSeparation);
+                if (app1Prayer.getPrayerSeparation().equals(SEPARATION_SET)) {
+                    app1Prayer.setPrayerJudicialSeparation(JUDICIAL_SEPARATION_SET);
                 }
-                if (applicant2Prayer.getPrayerSeparation().equals(separation)) {
-                    applicant2Prayer.setPrayerJudicialSeparation(judicialSeparation);
+                if (app2Prayer.getPrayerSeparation().equals(SEPARATION_SET)) {
+                    app2Prayer.setPrayerJudicialSeparation(JUDICIAL_SEPARATION_SET);
                 }
             }
         } else {
             if (caseData.isDivorce()) {
                 caseData.setDivorceOrDissolution(DISSOLUTION);
-                if (applicant1Prayer.getPrayerDissolveDivorce().equals(dissolveDivorce)) {
-                    applicant1Prayer.setPrayerEndCivilPartnership(endCivilPartnership);
+                if (app1Prayer.getPrayerDissolveDivorce().equals(DISSOLVE_DIVORCE_SET)) {
+                    app1Prayer.setPrayerEndCivilPartnership(END_CIVIL_PARTNERSHIP_SET);
                 }
-                if (applicant2Prayer.getPrayerDissolveDivorce().equals(dissolveDivorce)) {
-                    applicant2Prayer.setPrayerEndCivilPartnership(endCivilPartnership);
+                if (app2Prayer.getPrayerDissolveDivorce().equals(DISSOLVE_DIVORCE_SET)) {
+                    app2Prayer.setPrayerEndCivilPartnership(END_CIVIL_PARTNERSHIP_SET);
                 }
             } else {
                 caseData.setDivorceOrDissolution(DIVORCE);
-                if (applicant1Prayer.getPrayerEndCivilPartnership().equals(endCivilPartnership)) {
-                    applicant1Prayer.setPrayerDissolveDivorce(dissolveDivorce);
+                if (app1Prayer.getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET)) {
+                    app1Prayer.setPrayerDissolveDivorce(DISSOLVE_DIVORCE_SET);
                 }
-                if (applicant2Prayer.getPrayerEndCivilPartnership().equals(endCivilPartnership)) {
-                    applicant2Prayer.setPrayerDissolveDivorce(dissolveDivorce);
+                if (app2Prayer.getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET)) {
+                    app2Prayer.setPrayerDissolveDivorce(DISSOLVE_DIVORCE_SET);
                 }
             }
         }
