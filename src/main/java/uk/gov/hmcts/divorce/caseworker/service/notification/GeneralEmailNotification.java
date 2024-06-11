@@ -1,14 +1,13 @@
 package uk.gov.hmcts.divorce.caseworker.service.notification;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
@@ -18,18 +17,16 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.ofNullable;
+import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -39,9 +36,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT_SOLICITOR;
-
-import static org.springframework.util.CollectionUtils.firstElement;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.service.notify.NotificationClient.prepareUpload;
 
 @Component
@@ -76,20 +70,17 @@ public class GeneralEmailNotification {
         Map<String, String> templateVars = templateVars(caseData, caseId);
         List<ListValue<Document>> documents = new ArrayList<>();
 
-        GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralEmails()))
-            .map(element -> element.getValue().getGeneralEmailParties())
-            .orElse(GeneralParties.OTHER);
+        GeneralEmailDetails generalEmailDetails = firstElement(caseData.getGeneralEmails()).getValue();
+        if (generalEmailDetails != null) {
 
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue = firstElement(caseData.getGeneralEmails());
-        if (generalEmailDetailsListValue != null) {
-            GeneralEmailDetails emailDetails = generalEmailDetailsListValue.getValue();
-
-            if (!CollectionUtils.isEmpty(emailDetails.getGeneralEmailAttachmentLinks())) {
-                documents.addAll(emailDetails.getGeneralEmailAttachmentLinks());
+            if (!CollectionUtils.isEmpty(generalEmailDetails.getGeneralEmailAttachmentLinks())) {
+                documents.addAll(generalEmailDetails.getGeneralEmailAttachmentLinks());
             }
 
-            templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, emailDetails.getGeneralEmailToOtherName());
-            templateVars.put(GENERAL_EMAIL_DETAILS, emailDetails.getGeneralEmailBody());
+            templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmailDetails.getGeneralEmailToOtherName());
+            templateVars.put(GENERAL_EMAIL_DETAILS, generalEmailDetails.getGeneralEmailBody());
+
+            GeneralParties parties = generalEmailDetails.getGeneralEmailParties();
 
             if (APPLICANT.equals(parties)) {
                 if (caseData.getApplicant1().isRepresented()) {
@@ -115,7 +106,7 @@ public class GeneralEmailNotification {
                 }
             } else {
                 log.info("Sending General Email Notification to other party for case id: {}", caseId);
-                emailTo = emailDetails.getGeneralEmailToOtherEmail();
+                emailTo = generalEmailDetails.getGeneralEmailToOtherEmail();
                 templateId = GENERAL_EMAIL_OTHER_PARTY;
             }
 
@@ -125,16 +116,14 @@ public class GeneralEmailNotification {
             int documentId = 0;
             for (ListValue<Document> document : documents) {
                 ++documentId;
-                //Get byte code for document
                 byte[] sotDocument = getDocumentBytes(document.getValue());
-                //Upload document to notify
-                templateVarsObj.put(String.format("sot%s",documentId), prepareUpload(sotDocument,"myfile.pdf"));
+                templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument, "myfile.pdf"));
             }
 
             if (null == emailTo) {
                 log.info("Email address is not available for template id {} and case {} ", templateId, caseId);
             } else {
-                notificationService.sendEmail(
+                notificationService.sendEmailWithAttachment(
                     emailTo,
                     templateId,
                     templateVarsObj,
@@ -160,21 +149,6 @@ public class GeneralEmailNotification {
         templateVars.put("sot10", "");
         return templateVars;
     }
-
-/*    private static JSONObject prepareUpload(byte[] documentContents) throws NotificationClientException {
-        if (documentContents.length > 2097152) {
-            throw new NotificationClientException("File is larger than 2MB");
-        } else {
-            byte[] fileContentAsByte = Base64.encodeBase64(documentContents);
-            String fileContent = new String(fileContentAsByte, StandardCharsets.ISO_8859_1);
-            JSONObject jsonFileObject = new JSONObject();
-            jsonFileObject.put("file", fileContent);
-            jsonFileObject.put("filename", JSONObject.NULL);
-            jsonFileObject.put("confirm_email_before_download", true);
-            jsonFileObject.put("retention_period", JSONObject.NULL);
-            return jsonFileObject;
-        }
-    }*/
 
     private byte[] getDocumentBytes(Document document) throws IOException, NotificationClientException {
         final String authToken = authTokenGenerator.generate();

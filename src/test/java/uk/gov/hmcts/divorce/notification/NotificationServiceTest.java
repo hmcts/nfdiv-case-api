@@ -168,4 +168,117 @@ class NotificationServiceTest {
             anyString(),
             eq(replyToId));
     }
+
+    @Test
+    void shouldInvokeNotificationClientToSendEmailWithAttachmentInEnglish() throws NotificationClientException {
+        String templateId = UUID.randomUUID().toString();
+
+        when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
+        when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
+
+        when(notificationClient.sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            any()
+        )).thenReturn(sendEmailResponse);
+
+        notificationService.sendEmailWithAttachment(
+            EMAIL_ADDRESS,
+            SAVE_SIGN_OUT,
+            null,
+            ENGLISH,
+            TEST_CASE_ID
+        );
+
+        verify(notificationClient).sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            eq(replyToId));
+
+        verify(sendEmailResponse).getReference();
+        verify(sendEmailResponse).getNotificationId();
+
+        verifyNoMoreInteractions(notificationClient, sendEmailResponse);
+    }
+
+    @Test
+    void shouldInvokeNotificationClientToSendEmailWithAttachmentInWelsh() throws NotificationClientException {
+        String templateId = UUID.randomUUID().toString();
+
+        when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
+        when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                WELSH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
+
+        when(notificationClient.sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            any()
+        )).thenReturn(sendEmailResponse);
+
+        notificationService.sendEmailWithAttachment(
+            EMAIL_ADDRESS,
+            SAVE_SIGN_OUT,
+            null,
+            WELSH,
+            TEST_CASE_ID
+        );
+
+        verify(notificationClient).sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            eq(replyToId));
+
+        verify(sendEmailResponse).getReference();
+        verify(sendEmailResponse).getNotificationId();
+
+        verifyNoMoreInteractions(notificationClient, sendEmailResponse);
+    }
+
+    @Test
+    void shouldThrowNotificationExceptionWhenClientFailsToSendEmailWithAttachment()
+        throws NotificationClientException {
+        String templateId = UUID.randomUUID().toString();
+
+        doThrow(new NotificationClientException("some message"))
+            .when(notificationClient).sendEmail(anyString(), anyString(), eq(null), anyString(), any());
+
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
+
+        assertThatThrownBy(() -> notificationService.sendEmailWithAttachment(
+                EMAIL_ADDRESS,
+                SAVE_SIGN_OUT,
+                null,
+                ENGLISH,
+                TEST_CASE_ID
+            )
+        )
+            .isInstanceOf(NotificationException.class)
+            .hasMessageContaining("some message");
+
+
+        verify(notificationClient).sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            eq(replyToId));
+    }
 }

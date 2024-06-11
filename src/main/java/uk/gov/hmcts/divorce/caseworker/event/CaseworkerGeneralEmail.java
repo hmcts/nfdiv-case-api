@@ -13,7 +13,13 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -115,9 +121,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 .build();
         }
 
-        if (caseData.getGeneralEmail().getGeneralEmailAttachments().size() > MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS) {
+        if (caseData.getGeneralEmail().getGeneralEmailAttachments() != null
+            && caseData.getGeneralEmail().getGeneralEmailAttachments().size() > MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(String.format("Number of attachments on General Email cannot exceed %s",MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS)))
+                .errors(singletonList(String.format("Number of attachments on General Email cannot exceed %s",
+                    MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS)))
                 .build();
         }
 

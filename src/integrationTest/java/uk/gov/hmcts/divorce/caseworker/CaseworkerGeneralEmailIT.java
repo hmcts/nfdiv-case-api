@@ -13,25 +13,23 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.CASEWORKER_CREATE_GENERAL_EMAIL;
@@ -55,20 +53,20 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -118,59 +116,35 @@ public class CaseworkerGeneralEmailIT {
         final var caseData = caseData();
         final var applicant1 = getApplicant();
         caseData.setApplicant1(applicant1);
-        caseData.setGeneralEmail(GeneralEmail
-            .builder()
-            .generalEmailDetails("some details")
-            .generalEmailParties(APPLICANT)
-            .build()
-        );
 
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(APPLICANT)));
+
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
                         caseData,
                         CASEWORKER_CREATE_GENERAL_EMAIL)))
                 .accept(APPLICATION_JSON))
-            .andDo(print())
             .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .inPath("$.data.generalEmails")
-            .isArray()
-            .containsExactly(
-                json(
-                    "{\n"
-                        + "            \"id\":\"${json-unit.ignore}\",\n"
-                        + "            \"value\":{\n"
-                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
-                        + "               \"generalEmailParties\":\"applicant\",\n"
-                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
-                        + "               \"generalEmailBody\":\"some details\"\n"
-                        + "            }\n"
-                        + "         }"
-                )
-            );
+                status().isOk());
 
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
+        templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, "null null");
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
-        verify(notificationService).sendEmail(
+        Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
+
+        verify(notificationService).sendEmailWithAttachment(
             TEST_USER_EMAIL,
             GENERAL_EMAIL_PETITIONER,
-            templateVars,
+            templateVarsObj,
             ENGLISH,
             TEST_CASE_ID
         );
@@ -189,16 +163,11 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant1(applicant1);
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
 
-        caseData.setGeneralEmail(GeneralEmail
-            .builder()
-            .generalEmailDetails("some details")
-            .generalEmailParties(APPLICANT)
-            .build()
-        );
+        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(APPLICANT)));
 
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
@@ -206,31 +175,10 @@ public class CaseworkerGeneralEmailIT {
                         CASEWORKER_CREATE_GENERAL_EMAIL)))
                 .accept(APPLICATION_JSON))
             .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .inPath("$.data.generalEmails")
-            .isArray()
-            .containsExactly(
-                json(
-                    "{\n"
-                        + "            \"id\":\"${json-unit.ignore}\",\n"
-                        + "            \"value\":{\n"
-                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
-                        + "               \"generalEmailParties\":\"applicant\",\n"
-                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
-                        + "               \"generalEmailBody\":\"some details\"\n"
-                        + "            }\n"
-                        + "         }"
-                )
-            );
+                status().isOk());
 
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
+        templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -238,10 +186,12 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
-        verify(notificationService).sendEmail(
+        Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
+
+        verify(notificationService).sendEmailWithAttachment(
             TEST_SOLICITOR_EMAIL,
             GENERAL_EMAIL_PETITIONER_SOLICITOR,
-            templateVars,
+            templateVarsObj,
             ENGLISH,
             TEST_CASE_ID
         );
@@ -255,16 +205,11 @@ public class CaseworkerGeneralEmailIT {
         final var applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
 
-        caseData.setGeneralEmail(GeneralEmail
-            .builder()
-            .generalEmailDetails("some details")
-            .generalEmailParties(RESPONDENT)
-            .build()
-        );
+        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(RESPONDENT)));
 
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
@@ -272,41 +217,22 @@ public class CaseworkerGeneralEmailIT {
                         CASEWORKER_CREATE_GENERAL_EMAIL)))
                 .accept(APPLICATION_JSON))
             .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .inPath("$.data.generalEmails")
-            .isArray()
-            .containsExactly(
-                json(
-                    "{\n"
-                        + "            \"id\":\"${json-unit.ignore}\",\n"
-                        + "            \"value\":{\n"
-                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
-                        + "               \"generalEmailParties\":\"respondent\",\n"
-                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
-                        + "               \"generalEmailBody\":\"some details\"\n"
-                        + "            }\n"
-                        + "         }"
-                )
-            );
+                status().isOk());
 
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
+        templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
-        verify(notificationService).sendEmail(
+        Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
+
+        verify(notificationService).sendEmailWithAttachment(
             TEST_USER_EMAIL,
             GENERAL_EMAIL_RESPONDENT,
-            templateVars,
+            templateVarsObj,
             ENGLISH,
             TEST_CASE_ID
         );
@@ -326,16 +252,11 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant2(applicant2);
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).build());
 
-        caseData.setGeneralEmail(GeneralEmail
-            .builder()
-            .generalEmailDetails("some details")
-            .generalEmailParties(RESPONDENT)
-            .build()
-        );
+        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(RESPONDENT)));
 
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
@@ -343,31 +264,10 @@ public class CaseworkerGeneralEmailIT {
                         CASEWORKER_CREATE_GENERAL_EMAIL)))
                 .accept(APPLICATION_JSON))
             .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .inPath("$.data.generalEmails")
-            .isArray()
-            .containsExactly(
-                json(
-                    "{\n"
-                        + "            \"id\":\"${json-unit.ignore}\",\n"
-                        + "            \"value\":{\n"
-                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
-                        + "               \"generalEmailParties\":\"respondent\",\n"
-                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
-                        + "               \"generalEmailBody\":\"some details\"\n"
-                        + "            }\n"
-                        + "         }"
-                )
-            );
+                status().isOk());
 
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
+        templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -375,10 +275,12 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
-        verify(notificationService).sendEmail(
+        Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
+
+        verify(notificationService).sendEmailWithAttachment(
             TEST_SOLICITOR_EMAIL,
             GENERAL_EMAIL_RESPONDENT_SOLICITOR,
-            templateVars,
+            templateVarsObj,
             ENGLISH,
             TEST_CASE_ID
         );
@@ -392,18 +294,11 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).build());
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
 
-        caseData.setGeneralEmail(GeneralEmail
-            .builder()
-            .generalEmailDetails("some details")
-            .generalEmailOtherRecipientEmail(TEST_USER_EMAIL)
-            .generalEmailOtherRecipientName("otherparty")
-            .generalEmailParties(OTHER)
-            .build()
-        );
+        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(OTHER)));
 
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
@@ -411,43 +306,74 @@ public class CaseworkerGeneralEmailIT {
                         CASEWORKER_CREATE_GENERAL_EMAIL)))
                 .accept(APPLICATION_JSON))
             .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .inPath("$.data.generalEmails")
-            .isArray()
-            .containsExactly(
-                json(
-                    "{\n"
-                        + "            \"id\":\"${json-unit.ignore}\",\n"
-                        + "            \"value\":{\n"
-                        + "               \"generalEmailDateTime\":\"${json-unit.ignore}\",\n"
-                        + "               \"generalEmailParties\":\"other\",\n"
-                        + "               \"generalEmailCreatedBy\":\"forename Surname\",\n"
-                        + "               \"generalEmailBody\":\"some details\"\n"
-                        + "            }\n"
-                        + "         }"
-                )
-            );
+                status().isOk());
 
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
+        templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, "otherparty");
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
 
-        verify(notificationService).sendEmail(
+        Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
+
+        verify(notificationService).sendEmailWithAttachment(
             TEST_USER_EMAIL,
             GENERAL_EMAIL_OTHER_PARTY,
-            templateVars,
+            templateVarsObj,
             ENGLISH,
             TEST_CASE_ID
         );
+    }
+
+    ListValue<GeneralEmailDetails> getGeneralEmailsObject(GeneralParties party) {
+        GeneralEmailDetails generalEmailDetails;
+
+        if(OTHER == party) {
+            generalEmailDetails = GeneralEmailDetails
+                .builder()
+                .generalEmailDateTime(LOCAL_DATE_TIME)
+                .generalEmailParties(party)
+                .generalEmailCreatedBy("Test User")
+                .generalEmailBody("Test Body")
+                .generalEmailToOtherEmail(TEST_USER_EMAIL)
+                .generalEmailToOtherName("otherparty")
+                .build();
+        } else {
+            generalEmailDetails = GeneralEmailDetails
+                .builder()
+                .generalEmailDateTime(LOCAL_DATE_TIME)
+                .generalEmailParties(party)
+                .generalEmailCreatedBy("Test User")
+                .generalEmailBody("Test Body")
+                .build();
+        }
+
+        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
+            ListValue
+                .<GeneralEmailDetails>builder()
+                .id(UUID.randomUUID().toString())
+                .value(generalEmailDetails)
+                .build();
+
+        return generalEmailDetailsListValue;
+    }
+
+    Map<String, Object> populateAttachmentVars(Map<String, String> templateVars) {
+        templateVars.put("sot1", "");
+        templateVars.put("sot2", "");
+        templateVars.put("sot3", "");
+        templateVars.put("sot4", "");
+        templateVars.put("sot5", "");
+        templateVars.put("sot6", "");
+        templateVars.put("sot7", "");
+        templateVars.put("sot8", "");
+        templateVars.put("sot9", "");
+        templateVars.put("sot10", "");
+
+        Map<String, Object> templateVarsObj = new HashMap<>(templateVars);
+
+        return templateVarsObj;
     }
 }

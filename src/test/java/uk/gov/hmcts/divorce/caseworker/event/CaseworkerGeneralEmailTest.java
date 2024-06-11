@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -20,16 +21,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -39,6 +45,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.CASEWORKER_CREATE_GENERAL_EMAIL;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
@@ -85,7 +92,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldSetGeneralEmailDetailsAndSendEmailNotificationWhenExistingGeneralEmailsIsNull() {
+    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() throws Exception {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -119,12 +126,10 @@ public class CaseworkerGeneralEmailTest {
             .extracting("value")
             .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
             .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
-
-        verify(generalEmailNotification).send(caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldAddToTopOfExistingGeneralEmailsAndSendEmailNotificationWhenThereIsExistingGeneralEmail() {
+    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() throws Exception {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -178,13 +183,11 @@ public class CaseworkerGeneralEmailTest {
                 tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details 2"),
                 tuple(getExpectedLocalDateTime(), RESPONDENT, "forename lastname", "some details 1")
             );
-
-        verify(generalEmailNotification).send(caseData, TEST_CASE_ID);
     }
 
 
     @Test
-    void shouldSetConfidentialGeneralEmailDetails() {
+    void shouldSetConfidentialGeneralEmailDetails() throws Exception {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -221,8 +224,6 @@ public class CaseworkerGeneralEmailTest {
             .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
 
         assertNull(response.getData().getGeneralEmails());
-
-        verify(generalEmailNotification).send(caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -461,5 +462,98 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
         assertThat(response.getErrors()).isEqualTo(null);
+    }
+
+    @Test
+    void shouldReturnErrorIfDocumentLinkNotProvidedGeneralEmailAttachments() {
+        ListValue<DivorceDocument> generalEmailAttachment = new ListValue<>(
+            "1",
+            DivorceDocument
+                .builder()
+                .build()
+        );
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(singletonList(generalEmailAttachment))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains("Please ensure all General Email attachments have been uploaded before continuing");
+    }
+
+    @Test
+    void shouldReturnErrorIfAttachmentsExceedMaxAllowed() {
+
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListofDocument(11))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(String.format(
+            "Number of attachments on General Email cannot exceed %s",MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS));
+    }
+
+    @Test
+    void shouldSendEmailWhenEventSubmitted() throws Exception {
+
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListofDocument(2))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        SubmittedCallbackResponse response = generalEmail.submitted(details, details);
+
+        verify(generalEmailNotification).send(caseData,TEST_CASE_ID);
+    }
+
+    List<ListValue<DivorceDocument>> getListofDocument(int size) {
+        List<ListValue<DivorceDocument>> docList = new ArrayList<>();
+        while (size > 0) {
+            ListValue<DivorceDocument> generalEmailAttachment = new ListValue<>(
+                String.valueOf(size),
+                DivorceDocument
+                    .builder()
+                    .documentLink(Document.builder().build())
+                    .build()
+            );
+            docList.add(generalEmailAttachment);
+            size--;
+        }
+        return docList;
     }
 }

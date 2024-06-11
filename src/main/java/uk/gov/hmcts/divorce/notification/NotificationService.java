@@ -33,7 +33,47 @@ public class NotificationService {
     public void sendEmail(
         String destinationAddress,
         EmailTemplateName template,
-        Map<String, ?> templateVars,
+        Map<String, String> templateVars,
+        LanguagePreference languagePreference,
+        Long caseId
+    ) {
+        String referenceId = String.format("%s-%s", caseId,  UUID.randomUUID());
+
+        try {
+            String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
+
+            log.info("Sending email for reference id : {} using template : {}", referenceId, templateId);
+
+            SendEmailResponse sendEmailResponse =
+                notificationClient.sendEmail(
+                    templateId,
+                    destinationAddress,
+                    templateVars,
+                    referenceId,
+                    replyToId
+                );
+
+            log.info("Successfully sent email with notification id {} and reference {}",
+                sendEmailResponse.getNotificationId(),
+                sendEmailResponse.getReference().orElse(referenceId)
+            );
+
+        } catch (NotificationClientException notificationClientException) {
+            log.error("Failed to send email. Reference ID: {}. Reason: {}",
+                referenceId,
+                notificationClientException.getMessage(),
+                notificationClientException
+            );
+            final String message = notificationClientException.getMessage()
+                + format(" Exception for Case ID: %s", caseId);
+            throw new NotificationException(message, notificationClientException);
+        }
+    }
+
+    public void sendEmailWithAttachment(
+        String destinationAddress,
+        EmailTemplateName template,
+        Map<String, Object> templateVars,
         LanguagePreference languagePreference,
         Long caseId
     ) {
