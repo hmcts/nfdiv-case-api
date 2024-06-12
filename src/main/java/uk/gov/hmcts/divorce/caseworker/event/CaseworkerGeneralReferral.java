@@ -18,6 +18,7 @@ import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -71,9 +72,15 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
         final CaseData caseData = details.getData();
 
-        State endState = caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
-            ? AwaitingGeneralReferralPayment
-            : AwaitingGeneralConsideration;
+        var isExpeditedCase = details.getState().equals(ExpeditedCase);
+
+        State endState;
+        if (caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()) {
+            endState = AwaitingGeneralReferralPayment;
+        } else {
+            if (isExpeditedCase) endState = ExpeditedCase;
+            else endState = AwaitingGeneralConsideration;
+        }
 
         caseData.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
 

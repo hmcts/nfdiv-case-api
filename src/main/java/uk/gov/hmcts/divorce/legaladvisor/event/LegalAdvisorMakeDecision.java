@@ -36,6 +36,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -148,7 +151,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         if (conditionalOrder.hasConditionalOrderBeenGranted()) {
             log.info("Legal advisor conditional order granted for case id: {}", details.getId());
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
-            endState = AwaitingPronouncement;
+            endState = details.getState().equals(ExpeditedCase) ? details.getState() : AwaitingPronouncement;
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
             generateAndSetConditionalOrderRefusedDocument(
