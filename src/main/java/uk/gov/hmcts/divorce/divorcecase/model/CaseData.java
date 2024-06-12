@@ -142,12 +142,6 @@ public class CaseData {
     @CCD(access = {SystemUpdateAndSuperUserAccess.class})
     private GeneralEmail generalEmail = new GeneralEmail();
 
-    @CCD(
-        label = "Email addressed to?",
-        access = {DefaultAccess.class}
-    )
-    private GeneralParties partyToEmail;
-
     @JsonUnwrapped
     @Builder.Default
     private GeneralLetter generalLetter = new GeneralLetter();

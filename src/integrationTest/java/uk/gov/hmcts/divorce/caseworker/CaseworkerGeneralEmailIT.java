@@ -13,21 +13,18 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,7 +66,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -120,9 +116,7 @@ public class CaseworkerGeneralEmailIT {
         final var applicant1 = getApplicant();
         caseData.setApplicant1(applicant1);
 
-        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(APPLICANT)));
-
-        caseData.setPartyToEmail(APPLICANT);
+        caseData.setGeneralEmail(getGeneralEmailObject(APPLICANT));
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -168,9 +162,7 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant1(applicant1);
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
 
-        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(APPLICANT)));
-
-        caseData.setPartyToEmail(APPLICANT);
+        caseData.setGeneralEmail(getGeneralEmailObject(APPLICANT));
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -212,9 +204,7 @@ public class CaseworkerGeneralEmailIT {
         final var applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
 
-        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(RESPONDENT)));
-
-        caseData.setPartyToEmail(RESPONDENT);
+        caseData.setGeneralEmail(getGeneralEmailObject(RESPONDENT));
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -261,9 +251,7 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant2(applicant2);
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).build());
 
-        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(RESPONDENT)));
-
-        caseData.setPartyToEmail(RESPONDENT);
+        caseData.setGeneralEmail(getGeneralEmailObject(RESPONDENT));
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -305,9 +293,7 @@ public class CaseworkerGeneralEmailIT {
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).build());
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
 
-        caseData.setGeneralEmails(List.of(getGeneralEmailsObject(OTHER)));
-
-        caseData.setPartyToEmail(OTHER);
+        caseData.setGeneralEmail(getGeneralEmailObject(OTHER));
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -340,37 +326,26 @@ public class CaseworkerGeneralEmailIT {
         );
     }
 
-    ListValue<GeneralEmailDetails> getGeneralEmailsObject(GeneralParties party) {
-        GeneralEmailDetails generalEmailDetails;
+    GeneralEmail getGeneralEmailObject(GeneralParties party) {
+        GeneralEmail generalEmail;
 
         if (OTHER == party) {
-            generalEmailDetails = GeneralEmailDetails
+            generalEmail = GeneralEmail
                 .builder()
-                .generalEmailDateTime(LOCAL_DATE_TIME)
+                .generalEmailDetails("Test Body")
                 .generalEmailParties(party)
-                .generalEmailCreatedBy("Test User")
-                .generalEmailBody("Test Body")
-                .generalEmailToOtherEmail(TEST_USER_EMAIL)
-                .generalEmailToOtherName("otherparty")
+                .generalEmailOtherRecipientName("otherparty")
+                .generalEmailOtherRecipientEmail(TEST_USER_EMAIL)
                 .build();
         } else {
-            generalEmailDetails = GeneralEmailDetails
+            generalEmail = GeneralEmail
                 .builder()
-                .generalEmailDateTime(LOCAL_DATE_TIME)
+                .generalEmailDetails("Test Body")
                 .generalEmailParties(party)
-                .generalEmailCreatedBy("Test User")
-                .generalEmailBody("Test Body")
                 .build();
         }
 
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        return generalEmailDetailsListValue;
+        return generalEmail;
     }
 
     Map<String, Object> populateAttachmentVars(Map<String, String> templateVars) {

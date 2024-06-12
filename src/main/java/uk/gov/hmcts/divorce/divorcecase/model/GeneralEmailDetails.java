@@ -48,16 +48,4 @@ public class GeneralEmailDetails {
 
     @CCD(label = "Attachments")
     private List<ListValue<Document>> generalEmailAttachmentLinks;
-
-    @CCD(
-        label = "To other - Name",
-        showCondition = "generalEmailBody = \"\""
-    )
-    private String generalEmailToOtherName;
-
-    @CCD(
-        label = "To other - Email",
-        showCondition = "generalEmailBody = \"\""
-    )
-    private String generalEmailToOtherEmail;
 }

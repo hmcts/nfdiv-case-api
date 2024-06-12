@@ -10,7 +10,7 @@ import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -22,11 +22,12 @@ import uk.gov.service.notify.NotificationClientException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.util.CollectionUtils.firstElement;
+import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -70,23 +71,22 @@ public class GeneralEmailNotification {
         Map<String, String> templateVars = templateVars(caseData, caseId);
         List<ListValue<Document>> documents = new ArrayList<>();
 
-        GeneralEmailDetails generalEmailDetails;
-        if (isConfidentialEmail(caseData)) {
-            generalEmailDetails = firstElement(caseData.getConfidentialGeneralEmails()).getValue();
-        } else {
-            generalEmailDetails = firstElement(caseData.getGeneralEmails()).getValue();
-        }
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        if (generalEmailDetails != null) {
-
-            if (!CollectionUtils.isEmpty(generalEmailDetails.getGeneralEmailAttachmentLinks())) {
-                documents.addAll(generalEmailDetails.getGeneralEmailAttachmentLinks());
+        if (generalEmail != null) {
+            if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
+                documents = ofNullable(generalEmail.getGeneralEmailAttachments())
+                    .flatMap(Collection::stream)
+                    .map(divorceDocument -> ListValue.<Document>builder()
+                        .id(divorceDocument.getId())
+                        .value(divorceDocument.getValue().getDocumentLink()).build())
+                    .toList();
             }
 
-            templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmailDetails.getGeneralEmailToOtherName());
-            templateVars.put(GENERAL_EMAIL_DETAILS, generalEmailDetails.getGeneralEmailBody());
+            templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmail.getGeneralEmailOtherRecipientName());
+            templateVars.put(GENERAL_EMAIL_DETAILS, generalEmail.getGeneralEmailDetails());
 
-            GeneralParties parties = generalEmailDetails.getGeneralEmailParties();
+            GeneralParties parties = generalEmail.getGeneralEmailParties();
 
             if (APPLICANT.equals(parties)) {
                 if (caseData.getApplicant1().isRepresented()) {
@@ -112,7 +112,7 @@ public class GeneralEmailNotification {
                 }
             } else {
                 log.info("Sending General Email Notification to other party for case id: {}", caseId);
-                emailTo = generalEmailDetails.getGeneralEmailToOtherEmail();
+                emailTo = generalEmail.getGeneralEmailOtherRecipientEmail();
                 templateId = GENERAL_EMAIL_OTHER_PARTY;
             }
 
@@ -123,7 +123,7 @@ public class GeneralEmailNotification {
             for (ListValue<Document> document : documents) {
                 ++documentId;
                 byte[] sotDocument = getDocumentBytes(document.getValue());
-                templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument, "myfile.pdf"));
+                templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
             }
 
             if (null == emailTo) {
@@ -171,10 +171,10 @@ public class GeneralEmailNotification {
     }
 
     private boolean isConfidentialEmail(CaseData caseData) {
-        if (APPLICANT.equals(caseData.getPartyToEmail())) {
+        if (APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
             return caseData.getApplicant1().isConfidentialContactDetails();
         }
-        if (RESPONDENT.equals(caseData.getPartyToEmail())) {
+        if (RESPONDENT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
             return caseData.getApplicant2().isConfidentialContactDetails();
         }
         return false;

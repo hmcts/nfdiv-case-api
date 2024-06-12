@@ -104,6 +104,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
         CaseData caseData = details.getData();
 
+        //Setting generalEmail to null to ensure stale data is not present when event is launched next
         caseData.setGeneralEmail(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -169,8 +170,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .generalEmailCreatedBy(userDetails.getName())
             .generalEmailBody(generalEmail.getGeneralEmailDetails())
             .generalEmailAttachmentLinks(attachments)
-            .generalEmailToOtherName(generalEmail.getGeneralEmailOtherRecipientName())
-            .generalEmailToOtherEmail(generalEmail.getGeneralEmailOtherRecipientEmail())
             .build();
 
         ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
@@ -194,12 +193,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 caseData.getGeneralEmails().add(0, generalEmailDetailsListValue);
             }
         }
-
-        // Need to store the party email being sent to. This is required in notification class
-        //to know if general email need to fetched from ConfidentialGeneralEmails or not
-        //GeneralEmail is set to null to ensure no stale data in UI
-        caseData.setPartyToEmail(generalEmail.getGeneralEmailParties());
-        //caseData.setGeneralEmail(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

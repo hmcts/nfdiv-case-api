@@ -7,13 +7,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -54,7 +54,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -95,24 +94,12 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(APPLICANT);
-
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(APPLICANT)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -137,24 +124,12 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(RESPONDENT);
-
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(RESPONDENT)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -180,24 +155,12 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(RESPONDENT);
-
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(RESPONDENT)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -219,24 +182,12 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(APPLICANT);
-
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(APPLICANT)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -264,24 +215,12 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(RESPONDENT);
-
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(RESPONDENT)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -304,26 +243,14 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(OTHER);
-
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(OTHER)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .generalEmailToOtherEmail(TEST_USER_EMAIL)
-            .generalEmailToOtherName("Other User")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .generalEmailOtherRecipientEmail(TEST_USER_EMAIL)
+            .generalEmailOtherRecipientName("Other User")
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -357,35 +284,20 @@ public class GeneralEmailNotificationTest {
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
-        caseData.setPartyToEmail(APPLICANT);
-
-        List<ListValue<Document>> attachments = ofNullable(documentWithType(DocumentType.APPLICATION))
-            .map(divorceDocument -> ListValue.<Document>builder()
-                .id(divorceDocument.getId())
-                .value(divorceDocument.getValue().getDocumentLink()).build())
+        List<ListValue<DivorceDocument>> attachments = ofNullable(documentWithType(DocumentType.APPLICATION))
             .toList();
 
         given(documentManagementClient
-            .downloadBinary(SYSTEM_UPDATE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, attachments.get(0).getValue()))
+            .downloadBinary(SYSTEM_UPDATE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, attachments.get(0).getValue().getDocumentLink()))
             .willReturn(ResponseEntity.ok(resource));
 
-        var generalEmailDetails = GeneralEmailDetails
+        caseData.setGeneralEmail(GeneralEmail
             .builder()
-            .generalEmailDateTime(LOCAL_DATE_TIME)
+            .generalEmailDetails("some details")
             .generalEmailParties(APPLICANT)
-            .generalEmailCreatedBy("Test User")
-            .generalEmailBody("Test Body")
-            .generalEmailAttachmentLinks(attachments)
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(List.of(generalEmailDetailsListValue));
+            .generalEmailAttachments(attachments)
+            .build()
+        );
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
@@ -394,7 +306,7 @@ public class GeneralEmailNotificationTest {
         verify(documentManagementClient).downloadBinary(
             SYSTEM_UPDATE_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
-            attachments.get(0).getValue()
+            attachments.get(0).getValue().getDocumentLink()
         );
 
         verify(authTokenGenerator).generate();
