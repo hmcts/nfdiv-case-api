@@ -140,7 +140,7 @@ public class CaseworkerGeneralEmailIT {
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
             GENERAL_EMAIL_PETITIONER,
             templateVarsObj,
@@ -187,7 +187,7 @@ public class CaseworkerGeneralEmailIT {
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             GENERAL_EMAIL_PETITIONER_SOLICITOR,
             templateVarsObj,
@@ -228,7 +228,7 @@ public class CaseworkerGeneralEmailIT {
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
             GENERAL_EMAIL_RESPONDENT,
             templateVarsObj,
@@ -276,7 +276,7 @@ public class CaseworkerGeneralEmailIT {
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             GENERAL_EMAIL_RESPONDENT_SOLICITOR,
             templateVarsObj,
@@ -317,7 +317,7 @@ public class CaseworkerGeneralEmailIT {
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
             GENERAL_EMAIL_OTHER_PARTY,
             templateVarsObj,

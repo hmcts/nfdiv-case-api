@@ -103,7 +103,7 @@ public class GeneralEmailNotificationTest {
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_PETITIONER),
             anyMap(),
@@ -133,7 +133,7 @@ public class GeneralEmailNotificationTest {
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_RESPONDENT),
             anyMap(),
@@ -191,7 +191,7 @@ public class GeneralEmailNotificationTest {
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(GENERAL_EMAIL_PETITIONER_SOLICITOR),
             anyMap(),
@@ -224,7 +224,7 @@ public class GeneralEmailNotificationTest {
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
             eq(GENERAL_EMAIL_RESPONDENT_SOLICITOR),
             anyMap(),
@@ -254,7 +254,7 @@ public class GeneralEmailNotificationTest {
 
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_OTHER_PARTY),
             anyMap(),
@@ -310,7 +310,7 @@ public class GeneralEmailNotificationTest {
         );
 
         verify(authTokenGenerator).generate();
-        verify(notificationService).sendEmailWithAttachment(
+        verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(GENERAL_EMAIL_PETITIONER),
             anyMap(),
