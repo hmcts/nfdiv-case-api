@@ -84,6 +84,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .description("Create general email")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
@@ -97,6 +98,17 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .mandatory(GeneralEmail::getGeneralEmailDetails)
             .optional(GeneralEmail::getGeneralEmailAttachments)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
+        CaseData caseData = details.getData();
+
+        caseData.setGeneralEmail(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
@@ -187,7 +199,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         //to know if general email need to fetched from ConfidentialGeneralEmails or not
         //GeneralEmail is set to null to ensure no stale data in UI
         caseData.setPartyToEmail(generalEmail.getGeneralEmailParties());
-        caseData.setGeneralEmail(null);
+        //caseData.setGeneralEmail(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
