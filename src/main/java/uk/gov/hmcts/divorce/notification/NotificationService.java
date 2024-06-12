@@ -12,6 +12,7 @@ import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.SendEmailResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,37 +38,8 @@ public class NotificationService {
         LanguagePreference languagePreference,
         Long caseId
     ) {
-        String referenceId = String.format("%s-%s", caseId,  UUID.randomUUID());
-
-        try {
-            String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
-
-            log.info("Sending email for reference id : {} using template : {}", referenceId, templateId);
-
-            SendEmailResponse sendEmailResponse =
-                notificationClient.sendEmail(
-                    templateId,
-                    destinationAddress,
-                    templateVars,
-                    referenceId,
-                    replyToId
-                );
-
-            log.info("Successfully sent email with notification id {} and reference {}",
-                sendEmailResponse.getNotificationId(),
-                sendEmailResponse.getReference().orElse(referenceId)
-            );
-
-        } catch (NotificationClientException notificationClientException) {
-            log.error("Failed to send email. Reference ID: {}. Reason: {}",
-                referenceId,
-                notificationClientException.getMessage(),
-                notificationClientException
-            );
-            final String message = notificationClientException.getMessage()
-                + format(" Exception for Case ID: %s", caseId);
-            throw new NotificationException(message, notificationClientException);
-        }
+        Map<String, Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
+        sendEmailWithAttachment(destinationAddress, template, templateVarsObj, languagePreference, caseId);
     }
 
     public void sendEmailWithAttachment(

@@ -183,7 +183,9 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             }
         }
 
-        // clear existing general email to avoid stale data being displayed in UI on next use of event.
+        // Need to store the party email being sent to. This is required in notification class
+        //to know if general email need to fetched from ConfidentialGeneralEmails or not
+        //GeneralEmail is set to null to ensure no stale data in UI
         caseData.setPartyToEmail(generalEmail.getGeneralEmailParties());
         caseData.setGeneralEmail(null);
 
