@@ -73,78 +73,82 @@ public class GeneralEmailNotification {
 
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        templateVars.put(DOCUMENTS_AVAILABLE,"no");
+        if(generalEmail == null) {
+            return;
+        }
+        if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
 
-        if (generalEmail != null) {
-            if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
+            templateVars.put(DOCUMENTS_AVAILABLE,"yes");
 
-                templateVars.put(DOCUMENTS_AVAILABLE,"yes");
+            documents = ofNullable(generalEmail.getGeneralEmailAttachments())
+                .flatMap(Collection::stream)
+                .map(divorceDocument -> ListValue.<Document>builder()
+                    .id(divorceDocument.getId())
+                    .value(divorceDocument.getValue().getDocumentLink()).build())
+                .toList();
+        }
 
-                documents = ofNullable(generalEmail.getGeneralEmailAttachments())
-                    .flatMap(Collection::stream)
-                    .map(divorceDocument -> ListValue.<Document>builder()
-                        .id(divorceDocument.getId())
-                        .value(divorceDocument.getValue().getDocumentLink()).build())
-                    .toList();
-            }
+        templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmail.getGeneralEmailOtherRecipientName());
+        templateVars.put(GENERAL_EMAIL_DETAILS, generalEmail.getGeneralEmailDetails());
 
-            templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmail.getGeneralEmailOtherRecipientName());
-            templateVars.put(GENERAL_EMAIL_DETAILS, generalEmail.getGeneralEmailDetails());
+        GeneralParties parties = generalEmail.getGeneralEmailParties();
 
-            GeneralParties parties = generalEmail.getGeneralEmailParties();
-
-            if (APPLICANT.equals(parties)) {
-                if (caseData.getApplicant1().isRepresented()) {
-                    log.info("Sending General Email Notification to petitioner solicitor for case id: {}", caseId);
-                    emailTo = caseData.getApplicant1().getSolicitor().getEmail();
-                    templateId = GENERAL_EMAIL_PETITIONER_SOLICITOR;
-                    templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-                } else {
-                    log.info("Sending General Email Notification to petitioner for case id: {}", caseId);
-                    emailTo = caseData.getApplicant1().getEmail();
-                    templateId = GENERAL_EMAIL_PETITIONER;
-                }
-            } else if (RESPONDENT.equals(parties)) {
-                if (caseData.getApplicant2().isRepresented()) {
-                    log.info("Sending General Email Notification to respondent solicitor for case id: {}", caseId);
-                    emailTo = caseData.getApplicant2().getSolicitor().getEmail();
-                    templateId = GENERAL_EMAIL_RESPONDENT_SOLICITOR;
-                    templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-                } else {
-                    log.info("Sending General Email Notification to respondent for case id: {}", caseId);
-                    emailTo = caseData.getApplicant2().getEmail();
-                    templateId = GENERAL_EMAIL_RESPONDENT;
-                }
+        if (APPLICANT.equals(parties)) {
+            if (caseData.getApplicant1().isRepresented()) {
+                log.info("Sending General Email Notification to petitioner solicitor for case id: {}", caseId);
+                emailTo = caseData.getApplicant1().getSolicitor().getEmail();
+                templateId = GENERAL_EMAIL_PETITIONER_SOLICITOR;
+                templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
             } else {
-                log.info("Sending General Email Notification to other party for case id: {}", caseId);
-                emailTo = generalEmail.getGeneralEmailOtherRecipientEmail();
-                templateId = GENERAL_EMAIL_OTHER_PARTY;
+                log.info("Sending General Email Notification to petitioner for case id: {}", caseId);
+                emailTo = caseData.getApplicant1().getEmail();
+                templateId = GENERAL_EMAIL_PETITIONER;
             }
-
-            //Code to add attachment personalisation to templateVars
-            Map<String, Object> templateVarsObj = new HashMap<>(templateVars);
-            int documentId = 0;
-            for (ListValue<Document> document : documents) {
-                ++documentId;
-                byte[] sotDocument = getDocumentBytes(document.getValue());
-                templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
-            }
-
-            if (null == emailTo) {
-                log.info("Email address is not available for template id {} and case {} ", templateId, caseId);
+        } else if (RESPONDENT.equals(parties)) {
+            if (caseData.getApplicant2().isRepresented()) {
+                log.info("Sending General Email Notification to respondent solicitor for case id: {}", caseId);
+                emailTo = caseData.getApplicant2().getSolicitor().getEmail();
+                templateId = GENERAL_EMAIL_RESPONDENT_SOLICITOR;
+                templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
             } else {
-                notificationService.sendEmailWithAttachment(
-                    emailTo,
-                    templateId,
-                    templateVarsObj,
-                    ENGLISH,
-                    caseId
-                );
-                log.info("Successfully sent general email notification for case id: {}", caseId);
+                log.info("Sending General Email Notification to respondent for case id: {}", caseId);
+                emailTo = caseData.getApplicant2().getEmail();
+                templateId = GENERAL_EMAIL_RESPONDENT;
             }
+        } else {
+            log.info("Sending General Email Notification to other party for case id: {}", caseId);
+            emailTo = generalEmail.getGeneralEmailOtherRecipientEmail();
+            templateId = GENERAL_EMAIL_OTHER_PARTY;
+        }
+
+        Map<String, Object> templateVarsObj = addAttachmentsToTemplateVars(documents, templateVars);
+
+        if (null == emailTo) {
+            log.info("Email address is not available for template id {} and case {} ", templateId, caseId);
+        } else {
+            notificationService.sendEmailWithAttachment(
+                emailTo,
+                templateId,
+                templateVarsObj,
+                ENGLISH,
+                caseId
+            );
+            log.info("Successfully sent general email notification for case id: {}", caseId);
         }
     }
 
+    private Map<String, Object> addAttachmentsToTemplateVars(List<ListValue<Document>> documents, Map<String,String> vars) throws NotificationClientException, IOException {
+        Map<String, Object> templateVarsObj = new HashMap<>(vars);
+
+        int documentId = 0;
+        for (ListValue<Document> document : documents) {
+            ++documentId;
+            byte[] sotDocument = getDocumentBytes(document.getValue());
+            templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
+        }
+
+        return templateVarsObj;
+    }
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put("sot1", "");
@@ -157,6 +161,7 @@ public class GeneralEmailNotification {
         templateVars.put("sot8", "");
         templateVars.put("sot9", "");
         templateVars.put("sot10", "");
+        templateVars.put(DOCUMENTS_AVAILABLE,"no");
         return templateVars;
     }
 
@@ -172,15 +177,5 @@ public class GeneralEmailNotification {
         } else {
             throw new NotificationClientException("No body retrieved for document resource: " + document.getUrl());
         }
-    }
-
-    private boolean isConfidentialEmail(CaseData caseData) {
-        if (APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
-            return caseData.getApplicant1().isConfidentialContactDetails();
-        }
-        if (RESPONDENT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
-            return caseData.getApplicant2().isConfidentialContactDetails();
-        }
-        return false;
     }
 }

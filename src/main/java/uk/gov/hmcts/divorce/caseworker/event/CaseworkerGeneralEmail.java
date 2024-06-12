@@ -149,7 +149,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Caseworker create general email about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
 
         var caseData = details.getData();
         var generalEmail = caseData.getGeneralEmail();
@@ -202,7 +202,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
+        log.info("{} submitted callback invoked for Case Id: {}",CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
 
         CaseData caseData = details.getData();
 
