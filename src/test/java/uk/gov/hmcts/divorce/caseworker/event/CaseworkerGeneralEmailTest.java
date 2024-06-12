@@ -92,6 +92,26 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
+    void shouldSetGeneralEmailToNullInAboutToStart() {
+        final CaseData caseData = caseData();
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
+
+        assertNull(response.getData().getGeneralEmail());
+    }
+
+    @Test
     void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() throws Exception {
         setMockClock(clock);
 

@@ -359,6 +359,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put("sot8", "");
         templateVars.put("sot9", "");
         templateVars.put("sot10", "");
+        templateVars.put("areDocuments","no");
 
         Map<String, Object> templateVarsObj = new HashMap<>(templateVars);
 

@@ -45,7 +45,7 @@ public class GeneralEmailNotification {
 
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
-    private static final String PERSONALISATION_SOT_LINK = "sot_link";
+    private static final String DOCUMENTS_AVAILABLE = "areDocuments";
 
     @Autowired
     private CommonContent commonContent;
@@ -73,8 +73,13 @@ public class GeneralEmailNotification {
 
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
+        templateVars.put(DOCUMENTS_AVAILABLE,"no");
+
         if (generalEmail != null) {
             if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
+
+                templateVars.put(DOCUMENTS_AVAILABLE,"yes");
+
                 documents = ofNullable(generalEmail.getGeneralEmailAttachments())
                     .flatMap(Collection::stream)
                     .map(divorceDocument -> ListValue.<Document>builder()
@@ -116,8 +121,7 @@ public class GeneralEmailNotification {
                 templateId = GENERAL_EMAIL_OTHER_PARTY;
             }
 
-            //Code to get attachments and add to personalisation
-            //Get Attachment from general email
+            //Code to add attachment personalisation to templateVars
             Map<String, Object> templateVarsObj = new HashMap<>(templateVars);
             int documentId = 0;
             for (ListValue<Document> document : documents) {
