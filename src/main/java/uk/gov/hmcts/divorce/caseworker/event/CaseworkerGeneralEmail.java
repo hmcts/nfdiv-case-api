@@ -202,7 +202,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
                                                final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
+        log.info("Caseworker create general email submitted callback invoked for Case Id: {}", details.getId());
 
         CaseData caseData = details.getData();
 
