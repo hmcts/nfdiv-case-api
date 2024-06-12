@@ -73,7 +73,7 @@ public class GeneralEmailNotification {
 
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        if(generalEmail == null) {
+        if (generalEmail == null) {
             return;
         }
         if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
@@ -137,7 +137,8 @@ public class GeneralEmailNotification {
         }
     }
 
-    private Map<String, Object> addAttachmentsToTemplateVars(List<ListValue<Document>> documents, Map<String,String> vars) throws NotificationClientException, IOException {
+    private Map<String, Object> addAttachmentsToTemplateVars(List<ListValue<Document>> documents,
+                                                             Map<String,String> vars) throws NotificationClientException, IOException {
         Map<String, Object> templateVarsObj = new HashMap<>(vars);
 
         int documentId = 0;
@@ -149,6 +150,7 @@ public class GeneralEmailNotification {
 
         return templateVarsObj;
     }
+
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put("sot1", "");
