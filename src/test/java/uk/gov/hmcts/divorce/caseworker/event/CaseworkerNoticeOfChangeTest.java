@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
+import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -49,6 +50,9 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private SolicitorValidationService solicitorValidationService;
+
+    @Mock
+    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
@@ -174,6 +178,8 @@ class CaseworkerNoticeOfChangeTest {
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
@@ -184,6 +190,7 @@ class CaseworkerNoticeOfChangeTest {
                     .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
+        verify(setDefaultOrganisationPolicies).apply(details);
         verify(noticeOfChangeService, never()).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
     }
 
@@ -201,6 +208,8 @@ class CaseworkerNoticeOfChangeTest {
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
@@ -211,6 +220,7 @@ class CaseworkerNoticeOfChangeTest {
                     .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
+        verify(setDefaultOrganisationPolicies).apply(details);
         verify(noticeOfChangeService).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
     }
 
@@ -230,8 +240,9 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
-
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
 
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
@@ -249,6 +260,7 @@ class CaseworkerNoticeOfChangeTest {
                 .build())
             .build();
 
+        verify(setDefaultOrganisationPolicies).apply(details);
         verify(noticeOfChangeService).changeAccessWithinOrganisation(newSolicitor, roles, APPLICANT_1_SOLICITOR.getRole(), details.getId());
     }
 
@@ -268,11 +280,14 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyDigital(YES)
             .build());
 
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
+        verify(setDefaultOrganisationPolicies).apply(details);
         verifyNoInteractions(noticeOfChangeService);
     }
 
@@ -291,14 +306,16 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
-
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
 
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
+        verify(setDefaultOrganisationPolicies).apply(details);
         verify(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(
             details.getId(),
             details.getData().getApplicant1(),
@@ -320,14 +337,16 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
-
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
 
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
 
+        verify(setDefaultOrganisationPolicies).apply(details);
         verify(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(
             details.getId(),
             details.getData().getApplicant1(),
@@ -344,10 +363,13 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyRepresented(null)
             .build());
 
+        when(setDefaultOrganisationPolicies.apply(details)).thenReturn(details);
+
         var result = noticeOfChange.aboutToSubmit(details, getCaseDetails());
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
+        verify(setDefaultOrganisationPolicies).apply(details);
     }
 
     private CaseDetails<CaseData, State> getCaseDetails() {
