@@ -195,8 +195,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         //if email and org is the same as pre-event then it means the user has probably used the event to update contact details
         //erroneously and not change case access, doing this check ensures that we don't actually alter the case access
-        boolean isDifferentEmail = !afterSolicitor.getEmail().equals(beforeSolicitor.getEmail());
-        return isDifferentEmail ? NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG : NoticeType.OFFLINE_NOC;
+        boolean solEmailHasChanged = !afterSolicitor.getEmail().equals(beforeSolicitor.getEmail());
+        return solEmailHasChanged ? NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG : NoticeType.OFFLINE_NOC;
     }
 
     private void updateSolicitorInformation(CaseData data, UserRole orgPolicyCaseAssignedRole, Applicant applicant) {
