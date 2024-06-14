@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,10 +16,13 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SetDefaultOrganisationPolicies implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
+        log.info("Setting default organisation policies for case id {} ", caseDetails.getId());
+        
         final CaseData caseData = caseDetails.getData();
 
         initializeSolicitor(caseData.getApplicant1());
