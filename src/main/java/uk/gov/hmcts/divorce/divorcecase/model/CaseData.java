@@ -28,6 +28,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
+import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -61,7 +62,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.C8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -523,30 +526,45 @@ public class CaseData {
                                                               Clock clock,
                                                               ScannedDocument scannedDocument) {
 
-        DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
-            scannedDocument,
-            documentType,
-            clock
-        );
-
-        List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
-            documents.getDocumentsUploaded(),
-            divorceDocument
-        );
-
-        documents.setDocumentsUploaded(updatedDocumentsUploaded);
-
-        if (CONDITIONAL_ORDER_APPLICATION.equals(documentType)) {
-            documents.setDocumentsGenerated(
-                addDocumentToTop(documents.getDocumentsGenerated(), divorceDocument)
+        if (CONFIDENTIAL_RESPONDENT_ANSWERS.equals(documentType) || C8.equals(documentType)) {
+            ConfidentialDivorceDocument confidentialDivorceDocument = documents.mapScannedDocumentToConfidentialDivorceDocument(
+                scannedDocument,
+                documentType,
+                clock
             );
-            conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
-            conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
-        }
 
-        if (FINAL_ORDER_APPLICATION.equals(documentType)) {
-            finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
-            finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
+            List<ListValue<ConfidentialDivorceDocument>> updatedConfidentialDocumentsUploaded = addDocumentToTop(
+                documents.getConfidentialDocumentsUploaded(),
+                confidentialDivorceDocument
+            );
+
+            documents.setConfidentialDocumentsUploaded(updatedConfidentialDocumentsUploaded);
+        } else {
+            DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
+                scannedDocument,
+                documentType,
+                clock
+            );
+
+            List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
+                documents.getDocumentsUploaded(),
+                divorceDocument
+            );
+
+            documents.setDocumentsUploaded(updatedDocumentsUploaded);
+
+            if (CONDITIONAL_ORDER_APPLICATION.equals(documentType)) {
+                documents.setDocumentsGenerated(
+                    addDocumentToTop(documents.getDocumentsGenerated(), divorceDocument)
+                );
+                conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
+                conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
+            }
+
+            if (FINAL_ORDER_APPLICATION.equals(documentType)) {
+                finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
+                finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
+            }
         }
     }
 }
