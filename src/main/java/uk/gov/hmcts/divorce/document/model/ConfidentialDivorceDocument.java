@@ -54,6 +54,13 @@ public class ConfidentialDivorceDocument {
     )
     private String documentFileName;
 
+    @CCD(
+        label = "Select document type",
+        typeOverride = FixedList,
+        typeParameterOverride = "DocumentType"
+    )
+    private DocumentType documentType;
+
     //Add handwritten constructor as a workaround for @JsonUnwrapped prefix issue
     @JsonCreator
     public ConfidentialDivorceDocument(
@@ -62,7 +69,8 @@ public class ConfidentialDivorceDocument {
         @JsonProperty("documentLink") Document documentLink,
         @JsonProperty("documentDateAdded") LocalDate documentDateAdded,
         @JsonProperty("documentComment") String documentComment,
-        @JsonProperty("documentFileName") String documentFileName) {
+        @JsonProperty("documentFileName") String documentFileName,
+        @JsonProperty("documentType") DocumentType documentType) {
 
         this.confidentialDocumentsReceived = confidentialDocumentsReceived;
         this.documentEmailContent = documentEmailContent;
@@ -70,5 +78,6 @@ public class ConfidentialDivorceDocument {
         this.documentDateAdded = documentDateAdded;
         this.documentComment = documentComment;
         this.documentFileName = documentFileName;
+        this.documentType = documentType;
     }
 }
