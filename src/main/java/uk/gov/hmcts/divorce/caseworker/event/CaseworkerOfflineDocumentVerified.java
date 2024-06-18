@@ -67,6 +67,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
@@ -326,9 +327,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         if (AOS_CONFIDENTIAL_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             caseData.getApplicant2().setContactDetailsType(PRIVATE); // If D10 is Confidential, set App2 to private
+            reclassifyScannedDocumentToChosenDocumentType(caseData, CONFIDENTIAL_RESPONDENT_ANSWERS);
+        } else {
+            reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
         }
-
-        reclassifyScannedDocumentToChosenDocumentType(caseData, RESPONDENT_ANSWERS);
 
         // setting the status as drafted as AOS answers has been received and is being classified by caseworker
         details.setState(AosDrafted);
