@@ -104,46 +104,46 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
     private void handleScannedDocument(CaseData caseData, CaseData beforeCaseData) {
 
-        Optional<ScannedDocument> mostRecentScannedSubtypeReceived = GetMostRecentDocumentFromLists(
+        Optional<ScannedDocument> mostRecentScannedSubtypeReceived = getMostRecentDocumentFromLists(
             caseData.getDocuments().getScannedDocuments(),
             beforeCaseData.getDocuments().getScannedDocuments()
         );
 
         if (mostRecentScannedSubtypeReceived.isPresent()) {
             final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
-            HandleDocumentWithSubtype(scannedDocument, caseData);
+            handleDocumentWithSubtype(scannedDocument, caseData);
         }
     }
 
     private void handleConfidentialScannedDocument(CaseData caseData, CaseData beforeCaseData) {
 
-        Optional<ScannedDocument> mostRecentConfidentialScannedSubtypeReceived = GetMostRecentDocumentFromLists(
+        Optional<ScannedDocument> mostRecentConfidentialScannedSubtypeReceived = getMostRecentDocumentFromLists(
             caseData.getDocuments().getConfidentialScannedDocuments(),
             beforeCaseData.getDocuments().getConfidentialScannedDocuments()
         );
 
         if (mostRecentConfidentialScannedSubtypeReceived.isPresent()) {
             final ScannedDocument scannedDocument = mostRecentConfidentialScannedSubtypeReceived.get();
-            HandleDocumentWithSubtype(scannedDocument, caseData);
+            handleDocumentWithSubtype(scannedDocument, caseData);
         }
     }
 
-    private Optional<ScannedDocument> GetMostRecentDocumentFromLists(List<ListValue<ScannedDocument>> documentList,
+    private Optional<ScannedDocument> getMostRecentDocumentFromLists(List<ListValue<ScannedDocument>> documentList,
                                                                      List<ListValue<ScannedDocument>> beforeDocumentList) {
-        return GetMostRecentDocument(
-            GetDocumentList(documentList),
-            GetDocumentList(beforeDocumentList)
+        return getMostRecentDocument(
+            getDocumentList(documentList),
+            getDocumentList(beforeDocumentList)
         );
     }
 
-    private List<ScannedDocument> GetDocumentList(List<ListValue<ScannedDocument>> documentList) {
+    private List<ScannedDocument> getDocumentList(List<ListValue<ScannedDocument>> documentList) {
         return Stream.ofNullable(documentList)
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
             .toList();
     }
 
-    private Optional<ScannedDocument> GetMostRecentDocument(List<ScannedDocument> documentList,
+    private Optional<ScannedDocument> getMostRecentDocument(List<ScannedDocument> documentList,
                                                             List<ScannedDocument> beforeDocumentList) {
         return documentList
             .stream()
@@ -152,7 +152,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .findFirst();
     }
 
-    private void HandleDocumentWithSubtype(ScannedDocument scannedDocument, CaseData caseData) {
+    private void handleDocumentWithSubtype(ScannedDocument scannedDocument, CaseData caseData) {
         final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
             CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
         final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
