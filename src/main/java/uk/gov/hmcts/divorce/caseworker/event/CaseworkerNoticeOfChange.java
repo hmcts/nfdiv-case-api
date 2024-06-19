@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
@@ -47,7 +46,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
     private final NoticeOfChangeService noticeOfChangeService;
     private final SolicitorValidationService solicitorValidationService;
-    private final SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -168,11 +166,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             details,
             noticeOfChangeService);
 
-        correctRepresentationDetails(details.getData(), beforeData);
-        setMissingOrganisationPolicyFields(details);
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(correctRepresentationDetails(details.getData(), beforeData))
             .build();
     }
 
@@ -265,14 +260,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
         OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
             .orgPolicyCaseAssignedRole(role)
+            .organisation(new Organisation(null, null))
             .build();
 
         solicitor.setOrganisationPolicy(defaultOrgPolicy);
         return solicitor;
-    }
-
-    private void setMissingOrganisationPolicyFields(CaseDetails<CaseData, State> caseDetails) {
-        setDefaultOrganisationPolicies.apply(caseDetails);
     }
 
     private enum NoticeType {
