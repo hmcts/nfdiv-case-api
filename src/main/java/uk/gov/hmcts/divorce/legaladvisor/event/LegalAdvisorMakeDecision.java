@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.legaladvisor.event;
 
+import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForAmendmentContent;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorRejectedDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -27,6 +31,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
@@ -59,6 +64,12 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
 
     @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    @Autowired
     private LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
     @Autowired
@@ -83,19 +94,18 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_MAKE_DECISION)
-            .forStates(AwaitingLegalAdvisorReferral, JSAwaitingLA, ClarificationSubmitted, LAReview)
+            .forStates(AwaitingLegalAdvisorReferral, JSAwaitingLA, ClarificationSubmitted, LAReview, ExpeditedCase)
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
+            .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR, JUDGE)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
-                APPLICANT_1_SOLICITOR,
-                JUDGE))
+                APPLICANT_1_SOLICITOR))
             .page("grantConditionalOrder")
             .pageLabel("Grant Conditional Order")
             .complex(CaseData::getConditionalOrder)
@@ -146,13 +156,24 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         caseData.getConditionalOrder().setIsAdminClarificationSubmitted(YesOrNo.NO);
 
-        State endState;
+        State endState = details.getState();
+
+        if (endState.equals(ExpeditedCase)) {
+            final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
+            User user = idamService.retrieveUser(userAuth);
+            conditionalOrder.setGranted(YesOrNo.YES);
+            String pronouncementJudge = String.join(" ", user.getUserDetails().getGivenName(), user.getUserDetails().getFamilyName());
+            conditionalOrder.setPronouncementJudge(pronouncementJudge);
+          // conditionalOrder.setCourt();
+            conditionalOrder.setDateAndTimeOfHearing(LocalDateTime.now().plusDays(5));
+
+        }
 
         if (conditionalOrder.hasConditionalOrderBeenGranted()) {
             log.info("Legal advisor conditional order granted for case id: {}", details.getId());
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
-            endState = details.getState().equals(ExpeditedCase) ? details.getState() : AwaitingPronouncement;
 
+            endState = endState.equals(ExpeditedCase) ? endState : AwaitingPronouncement;
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
             generateAndSetConditionalOrderRefusedDocument(
                 caseData,

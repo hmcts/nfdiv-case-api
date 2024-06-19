@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
@@ -28,18 +29,23 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 
@@ -76,9 +82,10 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             .name("General Consideration")
             .description("General Consideration")
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR, JUDGE)
+            .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR, JUDGE, SYSTEMUPDATE)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER))
@@ -101,9 +108,9 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
         copyOfGeneralReferral.setGeneralReferralDecisionDate(LocalDate.now(clock));
 
         final ListValue<GeneralReferral> generalReferralListValue = ListValue.<GeneralReferral>builder()
-            .id(UUID.randomUUID().toString())
-            .value(copyOfGeneralReferral)
-            .build();
+                .id(UUID.randomUUID().toString())
+                .value(copyOfGeneralReferral)
+                .build();
 
         if (isNull(caseData.getGeneralReferrals())) {
             caseData.setGeneralReferrals(singletonList(generalReferralListValue));
@@ -113,49 +120,39 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
 
         // Reset all fields apart from urgent case flag as it is still required by agents to filter cases.
         caseData.setGeneralReferral(
-            GeneralReferral
-                .builder()
-                .generalReferralUrgentCase(caseData.getGeneralReferral().getGeneralReferralUrgentCase())
-                .build()
+                GeneralReferral
+                        .builder()
+                        .generalReferralUrgentCase(caseData.getGeneralReferral().getGeneralReferralUrgentCase())
+                        .build()
         );
 
-        State  endState = GeneralConsiderationComplete;
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .build();
+    }
 
-        if (details.getState().equals(ExpeditedCase) && isJudge(details.getId())) {
-            final User user = idamService.retrieveSystemUpdateUserDetails();
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
+        User user = idamService.retrieveUser(userAuth);
+        if (details.getState().equals(ExpeditedCase) && isJudge(details.getId(), user)) {
             final String serviceAuthorization = authTokenGenerator.generate();
             final Long caseId = details.getId();
 
             log.info("CaseID {} Expedited case.  Triggering Legal advisor/Judge make decision event.", details.getId());
 
             ccdUpdateService.submitEvent(caseId, LEGAL_ADVISOR_MAKE_DECISION, user, serviceAuthorization);
-            endState = ExpeditedCase;
         } else {
             log.info("CaseID {} Does not meet legal advisor make decision event requirements.  Skipping event.", details.getId());
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(endState)
-            .build();
+        return SubmittedCallbackResponse.builder().build();
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
-    public boolean isJudge(Long caseId) {
+    public boolean isJudge(Long caseId, User user) {
         log.info("Retrieving roles for user on case {}", caseId);
-        final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
-        User user = idamService.retrieveUser(userAuth);
-        List<String> userRoles =
-                caseAssignmentApi.getUserRoles(
-                                user.getAuthToken(),
-                                authTokenGenerator.generate(),
-                                List.of(String.valueOf(caseId)),
-                                List.of(user.getUserDetails().getUid())
-                        )
-                        .getCaseAssignmentUserRoles()
-                        .stream()
-                        .map(CaseAssignmentUserRole::getCaseRole)
-                        .collect(Collectors.toList());
-        return userRoles.contains(JUDGE.getRole());
+        return user.getUserDetails().getRoles().contains(JUDGE.getRole());
     }
 }
