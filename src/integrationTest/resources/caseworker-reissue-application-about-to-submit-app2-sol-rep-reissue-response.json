@@ -26,7 +26,7 @@
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "testsol",
     "applicant2SolicitorEmail": "solicitor@test.com",
-    "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
+    "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG",
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",

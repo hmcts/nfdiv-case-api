@@ -148,7 +148,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         Map<String, Object> templateContent = respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateContent).contains(
-            entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nNW1 6XE")
+            entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nUnited Kingdom\nNW1 6XE")
         );
     }
 }

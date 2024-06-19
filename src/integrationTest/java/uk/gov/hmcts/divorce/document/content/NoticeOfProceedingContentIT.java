@@ -212,8 +212,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
-        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town\nUK");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
@@ -302,8 +302,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
-        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town\nUK");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
@@ -393,7 +393,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
@@ -503,7 +503,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
@@ -517,7 +517,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, false);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, false);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
-        expectedEntries.put(APPLICANT_2_ADDRESS, "line1\nline2\nbt31 1re");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "line1\nline2\nUK\nbt31 1re");
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);
@@ -594,8 +594,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
-        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town\nUK");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
@@ -685,8 +685,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
-        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town\nUK");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put("applicant2FirstName", APPLICANT_2_FIRST_NAME);
@@ -1004,7 +1004,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
-        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2");
+        expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
         expectedEntries.put(APPLICANT_2_ADDRESS, "The avenue");
         expectedEntries.put(APPLICANT_1_SOLICITOR_NAME, "Not represented");
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
