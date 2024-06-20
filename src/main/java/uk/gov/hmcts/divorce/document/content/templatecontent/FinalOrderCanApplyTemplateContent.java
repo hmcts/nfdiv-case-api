@@ -26,6 +26,6 @@ public class FinalOrderCanApplyTemplateContent implements TemplateContent {
         return Map.of(CASE_REFERENCE, formatId(caseId),
             "applicantFirstName", applicant.getFirstName(),
             "applicantLastName", applicant.getLastName(),
-            "applicantAddress", applicant.getPostalAddress());
+            "applicantAddress", applicant.getCorrespondenceAddressWithoutConfidentialCheck());
     }
 }
