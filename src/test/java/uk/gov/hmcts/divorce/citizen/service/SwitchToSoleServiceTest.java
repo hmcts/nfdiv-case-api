@@ -129,7 +129,7 @@ public class SwitchToSoleServiceTest {
     }
 
     @Test
-    void shouldSetCorrectOrgPolicyCaseAssignedRolesWhileSwitchingData() {
+    void shouldSetCorrectOrgPolicyCaseAssignedRolesWhenApplicantDataIsSwitched() {
         CaseData caseData = validJointApplicant1CaseData();
         Solicitor app1Solicitor = new Solicitor().builder()
             .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR).build())
