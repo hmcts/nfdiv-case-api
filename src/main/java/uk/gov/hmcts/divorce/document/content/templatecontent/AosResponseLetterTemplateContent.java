@@ -90,7 +90,7 @@ public class AosResponseLetterTemplateContent implements TemplateContent {
 
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
-        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
+        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
@@ -127,7 +127,8 @@ public class AosResponseLetterTemplateContent implements TemplateContent {
             templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
             templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
-                ? caseData.getApplicant1().getSolicitor().getAddress() : caseData.getApplicant1().getPostalAddress());
+                ? caseData.getApplicant1().getSolicitor().getAddress()
+                : caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
             templateContent.put(SOLICITOR_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : NOT_REPRESENTED);
             templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().isRepresented()
