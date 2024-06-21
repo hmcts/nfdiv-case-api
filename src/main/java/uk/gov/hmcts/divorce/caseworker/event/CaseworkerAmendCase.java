@@ -61,8 +61,7 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
                 SUPER_USER,
                 LEGAL_ADVISOR,
                 JUDGE)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted));
+            .aboutToSubmitCallback(this::aboutToSubmit));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -83,20 +82,5 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_AMEND_CASE, details.getId());
-
-        if (null != details.getData().getApplication().getIssueDate()) {
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-
-            ccdUpdateService
-                .submitEvent(details.getId(), REGENERATE_APPLICATION, user, serviceAuth);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }
