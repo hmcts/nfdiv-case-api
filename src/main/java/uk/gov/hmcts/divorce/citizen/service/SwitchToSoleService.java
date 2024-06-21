@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SwitchedToSole;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -216,6 +217,7 @@ public class SwitchToSoleService {
         data.setApplicant2(applicant1);
 
         switchApplicationData(data, application, data.getApplicant2());
+        switchOrgPolicyCaseAssignedRoles(data);
         populateSwitchedToSoleData(application);
         switchConditionalOrderAnswers(data.getConditionalOrder());
         data.setCaseInvite(new CaseInvite(data.getApplicant2().getEmail(), null, null));
@@ -296,6 +298,19 @@ public class SwitchToSoleService {
         List<ListValue<DivorceDocument>> currentApplicant2DocumentsUploaded = data.getDocuments().getApplicant2DocumentsUploaded();
         data.getDocuments().setApplicant1DocumentsUploaded(currentApplicant2DocumentsUploaded);
         data.getDocuments().setApplicant2DocumentsUploaded(currentApplicant1DocumentsUploaded);
+    }
+
+    private void switchOrgPolicyCaseAssignedRoles(final CaseData data) {
+        Solicitor app1Solicitor = data.getApplicant1().getSolicitor();
+        Solicitor app2Solicitor = data.getApplicant2().getSolicitor();
+
+        if (app1Solicitor != null && app1Solicitor.getOrganisationPolicy() != null) {
+            app1Solicitor.getOrganisationPolicy().setOrgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR);
+        }
+
+        if (app2Solicitor != null && app2Solicitor.getOrganisationPolicy() != null) {
+            app2Solicitor.getOrganisationPolicy().setOrgPolicyCaseAssignedRole(APPLICANT_2_SOLICITOR);
+        }
     }
 
     private void switchConditionalOrderAnswers(ConditionalOrder conditionalOrder) {

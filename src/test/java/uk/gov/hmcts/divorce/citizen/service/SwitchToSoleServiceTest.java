@@ -6,10 +6,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -124,6 +126,20 @@ public class SwitchToSoleServiceTest {
         switchToSoleService.switchApplicantData(caseData);
 
         assertThat(caseData.getApplication().getDivorceWho()).isNull();
+    }
+
+    @Test
+    void shouldSetCorrectOrgPolicyCaseAssignedRolesWhileSwitchingData() {
+        CaseData caseData = validJointApplicant1CaseData();
+        Solicitor app1Solicitor = new Solicitor().builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR).build())
+            .build();
+        caseData.getApplicant1().setSolicitor(app1Solicitor);
+
+        switchToSoleService.switchApplicantData(caseData);
+
+        OrganisationPolicy<UserRole> app2OrganisationPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
+        assertThat(app2OrganisationPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_2_SOLICITOR);
     }
 
     @Test
