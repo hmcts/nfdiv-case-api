@@ -136,10 +136,17 @@ public class SwitchToSoleServiceTest {
             .build();
         caseData.getApplicant1().setSolicitor(app1Solicitor);
 
+        Solicitor app2Solicitor = new Solicitor().builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_2_SOLICITOR).build())
+            .build();
+        caseData.getApplicant2().setSolicitor(app2Solicitor);
+
         switchToSoleService.switchApplicantData(caseData);
 
-        OrganisationPolicy<UserRole> app2OrganisationPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
-        assertThat(app2OrganisationPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_2_SOLICITOR);
+        OrganisationPolicy<UserRole> newApp1OrgPolicy = caseData.getApplicant1().getSolicitor().getOrganisationPolicy();
+        OrganisationPolicy<UserRole> newApp2OrgPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
+        assertThat(newApp1OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_1_SOLICITOR);
+        assertThat(newApp2OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_2_SOLICITOR);
     }
 
     @Test
