@@ -38,4 +38,11 @@ public interface OrganisationClient {
         @RequestHeader(CoreCaseDataApi.SERVICE_AUTHORIZATION) String serviceAuthorization,
         @PathVariable("orgId") @NotBlank String organisationIdentifier
     );
+
+    @GetMapping("/refdata/internal/v1/organisations/orgDetails/{userId}")
+    OrganisationsResponse getOrganisationByUserId(
+            @RequestHeader(AUTHORIZATION) String authorisation,
+            @RequestHeader(CoreCaseDataApi.SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @PathVariable("userId") @NotBlank String userId
+    );
 }
