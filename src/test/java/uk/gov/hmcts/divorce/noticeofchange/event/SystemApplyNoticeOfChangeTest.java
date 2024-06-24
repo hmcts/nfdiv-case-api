@@ -26,7 +26,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
-import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
@@ -138,9 +137,11 @@ class SystemApplyNoticeOfChangeTest {
 
         assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
+        assertEquals(TEST_ORGANISATION_NAME, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationName());
+        assertEquals(TEST_ORGANISATION_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
+        assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
+        assertEquals(TEST_ORG_NAME, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationName());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
-        assertEquals(TEST_ORG_NAME, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationName());
-        assertEquals(TEST_ORG_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
         assertEquals("Applicant", changeOfRepresentative.getParty());
 
     }
@@ -168,9 +169,18 @@ class SystemApplyNoticeOfChangeTest {
                 TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
+        var changeOfRepresentative = applicant2CaseData.getChangeOfRepresentatives().stream()
+                .map(ListValue::getValue)
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(TEST_ORGANISATION_NAME, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationName());
         assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
+        assertEquals(TEST_ORGANISATION_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
+        assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
+        assertEquals(TEST_ORG_NAME, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationName());
     }
 
     @Test
@@ -235,7 +245,7 @@ class SystemApplyNoticeOfChangeTest {
         changeOrganisationRequest.setCaseRoleId(CaseRoleID.builder().value(dynamicListItem).listItems(dynamicListItemList).build());
         changeOrganisationRequest.setCreatedBy(TEST_SOLICITOR_EMAIL);
         changeOrganisationRequest.setOrganisationToAdd(Organisation
-                .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORG_NAME).build());
+                .builder().organisationId(TEST_ORGANISATION_ID).organisationName(TEST_ORG_NAME).build());
         changeOrganisationRequest.setOrganisationToRemove(Organisation
                 .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
         return changeOrganisationRequest;
