@@ -45,11 +45,6 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
-
-    private static final String APPLICANT_2_REPRESENTED_OVERSEAS = "applicant2SolicitorRepresented=\"Yes\" AND "
-            + "applicant2SolicitorAddressOverseas=\"Yes\"";
-    private static final String APPLICANT_1_REPRESENTED_OVERSEAS = "applicant1SolicitorRepresented=\"Yes\" AND "
-            + "applicant1SolicitorAddressOverseas=\"Yes\"";
     private static final String IS_SOLE = "applicationType=\"soleApplication\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED =
