@@ -118,7 +118,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
                     .refusalRejectionAdditionalInfo("Court does not have jurisdiction")
                     .build()).build();
 
-        templateContent.put(ADDRESS, caseData.getApplicant1().getPostalAddress());
+        templateContent.put(ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder())).thenReturn(refusalReasons);
         when(conditionalOrderCommonContent.getPartner(caseData)).thenReturn("wife");
@@ -306,7 +306,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
                     .refusalRejectionAdditionalInfo("Court does not have jurisdiction")
                     .build()).build();
 
-        templateContent.put(ADDRESS, caseData.getApplicant1().getPostalAddress());
+        templateContent.put(ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
 
         when(conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()))
             .thenReturn(refusalReasons);
