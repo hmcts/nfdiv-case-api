@@ -61,6 +61,12 @@ public class GeneralOrder {
     private String generalOrderJudgeOrLegalAdvisorName;
 
     @CCD(
+        label = "Name of Venue the Judge or Legal Advisor is Sitting",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private String generalOrderJudgeOrLegalAdvisorVenue;
+
+    @CCD(
         label = "General order details",
         typeOverride = TextArea,
         access = {CaseworkerAccessOnlyAccess.class}

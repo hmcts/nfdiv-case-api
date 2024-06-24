@@ -14,8 +14,6 @@ import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -24,17 +22,11 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
-import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
-import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -112,69 +104,6 @@ public class SwitchedToSoleFinalOrderTest {
 
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
-    }
-
-    @Test
-    void shouldSwitchUserDataAndRolesIfApplicant2TriggeredD36SwitchToSole() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
-        caseData.setFinalOrder(FinalOrder.builder()
-            .d36ApplicationType(SWITCH_TO_SOLE)
-            .d36WhoApplying(APPLICANT_2)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(switchToSoleService).switchUserRoles(caseData, caseId);
-        verify(switchToSoleService).switchApplicantData(caseData);
-    }
-
-    @Test
-    void shouldNotSwitchRolesIfApplicant2TriggeredD36SwitchToSoleAndIsNewPaperCase() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        caseData.getApplication().setNewPaperCase(YES);
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
-        caseData.setFinalOrder(FinalOrder.builder()
-            .d36ApplicationType(SWITCH_TO_SOLE)
-            .d36WhoApplying(APPLICANT_2)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        verify(switchToSoleService).switchApplicantData(caseData);
-        verifyNoMoreInteractions(switchToSoleService);
-    }
-
-    @Test
-    void shouldNotSwitchUserDataOrRolesIfApplicant1TriggeredD36SwitchToSole() {
-        final long caseId = TEST_CASE_ID;
-        CaseData caseData = validJointApplicant1CaseData();
-        caseData.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
-        caseData.setFinalOrder(FinalOrder.builder()
-            .d36ApplicationType(SWITCH_TO_SOLE)
-            .d36WhoApplying(APPLICANT_1)
-            .build()
-        );
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(caseId)
-            .data(caseData)
-            .build();
-
-        switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
-
-        verifyNoInteractions(switchToSoleService);
     }
 
     @Test

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -54,6 +56,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GR
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_COPIES;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_ABC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -73,6 +78,9 @@ public class FinalOrderGrantedNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private PaymentService paymentService;
 
     @Mock
     private NotificationService notificationService;
@@ -103,9 +111,12 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
+        templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -137,9 +148,12 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
+        templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -220,9 +234,12 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
+        templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -255,9 +272,12 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
+        templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
