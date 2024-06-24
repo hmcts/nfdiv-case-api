@@ -196,8 +196,10 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             var applicant2 = data.getApplicant2();
             var beforeSolicitor = beforeData.getApplicant2().getSolicitor();
             var currentSolicitor = applicant2.getSolicitor();
-            removedRepresentative = updateRepresentative(beforeSolicitor.getName(), beforeSolicitor.getEmail(),
-                    beforeSolicitor.getOrganisationPolicy().getOrganisation());
+            if (beforeSolicitor.getOrganisationPolicy() != null) {
+                removedRepresentative = updateRepresentative(beforeSolicitor.getName(), beforeSolicitor.getEmail(),
+                        beforeSolicitor.getOrganisationPolicy().getOrganisation());
+            }
             addedRepresentative = updateRepresentative(currentSolicitor.getName(), currentSolicitor.getEmail(),
                     currentSolicitor.getOrganisationPolicy().getOrganisation());
             party = data.getApplicationType().equals(ApplicationType.SOLE_APPLICATION) ? "Respondent" : "Applicant2";
