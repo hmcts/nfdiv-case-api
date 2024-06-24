@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -24,6 +26,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
@@ -57,6 +60,7 @@ class SystemApplyNoticeOfChangeTest {
 
     private static final String TEST_ORGANISATION_NAME = "organisation_name";
     private static final String TEST_ORGANISATION_USER_ID = "user_id";
+    private static final String TEST_ORGANISATION_ID = "organisation_id";
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -87,7 +91,7 @@ class SystemApplyNoticeOfChangeTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORG_ID))
+        when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_ID))
                 .thenReturn(findUsersByOrganisationResponse);
         when(organisationClient.getOrganisationByUserId(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_USER_ID))
                 .thenReturn(organisationsResponse);
@@ -127,9 +131,18 @@ class SystemApplyNoticeOfChangeTest {
             TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
+        var changeOfRepresentative = applicant1CaseData.getChangeOfRepresentatives().stream()
+                        .map(ListValue::getValue)
+                .findFirst()
+                .orElseThrow();
+
         assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
+        assertEquals(TEST_ORG_NAME, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationName());
+        assertEquals(TEST_ORG_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
+        assertEquals("Applicant", changeOfRepresentative.getParty());
+
     }
 
     @Test
@@ -231,6 +244,7 @@ class SystemApplyNoticeOfChangeTest {
     private Map<String, Object> expectedData(final CaseData caseData) {
 
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return objectMapper.convertValue(caseData, new TypeReference<>() {
         });
     }

@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.isNull;
@@ -256,6 +257,13 @@ public class CaseData {
 
     @CCD(access = {AcaSystemUserAccess.class})
     private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
+
+    @CCD(
+            access = {DefaultAccess.class, AcaSystemUserAccess.class},
+            label = "Change of representatives"
+    )
+    @Builder.Default
+    private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
 
     @CCD(
         access = {CaseworkerAccess.class}
