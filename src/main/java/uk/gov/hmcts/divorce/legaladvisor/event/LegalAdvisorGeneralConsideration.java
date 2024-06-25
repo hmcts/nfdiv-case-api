@@ -2,8 +2,6 @@ package uk.gov.hmcts.divorce.legaladvisor.event;
 
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
@@ -13,34 +11,29 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.UUID;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralDecision.APPROVE;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType.EXPEDITED_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -52,14 +45,10 @@ import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.L
 @Component
 @Slf4j
 public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, State, UserRole> {
-
     public static final String LEGAL_ADVISOR_GENERAL_CONSIDERATION = "legal-advisor-general-consideration";
 
     @Autowired
     private IdamService idamService;
-
-    @Autowired
-    private CaseAssignmentApi caseAssignmentApi;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
@@ -108,9 +97,9 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
         copyOfGeneralReferral.setGeneralReferralDecisionDate(LocalDate.now(clock));
 
         final ListValue<GeneralReferral> generalReferralListValue = ListValue.<GeneralReferral>builder()
-                .id(UUID.randomUUID().toString())
-                .value(copyOfGeneralReferral)
-                .build();
+            .id(UUID.randomUUID().toString())
+            .value(copyOfGeneralReferral)
+            .build();
 
         if (isNull(caseData.getGeneralReferrals())) {
             caseData.setGeneralReferrals(singletonList(generalReferralListValue));
@@ -120,10 +109,10 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
 
         // Reset all fields apart from urgent case flag as it is still required by agents to filter cases.
         caseData.setGeneralReferral(
-                GeneralReferral
-                        .builder()
-                        .generalReferralUrgentCase(caseData.getGeneralReferral().getGeneralReferralUrgentCase())
-                        .build()
+            GeneralReferral
+                .builder()
+                .generalReferralUrgentCase(caseData.getGeneralReferral().getGeneralReferralUrgentCase())
+                .build()
         );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -136,8 +125,18 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
 
         final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
         User user = idamService.retrieveUser(userAuth);
-        if (details.getState().equals(ExpeditedCase) && isJudge(details.getId(), user)) {
+        GeneralReferral generalReferral = details.getData()
+                .getGeneralReferrals()
+                .stream()
+                .map(ListValue::getValue)
+                .filter(referralType -> EXPEDITED_CASE.getLabel().equals(referralType.getGeneralReferralType().getLabel()))
+                .findFirst()
+                .orElse(null);
+
+        if (ExpeditedCase.equals(details.getState()) && isJudge(details.getId(), user)
+                && APPROVE.equals(Objects.requireNonNull(generalReferral).getGeneralReferralDecision())) {
             final String serviceAuthorization = authTokenGenerator.generate();
+
             final Long caseId = details.getId();
 
             log.info("CaseID {} Expedited case.  Triggering Legal advisor/Judge make decision event.", details.getId());

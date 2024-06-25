@@ -22,6 +22,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -55,12 +56,13 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_REFERRAL_PAYMENT)
-            .forStateTransition(AwaitingGeneralReferralPayment, AwaitingGeneralConsideration)
+            .forState(AwaitingGeneralReferralPayment)
             .name("General referral payment")
             .description("General referral payment")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, SOLICITOR, CITIZEN, LEGAL_ADVISOR));
     }
@@ -78,5 +80,19 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GENERAL_REFERRAL_PAYMENT, details.getId());
+        CaseData caseData = details.getData();
+
+        var previousState = caseData.getApplication().getPreviousState();
+        State state = ExpeditedCase.equals(previousState) ? ExpeditedCase : AwaitingGeneralConsideration;
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(state)
+                .build();
     }
 }

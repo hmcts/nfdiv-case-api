@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
-import uk.gov.hmcts.divorce.divorcecase.model.access.JudgeOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
@@ -305,7 +305,7 @@ public enum State {
     @CCD(
             label = "Expedited case",
             hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-            access = {JudgeOnlyAccess.class}
+            access = {CaseworkerAccess.class, LegalAdvisorAccess.class}
     )
     ExpeditedCase,
 

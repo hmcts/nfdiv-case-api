@@ -286,13 +286,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         if (caseData.isJudicialSeparationCase()) {
             state = JSAwaitingLA;
         } else {
-            if (isExpeditedCase) {
-
-                state = ExpeditedCase;
-            }
-            else state = AwaitingLegalAdvisorReferral;
+            state = isExpeditedCase ? ExpeditedCase : AwaitingLegalAdvisorReferral;
         }
-
 
         if (!caseData.isJudicialSeparationCase()) {
             log.info(
@@ -346,11 +341,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
 
         final CaseData caseData = details.getData();
-
-        if (details.getState().equals(ExpeditedCase)) {
-            generalReferralService.caseWorkerGeneralReferral(details);
-            return SubmittedCallbackResponse.builder().build();
-        }
 
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())
             && SWITCH_TO_SOLE.equals(caseData.getConditionalOrder().getD84ApplicationType())) {

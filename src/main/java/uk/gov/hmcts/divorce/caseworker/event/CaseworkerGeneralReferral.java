@@ -76,10 +76,12 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
         State endState;
         if (caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()) {
+            if (isExpeditedCase) {
+                caseData.getApplication().setPreviousState(ExpeditedCase);
+            }
             endState = AwaitingGeneralReferralPayment;
         } else {
-            if (isExpeditedCase) endState = ExpeditedCase;
-            else endState = AwaitingGeneralConsideration;
+            endState = isExpeditedCase ? ExpeditedCase : AwaitingGeneralConsideration;
         }
 
         caseData.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
