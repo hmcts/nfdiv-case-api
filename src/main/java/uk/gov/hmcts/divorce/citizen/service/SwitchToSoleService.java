@@ -57,7 +57,7 @@ public class SwitchToSoleService {
 
     public void switchUserRoles(final CaseData caseData, final Long caseId) {
         if (caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
-            switchSolicitorUserRoles(caseId);
+            // switchSolicitorUserRoles(caseId);
         } else if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant2().isRepresented()) {
             switchSolicitorAndCitizenUserRoles(caseId);
         } else if (!caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
