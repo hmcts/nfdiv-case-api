@@ -131,7 +131,7 @@ class SystemApplyNoticeOfChangeTest {
         );
 
         var changeOfRepresentative = applicant1CaseData.getChangeOfRepresentatives().stream()
-                        .map(ListValue::getValue)
+                .map(ListValue::getValue)
                 .findFirst()
                 .orElseThrow();
 
