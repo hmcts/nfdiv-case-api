@@ -30,8 +30,10 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
@@ -159,8 +161,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         caseData.getConditionalOrder().setIsAdminClarificationSubmitted(YesOrNo.NO);
 
         State endState = details.getState();
-        GeneralReferral generalReferral = details.getData()
-                .getGeneralReferrals()
+        GeneralReferral generalReferral =  Optional.ofNullable(details.getData()
+                .getGeneralReferrals()).orElse(Collections.emptyList())
                 .stream()
                 .map(ListValue::getValue)
                 .filter(referralType -> EXPEDITED_CASE.getLabel().equals(referralType.getGeneralReferralType().getLabel()))

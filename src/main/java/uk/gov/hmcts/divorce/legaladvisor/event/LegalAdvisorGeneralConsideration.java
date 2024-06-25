@@ -24,7 +24,9 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
@@ -125,8 +127,8 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
 
         final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
         User user = idamService.retrieveUser(userAuth);
-        GeneralReferral generalReferral = details.getData()
-                .getGeneralReferrals()
+        GeneralReferral generalReferral =  Optional.ofNullable(details.getData()
+                        .getGeneralReferrals()).orElse(Collections.emptyList())
                 .stream()
                 .map(ListValue::getValue)
                 .filter(referralType -> EXPEDITED_CASE.getLabel().equals(referralType.getGeneralReferralType().getLabel()))
