@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -30,16 +30,12 @@ import static uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest.acaRequest;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
-
-    @Autowired
-    private AssignCaseAccessClient assignCaseAccessClient;
-
-    @Autowired
-    private IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
+    private final AssignCaseAccessClient assignCaseAccessClient;
+    private final IdamService idamService;
 
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
 
@@ -67,7 +63,7 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
                 .optional(
                     ChangeOrganisationRequest::getApprovalStatus,
                     NEVER_SHOW,
-                    ChangeOrganisationApprovalStatus.APPROVED
+                    ChangeOrganisationApprovalStatus.APPROVED.getValue()
                 )
             .done();
     }
@@ -78,8 +74,6 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
 
-        assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
-
-        return SubmittedCallbackResponse.builder().build();
+        return assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
     }
 }
