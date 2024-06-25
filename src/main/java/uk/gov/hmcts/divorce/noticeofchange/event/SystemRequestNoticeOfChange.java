@@ -46,11 +46,11 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
     public static final String NOC_JUDICIAL_SEPARATION_ERROR = """
         Notice of change rejected for judicial separation case: %s
-    """;
+        """;
 
     public static final String NOC_JOINT_OFFLINE_ERROR = """
         Notice of change rejected for joint case with offline party: %s
-    """;
+        """;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
