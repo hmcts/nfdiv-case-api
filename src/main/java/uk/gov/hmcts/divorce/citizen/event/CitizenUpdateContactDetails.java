@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -39,6 +40,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
         configBuilder
             .event(CITIZEN_UPDATE_CONTACT_DETAILS)
             .forAllStates()
+            .showCondition(NEVER_SHOW)
             .name("Patch a case contact details")
             .description("Patch a case contact details for correct applicant")
             .retries(120, 120)
