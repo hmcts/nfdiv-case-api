@@ -15,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason.CASEWORKER_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType.PERMISSION_ON_DA_OOT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 
 @Component
 @Slf4j
@@ -35,7 +36,7 @@ public class SetGeneralReferralDetails implements CaseTask {
         log.info("Executing the SetGeneralReferralDetails task. Case ID: {}", caseDetails.getId());
 
         GeneralReferral referralDetails;
-        if (caseDetails.getState().equals(State.ExpeditedCase)) {
+        if (ExpeditedCase.equals(caseDetails.getState())) {
             referralDetails = GeneralReferral
                     .builder()
                     .generalReferralReason(CASEWORKER_REFERRAL)
