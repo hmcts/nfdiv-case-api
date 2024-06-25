@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ChangeOfRepresentationAuthor {
-    CW_NOTICE_OF_CHANGE("Caseworker notice of change"),
+    CASEWORKER_NOTICE_OF_CHANGE("Caseworker notice of change"),
     SOLICITOR_NOTICE_OF_CHANGE("Solicitor notice of change");
 
     private final String value;
