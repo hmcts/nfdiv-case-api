@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.model.Representative;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
@@ -43,7 +44,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.updateChangeOfRepresentativeTab;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.updateRepresentative;
-import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor.CW_NOTICE_OF_CHANGE;
 
 @Component
 @RequiredArgsConstructor
@@ -209,7 +209,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         var userDetails = idamService.retrieveUser(request.getHeader(AUTHORIZATION)).getUserDetails();
 
         updateChangeOfRepresentativeTab(data, clientName, userDetails.getName(),
-                CW_NOTICE_OF_CHANGE.getValue(), addedRepresentative,
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), addedRepresentative,
                 removedRepresentative, party);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
