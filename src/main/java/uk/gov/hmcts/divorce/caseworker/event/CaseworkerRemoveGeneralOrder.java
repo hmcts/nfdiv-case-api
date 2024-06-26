@@ -86,19 +86,19 @@ public class CaseworkerRemoveGeneralOrder implements CCDConfig<CaseData, State, 
         }
     }
 
-    private List<DivorceDocument> findGeneralOrderDocumentsForRemoval(final List<ListValue<DivorceGeneralOrder>> beforeGOs,
-                                                                     final List<ListValue<DivorceGeneralOrder>> currentGOs) {
+    private List<DivorceDocument> findGeneralOrderDocumentsForRemoval(final List<ListValue<DivorceGeneralOrder>> beforeGeneralOrders,
+                                                                     final List<ListValue<DivorceGeneralOrder>> currentGeneralOrders) {
 
         List<DivorceDocument> documentsToRemove = new ArrayList<>();
 
-        if (beforeGOs != null && currentGOs != null) {
-            beforeGOs.forEach(gOrder -> {
-                if (!currentGOs.contains(gOrder)) {
-                    documentsToRemove.add(gOrder.getValue().getGeneralOrderDocument());
+        if (beforeGeneralOrders != null && currentGeneralOrders != null) {
+            beforeGeneralOrders.forEach(generalOrder -> {
+                if (!currentGeneralOrders.contains(generalOrder)) {
+                    documentsToRemove.add(generalOrder.getValue().getGeneralOrderDocument());
                 }
             });
-        } else if (beforeGOs != null && currentGOs == null) {
-            beforeGOs.forEach(gOrder ->
+        } else if (beforeGeneralOrders != null && currentGeneralOrders == null) {
+            beforeGeneralOrders.forEach(gOrder ->
                     documentsToRemove.add(gOrder.getValue().getGeneralOrderDocument()));
         }
 

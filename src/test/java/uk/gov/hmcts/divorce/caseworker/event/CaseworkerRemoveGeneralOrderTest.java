@@ -24,11 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.*;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,12 +72,6 @@ public class CaseworkerRemoveGeneralOrderTest {
             documentUrl + "/binary"
         );
 
-        Document generalOrderDoc2 = new Document(
-            documentUrl,
-            "generalOrder2021-07-16 11:10:34.pdf",
-            documentUrl + "/binary"
-        );
-
         final List<ListValue<DivorceGeneralOrder>> generalOrders1 = new ArrayList<>();
         generalOrders1.add(getDivorceGeneralOrderListValue(generalOrderDoc1, LIST_VALUE_ID_1));
         caseData1.setGeneralOrders(generalOrders1);
@@ -85,6 +80,12 @@ public class CaseworkerRemoveGeneralOrderTest {
         final CaseDetails<CaseData, State> afterdetails = new CaseDetails<>();
         afterdetails.setData(caseData1);
         afterdetails.setId(TEST_CASE_ID);
+
+        Document generalOrderDoc2 = new Document(
+            documentUrl,
+            "generalOrder2021-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
 
         final List<ListValue<DivorceGeneralOrder>> generalOrders2 = new ArrayList<>();
         generalOrders2.add(getDivorceGeneralOrderListValue(generalOrderDoc1, LIST_VALUE_ID_1));
