@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -25,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_AMEND_CASE = "caseworker-amend-case";
