@@ -305,7 +305,7 @@ public enum State {
     @CCD(
             label = "Expedited case",
             hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-            access = {CaseworkerAccess.class, LegalAdvisorAccess.class}
+            access = {DefaultStateAccess.class}
     )
     ExpeditedCase,
 
