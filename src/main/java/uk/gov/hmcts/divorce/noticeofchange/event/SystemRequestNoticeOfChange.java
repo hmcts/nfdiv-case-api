@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -41,14 +40,13 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
     private final AuthTokenGenerator authTokenGenerator;
     private final AssignCaseAccessClient assignCaseAccessClient;
     private final IdamService idamService;
-    private final ObjectMapper objectMapper;
 
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
-    public static final String NOC_JUDICIAL_SEPARATION_ERROR = """
+    public static final String NOC_JUDICIAL_SEPARATION_CASE_ERROR = """
         Notice of change rejected for judicial separation case: %s
         """;
 
-    public static final String NOC_JOINT_OFFLINE_ERROR = """
+    public static final String NOC_JOINT_OFFLINE_CASE_ERROR = """
         Notice of change rejected for joint case with offline party: %s
         """;
 
@@ -93,13 +91,13 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
             && (data.getApplicant1().isApplicantOffline() || data.getApplicant2().isApplicantOffline());
 
         if (isJudicialSeparation) {
-            String error = String.format(NOC_JUDICIAL_SEPARATION_ERROR, details.getId());
+            String error = String.format(NOC_JUDICIAL_SEPARATION_CASE_ERROR, details.getId());
             log.info(error);
             errors.add(error);
         }
 
         if (isJointCaseWithOfflineParty) {
-            String error = String.format(NOC_JOINT_OFFLINE_ERROR, details.getId());
+            String error = String.format(NOC_JOINT_OFFLINE_CASE_ERROR, details.getId());
             log.info(error);
             errors.add(error);
         }

@@ -27,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange.NOC_JOINT_OFFLINE_ERROR;
-import static uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange.NOC_JUDICIAL_SEPARATION_ERROR;
+import static uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange.NOC_JOINT_OFFLINE_CASE_ERROR;
+import static uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange.NOC_JUDICIAL_SEPARATION_CASE_ERROR;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange.NOTICE_OF_CHANGE_REQUESTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -73,7 +73,7 @@ class SystemRequestNoticeOfChangeTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo(
-            String.format(NOC_JUDICIAL_SEPARATION_ERROR, details.getId())
+            String.format(NOC_JUDICIAL_SEPARATION_CASE_ERROR, details.getId())
         );
     }
 
@@ -89,7 +89,7 @@ class SystemRequestNoticeOfChangeTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo(
-            String.format(NOC_JOINT_OFFLINE_ERROR, details.getId())
+            String.format(NOC_JOINT_OFFLINE_CASE_ERROR, details.getId())
         );
     }
 
@@ -105,12 +105,12 @@ class SystemRequestNoticeOfChangeTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo(
-            String.format(NOC_JOINT_OFFLINE_ERROR, details.getId())
+            String.format(NOC_JOINT_OFFLINE_CASE_ERROR, details.getId())
         );
     }
 
     @Test
-    public void shouldNotReturnValidationErrorForValidCases() {
+    public void shouldNotReturnValidationErrorWhenCaseIsSuitableForNoc() {
         final var details = new CaseDetails<CaseData, State>();
         CaseData data = caseData();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -125,7 +125,7 @@ class SystemRequestNoticeOfChangeTest {
     @Test
     public void shouldCheckNoticeOfChangeApprovalByDelegatingToAssignCaseAccessClient() {
         final var details = new CaseDetails<CaseData, State>();
-        details.setData(caseData());
+        final var beforeDetails = new CaseDetails<CaseData, State>();
         final User systemUser = mock(User.class);
         final AcaRequest nocApiRequest = AcaRequest.acaRequest(details);
 
@@ -133,7 +133,7 @@ class SystemRequestNoticeOfChangeTest {
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        systemRequestNoticeOfChange.submitted(details, details);
+        systemRequestNoticeOfChange.submitted(details, beforeDetails);
 
         verify(assignCaseAccessClient).checkNocApproval(
             TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, nocApiRequest

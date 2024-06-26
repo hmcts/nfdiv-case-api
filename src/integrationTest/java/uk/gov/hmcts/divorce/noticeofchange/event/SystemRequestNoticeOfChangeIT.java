@@ -111,9 +111,10 @@ public class SystemRequestNoticeOfChangeIT {
     }
 
     @Test
-    void shouldProgressThroughValidationWhenCaseIsValid() throws Exception {
+    void shouldProgressThroughValidationWhenCaseIsSuitableForNoc() throws Exception {
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.SOLE_APPLICATION)
+            .applicant1(Applicant.builder().offline(YesOrNo.YES).build())
             .build();
 
         var response = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
@@ -123,18 +124,16 @@ public class SystemRequestNoticeOfChangeIT {
                 .content(objectMapper.writeValueAsString(callbackRequest(
                     caseData, NOTICE_OF_CHANGE_REQUESTED, State.Holding.toString())))
                 .accept(APPLICATION_JSON))
-            .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.errors").isEmpty());
     }
 
     @Test
-    void shouldNotProgressThroughValidationWhenCaseIsInvalid() throws Exception {
+    void shouldNotProgressThroughValidationWhenCaseIsUnsuitableForNoc() throws Exception {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .applicant1(Applicant.builder().offline(YesOrNo.YES).build())
-            .applicant2(Applicant.builder().offline(YesOrNo.NO).build())
             .build();
 
         var response = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
@@ -144,7 +143,6 @@ public class SystemRequestNoticeOfChangeIT {
                 .content(objectMapper.writeValueAsString(callbackRequest(
                     caseData, NOTICE_OF_CHANGE_REQUESTED, State.Holding.toString())))
                 .accept(APPLICATION_JSON))
-            .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.errors").isNotEmpty());
     }
@@ -169,9 +167,7 @@ public class SystemRequestNoticeOfChangeIT {
                                 .build())
                         .build();
         final CaseData caseData = CaseData.builder().changeOrganisationRequestField(changeOrganisationRequestField)
-                .applicant1(Applicant.builder().solicitor(app1Solicitor).build())
-                .applicationType(ApplicationType.SOLE_APPLICATION)
-                .build();
+                .applicant1(Applicant.builder().solicitor(app1Solicitor).build()).build();
 
         AcaRequest acaRequest = acaRequestBody(caseData);
         stubForCheckNocApprovalEndpoint(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
@@ -215,9 +211,7 @@ public class SystemRequestNoticeOfChangeIT {
                                 .build())
                         .build();
         final CaseData caseData = CaseData.builder()
-                .applicant1(Applicant.builder().solicitor(app1Solicitor).build())
-                .applicationType(ApplicationType.SOLE_APPLICATION)
-                .build();;
+                .applicant1(Applicant.builder().solicitor(app1Solicitor).build()).build();
 
         AcaRequest acaRequest = acaRequestBody(caseData);
         stubForCheckNocApprovalEndpointForFailure(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);

@@ -21,7 +21,6 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseRoleID;
 import uk.gov.hmcts.divorce.divorcecase.model.DynamicListItem;
@@ -64,7 +63,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
@@ -193,7 +191,6 @@ public class SystemApplyNoticeOfChangeIT {
                                 .build())
                         .build();
         final CaseData caseData = CaseData.builder()
-                .applicationType(ApplicationType.SOLE_APPLICATION)
                 .applicant1(Applicant.builder().solicitor(app1Solicitor).build()).build();
 
         AcaRequest acaRequest = acaRequestBody(caseData);
@@ -207,8 +204,8 @@ public class SystemApplyNoticeOfChangeIT {
                                 callbackRequest(caseData, NOTICE_OF_CHANGE_REQUESTED, State.Holding.toString())))
                         .accept(APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isForbidden()).andExpect(
-                        result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
+                .andExpect(status().isForbidden())
+                .andExpect(result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
     }
 
