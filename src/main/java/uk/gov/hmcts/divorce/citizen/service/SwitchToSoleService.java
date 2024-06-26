@@ -61,7 +61,7 @@ public class SwitchToSoleService {
         } else if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant2().isRepresented()) {
             switchSolicitorAndCitizenUserRoles(caseId);
         } else if (!caseData.getApplicant1().isRepresented() && caseData.getApplicant2().isRepresented()) {
-            switchCitizenAndSolicitorUserRoles(caseId);
+//            switchCitizenAndSolicitorUserRoles(caseId);
         } else {
             switchCitizenUserRoles(caseId);
         }
@@ -147,8 +147,8 @@ public class SwitchToSoleService {
                 ? applicant2SolicitorUser.get(0).getUserId()
                 : "";
 
-        removeCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, CREATOR);
-        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_2_SOLICITOR);
+//        removeCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, CREATOR);
+//        removeCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_2_SOLICITOR);
 
         addCaseUserRoles(caseId, auth, s2sToken, currentApplicant2SolicitorUserId, APPLICANT_1_SOLICITOR);
         addCaseUserRoles(caseId, auth, s2sToken, currentCreatorUserId, APPLICANT_2);
