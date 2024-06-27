@@ -23,12 +23,12 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -158,13 +158,12 @@ public class CaseworkerRemoveGeneralOrderTest {
         final CaseData caseData1 = caseData();
         final CaseData caseData2 = caseData();
 
-        String documentUrl = "http://localhost:8080/4567";
-
         caseData1.setGeneralOrders(null);
         final CaseDetails<CaseData, State> afterdetails = new CaseDetails<>();
         afterdetails.setData(caseData1);
         afterdetails.setId(TEST_CASE_ID);
 
+        String documentUrl = "http://localhost:8080/4567";
         Document generalOrderDoc1 = new Document(
             documentUrl,
             "generalOrder2020-07-16 11:10:34.pdf",
