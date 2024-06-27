@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,21 +13,18 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
-import uk.gov.hmcts.divorce.noticeofchange.model.Representative;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
@@ -42,8 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.updateChangeOfRepresentativeTab;
-import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.updateRepresentative;
 
 @Component
 @RequiredArgsConstructor
@@ -54,8 +48,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
     private final NoticeOfChangeService noticeOfChangeService;
     private final SolicitorValidationService solicitorValidationService;
-    private final IdamService idamService;
-    private final HttpServletRequest request;
+    private final ChangeOfRepresentativeService changeOfRepresentativeService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -176,41 +169,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             details,
             noticeOfChangeService);
 
-        String party;
-        String clientName;
-        Representative removedRepresentative = null;
-        Representative addedRepresentative = null;
-
-        if (isApplicant1) {
-            var beforeSolicitor = beforeApplicant.getSolicitor();
-            var currentSolicitor = applicant.getSolicitor();
-            if (beforeSolicitor.getOrganisationPolicy() != null) {
-                removedRepresentative = updateRepresentative(beforeSolicitor.getName(), beforeSolicitor.getEmail(),
-                        beforeSolicitor.getOrganisationPolicy().getOrganisation());
-            }
-            addedRepresentative = updateRepresentative(currentSolicitor.getName(), currentSolicitor.getEmail(),
-                    currentSolicitor.getOrganisationPolicy().getOrganisation());
-            party = "Applicant";
-            clientName = applicant.getFullName();
-        } else {
-            var applicant2 = data.getApplicant2();
-            var beforeSolicitor = beforeData.getApplicant2().getSolicitor();
-            var currentSolicitor = applicant2.getSolicitor();
-            if (beforeSolicitor.getOrganisationPolicy() != null) {
-                removedRepresentative = updateRepresentative(beforeSolicitor.getName(), beforeSolicitor.getEmail(),
-                        beforeSolicitor.getOrganisationPolicy().getOrganisation());
-            }
-            addedRepresentative = updateRepresentative(currentSolicitor.getName(), currentSolicitor.getEmail(),
-                    currentSolicitor.getOrganisationPolicy().getOrganisation());
-            party = data.getApplicationType().equals(ApplicationType.SOLE_APPLICATION) ? "Respondent" : "Applicant2";
-            clientName = applicant2.getFullName();
-        }
-
-        var userDetails = idamService.retrieveUser(request.getHeader(AUTHORIZATION)).getUserDetails();
-
-        updateChangeOfRepresentativeTab(data, clientName, userDetails.getName(),
-                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), addedRepresentative,
-                removedRepresentative, party);
+        changeOfRepresentativeService.buildChangeOfRepresentative(data, beforeData,
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(correctRepresentationDetails(details.getData(), beforeData))

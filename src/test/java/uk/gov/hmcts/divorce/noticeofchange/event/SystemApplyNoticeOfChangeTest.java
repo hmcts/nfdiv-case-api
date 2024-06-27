@@ -13,12 +13,10 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseRoleID;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DynamicListItem;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -26,10 +24,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
@@ -39,12 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.NOTICE_OF_CHANGE_APPLIED;
+import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor.SOLICITOR_NOTICE_OF_CHANGE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -52,23 +46,18 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
 class SystemApplyNoticeOfChangeTest {
 
     private static final String TEST_ORGANISATION_NAME = "organisation_name";
-    private static final String TEST_ORGANISATION_USER_ID = "user_id";
     private static final String TEST_ORGANISATION_ID = "organisation_id";
-
     @Mock
     private AuthTokenGenerator authTokenGenerator;
     @Mock
     private IdamService idamService;
     @Mock
     private AssignCaseAccessClient assignCaseAccessClient;
-    @Mock
-    private OrganisationClient organisationClient;
 
     @Mock
     private User systemUser;
@@ -76,24 +65,16 @@ class SystemApplyNoticeOfChangeTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private ChangeOfRepresentativeService changeOfRepresentativeService;
+
     @InjectMocks
     private SystemApplyNoticeOfChange systemApplyNoticeOfChange;
 
     public void setup() {
-        List<ProfessionalUser> professionalUsers = new ArrayList<>();
-        professionalUsers.add(ProfessionalUser.builder().email(TEST_SOLICITOR_EMAIL).userIdentifier(TEST_ORGANISATION_USER_ID).build());
-        FindUsersByOrganisationResponse findUsersByOrganisationResponse = FindUsersByOrganisationResponse
-                .builder().users(professionalUsers).build();
-
-        OrganisationsResponse organisationsResponse = OrganisationsResponse.builder().name(TEST_ORGANISATION_NAME).build();
-
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_ID))
-                .thenReturn(findUsersByOrganisationResponse);
-        when(organisationClient.getOrganisationByUserId(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_USER_ID))
-                .thenReturn(organisationsResponse);
     }
 
     @Test
@@ -110,11 +91,16 @@ class SystemApplyNoticeOfChangeTest {
     @Test
     void shouldApplyNoticeOfChangeForApplicant1Solicitor() {
         setup();
-        CaseData applicant1CaseData = buildCaseDataApplicant1();
-        var details =  CaseDetails.<CaseData, State>builder().data(applicant1CaseData).build();
+        Applicant applicant = TestDataHelper.applicantRepresentedBySolicitor();
+        final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPONESOLICITOR]",
+                "APPLICANT_1_SOLICITOR");
+
+        CaseData caseData = CaseData.builder().applicant1(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
+
+        var details =  CaseDetails.<CaseData, State>builder().data(caseData).build();
         AcaRequest acaRequest = AcaRequest.acaRequest(details);
-        Map<String, Object> expectedData = expectedData(applicant1CaseData);
-        when(objectMapper.convertValue(expectedData, CaseData.class)).thenReturn(applicant1CaseData);
+        Map<String, Object> expectedData = expectedData(caseData);
+        when(objectMapper.convertValue(expectedData, CaseData.class)).thenReturn(caseData);
 
         AboutToStartOrSubmitCallbackResponse response = AboutToStartOrSubmitCallbackResponse
                 .builder().data(expectedData).build();
@@ -123,37 +109,21 @@ class SystemApplyNoticeOfChangeTest {
 
         systemApplyNoticeOfChange.aboutToStart(details);
 
-        Organisation updatedOrganisation = details.getData().getApplicant1().getSolicitor()
-                .getOrganisationPolicy().getOrganisation();
-
-        verify(assignCaseAccessClient).applyNoticeOfChange(
-            TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
-        );
-
-        var changeOfRepresentative = applicant1CaseData.getChangeOfRepresentatives().stream()
-                .map(ListValue::getValue)
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
-        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
-        assertEquals(TEST_ORGANISATION_NAME, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationName());
-        assertEquals(TEST_ORGANISATION_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
-        assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
-        assertEquals(TEST_ORG_NAME, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationName());
-        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
-        assertEquals("Applicant", changeOfRepresentative.getParty());
-
+        verify(assignCaseAccessClient).applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
+        verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), true);
     }
 
     @Test
     void shouldApplyNoticeOfChangeForApplicant2Solicitor() {
         setup();
-        CaseData applicant2CaseData = buildCaseDataApplicant2();
-        var details =  CaseDetails.<CaseData, State>builder().data(applicant2CaseData).build();
+        Applicant applicant = TestDataHelper.applicantRepresentedBySolicitor();
+        final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPTWOSOLICITOR]",
+                "APPLICANT_2_SOLICITOR");
+        CaseData caseData = CaseData.builder().applicant2(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
+        var details =  CaseDetails.<CaseData, State>builder().data(caseData).build();
         AcaRequest acaRequest = AcaRequest.acaRequest(details);
-        Map<String, Object> expectedData = expectedData(applicant2CaseData);
-        when(objectMapper.convertValue(expectedData, CaseData.class)).thenReturn(applicant2CaseData);
+        Map<String, Object> expectedData = expectedData(caseData);
+        when(objectMapper.convertValue(expectedData, CaseData.class)).thenReturn(caseData);
 
         AboutToStartOrSubmitCallbackResponse response = AboutToStartOrSubmitCallbackResponse
                 .builder().data(expectedData).build();
@@ -162,35 +132,18 @@ class SystemApplyNoticeOfChangeTest {
 
         systemApplyNoticeOfChange.aboutToStart(details);
 
-        Organisation updatedOrganisation = details.getData().getApplicant2().getSolicitor()
-                .getOrganisationPolicy().getOrganisation();
-
-        verify(assignCaseAccessClient).applyNoticeOfChange(
-                TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
-        );
-
-        var changeOfRepresentative = applicant2CaseData.getChangeOfRepresentatives().stream()
-                .map(ListValue::getValue)
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(TEST_ORGANISATION_NAME, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationName());
-        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
-        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
-        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
-        assertEquals(TEST_ORGANISATION_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
-        assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
-        assertEquals(TEST_ORG_NAME, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationName());
+        verify(assignCaseAccessClient).applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
+        verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), false);
     }
 
     @Test
     void shouldNotApplyNoticeOfChangeWhenErrorsThrown() {
         setup();
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
-        when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        var details =  CaseDetails.<CaseData, State>builder().data(buildCaseDataApplicant1()).build();
+        Applicant applicant = TestDataHelper.applicantRepresentedBySolicitor();
+        final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPTWOSOLICITOR]",
+                "APPLICANT_2_SOLICITOR");
+        CaseData caseData = CaseData.builder().applicant2(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
+        var details =  CaseDetails.<CaseData, State>builder().data(caseData).build();
         AcaRequest acaRequest = AcaRequest.acaRequest(details);
 
         List<String> errors = List.of("One of the org policies is missing for NoC");
@@ -208,31 +161,12 @@ class SystemApplyNoticeOfChangeTest {
         verifyNoInteractions(objectMapper);
     }
 
-    private CaseData buildCaseDataApplicant1() {
-        final Applicant applicant1 = TestDataHelper.applicantRepresentedBySolicitor();
-        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
-        final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPONESOLICITOR]",
-                "APPLICANT_1_SOLICITOR");
+    private Map<String, Object> expectedData(final CaseData caseData) {
 
-        return CaseData.builder()
-                .applicationType(SOLE_APPLICATION)
-                .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-                .applicant1(applicant1)
-                .changeOrganisationRequestField(changeOrganisationRequest)
-                .build();
-    }
-
-    private CaseData buildCaseDataApplicant2() {
-        final Applicant applicant2 = TestDataHelper.respondentWithDigitalSolicitor();
-        final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPTWOSOLICITOR]",
-                "APPLICANT_2_SOLICITOR");
-
-        return CaseData.builder()
-                .applicationType(SOLE_APPLICATION)
-                .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-                .applicant2(applicant2)
-                .changeOrganisationRequestField(changeOrganisationRequest)
-                .build();
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return objectMapper.convertValue(caseData, new TypeReference<>() {
+        });
     }
 
     private static ChangeOrganisationRequest<CaseRoleID> getChangeOrganisationRequestField(String role, String roleLabel) {
@@ -249,13 +183,5 @@ class SystemApplyNoticeOfChangeTest {
         changeOrganisationRequest.setOrganisationToRemove(Organisation
                 .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
         return changeOrganisationRequest;
-    }
-
-    private Map<String, Object> expectedData(final CaseData caseData) {
-
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return objectMapper.convertValue(caseData, new TypeReference<>() {
-        });
     }
 }
