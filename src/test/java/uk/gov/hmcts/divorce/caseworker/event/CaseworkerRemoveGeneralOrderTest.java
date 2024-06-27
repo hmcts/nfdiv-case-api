@@ -23,9 +23,12 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -110,5 +113,82 @@ public class CaseworkerRemoveGeneralOrderTest {
 
         verify(documentRemovalService).deleteDocument(documentsToDelete);
         assertThat(submitResponse.getData().getGeneralOrders().size() == 1);
+    }
+
+    @Test
+    void shouldNotCallRemoveDocumentIfGeneralOrderListIsSame() {
+
+        final CaseData caseData = caseData();
+
+        String documentUrl = "http://localhost:8080/4567";
+
+        Document generalOrderDoc1 = new Document(
+            documentUrl,
+            "generalOrder2020-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+
+        final List<ListValue<DivorceGeneralOrder>> generalOrders = new ArrayList<>();
+        generalOrders.add(getDivorceGeneralOrderListValue(generalOrderDoc1, LIST_VALUE_ID_1));
+
+        Document generalOrderDoc2 = new Document(
+            documentUrl,
+            "generalOrder2021-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+
+        generalOrders.add(getDivorceGeneralOrderListValue(generalOrderDoc2, LIST_VALUE_ID_2));
+
+        caseData.setGeneralOrders(generalOrders);
+
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerRemoveGO.aboutToSubmit(details, details);
+
+        verifyNoInteractions(documentRemovalService);
+        assertThat(submitResponse.getData().getGeneralOrders().size() == 2);
+    }
+
+    @Test
+    void shouldRemoveAllDocumentsIfAllGeneralOrdersAreDeleted() {
+
+        final CaseData caseData1 = caseData();
+        final CaseData caseData2 = caseData();
+
+        String documentUrl = "http://localhost:8080/4567";
+
+        caseData1.setGeneralOrders(null);
+        final CaseDetails<CaseData, State> afterdetails = new CaseDetails<>();
+        afterdetails.setData(caseData1);
+        afterdetails.setId(TEST_CASE_ID);
+
+        Document generalOrderDoc1 = new Document(
+            documentUrl,
+            "generalOrder2020-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+
+        final List<ListValue<DivorceGeneralOrder>> generalOrders = new ArrayList<>();
+        generalOrders.add(getDivorceGeneralOrderListValue(generalOrderDoc1, LIST_VALUE_ID_1));
+
+        Document generalOrderDoc2 = new Document(
+            documentUrl,
+            "generalOrder2021-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+        generalOrders.add(getDivorceGeneralOrderListValue(generalOrderDoc2, LIST_VALUE_ID_2));
+        caseData2.setGeneralOrders(generalOrders);
+
+        final CaseDetails<CaseData, State> beforedetails = new CaseDetails<>();
+        beforedetails.setData(caseData2);
+        beforedetails.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerRemoveGO.aboutToSubmit(afterdetails, beforedetails);
+
+        verify(documentRemovalService).deleteDocument(anyList());
+        assertNull(submitResponse.getData().getGeneralOrders());
     }
 }

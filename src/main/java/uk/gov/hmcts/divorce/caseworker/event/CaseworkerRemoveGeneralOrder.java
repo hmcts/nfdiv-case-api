@@ -47,7 +47,7 @@ public class CaseworkerRemoveGeneralOrder implements CCDConfig<CaseData, State, 
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
-            .grantHistoryOnly(CASE_WORKER))
+            .grantHistoryOnly(CASE_WORKER,SUPER_USER))
             .page("removeGeneralOrders")
             .pageLabel("Remove General Orders")
             .optional(CaseData::getGeneralOrders)
@@ -70,12 +70,10 @@ public class CaseworkerRemoveGeneralOrder implements CCDConfig<CaseData, State, 
     }
 
     private void handleDeletionOfGeneralOrderDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
-        List<DivorceDocument> documentsToRemove = new ArrayList<>();
-
-        documentsToRemove.addAll(findGeneralOrderDocumentsForRemoval(
+        List<DivorceDocument> documentsToRemove = findGeneralOrderDocumentsForRemoval(
             beforeCaseData.getGeneralOrders(),
             currentCaseData.getGeneralOrders()
-        ));
+        );
 
         if (!documentsToRemove.isEmpty()) {
             List<ListValue<DivorceDocument>> documents = documentsToRemove.stream()
