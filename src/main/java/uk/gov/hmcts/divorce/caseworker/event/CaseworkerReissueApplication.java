@@ -113,6 +113,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
+        log.info("Validating Issue for Case Id: {}", details.getId());
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
         if (!isEmpty(caseValidationErrors)) {

@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack.LETTER_TYPE_GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
@@ -114,6 +116,50 @@ public class LetterPrinterTest {
 
         Print print = printArgumentCaptor.getValue();
         assertThat(print.getLetters()).containsAll(expectedLetters);
+        assertThat(print.getIsInternational()).isEqualTo(false);
+        assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_GENERAL_LETTER);
+    }
+
+    @Test
+    public void shouldPrintLettersWithInternationalFlagSetWhenApplicantAddressOverseas() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setAddressOverseas(YES);
+
+        Document generalLetter = Document.builder()
+            .filename("GeneralLetter.pdf")
+            .build();
+
+        List<ListValue<GeneralLetterDetails>> generalLetters = new ArrayList<>();
+        generalLetters.add(
+            ListValue.<GeneralLetterDetails>builder()
+                .value(
+                    GeneralLetterDetails.builder()
+                        .generalLetterParties(GeneralParties.APPLICANT)
+                        .generalLetterLink(generalLetter)
+                        .build()
+                ).build()
+        );
+        caseData.setGeneralLetters(generalLetters);
+
+        long caseId = TEST_CASE_ID;
+        Applicant applicant = caseData.getApplicant1();
+        DocumentPackInfo documentPackInfo = new DocumentPackInfo(
+            ImmutableMap.of(DocumentType.GENERAL_LETTER, Optional.empty()),
+            ImmutableMap.of()
+        );
+
+        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+            .collect(Collectors.toList());
+
+        when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+
+        letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
+
+        verify(bulkPrintService).print(printArgumentCaptor.capture());
+
+        Print print = printArgumentCaptor.getValue();
+        assertThat(print.getLetters()).containsAll(expectedLetters);
+        assertThat(print.getIsInternational()).isEqualTo(true);
         assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_GENERAL_LETTER);
     }
 
@@ -176,6 +222,23 @@ public class LetterPrinterTest {
         Letter letter = new Letter(Document.builder().filename("coversheet").build(), 1);
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(List.of(letter));
+
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME)
+        );
+
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenListReturnedIsEmpty() {
+        CaseData caseData = validApplicant1CaseData();
+        long caseId = TEST_CASE_ID;
+        Applicant applicant = caseData.getApplicant1();
+        DocumentPackInfo documentPackInfo = getDocumentPackInfo();
+
+        when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(emptyList());
 
         assertThrows(
             IllegalArgumentException.class,

@@ -75,6 +75,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
+                    .mandatory(Solicitor::getAddressOverseas,
+                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
@@ -85,6 +87,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
+                .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
@@ -92,6 +95,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getAddress,
+                        "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
+                    .mandatory(Solicitor::getAddressOverseas,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
@@ -103,6 +108,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
+                .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .done();
     }
 

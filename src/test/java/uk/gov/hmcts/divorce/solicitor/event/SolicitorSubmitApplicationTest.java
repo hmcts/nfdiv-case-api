@@ -55,6 +55,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -99,7 +100,7 @@ public class SolicitorSubmitApplicationTest {
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE)).thenReturn(orderSummary);
         when(orderSummary.getPaymentTotal()).thenReturn("55000");
 
-        var midEventCaseData = caseData();
+        var midEventCaseData = caseDataWithMarriageDate();
         midEventCaseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
 
         var pbaResponse
