@@ -37,11 +37,11 @@ class SetDefaultOrganisationPoliciesTest {
         final OrganisationPolicy<UserRole> app2OrgPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
 
         assertAll(
-            () -> assertEquals(null, app1OrgPolicy.getOrganisation().getOrganisationName()),
-            () -> assertEquals(null, app1OrgPolicy.getOrganisation().getOrganisationId()),
+            () -> assertEquals("", app1OrgPolicy.getOrganisation().getOrganisationName()),
+            () -> assertEquals("", app1OrgPolicy.getOrganisation().getOrganisationId()),
             () -> assertEquals(UserRole.APPLICANT_1_SOLICITOR, app1OrgPolicy.getOrgPolicyCaseAssignedRole()),
-            () -> assertEquals(null, app2OrgPolicy.getOrganisation().getOrganisationName()),
-            () -> assertEquals(null, app2OrgPolicy.getOrganisation().getOrganisationId()),
+            () -> assertEquals("", app2OrgPolicy.getOrganisation().getOrganisationName()),
+            () -> assertEquals("", app2OrgPolicy.getOrganisation().getOrganisationId()),
             () -> assertEquals(UserRole.APPLICANT_2_SOLICITOR, app2OrgPolicy.getOrgPolicyCaseAssignedRole())
         );
     }
@@ -66,8 +66,8 @@ class SetDefaultOrganisationPoliciesTest {
             () -> assertEquals(TEST_ORG_NAME, app1OrgPolicy.getOrganisation().getOrganisationName()),
             () -> assertEquals(TEST_ORG_ID, app1OrgPolicy.getOrganisation().getOrganisationId()),
             () -> assertEquals(UserRole.APPLICANT_1_SOLICITOR, app1OrgPolicy.getOrgPolicyCaseAssignedRole()),
-            () -> assertEquals(null, app2OrgPolicy.getOrganisation().getOrganisationName()),
-            () -> assertEquals(null, app2OrgPolicy.getOrganisation().getOrganisationId()),
+            () -> assertEquals("", app2OrgPolicy.getOrganisation().getOrganisationName()),
+            () -> assertEquals("", app2OrgPolicy.getOrganisation().getOrganisationId()),
             () -> assertEquals(UserRole.APPLICANT_2_SOLICITOR, app2OrgPolicy.getOrgPolicyCaseAssignedRole())
         );
     }
@@ -92,8 +92,8 @@ class SetDefaultOrganisationPoliciesTest {
             () -> assertEquals(TEST_ORG_NAME, app1OrgPolicy.getOrganisation().getOrganisationName()),
             () -> assertEquals(TEST_ORG_ID, app1OrgPolicy.getOrganisation().getOrganisationId()),
             () -> assertEquals(UserRole.APPLICANT_2_SOLICITOR, app1OrgPolicy.getOrgPolicyCaseAssignedRole()),
-            () -> assertEquals(null, app2OrgPolicy.getOrganisation().getOrganisationName()),
-            () -> assertEquals(null, app2OrgPolicy.getOrganisation().getOrganisationId()),
+            () -> assertEquals("", app2OrgPolicy.getOrganisation().getOrganisationName()),
+            () -> assertEquals("", app2OrgPolicy.getOrganisation().getOrganisationId()),
             () -> assertEquals(UserRole.APPLICANT_2_SOLICITOR, app2OrgPolicy.getOrgPolicyCaseAssignedRole())
         );
     }

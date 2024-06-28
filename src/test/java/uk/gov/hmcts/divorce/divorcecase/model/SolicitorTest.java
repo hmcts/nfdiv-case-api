@@ -76,6 +76,20 @@ class SolicitorTest {
     }
 
     @Test
+    void shouldReturnNullIfOrganisationIdIsBlank() {
+
+        final Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder()
+                    .organisationId("")
+                    .build())
+                .build())
+            .build();
+
+        assertThat(solicitor.getOrganisationId()).isEqualTo(null);
+    }
+
+    @Test
     void shouldReturnNullIfOrganisationIdIsMissing() {
 
         final Solicitor solicitor1 = Solicitor.builder().build();
