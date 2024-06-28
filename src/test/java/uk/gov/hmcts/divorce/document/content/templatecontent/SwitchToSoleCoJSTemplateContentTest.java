@@ -99,7 +99,7 @@ class SwitchToSoleCoJSTemplateContentTest {
             entry(IS_DIVORCE, true),
             entry(FIRST_NAME, APPLICANT_2_FIRST_NAME),
             entry(LAST_NAME, APPLICANT_2_LAST_NAME),
-            entry(ADDRESS, applicant2.getPostalAddress()),
+            entry(ADDRESS, applicant2.getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(PARTNER, "wife"),
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
         );
@@ -147,7 +147,7 @@ class SwitchToSoleCoJSTemplateContentTest {
             entry(IS_DIVORCE, false),
             entry(FIRST_NAME, APPLICANT_2_FIRST_NAME),
             entry(LAST_NAME, APPLICANT_2_LAST_NAME),
-            entry(ADDRESS, applicant2.getPostalAddress()),
+            entry(ADDRESS, applicant2.getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(PARTNER, "wife"),
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
         );

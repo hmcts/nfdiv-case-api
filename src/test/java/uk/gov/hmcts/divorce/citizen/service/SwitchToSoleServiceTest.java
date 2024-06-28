@@ -6,10 +6,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -124,6 +126,27 @@ public class SwitchToSoleServiceTest {
         switchToSoleService.switchApplicantData(caseData);
 
         assertThat(caseData.getApplication().getDivorceWho()).isNull();
+    }
+
+    @Test
+    void shouldSetCorrectOrgPolicyCaseAssignedRolesWhenApplicantDataIsSwitched() {
+        CaseData caseData = validJointApplicant1CaseData();
+        Solicitor app1Solicitor = new Solicitor().builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR).build())
+            .build();
+        caseData.getApplicant1().setSolicitor(app1Solicitor);
+
+        Solicitor app2Solicitor = new Solicitor().builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().orgPolicyCaseAssignedRole(APPLICANT_2_SOLICITOR).build())
+            .build();
+        caseData.getApplicant2().setSolicitor(app2Solicitor);
+
+        switchToSoleService.switchApplicantData(caseData);
+
+        OrganisationPolicy<UserRole> newApp1OrgPolicy = caseData.getApplicant1().getSolicitor().getOrganisationPolicy();
+        OrganisationPolicy<UserRole> newApp2OrgPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
+        assertThat(newApp1OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_1_SOLICITOR);
+        assertThat(newApp2OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_2_SOLICITOR);
     }
 
     @Test

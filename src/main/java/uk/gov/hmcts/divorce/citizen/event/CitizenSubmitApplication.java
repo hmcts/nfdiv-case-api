@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -49,6 +50,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         configBuilder
             .event(CITIZEN_SUBMIT)
             .forStates(Draft, AwaitingPayment, Applicant2Approved)
+            .showCondition(NEVER_SHOW)
             .name("Apply: divorce or dissolution")
             .description("Apply: divorce or dissolution")
             .retries(120, 120)
