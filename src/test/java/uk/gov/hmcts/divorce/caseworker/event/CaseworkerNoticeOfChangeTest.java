@@ -359,11 +359,11 @@ class CaseworkerNoticeOfChangeTest {
         data.getApplicant1().setOffline(NO);
         data.getApplicant2().setOffline(NO);
         data.getApplicant1().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
-                .organisation(new Organisation("", ""))
+                .organisation(new Organisation(null, null))
                 .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
             .build());
         data.getApplicant2().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
-                .organisation(new Organisation("", ""))
+                .organisation(new Organisation(null, null))
                 .orgPolicyCaseAssignedRole(UserRole.APPLICANT_2_SOLICITOR)
             .build());
         details.setData(data);

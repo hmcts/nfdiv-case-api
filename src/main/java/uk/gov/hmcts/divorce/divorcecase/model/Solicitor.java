@@ -113,7 +113,6 @@ public class Solicitor {
         return Optional.ofNullable(organisationPolicy)
             .map(OrganisationPolicy::getOrganisation)
             .map(Organisation::getOrganisationId)
-            .filter(x -> !x.isEmpty())
             .orElse(null);
     }
 

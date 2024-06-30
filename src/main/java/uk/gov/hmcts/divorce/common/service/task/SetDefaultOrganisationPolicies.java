@@ -22,7 +22,7 @@ public class SetDefaultOrganisationPolicies implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
         log.info("Setting default organisation policies for case id {} ", caseDetails.getId());
-
+        
         final CaseData caseData = caseDetails.getData();
 
         initializeSolicitor(caseData.getApplicant1());
@@ -62,7 +62,7 @@ public class SetDefaultOrganisationPolicies implements CaseTask {
 
         organisationPolicy.setOrganisation(
             Optional.ofNullable(organisationPolicy.getOrganisation())
-                .orElse(new Organisation("", ""))
+                .orElse(new Organisation(null, null))
         );
     }
 }
