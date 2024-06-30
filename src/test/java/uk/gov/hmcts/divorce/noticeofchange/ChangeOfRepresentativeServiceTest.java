@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
@@ -67,8 +66,7 @@ class ChangeOfRepresentativeServiceTest {
     private AuthTokenGenerator authTokenGenerator;
     @Mock
     private IdamService idamService;
-    @Mock
-    private AssignCaseAccessClient assignCaseAccessClient;
+
     @Mock
     private OrganisationClient organisationClient;
 

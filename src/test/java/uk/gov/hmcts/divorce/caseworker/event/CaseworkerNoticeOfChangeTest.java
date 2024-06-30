@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
@@ -18,17 +16,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
-import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -45,22 +40,19 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerNoticeOfChangeTest {
-    private static final String USER_TOKEN = "dummy-user-token";
     @Mock
     private NoticeOfChangeService noticeOfChangeService;
 
     @Mock
     private SolicitorValidationService solicitorValidationService;
+
     @Mock
-    private IdamService idamService;
-    @Mock
-    HttpServletRequest httpServletRequest;
+    private ChangeOfRepresentativeService changeOfRepresentativeService;
 
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
@@ -186,10 +178,6 @@ class CaseworkerNoticeOfChangeTest {
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
-
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
@@ -216,9 +204,6 @@ class CaseworkerNoticeOfChangeTest {
             .build());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
@@ -230,6 +215,8 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
         verify(noticeOfChangeService).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
+        verify(changeOfRepresentativeService).buildChangeOfRepresentative(details.getData(), beforeDetails.getData(),
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), true);
     }
 
     @Test
@@ -249,26 +236,10 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyDigital(YES)
             .build());
 
-
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
-
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        var changeOfRepresentative = details.getData().getChangeOfRepresentatives().stream()
-                .map(ListValue::getValue)
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(TEST_ORG_ID, changeOfRepresentative.getAddedRepresentative().getOrganisation().getOrganisationId());
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
-        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
-        assertEquals(TEST_SOLICITOR_EMAIL, changeOfRepresentative.getAddedRepresentative().getSolicitorEmail());
-        assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
-        assertEquals(TEST_SOL_USER_EMAIL, changeOfRepresentative.getRemovedRepresentative().getSolicitorEmail());
-        assertEquals("Applicant", changeOfRepresentative.getParty());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
@@ -301,9 +272,7 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
@@ -329,9 +298,7 @@ class CaseworkerNoticeOfChangeTest {
             .build());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
@@ -360,9 +327,6 @@ class CaseworkerNoticeOfChangeTest {
             .build());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
@@ -383,9 +347,7 @@ class CaseworkerNoticeOfChangeTest {
             .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
             .areTheyRepresented(null)
             .build());
-        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).name("Caseworker name").build());
-        when(httpServletRequest.getHeader(any())).thenReturn(USER_TOKEN);
-        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+
         var result = noticeOfChange.aboutToSubmit(details, getCaseDetails());
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();

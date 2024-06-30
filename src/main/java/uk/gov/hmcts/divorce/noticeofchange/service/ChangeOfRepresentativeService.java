@@ -44,38 +44,34 @@ public class ChangeOfRepresentativeService {
         Representative removedRepresentative = null;
         String clientName = isApplicant1 ? caseData.getApplicant1().getFullName() : caseData.getApplicant2().getFullName();
         String updatedBy;
-        var currentSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();
+        Solicitor currentSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();
 
         if (SOLICITOR_NOTICE_OF_CHANGE.getValue().equals(updatedVia)) {
             String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
             String s2sToken = authTokenGenerator.generate();
             var changeOrganisationRequest = caseData.getChangeOrganisationRequestField();
-            var orgToAdd = changeOrganisationRequest.getOrganisationToAdd();
-            var organisationId = orgToAdd.getOrganisationId();
-            var loggedInUserEmail = changeOrganisationRequest.getCreatedBy().toLowerCase();
-            final var nocRequestingUser = getProfessionalUsers(sysUserToken, s2sToken, organisationId, loggedInUserEmail);
+            Organisation orgToAdd = changeOrganisationRequest.getOrganisationToAdd();
+            String loggedInUserEmail = changeOrganisationRequest.getCreatedBy().toLowerCase();
+            String organisationId = orgToAdd.getOrganisationId();
+            ProfessionalUser nocRequestingUser = getProfessionalUsers(sysUserToken, s2sToken, organisationId, loggedInUserEmail);
             String nocSolicitorOrgName = organisationClient
                     .getOrganisationByUserId(sysUserToken, s2sToken, nocRequestingUser.getUserIdentifier()).getName();
             orgToAdd.setOrganisationName(nocSolicitorOrgName);
-            var beforeSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();;
+            Solicitor beforeSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();;
             if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
-                removedRepresentative = updateRepresentative(beforeSolicitor.getName(), beforeSolicitor.getEmail(),
-                        beforeSolicitor.getOrganisationPolicy().getOrganisation());
+                removedRepresentative = updateRepresentative(beforeSolicitor);
             }
             updateOrgPolicyAndSolicitorDetails(currentSolicitor, nocRequestingUser, loggedInUserEmail);
-            final ProfessionalUser professionalUser = getProfessionalUsers(sysUserToken, s2sToken, organisationId, loggedInUserEmail);
-            updatedBy = String.join(" ", professionalUser.getFirstName(), professionalUser.getLastName());
+            updatedBy = String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName());
             addedRepresentative = updateRepresentative(updatedBy, loggedInUserEmail, orgToAdd);
         } else {
             var userDetails = idamService.retrieveUser(request.getHeader(AUTHORIZATION)).getUserDetails();
             var beforeSolicitor = isApplicant1 ? beforeCaseData.getApplicant1().getSolicitor()
                     : beforeCaseData.getApplicant2().getSolicitor();
             updatedBy = userDetails.getName();
-            addedRepresentative = updateRepresentative(currentSolicitor.getName(), currentSolicitor.getEmail(),
-                    currentSolicitor.getOrganisationPolicy().getOrganisation());
+            addedRepresentative = updateRepresentative(currentSolicitor);
             if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
-                removedRepresentative = updateRepresentative(beforeSolicitor.getName(), beforeSolicitor.getEmail(),
-                        beforeSolicitor.getOrganisationPolicy().getOrganisation());
+                removedRepresentative = updateRepresentative(beforeSolicitor);
             }
         }
 
@@ -117,6 +113,10 @@ public class ChangeOfRepresentativeService {
                 .solicitorEmail(solicitorEmail)
                 .organisation(organisation)
                 .build();
+    }
+
+    private Representative updateRepresentative(Solicitor solicitor) {
+        return updateRepresentative(solicitor.getName(), solicitor.getEmail(), solicitor.getOrganisationPolicy().getOrganisation());
     }
 
     private void updateChangeOfRepresentativeTab(CaseData caseData,
