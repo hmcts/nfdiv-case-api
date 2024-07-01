@@ -57,6 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stubFor
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -174,7 +175,6 @@ public class SystemApplyNoticeOfChangeIT {
                         .value(TEST_ORGANISATION_NAME));
     }
 
-
     @Test
     void shouldThrowErrorWhenApplyNoticeOfChange() throws Exception {
 
@@ -196,7 +196,7 @@ public class SystemApplyNoticeOfChangeIT {
         AcaRequest acaRequest = acaRequestBody(caseData);
         stubForCheckNocApprovalEndpointForFailure(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
                         .contentType(APPLICATION_JSON)
                         .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                         .header(AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
@@ -204,10 +204,8 @@ public class SystemApplyNoticeOfChangeIT {
                                 callbackRequest(caseData, NOTICE_OF_CHANGE_REQUESTED, State.Holding.toString())))
                         .accept(APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(
-                        status().isForbidden()
-                ).andExpect(
-                        result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
+                .andExpect(status().isForbidden())
+                .andExpect(result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
     }
 
