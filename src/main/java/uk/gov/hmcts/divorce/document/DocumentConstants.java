@@ -15,6 +15,8 @@ public final class DocumentConstants {
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_JS_SOLE_DISPUTED = "NFD_NOP_APP1_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED";
+    public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID = "NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2";
+    public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME = "Grant of representation";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
