@@ -16,45 +16,30 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant2ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant2ContactDetails.SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorViewApplicant1ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorViewApplicant1ContactDetails.APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorViewApplicant2ContactDetailsTest {
+public class Applicant2SolicitorViewApplicant1ContactDetailsTest {
 
     @InjectMocks
-    private SolicitorViewApplicant2ContactDetails solicitorViewApplicant2ContactDetails;
+    private Applicant2SolicitorViewApplicant1ContactDetails solicitorViewApplicant1ContactDetails;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorViewApplicant2ContactDetails.configure(configBuilder);
+        solicitorViewApplicant1ContactDetails.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO);
+            .contains(APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO);
     }
 
     @Test
-    public void aboutToStartShouldReturnValidationErrorIfApplicant2IsPrivate() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setState(Submitted);
-        final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
-            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
-            .build();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant2ContactDetails.aboutToStart(details);
-
-        assertThat(response.getErrors()).containsExactly(CONFIDENTIAL_APPLICANT_ERROR);
-    }
-
-    @Test
-    public void aboutToStartShouldNotReturnValidationErrorIfApplicant2IsPublic() {
+    public void aboutToStartShouldReturnValidationErrorIfApplicant1IsPrivate() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder()
@@ -63,7 +48,22 @@ public class SolicitorViewApplicant2ContactDetailsTest {
             .build();
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant2ContactDetails.aboutToStart(details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant1ContactDetails.aboutToStart(details);
+
+        assertThat(response.getErrors()).containsExactly(CONFIDENTIAL_APPLICANT_ERROR);
+    }
+
+    @Test
+    public void aboutToStartShouldNotReturnValidationErrorIfApplicant1IsPublic() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setState(Submitted);
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
+            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .build();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant1ContactDetails.aboutToStart(details);
 
         assertThat(response.getErrors()).isEmpty();
     }
