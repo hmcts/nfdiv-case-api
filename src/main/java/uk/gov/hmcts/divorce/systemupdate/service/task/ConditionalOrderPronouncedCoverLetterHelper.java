@@ -158,7 +158,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         }
 
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
