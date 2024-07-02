@@ -155,6 +155,7 @@ public final class ManageCaseAssignmentWireMock {
                 .email(TEST_SOLICITOR_EMAIL)
                 .organisationPolicy(OrganisationPolicy.<UserRole>builder().organisation(Organisation.builder()
                                 .organisationId(TEST_ORGANISATION_ID)
+                                .organisationName(TEST_ORGANISATION_NAME)
                                 .build())
                         .build())
                 .build();
