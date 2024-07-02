@@ -13,11 +13,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -53,7 +55,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -65,6 +69,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -450,5 +456,112 @@ public class LegalAdvisorMakeServiceDecisionIT {
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
+    }
+
+    @Test
+    public void shouldSendRejectedEmailNotificationToSolicitorIfApplicantRepresentedAndApplicationIsNotGrantedAndTypeIsDeemed()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(getApplicant())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(DEEMED)
+                    .serviceApplicationGranted(NO)
+                    .serviceApplicationRefusalReason("refusal reasons")
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .dueDate(LocalDate.of(2021, 6, 20))
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verify(notificationService).sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SERVICE_APPLICATION_REJECTED_SOLICITOR),
+            anyMap(), eq(ENGLISH), anyLong());
+    }
+
+    @Test
+    public void shouldSendGrantedEmailNotificationToSolicitorIfApplicantRepresentedAndApplicationIsGrantedAndTypeIsDeemed()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(getApplicant())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(DEEMED)
+                    .serviceApplicationGranted(YES)
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .dueDate(LocalDate.of(2021, 6, 20))
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        verify(notificationService).sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SERVICE_APPLICATION_GRANTED_SOLICITOR),
+            anyMap(), eq(ENGLISH), anyLong());
     }
 }
