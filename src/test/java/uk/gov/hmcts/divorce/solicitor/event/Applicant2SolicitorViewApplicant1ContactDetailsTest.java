@@ -16,16 +16,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant1ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorViewApplicant1ContactDetails.SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorViewApplicant1ContactDetails.APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorViewApplicant1ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorViewApplicant1ContactDetailsTest {
+public class Applicant2SolicitorViewApplicant1ContactDetailsTest {
 
     @InjectMocks
-    private SolicitorViewApplicant1ContactDetails solicitorViewApplicant1ContactDetails;
+    private Applicant2SolicitorViewApplicant1ContactDetails solicitorViewApplicant1ContactDetails;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -35,7 +35,7 @@ public class SolicitorViewApplicant1ContactDetailsTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO);
+            .contains(APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO);
     }
 
     @Test
