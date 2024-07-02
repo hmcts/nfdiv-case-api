@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.service.task.SendSubmissionNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicant2Email;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
+import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.common.service.task.SetStateAfterSubmission;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -30,6 +31,9 @@ public class SubmissionService {
     @Autowired
     private SendSubmissionNotifications sendSubmissionNotifications;
 
+    @Autowired
+    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+
     public CaseDetails<CaseData, State> submitApplication(final CaseDetails<CaseData, State> caseDetails) {
 
         return CaseTaskRunner.caseTasks(
@@ -37,6 +41,7 @@ public class SubmissionService {
             setDateSubmitted,
             setApplicant2Email,
             setApplicantOfflineStatus,
+            setDefaultOrganisationPolicies,
             sendSubmissionNotifications
         ).run(caseDetails);
     }
