@@ -181,6 +181,7 @@ class CaseworkerNoticeOfChangeTest {
             .isEqualTo(
                 OrganisationPolicy.<UserRole>builder()
                     .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                    .organisation(new Organisation(null, null))
                     .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -208,6 +209,7 @@ class CaseworkerNoticeOfChangeTest {
             .isEqualTo(
                 OrganisationPolicy.<UserRole>builder()
                     .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                    .organisation(new Organisation(null, null))
                     .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
