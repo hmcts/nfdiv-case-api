@@ -27,6 +27,7 @@ public final class IdamWireMock {
 
     public static final String SOLICITOR_ROLE = "caseworker-divorce-solicitor";
     public static final String CASEWORKER_ROLE = "caseworker-divorce";
+    public static final String JUDGE_ROLE = "caseworker-divorce-judge";
     public static final String SYSTEM_USER_ROLE = "caseworker-divorce-systemupdate";
     public static final String SUPER_USER_ROLE = "caseworker-divorce-superuser";
     public static final String CITIZEN_ROLE = "citizen";

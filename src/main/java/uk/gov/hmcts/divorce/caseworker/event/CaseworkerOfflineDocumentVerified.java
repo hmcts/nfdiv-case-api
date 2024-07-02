@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -49,6 +50,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
@@ -278,9 +280,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getApplicant2().setOffline(YES);
         }
 
-        var state = caseData.isJudicialSeparationCase()
-            ? JSAwaitingLA
-            : AwaitingLegalAdvisorReferral;
+        var isExpeditedCase = OfflineApplicationType.EXPEDITED_CASE.equals(caseData.getConditionalOrder().getD84ApplicationType());
+
+        State state;
+        if (caseData.isJudicialSeparationCase()) {
+            state = JSAwaitingLA;
+        } else {
+            state = isExpeditedCase ? ExpeditedCase : AwaitingLegalAdvisorReferral;
+        }
 
         if (!caseData.isJudicialSeparationCase()) {
             log.info(

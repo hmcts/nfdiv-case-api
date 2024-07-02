@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARI
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -135,6 +136,21 @@ class SubmitClarificationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(ClarificationSubmitted);
+    }
+
+    @Test
+    void shouldSetStateToExpeditedCaseOnAboutToSubmitWhenPreviousStateIsExpeditedCase() {
+
+        setMockClock(clock);
+
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setPreviousState(ExpeditedCase);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+                .data(caseData).state(AwaitingClarification).id(TEST_CASE_ID).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(ExpeditedCase);
     }
 
     @Test

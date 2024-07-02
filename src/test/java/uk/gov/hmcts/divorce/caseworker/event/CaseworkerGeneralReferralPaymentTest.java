@@ -20,6 +20,8 @@ import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferralPayment.CASEWORKER_GENERAL_REFERRAL_PAYMENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE_AMEND_PETITION;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
@@ -61,5 +63,31 @@ public class CaseworkerGeneralReferralPaymentTest {
 
         assertThat(response.getData().getGeneralReferral().getGeneralReferralFee().getOrderSummary()).isNotNull();
         assertThat(response.getData().getGeneralReferral().getGeneralReferralFee().getOrderSummary()).isEqualTo(orderSummary);
+    }
+
+
+    @Test
+    void shouldSetTheStateToExpeditedCaseWhenPreviousStateIsExpeditedCase() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setPreviousState(ExpeditedCase);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalReferralPayment.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getState()).isEqualTo(ExpeditedCase);
+    }
+
+    @Test
+    void shouldSetTheStateToAwaitingGeneralConsiderationWhenPreviousStateIsExpeditedCase() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalReferralPayment.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingGeneralConsideration);
     }
 }
