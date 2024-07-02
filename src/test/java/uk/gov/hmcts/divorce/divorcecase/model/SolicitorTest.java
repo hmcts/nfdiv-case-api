@@ -51,7 +51,7 @@ class SolicitorTest {
 
         assertThat(solicitor.hasOrgId()).isFalse();
     }
-    
+
     @Test
     void shouldReturnFalseIfOrganisationPolicyIsNull() {
 
