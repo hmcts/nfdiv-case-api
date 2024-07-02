@@ -3,17 +3,12 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -34,13 +29,13 @@ public class Applicant2SolicitorViewApplicant2ContactDetails implements CCDConfi
         new PageBuilder(configBuilder
             .event(APPLICANT_2_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO)
             .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
-            .name("View applicant 1 contact info")
-            .description("View applicant 1 contact details")
+            .name("View respondent contact info")
+            .description("View respondent contact details")
             .showSummary(false)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("applicant2ContactDetails")
-            .pageLabel("Applicant 2 Contact Details")
+            .pageLabel("Respondent Contact Details")
             .complex(CaseData::getApplicant2)
                 .readonly(Applicant::getAddress)
                 .readonly(Applicant::getPhoneNumber)

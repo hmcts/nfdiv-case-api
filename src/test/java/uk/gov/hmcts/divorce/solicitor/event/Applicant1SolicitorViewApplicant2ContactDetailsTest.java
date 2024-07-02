@@ -16,8 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorViewApplicant2ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorViewApplicant2ContactDetails.APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorViewApplicant2ContactDetails.CONFIDENTIAL_APPLICANT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 

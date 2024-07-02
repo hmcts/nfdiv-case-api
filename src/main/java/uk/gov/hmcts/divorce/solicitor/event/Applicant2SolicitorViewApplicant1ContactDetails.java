@@ -54,7 +54,9 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}",
+            APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId()
+        );
 
         List<String> errors = new ArrayList<>();
 

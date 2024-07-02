@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 public class Applicant2SolicitorViewApplicant2ContactDetailsTest {
 
     @InjectMocks
-    private Applicant1SolicitorViewApplicant2ContactDetails solicitorViewApplicant2ContactDetails;
+    private Applicant2SolicitorViewApplicant2ContactDetails solicitorViewApplicant2ContactDetails;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {

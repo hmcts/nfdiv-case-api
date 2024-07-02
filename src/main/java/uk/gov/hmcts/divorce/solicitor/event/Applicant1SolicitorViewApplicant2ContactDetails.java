@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO = "solicitor-view-applicant-2-contact-info";
+    public static final String APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO = "app1-solicitor-view-app2-contact-info";
     public static final String CONFIDENTIAL_APPLICANT_ERROR = """
                 The respondents contact details are confidential. Please complete a general application
                 to seek permission to obtain the address from the court.
@@ -54,7 +54,9 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}",
+            APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO, details.getId()
+        );
 
         List<String> errors = new ArrayList<>();
 
