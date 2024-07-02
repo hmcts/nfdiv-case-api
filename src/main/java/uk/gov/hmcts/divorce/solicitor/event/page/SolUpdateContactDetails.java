@@ -46,6 +46,7 @@ public class SolUpdateContactDetails implements CcdPageConfiguration {
                             .mandatory(Organisation::getOrganisationId)
                         .done()
                     .done()
+                    .mandatory(Solicitor::getAddressOverseas)
                 .done()
             .done();
     }
