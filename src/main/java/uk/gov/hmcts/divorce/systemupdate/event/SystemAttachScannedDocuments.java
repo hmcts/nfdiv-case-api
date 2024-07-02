@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -36,7 +38,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.C8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
@@ -91,6 +95,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         final CaseData beforeCaseData = beforeDetails.getData();
         caseData.getApplication().setPreviousState(beforeDetails.getState());
         handleScannedDocument(caseData, beforeCaseData);
+        handleConfidentialScannedDocument(caseData, beforeCaseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -99,33 +104,62 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
     private void handleScannedDocument(CaseData caseData, CaseData beforeCaseData) {
 
-        final List<ScannedDocument> afterScannedDocs = Stream.ofNullable(caseData.getDocuments().getScannedDocuments())
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .toList();
-
-        final List<ScannedDocument> beforeScannedDocs = Stream.ofNullable(beforeCaseData.getDocuments().getScannedDocuments())
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .toList();
-
-        Optional<ScannedDocument> mostRecentScannedSubtypeReceived =
-            afterScannedDocs
-                .stream()
-                .filter(element -> !beforeScannedDocs.contains(element))
-                .filter(SystemAttachScannedDocuments::isValidDocumentSubtype)
-                .findFirst();
+        Optional<ScannedDocument> mostRecentScannedSubtypeReceived = getMostRecentDocumentFromLists(
+            caseData.getDocuments().getScannedDocuments(),
+            beforeCaseData.getDocuments().getScannedDocuments()
+        );
 
         if (mostRecentScannedSubtypeReceived.isPresent()) {
             final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
-            final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
-                CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
-            final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
+            handleDocumentWithSubtype(scannedDocument, caseData);
+        }
+    }
 
-            if (isNotEmpty(documentType)) {
-                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
-                caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
-            }
+    private void handleConfidentialScannedDocument(CaseData caseData, CaseData beforeCaseData) {
+
+        Optional<ScannedDocument> mostRecentConfidentialScannedSubtypeReceived = getMostRecentDocumentFromLists(
+            caseData.getDocuments().getConfidentialScannedDocuments(),
+            beforeCaseData.getDocuments().getConfidentialScannedDocuments()
+        );
+
+        if (mostRecentConfidentialScannedSubtypeReceived.isPresent()) {
+            final ScannedDocument scannedDocument = mostRecentConfidentialScannedSubtypeReceived.get();
+            handleDocumentWithSubtype(scannedDocument, caseData);
+        }
+    }
+
+    private Optional<ScannedDocument> getMostRecentDocumentFromLists(List<ListValue<ScannedDocument>> documentList,
+                                                                     List<ListValue<ScannedDocument>> beforeDocumentList) {
+        return getMostRecentDocument(
+            getDocumentList(documentList),
+            getDocumentList(beforeDocumentList)
+        );
+    }
+
+    private List<ScannedDocument> getDocumentList(List<ListValue<ScannedDocument>> documentList) {
+        return Stream.ofNullable(documentList)
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .toList();
+    }
+
+    private Optional<ScannedDocument> getMostRecentDocument(List<ScannedDocument> documentList,
+                                                            List<ScannedDocument> beforeDocumentList) {
+        return documentList
+            .stream()
+            .filter(element -> !beforeDocumentList.contains(element))
+            .filter(SystemAttachScannedDocuments::isValidDocumentSubtype)
+            .findFirst();
+    }
+
+    private void handleDocumentWithSubtype(ScannedDocument scannedDocument, CaseData caseData) {
+        final CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype =
+            CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
+        final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
+
+        if (isNotEmpty(documentType)) {
+            caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+            caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
         }
     }
 
@@ -143,6 +177,10 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
         if (D10.equals(scannedDocumentSubtype)) {
             return RESPONDENT_ANSWERS;
+        } else if (CONFIDENTIAL_D10.equals(scannedDocumentSubtype)) {
+            return CONFIDENTIAL_RESPONDENT_ANSWERS;
+        } else if (CONFIDENTIAL.equals(scannedDocumentSubtype)) {
+            return C8;
         } else if (D84.equals(scannedDocumentSubtype)) {
             return CONDITIONAL_ORDER_APPLICATION;
         } else if (D36.equals(scannedDocumentSubtype)) {
