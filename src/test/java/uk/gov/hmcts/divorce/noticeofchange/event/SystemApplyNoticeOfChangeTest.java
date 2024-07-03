@@ -130,14 +130,14 @@ class SystemApplyNoticeOfChangeTest {
             TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
+        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
+        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
+        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
         assertTrue(applicant1CaseData.getApplicant1().isRepresented());
         assertFalse(applicant1CaseData.getApplicant1().isApplicantOffline());
         assertEquals(TEST_ORGANISATION_NAME, applicant1CaseData.getApplicant1().getSolicitor().getFirmName());
         assertEquals(NO, applicant1CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
         assertEquals(NO, applicant1CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
-        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
-        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
-        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
     }
 
     @Test
@@ -163,14 +163,14 @@ class SystemApplyNoticeOfChangeTest {
                 TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
+        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
+        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
+        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
         assertTrue(applicant2CaseData.getApplicant2().isRepresented());
         assertFalse(applicant2CaseData.getApplicant2().isApplicantOffline());
         assertEquals(TEST_ORGANISATION_NAME, details.getData().getApplicant2().getSolicitor().getFirmName());
         assertEquals(NO, applicant2CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
         assertEquals(NO, applicant2CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
-        assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
-        assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
-        assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());
     }
 
     @Test

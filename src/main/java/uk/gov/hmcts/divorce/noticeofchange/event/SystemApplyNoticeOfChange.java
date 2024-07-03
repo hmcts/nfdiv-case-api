@@ -133,12 +133,13 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         }
     }
 
-    private static void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor,
-                                                           ProfessionalUser nocRequestingUser, String nocSolicitorOrgName, String loggedInUserEmail) {
-
+    private static void updateOrgPolicyAndSolicitorDetails(
+        Solicitor applicantSolicitor, ProfessionalUser nocRequestingUser,
+        String nocRequestingUserOrgName, String loggedInUserEmail
+    ) {
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
-        applicantSolicitor.setFirmName(nocSolicitorOrgName);
+        applicantSolicitor.setFirmName(nocRequestingUserOrgName);
     }
 
     private static void setApplicantRepresented(Applicant applicant) {
