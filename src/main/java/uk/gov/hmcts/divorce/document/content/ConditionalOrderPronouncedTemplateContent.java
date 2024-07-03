@@ -104,7 +104,7 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
         } else {
             templateContent.put(CommonContent.NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         }
-        templateContent.put(CommonContent.ADDRESS, applicant.getCorrespondenceAddress());
+        templateContent.put(CommonContent.ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
 
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(PRONOUNCEMENT_DATE_PLUS_43,
