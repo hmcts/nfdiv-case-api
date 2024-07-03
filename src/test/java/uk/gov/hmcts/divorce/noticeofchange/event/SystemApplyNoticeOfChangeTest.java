@@ -37,10 +37,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.NOTICE_OF_CHANGE_APPLIED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -127,6 +130,11 @@ class SystemApplyNoticeOfChangeTest {
             TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
+        assertTrue(applicant1CaseData.getApplicant1().isRepresented());
+        assertFalse(applicant1CaseData.getApplicant1().isApplicantOffline());
+        assertEquals(TEST_ORGANISATION_NAME, applicant1CaseData.getApplicant1().getSolicitor().getFirmName());
+        assertEquals(NO, applicant1CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
+        assertEquals(NO, applicant1CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
         assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant1().getSolicitor().getEmail());
@@ -155,6 +163,11 @@ class SystemApplyNoticeOfChangeTest {
                 TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest
         );
 
+        assertTrue(applicant2CaseData.getApplicant2().isRepresented());
+        assertFalse(applicant2CaseData.getApplicant2().isApplicantOffline());
+        assertEquals(TEST_ORGANISATION_NAME, details.getData().getApplicant2().getSolicitor().getFirmName());
+        assertEquals(NO, applicant2CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
+        assertEquals(NO, applicant2CaseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
         assertEquals(TEST_ORG_NAME, updatedOrganisation.getOrganisationName());
         assertEquals(TEST_ORG_ID, updatedOrganisation.getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, details.getData().getApplicant2().getSolicitor().getEmail());

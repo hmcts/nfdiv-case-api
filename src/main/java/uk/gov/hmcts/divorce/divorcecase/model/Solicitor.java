@@ -108,6 +108,14 @@ public class Solicitor {
         return false;
     }
 
+    @JsonIgnore
+    public boolean hasOrgName() {
+        if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
+            return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationName());
+        }
+        return false;
+    }
+
     public String getAddress() {
         if (YesOrNo.YES == getAddressOverseas() || StringUtils.isEmpty(this.address)) {
             return this.address;

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -27,6 +28,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -68,6 +71,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         String s2sToken = authTokenGenerator.generate();
 
         updateChangeOfRepresentation(details, sysUserToken, s2sToken);
+        resetConditionalOrderFields(details.getData());
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
@@ -120,17 +124,34 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         if (APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole())) {
             updateOrgPolicyAndSolicitorDetails(applicant1Solicitor,
-                    nocRequestingUser, loggedInUserEmail);
+                    nocRequestingUser, nocSolicitorOrgName, loggedInUserEmail);
+            setApplicantRepresented(details.getData().getApplicant1());
         } else {
             updateOrgPolicyAndSolicitorDetails(applicant2Solicitor,
-                    nocRequestingUser, loggedInUserEmail);
+                    nocRequestingUser, nocSolicitorOrgName, loggedInUserEmail);
+            setApplicantRepresented(details.getData().getApplicant2());
         }
     }
 
     private static void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor,
-                                                           ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
+                                                           ProfessionalUser nocRequestingUser, String nocSolicitorOrgName, String loggedInUserEmail) {
 
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
+        applicantSolicitor.setFirmName(nocSolicitorOrgName);
+    }
+
+    private static void setApplicantRepresented(Applicant applicant) {
+        applicant.setSolicitorRepresented(YES);
+        applicant.setOffline(NO);
+    }
+
+    public static void resetConditionalOrderFields(CaseData data) {
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+        if (!data.getApplicationType().isSole()) {
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+        }
     }
 }

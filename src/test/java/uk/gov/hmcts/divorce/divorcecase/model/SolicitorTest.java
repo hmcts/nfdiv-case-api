@@ -60,4 +60,57 @@ class SolicitorTest {
 
         assertThat(solicitor.hasOrgId()).isFalse();
     }
+
+    @Test
+    void hasOrgNameShouldReturnTrueIfOrganisationNameIsSet() {
+
+        final Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder()
+                    .organisationName("Org Name")
+                    .build())
+                .build())
+            .build();
+
+        assertThat(solicitor.hasOrgName()).isTrue();
+    }
+
+    @Test
+    void hasOrgNameShouldReturnFalseIfOrganisationNameIsEmptyOrNull() {
+
+        final Solicitor solicitor1 = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder()
+                    .organisationName("")
+                    .build())
+                .build())
+            .build();
+        final Solicitor solicitor2 = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder().build())
+                .build())
+            .build();
+
+        assertThat(solicitor1.hasOrgName()).isFalse();
+        assertThat(solicitor2.hasOrgName()).isFalse();
+    }
+
+    @Test
+    void hasOrgNameShouldReturnFalseIfOrganisationIsNull() {
+
+        final Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().build())
+            .build();
+
+        assertThat(solicitor.hasOrgName()).isFalse();
+    }
+
+    @Test
+    void hasOrgNameShouldReturnFalseIfOrganisationPolicyIsNull() {
+
+        final Solicitor solicitor = Solicitor.builder()
+            .build();
+
+        assertThat(solicitor.hasOrgName()).isFalse();
+    }
 }

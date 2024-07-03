@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.resetConditionalOrderFields;
 
 @Component
 @RequiredArgsConstructor
@@ -245,18 +246,24 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         }
 
         if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-            setConditionalOrderDefaultValues(data);
+            resetConditionalOrderFields(data);
+            setSolicitorFirmName(data);
         }
 
         return data;
     }
 
-    private void setConditionalOrderDefaultValues(CaseData data) {
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
-        if (!data.getApplicationType().isSole()) {
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+    private void setSolicitorFirmName(CaseData data) {
+        Solicitor applicant1Solicitor = data.getApplicant1().getSolicitor();
+        if (applicant1Solicitor != null && applicant1Solicitor.hasOrgName()) {
+            String orgName = applicant1Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+            applicant1Solicitor.setFirmName(orgName);
+        }
+
+        Solicitor applicant2Solicitor = data.getApplicant2().getSolicitor();
+        if (applicant2Solicitor != null && applicant2Solicitor.hasOrgName()) {
+            String orgName = applicant2Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+            applicant2Solicitor.setFirmName(orgName);
         }
     }
 
