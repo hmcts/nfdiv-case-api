@@ -38,8 +38,8 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
         new PageBuilder(configBuilder
             .event(APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO)
             .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
-            .name("View applicant 1 contact info")
-            .description("View applicant 1 contact details")
+            .name("View applicant contact info")
+            .description("View applicant contact details")
             .showSummary(false)
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
