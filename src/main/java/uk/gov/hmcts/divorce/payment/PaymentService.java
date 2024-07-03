@@ -44,6 +44,8 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
+    private static final String ERROR_GENERIC = "Sorry, there is a problem with the service.\n"
+        + "Try again later.";
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
     public static final String EVENT_ISSUE = "issue";
@@ -143,7 +145,7 @@ public class PaymentService {
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
-        return new PbaResponse(INTERNAL_SERVER_ERROR, GENERAL.value(), null);
+        return new PbaResponse(INTERNAL_SERVER_ERROR, ERROR_GENERIC, null);
     }
 
     private CreditAccountPaymentResponse getPaymentResponse(FeignException exception) {
@@ -247,6 +249,8 @@ public class PaymentService {
                     errorMessage = GENERAL.value();
                     break;
             }
+        } else if (isGenericErrorRequiredForHttpStatus(httpStatus)) {
+            errorMessage = ERROR_GENERIC;
         } else {
             errorMessage = GENERAL.value();
         }
@@ -325,5 +329,13 @@ public class PaymentService {
         );
 
         return feeResponse.getAmount();
+    }
+
+    private boolean isGenericErrorRequiredForHttpStatus(HttpStatus httpStatus) {
+        boolean required = switch (httpStatus) {
+            case INTERNAL_SERVER_ERROR, GATEWAY_TIMEOUT -> true;
+            default -> false;
+        };
+        return required;
     }
 }
