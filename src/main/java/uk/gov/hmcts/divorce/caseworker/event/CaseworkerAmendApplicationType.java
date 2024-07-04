@@ -64,8 +64,8 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted))
             .page("Amend application type")
-            .label("prayerChangeLabel","Completing this event will change the prayer on the case. " +
-                "Please make sure that you have confirmed this with the Applicant before proceeding.");
+            .label("prayerChangeLabel","Completing this event will change the prayer on the case. "
+                + "Please make sure that you have confirmed this with the Applicant before proceeding.");
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
