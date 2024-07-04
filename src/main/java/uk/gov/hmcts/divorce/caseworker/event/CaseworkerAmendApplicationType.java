@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.EndCivilPartnership;
@@ -53,7 +54,7 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder
+        new PageBuilder(configBuilder
             .event(CASEWORKER_AMEND_APPLICATION_TYPE)
             .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
             .name("Amend application type")
@@ -61,7 +62,10 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, CASE_WORKER)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted);
+            .submittedCallback(this::submitted))
+            .page("Amend application type")
+            .label("prayerChangeLabel","Completing this event will change the prayer on the case. " +
+                "Please make sure that you have confirmed this with the Applicant before proceeding.");
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
