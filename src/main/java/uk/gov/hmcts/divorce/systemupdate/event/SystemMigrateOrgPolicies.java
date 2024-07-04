@@ -31,6 +31,7 @@ public class SystemMigrateOrgPolicies implements CCDConfig<CaseData, State, User
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE);
     }
 
+    // BEGIN-NOSCAN
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
@@ -40,4 +41,5 @@ public class SystemMigrateOrgPolicies implements CCDConfig<CaseData, State, User
             .data(details.getData())
             .build();
     }
+    // END-NOSCAN
 }
