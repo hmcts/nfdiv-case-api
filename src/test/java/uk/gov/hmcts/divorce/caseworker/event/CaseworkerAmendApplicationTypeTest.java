@@ -30,10 +30,14 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerAmendApplicationTypeTest {
 
-    private static final Set<ApplicantPrayer.DissolveDivorce> DISSOLVE_DIVORCE_SET = Set.of(ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE);
-    private static final Set<ApplicantPrayer.EndCivilPartnership> END_CIVIL_PARTNERSHIP_SET = Set.of(ApplicantPrayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP);
-    private static final Set<ApplicantPrayer.JudicialSeparation> JUDICIAL_SEPARATION_SET = Set.of(ApplicantPrayer.JudicialSeparation.JUDICIAL_SEPARATION);
-    private static final Set<ApplicantPrayer.Separation> SEPARATION_SET = Set.of(ApplicantPrayer.Separation.SEPARATION);
+    private static final Set<ApplicantPrayer.DissolveDivorce> DISSOLVE_DIVORCE_SET =
+        Set.of(ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE);
+    private static final Set<ApplicantPrayer.EndCivilPartnership> END_CIVIL_PARTNERSHIP_SET =
+        Set.of(ApplicantPrayer.EndCivilPartnership.END_CIVIL_PARTNERSHIP);
+    private static final Set<ApplicantPrayer.JudicialSeparation> JUDICIAL_SEPARATION_SET =
+        Set.of(ApplicantPrayer.JudicialSeparation.JUDICIAL_SEPARATION);
+    private static final Set<ApplicantPrayer.Separation> SEPARATION_SET =
+        Set.of(ApplicantPrayer.Separation.SEPARATION);
 
     @InjectMocks
     private CaseworkerAmendApplicationType caseworkerAmendApplicationType;
@@ -66,8 +70,10 @@ class CaseworkerAmendApplicationTypeTest {
         assertNull(response.getErrors());
         assertThat(response.getData().getDivorceOrDissolution().equals(DISSOLUTION));
         assertThat(response.getData().getLabelContent().getMarriageOrCivilPartnership().equals("civil partnership"));
-        assertThat(response.getData().getApplicant1().getApplicantPrayer().getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET));
-        assertThat(response.getData().getApplicant2().getApplicantPrayer().getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET));
+        assertThat(response.getData().getApplicant1().getApplicantPrayer()
+            .getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET));
+        assertThat(response.getData().getApplicant2().getApplicantPrayer()
+            .getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET));
     }
 
     @Test
