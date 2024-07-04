@@ -332,10 +332,6 @@ public class PaymentService {
     }
 
     private boolean isGenericErrorRequiredForHttpStatus(HttpStatus httpStatus) {
-        boolean required = switch (httpStatus) {
-            case INTERNAL_SERVER_ERROR, GATEWAY_TIMEOUT -> true;
-            default -> false;
-        };
-        return required;
+        return httpStatus == INTERNAL_SERVER_ERROR || httpStatus == GATEWAY_TIMEOUT;
     }
 }
