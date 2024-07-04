@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummar
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectApplicationType;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationUploadDocument;
+import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectUrgentCase;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
@@ -82,6 +83,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         final List<CcdPageConfiguration> pages = asList(
             new GeneralApplicationSelectApplicationType(),
+            new GeneralApplicationSelectUrgentCase(),
             generalApplicationSelectFee,
             new GeneralApplicationUploadDocument(),
             new GeneralApplicationPaymentConfirmation(),
