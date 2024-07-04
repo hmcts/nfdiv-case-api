@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -28,18 +29,15 @@ public class SystemMigrateOrgPolicies implements CCDConfig<CaseData, State, User
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name("Migrate organisation policies")
             .description("Migrate organisation policies")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE);
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .grantHistoryOnly(SUPER_USER);
     }
 
-    // BEGIN-NOSCAN
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Migrating org policies for case Id: {}", details.getId());
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(details.getData()).build();
     }
-    // END-NOSCAN
 }
