@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -36,6 +37,7 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
         configBuilder
             .event(CITIZEN_SAVE_AND_CLOSE)
             .forAllStates()
+            .showCondition(NEVER_SHOW)
             .name("Save and close application")
             .description("Save application and send email notification to the applicant")
             .retries(120, 120)

@@ -44,6 +44,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String GENDER_LABEL = "What is the ${%s} gender?";
     private static final String GENDER_HINT_LABEL = "The ${%s} gender is collected for statistical purposes only";
     private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
+    private static final String ADDRESS_OVERSEAS_LABEL = "is ${%s} address international?";
     private static final String ADDRESS_LABEL = "${%s} home address";
     private static final String EMAIL_LABEL = "${%s} email address";
     private static final String SOLICITOR_DETAILS_LABEL = "### ${%s} solicitor's details";
@@ -61,6 +62,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_PHONE_NUMBER_LABEL = "${%s} solicitor phone number";
     public static final String SOLICITOR_EMAIL_LABEL = "${%s} solicitor email";
     public static final String SOLICITOR_S_FIRM_ADDRESS_LABEL = "${%s} solicitor's firm address/DX address";
+    public static final String SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL = "Is ${%s} solicitor's firm address/DX address international?";
     public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
     public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
 
@@ -100,6 +102,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, APPLICANTS_OR_APPLICANT1S))
                     .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                     .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
+                    .optionalWithLabel(Solicitor::getAddressOverseas,
+                        getLabel(SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL, APPLICANTS_OR_APPLICANT1S))
                     .optional(Solicitor::getAgreeToReceiveEmailsCheckbox)
                 .done()
             .done();
@@ -122,6 +126,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     .optionalWithLabel(Solicitor::getPhone, getLabel(SOLICITOR_PHONE_NUMBER_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getEmail, getLabel(SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getAddress, getLabel(SOLICITOR_S_FIRM_ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+                    .optionalWithLabel(Solicitor::getAddressOverseas,
+                        getLabel(SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .done()
             .done();
     }
@@ -147,6 +153,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 .optional(Application::getDivorceWho)
             .done()
             .complex(CaseData::getApplicant1)
+                .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
@@ -167,6 +174,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
+                .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))

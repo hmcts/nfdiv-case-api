@@ -75,6 +75,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
+                    .mandatory(Solicitor::getAddressOverseas,
+                        "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation, "nocWhichApplicant=\"applicant1\"")
@@ -85,6 +87,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
+                .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
@@ -92,6 +95,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
                     .mandatory(Solicitor::getAddress,
+                        "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
+                    .mandatory(Solicitor::getAddressOverseas,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .complex(Solicitor::getOrganisationPolicy,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"Yes\"")
@@ -103,6 +108,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .done()
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
+                .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .done();
     }
 
@@ -171,29 +177,32 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private NoticeType calculateNoticeType(Applicant applicant,
-                                           Applicant beforeApplicant) {
-        OrganisationPolicy<UserRole> orgPolicy = applicant.getSolicitor().getOrganisationPolicy();
-        OrganisationPolicy<UserRole> beforeOrgPolicy = beforeApplicant.getSolicitor().getOrganisationPolicy();
+    private NoticeType calculateNoticeType(Applicant applicant, Applicant beforeApplicant) {
+        Solicitor beforeSolicitor = beforeApplicant.getSolicitor();
+        Solicitor afterSolicitor = applicant.getSolicitor();
 
-        if (beforeOrgPolicy == null) {
-            return orgPolicy.getOrganisation() != null ? NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG : NoticeType.OFFLINE_NOC;
+        String beforeOrgID = beforeSolicitor.getOrganisationId();
+        String afterOrgID = afterSolicitor.getOrganisationId();
+
+        boolean hadOrgBefore = beforeOrgID != null;
+        boolean hasOrgAfter = afterOrgID != null;
+
+        if (!hadOrgBefore) {
+            return hasOrgAfter ? NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG : NoticeType.OFFLINE_NOC;
         }
 
-        if (beforeOrgPolicy.getOrganisation() != null && orgPolicy.getOrganisation() == null) {
+        if (!hasOrgAfter) {
             return NoticeType.ORG_REMOVED;
-        } else if (orgPolicy.getOrganisation() != null && orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
-            if (applicant.getSolicitor().getEmail().equals(beforeApplicant.getSolicitor().getEmail())) {
-                //if email and org is the same as pre-event then it means the user has probably used the event to update contact details
-                //erroneously and not change case access, doing this check ensures that we don't actually alter the case access
-                return NoticeType.OFFLINE_NOC;
-            }
-            return NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG;
-        } else if (orgPolicy.getOrganisation() != null && !orgPolicy.getOrganisation().equals(beforeOrgPolicy.getOrganisation())) {
+        }
+
+        if (!beforeOrgID.equals(afterOrgID)) {
             return NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
         }
 
-        return NoticeType.OFFLINE_NOC;
+        //if email and org is the same as pre-event then it means the user has probably used the event to update contact details
+        //erroneously and not change case access, doing this check ensures that we don't actually alter the case access
+        boolean solEmailHasChanged = !afterSolicitor.getEmail().equals(beforeSolicitor.getEmail());
+        return solEmailHasChanged ? NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG : NoticeType.OFFLINE_NOC;
     }
 
     private void updateSolicitorInformation(CaseData data, UserRole orgPolicyCaseAssignedRole, Applicant applicant) {
@@ -257,6 +266,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
         OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
             .orgPolicyCaseAssignedRole(role)
+            .organisation(new Organisation(null, null))
             .build();
 
         solicitor.setOrganisationPolicy(defaultOrgPolicy);

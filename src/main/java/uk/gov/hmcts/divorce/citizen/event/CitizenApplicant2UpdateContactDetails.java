@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -52,6 +53,7 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         configBuilder
             .event(CITIZEN_APPLICANT2_UPDATE_CONTACT_DETAILS)
             .forAllStates()
+            .showCondition(NEVER_SHOW)
             .name("Update respondent contact info")
             .description("Contact details changed by respondent")
             .retries(120, 120)
