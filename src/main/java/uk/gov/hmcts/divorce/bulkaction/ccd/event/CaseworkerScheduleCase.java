@@ -10,8 +10,13 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
@@ -22,6 +27,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
 @Slf4j
@@ -30,6 +36,20 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
     @Autowired
     private ScheduleCaseService scheduleCaseService;
+
+    @Autowired
+    private BulkTriggerService bulkTriggerService;
+
+    @Autowired
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
+
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -58,6 +78,9 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
 
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuth = authTokenGenerator.generate();
+
         if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
@@ -65,6 +88,13 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                 .data(bulkCaseDetails.getData())
                 .build();
         }
+
+        bulkTriggerService.bulkTrigger(
+                bulkCaseDetails.getData().getBulkListCaseDetails(),
+                SYSTEM_LINK_WITH_BULK_CASE,
+                bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_LINK_WITH_BULK_CASE),
+                user,
+                serviceAuth);
 
         return AboutToStartOrSubmitResponse
             .<BulkActionCaseData, BulkActionState>builder()

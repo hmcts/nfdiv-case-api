@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
@@ -212,14 +213,25 @@ public class CcdSearchService {
         final User user,
         final String serviceAuth) {
 
-        final QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-        final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
+        String coGranted = "coGranted";
+
+        final QueryBuilder awaitingPronouncementStateQuery = matchQuery(STATE, AwaitingPronouncement);
+        final QueryBuilder expeditedCaseStateQuery = matchQuery(STATE, ExpeditedCase);
+        final QueryBuilder conditionalOrderGrantedQuery = matchQuery(String.format(DATA, coGranted), YesOrNo.YES);
+        final QueryBuilder bulkListingCaseIdQuery = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
+
+        final BoolQueryBuilder orQuery = boolQuery()
+                .should(awaitingPronouncementStateQuery)
+                .should(boolQuery()
+                        .must(expeditedCaseStateQuery)
+                        .must(conditionalOrderGrantedQuery)
+                ).minimumShouldMatch(1);
 
         final BoolQueryBuilder query = boolQuery()
-            .must(stateQuery)
-            .mustNot(bulkListingCaseId);
+            .should(orQuery)
+            .mustNot(bulkListingCaseIdQuery);
 
-        final List<CaseDetails> allCaseDetails = searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPronouncement);
+        final List<CaseDetails> allCaseDetails = searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPronouncement, ExpeditedCase);
 
         return new LinkedList<>(partition(
             caseDetailsListConverter.convertToListOfValidCaseDetails(allCaseDetails),
