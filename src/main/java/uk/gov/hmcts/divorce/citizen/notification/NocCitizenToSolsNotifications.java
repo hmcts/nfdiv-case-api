@@ -41,6 +41,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
+        log.info("Sending NOC notification to app2 : {}", id);
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN,
