@@ -82,36 +82,36 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         if (caseData.isJudicialSeparationCase()) {
             if (caseData.isDivorce()) {
                 caseData.setSupplementaryCaseType(SEPARATION);
-                if (app1Prayer.getPrayerJudicialSeparation().equals(JUDICIAL_SEPARATION_SET)) {
+                if (JUDICIAL_SEPARATION_SET.equals(app1Prayer.getPrayerJudicialSeparation())) {
                     app1Prayer.setPrayerSeparation(SEPARATION_SET);
                 }
-                if (app2Prayer.getPrayerJudicialSeparation().equals(JUDICIAL_SEPARATION_SET)) {
+                if (JUDICIAL_SEPARATION_SET.equals(app2Prayer.getPrayerJudicialSeparation())) {
                     app2Prayer.setPrayerSeparation(SEPARATION_SET);
                 }
             } else {
                 caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-                if (app1Prayer.getPrayerSeparation().equals(SEPARATION_SET)) {
+                if (SEPARATION_SET.equals(app1Prayer.getPrayerSeparation())) {
                     app1Prayer.setPrayerJudicialSeparation(JUDICIAL_SEPARATION_SET);
                 }
-                if (app2Prayer.getPrayerSeparation().equals(SEPARATION_SET)) {
+                if (SEPARATION_SET.equals(app2Prayer.getPrayerSeparation())) {
                     app2Prayer.setPrayerJudicialSeparation(JUDICIAL_SEPARATION_SET);
                 }
             }
         } else {
             if (caseData.isDivorce()) {
                 caseData.setDivorceOrDissolution(DISSOLUTION);
-                if (app1Prayer.getPrayerDissolveDivorce().equals(DISSOLVE_DIVORCE_SET)) {
+                if (DISSOLVE_DIVORCE_SET.equals(app1Prayer.getPrayerDissolveDivorce())) {
                     app1Prayer.setPrayerEndCivilPartnership(END_CIVIL_PARTNERSHIP_SET);
                 }
-                if (app2Prayer.getPrayerDissolveDivorce().equals(DISSOLVE_DIVORCE_SET)) {
+                if (DISSOLVE_DIVORCE_SET.equals(app2Prayer.getPrayerDissolveDivorce())) {
                     app2Prayer.setPrayerEndCivilPartnership(END_CIVIL_PARTNERSHIP_SET);
                 }
             } else {
                 caseData.setDivorceOrDissolution(DIVORCE);
-                if (app1Prayer.getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET)) {
+                if (END_CIVIL_PARTNERSHIP_SET.equals(app1Prayer.getPrayerEndCivilPartnership())) {
                     app1Prayer.setPrayerDissolveDivorce(DISSOLVE_DIVORCE_SET);
                 }
-                if (app2Prayer.getPrayerEndCivilPartnership().equals(END_CIVIL_PARTNERSHIP_SET)) {
+                if (END_CIVIL_PARTNERSHIP_SET.equals(app2Prayer.getPrayerEndCivilPartnership())) {
                     app2Prayer.setPrayerDissolveDivorce(DISSOLVE_DIVORCE_SET);
                 }
             }
