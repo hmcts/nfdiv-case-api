@@ -33,7 +33,7 @@ public class NotificationDispatcher {
     public void sendNOC(final ApplicantNotification applicantNotification,
                         final CaseData caseData, final CaseData previousCaseData, final Long caseId,
                         boolean isApplicant1, NoticeType noticeType) {
-        if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG || noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG) {
+        if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG) {
             if (isApplicant1) {
                 if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
                     applicantNotification.sendToApplicant1(caseData, caseId);
@@ -47,10 +47,12 @@ public class NotificationDispatcher {
                 applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
             }
         }
-        if (isApplicant1) {
-            applicantNotification.sendToApplicant1OldSolicitor(previousCaseData, caseId);
-        } else {
-            applicantNotification.sendToApplicant2OldSolicitor(previousCaseData, caseId);
+        if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG || noticeType == NoticeType.ORG_REMOVED) {
+            if (isApplicant1) {
+                applicantNotification.sendToApplicant1OldSolicitor(previousCaseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2OldSolicitor(previousCaseData, caseId);
+            }
         }
     }
 }

@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
