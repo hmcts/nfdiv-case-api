@@ -158,7 +158,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         }
 
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
@@ -204,20 +204,22 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference());
 
+        Applicant applicant1 = caseData.getApplicant1();
+        Applicant applicant2 = caseData.getApplicant2();
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
         templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
-        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor() != null
-            ? caseData.getApplicant1().getSolicitor().getName()
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant1.isRepresented() && applicant1.getSolicitor() != null
+            ? applicant1.getSolicitor().getName()
             : NOT_REPRESENTED
         );
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor() != null
-            ? caseData.getApplicant2().getSolicitor().getName()
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, applicant2.isRepresented() && applicant2.getSolicitor() != null
+            ? applicant2.getSolicitor().getName()
             : NOT_REPRESENTED
         );
         templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference() != null

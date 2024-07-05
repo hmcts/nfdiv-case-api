@@ -11,6 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
+import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -18,13 +20,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -32,6 +39,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -45,6 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerNoticeOfChangeTest {
+
     @Mock
     private NoticeOfChangeService noticeOfChangeService;
 
@@ -54,11 +64,20 @@ class CaseworkerNoticeOfChangeTest {
     @Mock
     private ChangeOfRepresentativeService changeOfRepresentativeService;
 
+    @Mock
+    private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
     @InjectMocks
     private CaseworkerNoticeOfChange noticeOfChange;
 
+    @Mock
+    private ApplicantNotification applicantNotification;
+
     @Test
-    public void configure() {
+    void configure() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         noticeOfChange.configure(configBuilder);
@@ -69,10 +88,10 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldReturnValidationErrorWhenUserDoesNotExist() {
+    void shouldReturnValidationErrorWhenUserDoesNotExist() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyDigital(YES)
             .areTheyRepresented(YES)
             .build());
@@ -91,10 +110,10 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldNotReturnValidationErrorWhenUserDoesExist() {
+    void shouldNotReturnValidationErrorWhenUserDoesExist() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyDigital(YES)
             .areTheyRepresented(YES)
             .build());
@@ -112,10 +131,10 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldNotValidateWhenOfflineCitizen() {
+    void shouldNotValidateWhenOfflineCitizen() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyDigital(NO)
             .areTheyRepresented(NO)
             .build());
@@ -129,10 +148,10 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldNotValidateWhenOfflineSolicitor() {
+    void shouldNotValidateWhenOfflineSolicitor() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyDigital(NO)
             .areTheyRepresented(YES)
             .build());
@@ -146,16 +165,16 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldAddErrorIfEmailIsMissingAndIsDigitalNoc() {
+    void shouldAddErrorIfEmailIsMissingAndIsDigitalNoc() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyDigital(YES)
             .areTheyRepresented(YES)
             .build());
         details.getData().getApplicant1().getSolicitor().setEmail(null);
         details.getData().getApplicant1().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
-                .organisation(Organisation.builder().organisationId(TEST_ORG_ID).build())
+            .organisation(Organisation.builder().organisationId(TEST_ORG_ID).build())
             .build());
 
 
@@ -167,13 +186,13 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldProcessOfflineNoticeOfChangeWithoutInvokingNocService() {
+    void shouldProcessOfflineNoticeOfChangeWithoutInvokingNocService() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-                .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
-                .areTheyDigital(NO)
-                .areTheyRepresented(NO)
+            .whichApplicant(APPLICANT_1)
+            .areTheyDigital(NO)
+            .areTheyRepresented(NO)
             .build());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -185,6 +204,7 @@ class CaseworkerNoticeOfChangeTest {
             .isEqualTo(
                 OrganisationPolicy.<UserRole>builder()
                     .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                    .organisation(new Organisation(null, null))
                     .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -192,18 +212,19 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldMoveCaseOfflineAndRevokeDigitalSolicitorAccess() {
+    void shouldMoveCaseOfflineAndRevokeDigitalSolicitorAccess() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         beforeDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
             .organisationId(TEST_ORG_ID)
             .build());
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyRepresented(NO)
             .build());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isTrue();
@@ -211,6 +232,7 @@ class CaseworkerNoticeOfChangeTest {
             .isEqualTo(
                 OrganisationPolicy.<UserRole>builder()
                     .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                    .organisation(new Organisation(null, null))
                     .build());
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
@@ -220,7 +242,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldReplaceAccessWithinOrganisation() {
+    void shouldReplaceAccessWithinOrganisation() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         beforeDetails.getData().getApplicant1().getSolicitor().setEmail(TEST_SOL_USER_EMAIL);
@@ -231,7 +253,7 @@ class CaseworkerNoticeOfChangeTest {
             .organisationId(TEST_ORG_ID)
             .build());
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
@@ -258,7 +280,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldBeTreatedAsOfflineNocWhenEmailAndOrgAreSameAsBeforeEvent() {
+    void shouldBeTreatedAsOfflineNocWhenEmailAndOrgAreSameAsBeforeEvent() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
@@ -268,7 +290,7 @@ class CaseworkerNoticeOfChangeTest {
             .organisationId(TEST_ORG_ID)
             .build());
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
@@ -282,7 +304,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldApplyNoticeOfChangeDecision() {
+    void shouldApplyNoticeOfChangeDecision() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
@@ -292,7 +314,7 @@ class CaseworkerNoticeOfChangeTest {
             .organisationId("SECOND_ORG_ID")
             .build());
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
@@ -313,7 +335,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldHandleNullBeforeOrgPolicyGracefully() {
+    void shouldHandleNullBeforeOrgPolicyGracefully() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
@@ -321,12 +343,13 @@ class CaseworkerNoticeOfChangeTest {
             .build());
         beforeDetails.getData().getApplicant1().getSolicitor().setOrganisationPolicy(null);
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyRepresented(YES)
             .areTheyDigital(YES)
             .build());
 
         List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
@@ -341,10 +364,10 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldHandleNullRepresentationGracefully() {
+    void shouldHandleNullRepresentationGracefully() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
-            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .whichApplicant(APPLICANT_1)
             .areTheyRepresented(null)
             .build());
 
@@ -363,15 +386,137 @@ class CaseworkerNoticeOfChangeTest {
         data.getApplicant1().setOffline(NO);
         data.getApplicant2().setOffline(NO);
         data.getApplicant1().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
-                .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
+                .organisation(new Organisation(null, null))
+            .orgPolicyCaseAssignedRole(APPLICANT_1_SOLICITOR)
             .build());
         data.getApplicant2().getSolicitor().setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
-                .orgPolicyCaseAssignedRole(UserRole.APPLICANT_2_SOLICITOR)
+                .organisation(new Organisation(null, null))
+            .orgPolicyCaseAssignedRole(UserRole.APPLICANT_2_SOLICITOR)
             .build());
         details.setData(data);
         details.setId(TEST_CASE_ID);
 
         return details;
+    }
+
+    @Test
+    void shouldSendNotificationWhenNewDigitalSolicitorInNewOrg() {
+        CaseData caseData = createCaseData(APPLICANT_1, true, true, TEST_ORG_ID);
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, true, "OldOrgId");
+
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+
+        doNothing().when(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(any(), any(), any(), any(), any());
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
+            caseData, beforeCaseData, details.getId(), true, NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
+    }
+
+    @Test
+    void shouldSendNotificationWhenBecomeNotRepresentedApp1() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, false, true, TEST_ORG_ID);
+        CaseData caseData = createCaseDataNoSols(APPLICANT_1);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
+            caseData, beforeCaseData, details.getId(), true, NoticeType.ORG_REMOVED);
+    }
+
+    @Test
+    void shouldSendNotificationWhenBecomeNotRepresentedApp2() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, false, true, TEST_ORG_ID);
+        CaseData caseData = createCaseDataNoSols(APPLICANT_2);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
+            caseData, beforeCaseData, details.getId(), false, NoticeType.ORG_REMOVED);
+    }
+
+    @Test
+    void shouldSendNotificationWhenNewDigitalSolicitorInNewOrgApp2() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, true, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_2, true, true, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        doNothing().when(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(any(), any(), any(), any(), any());
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
+            caseData, beforeCaseData, details.getId(), false, NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
+    }
+
+    @Test
+    void shouldSendNotificationWhenNoNewDigitalSolicitorInNewOrg() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_1, true, false, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
+            caseData, beforeCaseData, details.getId(),true, NoticeType.ORG_REMOVED);
+    }
+
+    private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {
+        NoticeOfChange noticeOfChange = new NoticeOfChange();
+        noticeOfChange.setWhichApplicant(whichApplicant);
+        noticeOfChange.setAreTheyRepresented(NO);
+        noticeOfChange.setAreTheyDigital(NO);
+        CaseData caseData = new CaseData();
+        caseData.setNoticeOfChange(noticeOfChange);
+        Applicant applicant = new Applicant();
+        if (whichApplicant == APPLICANT_1) {
+            caseData.setApplicant1(applicant);
+        } else {
+            caseData.setApplicant2(applicant);
+        }
+        caseData.setApplicationType(SOLE_APPLICATION);
+        return caseData;
+    }
+
+    private CaseData createCaseData(NoticeOfChange.WhichApplicant whichApplicant, boolean areTheyRepresented,
+                                    boolean areTheyDigital, String solsOrgId) {
+        NoticeOfChange noticeOfChange = new NoticeOfChange();
+        noticeOfChange.setWhichApplicant(whichApplicant);
+        noticeOfChange.setAreTheyRepresented(areTheyRepresented ? YES : NO);
+        noticeOfChange.setAreTheyDigital(areTheyDigital ? YES : NO);
+        CaseData caseData = new CaseData();
+        caseData.setNoticeOfChange(noticeOfChange);
+
+        Applicant applicant = new Applicant();
+        Solicitor solicitor = new Solicitor();
+        solicitor.setEmail("test@example.com");
+        solicitor.setOrganisationPolicy(OrganisationPolicy.<UserRole>builder()
+            .organisation(Organisation.builder().organisationId(solsOrgId).build())
+            .build());
+        applicant.setSolicitor(solicitor);
+        if (whichApplicant == APPLICANT_1) {
+            caseData.setApplicant1(applicant);
+        } else {
+            caseData.setApplicant2(applicant);
+        }
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        return caseData;
+    }
+
+    private CaseDetails<CaseData, State> createCaseDetails(CaseData caseData) {
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(123456789L);
+        return caseDetails;
     }
 
 }

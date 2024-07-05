@@ -1,19 +1,24 @@
 package uk.gov.hmcts.divorce.notification;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
@@ -56,6 +61,7 @@ public class CommonContent {
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL = "signin url";
+    public static final String WEBFORM_URL = "webformUrl";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String SIGN_IN_PROFESSIONAL_USERS_URL = "signInProfessionalUsersUrl";
@@ -119,9 +125,12 @@ public class CommonContent {
     public static final String PRONOUNCE_BY_DATE = "pronounceByDate";
     public static final int CO_SUBMISSION_DATE_PLUS_DAYS = 56;
 
+    public static final String DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE = "digitalFinalOrderCertificateCopyFee";
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
+
+    public static final String SMART_SURVEY = "smartSurvey";
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
@@ -143,6 +152,7 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
+        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
         return templateVars;
     }
 
@@ -183,7 +193,7 @@ public class CommonContent {
 
         templateVars.put("moreInfo", MORE_INFO.equals(refusalOption) ? YES : NO);
         templateVars.put("amendApplication", REJECT.equals(refusalOption) ? YES : NO);
-        templateVars.put("isJoint", isSole ? NO : YES);
+        templateVars.put(IS_JOINT, isSole ? NO : YES);
         templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
 
@@ -266,9 +276,9 @@ public class CommonContent {
     }
 
     public Map<String, Object> templateContentCanApplyForCoOrFo(final CaseData caseData,
-                                                final Long caseId,
-                                                final Applicant applicant,
-                                                final Applicant partner, final LocalDate date) {
+                                                                final Long caseId,
+                                                                final Applicant applicant,
+                                                                final Applicant partner, final LocalDate date) {
 
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             applicant.getLanguagePreference());
@@ -277,7 +287,7 @@ public class CommonContent {
 
         templateContent.put("firstName", applicant.getFirstName());
         templateContent.put("lastName", applicant.getLastName());
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateContent.put(DATE, date);
 
@@ -285,6 +295,59 @@ public class CommonContent {
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
 
         return templateContent;
+    }
+
+    public String getSmartSurvey() {
+        return config.getTemplateVars().get(SMART_SURVEY);
+    }
+
+    public Map<String, String> nocCitizenTemplateVars(final Long caseId,
+                                                      final Applicant applicant) {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
+        templateVars.put(FIRST_NAME, applicant.getFirstName());
+        templateVars.put(LAST_NAME, applicant.getLastName());
+        String organisationName = Optional.ofNullable(applicant.getSolicitor())
+            .map(Solicitor::getOrganisationPolicy)
+            .map(OrganisationPolicy::getOrganisation)
+            .map(Organisation::getOrganisationName)
+            .orElse(null);
+
+        if (StringUtils.isNotEmpty(applicant.getSolicitor().getFirmName())) {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
+        } else if (organisationName != null) {
+            templateVars.put(SOLICITOR_FIRM, organisationName);
+        } else {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
+        }
+        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        return templateVars;
+    }
+
+    public Map<String, String> nocSolsTemplateVars(final Long caseId,
+                                                   final Applicant applicant) {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
+        templateVars.put(NAME, applicant.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE,
+            isNotEmpty(applicant.getSolicitor().getReference())
+                ? applicant.getSolicitor().getReference()
+                : NOT_PROVIDED);
+        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        return templateVars;
+    }
+
+    public Map<String, String> nocOldSolsTemplateVars(final Long caseId,
+                                                      final Applicant beforeApplicant) {
+
+        // note: it's the beforeApplicant needs to be passed in to get the old sols
+        // this can get improved once we are saving noc info out
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
+        templateVars.put(NAME, beforeApplicant.getSolicitor().getName());
+        templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
+        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        return templateVars;
     }
 
     public void setOverdueAndInTimeVariables(CaseData caseData, Map<String, String> templateVars) {

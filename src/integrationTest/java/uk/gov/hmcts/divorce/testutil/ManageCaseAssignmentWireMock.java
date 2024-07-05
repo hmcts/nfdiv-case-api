@@ -13,12 +13,12 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseRoleID;
-import uk.gov.hmcts.divorce.divorcecase.model.DynamicListItem;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
@@ -155,6 +155,7 @@ public final class ManageCaseAssignmentWireMock {
                 .email(TEST_SOLICITOR_EMAIL)
                 .organisationPolicy(OrganisationPolicy.<UserRole>builder().organisation(Organisation.builder()
                                 .organisationId(TEST_ORGANISATION_ID)
+                                .organisationName(TEST_ORGANISATION_NAME)
                                 .build())
                         .build())
                 .build();

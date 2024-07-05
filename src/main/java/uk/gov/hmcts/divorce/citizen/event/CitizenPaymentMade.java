@@ -18,6 +18,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -43,6 +44,7 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
         configBuilder
             .event(CITIZEN_PAYMENT_MADE)
             .forState(AwaitingPayment)
+            .showCondition(NEVER_SHOW)
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)

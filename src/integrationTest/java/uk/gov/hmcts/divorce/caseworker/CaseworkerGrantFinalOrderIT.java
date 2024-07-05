@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
@@ -131,6 +132,9 @@ public class CaseworkerGrantFinalOrderIT {
 
     @MockBean
     private BulkPrintService bulkPrintService;
+
+    @MockBean
+    private PaymentService paymentService;
 
     @MockBean
     private Clock clock;
