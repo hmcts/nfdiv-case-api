@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
@@ -19,7 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseRoleID;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.divorcecase.model.DynamicListItem;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -206,14 +206,14 @@ class ChangeOfRepresentativeServiceTest {
     }
 
     private User solicitorUser() {
-        return getUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID);
+        return getUser();
     }
 
-    private User getUser(String systemUpdateAuthToken, String systemUserUserId) {
+    private User getUser() {
         return new User(
-                systemUpdateAuthToken,
+                APP_1_SOL_AUTH_TOKEN,
                 UserInfo.builder()
-                        .uid(systemUserUserId)
+                        .uid(SOLICITOR_USER_ID)
                         .build());
     }
 }

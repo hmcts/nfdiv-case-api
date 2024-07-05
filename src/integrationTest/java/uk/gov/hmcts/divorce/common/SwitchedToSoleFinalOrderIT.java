@@ -15,9 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -54,11 +52,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_1;
-import static uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying.APPLICANT_2;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER;
@@ -133,90 +127,15 @@ public class SwitchedToSoleFinalOrderIT {
     }
 
     @Test
-    public void shouldSwitchApplicationTypeToSoleAndSendApplicant1Notifications() throws Exception {
+    public void shouldNotSwitchUserRolesOrDataWhenTriggeredByApplicant1() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         setupMocks(true, false);
 
-        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, AUTH_HEADER_VALUE)
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "AwaitingFinalOrder")))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.applicationType")
-            .isEqualTo(ApplicationType.SOLE_APPLICATION);
-
-        assertThatJson(actualResponse)
-            .inPath("$.data.finalOrderSwitchedToSole")
-            .isEqualTo(YES);
-    }
-
-    @Test
-    public void shouldSwitchApplicationTypeToSoleAndSwitchApplicantDataIfD84SwitchToSoleTriggeredByApplicant2()
-        throws Exception {
-
-        CaseData data = validJointApplicant1CaseData();
-        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
-        data.setFinalOrder(FinalOrder.builder()
-            .d36ApplicationType(SWITCH_TO_SOLE)
-            .d36WhoApplying(APPLICANT_2)
-            .build());
-        setupMocks(false, false);
-
-        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
-            .caseAssignmentUserRoles(List.of(
-                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
-                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
-            ))
-            .build();
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(caseAssignmentApi.getUserRoles(
-            BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            List.of(String.valueOf(TEST_CASE_ID)))
-        ).thenReturn(caseRolesResponse);
-
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(response)
-            .when(TREATING_NULL_AS_ABSENT)
-            .when(IGNORING_ARRAY_ORDER)
-            .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_APPLICANT_2_RESPONSE)));
-    }
-
-    @Test
-    public void shouldNotSwitchApplicantDataOnSwitchToSoleIfD84SwitchToSoleTriggeredByApplicant1()
-        throws Exception {
-
-        CaseData data = validJointApplicant1CaseData();
-        data.setDocuments(CaseDocuments.builder().typeOfDocumentAttached(FO_D36).build());
-        data.setFinalOrder(FinalOrder.builder()
-            .d36ApplicationType(SWITCH_TO_SOLE)
-            .d36WhoApplying(APPLICANT_1)
-            .build());
-        setupMocks(false, false);
-
-        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "ConditionalOrderPending")))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -228,6 +147,43 @@ public class SwitchedToSoleFinalOrderIT {
             .when(IGNORING_ARRAY_ORDER)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_APPLICANT_1_RESPONSE)));
+    }
+
+    @Test
+    public void shouldSwitchUserRolesAndDataWhenTriggeredByApplicant2() throws Exception {
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(String.valueOf(TEST_CASE_ID)))
+        ).thenReturn(caseRolesResponse);
+
+        CaseData data = validJointApplicant1CaseData();
+        setupMocks(false, true);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, AUTH_HEADER_VALUE)
+                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE_FO, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedResponse(SWITCH_TO_SOLE_FO_APPLICANT_2_RESPONSE)));
     }
 
     @Test

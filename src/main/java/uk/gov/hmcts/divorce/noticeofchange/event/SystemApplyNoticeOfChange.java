@@ -88,7 +88,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         Map<String, Object> data = response.getData();
         List<String> responseErrors = response.getErrors();
 
-        if (!Objects.isNull(responseErrors)) {
+        if (Objects.nonNull(responseErrors) && !responseErrors.isEmpty()) {
             log.info("Notice of change failed with the following error(s) for CaseID {}:", details.getId());
             responseErrors.forEach(log::info);
 
@@ -122,7 +122,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
                 caseIdString,
                 caseIdString,
                 LETTER_TYPE_GRANT_OF_REPRESENTATION,
-                applicant.getFullName()
+                applicant.getFullName(),
+                applicant.getAddressOverseas()
         );
 
         final UUID letterId = bulkPrintService.print(print);

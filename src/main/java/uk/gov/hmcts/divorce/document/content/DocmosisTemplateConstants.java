@@ -68,6 +68,7 @@ public final class DocmosisTemplateConstants {
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
     public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
     public static final String GENERAL_ORDER_MADE_BY = "generalOrderMadeBy";
+    public static final String SITTING_VENUE = "sittingVenue";
     public static final String PETITIONER_FULL_NAME = "petitionerFullName";
     public static final String RESPONDENT_FULL_NAME = "respondentFullName";
     public static final String APPLICANT_1_EMAIL = "applicant1Email";

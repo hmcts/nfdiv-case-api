@@ -17,13 +17,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseRoleID;
-import uk.gov.hmcts.divorce.divorcecase.model.DynamicListItem;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -49,11 +49,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.NOTICE_OF_CHANGE_APPLIED;
-import static uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange.NOTICE_OF_CHANGE_REQUESTED;
 import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stopAndReset;
-import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stubForCheckNocApprovalEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stubForNoCApplyDecisionEndpoint;
+import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stubForNoCApplyDecisionEndpointEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -62,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
@@ -137,35 +137,49 @@ public class SystemApplyNoticeOfChangeIT {
                 TEST_SERVICE_AUTH_TOKEN, USER_IDENTIFIER)).thenReturn(organisationResponse);
 
         ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField = getChangeOrganisationRequestField();
-
         Solicitor app1Solicitor =
                 Solicitor.builder().organisationPolicy(OrganisationPolicy.<UserRole>builder()
                                 .organisation(Organisation.builder()
-                                        .organisationName(TEST_ORGANISATION_NAME_REMOVE)
-                                        .organisationId(TEST_ORGANISATION_ID_REMOVE)
+                                        .organisationName(TEST_ORGANISATION_NAME)
+                                        .organisationId(TEST_ORGANISATION_ID)
                                         .build())
                                 .build())
-                        .email("randomEmail@solicitor.com")
-                        .name("Test name")
+                        .email(TEST_SOLICITOR_EMAIL)
+                        .name(String.join(" ", TEST_FIRST_NAME, TEST_LAST_NAME))
                         .build();
+
         final CaseData caseData = CaseData.builder().changeOrganisationRequestField(changeOrganisationRequestField)
                 .applicant1(Applicant.builder().solicitor(app1Solicitor).build()).build();
 
         AcaRequest acaRequest = acaRequestBody(caseData);
         stubForNoCApplyDecisionEndpoint(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
 
+        Solicitor app1OldSolicitor =
+                Solicitor.builder().organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                                .organisation(Organisation.builder()
+                                        .organisationName(TEST_ORGANISATION_NAME)
+                                        .organisationId(TEST_ORGANISATION_ID)
+                                        .build())
+                                .build())
+                        .email("randomEmail@solicitor.com")
+                        .name("Test name")
+                        .build();
+
+        final CaseData caseDataWithOldSolicitor = CaseData.builder().changeOrganisationRequestField(changeOrganisationRequestField)
+                .applicant1(Applicant.builder().solicitor(app1OldSolicitor).build()).build();
+
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
                         .contentType(APPLICATION_JSON)
                         .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                         .header(AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                         .content(objectMapper.writeValueAsString(callbackRequest(
-                                caseData, NOTICE_OF_CHANGE_APPLIED, State.Holding.toString())))
+                                caseDataWithOldSolicitor, NOTICE_OF_CHANGE_APPLIED, State.Holding.toString())))
                         .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(
                         status().isOk()
                 ).andExpect(jsonPath("$.data.applicant1SolicitorName")
-                        .value(SOLICITOR_NAME))
+                        .value(TEST_SOLICITOR_NAME))
                 .andExpect(jsonPath("$.data.applicant1SolicitorEmail")
                         .value(TEST_SOLICITOR_EMAIL))
                 .andExpect(jsonPath("$.data.applicant1SolicitorOrganisationPolicy.Organisation.OrganisationID")
@@ -174,13 +188,27 @@ public class SystemApplyNoticeOfChangeIT {
                         .value(TEST_ORGANISATION_NAME));
     }
 
-
     @Test
     void shouldThrowErrorWhenApplyNoticeOfChange() throws Exception {
+
+        List<ProfessionalUser> professionalUsers = new ArrayList<>();
+
+        professionalUsers.add(ProfessionalUser.builder().email(TEST_SOLICITOR_EMAIL)
+                .firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).userIdentifier(USER_IDENTIFIER).build());
+
+        OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
+                .organisationIdentifier(USER_IDENTIFIER).name(TEST_ORGANISATION_NAME).build();
+        FindUsersByOrganisationResponse findUsersByOrganisationResponse =
+                FindUsersByOrganisationResponse.builder().users(professionalUsers)
+                        .organisationIdentifier(TEST_ORGANISATION_ID).build();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(user.getAuthToken()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(organisationClient.getOrganisationUsers(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_ID))
+                .thenReturn(findUsersByOrganisationResponse);
+        when(organisationClient.getOrganisationByUserId(TEST_SERVICE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN, USER_IDENTIFIER)).thenReturn(organisationResponse);
 
         Solicitor app1Solicitor =
                 Solicitor.builder().organisationPolicy(OrganisationPolicy.<UserRole>builder()
@@ -190,24 +218,24 @@ public class SystemApplyNoticeOfChangeIT {
                                         .build())
                                 .build())
                         .build();
-        final CaseData caseData = CaseData.builder()
+        ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField = getChangeOrganisationRequestField();
+
+        final CaseData caseData = CaseData.builder().changeOrganisationRequestField(changeOrganisationRequestField)
                 .applicant1(Applicant.builder().solicitor(app1Solicitor).build()).build();
 
         AcaRequest acaRequest = acaRequestBody(caseData);
-        stubForCheckNocApprovalEndpointForFailure(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
+        stubForNoCApplyDecisionEndpointEndpointForFailure(TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
                         .contentType(APPLICATION_JSON)
                         .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                         .header(AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
                         .content(objectMapper.writeValueAsString(
-                                callbackRequest(caseData, NOTICE_OF_CHANGE_REQUESTED, State.Holding.toString())))
+                                callbackRequest(caseData, NOTICE_OF_CHANGE_APPLIED, State.Holding.toString())))
                         .accept(APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(
-                        status().isForbidden()
-                ).andExpect(
-                        result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
+                .andExpect(status().isForbidden())
+                .andExpect(result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
     }
 
