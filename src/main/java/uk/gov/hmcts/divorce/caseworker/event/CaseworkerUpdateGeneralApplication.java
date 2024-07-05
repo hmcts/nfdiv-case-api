@@ -21,21 +21,24 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerUpdateGeneralApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_UPDATE_GENERAL_APPLICATION = "caseworker-update-general-application";
 
+    private static final String UPDATE_GENERAL_APPLICATION = "Update general application";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_GENERAL_APPLICATION)
             .forStates(POST_ISSUE_STATES)
-            .name("Update general application")
-            .description("Update general application")
+            .name(UPDATE_GENERAL_APPLICATION)
+            .description(UPDATE_GENERAL_APPLICATION)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER, CASE_WORKER)
             .grantHistoryOnly(
                 SOLICITOR,
-                CASE_WORKER
+                CASE_WORKER,
+                SUPER_USER
                 ))
             .page("updateGeneralApplication")
-            .pageLabel("Update general application")
+            .pageLabel(UPDATE_GENERAL_APPLICATION)
             .complex(CaseData::getGeneralApplication)
             .optional(GeneralApplication::getGeneralApplicationUrgentCase)
             .mandatory(GeneralApplication::getGeneralApplicationUrgentCaseReason, "generalApplicationUrgentCase=\"Yes\"")

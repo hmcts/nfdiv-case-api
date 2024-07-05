@@ -123,8 +123,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         final GeneralApplication generalApplication = data.getGeneralApplication();
 
         if (generalApplication.getGeneralApplicationUrgentCase() == YesOrNo.YES) {
-            if (isNull(generalApplication.getGeneralApplicationUrgentCaseReason())
-                || isEmpty(generalApplication.getGeneralApplicationUrgentCaseReason())) {
+            if (isEmpty(generalApplication.getGeneralApplicationUrgentCaseReason())) {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .errors(singletonList(GENERAL_APPLICATION_URGENT_CASE_REASON_ERROR))
                     .build();
