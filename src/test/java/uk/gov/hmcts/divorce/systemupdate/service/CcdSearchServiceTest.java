@@ -56,10 +56,12 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
@@ -481,7 +483,8 @@ class CcdSearchServiceTest {
             CcdSearchCaseException.class,
             () -> ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION));
 
-        assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of [AwaitingPronouncement]");
+        assertThat(exception.getMessage())
+                .contains("Failed to complete search for Cases with state of [AwaitingPronouncement, ExpeditedCase]");
     }
 
     @SuppressWarnings("unchecked")
@@ -875,9 +878,23 @@ class CcdSearchServiceTest {
         QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
         QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
 
-        QueryBuilder query = boolQuery()
-            .must(stateQuery)
-            .mustNot(bulkListingCaseId);
+        String coGranted = "coGranted";
+
+        QueryBuilder awaitingPronouncementStateQuery = matchQuery(STATE, AwaitingPronouncement);
+        QueryBuilder expeditedCaseStateQuery = matchQuery(STATE, ExpeditedCase);
+        QueryBuilder conditionalOrderGrantedQuery = matchQuery(String.format(DATA, coGranted), YesOrNo.YES);
+        QueryBuilder bulkListingCaseIdQuery = existsQuery("data.bulkListCaseReferenceLink.CaseReference");
+
+        BoolQueryBuilder orQuery = boolQuery()
+                .should(awaitingPronouncementStateQuery)
+                .should(boolQuery()
+                        .must(expeditedCaseStateQuery)
+                        .must(conditionalOrderGrantedQuery)
+                ).minimumShouldMatch(1);
+
+        BoolQueryBuilder query = boolQuery()
+                .should(orQuery)
+                .mustNot(bulkListingCaseIdQuery);
 
         return SearchSourceBuilder
             .searchSource()
