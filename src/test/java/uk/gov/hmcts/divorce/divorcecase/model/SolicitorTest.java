@@ -60,4 +60,29 @@ class SolicitorTest {
 
         assertThat(solicitor.hasOrgId()).isFalse();
     }
+
+    @Test
+    void shouldReturnOrganisationIdIfPresent() {
+
+        final Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder()
+                    .organisationId("Org ID")
+                    .build())
+                .build())
+            .build();
+
+        assertThat(solicitor.getOrganisationId()).isEqualTo("Org ID");
+    }
+
+    @Test
+    void shouldReturnNullIfOrganisationIdIsMissing() {
+
+        final Solicitor solicitor1 = Solicitor.builder().build();
+        final Solicitor solicitor2 = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder().build()).build();
+
+        assertThat(solicitor1.getOrganisationId()).isEqualTo(null);
+        assertThat(solicitor2.getOrganisationId()).isEqualTo(null);
+    }
 }
