@@ -234,6 +234,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant1().getSolicitor().setAddress(null);
             }
+
+            setSolicitorFirmName(data.getApplicant1());
         } else {
             data.getApplicant1().getSolicitor().setOrganisationPolicy(beforeData.getApplicant1().getSolicitor().getOrganisationPolicy());
             data.getApplicant1().setAddress(beforeData.getApplicant1().getAddress());
@@ -243,27 +245,22 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 data.getApplicant2().getSolicitor().setAddress(null);
             }
+
+            setSolicitorFirmName(data.getApplicant2());
         }
 
         if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
             resetConditionalOrderFields(data);
-            setSolicitorFirmName(data);
         }
 
         return data;
     }
 
-    private void setSolicitorFirmName(CaseData data) {
-        Solicitor applicant1Solicitor = data.getApplicant1().getSolicitor();
-        if (applicant1Solicitor != null && applicant1Solicitor.hasOrgName()) {
-            String orgName = applicant1Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
-            applicant1Solicitor.setFirmName(orgName);
-        }
-
-        Solicitor applicant2Solicitor = data.getApplicant2().getSolicitor();
-        if (applicant2Solicitor != null && applicant2Solicitor.hasOrgName()) {
-            String orgName = applicant2Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
-            applicant2Solicitor.setFirmName(orgName);
+    private void setSolicitorFirmName(Applicant applicant) {
+        Solicitor applicantSolicitor = applicant.getSolicitor();
+        if (applicantSolicitor != null && applicantSolicitor.hasOrgName()) {
+            String orgName = applicantSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+            applicantSolicitor.setFirmName(orgName);
         }
     }
 
