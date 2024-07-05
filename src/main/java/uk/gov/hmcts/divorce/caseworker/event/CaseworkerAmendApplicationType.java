@@ -27,6 +27,7 @@ import java.util.Set;
 
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.common.event.RegenerateApplication.REGENERATE_APPLICATION;
+import static uk.gov.hmcts.divorce.common.event.RegenerateNoticeOfProceedings.REGENERATE_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
@@ -135,6 +136,8 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
 
+            ccdUpdateService
+                .submitEvent(details.getId(), REGENERATE_NOTICE_OF_PROCEEDINGS, user, serviceAuth);
             ccdUpdateService
                 .submitEvent(details.getId(), REGENERATE_APPLICATION, user, serviceAuth);
         }
