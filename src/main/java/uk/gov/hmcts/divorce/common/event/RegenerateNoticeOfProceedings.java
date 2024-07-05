@@ -30,8 +30,8 @@ public class RegenerateNoticeOfProceedings implements CCDConfig<CaseData, State,
     public static final String REGENERATE_NOTICE_OF_PROCEEDINGS = "regenerate-notice-of-proceedings";
 
     private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
-    private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
     private final GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
+    private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
