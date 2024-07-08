@@ -177,6 +177,7 @@ class NotificationDispatcherTest {
         notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
 
         verify(applicantNotification).sendToApplicant1Solicitor(caseData, caseId);
+        verify(applicantNotification).sendToApplicant1(caseData, caseId);
     }
 
     @Test
@@ -190,6 +191,7 @@ class NotificationDispatcherTest {
         notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
 
         verify(applicantNotification).sendToApplicant2Solicitor(caseData, caseId);
+        verify(applicantNotification).sendToApplicant2(caseData, caseId);
     }
 
     @Test

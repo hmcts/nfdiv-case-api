@@ -34,7 +34,7 @@ public class NotificationDispatcher {
                         final CaseData caseData, final CaseData previousCaseData, final Long caseId,
                         boolean isApplicant1, NoticeType noticeType) {
         if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG) {
-            sendNotification(isApplicant1, caseData, caseId, applicantNotification);
+            sendRepresentationGrantedNotifications(isApplicant1, caseData, caseId, applicantNotification);
         }
         if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG || noticeType == NoticeType.ORG_REMOVED) {
             if (isApplicant1) {
@@ -45,7 +45,7 @@ public class NotificationDispatcher {
         }
     }
 
-    private void sendNotification(boolean isApplicant1, CaseData caseData, long caseId, ApplicantNotification applicantNotification) {
+    private void sendRepresentationGrantedNotifications(boolean isApplicant1, CaseData caseData, long caseId, ApplicantNotification applicantNotification) {
         if (isApplicant1) {
             if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
                 applicantNotification.sendToApplicant1(caseData, caseId);
