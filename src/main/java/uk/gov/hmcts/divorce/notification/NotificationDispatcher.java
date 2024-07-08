@@ -47,7 +47,7 @@ public class NotificationDispatcher {
 
     private void sendNotification(boolean isApplicant1, CaseData caseData, long caseId, ApplicantNotification applicantNotification) {
         if (isApplicant1) {
-            if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail()) && !caseData.getApplicant1().isApplicantOffline()) {
+            if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
                 applicantNotification.sendToApplicant1(caseData, caseId);
             } else {
                 applicantNotification.sendToApplicant1Offline(caseData, caseId);
@@ -55,7 +55,7 @@ public class NotificationDispatcher {
             applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
 
         } else {
-            if (StringUtils.isNotEmpty(caseData.getApplicant2().getEmail()) && !caseData.getApplicant2().isApplicantOffline()) {
+            if (StringUtils.isNotEmpty(caseData.getApplicant2().getEmail())) {
                 applicantNotification.sendToApplicant2(caseData, caseId);
             } else {
                 applicantNotification.sendToApplicant2Offline(caseData, caseId);

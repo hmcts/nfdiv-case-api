@@ -86,7 +86,7 @@ TASK_NAME=SystemProgressHeldCasesTask java -jar nfdiv-case-api.jar
 TASK_NAME=SystemProgressHeldCasesTask ./gradlew bootRun
 
 Before running cron/task locally, these changes are required
-Add task name as as environment variable
+Add task name as environment variable
 #e.g.
 Add TASK_NAME=SystemProgressHeldCasesTask in .aat-env file
 
