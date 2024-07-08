@@ -10,20 +10,24 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationApprovalStatus;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.caseworker.event.NoticeType.ORG_REMOVED;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -40,6 +44,8 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
     private final AuthTokenGenerator authTokenGenerator;
     private final AssignCaseAccessClient assignCaseAccessClient;
     private final IdamService idamService;
+    private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+    private final NotificationDispatcher notificationDispatcher;
 
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
     public static final String NOC_JUDICIAL_SEPARATION_CASE_ERROR = """
@@ -113,6 +119,11 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
+        boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole()
+                .equals(details.getData().getChangeOrganisationRequestField().getCaseRoleId().getRole());
+
+        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
+                beforeDetails.getData(), details.getId(), isApplicant1, ORG_REMOVED);
 
         return assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
     }
