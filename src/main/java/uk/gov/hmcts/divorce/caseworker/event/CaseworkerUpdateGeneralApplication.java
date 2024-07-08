@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -31,11 +33,12 @@ public class CaseworkerUpdateGeneralApplication implements CCDConfig<CaseData, S
             .name(UPDATE_GENERAL_APPLICATION)
             .description(UPDATE_GENERAL_APPLICATION)
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, SUPER_USER, CASE_WORKER)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(
+                SUPER_USER,
                 SOLICITOR,
-                CASE_WORKER,
-                SUPER_USER
+                LEGAL_ADVISOR,
+                JUDGE
                 ))
             .page("updateGeneralApplication")
             .pageLabel(UPDATE_GENERAL_APPLICATION)

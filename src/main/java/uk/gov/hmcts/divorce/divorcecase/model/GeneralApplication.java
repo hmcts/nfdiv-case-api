@@ -55,12 +55,12 @@ public class GeneralApplication {
     private FeeDetails generalApplicationFee = new FeeDetails();
 
     @CCD(
-        label = "Is this an Urgent Application?"
+        label = "Is this an urgent application?"
     )
     private YesOrNo generalApplicationUrgentCase;
 
     @CCD(
-        label = "How does this Qualify as an urgent Application?",
+        label = "How does this qualify as an urgent application?",
         typeOverride = TextArea
     )
     private String generalApplicationUrgentCaseReason;
