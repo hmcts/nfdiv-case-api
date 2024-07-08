@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.LocalDate;
@@ -25,6 +26,8 @@ import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -58,6 +61,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
@@ -79,6 +83,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 @ExtendWith(MockitoExtension.class)
 class CommonContentTest {
 
+    private final Long caseRef = 7201000100010001L;
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;
 
@@ -408,7 +413,7 @@ class CommonContentTest {
     }
 
     @Test
-    public void shouldAddCoRefusedSolicitorContentForSoleApplicationWithRefusalOptionMoreInfo() {
+    void shouldAddCoRefusedSolicitorContentForSoleApplicationWithRefusalOptionMoreInfo() {
 
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
@@ -440,7 +445,7 @@ class CommonContentTest {
     }
 
     @Test
-    public void shouldAddCoRefusedSolicitorContentForJointApplicationWithRefusalOptionAmendApplication() {
+    void shouldAddCoRefusedSolicitorContentForJointApplicationWithRefusalOptionAmendApplication() {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
             .application(Application.builder()
@@ -474,14 +479,14 @@ class CommonContentTest {
 
     @ParameterizedTest
     @CsvSource({"YES,yes, no", "NO,no,yes", ",no,yes"})
-    public void shouldSetOverdueAndInTimeVariablesFinalOrderOverdue(YesOrNo finalOrderOverdue, String isOverdue, String inTime) {
+    void shouldSetOverdueAndInTimeVariablesFinalOrderOverdue(YesOrNo finalOrderOverdue, String isOverdue, String inTime) {
         CaseData caseData = CaseData.builder()
             .finalOrder(FinalOrder.builder().isFinalOrderOverdue(finalOrderOverdue).build())
             .build();
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        commonContent.setOverdueAndInTimeVariables(caseData,  templateVars);
+        commonContent.setOverdueAndInTimeVariables(caseData, templateVars);
 
         assertThat(templateVars.get(IS_OVERDUE)).isEqualTo(isOverdue);
         assertThat(templateVars.get(IN_TIME)).isEqualTo(inTime);
@@ -589,4 +594,83 @@ class CommonContentTest {
                 entry(IS_DISSOLUTION, "yes")
             );
     }
+
+    @Test
+    void nocCitizenTemplateVars() {
+        Applicant applicant = new Applicant();
+        applicant.setFirstName("John");
+        applicant.setLastName("Doe");
+
+        Solicitor solicitor = new Solicitor();
+        solicitor.setFirmName("XYZ Solicitors");
+        applicant.setSolicitor(solicitor);
+
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        Map<String, String> templateVars = commonContent.nocCitizenTemplateVars(caseRef, applicant);
+
+        // Assert the result
+        assertNotNull(templateVars);
+        assertEquals("John", templateVars.get("first name"));
+        assertEquals("Doe", templateVars.get("last name"));
+        assertEquals("XYZ Solicitors", templateVars.get("solicitor firm"));
+        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
+
+    }
+
+    @Test
+    void testNocSolsTemplateVars() {
+        Solicitor solicitor = Solicitor.builder()
+            .name("Solicitor Name")
+            .reference("SolRef")
+            .build();
+        Applicant applicant = Applicant.builder()
+            .solicitor(solicitor)
+            .build();
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+
+        assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
+        assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
+        assertEquals("SolRef", templateVars.get(CommonContent.SOLICITOR_REFERENCE));
+        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+    }
+
+    @Test
+    void testNocSolsTemplateVarsNoSolsReference() {
+        Solicitor solicitor = Solicitor.builder()
+            .name("Solicitor Name")
+            .build();
+        Applicant applicant = Applicant.builder()
+            .solicitor(solicitor)
+            .build();
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+
+        assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
+        assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
+        assertEquals("Not provided", templateVars.get(SOLICITOR_REFERENCE));
+        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+    }
+
+    @Test
+    void testNocOldSolsTemplateVars() {
+        Solicitor solicitor = Solicitor.builder()
+            .name("Old Solicitor Name")
+            .build();
+        Applicant beforeApplicant = Applicant.builder()
+            .solicitor(solicitor)
+            .firstName("First")
+            .lastName("Last")
+            .build();
+
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+
+        Map<String, String> templateVars = commonContent.nocOldSolsTemplateVars(caseRef, beforeApplicant);
+        assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
+        assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
+        assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
+        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+    }
 }
+

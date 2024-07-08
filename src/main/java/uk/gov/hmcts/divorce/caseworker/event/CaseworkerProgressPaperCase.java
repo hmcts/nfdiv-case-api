@@ -1,12 +1,14 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -29,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 
 @Slf4j
@@ -36,6 +39,9 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_PROGRESS_PAPER_CASE = "caseworker-progress-paper-case";
+
+    @Autowired
+    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -79,8 +85,10 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
         }
 
         if (caseData.getApplication().getProgressPaperCase().equals(SUBMITTED)) {
+            final CaseDetails<CaseData, State> result = caseTasks(setDefaultOrganisationPolicies).run(details);
+
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
+                .data(result.getData())
                 .state(Submitted)
                 .build();
         } else if (caseData.getApplication().getProgressPaperCase().equals(AWAITING_DOCUMENTS)) {
