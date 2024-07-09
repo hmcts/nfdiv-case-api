@@ -45,7 +45,8 @@ public class NotificationDispatcher {
         }
     }
 
-    private void sendRepresentationGrantedNotifications(boolean isApplicant1, CaseData caseData, long caseId, ApplicantNotification applicantNotification) {
+    private void sendRepresentationGrantedNotifications(boolean isApplicant1, CaseData caseData,
+                                                        long caseId, ApplicantNotification applicantNotification) {
         if (isApplicant1) {
             if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
                 applicantNotification.sendToApplicant1(caseData, caseId);

@@ -72,6 +72,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
         CaseData caseData = details.getData();
 
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+                .data(details.getData()).build();
+
         changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
@@ -95,7 +98,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
-                details.getData(), details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+                beforeDetails.getData(), details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
