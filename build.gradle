@@ -485,6 +485,6 @@ tasks.cftlibTest.dependsOn(installChromium)
 generateCCDConfig.doLast {
   copy {
     from file('ccd-definitions')
-    into layout.buildDirectory.dir('definitions/NFD-3808')
+    into layout.buildDirectory.dir('definitions/NFD-3848')
   }
 }
