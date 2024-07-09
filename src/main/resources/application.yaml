@@ -51,6 +51,7 @@ uk:
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
+          smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
         templates:
           english:
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
@@ -148,6 +149,8 @@ uk:
             GENERAL_APPLICATION_SUCCESSFUL: 'b22ad794-a768-4b1a-86a8-3bf5c713ea2b'
             SERVICE_APPLICATION_REJECTED: 'db7f376b-ab61-4316-b59f-83fe570b8f23'
             SERVICE_APPLICATION_GRANTED: '2b7cc04e-2c21-4c06-9ae4-e7109a3efde4'
+            SERVICE_APPLICATION_REJECTED_SOLICITOR: 'ba1c3408-4413-4f18-9685-6aacf161f293'
+            SERVICE_APPLICATION_GRANTED_SOLICITOR: '88cce629-73e8-43df-83a1-468b00201cd4'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: 'e872dbc4-e1f9-454c-830c-3e86ccb03251'
             APPLY_FOR_FINAL_ORDER_SOLICITOR: '91c049a6-d2ee-4682-bea2-8a74fa1b75a6'
             JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR: '00c04fec-dc80-4ec9-82f1-f6eab43d656c'
@@ -171,6 +174,9 @@ uk:
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: '09a78fbf-05d5-465a-8ba5-f7c1cae1686b'
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310'
             APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '5c9afec8-9cb3-4688-aad9-602800e0f514'
+            NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'd4eb2375-2d61-4a08-88b0-457430056c18'
+            NOC_TO_SOLS_EMAIL_NEW_SOL: 'e19d3227-84eb-4b43-afa0-05de1e089003'
+            NOC_TO_SOLS_EMAIL_OLD_SOL: '98c2a7a4-79c4-410c-909d-10db0108fe8d'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
@@ -261,6 +267,8 @@ uk:
             GENERAL_APPLICATION_SUCCESSFUL: 'b22ad794-a768-4b1a-86a8-3bf5c713ea2b'
             SERVICE_APPLICATION_REJECTED: '0b0b9648-3551-45f0-ac23-ebfc15c01633'
             SERVICE_APPLICATION_GRANTED: 'b95dc623-7508-4310-9f99-6057a6242c2a'
+            SERVICE_APPLICATION_REJECTED_SOLICITOR: 'c8675e71-ff1e-4dff-9780-4db3c3d12bcf'
+            SERVICE_APPLICATION_GRANTED_SOLICITOR: '860accd8-e153-4df2-a076-f5322b65448e'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: 'e872dbc4-e1f9-454c-830c-3e86ccb03251'
             BAILIFF_SERVICE_UNSUCCESSFUL: 'af3c1d06-0485-4443-b544-005348f15c4e'
             BAILIFF_SERVICE_SUCCESSFUL: 'ec30a7ef-8e51-45ae-a018-c5ff2622db40'
@@ -289,7 +297,9 @@ uk:
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '46baacb0-1e11-4502-94be-913d9281f12e' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: '09a78fbf-05d5-465a-8ba5-f7c1cae1686b' #TODO - Welsh translation needed
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '7d86d77b-125e-4ea6-ac09-d9aa0b755714'
-
+            NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'b3786fd2-4a72-4c5f-b4ed-6635647b1520'
+            NOC_TO_SOLS_EMAIL_NEW_SOL: '7fd68c22-f0cc-41ce-af9e-be9f732eab3a'
+            NOC_TO_SOLS_EMAIL_OLD_SOL: '977d2857-dcf1-4bc2-97fb-f9b1e13af907'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
