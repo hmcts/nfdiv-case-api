@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
@@ -122,6 +123,12 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service if the respondent is confidential."))
+                .build();
+        } else if (application.isCourtServiceMethod()
+            && (caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(singletonList("Solicitor cannot select court service because the respondent has an international address."))
                 .build();
         } else if (application.isCourtServiceMethod() && beforeDetails.getData().getApplication().isSolicitorServiceMethod()) {
             caseData.setDueDate(now().plusDays(dueDateOffsetDays));
