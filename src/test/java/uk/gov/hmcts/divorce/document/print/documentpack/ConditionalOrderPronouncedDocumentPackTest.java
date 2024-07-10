@@ -20,7 +20,8 @@ import static uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderP
 
 class ConditionalOrderPronouncedDocumentPackTest {
 
-    private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack = new ConditionalOrderPronouncedDocumentPack();
+    private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack =
+        new ConditionalOrderPronouncedDocumentPack();
 
     @Test
     void getCorrectLetterId() {
