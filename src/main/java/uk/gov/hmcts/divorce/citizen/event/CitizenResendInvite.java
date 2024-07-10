@@ -17,6 +17,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -46,6 +47,7 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
         configBuilder
             .event(CITIZEN_RESEND_INVITE)
             .forStates(AwaitingApplicant2Response)
+            .showCondition(NEVER_SHOW)
             .name("Update applicant 2 email")
             .description("Citizen event for applicant 1 to update applicant 2 email pre-submission")
             .aboutToSubmitCallback(this::aboutToSubmit)
