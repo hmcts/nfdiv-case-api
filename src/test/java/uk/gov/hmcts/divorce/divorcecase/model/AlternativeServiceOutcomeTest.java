@@ -1,8 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.caseworker.model.Document;import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.Optional;
 

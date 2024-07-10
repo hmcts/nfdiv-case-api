@@ -6,11 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import uk.gov.hmcts.divorce.caseworker.model.Document;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 

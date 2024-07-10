@@ -1,10 +1,8 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.caseworker.model.Document;import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.model.ScannedDocument;import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.util.ArrayList;

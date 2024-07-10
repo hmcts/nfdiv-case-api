@@ -401,7 +401,7 @@ public class CcdUpdateService {
             JURISDICTION,
             getCaseType(),
             caseId,
-            true,
+            false,
             caseDataContent);
     }
 }

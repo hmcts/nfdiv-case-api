@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.document;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.divorce.caseworker.model.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;

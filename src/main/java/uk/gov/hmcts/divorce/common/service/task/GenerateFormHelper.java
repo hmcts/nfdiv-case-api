@@ -48,10 +48,11 @@ public class GenerateFormHelper {
                 .documentType(formType)
                 .documentFileName(formFileName)
                 .documentLink(
-                    new uk.gov.hmcts.ccd.sdk.type.Document(
+                    new uk.gov.hmcts.divorce.caseworker.model.Document(
                         document.links.self.href,
                         document.originalDocumentName,
-                        document.links.binary.href
+                        document.links.binary.href,
+                            document.size
                     )
                 )
                 .build())

@@ -74,7 +74,7 @@ public class GenerateD84FormTest {
                 .documentType(D84)
                 .documentFileName("D84.pdf")
                 .documentLink(
-                    new uk.gov.hmcts.ccd.sdk.type.Document(
+                    new uk.gov.hmcts.divorce.caseworker.model.Document(
                         "/",
                         "D84.pdf",
                         "/binary"

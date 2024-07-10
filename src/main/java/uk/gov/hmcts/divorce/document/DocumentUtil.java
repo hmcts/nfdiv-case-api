@@ -1,7 +1,8 @@
 package uk.gov.hmcts.divorce.document;
 
-import uk.gov.hmcts.ccd.sdk.type.Document;
+import java.util.Locale;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.model.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -54,14 +55,16 @@ public final class DocumentUtil {
         return new Document(
             documentInfo.getUrl(),
             documentInfo.getFilename(),
-            documentInfo.getBinaryUrl());
+            documentInfo.getBinaryUrl(),
+            documentInfo.getSize());
     }
 
     public static DocumentInfo documentInfoFrom(final Document document) {
         return new DocumentInfo(
             document.getUrl(),
             document.getFilename(),
-            document.getBinaryUrl());
+            document.getBinaryUrl(),
+                document.getSize());
     }
 
     public static DivorceDocument divorceDocumentFrom(final DocumentInfo documentInfo, final DocumentType documentType) {

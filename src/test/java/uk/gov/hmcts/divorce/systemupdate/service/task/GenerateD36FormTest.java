@@ -58,7 +58,7 @@ public class GenerateD36FormTest {
                 .documentType(D36)
                 .documentFileName("D36.pdf")
                 .documentLink(
-                    new uk.gov.hmcts.ccd.sdk.type.Document(
+                    new uk.gov.hmcts.divorce.caseworker.model.Document(
                         "/",
                         "D36.pdf",
                         "/binary"

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document.print.model;
 
 import lombok.Getter;
-import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.divorce.caseworker.model.Document;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 

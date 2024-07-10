@@ -2,7 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.service.task;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.divorce.caseworker.model.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;

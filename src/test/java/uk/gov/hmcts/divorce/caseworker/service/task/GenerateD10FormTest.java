@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.model.Document;
 import uk.gov.hmcts.divorce.common.service.task.GenerateFormHelper;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -141,7 +142,7 @@ public class GenerateD10FormTest {
                 .documentType(D10)
                 .documentFileName("D10.pdf")
                 .documentLink(
-                    new uk.gov.hmcts.ccd.sdk.type.Document(
+                    new Document(
                         "/",
                         "D10.pdf",
                         "/binary"

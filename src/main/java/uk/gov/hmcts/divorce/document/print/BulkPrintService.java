@@ -123,7 +123,7 @@ public class BulkPrintService {
         return sendLetterUUID;
     }
 
-    private uk.gov.hmcts.ccd.sdk.type.Document getDocument(final Letter letter) {
+    private uk.gov.hmcts.divorce.caseworker.model.Document getDocument(final Letter letter) {
         if (letter.getDivorceDocument() != null) {
             return letter.getDivorceDocument().getDocumentLink();
         } else if (letter.getConfidentialDivorceDocument() != null) {

@@ -15,13 +15,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.caseworker.event.ValidationEvent.VALIDATION_EVENT;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -31,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.ORGANISATION_CASE_
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest.acaRequest;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Slf4j
 @Component
@@ -40,6 +44,7 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
     private final AuthTokenGenerator authTokenGenerator;
     private final AssignCaseAccessClient assignCaseAccessClient;
     private final IdamService idamService;
+    private final CcdUpdateService ccdUpdateService;
 
     public static final String NOTICE_OF_CHANGE_REQUESTED = "notice-of-change-requested";
     public static final String NOC_JUDICIAL_SEPARATION_CASE_ERROR = """
@@ -100,6 +105,12 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
             String error = String.format(NOC_JOINT_OFFLINE_CASE_ERROR, details.getId());
             log.info(error);
             errors.add(error);
+
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuthorization = authTokenGenerator.generate();
+
+            log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+            ccdUpdateService.submitEvent(details.getId(), VALIDATION_EVENT, user, serviceAuthorization);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -111,8 +122,21 @@ public class SystemRequestNoticeOfChange implements CCDConfig<CaseData, State, U
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
         log.info("Notice of change requested submitted callback invoked for case: {}", details.getId());
 
+        CaseData data = details.getData();
+
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
+
+        boolean isJointCaseWithOfflineParty = !data.getApplicationType().isSole()
+                && (data.getApplicant1().isApplicantOffline() || data.getApplicant2().isApplicantOffline());
+
+        if (isJointCaseWithOfflineParty) {
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuthorization = authTokenGenerator.generate();
+
+            log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+            ccdUpdateService.submitEvent(details.getId(), VALIDATION_EVENT, user, serviceAuthorization);
+        }
 
         return assignCaseAccessClient.checkNocApproval(sysUserToken, s2sToken, acaRequest(details));
     }
