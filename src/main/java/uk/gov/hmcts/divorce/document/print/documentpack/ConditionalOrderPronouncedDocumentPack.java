@@ -82,7 +82,7 @@ public class ConditionalOrderPronouncedDocumentPack implements DocumentPack {
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
+            CO_PRONOUNCED_COVER_LETTER_OFFLINE_APPLICANT_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
     private static final DocumentPackInfo APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
