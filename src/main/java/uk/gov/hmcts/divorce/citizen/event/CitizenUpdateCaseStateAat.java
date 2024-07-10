@@ -34,7 +34,6 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
             configBuilder
                 .event(CITIZEN_UPDATE_CASE_STATE_AAT)
                 .forAllStates()
-                .showCondition(NEVER_SHOW)
                 .name("Citizen update case state AAT")
                 .description("Citizen update the case state in AAT")
                 .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
