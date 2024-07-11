@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.event.page.AlternativeServicePaymentConfirmation;
 import uk.gov.hmcts.divorce.caseworker.event.page.AlternativeServicePaymentSummary;
+import uk.gov.hmcts.divorce.caseworker.service.AlternativeServicePaymentService;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
@@ -42,7 +43,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
-    private PaymentService paymentService;
+    private AlternativeServicePaymentService alternativeServicePaymentService;
 
     public static final String CASEWORKER_SERVICE_PAYMENT = "caseworker-service-payment";
 
@@ -61,7 +62,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 
@@ -73,22 +74,9 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
-        log.info("Retrieve the Alternative Service fee and set the OrderSummary for Case Id: {}", details.getId());
+        log.info("CaseWorkerAlternativeServicePayment aboutToStart callback invoked for Case Id: {}", details.getId());
 
-        OrderSummary orderSummary;
-
-        final var caseData = details.getData();
-        if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
-            orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF);
-        } else {
-            orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
-        }
-        caseData.getAlternativeService().getServicePaymentFee().setOrderSummary(orderSummary);
-
-        for (ListValue<Fee> entry : orderSummary.getFees()) {
-            Fee fee = entry.getValue();
-            log.info("orderSummary code {} description {} value {}", fee.getAmount(), fee.getDescription(), fee.getCode());
-        }
+        CaseData caseData = alternativeServicePaymentService.getFeeAndSetOrderSummary(details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
