@@ -15,6 +15,8 @@ public class GeneralApplicationSelectApplicationType implements CcdPageConfigura
                 .mandatory(GeneralApplication::getGeneralApplicationType)
                 .mandatory(GeneralApplication::getGeneralApplicationTypeOtherComments,
                     "generalApplicationType=\"other\"")
+                .mandatory(GeneralApplication::getGeneralApplicationUrgentCase)
+                .mandatory(GeneralApplication::getGeneralApplicationUrgentCaseReason, "generalApplicationUrgentCase=\"Yes\"")
                 .done();
     }
 }
