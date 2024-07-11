@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -127,6 +128,7 @@ class CaseworkerChangeServiceRequestTest {
     @Test
     void shouldChangeServiceRequestCourtServiceConfidentialButIsOverseas() {
         final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
@@ -148,6 +150,7 @@ class CaseworkerChangeServiceRequestTest {
     @Test
     void shouldThrowErrorServiceRequestCourtServiceNotConfidentialButIsOverseas() {
         final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
@@ -165,5 +168,27 @@ class CaseworkerChangeServiceRequestTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).contains("You may not select court service if respondent"
             + " has an international address.");
+    }
+
+    @Test
+    void shouldNotThrowErrorServiceRequestCourtServiceNotConfidentialButIsOverseasAndJointApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerChangeServiceRequest.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
     }
 }

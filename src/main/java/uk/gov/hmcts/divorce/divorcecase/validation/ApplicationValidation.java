@@ -50,7 +50,8 @@ public final class ApplicationValidation {
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails()),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails()),
-            validateCaseFieldsForCourtService(caseData.getApplication(),
+            validateCaseFieldsForCourtService(caseData.getApplicationType(),
+                caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails(),
                 caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES)
         );
@@ -61,7 +62,8 @@ public final class ApplicationValidation {
             validateBasicCase(caseData),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails()),
-            validateCaseFieldsForCourtService(caseData.getApplication(),
+            validateCaseFieldsForCourtService(caseData.getApplicationType(),
+                caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails(),
                 caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES)
         );

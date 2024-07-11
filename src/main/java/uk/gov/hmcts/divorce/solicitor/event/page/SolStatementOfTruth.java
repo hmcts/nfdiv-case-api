@@ -25,7 +25,8 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
     private static final String PERSONAL_SERVICE_ERROR =
         "Solicitors cannot select personal service. Select court service or solicitor service before proceeding.";
     private static final String COURT_SERVICE_ERROR_INT_ADDRESS =
-        "Solicitor cannot select court service because the respondent has an international address.";
+        "You cannot select Court Service because the Respondent has an international address. "
+            + "Please select Solicitor Service.";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -96,7 +97,8 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
         }
 
         if (COURT_SERVICE.equals(data.getApplication().getServiceMethod())) {
-            if (data.getApplicant2().getAddressOverseas() == YesOrNo.YES) {
+            if (data.getApplicationType().isSole()
+                && data.getApplicant2().getAddressOverseas() == YesOrNo.YES) {
                 errors.add(COURT_SERVICE_ERROR_INT_ADDRESS);
             }
         }

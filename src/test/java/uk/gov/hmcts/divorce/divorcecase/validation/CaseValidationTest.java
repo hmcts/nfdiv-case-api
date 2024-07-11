@@ -611,8 +611,9 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtService() {
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceSoleApp() {
         final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final Applicant applicant2 = caseData.getApplicant2();
         applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
         applicant2.setAddressOverseas(YES);
@@ -622,6 +623,21 @@ public class CaseValidationTest {
         List<String> errors = validateChangeServiceRequest(caseData);
 
         assertThat(errors).contains("You may not select court service if respondent has an international address.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceJointApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
     }
 
     @Test

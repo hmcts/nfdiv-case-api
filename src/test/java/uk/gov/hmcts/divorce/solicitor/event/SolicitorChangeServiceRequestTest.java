@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -128,8 +129,9 @@ class SolicitorChangeServiceRequestTest {
     }
 
     @Test
-    void shouldThrowErrorIfCourtServiceForOverseasAndNotConfidentialRespondent() {
+    void shouldThrowErrorIfCourtServiceForOverseasAndNotConfidentialRespondentSoleApp() {
         final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
@@ -146,6 +148,27 @@ class SolicitorChangeServiceRequestTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).contains("Solicitor cannot select court service because the "
             + "respondent has an international address.");
+    }
+
+    @Test
+    void shouldThrowErrorIfCourtServiceForOverseasAndNotConfidentialRespondentJointApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setAddressOverseas(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test

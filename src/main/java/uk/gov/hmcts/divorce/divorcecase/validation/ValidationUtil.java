@@ -201,10 +201,11 @@ public final class ValidationUtil {
             : emptyList();
     }
 
-    public static List<String> validateCaseFieldsForCourtService(final Application application,
-                                                                                final boolean applicant2ConfidentialContactDetails,
-                                                                                final boolean applicant2OverseasFlag) {
-        final boolean courtServiceCheck = (application.isCourtServiceMethod())
+    public static List<String> validateCaseFieldsForCourtService(final ApplicationType type,
+                                                                 final Application application,
+                                                                 final boolean applicant2ConfidentialContactDetails,
+                                                                 final boolean applicant2OverseasFlag) {
+        final boolean courtServiceCheck = (type == ApplicationType.SOLE_APPLICATION) && (application.isCourtServiceMethod())
             && !applicant2ConfidentialContactDetails && applicant2OverseasFlag;
         return courtServiceCheck
             ? singletonList("You may not select court service if respondent has an international address.")
