@@ -113,8 +113,6 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         final Application application = caseData.getApplication();
         final Applicant applicant2 = caseData.getApplicant2();
         final boolean isIssued = application.getIssueDate() != null;
-        final boolean isOverseasApp2AndNotConfidentialContactDetails = (applicant2.getAddressOverseas() == YesOrNo.YES)
-            && !applicant2.isConfidentialContactDetails();
 
         if (application.isPersonalServiceMethod()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
