@@ -48,6 +48,7 @@ public class CitizenAlternativeServicePayment implements CCDConfig<CaseData, Sta
             .event(CITIZEN_SERVICE_PAYMENT)
             .forState(AwaitingServicePayment)
             .showCondition(NEVER_SHOW)
+            .name("Confirm service payment")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
