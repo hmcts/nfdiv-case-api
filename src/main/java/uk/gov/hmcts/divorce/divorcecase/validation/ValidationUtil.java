@@ -201,6 +201,16 @@ public final class ValidationUtil {
             : emptyList();
     }
 
+    public static List<String> validateCaseFieldsForCourtService(final Application application,
+                                                                                final boolean applicant2ConfidentialContactDetails,
+                                                                                final boolean applicant2OverseasFlag) {
+        final boolean courtServiceCheck = (application.isCourtServiceMethod())
+            && !applicant2ConfidentialContactDetails && applicant2OverseasFlag;
+        return courtServiceCheck
+            ? singletonList("You may not select court service if respondent has an international address.")
+            : emptyList();
+    }
+
     public static List<String> validateCitizenResendInvite(CaseDetails<CaseData, State> details) {
         var data = details.getData();
         boolean isApplicant2EmailUpdatePossible = details.getState() == State.AwaitingApplicant2Response

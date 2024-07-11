@@ -95,7 +95,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             errors.add(PERSONAL_SERVICE_ERROR);
         }
 
-        if(COURT_SERVICE.equals(data.getApplication().getServiceMethod())) {
+        if (COURT_SERVICE.equals(data.getApplication().getServiceMethod())) {
             if (data.getApplicant2().getAddressOverseas() == YesOrNo.YES) {
                 errors.add(COURT_SERVICE_ERROR_INT_ADDRESS);
             }

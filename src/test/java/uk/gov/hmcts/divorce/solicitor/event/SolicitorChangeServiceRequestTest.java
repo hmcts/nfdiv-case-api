@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
@@ -124,6 +125,27 @@ class SolicitorChangeServiceRequestTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).contains("You may not select Solicitor Service if the respondent is confidential.");
+    }
+
+    @Test
+    void shouldThrowErrorIfCourtServiceForOverseasAndNotConfidentialRespondent() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setAddressOverseas(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
+            updatedCaseDetails, caseDetails);
+
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getErrors()).contains("Solicitor cannot select court service because the "
+            + "respondent has an international address.");
     }
 
     @Test

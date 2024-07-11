@@ -112,6 +112,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         final Application application = caseData.getApplication();
         final Applicant applicant2 = caseData.getApplicant2();
         final boolean isIssued = application.getIssueDate() != null;
+        final boolean isOverseasApp2AndNotConfidentialContactDetails = (applicant2.getAddressOverseas() == YesOrNo.YES)
+            && !applicant2.isConfidentialContactDetails();
 
         if (application.isPersonalServiceMethod()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -125,7 +127,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .errors(singletonList("You may not select Solicitor Service if the respondent is confidential."))
                 .build();
         } else if (application.isCourtServiceMethod()
-            && (caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES)) {
+            && isOverseasApp2AndNotConfidentialContactDetails) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("Solicitor cannot select court service because the respondent has an international address."))
