@@ -106,4 +106,15 @@ public class GeneralReferral {
         typeOverride = TextArea
     )
     private String generalReferralUrgentCaseReason;
+
+    @CCD(
+        label = "Is this a fraud referral?"
+    )
+    private YesOrNo generalReferralFraudCase;
+
+    @CCD(
+        label = "Fraud referral reason",
+        typeOverride = TextArea
+    )
+    private String generalReferralFraudCaseReason;
 }
