@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForCourtService;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
@@ -126,9 +127,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
                 .data(caseData)
                 .errors(singletonList("You may not select Solicitor Service if the respondent is confidential."))
                 .build();
-        } else if (caseData.getApplicationType().isSole()
-            && application.isCourtServiceMethod()
-            && isOverseasApp2AndNotConfidentialContactDetails) {
+        } else if (validateCaseFieldsForCourtService(caseData).size() > 0) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(singletonList("Solicitor cannot select court service because the respondent has an international address."))

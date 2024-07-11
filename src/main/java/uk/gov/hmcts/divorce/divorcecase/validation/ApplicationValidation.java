@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
@@ -50,10 +49,7 @@ public final class ApplicationValidation {
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails()),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails()),
-            validateCaseFieldsForCourtService(caseData.getApplicationType(),
-                caseData.getApplication(),
-                caseData.getApplicant2().isConfidentialContactDetails(),
-                caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES)
+            validateCaseFieldsForCourtService(caseData)
         );
     }
 
@@ -62,10 +58,7 @@ public final class ApplicationValidation {
             validateBasicCase(caseData),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
                 caseData.getApplicant2().isConfidentialContactDetails()),
-            validateCaseFieldsForCourtService(caseData.getApplicationType(),
-                caseData.getApplication(),
-                caseData.getApplicant2().isConfidentialContactDetails(),
-                caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES)
+            validateCaseFieldsForCourtService(caseData)
         );
     }
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -201,12 +202,11 @@ public final class ValidationUtil {
             : emptyList();
     }
 
-    public static List<String> validateCaseFieldsForCourtService(final ApplicationType type,
-                                                                 final Application application,
-                                                                 final boolean applicant2ConfidentialContactDetails,
-                                                                 final boolean applicant2OverseasFlag) {
-        final boolean courtServiceCheck = (type == ApplicationType.SOLE_APPLICATION) && (application.isCourtServiceMethod())
-            && !applicant2ConfidentialContactDetails && applicant2OverseasFlag;
+    public static List<String> validateCaseFieldsForCourtService(final CaseData caseData) {
+        final boolean courtServiceCheck = (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+            && (caseData.getApplication().isCourtServiceMethod())
+            && !caseData.getApplicant2().isConfidentialContactDetails()
+            && (caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES);
         return courtServiceCheck
             ? singletonList("You may not select court service if respondent has an international address.")
             : emptyList();
