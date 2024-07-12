@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +73,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
         CaseData caseData = details.getData();
 
-        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
-                .data(details.getData()).build();
+        Map<String, Object> copyCaseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
+        CaseData beforeCaseData = objectMapper.convertValue(copyCaseDataMap, CaseData.class);
 
         changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
@@ -97,8 +98,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
-        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
-                beforeDetails.getData(), details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
+                beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
