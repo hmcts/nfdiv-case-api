@@ -42,38 +42,4 @@ public class CitizenConfirmServicePaymentTest {
             .extracting(Event::getId)
             .contains(CITIZEN_SERVICE_PAYMENT);
     }
-
-    @Test
-    void shouldSetAwaitingBailiffReferralWhenAlternativeServiceTypeIsBailiff() {
-
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setState(AwaitingServicePayment);
-        details.setId(TEST_CASE_ID);
-
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            citizenAlternativeServicePayment.aboutToSubmit(details, details);
-
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingBailiffReferral);
-    }
-
-    @Test
-    void shouldSetAwaitingServiceConsiderationWhenAlternativeServiceTypeIsNotBailiff() {
-
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setState(AwaitingServicePayment);
-        details.setId(TEST_CASE_ID);
-
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            citizenAlternativeServicePayment.aboutToSubmit(details, details);
-
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingServiceConsideration);
-    }
 }

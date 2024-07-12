@@ -82,13 +82,7 @@ public class CitizenAlternativeServicePayment implements CCDConfig<CaseData, Sta
         log.info("CitizenAlternativeServicePayment aboutToSubmit callback invoked for Case Id: {}", details.getId());
 
         final var caseData = details.getData();
-        final State state;
-
-        if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
-            state = AwaitingBailiffReferral;
-        } else {
-            state = AwaitingServiceConsideration;
-        }
+        final State state = alternativeServicePaymentService.getState(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
