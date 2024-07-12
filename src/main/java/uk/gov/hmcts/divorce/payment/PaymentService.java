@@ -189,6 +189,10 @@ public class PaymentService {
             return new PbaResponse(httpStatus, String.format(NOT_FOUND.value(), pbaNumber), null);
         }
 
+        if (isGenericErrorRequiredForHttpStatus(httpStatus)) {
+            return new PbaResponse(httpStatus, ERROR_GENERIC, pbaNumber);
+        }
+
         CreditAccountPaymentResponse creditAccountPaymentResponse = getPaymentResponse(exception);
 
         if (creditAccountPaymentResponse == null) {
@@ -250,8 +254,6 @@ public class PaymentService {
                     errorMessage = GENERAL.value();
                     break;
             }
-        } else if (isGenericErrorRequiredForHttpStatus(httpStatus)) {
-            errorMessage = ERROR_GENERIC;
         } else {
             errorMessage = GENERAL.value();
         }

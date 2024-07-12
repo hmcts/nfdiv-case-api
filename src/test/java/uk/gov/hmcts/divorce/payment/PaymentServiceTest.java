@@ -343,11 +343,6 @@ public class PaymentServiceTest {
         Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
         FeignException feignException = new FeignException.GatewayTimeout(GATEWAY_TIMEOUT.toString(),request, body, emptyMap());
 
-        when(objectMapper.readValue(
-            feignException.contentUTF8().getBytes(),
-            CreditAccountPaymentResponse.class
-        )).thenReturn(creditAccountPaymentResponse);
-
         doThrow(feignException)
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
@@ -415,11 +410,6 @@ public class PaymentServiceTest {
         byte[] body = new ObjectMapper().writeValueAsString(creditAccountPaymentResponse).getBytes();
         Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
         FeignException feignException = new FeignException.InternalServerError(INTERNAL_SERVER_ERROR.toString(),request, body, emptyMap());
-
-        when(objectMapper.readValue(
-            feignException.contentUTF8().getBytes(),
-            CreditAccountPaymentResponse.class
-        )).thenReturn(creditAccountPaymentResponse);
 
         doThrow(feignException)
             .when(paymentPbaClient).creditAccountPayment(
