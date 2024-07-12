@@ -63,7 +63,8 @@ public class Solicitor {
     private String email;
 
     @CCD(
-        label = "Solicitor’s Firm Name"
+        label = "Solicitor’s Firm Name",
+        access = {AcaSystemUserAccess.class}
     )
     private String firmName;
 
