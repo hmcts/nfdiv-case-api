@@ -63,8 +63,10 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
 
         log.info("CaseWorkerAlternativeServicePayment aboutToStart callback invoked for Case Id: {}", details.getId());
 
+        CaseData caseData = alternativeServicePaymentService.getFeeAndSetOrderSummary(details.getData(), details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(alternativeServicePaymentService.getFeeAndSetOrderSummary(details.getData(), details.getId()))
+            .data(caseData)
             .errors(null)
             .warnings(null)
             .build();
@@ -75,9 +77,12 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
 
         log.info("CaseWorkerAlternativeServicePayment aboutToSubmit callback invoked for Case Id: {}", details.getId());
 
+        final var caseData = details.getData();
+        final State state = alternativeServicePaymentService.getState(caseData);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(alternativeServicePaymentService.getState(details.getData()))
+            .data(caseData)
+            .state(state)
             .build();
     }
 }
