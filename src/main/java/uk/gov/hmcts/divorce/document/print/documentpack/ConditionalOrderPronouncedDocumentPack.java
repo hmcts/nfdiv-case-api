@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_APPLICANT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
@@ -78,11 +77,11 @@ public class ConditionalOrderPronouncedDocumentPack implements DocumentPack {
     );
     private static final DocumentPackInfo APPLICANT_1_SOLE_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
         ImmutableMap.of(
-            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(CO_PRONOUNCED_COVER_LETTER_OFFLINE_APPLICANT_TEMPLATE_ID),
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(CO_GRANTED_COVER_LETTER_TEMPLATE_ID),
             CONDITIONAL_ORDER_GRANTED, Optional.empty()
         ),
         ImmutableMap.of(
-            CO_PRONOUNCED_COVER_LETTER_OFFLINE_APPLICANT_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
+            CO_GRANTED_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
     private static final DocumentPackInfo APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
