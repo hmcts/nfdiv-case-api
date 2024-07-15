@@ -36,7 +36,7 @@ public class CitizenAlternativeServicePayment implements CCDConfig<CaseData, Sta
     @Autowired
     private AlternativeServicePaymentService alternativeServicePaymentService;
 
-    public static final String CITIZEN_SERVICE_PAYMENT = "citizen-service-payment";
+    public static final String CITIZEN_SERVICE_PAYMENT = "caseworker-service-payment";
 
     private final List<CcdPageConfiguration> pages = List.of(
         new AlternativeServicePaymentConfirmation(),
@@ -48,6 +48,8 @@ public class CitizenAlternativeServicePayment implements CCDConfig<CaseData, Sta
             .event(CITIZEN_SERVICE_PAYMENT)
             .forState(AwaitingServicePayment)
             .showCondition(NEVER_SHOW)
+            .name("Confirm service payment")
+            .description("Service payment made")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
