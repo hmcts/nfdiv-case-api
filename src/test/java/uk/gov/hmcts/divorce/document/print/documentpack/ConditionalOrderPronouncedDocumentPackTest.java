@@ -20,11 +20,12 @@ import static uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderP
 
 class ConditionalOrderPronouncedDocumentPackTest {
 
-    private final ConditionalOrderPronouncedDocumentPack finalOrderGrantedDocumentPack = new ConditionalOrderPronouncedDocumentPack();
+    private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack =
+        new ConditionalOrderPronouncedDocumentPack();
 
     @Test
     void getCorrectLetterId() {
-        assertThat(finalOrderGrantedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
+        assertThat(conditionalOrderPronouncedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
     }
 
     private static Stream<Object[]> provideTestCases() {
