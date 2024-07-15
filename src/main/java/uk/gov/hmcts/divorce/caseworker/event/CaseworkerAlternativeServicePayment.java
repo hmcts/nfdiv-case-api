@@ -61,7 +61,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 
