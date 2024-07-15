@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -39,6 +40,7 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
         configBuilder
             .event(APPLICANT_2_NOT_BROKEN)
             .forStateTransition(AwaitingApplicant2Response, AwaitingApplicant1Response)
+            .showCondition(NEVER_SHOW)
             .name("Applicant 2 not broken")
             .description("Applicant 2 union has not broken")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
