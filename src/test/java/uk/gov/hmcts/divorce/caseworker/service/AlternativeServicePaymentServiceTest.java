@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.ArrayList;
@@ -22,8 +21,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
@@ -107,25 +104,5 @@ public class AlternativeServicePaymentServiceTest {
 
         assertThat(response.getAlternativeService().getServicePaymentFee().getOrderSummary().getFees())
             .isEqualTo(orderSummaryFees);
-    }
-
-    @Test
-    void shouldReturnAwaitingBailiffReferralWhenAlternativeServiceTypeIsBailiff() {
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
-
-        State response = alternativeServicePaymentService.getState(caseData);
-
-        assertThat(response).isEqualTo(AwaitingBailiffReferral);
-    }
-
-    @Test
-    void shouldReturnAwaitingServiceConsiderationWhenAlternativeServiceTypeIsNotBailiff() {
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
-
-        State response = alternativeServicePaymentService.getState(caseData);
-
-        assertThat(response).isEqualTo(AwaitingServiceConsideration);
     }
 }

@@ -8,11 +8,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
@@ -46,12 +43,5 @@ public class AlternativeServicePaymentService {
         return caseData;
     }
 
-    public State getState(final CaseData caseData) {
-        if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
-            return AwaitingBailiffReferral;
-        } else {
-            return AwaitingServiceConsideration;
-        }
-    }
 
 }
