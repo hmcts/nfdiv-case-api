@@ -7,10 +7,16 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.event.page.AlternativeServicePaymentConfirmation;
+import uk.gov.hmcts.divorce.caseworker.event.page.AlternativeServicePaymentSummary;
 import uk.gov.hmcts.divorce.caseworker.service.AlternativeServicePaymentService;
+import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
@@ -29,25 +35,39 @@ public class CitizenAlternativeServicePayment implements CCDConfig<CaseData, Sta
 
     public static final String CITIZEN_SERVICE_PAYMENT = "citizen-service-payment";
 
-    @Override
-    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder
+    private final List<CcdPageConfiguration> pages = List.of(
+        new AlternativeServicePaymentConfirmation(),
+        new AlternativeServicePaymentSummary()
+    );
+
+    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder(configBuilder
             .event(CITIZEN_SERVICE_PAYMENT)
             .forState(AwaitingServicePayment)
             .showCondition(NEVER_SHOW)
             .name("Confirm service payment")
+            .showSummary()
+            .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE);
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE));
+    }
+
+    @Override
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        pages.forEach(page -> page.addTo(pageBuilder));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
         log.info("CitizenAlternativeServicePayment aboutToStart callback invoked for Case Id: {}", details.getId());
 
+        CaseData caseData = alternativeServicePaymentService.getFeeAndSetOrderSummary(details.getData(), details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(alternativeServicePaymentService.getFeeAndSetOrderSummary(details.getData(), details.getId()))
+            .data(caseData)
             .errors(null)
             .warnings(null)
             .build();
@@ -58,9 +78,12 @@ public class CitizenAlternativeServicePayment implements CCDConfig<CaseData, Sta
 
         log.info("CitizenAlternativeServicePayment aboutToSubmit callback invoked for Case Id: {}", details.getId());
 
+        final var caseData = details.getData();
+        final State state = alternativeServicePaymentService.getState(caseData);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(alternativeServicePaymentService.getState(details.getData()))
+            .data(caseData)
+            .state(state)
             .build();
     }
 }
