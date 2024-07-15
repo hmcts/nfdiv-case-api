@@ -74,6 +74,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .endButtonLabel("Save Conditional Order")
             .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted!=\"Yes\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("ConditionalOrderSoT")
