@@ -217,7 +217,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    public void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -235,7 +235,7 @@ class SetStateAfterSubmissionTest {
 
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
-        assertThat(result.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
     @Test
@@ -261,7 +261,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    public void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -279,7 +279,7 @@ class SetStateAfterSubmissionTest {
 
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
-        assertThat(result.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
     @Test
