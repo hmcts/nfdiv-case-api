@@ -41,7 +41,7 @@ public class SystemRegenerateConditionalOrder implements CCDConfig<CaseData, Sta
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_REGENERATE_CONDITIONAL_ORDER)
-            .forStates(POST_SUBMISSION_STATES)
+            .forAllStates()
             .name(REGENERATE_CONDITIONAL_ORDER)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
