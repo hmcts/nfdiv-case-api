@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -61,6 +62,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         configBuilder
             .event(SWITCH_TO_SOLE)
             .forStates(AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment)
+            .showCondition(NEVER_SHOW)
             .name("Application switched to sole")
             .description("Application type switched to sole")
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)

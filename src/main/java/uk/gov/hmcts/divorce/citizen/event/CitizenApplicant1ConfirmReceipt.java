@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -26,6 +27,7 @@ public class CitizenApplicant1ConfirmReceipt implements CCDConfig<CaseData, Stat
         configBuilder
             .event(APPLICANT_1_CONFIRM_RECEIPT)
             .forStates(Holding)
+            .showCondition(NEVER_SHOW)
             .name("Applicant 1 Confirm Receipt")
             .description("Applicant 1 confirms receipt for joint application")
             .grant(CREATE_READ_UPDATE, CREATOR)
