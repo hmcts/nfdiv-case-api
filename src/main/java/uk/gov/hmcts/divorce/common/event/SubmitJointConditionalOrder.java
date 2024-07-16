@@ -55,6 +55,7 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
             .forStates(ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
+            .showSummary()
             .endButtonLabel("Save Conditional Order")
             .showCondition("applicationType=\"jointApplication\" AND coApplicant2IsDrafted=\"Yes\" AND coApplicant2IsSubmitted!=\"Yes\"")
             .aboutToSubmitCallback(this::aboutToSubmit)

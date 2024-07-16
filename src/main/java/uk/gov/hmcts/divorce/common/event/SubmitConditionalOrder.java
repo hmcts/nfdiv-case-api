@@ -71,6 +71,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .forStates(ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
+            .showSummary()
             .endButtonLabel("Save Conditional Order")
             .showCondition("coApplicant1IsDrafted=\"Yes\" AND coApplicant1IsSubmitted!=\"Yes\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
