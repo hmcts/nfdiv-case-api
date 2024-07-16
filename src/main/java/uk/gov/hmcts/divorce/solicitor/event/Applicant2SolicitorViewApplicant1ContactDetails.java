@@ -25,9 +25,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class SolicitorViewApplicant1ContactDetails implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO = "solicitor-view-applicant-1-contact-info";
+    public static final String APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO = "app2-solicitor-view-app1-contact-info";
     public static final String CONFIDENTIAL_APPLICANT_ERROR = """
             The applicants contact details are confidential. Please complete a general application
             to seek permission to obtain the address from the court.
@@ -36,10 +36,10 @@ public class SolicitorViewApplicant1ContactDetails implements CCDConfig<CaseData
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO)
+            .event(APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO)
             .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
-            .name("View applicant 1 contact info")
-            .description("View applicant 1 contact details")
+            .name("View applicant contact info")
+            .description("View applicant contact details")
             .showSummary(false)
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
@@ -54,7 +54,9 @@ public class SolicitorViewApplicant1ContactDetails implements CCDConfig<CaseData
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}",
+            APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId()
+        );
 
         List<String> errors = new ArrayList<>();
 
