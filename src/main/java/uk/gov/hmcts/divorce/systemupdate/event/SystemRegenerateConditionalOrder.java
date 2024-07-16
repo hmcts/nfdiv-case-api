@@ -63,8 +63,11 @@ public class SystemRegenerateConditionalOrder implements CCDConfig<CaseData, Sta
                 removeExistingConditionalOrderPronouncedDocument,
                 generateConditionalOrderPronouncedDocument
             ).run(details);
+
+            notificationDispatcher.send(regenerateConditionalOrderNotification, caseData, details.getId());
+        } else {
+            log.info("No CO Pronounced document to Regenerate on Case Id: {}", details.getId());
         }
-        notificationDispatcher.send(regenerateConditionalOrderNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
