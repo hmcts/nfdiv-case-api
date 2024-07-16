@@ -116,6 +116,8 @@ public class SolicitorGeneralApplicationTest {
 
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationType()).isNull();
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationTypeOtherComments()).isNull();
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationUrgentCase()).isNull();
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationUrgentCaseReason()).isNull();
         assertThat(response.getData().getGeneralApplication()).isEqualTo(GeneralApplication.builder().build());
     }
 
@@ -418,5 +420,28 @@ public class SolicitorGeneralApplicationTest {
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors())
             .contains("Account balance insufficient");
+    }
+
+    @Test
+    void shouldReturnErrorIfUrgentFlagIsSetButNoReasonProvided() {
+        final DivorceDocument document = DivorceDocument.builder()
+            .documentLink(Document.builder().build())
+            .build();
+        final CaseData caseData = caseData();
+        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
+        caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .contains("General Application marked as urgent need an accompanying reason why it is urgent");
     }
 }
