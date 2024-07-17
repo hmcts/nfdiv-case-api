@@ -302,6 +302,13 @@ public enum State {
     ConditionalOrderRefused,
 
     @CCD(
+            label = "Conditional order review caseworker",
+            hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+            access = {DefaultStateAccess.class}
+    )
+    ConditionalOrderReview,
+
+    @CCD(
         label = "Draft",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}

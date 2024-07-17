@@ -12,8 +12,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -32,7 +35,7 @@ public class CaseworkerAddAdminClarification implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ADD_ADMIN_CLARIFICATION)
-            .forStateTransition(AwaitingAdminClarification, ClarificationSubmitted)
+            .forStateTransition(EnumSet.of(AwaitingAdminClarification, ConditionalOrderReview), ClarificationSubmitted)
             .name("Add admin clarification")
             .description("Add admin clarification")
             .aboutToSubmitCallback(this::aboutToSubmit)
