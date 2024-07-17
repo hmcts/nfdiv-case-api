@@ -307,7 +307,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildHearingsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("hearings", "Hearings")
-            .forRoles(CASE_WORKER, SUPER_USER)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("hearings");
     }
 
