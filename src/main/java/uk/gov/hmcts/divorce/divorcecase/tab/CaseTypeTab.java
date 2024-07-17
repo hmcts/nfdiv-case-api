@@ -92,6 +92,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildCivilPartnershipCertificateTab(configBuilder);
         buildServiceApplicationTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
+        buildGeneralReferralTabCWSU(configBuilder);
         buildLanguageTab(configBuilder);
         buildConfidentialApplicantTab(configBuilder);
         buildConfidentialRespondentTab(configBuilder);
@@ -288,8 +289,32 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildGeneralReferralTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("generalReferral", "General Referral")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .forRoles(LEGAL_ADVISOR, JUDGE)
             .field("generalReferralReason")
+            .field("generalReferralUrgentCase")
+            .field("generalReferralUrgentCaseReason", "generalReferralUrgentCase=\"Yes\"")
+            .field("generalReferralFraudCase")
+            .field("generalReferralFraudCaseReason", "generalReferralFraudCase=\"Yes\"")
+            .field("generalApplicationFrom", "generalApplicationFrom=\"*\"")
+            .field("generalApplicationReferralDate", "generalApplicationReferralDate=\"*\"")
+            .field("generalApplicationAddedDate")
+            .field("generalReferralType")
+            .field("alternativeServiceMedium")
+            .field("generalReferralJudgeOrLegalAdvisorDetails")
+            .field("generalReferralFeeRequired")
+            .field("generalReferralFeePaymentMethod")
+            .field("generalReferralDecisionDate")
+            .field("generalReferralDecision")
+            .field("generalReferralDecisionReason")
+            .field("generalReferrals");
+    }
+
+    private void buildGeneralReferralTabCWSU(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("generalReferralCWSU", "General Referral")
+            .forRoles(CASE_WORKER, SUPER_USER)
+            .field("generalReferralReason")
+            .field("generalReferralUrgentCase")
+            .field("generalReferralFraudCase")
             .field("generalApplicationFrom", "generalApplicationFrom=\"*\"")
             .field("generalApplicationReferralDate", "generalApplicationReferralDate=\"*\"")
             .field("generalApplicationAddedDate")
