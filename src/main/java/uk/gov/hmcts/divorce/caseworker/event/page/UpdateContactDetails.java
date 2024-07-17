@@ -19,7 +19,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
@@ -44,8 +48,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String LAST_NAME_LABEL = "${%s} last name";
     private static final String WARNING_LABEL = "### WARNING: Changing the ${%s} gender here means you need "
         + "to Re-Issue the case to update all case documents";
-    private static final String CHANGE_REPRESENTATION_WARNING_LABEL = "### WARNING: Do not change the solicitor firm that represents the "
-        + "applicant with this event. You can change or remove representation using the notice of change event.";
+    private static final String CHANGE_REPRESENTATION_WARNING_LABEL = "### WARNING: Use this event for only minor amendments to the "
+        + "solicitor's details. DO NOT change the firm. Use Notice of change to change the firm.";
     private static final String GENDER_LABEL = "What is the ${%s} gender?";
     private static final String GENDER_HINT_LABEL = "The ${%s} gender is collected for statistical purposes only";
     private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
@@ -70,8 +74,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL = "Is ${%s} solicitor's firm address/DX address international?";
     public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
     public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
-    public static final String SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR = """
-        Please do not remove solicitor contact details. You can use the notice of change event to remove representation.
+    public static final String SOLICITOR_DETAILS_REMOVED_ERROR = """
+        You cannot remove the solicitor %s with this event. Please use Notice of Change if you would like to remove representation.
         """;
 
     @Override
@@ -216,9 +220,10 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         CaseData caseData = details.getData();
         CaseData caseDataBefore = detailsBefore.getData();
 
-        if (!validSolicitorContactDetails(caseDataBefore, caseData)) {
+        List<String> solicitorValidationErrors = validateSolicitorDetails(caseDataBefore, caseData);
+        if (!solicitorValidationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR))
+                .errors(solicitorValidationErrors)
                 .build();
         }
 
@@ -249,16 +254,48 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .build();
     }
 
-    private boolean validSolicitorContactDetails(CaseData caseDataBefore, CaseData caseData) {
-        if (solicitorHasEmail(caseDataBefore.getApplicant1()) && !solicitorHasEmail(caseData.getApplicant1())) {
-            return false;
+    private List<String> validateSolicitorDetails(CaseData caseDataBefore, CaseData caseData) {
+        List<String> solicitorDetailsRemovedErrors = new ArrayList<>();
+
+        List<String> app1SolicitorContactDetailRemovedErrors = validateSolicitorDetailsNotRemoved(
+            caseDataBefore.getApplicant1().getSolicitor(),
+            caseData.getApplicant1().getSolicitor()
+        );
+        solicitorDetailsRemovedErrors.addAll(app1SolicitorContactDetailRemovedErrors);
+
+        List<String> app2SolicitorContactDetailRemovedErrors = validateSolicitorDetailsNotRemoved(
+            caseDataBefore.getApplicant2().getSolicitor(),
+            caseData.getApplicant2().getSolicitor()
+        );
+        solicitorDetailsRemovedErrors.addAll(app2SolicitorContactDetailRemovedErrors);
+
+        return solicitorDetailsRemovedErrors;
+    }
+
+    private List<String> validateSolicitorDetailsNotRemoved(Solicitor solicitorBefore, Solicitor solicitorAfter) {
+        List<String> contactDetailRemovedErrors = new ArrayList<>();
+
+        if (solicitorBefore == null) {
+            return contactDetailRemovedErrors;
         }
 
-        if (solicitorHasEmail(caseDataBefore.getApplicant2()) && !solicitorHasEmail(caseData.getApplicant2())) {
-            return false;
+        Map<Function<Solicitor, String>, String> contactDetailGetters = Map.of(
+            Solicitor::getEmail, "email address",
+            Solicitor::getPhone, "phone number",
+            Solicitor::getAddress, "address"
+        );
+
+        for (Map.Entry<Function<Solicitor,String>,String> getterEntry : contactDetailGetters.entrySet()) {
+            String valueBefore = getterEntry.getKey().apply(solicitorBefore);
+            String valueAfter = getterEntry.getKey().apply(solicitorAfter);
+
+            if (StringUtils.isNotEmpty(valueBefore) && StringUtils.isEmpty(valueAfter)) {
+                String errorMessage = String.format(SOLICITOR_DETAILS_REMOVED_ERROR, getterEntry.getValue());
+                contactDetailRemovedErrors.add(errorMessage);
+            }
         }
 
-        return true;
+        return contactDetailRemovedErrors;
     }
 
     private boolean solicitorHasEmail(Applicant applicant) {

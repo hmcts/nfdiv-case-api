@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.SOLICITOR_DETAILS_REMOVED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
@@ -411,62 +411,112 @@ public class UpdateContactDetailsTest {
     }
 
     @Test
-    void shouldReturnErrorWhenApp1SolicitorEmailAddressIsRemoved() {
-        var detailsBefore = setUpCaseDetailsWithSolicitorEmailAddresses("test@test.com", null);
-        var detailsAfter = setUpCaseDetailsWithSolicitorEmailAddresses("", null);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response
-            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
-
-        assertThat(response.getErrors()).contains(SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR);
-    }
-
-    @Test
-    void shouldReturnErrorWhenApp2SolicitorEmailAddressIsRemoved() {
-        var detailsBefore = setUpCaseDetailsWithSolicitorEmailAddresses(null, "test@test.com");
-        var detailsAfter = setUpCaseDetailsWithSolicitorEmailAddresses(null, "");
-
-        AboutToStartOrSubmitResponse<CaseData, State> response
-            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
-
-        assertThat(response.getErrors()).contains(SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR);
-    }
-
-    @Test
-    void shouldNotReturnErrorWhenSolicitorEmailAddressesWereBlankBefore() {
-        var detailsBefore = setUpCaseDetailsWithSolicitorEmailAddresses("", "");
-        var detailsAfter = setUpCaseDetailsWithSolicitorEmailAddresses("", "");
-
-        AboutToStartOrSubmitResponse<CaseData, State> response
-            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
-
-        assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
-    void shouldNotReturnErrorWhenSolicitorEmailAddressesWereMissingBefore() {
-        var detailsBefore = setUpCaseDetailsWithSolicitorEmailAddresses(null, null);
-        var detailsAfter = setUpCaseDetailsWithSolicitorEmailAddresses("", "");
-
-        AboutToStartOrSubmitResponse<CaseData, State> response
-            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
-
-        assertThat(response.getErrors()).isNull();
-    }
-
-    private CaseDetails<CaseData, State> setUpCaseDetailsWithSolicitorEmailAddresses(String app1SolEmail, String app2SolEmail) {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+    void shouldReturnErrorsWhenApplicant1SolicitorDetailsAreRemoved() {
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder()
-                .solicitor(Solicitor.builder().email(app1SolEmail).build())
-                .build())
-            .applicant2(Applicant.builder()
-                .solicitor(Solicitor.builder().email(app2SolEmail).build())
-                .build())
+            .applicant1(applicantWithSolContactDetails("test@test.com", "testAddress", "testPhone"))
+            .applicant2(Applicant.builder().build())
             .build();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseData);
 
-        return details;
+        final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
+        final CaseData caseDataAfter = CaseData.builder()
+            .applicant1(applicantWithSolContactDetails("", "", ""))
+            .applicant2(Applicant.builder().build())
+            .build();
+        detailsAfter.setId(TEST_CASE_ID);
+        detailsAfter.setData(caseDataAfter);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
+
+        assertThat(response.getErrors()).contains(
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "email address"),
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "phone number"),
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "address")
+        );
+    }
+
+    @Test
+    void shouldReturnErrorsWhenApplicant2SolicitorDetailsAreRemoved() {
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .applicant2(applicantWithSolContactDetails("test@test.com", "testAddress", "testPhone"))
+            .build();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseData);
+
+        final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
+        final CaseData caseDataAfter = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .applicant2(applicantWithSolContactDetails("", "", ""))
+            .build();
+        detailsAfter.setId(TEST_CASE_ID);
+        detailsAfter.setData(caseDataAfter);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
+
+        assertThat(response.getErrors()).contains(
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "email address"),
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "phone number"),
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "address")
+        );
+    }
+
+    @Test
+    void shouldNotReturnErrorsWhenSolicitorDetailsWereBlankBefore() {
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(applicantWithSolContactDetails("", "", ""))
+            .build();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseData);
+
+        final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
+        final CaseData caseDataAfter = CaseData.builder()
+            .applicant1(applicantWithSolContactDetails("", "", ""))
+            .build();
+        detailsAfter.setId(TEST_CASE_ID);
+        detailsAfter.setData(caseDataAfter);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldNotReturnErrorsWhenSolicitorDetailsWereMissingBefore() {
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder()
+            .applicant1(applicantWithSolContactDetails(null, null, null))
+            .applicant2(Applicant.builder().build())
+            .build();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseData);
+
+        final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
+        final CaseData caseDataAfter = CaseData.builder()
+            .applicant1(applicantWithSolContactDetails("", "", ""))
+            .applicant2(Applicant.builder().build())
+            .build();
+        detailsAfter.setId(TEST_CASE_ID);
+        detailsAfter.setData(caseDataAfter);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(detailsAfter, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    private Applicant applicantWithSolContactDetails(String email, String address, String phone) {
+        return Applicant.builder()
+                .solicitor(Solicitor.builder()
+                    .email(email).address(address).phone(phone)
+                    .build())
+                .build();
     }
 }
