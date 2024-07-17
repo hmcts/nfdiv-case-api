@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
@@ -44,6 +45,8 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
+    private static final String ERROR_GENERIC = "Sorry, there is a problem with the service.\n"
+        + "Try again later.";
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
     public static final String EVENT_ISSUE = "issue";
@@ -143,7 +146,7 @@ public class PaymentService {
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
-        return new PbaResponse(INTERNAL_SERVER_ERROR, GENERAL.value(), null);
+        return new PbaResponse(INTERNAL_SERVER_ERROR, ERROR_GENERIC, null);
     }
 
     private CreditAccountPaymentResponse getPaymentResponse(FeignException exception) {
@@ -184,6 +187,10 @@ public class PaymentService {
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
             return new PbaResponse(httpStatus, String.format(NOT_FOUND.value(), pbaNumber), null);
+        }
+
+        if (isGenericErrorRequiredForHttpStatus(httpStatus)) {
+            return new PbaResponse(httpStatus, ERROR_GENERIC, pbaNumber);
         }
 
         CreditAccountPaymentResponse creditAccountPaymentResponse = getPaymentResponse(exception);
@@ -325,5 +332,9 @@ public class PaymentService {
         );
 
         return feeResponse.getAmount();
+    }
+
+    private boolean isGenericErrorRequiredForHttpStatus(HttpStatus httpStatus) {
+        return httpStatus == INTERNAL_SERVER_ERROR || httpStatus == GATEWAY_TIMEOUT;
     }
 }
