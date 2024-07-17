@@ -56,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVarsPreIssue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -319,9 +320,9 @@ class ServiceApplicationNotificationTest {
         data.getAlternativeService().setAlternativeServiceType(BAILIFF);
         data.getAlternativeService().setServiceApplicationGranted(GRANTED);
 
-        final Map<String, String> templateVars = solicitorTemplateVars(data, data.getApplicant1());
+        final Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, data.getApplicant1());
 
-        when(commonContent.solicitorTemplateVars(data, ID, data.getApplicant1()))
+        when(commonContent.solicitorTemplateVarsPreIssue(data, ID, data.getApplicant1()))
             .thenReturn(templateVars);
 
         serviceApplicationNotification.sendToApplicant1Solicitor(data, ID);
@@ -350,9 +351,9 @@ class ServiceApplicationNotificationTest {
         data.getAlternativeService().setAlternativeServiceType(DEEMED);
         data.getAlternativeService().setServiceApplicationGranted(NOT_GRANTED);
 
-        final Map<String, String> templateVars = solicitorTemplateVars(data, data.getApplicant1());
+        final Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, data.getApplicant1());
 
-        when(commonContent.solicitorTemplateVars(data, ID, data.getApplicant1()))
+        when(commonContent.solicitorTemplateVarsPreIssue(data, ID, data.getApplicant1()))
             .thenReturn(templateVars);
 
         serviceApplicationNotification.sendToApplicant1Solicitor(data, ID);
@@ -381,7 +382,6 @@ class ServiceApplicationNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
-        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         return data;
     }
 }
