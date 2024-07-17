@@ -46,7 +46,7 @@ public class CaseworkerListForHearing implements CCDConfig<CaseData, State, User
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
-            .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR, JUDGE))
+            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("listForHearing")
             .pageLabel("List for hearing")
             .complex(CaseData::getHearing)
