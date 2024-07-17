@@ -82,7 +82,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
     private Map<String, String> getSolicitorServiceApplicationVars(final CaseData caseData, final Long id) {
 
         Map<String, String> templateVars =
-            commonContent.solicitorTemplateVars(caseData, id, caseData.getApplicant1());
+            commonContent.solicitorTemplateVarsPreIssue(caseData, id, caseData.getApplicant1());
 
         AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 

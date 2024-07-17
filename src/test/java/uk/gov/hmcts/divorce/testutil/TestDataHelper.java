@@ -853,9 +853,8 @@ public class TestDataHelper {
         return templateVars;
     }
 
-    public static Map<String, String> solicitorTemplateVars(CaseData data, Applicant applicant) {
+    public static Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Applicant applicant) {
         Map<String, String> templateVars = getBasicTemplateVars();
-        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference())
@@ -864,6 +863,12 @@ public class TestDataHelper {
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getConfigTemplateVars().get(SIGN_IN_DIVORCE_URL));
+        return templateVars;
+    }
+
+    public static Map<String, String> solicitorTemplateVars(CaseData data, Applicant applicant) {
+        Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, applicant);
+        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
