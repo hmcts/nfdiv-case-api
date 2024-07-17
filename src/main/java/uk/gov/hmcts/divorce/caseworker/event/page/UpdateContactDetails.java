@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -17,6 +18,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing;
+
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
@@ -41,6 +44,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String LAST_NAME_LABEL = "${%s} last name";
     private static final String WARNING_LABEL = "### WARNING: Changing the ${%s} gender here means you need "
         + "to Re-Issue the case to update all case documents";
+    private static final String CHANGE_REPRESENTATION_WARNING_LABEL = "### WARNING: Do not change the solicitor firm that represents the "
+        + "applicant with this event. You can change or remove representation using the notice of change event.";
     private static final String GENDER_LABEL = "What is the ${%s} gender?";
     private static final String GENDER_HINT_LABEL = "The ${%s} gender is collected for statistical purposes only";
     private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
@@ -65,6 +70,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL = "Is ${%s} solicitor's firm address/DX address international?";
     public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
     public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
+    public static final String SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR = """
+        Please do not remove solicitor contact details. You can use the notice of change event to remove representation.
+        """;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -94,6 +102,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
         fieldCollectionBuilder
             .label("applicantSolicitorDetailsLabel", getLabel(SOLICITOR_DETAILS_LABEL, APPLICANTS_OR_APPLICANT1S))
+            .label("LabelApp1ChangeOfRepresentationWarning", getLabel(CHANGE_REPRESENTATION_WARNING_LABEL))
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
                     .optionalWithLabel(Solicitor::getReference, "Reference number")
@@ -113,13 +122,12 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
         fieldCollectionBuilder
             .label("respondentSolicitorDetailsLabel", getLabel(SOLICITOR_DETAILS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+            .label("LabelApp2ChangeOfRepresentationWarning", getLabel(CHANGE_REPRESENTATION_WARNING_LABEL))
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
                     .optionalWithLabel(Solicitor::getReference,  getLabel(SOLICITOR_REFERENCE_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getEmail,  getLabel(RESPONDENT_SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .done()
-                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
-                    "Is ${labelContentTheApplicant2} represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
                     .optionalWithLabel(Solicitor::getName, getLabel(SOLICITOR_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getFirmName, getLabel(SOLICITOR_FIRM_LABEL, RESPONDENTS_OR_APPLICANT2S))
@@ -208,7 +216,13 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         CaseData caseData = details.getData();
         CaseData caseDataBefore = detailsBefore.getData();
 
-        if (!validContactDetails(caseDataBefore, caseData)) {
+        if (!validSolicitorContactDetails(caseDataBefore, caseData)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(SOLICITOR_CONTACT_DETAILS_REMOVED_ERROR))
+                .build();
+        }
+
+        if (!validApplicantContactDetails(caseDataBefore, caseData)) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
@@ -235,7 +249,27 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .build();
     }
 
-    private boolean validContactDetails(CaseData caseDataBefore, CaseData caseData) {
+    private boolean validSolicitorContactDetails(CaseData caseDataBefore, CaseData caseData) {
+        if (solicitorHasEmail(caseDataBefore.getApplicant1()) && !solicitorHasEmail(caseData.getApplicant1())) {
+            return false;
+        }
+
+        if (solicitorHasEmail(caseDataBefore.getApplicant2()) && !solicitorHasEmail(caseData.getApplicant2())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean solicitorHasEmail(Applicant applicant) {
+        return Optional.ofNullable(applicant)
+            .map(Applicant::getSolicitor)
+            .map(Solicitor::getEmail)
+            .filter(StringUtils::isNotEmpty)
+            .isPresent();
+    }
+
+    private boolean validApplicantContactDetails(CaseData caseDataBefore, CaseData caseData) {
 
         if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
             if (!caseDataBefore.getApplicant1().isRepresented()
