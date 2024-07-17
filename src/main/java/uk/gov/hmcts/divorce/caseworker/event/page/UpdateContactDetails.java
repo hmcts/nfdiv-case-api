@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -22,11 +21,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import static uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
@@ -257,17 +257,19 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private List<String> validateSolicitorDetails(CaseData caseDataBefore, CaseData caseData) {
         List<String> solicitorDetailsRemovedErrors = new ArrayList<>();
 
-        List<String> app1SolicitorContactDetailRemovedErrors = validateSolicitorDetailsNotRemoved(
-            caseDataBefore.getApplicant1().getSolicitor(),
-            caseData.getApplicant1().getSolicitor()
+        solicitorDetailsRemovedErrors.addAll(
+            validateSolicitorDetailsNotRemoved(
+                caseDataBefore.getApplicant1().getSolicitor(),
+                caseData.getApplicant1().getSolicitor()
+            )
         );
-        solicitorDetailsRemovedErrors.addAll(app1SolicitorContactDetailRemovedErrors);
 
-        List<String> app2SolicitorContactDetailRemovedErrors = validateSolicitorDetailsNotRemoved(
-            caseDataBefore.getApplicant2().getSolicitor(),
-            caseData.getApplicant2().getSolicitor()
+        solicitorDetailsRemovedErrors.addAll(
+            validateSolicitorDetailsNotRemoved(
+                caseDataBefore.getApplicant2().getSolicitor(),
+                caseData.getApplicant2().getSolicitor()
+            )
         );
-        solicitorDetailsRemovedErrors.addAll(app2SolicitorContactDetailRemovedErrors);
 
         return solicitorDetailsRemovedErrors;
     }
@@ -279,31 +281,22 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             return contactDetailRemovedErrors;
         }
 
-        Map<Function<Solicitor, String>, String> contactDetailGetters = Map.of(
+        Map<Function<Solicitor, String>, String> getterToFieldNameMap = Map.of(
             Solicitor::getEmail, "email address",
             Solicitor::getPhone, "phone number",
             Solicitor::getAddress, "address"
         );
 
-        for (Map.Entry<Function<Solicitor,String>,String> getterEntry : contactDetailGetters.entrySet()) {
-            String valueBefore = getterEntry.getKey().apply(solicitorBefore);
-            String valueAfter = getterEntry.getKey().apply(solicitorAfter);
+        getterToFieldNameMap.forEach((getter, fieldName) -> {
+            String valueBefore = getter.apply(solicitorBefore);
+            String valueAfter = getter.apply(solicitorAfter);
 
-            if (StringUtils.isNotEmpty(valueBefore) && StringUtils.isEmpty(valueAfter)) {
-                String errorMessage = String.format(SOLICITOR_DETAILS_REMOVED_ERROR, getterEntry.getValue());
-                contactDetailRemovedErrors.add(errorMessage);
+            if (isNotEmpty(valueBefore) && isEmpty(valueAfter)) {
+                contactDetailRemovedErrors.add(String.format(SOLICITOR_DETAILS_REMOVED_ERROR, fieldName));
             }
-        }
+        });
 
         return contactDetailRemovedErrors;
-    }
-
-    private boolean solicitorHasEmail(Applicant applicant) {
-        return Optional.ofNullable(applicant)
-            .map(Applicant::getSolicitor)
-            .map(Solicitor::getEmail)
-            .filter(StringUtils::isNotEmpty)
-            .isPresent();
     }
 
     private boolean validApplicantContactDetails(CaseData caseDataBefore, CaseData caseData) {
