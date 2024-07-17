@@ -434,7 +434,7 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).contains(
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "email address"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "phone number"),
-            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "address")
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "postal address")
         );
     }
 
@@ -462,7 +462,7 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).contains(
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "email address"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "phone number"),
-            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "address")
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "postal address")
         );
     }
 
