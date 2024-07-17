@@ -255,36 +255,36 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     }
 
     private List<String> validateSolicitorDetails(CaseData caseDataBefore, CaseData caseData) {
-        List<String> solicitorDetailsRemovedErrors = new ArrayList<>();
+        List<String> solicitorValidationErrors = new ArrayList<>();
 
-        solicitorDetailsRemovedErrors.addAll(
+        solicitorValidationErrors.addAll(
             validateSolicitorDetailsNotRemoved(
                 caseDataBefore.getApplicant1().getSolicitor(),
                 caseData.getApplicant1().getSolicitor()
             )
         );
 
-        solicitorDetailsRemovedErrors.addAll(
+        solicitorValidationErrors.addAll(
             validateSolicitorDetailsNotRemoved(
                 caseDataBefore.getApplicant2().getSolicitor(),
                 caseData.getApplicant2().getSolicitor()
             )
         );
 
-        return solicitorDetailsRemovedErrors;
+        return solicitorValidationErrors;
     }
 
     private List<String> validateSolicitorDetailsNotRemoved(Solicitor solicitorBefore, Solicitor solicitorAfter) {
-        List<String> contactDetailRemovedErrors = new ArrayList<>();
+        List<String> solicitorDetailRemovedErrors = new ArrayList<>();
 
         if (solicitorBefore == null) {
-            return contactDetailRemovedErrors;
+            return solicitorDetailRemovedErrors;
         }
 
         Map<Function<Solicitor, String>, String> getterToFieldNameMap = Map.of(
             Solicitor::getEmail, "email address",
             Solicitor::getPhone, "phone number",
-            Solicitor::getAddress, "address"
+            Solicitor::getAddress, "postal address"
         );
 
         getterToFieldNameMap.forEach((getter, fieldName) -> {
@@ -292,11 +292,11 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             String valueAfter = getter.apply(solicitorAfter);
 
             if (isNotEmpty(valueBefore) && isEmpty(valueAfter)) {
-                contactDetailRemovedErrors.add(String.format(SOLICITOR_DETAILS_REMOVED_ERROR, fieldName));
+                solicitorDetailRemovedErrors.add(String.format(SOLICITOR_DETAILS_REMOVED_ERROR, fieldName));
             }
         });
 
-        return contactDetailRemovedErrors;
+        return solicitorDetailRemovedErrors;
     }
 
     private boolean validApplicantContactDetails(CaseData caseDataBefore, CaseData caseData) {
