@@ -172,7 +172,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                         SERVICE_REFUSAL_TEMPLATE_ID);
                 }
 
-                endState = AwaitingAos;
+                endState = caseDataCopy.getApplication().getIssueDate() != null ? AwaitingAos : ServiceAdminRefusal;
             }
         }
 
