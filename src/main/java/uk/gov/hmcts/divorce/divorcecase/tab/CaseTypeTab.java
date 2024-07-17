@@ -92,6 +92,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildCivilPartnershipCertificateTab(configBuilder);
         buildServiceApplicationTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
+        buildHearingsTab(configBuilder);
         buildLanguageTab(configBuilder);
         buildConfidentialApplicantTab(configBuilder);
         buildConfidentialRespondentTab(configBuilder);
@@ -302,6 +303,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalReferralDecision")
             .field("generalReferralDecisionReason")
             .field("generalReferrals");
+    }
+
+    private void buildHearingsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("hearings", "Hearings")
+            .forRoles(CASE_WORKER, SUPER_USER)
+            .field("hearings");
     }
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
