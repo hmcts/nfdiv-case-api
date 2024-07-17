@@ -34,7 +34,7 @@ public class CaseworkerPendingHearingDate implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .event(CASEWORKER_PENDING_HEARING_DATE)
             .forStateTransition(
-                EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse, RespondentFinalOrderRequested),
+                GeneralConsiderationComplete,
                 PendingHearingDate
             )
             .name("Pending hearing date")
