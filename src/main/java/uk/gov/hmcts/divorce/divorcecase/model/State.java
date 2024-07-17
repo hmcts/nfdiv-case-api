@@ -386,18 +386,18 @@ public enum State {
     OfflineDocumentReceived,
 
     @CCD(
-        label = "Pending hearing outcome",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    PendingHearingOutcome,
-
-    @CCD(
         label = "Pending hearing date",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
     PendingHearingDate,
+
+    @CCD(
+        label = "Pending hearing outcome",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    PendingHearingOutcome,
 
     @CCD(
         label = "Removed from bulk case",
