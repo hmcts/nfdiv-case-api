@@ -2,13 +2,10 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,14 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -33,9 +24,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CaseworkerConfirmDispenseWithServiceRefusal implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerConfirmServiceRefusal implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_CONFIRM_DISPENSE_WITH_SERVICE_REFUSAL = "caseworker-confirm-dispense-clarification";
+    public static final String CASEWORKER_CONFIRM_SERVICE_REFUSAL = "caseworker-confirm-service-refusal";
 
     private final NotificationDispatcher notificationDispatcher;
     private final ServiceApplicationNotification serviceApplicationNotification;
@@ -43,7 +34,7 @@ public class CaseworkerConfirmDispenseWithServiceRefusal implements CCDConfig<Ca
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_CONFIRM_DISPENSE_WITH_SERVICE_REFUSAL)
+            .event(CASEWORKER_CONFIRM_SERVICE_REFUSAL)
             .forState(ServiceAdminRefusal)
             .name("CW confirm service refusal")
             .description("CW confirm service refusal")
