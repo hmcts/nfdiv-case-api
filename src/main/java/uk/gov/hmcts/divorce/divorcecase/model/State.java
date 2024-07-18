@@ -309,6 +309,13 @@ public enum State {
     Draft,
 
     @CCD(
+            label = "Expedited case",
+            hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+            access = {DefaultStateAccess.class}
+    )
+    ExpeditedCase,
+
+    @CCD(
         label = "Final order complete",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}

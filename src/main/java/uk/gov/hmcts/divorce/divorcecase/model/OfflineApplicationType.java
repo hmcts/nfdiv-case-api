@@ -16,7 +16,10 @@ public enum OfflineApplicationType implements HasLabel {
     JOINT("Joint"),
 
     @JsonProperty("switchToSole")
-    SWITCH_TO_SOLE("Switch to sole");
+    SWITCH_TO_SOLE("Switch to sole"),
+
+    @JsonProperty("expeditedCase")
+    EXPEDITED_CASE("Expedited case");
 
     private final String label;
 }

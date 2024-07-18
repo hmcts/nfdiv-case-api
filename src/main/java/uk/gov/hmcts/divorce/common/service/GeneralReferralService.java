@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 
@@ -34,17 +35,21 @@ public class GeneralReferralService {
     private SetGeneralReferralDetails setGeneralReferralDetails;
 
     public void caseWorkerGeneralReferral(final CaseDetails<CaseData, State> details) {
-        if (finalOrderRequestedAndOverdue(details)) {
+
+        var isExpeditedCase = ExpeditedCase.equals(details.getState());
+
+        if (isExpeditedCase || finalOrderRequestedAndOverdue(details)) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
             final String caseId = details.getId().toString();
 
-            log.info("CaseID {} FO Requested and Overdue.  Triggering Caseworker general referral event.", details.getId());
+            log.info("CaseID {} {}.  Triggering Caseworker general referral event.", details.getId(), isExpeditedCase ? "Expedited case"
+                    : "FO Requested and Overdue");
 
             ccdUpdateService
                 .submitEventWithRetry(caseId, CASEWORKER_GENERAL_REFERRAL, setGeneralReferralDetails, user, serviceAuthorization);
         } else {
-            log.info("CaseID {} Does not meet Requested & Overdue status.  Skipping general referral event.", details.getId());
+            log.info("CaseID {} Does not meet general referral status.  Skipping general referral event.", details.getId());
         }
     }
 

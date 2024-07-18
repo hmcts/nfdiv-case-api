@@ -87,6 +87,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.JUDGE_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -352,6 +353,7 @@ public class LegalAdvisorMakeDecisionIT {
         throws Exception {
 
         setMockClock(clock);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, JUDGE_ROLE);
 
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()

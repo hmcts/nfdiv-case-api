@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitte
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -356,7 +357,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingLegalAdvisorReferral,
                     AwaitingPronouncement,
                     JSAwaitingLA,
-                    SeparationOrderGranted
+                    SeparationOrderGranted,
+                    ExpeditedCase
                 )
             )
             .label("labelConditionalOrderDetails-Applicant1",

@@ -70,11 +70,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84NVA;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.EXPEDITED_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkActionCase;
@@ -1259,6 +1261,25 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         caseworkerOfflineDocumentVerified.submitted(details, details);
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SWITCH_TO_SOLE_CO, user, TEST_SERVICE_AUTH_TOKEN);
+    }
+
+    @Test
+    void shouldSetStateToExpeditedCaseIfD84AndExpeditedCaseSelected() {
+        final CaseData caseData = CaseData.builder()
+                .applicationType(JOINT_APPLICATION)
+                .documents(CaseDocuments.builder()
+                        .typeOfDocumentAttached(CO_D84)
+                        .scannedSubtypeReceived(D84)
+                        .build())
+                .conditionalOrder(ConditionalOrder.builder().d84ApplicationType(EXPEDITED_CASE).build())
+                .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        assertThat(response.getState()).isEqualTo(ExpeditedCase);
     }
 
     @Test

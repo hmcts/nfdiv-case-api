@@ -27,7 +27,10 @@ public enum GeneralReferralType implements HasLabel {
     AMEND_APPLICATION("Amend Application"),
 
     @JsonProperty("other")
-    OTHER("Other");
+    OTHER("Other"),
+
+    @JsonProperty("expeditedCase")
+    EXPEDITED_CASE("Expedited Case");
 
     private final String label;
 }

@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason.GENER
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType.CASEWORKER_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -80,10 +81,12 @@ public class CaseworkerGeneralReferralTest {
         caseData.setGeneralReferral(generalReferral(NO));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
+        details.setState(AwaitingGeneralConsideration);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = generalReferral.aboutToSubmit(details, details);
 
         assertThat(aboutToSubmitResponse.getState()).isEqualTo(AwaitingGeneralConsideration);
+        assertThat(caseData.getApplication().getPreviousState()).isNull();
 
         final var expectedDate = LocalDate.ofInstant(instant, zoneId);
         assertThat(aboutToSubmitResponse.getData().getGeneralReferral().getGeneralApplicationAddedDate())
@@ -98,6 +101,7 @@ public class CaseworkerGeneralReferralTest {
         caseData.setGeneralReferral(generalReferral(YES));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
+        details.setState(AwaitingGeneralConsideration);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = generalReferral.aboutToSubmit(details, details);
 
@@ -106,6 +110,45 @@ public class CaseworkerGeneralReferralTest {
         final var expectedDate = LocalDate.ofInstant(instant, zoneId);
         assertThat(aboutToSubmitResponse.getData().getGeneralReferral().getGeneralApplicationAddedDate())
             .isEqualTo(expectedDate);
+    }
+
+    @Test
+    void shouldUpdatePreviousStateToExpeditedCaseAndAddApplicationAddedDateToCaseDataWhenGeneralReferralFeeIsRequired() {
+        setClock();
+
+        final CaseData caseData = caseData();
+        caseData.setGeneralReferral(generalReferral(YES));
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setState(ExpeditedCase);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = generalReferral.aboutToSubmit(details, details);
+
+        assertThat(caseData.getApplication().getPreviousState()).isEqualTo(ExpeditedCase);
+        assertThat(aboutToSubmitResponse.getState()).isEqualTo(AwaitingGeneralReferralPayment);
+
+        final var expectedDate = LocalDate.ofInstant(instant, zoneId);
+        assertThat(aboutToSubmitResponse.getData().getGeneralReferral().getGeneralApplicationAddedDate())
+                .isEqualTo(expectedDate);
+    }
+
+    @Test
+    void shouldUpdateStateToExpeditedCaseAndAddApplicationAddedDateToCaseDataWhenGeneralReferralFeeIsNotRequired() {
+        setClock();
+
+        final CaseData caseData = caseData();
+        caseData.setGeneralReferral(generalReferral(NO));
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setState(ExpeditedCase);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = generalReferral.aboutToSubmit(details, details);
+
+        assertThat(aboutToSubmitResponse.getState()).isEqualTo(ExpeditedCase);
+
+        final var expectedDate = LocalDate.ofInstant(instant, zoneId);
+        assertThat(aboutToSubmitResponse.getData().getGeneralReferral().getGeneralApplicationAddedDate())
+                .isEqualTo(expectedDate);
     }
 
     private GeneralReferral generalReferral(YesOrNo feeRequired) {

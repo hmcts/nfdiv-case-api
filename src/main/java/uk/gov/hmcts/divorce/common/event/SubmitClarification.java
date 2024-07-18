@@ -24,6 +24,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ExpeditedCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -57,7 +58,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SUBMIT_CLARIFICATION)
-            .forStateTransition(AwaitingClarification, ClarificationSubmitted)
+            .forState(AwaitingClarification)
             .name("Submit clarification for CO")
             .description("Submit clarification for conditional order")
             .showSummary()
@@ -120,11 +121,13 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
         notificationDispatcher.send(clarificationSubmittedNotification, data, details.getId());
 
+        var isExpeditedCase = ExpeditedCase.equals(data.getApplication().getPreviousState());
+
         data.getConditionalOrder().resetRefusalFields();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(ClarificationSubmitted)
+            .state(isExpeditedCase ? ExpeditedCase : ClarificationSubmitted)
             .build();
     }
 
