@@ -288,7 +288,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildGeneralReferralTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("generalReferral", "General Referral")
-            .forRoles(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("generalReferralReason")
             .field("generalReferralUrgentCase", "generalReferralReason=\"*\"")
             .field("generalReferralUrgentCaseReason", "generalReferralUrgentCase=\"Yes\"")
