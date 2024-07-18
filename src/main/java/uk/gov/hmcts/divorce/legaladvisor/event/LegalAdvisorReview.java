@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -34,7 +35,8 @@ public class LegalAdvisorReview implements CCDConfig<CaseData, State, UserRole> 
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_REVIEW)
             .forStateTransition(EnumSet.of(AwaitingLegalAdvisorReferral, ClarificationSubmitted,
-                AwaitingClarification, AwaitingAdminClarification, AwaitingServiceConsideration, JSAwaitingLA), LAReview)
+                AwaitingClarification, AwaitingAdminClarification, AwaitingServiceConsideration, JSAwaitingLA, ConditionalOrderReview),
+                    LAReview)
             .name("LA Review")
             .description("LA Review")
             .showSummary()
