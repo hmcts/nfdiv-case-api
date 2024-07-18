@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,28 +9,23 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.LitigantGrantOfRepresentationConfirmationTemplateContent;
-import uk.gov.hmcts.divorce.document.print.BulkPrintService;
-import uk.gov.hmcts.divorce.document.print.model.Letter;
-import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
+import static uk.gov.hmcts.divorce.caseworker.event.NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -38,8 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.NOC_APPROVER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest.acaRequest;
 import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor.SOLICITOR_NOTICE_OF_CHANGE;
 
@@ -55,9 +49,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     private final  AssignCaseAccessClient assignCaseAccessClient;
     private final  IdamService idamService;
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
-    private final CaseDataDocumentService caseDataDocumentService;
-    private final LitigantGrantOfRepresentationConfirmationTemplateContent templateContent;
-    private final BulkPrintService bulkPrintService;
+    private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+    private final NotificationDispatcher notificationDispatcher;
+
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -78,6 +72,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
         CaseData caseData = details.getData();
+
+        Map<String, Object> copyCaseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
+        CaseData beforeCaseData = objectMapper.convertValue(copyCaseDataMap, CaseData.class);
 
         changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
@@ -101,44 +98,12 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
-        Applicant applicant = isApplicant1 ? responseData.getApplicant1() : responseData.getApplicant2();
-        generateNoCNotificationLetterAndSend(responseData, details.getId(), applicant);
+        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
+                beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
             .state(details.getState())
             .build();
-    }
-
-    private void generateNoCNotificationLetterAndSend(CaseData caseData, Long caseId, Applicant applicant) {
-
-        Document generatedDocument = generateDocument(caseId, applicant, caseData);
-
-        Letter letter = new  Letter(generatedDocument, 1);
-        String caseIdString = String.valueOf(caseId);
-
-        final Print print = new Print(
-                List.of(letter),
-                caseIdString,
-                caseIdString,
-                LETTER_TYPE_GRANT_OF_REPRESENTATION,
-                applicant.getFullName(),
-                applicant.getAddressOverseas()
-        );
-
-        final UUID letterId = bulkPrintService.print(print);
-
-        log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
-    }
-
-    private Document generateDocument(final long caseId,
-                                      final Applicant applicant,
-                                      final CaseData caseData) {
-
-        return caseDataDocumentService.renderDocument(templateContent.getTemplateContent(caseData, caseId, applicant),
-                caseId,
-                NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID,
-                applicant.getLanguagePreference(),
-                NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME);
     }
 }
