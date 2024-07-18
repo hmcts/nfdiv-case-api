@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
@@ -58,6 +60,9 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private SolicitorValidationService solicitorValidationService;
+
+    @Mock
+    private ChangeOfRepresentativeService changeOfRepresentativeService;
 
     @Mock
     private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
@@ -232,6 +237,8 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
         verify(noticeOfChangeService).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
+        verify(changeOfRepresentativeService).buildChangeOfRepresentative(details.getData(), beforeDetails.getData(),
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), true);
     }
 
     @Test
@@ -251,12 +258,12 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyDigital(YES)
             .build());
 
-        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
-
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
         Solicitor newSolicitor = Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)

@@ -19,6 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
@@ -48,7 +50,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
     private final NoticeOfChangeService noticeOfChangeService;
     private final SolicitorValidationService solicitorValidationService;
-
+    private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
 
@@ -176,6 +178,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             orgPolicyCaseAssignedRole.getRole(),
             details,
             noticeOfChangeService);
+
+        changeOfRepresentativeService.buildChangeOfRepresentative(data, beforeData,
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
 
         //could get which applicant from case data but use param to avoid mishap
@@ -307,5 +312,4 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         solicitor.setOrganisationPolicy(defaultOrgPolicy);
         return solicitor;
     }
-
 }

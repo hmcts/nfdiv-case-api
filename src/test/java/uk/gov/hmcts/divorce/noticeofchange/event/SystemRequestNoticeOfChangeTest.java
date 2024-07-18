@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.noticeofchange.events;
+package uk.gov.hmcts.divorce.noticeofchange.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
-import uk.gov.hmcts.divorce.noticeofchange.event.SystemRequestNoticeOfChange;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -38,7 +37,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class SystemRequestNoticeOfChangeTest {
-
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
@@ -71,7 +69,7 @@ class SystemRequestNoticeOfChangeTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemRequestNoticeOfChange.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(
             String.format(NOC_JUDICIAL_SEPARATION_CASE_ERROR, details.getId())
         );
@@ -87,7 +85,7 @@ class SystemRequestNoticeOfChangeTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemRequestNoticeOfChange.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(
             String.format(NOC_JOINT_OFFLINE_CASE_ERROR, details.getId())
         );
@@ -103,7 +101,7 @@ class SystemRequestNoticeOfChangeTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemRequestNoticeOfChange.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(
             String.format(NOC_JOINT_OFFLINE_CASE_ERROR, details.getId())
         );
@@ -119,13 +117,14 @@ class SystemRequestNoticeOfChangeTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemRequestNoticeOfChange.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(0);
+        assertThat(response.getErrors()).isEmpty();
     }
 
     @Test
     public void shouldCheckNoticeOfChangeApprovalByDelegatingToAssignCaseAccessClient() {
         final var details = new CaseDetails<CaseData, State>();
         final var beforeDetails = new CaseDetails<CaseData, State>();
+
         final User systemUser = mock(User.class);
         final AcaRequest nocApiRequest = AcaRequest.acaRequest(details);
 
