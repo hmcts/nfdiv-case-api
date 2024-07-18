@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+
 
 @ExtendWith(MockitoExtension.class)
 class NotificationDispatcherTest {
@@ -136,6 +138,58 @@ class NotificationDispatcherTest {
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
         verify(applicantNotification).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCForNewDigitalSolicitorNewOrg_Applicant1() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = new CaseData();
+        final boolean isApplicant1 = true;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCForNewDigitalSolicitorNewOrg_Applicant2() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = new CaseData();
+        final boolean isApplicant1 = false;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCForOrgRemoved_Applicant1() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = new CaseData();
+        final boolean isApplicant1 = true;
+        final NoticeType noticeType = NoticeType.ORG_REMOVED;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant1OldSolicitor(previousCaseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCForOrgRemoved_Applicant2() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = new CaseData();
+        final boolean isApplicant1 = false;
+        final NoticeType noticeType = NoticeType.ORG_REMOVED;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant2OldSolicitor(previousCaseData, caseId);
     }
 
     public static class TestNotification implements ApplicantNotification {
