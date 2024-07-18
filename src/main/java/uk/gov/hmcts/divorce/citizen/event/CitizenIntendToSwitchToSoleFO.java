@@ -22,6 +22,7 @@ import java.time.LocalDate;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -59,6 +60,7 @@ public class CitizenIntendToSwitchToSoleFO implements CCDConfig<CaseData, State,
         configBuilder
             .event(INTEND_SWITCH_TO_SOLE_FO)
             .forState(AwaitingJointFinalOrder)
+            .showCondition(NEVER_SHOW)
             .name("Intend to switch to sole FO")
             .description("Intend to switch to sole FO")
             .showSummary()

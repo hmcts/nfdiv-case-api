@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -52,4 +53,15 @@ public class GeneralApplication {
     @JsonUnwrapped(prefix = "generalApplicationFee")
     @Builder.Default
     private FeeDetails generalApplicationFee = new FeeDetails();
+
+    @CCD(
+        label = "Is this an urgent application?"
+    )
+    private YesOrNo generalApplicationUrgentCase;
+
+    @CCD(
+        label = "How does this qualify as an urgent application?",
+        typeOverride = TextArea
+    )
+    private String generalApplicationUrgentCaseReason;
 }

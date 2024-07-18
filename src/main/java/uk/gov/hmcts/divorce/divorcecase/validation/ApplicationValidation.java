@@ -9,6 +9,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForCourtService;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForPersonalAndSolicitorService;
 
@@ -47,7 +48,8 @@ public final class ApplicationValidation {
             validateBasicCase(caseData, true),
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails()),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
-                caseData.getApplicant2().isConfidentialContactDetails())
+                caseData.getApplicant2().isConfidentialContactDetails()),
+            validateCaseFieldsForCourtService(caseData)
         );
     }
 
@@ -55,7 +57,8 @@ public final class ApplicationValidation {
         return flattenLists(
             validateBasicCase(caseData),
             validateCaseFieldsForPersonalAndSolicitorService(caseData.getApplication(),
-                caseData.getApplicant2().isConfidentialContactDetails())
+                caseData.getApplicant2().isConfidentialContactDetails()),
+            validateCaseFieldsForCourtService(caseData)
         );
     }
 

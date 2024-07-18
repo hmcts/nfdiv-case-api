@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.notification;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -107,6 +108,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
             .map(CaseData::getApplicant1)
             .map(Applicant::getSolicitor)
             .map(Solicitor::getEmail)
+            .filter(StringUtils::isNotEmpty)
             .ifPresent(email -> notificationService.sendEmail(
                 email,
                 NOC_TO_SOLS_EMAIL_OLD_SOL,
@@ -124,6 +126,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
             .map(CaseData::getApplicant2)
             .map(Applicant::getSolicitor)
             .map(Solicitor::getEmail)
+            .filter(StringUtils::isNotEmpty)
             .ifPresent(email -> notificationService.sendEmail(
                 email,
                 NOC_TO_SOLS_EMAIL_OLD_SOL,
