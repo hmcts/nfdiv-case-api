@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -32,6 +33,8 @@ public class SystemRegenerateConditionalOrder implements CCDConfig<CaseData, Sta
     public static final String REGENERATE_CONDITIONAL_ORDER = "Regenerate conditional order";
 
     private final GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+
+    private final RegenerateConditionalOrderPronouncedCoverLetter regenerateConditionalOrderPronouncedCoverLetter;
     private final RegenerateConditionalOrderNotification regenerateConditionalOrderNotification;
     private final NotificationDispatcher notificationDispatcher;
     private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
@@ -60,7 +63,8 @@ public class SystemRegenerateConditionalOrder implements CCDConfig<CaseData, Sta
 
             caseTasks(
                 removeExistingConditionalOrderPronouncedDocument,
-                generateConditionalOrderPronouncedDocument
+                generateConditionalOrderPronouncedDocument,
+                regenerateConditionalOrderPronouncedCoverLetter
             ).run(details);
 
             notificationDispatcher.send(regenerateConditionalOrderNotification, caseData, details.getId());

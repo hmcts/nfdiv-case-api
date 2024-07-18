@@ -17,10 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateConditionalOrderPronouncedCoverLetter;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateConditionalOrder.SYSTEM_REGENERATE_CONDITIONAL_ORDER;
@@ -34,6 +36,9 @@ class SystemRegenerateConditionalOrderTest {
 
     @Mock
     private GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
+
+    @Mock
+    private RegenerateConditionalOrderPronouncedCoverLetter regenerateConditionalOrderPronouncedCoverLetter;
 
     @Mock
     private RegenerateConditionalOrderNotification regenerateConditionalOrderNotification;
@@ -70,6 +75,10 @@ class SystemRegenerateConditionalOrderTest {
             systemRegenerateConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
+        verifyNoInteractions(removeExistingConditionalOrderPronouncedDocument);
+        verifyNoInteractions(generateConditionalOrderPronouncedDocument);
+        verifyNoInteractions(regenerateConditionalOrderPronouncedCoverLetter);
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
@@ -96,6 +105,7 @@ class SystemRegenerateConditionalOrderTest {
 
         when(removeExistingConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
         when(generateConditionalOrderPronouncedDocument.apply(caseDetails)).thenReturn(caseDetails);
+        when(regenerateConditionalOrderPronouncedCoverLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRegenerateConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
@@ -104,6 +114,7 @@ class SystemRegenerateConditionalOrderTest {
 
         verify(removeExistingConditionalOrderPronouncedDocument).apply(caseDetails);
         verify(generateConditionalOrderPronouncedDocument).apply(caseDetails);
+        verify(regenerateConditionalOrderPronouncedCoverLetter).apply(caseDetails);
         verify(notificationDispatcher).send(regenerateConditionalOrderNotification, caseData, caseDetails.getId());
     }
 }
