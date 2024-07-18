@@ -282,6 +282,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         }
 
         Map<Function<Solicitor, String>, String> getterToFieldNameMap = Map.of(
+            Solicitor::getName, "name",
             Solicitor::getEmail, "email address",
             Solicitor::getPhone, "phone number",
             Solicitor::getAddress, "postal address"

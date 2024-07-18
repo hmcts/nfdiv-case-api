@@ -414,24 +414,23 @@ public class UpdateContactDetailsTest {
     void shouldReturnErrorsWhenApplicant1SolicitorDetailsAreRemoved() {
         final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1(applicantAndSolicitorWithContactDetails("test@test.com", "testAddress", "testPhone"))
+            .applicant1(applicantAndSolicitorWithContactDetails("name", "test@test.com", "testAddress", "testPhone"))
             .applicant2(Applicant.builder().build())
             .build();
-        detailsBefore.setId(TEST_CASE_ID);
         detailsBefore.setData(caseData);
 
         final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
         final CaseData caseDataAfter = CaseData.builder()
-            .applicant1(applicantAndSolicitorWithContactDetails("", "", ""))
+            .applicant1(applicantAndSolicitorWithContactDetails("", "", "", ""))
             .applicant2(Applicant.builder().build())
             .build();
-        detailsAfter.setId(TEST_CASE_ID);
         detailsAfter.setData(caseDataAfter);
 
         AboutToStartOrSubmitResponse<CaseData, State> response
             = updateContactDetails.midEvent(detailsAfter, detailsBefore);
 
         assertThat(response.getErrors()).contains(
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "name"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "email address"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "phone number"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "postal address")
@@ -442,24 +441,21 @@ public class UpdateContactDetailsTest {
     void shouldReturnErrorsWhenApplicant2SolicitorDetailsAreRemoved() {
         final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().build())
-            .applicant2(applicantAndSolicitorWithContactDetails("test@test.com", "testAddress", "testPhone"))
+            .applicant2(applicantAndSolicitorWithContactDetails("name", "test@test.com", "testAddress", "testPhone"))
             .build();
-        detailsBefore.setId(TEST_CASE_ID);
         detailsBefore.setData(caseData);
 
         final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
         final CaseData caseDataAfter = CaseData.builder()
-            .applicant1(Applicant.builder().build())
-            .applicant2(applicantAndSolicitorWithContactDetails("", "", ""))
+            .applicant2(applicantAndSolicitorWithContactDetails("", "", "", ""))
             .build();
-        detailsAfter.setId(TEST_CASE_ID);
         detailsAfter.setData(caseDataAfter);
 
         AboutToStartOrSubmitResponse<CaseData, State> response
             = updateContactDetails.midEvent(detailsAfter, detailsBefore);
 
         assertThat(response.getErrors()).contains(
+            String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "name"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "email address"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "phone number"),
             String.format(SOLICITOR_DETAILS_REMOVED_ERROR, "postal address")
@@ -470,16 +466,14 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsWhenSolicitorDetailsWereBlankBefore() {
         final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1(applicantAndSolicitorWithContactDetails("", "", ""))
+            .applicant1(applicantAndSolicitorWithContactDetails("", "", "", ""))
             .build();
-        detailsBefore.setId(TEST_CASE_ID);
         detailsBefore.setData(caseData);
 
         final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
         final CaseData caseDataAfter = CaseData.builder()
-            .applicant1(applicantAndSolicitorWithContactDetails("", "", ""))
+            .applicant1(applicantAndSolicitorWithContactDetails("", "", "", ""))
             .build();
-        detailsAfter.setId(TEST_CASE_ID);
         detailsAfter.setData(caseDataAfter);
 
         AboutToStartOrSubmitResponse<CaseData, State> response
@@ -492,7 +486,7 @@ public class UpdateContactDetailsTest {
     void shouldNotReturnErrorsWhenSolicitorDetailsWereMissingBefore() {
         final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1(applicantAndSolicitorWithContactDetails(null, null, null))
+            .applicant1(applicantAndSolicitorWithContactDetails(null, null, null, null))
             .applicant2(Applicant.builder().build())
             .build();
         detailsBefore.setId(TEST_CASE_ID);
@@ -500,7 +494,7 @@ public class UpdateContactDetailsTest {
 
         final CaseDetails<CaseData, State> detailsAfter = new CaseDetails<>();
         final CaseData caseDataAfter = CaseData.builder()
-            .applicant1(applicantAndSolicitorWithContactDetails("", "", ""))
+            .applicant1(applicantAndSolicitorWithContactDetails("", "", "", ""))
             .applicant2(Applicant.builder().build())
             .build();
         detailsAfter.setId(TEST_CASE_ID);
@@ -512,10 +506,10 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).isNull();
     }
 
-    private Applicant applicantAndSolicitorWithContactDetails(String email, String address, String phone) {
+    private Applicant applicantAndSolicitorWithContactDetails(String name, String email, String address, String phone) {
         return Applicant.builder()
                 .solicitor(Solicitor.builder()
-                    .email(email).address(address).phone(phone)
+                    .name(name).email(email).address(address).phone(phone)
                     .build())
                 .build();
     }
