@@ -20,6 +20,7 @@ import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -49,6 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.NOTICE_OF_CHANGE_APPLIED;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stopAndReset;
 import static uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock.stubForNoCApplyDecisionEndpoint;
@@ -102,6 +104,9 @@ public class SystemApplyNoticeOfChangeIT {
     private WebMvcConfig webMvcConfig;
 
     @MockBean
+    private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+
+    @MockBean
     private Clock clock;
 
     @BeforeAll
@@ -116,6 +121,8 @@ public class SystemApplyNoticeOfChangeIT {
 
     @Test
     void shouldApplyNoticeOfChangeDecision() throws Exception {
+
+        setMockClock(clock);
 
         List<ProfessionalUser> professionalUsers = new ArrayList<>();
 
