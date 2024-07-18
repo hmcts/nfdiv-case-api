@@ -206,14 +206,14 @@ class ChangeOfRepresentativeServiceTest {
     }
 
     private User solicitorUser() {
-        return getUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID);
+        return getUser();
     }
 
-    private User getUser(String systemUpdateAuthToken, String systemUserUserId) {
+    private User getUser() {
         return new User(
-                systemUpdateAuthToken,
+                APP_1_SOL_AUTH_TOKEN,
                 UserInfo.builder()
-                        .uid(systemUserUserId)
+                        .uid(SOLICITOR_USER_ID)
                         .build());
     }
 }

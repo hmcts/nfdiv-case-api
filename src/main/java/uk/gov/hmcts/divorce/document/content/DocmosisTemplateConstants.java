@@ -146,6 +146,7 @@ public final class DocmosisTemplateConstants {
     public static final String DEEMED_SERVICE_COST = "deemedServiceCost";
     public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
     public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";
+    public static final String SOLICITOR_ORGANISATION_NAME = "organisationName";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP = "divorceOrCivilPartnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";

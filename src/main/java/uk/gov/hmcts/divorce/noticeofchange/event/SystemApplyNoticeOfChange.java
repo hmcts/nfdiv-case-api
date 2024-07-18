@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -15,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.caseworker.event.NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -38,12 +42,16 @@ import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAu
 @RequiredArgsConstructor
 public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
     public static final String NOTICE_OF_CHANGE_APPLIED = "notice-of-change-applied";
+    public static final String LETTER_TYPE_GRANT_OF_REPRESENTATION = "grant-of-representation";
 
     private final  AuthTokenGenerator authTokenGenerator;
     private final  ObjectMapper objectMapper;
     private final  AssignCaseAccessClient assignCaseAccessClient;
     private final  IdamService idamService;
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
+    private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+    private final NotificationDispatcher notificationDispatcher;
+
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -61,8 +69,15 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
         String s2sToken = authTokenGenerator.generate();
+        var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
+        boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
+        CaseData caseData = details.getData();
 
-        updateChangeOfRepresentation(details.getData());
+        Map<String, Object> copyCaseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
+        CaseData beforeCaseData = objectMapper.convertValue(copyCaseDataMap, CaseData.class);
+
+        changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
+                SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
@@ -83,16 +98,12 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
+        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
+                beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
             .state(details.getState())
             .build();
-    }
-
-    private void updateChangeOfRepresentation(CaseData caseData) {
-        var changeOrganisationRequest = caseData.getChangeOrganisationRequestField();
-        var isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
-        changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
-                SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
     }
 }
