@@ -66,5 +66,19 @@ class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTaskTest {
             .logError(eq("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopped after search error"), isNull(),
                 isA(CcdSearchCaseException.class));
     }
+
+    @Test
+    void run_IOException_LogsError() throws CcdSearchCaseException, CcdConflictException, IOException {
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn("token");
+        when(oldTask.loadCaseIds()).thenThrow(new IOException("IO error"));
+        task.run();
+
+        // Verify that the IO error is logged
+        verify(oldTask)
+            .logError(eq("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopped after file read error"), isNull(),
+                isA(IOException.class));
+    }
 }
 
