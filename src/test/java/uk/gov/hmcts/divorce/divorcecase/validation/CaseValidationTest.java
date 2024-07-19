@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
@@ -34,6 +35,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateChangeServiceRequest;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
@@ -44,6 +49,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
 public class CaseValidationTest {
 
@@ -575,5 +581,102 @@ public class CaseValidationTest {
         return BulkActionCaseData.builder()
             .bulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2))
             .build();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndPersonalService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndSolicitorService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).contains("You may not select Solicitor Service or Personal Service"
+            + " if the respondent is confidential.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceSoleApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).contains("You may not select court service if respondent has an international address.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceJointApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialOverseasAndCourtService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotAndPersonalService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialAndSolicitorService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
     }
 }
