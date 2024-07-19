@@ -328,7 +328,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented!=\"No\"")
-            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented!=\"No\" AND applicant2SolicitorOrganisationPolicy.Organisation.OrganisationId=\"*\"")
+            .field(
+                "applicant2SolicitorOrganisationPolicy",
+                "applicant2SolicitorRepresented!=\"No\" AND applicant2SolicitorOrganisationPolicy.Organisation.OrganisationId=\"*\""
+            )
             .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented!=\"No\"")
 
             //Applicant 2 Other proceedings
