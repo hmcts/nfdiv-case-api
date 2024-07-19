@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -164,6 +165,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                         DISPENSE_WITH_SERVICE_REFUSED,
                         SERVICE_REFUSAL_TEMPLATE_ID);
                     endState = caseDataCopy.getApplication().getIssueDate() != null ? AwaitingAos : ServiceAdminRefusal;
+                    caseDataCopy.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
                 } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
                     generateAndSetOrderToDeemedOrDispenseDocument(
                         caseDataCopy,
