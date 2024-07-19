@@ -68,6 +68,24 @@ class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTaskTest {
     }
 
     @Test
+    void run_conflictException_LogsError() throws CcdConflictException, IOException {
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn("token");
+        when(oldTask.loadCaseIds()).thenReturn(new ArrayList<>());
+
+        doThrow(new CcdConflictException("Conflict error", null)).when(ccdSearchService)
+            .searchForAllCasesWithQuery(any(), any(), any());
+        task.run();
+        // Verify that the logger's error method is called with the expected message
+        verify(oldTask)
+            .logError(eq(
+                "SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopping due to conflict with another running task"),
+                isNull(),
+                isA(CcdConflictException.class)
+            );
+    }
+
+    @Test
     void run_IOException_LogsError() throws CcdSearchCaseException, CcdConflictException, IOException {
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
