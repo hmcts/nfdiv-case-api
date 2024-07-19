@@ -11,17 +11,22 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -32,6 +37,9 @@ class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @Mock
     private IdamService idamService;
@@ -50,6 +58,30 @@ class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTaskTest {
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+    }
+
+    private List<CaseDetails> createCaseDetailsList(final int size) {
+
+        final List<CaseDetails> caseDetails = new ArrayList<>();
+
+        for (int index = 0; index < size; index++) {
+            caseDetails.add(mock(CaseDetails.class));
+        }
+
+        return caseDetails;
+    }
+
+    @Test
+    void run_ProcessesCases() {
+        // Mock data
+        List<CaseDetails> casesToBeUpdated = createCaseDetailsList(10);
+        when(ccdSearchService.searchForAllCasesWithQuery(any(), any(), any())).thenReturn(casesToBeUpdated);
+
+        // Call the method under test
+        task.run();
+
+        // Verify that all cases are processed
+        verify(ccdUpdateService, times(10)).submitEvent(any(), any(), any(), any()); // Expect 3 calls to submitEvent
     }
 
     @Test
