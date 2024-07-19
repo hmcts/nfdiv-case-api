@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -18,20 +16,16 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRedoPronouncedCoverLetter.SYSTEM_REDO_PRONOUNCED_COVER_LETTER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateCoPronouncedCoverLetterOfflineConfidential.SYSTEM_REGEN_CO_PRONOUNCED_COVER_LETTER_OFFLINE_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 /**
  * SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask introduced as a one off fix for NFDIV-4142.
@@ -41,81 +35,64 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
  */
 public class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask implements Runnable {
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
+
+    private final SystemRedoPronouncedCoverLettersTask oldTask;
 
     public static final String NOTIFICATION_FLAG = "coPronouncedForceConfidentialCoverLetterResentAgain";
 
     @Override
     public void run() {
-        log.info("SystemRedoPronouncedCoverLettersTask started");
+        log.info("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask started");
         try {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
 
-            List<Long> caseIds = loadCaseIds();
-            final BoolQueryBuilder query =
-                boolQuery()
-                    .filter(QueryBuilders.termsQuery("reference", caseIds))
-                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YES));
+            List<Long> caseIds = oldTask.loadCaseIds();
+            final BoolQueryBuilder query = boolQuery()
+                .filter(QueryBuilders.termsQuery("reference", caseIds))
+                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YES));
 
-            final List<CaseDetails> casesToBeUpdated =
-                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, ConditionalOrderPronounced, AwaitingFinalOrder);
-            int maxCasesToUpdate = Math.min(casesToBeUpdated.size(), 50); // Limit to 50 cases or the size of casesToBeUpdated
-            for (int i = 0; i < maxCasesToUpdate; i++) {
-                CaseDetails caseDetails = casesToBeUpdated.get(i);
-                triggerRedoCoPronouncedCoverLetterForEligibleCases(user, serviceAuth, caseDetails);
+            final List<CaseDetails> caseList =
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth);
+            for (int i = 0; i < caseList.size(); i++) {
+                CaseDetails caseDetails = caseList.get(i);
+                triggerRegenCoPronouncedCoverLetterForEligibleCases(user, serviceAuth, caseDetails);
             }
 
             log.info("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask completed.");
         } catch (final CcdSearchCaseException e) {
-            logError("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopped after search error", null, e);
+            oldTask.logError(
+                "SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopped after search error",
+                null,
+                e
+            );
         } catch (final CcdConflictException e) {
-            logError(
+            oldTask.logError(
                 "SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopping due to conflict with another running task",
                 null,
                 e
             );
         } catch (IOException e) {
-            logError("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopped after file read error", null, e);
+            oldTask.logError("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask stopped after file read error", null, e);
         }
     }
 
-    private void triggerRedoCoPronouncedCoverLetterForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
+    private void triggerRegenCoPronouncedCoverLetterForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
             log.info("Submitting Regenerate CO Pronounced letter for Case {}", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_REDO_PRONOUNCED_COVER_LETTER, user, serviceAuth);
+            ccdUpdateService.submitEvent(caseDetails.getId(),
+                SYSTEM_REGEN_CO_PRONOUNCED_COVER_LETTER_OFFLINE_CONFIDENTIAL, user, serviceAuth);
         } catch (final CcdManagementException e) {
-            logError("Submit event failed for case id: {}, continuing to next case", caseDetails.getId(), e);
+            oldTask.logError("Submit event failed for case id: {}, continuing to next case", caseDetails.getId(), e);
         } catch (final IllegalArgumentException e) {
-            logError("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId(), e);
+            oldTask.logError("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId(), e);
         }
-    }
-
-    public List<Long> loadCaseIds() throws IOException {
-        ClassPathResource resource = new ClassPathResource("relevant_ids_changes.txt");
-        String content = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
-        StringTokenizer tokenizer = new StringTokenizer(content, ",");
-        List<Long> idList = new ArrayList<>();
-
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken().trim(); // Trim whitespace from each token
-            idList.add(Long.valueOf(token));
-        }
-
-        return idList;
-    }
-
-    public void logError(String message, Long arg, Exception e) {
-        log.error(message, arg, e);
     }
 }
