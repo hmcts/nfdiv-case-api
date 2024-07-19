@@ -60,6 +60,9 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
 
+    private static final String WARNING_ATTACHMENT_SIZE = "### NOTE: Individual attachments must be less than 2MB"
+        + " or else the general email will fail to send";
+
     @Autowired
     private DocumentIdProvider documentIdProvider;
 
@@ -96,6 +99,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailDetails)
+            .label("attachmentWarning", WARNING_ATTACHMENT_SIZE)
             .optional(GeneralEmail::getGeneralEmailAttachments)
             .done();
     }
