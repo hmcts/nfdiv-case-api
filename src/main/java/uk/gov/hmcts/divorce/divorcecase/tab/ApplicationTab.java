@@ -36,8 +36,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private static final String NOT_NEW_PAPER_CASE = "newPaperCase!=\"Yes\"";
     private static final String NOT_JS_OR_NULLITY_CASE = "supplementaryCaseType=\"notApplicable\"";
     private static final String JS_OR_NULLITY_CASE = "supplementaryCaseType!=\"notApplicable\"";
-    private static final String APPLICANT_1_IS_REPRESENTED = "applicant1SolicitorRepresented=\"Yes\"";
-    private static final String APPLICANT_2_IS_REPRESENTED = "applicant2SolicitorRepresented=\"Yes\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -253,16 +251,16 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", NEVER_SHOW)
             .label("LabelApplicant1sSolicitor-Heading",
-                APPLICANT_1_IS_REPRESENTED,
+                "applicant1SolicitorRepresented=\"Yes\"",
                 "#### ${labelContentTheApplicantOrApplicant1UC}'s solicitor")
-            .field("applicant1SolicitorReference", APPLICANT_1_IS_REPRESENTED)
-            .field("applicant1SolicitorName", APPLICANT_1_IS_REPRESENTED)
-            .field("applicant1SolicitorAddress", APPLICANT_1_IS_REPRESENTED)
+            .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorAddress", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorAddressOverseas", APPLICANT_1_REPRESENTED_OVERSEAS)
-            .field("applicant1SolicitorPhone", APPLICANT_1_IS_REPRESENTED)
-            .field("applicant1SolicitorEmail", APPLICANT_1_IS_REPRESENTED)
-            .field("applicant1SolicitorOrganisationPolicy", APPLICANT_1_IS_REPRESENTED)
-            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", APPLICANT_1_IS_REPRESENTED);
+            .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"");
     }
 
     private void addOtherCourtCases(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -323,15 +321,15 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelApplicant2sSolicitorOldCases-Heading",
                 "applicant1IsApplicant2Represented=\"Yes\" AND applicant2SolicitorRepresented!=\"*\"",
                 "#### ${labelContentApplicant2UC}'s solicitor details")
-            .field("applicant2SolicitorReference", APPLICANT_2_IS_REPRESENTED)
-            .field("applicant2SolicitorName", APPLICANT_2_IS_REPRESENTED)
-            .field("applicant2SolicitorAddress", APPLICANT_2_IS_REPRESENTED)
+            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAddress", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorAddressOverseas", APPLICANT_2_REPRESENTED_OVERSEAS)
-            .field("applicant2SolicitorPhone", APPLICANT_2_IS_REPRESENTED)
-            .field("applicant2SolicitorEmail", APPLICANT_2_IS_REPRESENTED)
-            .field("applicant2SolicitorFirmName", APPLICANT_2_IS_REPRESENTED)
-            .field("applicant2SolicitorOrganisationPolicy", APPLICANT_2_IS_REPRESENTED)
-            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", APPLICANT_2_IS_REPRESENTED)
+            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented!=\"No\"")
+            .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented!=\"No\"")
 
             //Applicant 2 Other proceedings
             .label("LabelApplicant2OtherProceedings-Heading",
@@ -378,7 +376,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
             .field("solStatementOfReconciliationCertify")
             .field("solStatementOfReconciliationDiscussed")
-            .field("solSignStatementOfTruth", APPLICANT_1_IS_REPRESENTED)
+            .field("solSignStatementOfTruth", "applicant1SolicitorRepresented=\"Yes\"")
             .field("solStatementOfReconciliationName")
             .field("solStatementOfReconciliationFirm")
             .field("statementOfReconciliationComments");
