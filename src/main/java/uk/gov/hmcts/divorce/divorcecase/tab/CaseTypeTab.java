@@ -460,9 +460,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "applicationType=\"jointApplication\"",
                 "### Applicant 1")
             .field("isFinalOrderOverdue", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("applicant1SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("applicant2SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant1SolicitorRepresented",
+                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant2SolicitorRepresented",
+                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("labelContentFinaliseDivorceOrEndCivilPartnership",
+                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
             .field("applicant1FinalOrderStatementOfTruth")
