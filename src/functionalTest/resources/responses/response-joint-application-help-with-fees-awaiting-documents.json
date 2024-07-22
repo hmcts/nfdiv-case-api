@@ -44,5 +44,5 @@
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "dueDate": "${json-unit.any-string}"
   },
-  "state": "AwaitingDocuments"
+  "state": "AwaitingHWFDecision"
 }
