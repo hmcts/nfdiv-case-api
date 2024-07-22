@@ -2,7 +2,7 @@
   {
     "Answer": "${applicant1FirstName}:[APPONESOLICITOR],${applicant2FirstName}:[APPTWOSOLICITOR]",
     "AnswerFieldType": "Text",
-    "CaseTypeID": "NFD-3835",
+    "CaseTypeID": "NFD",
     "DisplayOrder": 1,
     "ID": "NoCChallenge",
     "LiveFrom": "01/04/2024",
@@ -12,7 +12,7 @@
   {
     "Answer": "${applicant1LastName}:[APPONESOLICITOR],${applicant2LastName}:[APPTWOSOLICITOR]",
     "AnswerFieldType": "Text",
-    "CaseTypeID": "NFD-3835",
+    "CaseTypeID": "NFD",
     "DisplayOrder": 2,
     "ID": "NoCChallenge",
     "LiveFrom": "01/04/2024",
