@@ -186,6 +186,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
+            .endButtonLabel("Submit Application")
             .grantHistoryOnly(
                 CASE_WORKER,
                 LEGAL_ADVISOR,

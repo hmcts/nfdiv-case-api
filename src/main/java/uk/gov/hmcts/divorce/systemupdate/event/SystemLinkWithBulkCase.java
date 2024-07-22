@@ -30,7 +30,7 @@ public class SystemLinkWithBulkCase implements CCDConfig<CaseData, State, UserRo
             .showCondition(NEVER_SHOW)
             .name("Link with bulk case")
             .description("Linked with bulk case")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR));
     }
 }
