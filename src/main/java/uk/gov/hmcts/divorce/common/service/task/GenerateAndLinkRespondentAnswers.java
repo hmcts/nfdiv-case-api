@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @Component
@@ -29,8 +30,12 @@ public class GenerateAndLinkRespondentAnswers implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final var haveReceivedOfflineRespAnswers = emptyIfNull(caseData.getDocuments().getDocumentsUploaded()).stream()
             .anyMatch(divorceDocumentListValue -> RESPONDENT_ANSWERS.equals(divorceDocumentListValue.getValue().getDocumentType()));
+        final var haveReceivedOfflineConfidentialRespAnswers = emptyIfNull(caseData.getDocuments().getConfidentialDocumentsUploaded())
+            .stream().anyMatch(
+                divorceDocumentListValue -> CONFIDENTIAL_RESPONDENT_ANSWERS.equals(divorceDocumentListValue.getValue().getDocumentType())
+            );
 
-        if (!haveReceivedOfflineRespAnswers) {
+        if (!haveReceivedOfflineRespAnswers && !haveReceivedOfflineConfidentialRespAnswers) {
             documentGenerator.generateAndStoreCaseDocument(
                 RESPONDENT_ANSWERS,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
@@ -40,6 +45,7 @@ public class GenerateAndLinkRespondentAnswers implements CaseTask {
             );
         }
 
+        //Do we need to alter this to include confidential_respondent_answers, or should they not be linked?
         Stream.ofNullable(caseData.getDocuments().getDocumentsGenerated())
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
