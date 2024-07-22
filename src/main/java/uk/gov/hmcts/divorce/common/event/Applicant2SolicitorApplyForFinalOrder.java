@@ -96,6 +96,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
+            .endButtonLabel("Submit Application")
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
