@@ -34,7 +34,8 @@
     "Organisation": {
       "OrganisationName": "Test 1 Organisation",
       "OrganisationID": "0FA7S8S"
-    }
+    },
+    "OrgPolicyCaseAssignedRole": "[APPONESOLICITOR]"
   },
   "applicant2FirstName": "test_first_name",
   "applicant2MiddleName": "test_middle_name",
@@ -50,7 +51,8 @@
     "Organisation": {
       "OrganisationName": "Test 2 Organisation",
       "OrganisationID": "N5AFUXG"
-    }
+    },
+    "OrgPolicyCaseAssignedRole": "[APPTWOSOLICITOR]"
   },
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",
