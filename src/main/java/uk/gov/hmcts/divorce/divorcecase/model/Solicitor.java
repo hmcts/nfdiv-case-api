@@ -119,6 +119,7 @@ public class Solicitor {
         return false;
     }
 
+    @JsonIgnore
     public String getOrganisationId() {
         return Optional.ofNullable(organisationPolicy)
             .map(OrganisationPolicy::getOrganisation)
