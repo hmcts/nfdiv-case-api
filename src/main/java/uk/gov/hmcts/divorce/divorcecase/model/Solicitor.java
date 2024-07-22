@@ -65,7 +65,8 @@ public class Solicitor {
     private String email;
 
     @CCD(
-        label = "Solicitor’s Firm Name"
+        label = "Solicitor’s Firm Name",
+        access = {AcaSystemUserAccess.class}
     )
     private String firmName;
 
@@ -106,6 +107,14 @@ public class Solicitor {
     public boolean hasOrgId() {
         if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
             return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationId());
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean hasOrgName() {
+        if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
+            return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationName());
         }
         return false;
     }

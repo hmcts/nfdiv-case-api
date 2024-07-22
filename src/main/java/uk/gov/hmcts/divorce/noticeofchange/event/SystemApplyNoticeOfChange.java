@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.event.NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -74,10 +75,11 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         CaseData caseData = details.getData();
 
         Map<String, Object> copyCaseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
-        CaseData beforeCaseData = objectMapper.convertValue(copyCaseDataMap, CaseData.class);
+        final CaseData beforeCaseData = objectMapper.convertValue(copyCaseDataMap, CaseData.class);
 
         changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
+        resetConditionalOrderFields(caseData);
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
@@ -105,5 +107,14 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .data(responseData)
             .state(details.getState())
             .build();
+    }
+
+    public static void resetConditionalOrderFields(CaseData data) {
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+        if (data.getApplicationType() != null && !data.getApplicationType().isSole()) {
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+        }
     }
 }

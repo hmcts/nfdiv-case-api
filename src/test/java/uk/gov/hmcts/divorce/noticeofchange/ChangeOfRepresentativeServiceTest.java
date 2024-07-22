@@ -116,6 +116,7 @@ class ChangeOfRepresentativeServiceTest {
         assertEquals(TEST_ORG_NAME, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationName());
         assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, applicant2CaseData.getApplicant2().getSolicitor().getEmail());
+        assertEquals(TEST_ORGANISATION_NAME, applicant2CaseData.getApplicant2().getSolicitor().getFirmName());
         assertEquals("Respondent", changeOfRepresentative.getParty());
         assertEquals(SOLICITOR_NOTICE_OF_CHANGE.getValue(), changeOfRepresentative.getUpdatedVia());
     }

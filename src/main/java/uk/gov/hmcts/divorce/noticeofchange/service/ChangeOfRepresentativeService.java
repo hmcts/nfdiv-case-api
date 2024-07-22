@@ -61,7 +61,7 @@ public class ChangeOfRepresentativeService {
             if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
                 removedRepresentative = updateRepresentative(beforeSolicitor);
             }
-            updateOrgPolicyAndSolicitorDetails(currentSolicitor, nocRequestingUser, loggedInUserEmail);
+            updateOrgPolicyAndSolicitorDetails(currentSolicitor,  nocSolicitorOrgName, nocRequestingUser, loggedInUserEmail);
             updatedBy = String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName());
             addedRepresentative = updateRepresentative(updatedBy, loggedInUserEmail, orgToAdd);
         } else {
@@ -88,11 +88,12 @@ public class ChangeOfRepresentativeService {
         }
     }
 
-    private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor,
+    private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, String nocRequestUserFirmName,
                                                     ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
 
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
+        applicantSolicitor.setFirmName(nocRequestUserFirmName);
     }
 
     private ProfessionalUser getProfessionalUsers(String sysUserToken, String s2sToken, String organisationId, String loggedInUserEmail) {
