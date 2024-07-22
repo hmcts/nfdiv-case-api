@@ -177,14 +177,6 @@ public class CaseData {
     private Hearing hearing = new Hearing();
 
     @CCD(
-        label = "Hearings",
-        typeOverride = Collection,
-        typeParameterOverride = "Hearing",
-        access = {SystemUpdateAndSuperUserAccess.class}
-    )
-    private List<ListValue<Hearing>> hearings;
-
-    @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
     )

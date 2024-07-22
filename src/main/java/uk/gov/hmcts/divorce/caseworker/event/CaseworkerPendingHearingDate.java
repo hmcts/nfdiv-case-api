@@ -36,7 +36,7 @@ public class CaseworkerPendingHearingDate implements CCDConfig<CaseData, State, 
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
+            .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE));
     }
 }

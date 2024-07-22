@@ -8,16 +8,13 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Hearing;
-import uk.gov.hmcts.divorce.divorcecase.model.HearingAttendance;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerListForHearing.CASEWORKER_LIST_FOR_HEARING;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingDate;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -41,42 +38,24 @@ class CaseworkerListForHearingTest {
     }
 
     @Test
-    void shouldSetHearingToNullAfterProcessing() throws Exception {
+    void shouldResetGeneralApplicationWhenAboutToStartCallbackTriggered() {
         final CaseData caseData = caseData();
-        caseData.setHearing(
-            Hearing
-                .builder()
-                .dateOfHearing(LOCAL_DATE_TIME)
-                .venueOfHearing("Test")
-                .hearingAttendance(Set.of(HearingAttendance.IN_PERSON))
-                .build()
-        );
+        caseData.setHearing(Hearing.builder()
+            .venueOfHearing("Test")
+            .dateOfHearing(LOCAL_DATE_TIME)
+            .hearingAttendance(Set.of(HearingAttendance.IN_PERSON))
+            .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
+        details.setState(PendingHearingDate);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerListForHearing.aboutToSubmit(details, details);
-        assertThat(response.getData().getHearing()).isNull();
-    }
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerListForHearing.aboutToStart(details);
 
-    @Test
-    void shouldAddToHearingsArray() throws Exception {
-        final CaseData caseData = caseData();
-        caseData.setHearing(
-            Hearing
-                .builder()
-                .dateOfHearing(LOCAL_DATE_TIME)
-                .venueOfHearing("Test")
-                .hearingAttendance(Set.of(HearingAttendance.IN_PERSON))
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerListForHearing.aboutToSubmit(details, details);
-        assertThat(response.getData().getHearings().size()).isEqualTo(1);
+        assertThat(response.getData().getHearing().getDateOfHearing()).isNull();
+        assertThat(response.getData().getHearing().getVenueOfHearing()).isNull();
+        assertThat(response.getData().getHearing().getHearingAttendance()).isNull();
     }
 }
