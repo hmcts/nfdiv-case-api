@@ -21,9 +21,9 @@ public class BulkCaseListAccess implements HasAccessControl {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(CITIZEN, Permissions.READ);
         grants.putAll(SOLICITOR, Permissions.READ);
-        grants.putAll(SUPER_USER, Permissions.READ);
+        grants.putAll(SUPER_USER, Permissions.CREATE_READ_UPDATE);
 
-        grants.putAll(CASE_WORKER, Permissions.READ_UPDATE);
+        grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE);
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(JUDGE, Permissions.READ);
         grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
