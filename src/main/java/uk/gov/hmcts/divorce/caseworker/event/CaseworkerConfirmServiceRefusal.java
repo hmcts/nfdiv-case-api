@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -50,7 +51,12 @@ public class CaseworkerConfirmServiceRefusal implements CCDConfig<CaseData, Stat
 
         log.info("Caseworker confirm service refusal Submitted callback invoked, Case Id: {}", details.getId());
 
-        notificationDispatcher.send(serviceApplicationNotification, details.getData(), details.getId());
+        CaseData caseData = details.getData();
+
+        //Set field temporarily to validate service application refused.
+        caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
+
+        notificationDispatcher.send(serviceApplicationNotification, caseData, details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }
