@@ -32,6 +32,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAcc
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -256,6 +257,13 @@ public class CaseData {
 
     @CCD(access = {AcaSystemUserAccess.class})
     private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
+
+    @CCD(
+            access = {DefaultAccess.class, AcaSystemUserAccess.class},
+            label = "Change of representatives"
+    )
+    @Builder.Default
+    private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
 
     @CCD(
         access = {CaseworkerAccess.class}

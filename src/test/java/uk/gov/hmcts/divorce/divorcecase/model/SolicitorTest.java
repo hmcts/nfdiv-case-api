@@ -109,6 +109,11 @@ class SolicitorTest {
     void shouldReturnOrganisationIdIfPresent() {
 
         final Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                .organisation(Organisation.builder()
+                    .organisationId("Org ID")
+                    .build())
+                .build())
             .build();
 
         assertThat(solicitor.hasOrgName()).isFalse();

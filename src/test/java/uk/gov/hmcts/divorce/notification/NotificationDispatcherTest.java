@@ -167,6 +167,34 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendNOCForNewDigitalSolicitorNewOrg_WhenApplicant1EmailIsPresent() {
+        final long caseId = 12345L;
+        final CaseData caseData = CaseData.builder().applicant1(Applicant.builder().email("test@test.com").build()).build();
+        final CaseData previousCaseData = new CaseData();
+        final boolean isApplicant1 = true;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseData, caseId);
+        verify(applicantNotification).sendToApplicant1(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCForNewDigitalSolicitorNewOrg_WhenApplicant2EmailIsPresent() {
+        final long caseId = 12345L;
+        final CaseData caseData = CaseData.builder().applicant2(Applicant.builder().email("test@test.com").build()).build();
+        final CaseData previousCaseData = new CaseData();
+        final boolean isApplicant1 = false;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseData, caseId);
+        verify(applicantNotification).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
     void shouldSendNOCForOrgRemoved_Applicant1() {
         final long caseId = 12345L;
         final CaseData caseData = new CaseData();

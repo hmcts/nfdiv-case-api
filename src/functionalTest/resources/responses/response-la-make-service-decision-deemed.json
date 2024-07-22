@@ -8,6 +8,7 @@
     "applicant1LastName": "Smith",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
+    "changeOfRepresentatives": [],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceOutcomes": [
       {
