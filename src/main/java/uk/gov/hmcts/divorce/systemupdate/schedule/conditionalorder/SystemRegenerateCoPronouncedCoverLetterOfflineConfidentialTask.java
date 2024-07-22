@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateCoPronouncedCoverLetterOfflineConfidential.SYSTEM_REGEN_CO_PRONOUNCED_COVER_LETTER_OFFLINE_CONFIDENTIAL;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 
 @Component
 @RequiredArgsConstructor
@@ -45,8 +42,6 @@ public class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask impl
 
     private final SystemRedoPronouncedCoverLettersTask oldTask;
 
-    public static final String NOTIFICATION_FLAG = "coPronouncedForceConfidentialCoverLetterResentAgain";
-
     @Override
     public void run() {
         log.info("SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask started");
@@ -56,8 +51,7 @@ public class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTask impl
 
             List<Long> caseIds = oldTask.loadCaseIds();
             final BoolQueryBuilder query = boolQuery()
-                .filter(QueryBuilders.termsQuery("reference", caseIds))
-                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YES));
+                .filter(QueryBuilders.termsQuery("reference", caseIds));
 
             final List<CaseDetails> caseList =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth);

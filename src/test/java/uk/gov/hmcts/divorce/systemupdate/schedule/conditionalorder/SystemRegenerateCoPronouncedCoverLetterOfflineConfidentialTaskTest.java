@@ -81,7 +81,7 @@ class SystemRegenerateCoPronouncedCoverLetterOfflineConfidentialTaskTest {
         task.run();
 
         // Verify that all cases are processed
-        verify(ccdUpdateService, times(10)).submitEvent(any(), any(), any(), any()); // Expect 3 calls to submitEvent
+        verify(ccdUpdateService, times(10)).submitEvent(any(), any(), any(), any());
     }
 
     @Test
