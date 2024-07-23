@@ -82,6 +82,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_1_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
+            .endButtonLabel("Submit Application")
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
