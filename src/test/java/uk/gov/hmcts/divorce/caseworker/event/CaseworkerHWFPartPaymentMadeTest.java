@@ -46,6 +46,6 @@ class CaseworkerHWFPartPaymentMadeTest {
 
         caseworkerHWFPartPaymentMade.aboutToSubmit(caseDetails, null);
 
-        verify(caseworkerHwfApplicationAndPaymentHelper).setDefaultCaseFieldsForPostSubmissionState(caseDetails);
+        verify(caseworkerHwfApplicationAndPaymentHelper).setRequiredCaseFieldsForPostSubmissionCase(caseDetails);
     }
 }

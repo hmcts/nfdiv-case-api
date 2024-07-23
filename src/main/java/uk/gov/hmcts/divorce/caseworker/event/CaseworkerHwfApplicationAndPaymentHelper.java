@@ -47,7 +47,7 @@ public class CaseworkerHwfApplicationAndPaymentHelper {
         return caseData;
     }
 
-    public CaseDetails<CaseData, State> setDefaultCaseFieldsForPostSubmissionState(CaseDetails<CaseData, State> details) {
+    public CaseDetails<CaseData, State> setRequiredCaseFieldsForPostSubmissionCase(CaseDetails<CaseData, State> details) {
         return caseTasks(setDefaultOrganisationPolicies).run(details);
     }
 }

@@ -50,7 +50,7 @@ public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, 
         CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_HWF_PART_PAYMENT_MADE, details.getId());
 
-        caseworkerHwfApplicationAndPaymentHelper.setDefaultCaseFieldsForPostSubmissionState(details);
+        caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

@@ -50,7 +50,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
 
         details.setState(caseworkerHwfApplicationAndPaymentHelper.getState(caseData));
         details.setData(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData));
-        caseworkerHwfApplicationAndPaymentHelper.setDefaultCaseFieldsForPostSubmissionState(details);
+        caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

@@ -148,7 +148,7 @@ class CaseworkerHwfApplicationAndPaymentHelperTest {
 
         when(setDefaultOrganisationPolicies.apply(caseDetails)).thenReturn(caseDetails);
 
-        caseworkerHwfApplicationAndPaymentHelper.setDefaultCaseFieldsForPostSubmissionState(caseDetails);
+        caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(caseDetails);
 
         verify(setDefaultOrganisationPolicies).apply(caseDetails);
     }

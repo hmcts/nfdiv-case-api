@@ -64,6 +64,6 @@ class CaseworkerHwfApplicationAcceptedTest {
 
         caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, null);
 
-        verify(caseworkerHwfApplicationAndPaymentHelper).setDefaultCaseFieldsForPostSubmissionState(caseDetails);
+        verify(caseworkerHwfApplicationAndPaymentHelper).setRequiredCaseFieldsForPostSubmissionCase(caseDetails);
     }
 }
