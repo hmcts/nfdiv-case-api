@@ -55,4 +55,15 @@ public class CaseworkerPaymentMadeTest {
         verify(caseworkerHwfApplicationAndPaymentHelper).getState(caseData);
         verify(caseworkerHwfApplicationAndPaymentHelper).setDateSubmittedAndDueDate(caseData);
     }
+
+    @Test
+    void shouldSetDefaultCaseDataRequiredForPostSubmissionCases() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerPaymentMade.aboutToSubmit(caseDetails, null);
+
+        verify(caseworkerHwfApplicationAndPaymentHelper).setDefaultCaseFieldsForPostSubmissionState(caseDetails);
+    }
 }
