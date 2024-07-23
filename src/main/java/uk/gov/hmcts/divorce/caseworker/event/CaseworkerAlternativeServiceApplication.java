@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -84,7 +85,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         State endState = AwaitingServiceConsideration;
 
-        if (caseData.getAlternativeService().getAlternativeServiceFeeRequired().toBoolean()) {
+        if (YesOrNo.YES == caseData.getAlternativeService().getAlternativeServiceFeeRequired()) {
             endState = AwaitingServicePayment;
         } else if (AlternativeServiceType.BAILIFF == caseData.getAlternativeService().getAlternativeServiceType()) {
             endState = AwaitingBailiffReferral;
