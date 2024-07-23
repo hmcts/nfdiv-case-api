@@ -125,8 +125,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
                 AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .field("applicant2Offline", NEVER_SHOW)
-            .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
-            .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
+            .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"",
+                "## This is an online AoS response")
+            .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"",
+                "## This is an offline AoS response")
             .field("confirmReadPetition")
             .field("jurisdictionAgree")
             .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
@@ -138,7 +140,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
-            .field("noticeOfProceedingsEmail","applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
+            .field("noticeOfProceedingsEmail",
+                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
             .field("noticeOfProceedingsSolicitorFirm")
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
@@ -152,7 +155,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
             .field("applicant2HWFNeedHelp", NEVER_SHOW)
-            .field("applicant1HWFReferenceNumber", "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
+            .field("applicant1HWFReferenceNumber",
+                "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
             .field("newPaperCase", NEVER_SHOW)
