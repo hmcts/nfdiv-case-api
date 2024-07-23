@@ -24,7 +24,7 @@ public class OrganisationPolicyAccess implements HasAccessControl {
     @Override
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
-        grants.putAll(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, CREATE_READ_UPDATE);
+        grants.putAll(ORGANISATION_CASE_ACCESS_ADMINISTRATOR, CREATE_READ_UPDATE_DELETE);
         grants.putAll(NOC_APPROVER, CREATE_READ_UPDATE_DELETE);
         grants.putAll(APPLICANT_2_SOLICITOR, READ);
         grants.putAll(CITIZEN, CREATE_READ_UPDATE);

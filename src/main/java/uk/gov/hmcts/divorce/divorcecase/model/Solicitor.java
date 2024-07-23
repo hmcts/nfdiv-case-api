@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
 
@@ -39,7 +40,7 @@ public class Solicitor {
 
     @CCD(
         label = "Solicitor’s name",
-        access = {CaseworkerWithCAAAccess.class}
+        access = {CaseworkerWithCAAAccess.class, AcaSystemUserAccess.class}
     )
     private String name;
 
@@ -58,7 +59,8 @@ public class Solicitor {
 
     @CCD(
         label = "Solicitor’s Email",
-        typeOverride = Email
+        typeOverride = Email,
+        access = {AcaSystemUserAccess.class}
     )
     private String email;
 
