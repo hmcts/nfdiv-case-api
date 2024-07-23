@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -117,6 +119,8 @@ class ChangeOfRepresentativeServiceTest {
         assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, applicant2CaseData.getApplicant2().getSolicitor().getEmail());
         assertEquals(TEST_ORGANISATION_NAME, applicant2CaseData.getApplicant2().getSolicitor().getFirmName());
+        assertTrue(applicant2CaseData.getApplicant2().isRepresented());
+        assertFalse(applicant2CaseData.getApplicant2().isApplicantOffline());
         assertEquals("Respondent", changeOfRepresentative.getParty());
         assertEquals(SOLICITOR_NOTICE_OF_CHANGE.getValue(), changeOfRepresentative.getUpdatedVia());
     }

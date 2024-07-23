@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -62,6 +64,7 @@ public class ChangeOfRepresentativeService {
                 removedRepresentative = updateRepresentative(beforeSolicitor);
             }
             updateOrgPolicyAndSolicitorDetails(currentSolicitor,  nocSolicitorOrgName, nocRequestingUser, loggedInUserEmail);
+            setApplicantRepresented(isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2());
             updatedBy = String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName());
             addedRepresentative = updateRepresentative(updatedBy, loggedInUserEmail, orgToAdd);
         } else {
@@ -86,6 +89,11 @@ public class ChangeOfRepresentativeService {
         } else {
             return SOLE_APPLICATION.equals(applicationType) ? "Respondent" : "Applicant2";
         }
+    }
+
+    private void setApplicantRepresented(Applicant applicant) {
+        applicant.setSolicitorRepresented(YesOrNo.YES);
+        applicant.setOffline(YesOrNo.NO);
     }
 
     private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, String nocRequestUserFirmName,
