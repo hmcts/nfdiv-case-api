@@ -171,9 +171,8 @@ public class CommonContent {
         return templateVars;
     }
 
-    public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
+    public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = basicTemplateVars(data, id);
-        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference())
@@ -182,6 +181,12 @@ public class CommonContent {
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
+        return templateVars;
+    }
+
+    public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
+        Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, id, applicant);
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
