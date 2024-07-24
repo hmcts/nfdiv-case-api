@@ -22,7 +22,7 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
     public static final String CASEWORKER_UPDATE_LANGUAGE_PREFERENCE = "caseworker-update-language-preference";
     private static final String CASEWORKER_UPDATE_LANGUAGE = "Update language preference";
     private static final String LANGUAGE_PREFERENCE = "Is the ${%s} language preference Welsh?";
-    private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
+    private static final String NEVER_SHOW = "applicant1LanguagePreferenceWelsh=\"NEVER_SHOW\"";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
 
     @Override
