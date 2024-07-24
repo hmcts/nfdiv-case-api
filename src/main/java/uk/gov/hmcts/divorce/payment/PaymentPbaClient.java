@@ -10,11 +10,11 @@ import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 
-@FeignClient(name = "fees-and-payments-client", url = "http://localhost:8766")
+@FeignClient(name = "fees-and-payments-client", url = "${payment.service.api.baseurl}")
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public interface PaymentPbaClient {
 
-    @PostMapping(value = "/status/500")
+    @PostMapping(value = "/credit-account-payments")
     ResponseEntity<CreditAccountPaymentResponse> creditAccountPayment(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
