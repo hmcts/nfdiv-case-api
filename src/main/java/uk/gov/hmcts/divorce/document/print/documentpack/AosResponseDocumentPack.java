@@ -144,15 +144,15 @@ public class AosResponseDocumentPack implements DocumentPack {
         )
     );
 
-    private static final DocumentPackInfo APP_2_OFFLINE_CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo APP_2_OFFLINE_CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
-            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
+            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_JS_SOLE_UNDISPUTED),
             DocumentType.RESPONDENT_ANSWERS, Optional.empty(),
             DocumentType.D84, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_JS_SOLE_UNDISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
