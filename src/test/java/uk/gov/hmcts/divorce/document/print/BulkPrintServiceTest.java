@@ -656,6 +656,73 @@ class BulkPrintServiceTest {
         verify(authTokenGenerator).generate();
     }
 
+    @Test
+    void shouldReturnLetterIdForValidRequestWhenInternational() throws IOException {
+        final List<String> roles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUpdateUser = solicitorUser(roles, userId);
+
+        given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
+        given(authTokenGenerator.generate()).willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final UUID uuid = UUID.randomUUID();
+        final byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
+
+        given(sendLetterApi.sendLetter(eq(TEST_SERVICE_AUTH_TOKEN), isA(LetterV3.class)))
+            .willReturn(new SendLetterResponse(uuid));
+
+        given(resource.getInputStream())
+            .willReturn(new ByteArrayInputStream(firstFile))
+            .willReturn(new ByteArrayInputStream(firstFile));
+
+        final ListValue<Document> documentListValue = getDocumentListValue(() -> ResponseEntity.ok(resource));
+
+        final ListValue<Document> documentListValue2 = getDocumentListValue(() -> ResponseEntity.ok(resource));
+
+        final List<Letter> letters = List.of(
+            new Letter(documentListValue.getValue(), 1),
+            new Letter(documentListValue2.getValue(), 2)
+        );
+
+        final Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType",
+            "Test User",
+            YesOrNo.YES
+        );
+
+        final UUID letterId = bulkPrintService.print(print);
+        assertThat(letterId).isEqualTo(uuid);
+
+        verify(sendLetterApi).sendLetter(eq(TEST_SERVICE_AUTH_TOKEN), letterV3ArgumentCaptor.capture());
+
+        final LetterV3 letterV3 = letterV3ArgumentCaptor.getValue();
+        assertThat(letterV3.documents)
+            .extracting("content", "copies")
+            .contains(
+                tuple(getEncoder().encodeToString(firstFile), 1),
+                tuple(getEncoder().encodeToString(firstFile), 2)
+            );
+
+        assertThat(letterV3.additionalData)
+            .contains(
+                entry(LETTER_TYPE_KEY, "letterType"),
+                entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
+            );
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(documentManagementClient).downloadBinary(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            documentListValue.getValue()
+        );
+        verify(authTokenGenerator).generate();
+    }
+
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
         final Supplier<ResponseEntity<Resource>> responseEntitySupplier) {
 
