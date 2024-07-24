@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -25,6 +22,7 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
     public static final String CASEWORKER_UPDATE_LANGUAGE_PREFERENCE = "caseworker-update-language-preference";
     private static final String CASEWORKER_UPDATE_LANGUAGE = "Update language preference";
     private static final String LANGUAGE_PREFERENCE = "Is the ${%s} language preference Welsh?";
+    private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
 
     @Override
@@ -44,13 +42,18 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
                 JUDGE))
             .page("updateLanguagePreference")
             .pageLabel(CASEWORKER_UPDATE_LANGUAGE)
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, NEVER_SHOW)
+                .readonlyNoSummary(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
+                .done()
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
                     getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S))
-            .done()
+                .done()
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
                     getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S))
+                .done()
             .done();
     }
 
