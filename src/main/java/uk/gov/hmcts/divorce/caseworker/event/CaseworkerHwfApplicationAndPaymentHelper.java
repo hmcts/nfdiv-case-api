@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
@@ -17,12 +17,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
+@RequiredArgsConstructor
 public class CaseworkerHwfApplicationAndPaymentHelper {
-    @Autowired
-    private Clock clock;
 
-    @Autowired
-    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+    private final Clock clock;
+
+    private final SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     public State getState(CaseData caseData) {
         if (caseData.getApplicationType().isSole()

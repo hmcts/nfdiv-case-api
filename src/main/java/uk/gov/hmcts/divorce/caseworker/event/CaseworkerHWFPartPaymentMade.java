@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -26,13 +26,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_HWF_PART_PAYMENT_MADE = "caseworker-hwf-part-payment-made";
     public static final String EVENT_NAME_AND_DESCRIPTION = "HWF part payment made";
 
-    @Autowired
-    private CaseworkerHwfApplicationAndPaymentHelper caseworkerHwfApplicationAndPaymentHelper;
+    private final CaseworkerHwfApplicationAndPaymentHelper caseworkerHwfApplicationAndPaymentHelper;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
