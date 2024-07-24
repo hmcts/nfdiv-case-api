@@ -610,15 +610,7 @@ class BulkPrintServiceTest {
 
         final ListValue<Document> documentListValue = getDocumentListValue(() -> ResponseEntity.ok(resource));
 
-        given(documentManagementClient
-            .downloadBinary(SYSTEM_UPDATE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, documentListValue.getValue()))
-            .willReturn(ResponseEntity.ok(resource));
-
         final ListValue<Document> documentListValue2 = getDocumentListValue(() -> ResponseEntity.ok(resource));
-
-        given(documentManagementClient
-            .downloadBinary(SYSTEM_UPDATE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, documentListValue2.getValue()))
-            .willReturn(ResponseEntity.ok(resource));
 
         final List<Letter> letters = List.of(
             new Letter(documentListValue.getValue(), 1),
