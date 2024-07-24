@@ -21,8 +21,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @Slf4j
 public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, State, UserRole> {
+    private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
     public static final String CASEWORKER_UPDATE_LANGUAGE_PREFERENCE = "caseworker-update-language-preference";
     private static final String CASEWORKER_UPDATE_LANGUAGE = "Update language preference";
+    private static final String LANGUAGE_PREFERENCE = "Is the ${%s} language preference Welsh?";
+    private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -31,6 +34,7 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
             .forStates(POST_SUBMISSION_STATES)
             .name(CASEWORKER_UPDATE_LANGUAGE)
             .description(CASEWORKER_UPDATE_LANGUAGE)
+            .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(
@@ -42,11 +46,15 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
             .pageLabel(CASEWORKER_UPDATE_LANGUAGE)
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
-                    "Is the ${labelContentApplicantsOrApplicant1s} language preference Welsh?")
+                    getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S))
             .done()
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
-                    "Is the ${labelContentRespondentsOrApplicant2s} language preference Welsh?")
+                    getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S))
             .done();
+    }
+
+    private String getLabel(final String label, final Object... value) {
+        return String.format(label, value);
     }
 }
