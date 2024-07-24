@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_J
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocumentPack.APP_2_OFFLINE_CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK;
+import static uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocumentPack.CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -152,4 +153,19 @@ public class AosResponseDocumentPackTest {
         verify(generateD84Form).generateD84(data);
         assertThat(documentPack).isEqualTo(APP_2_OFFLINE_CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK);
     }
+
+    @Test
+    public void shouldReturnCorrectPackWhenJSUnDisputedUnRepresentedApp1Offline() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        data.getApplicant1().setOffline(YesOrNo.YES);
+        data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
+        data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
+        data.getApplicant2().setOffline(YesOrNo.NO);
+
+        var documentPack = aosResponseDocumentPack.getDocumentPack(data, data.getApplicant1());
+        assertThat(documentPack).isEqualTo(CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK);
+    }
+
 }
