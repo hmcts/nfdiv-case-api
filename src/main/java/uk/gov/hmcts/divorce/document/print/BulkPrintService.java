@@ -114,7 +114,7 @@ public class BulkPrintService {
                 )))
             .letterId;
 
-        String logMsg = print.getIsInternational() ? "International" : "";
+        String logMsg = print.getIsInternational() ? "International " : "";
         logMsg += "Bulk print request sent with letterId: " + sendLetterUUID;
         log.info(logMsg);
 
