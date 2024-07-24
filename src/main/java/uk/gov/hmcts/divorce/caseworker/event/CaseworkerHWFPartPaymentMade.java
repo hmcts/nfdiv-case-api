@@ -41,6 +41,7 @@ public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, 
             .forStateTransition(EnumSet.of(AwaitingHWFPartPayment, AwaitingHWFEvidence), Submitted)
             .name(EVENT_NAME_AND_DESCRIPTION)
             .description(EVENT_NAME_AND_DESCRIPTION)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR, CITIZEN));
