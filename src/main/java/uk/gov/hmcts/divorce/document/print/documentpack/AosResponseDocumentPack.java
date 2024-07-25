@@ -153,7 +153,7 @@ public class AosResponseDocumentPack implements DocumentPack {
             DocumentType.D84, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_JS_SOLE_UNDISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
