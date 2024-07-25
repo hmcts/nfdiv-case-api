@@ -216,10 +216,13 @@ public class SystemApplyNoticeOfChangeIT {
 
         OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
                 .organisationIdentifier(USER_IDENTIFIER)
+                .name(TEST_ORGANISATION_NAME)
                 .contactInformation(List.of(
-                    OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()
+                    OrganisationContactInformation.builder()
+                        .addressLine1(TEST_SOLICITOR_ADDRESS)
+                        .build()
                 ))
-                .name(TEST_ORGANISATION_NAME).build();
+            .build();
         FindUsersByOrganisationResponse findUsersByOrganisationResponse =
                 FindUsersByOrganisationResponse.builder().users(professionalUsers)
                         .organisationIdentifier(TEST_ORGANISATION_ID).build();
