@@ -130,6 +130,7 @@ class ChangeOfRepresentativeServiceTest {
         assertEquals(null, applicant2CaseData.getApplicant2().getSolicitor().getAddressOverseas());
         assertEquals(null, applicant2CaseData.getApplicant2().getSolicitor().getPhone());
         assertEquals(null, applicant2CaseData.getApplicant2().getSolicitor().getReference());
+        assertEquals(Collections.emptySet(), applicant2CaseData.getApplicant2().getSolicitor().getAgreeToReceiveEmailsCheckbox());
 
         assertTrue(applicant2CaseData.getApplicant2().isRepresented());
         assertFalse(applicant2CaseData.getApplicant2().isApplicantOffline());

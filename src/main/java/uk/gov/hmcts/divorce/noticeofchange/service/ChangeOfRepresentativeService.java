@@ -100,15 +100,16 @@ public class ChangeOfRepresentativeService {
         applicant.setOffline(YesOrNo.NO);
     }
 
-    private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, OrganisationsResponse nocRequestUserOrg,
+    private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, OrganisationsResponse nocRequestingUserOrg,
                                                     ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
 
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
-        applicantSolicitor.setFirmName(nocRequestUserOrg.getName());
+        applicantSolicitor.setFirmName(nocRequestingUserOrg.getName());
         applicantSolicitor.setAddress(
-            parseOrganisationAddress(nocRequestUserOrg.getContactInformation())
+            parseOrganisationAddress(nocRequestingUserOrg.getContactInformation())
         );
+        applicantSolicitor.setAgreeToReceiveEmailsCheckbox(Collections.emptySet());
         applicantSolicitor.setReference(null);
         applicantSolicitor.setAddressOverseas(null);
         applicantSolicitor.setPhone(null);
