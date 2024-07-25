@@ -138,7 +138,7 @@ public class CertificateOfEntitlementDocumentPack implements DocumentPack {
                 APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK;
         } else {
             if (applicant.isRepresented()) {
-              return APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK_REPRESENTED;
+                return APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK_REPRESENTED;
             } else if (isSole) {
                 return RESPONDENT_CERTIFICATE_OF_ENTITLEMENT_PACK;
             }
