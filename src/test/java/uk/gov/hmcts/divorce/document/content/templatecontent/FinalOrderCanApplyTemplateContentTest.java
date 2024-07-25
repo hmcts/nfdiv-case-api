@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.FINAL_ORDER_OVERDU
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
@@ -96,7 +95,7 @@ class FinalOrderCanApplyTemplateContentTest {
         expectedEntries.put(PARTNER, "husband");
         expectedEntries.put(ADDRESS, "test value");
         expectedEntries.put(IS_JOINT, false);
-        expectedEntries.put(IS_DIVORCE, YES);
+        expectedEntries.put(IS_DIVORCE, true);
 
         Map<String, Object> templateContents = finalOrderCanApplyTemplateContent.getTemplateContent(caseData,
                 TEST_CASE_ID, caseData.getApplicant1());
