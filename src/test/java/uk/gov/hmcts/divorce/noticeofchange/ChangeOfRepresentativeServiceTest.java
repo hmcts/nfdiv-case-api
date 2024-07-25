@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -54,6 +55,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
@@ -98,7 +100,12 @@ class ChangeOfRepresentativeServiceTest {
         when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_ID))
                 .thenReturn(findUsersByOrganisationResponse);
 
-        OrganisationsResponse organisationsResponse = OrganisationsResponse.builder().name(TEST_ORGANISATION_NAME).build();
+        OrganisationContactInformation contactInformation = new OrganisationContactInformation();
+        contactInformation.setAddressLine1(TEST_SOLICITOR_ADDRESS);
+        OrganisationsResponse organisationsResponse = OrganisationsResponse.builder()
+            .name(TEST_ORGANISATION_NAME)
+            .contactInformation(List.of(contactInformation))
+            .build();
 
         when(organisationClient.getOrganisationByUserId(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_USER_ID))
                 .thenReturn(organisationsResponse);
@@ -119,6 +126,11 @@ class ChangeOfRepresentativeServiceTest {
         assertEquals(TEST_ORG_ID, changeOfRepresentative.getRemovedRepresentative().getOrganisation().getOrganisationId());
         assertEquals(TEST_SOLICITOR_EMAIL, applicant2CaseData.getApplicant2().getSolicitor().getEmail());
         assertEquals(TEST_ORGANISATION_NAME, applicant2CaseData.getApplicant2().getSolicitor().getFirmName());
+        assertEquals(TEST_SOLICITOR_ADDRESS, applicant2CaseData.getApplicant2().getSolicitor().getAddress());
+        assertEquals(null, applicant2CaseData.getApplicant2().getSolicitor().getAddressOverseas());
+        assertEquals(null, applicant2CaseData.getApplicant2().getSolicitor().getPhone());
+        assertEquals(null, applicant2CaseData.getApplicant2().getSolicitor().getReference());
+
         assertTrue(applicant2CaseData.getApplicant2().isRepresented());
         assertFalse(applicant2CaseData.getApplicant2().isApplicantOffline());
         assertEquals("Respondent", changeOfRepresentative.getParty());

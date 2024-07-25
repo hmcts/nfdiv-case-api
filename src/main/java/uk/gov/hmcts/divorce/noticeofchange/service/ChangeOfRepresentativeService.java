@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 import uk.gov.hmcts.divorce.noticeofchange.model.Representative;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -27,6 +28,7 @@ import java.util.Optional;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
 import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor.SOLICITOR_NOTICE_OF_CHANGE;
 
 @Component
@@ -55,15 +57,17 @@ public class ChangeOfRepresentativeService {
             Organisation orgToAdd = changeOrganisationRequest.getOrganisationToAdd();
             String loggedInUserEmail = changeOrganisationRequest.getCreatedBy().toLowerCase();
             String organisationId = orgToAdd.getOrganisationId();
+
             ProfessionalUser nocRequestingUser = getProfessionalUsers(sysUserToken, s2sToken, organisationId, loggedInUserEmail);
-            String nocSolicitorOrgName = organisationClient
-                    .getOrganisationByUserId(sysUserToken, s2sToken, nocRequestingUser.getUserIdentifier()).getName();
-            orgToAdd.setOrganisationName(nocSolicitorOrgName);
+            OrganisationsResponse nocSolicitorOrg = organisationClient
+                .getOrganisationByUserId(sysUserToken, s2sToken, nocRequestingUser.getUserIdentifier());
+            orgToAdd.setOrganisationName(nocSolicitorOrg.getName());
+
             Solicitor beforeSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();;
             if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
                 removedRepresentative = updateRepresentative(beforeSolicitor);
             }
-            updateOrgPolicyAndSolicitorDetails(currentSolicitor,  nocSolicitorOrgName, nocRequestingUser, loggedInUserEmail);
+            updateOrgPolicyAndSolicitorDetails(currentSolicitor,  nocSolicitorOrg, nocRequestingUser, loggedInUserEmail);
             setApplicantRepresented(isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2());
             updatedBy = String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName());
             addedRepresentative = updateRepresentative(updatedBy, loggedInUserEmail, orgToAdd);
@@ -96,12 +100,18 @@ public class ChangeOfRepresentativeService {
         applicant.setOffline(YesOrNo.NO);
     }
 
-    private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, String nocRequestUserFirmName,
+    private void updateOrgPolicyAndSolicitorDetails(Solicitor applicantSolicitor, OrganisationsResponse nocRequestUserOrg,
                                                     ProfessionalUser nocRequestingUser, String loggedInUserEmail) {
 
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
-        applicantSolicitor.setFirmName(nocRequestUserFirmName);
+        applicantSolicitor.setFirmName(nocRequestUserOrg.getName());
+        applicantSolicitor.setAddress(
+            parseOrganisationAddress(nocRequestUserOrg.getContactInformation())
+        );
+        applicantSolicitor.setReference(null);
+        applicantSolicitor.setAddressOverseas(null);
+        applicantSolicitor.setPhone(null);
     }
 
     private ProfessionalUser getProfessionalUsers(String sysUserToken, String s2sToken, String organisationId, String loggedInUserEmail) {
