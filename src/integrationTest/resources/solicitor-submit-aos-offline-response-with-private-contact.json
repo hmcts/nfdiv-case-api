@@ -44,13 +44,13 @@
       {
         "id":"${json-unit.any-string}",
         "value": {
-          "confidentialDocumentsReceived":"aosResponseCoversheet",
+          "confidentialDocumentsReceived":"coversheet",
           "documentLink": {
             "document_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002",
-            "document_filename":"aosResponseCoversheet-1616591401473378-2022-02-15:13:39.pdf",
+            "document_filename":"coversheet-1616591401473378-2022-02-15:13:39.pdf",
             "document_binary_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/baf61f9a-38e5-11ed-a261-0242ac120002/binary"
           },
-          "documentFileName":"aosResponseCoversheet-1616591401473378-2022-02-15:13:39.pdf"}
+          "documentFileName":"coversheet-1616591401473378-2022-02-15:13:39.pdf"}
       }
     ],
     "documentsGenerated": [

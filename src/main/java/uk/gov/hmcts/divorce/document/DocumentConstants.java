@@ -35,7 +35,6 @@ public final class DocumentConstants {
 
     public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
-    public static final String AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME = "aosResponseCoversheet";
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "judicialSeparationOrderGrantedCoversheet";
