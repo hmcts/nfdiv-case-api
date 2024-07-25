@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocumentPack.APP_2_OFFLINE_CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK;
@@ -98,6 +97,7 @@ public class AosResponseDocumentPackTest {
         verify(generateD84Form).generateD84(data);
         assertThat(documentPack).isEqualTo(APP_2_OFFLINE_CITIZEN_JS_UNDISPUTED_AOS_RESPONSE_PACK);
     }
+
     @Test
     public void shouldReturnCorrectPackWhenJSUnDisputedUnRepresentedApp1Offline() {
         CaseData data = validApplicant1CaseData();
