@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
 import java.util.Optional;
 
+import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR;
@@ -33,43 +34,43 @@ public class AosResponseDocumentPack implements DocumentPack {
     private final GenerateD10Form generateD10Form;
     private final GenerateD84Form generateD84Form;
 
-    private static final DocumentPackInfo SOLICITOR_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo SOLICITOR_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED),
             DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT2_SOLICITOR, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo CITIZEN_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo CITIZEN_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_JS_SOLE_DISPUTED),
             DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_JS_SOLE_DISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID),
             DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo APP_2_OFFLINE_SOLICITOR_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo APP_2_OFFLINE_SOLICITOR_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED),
@@ -77,12 +78,12 @@ public class AosResponseDocumentPack implements DocumentPack {
             DocumentType.D84, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT2_SOLICITOR, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo APP_2_OFFLINE_CITIZEN_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo APP_2_OFFLINE_CITIZEN_JS_DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_JS_SOLE_DISPUTED),
@@ -90,19 +91,19 @@ public class AosResponseDocumentPack implements DocumentPack {
             DocumentType.D84, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_JS_SOLE_DISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo SOLICITOR_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo SOLICITOR_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED),
             DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT2_SOLICITOR, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
@@ -114,24 +115,24 @@ public class AosResponseDocumentPack implements DocumentPack {
             DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_JS_SOLE_UNDISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID),
             DocumentType.RESPONDENT_ANSWERS, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
-    private static final DocumentPackInfo APP_2_OFFLINE_SOLICITOR_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
+    static final DocumentPackInfo APP_2_OFFLINE_SOLICITOR_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
             DocumentType.AOS_RESPONSE_LETTER, Optional.of(NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED),
@@ -139,7 +140,7 @@ public class AosResponseDocumentPack implements DocumentPack {
             DocumentType.D84, Optional.empty()
         ),
         ImmutableMap.of(
-            COVERSHEET_APPLICANT2_SOLICITOR, COVERSHEET_DOCUMENT_NAME,
+            COVERSHEET_APPLICANT2_SOLICITOR, AOS_RESPONSE_COVERSHEET_DOCUMENT_NAME,
             NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
