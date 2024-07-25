@@ -100,11 +100,11 @@ class ChangeOfRepresentativeServiceTest {
         when(organisationClient.getOrganisationUsers(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_ID))
                 .thenReturn(findUsersByOrganisationResponse);
 
-        OrganisationContactInformation contactInformation = new OrganisationContactInformation();
-        contactInformation.setAddressLine1(TEST_SOLICITOR_ADDRESS);
         OrganisationsResponse organisationsResponse = OrganisationsResponse.builder()
             .name(TEST_ORGANISATION_NAME)
-            .contactInformation(List.of(contactInformation))
+            .contactInformation(List.of(
+                OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()
+            ))
             .build();
 
         when(organisationClient.getOrganisationByUserId(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_ORGANISATION_USER_ID))
