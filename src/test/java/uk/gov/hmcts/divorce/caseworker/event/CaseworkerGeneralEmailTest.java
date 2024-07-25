@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -75,6 +76,9 @@ public class CaseworkerGeneralEmailTest {
 
     @Mock
     private IdamService idamService;
+
+    @Mock
+    private DocumentIdProvider documentIdProvider;
 
     @InjectMocks
     private CaseworkerGeneralEmail generalEmail;
@@ -561,6 +565,66 @@ public class CaseworkerGeneralEmailTest {
         verify(generalEmailNotification).send(caseData,TEST_CASE_ID);
     }
 
+    @Test
+    void shouldReturnWarningAboutAttachmentSizeWhenDocumentsAttached() {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListofDocument(2))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(getCaseworkerUser());
+
+        when(documentIdProvider.documentId()).thenReturn("1");
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getWarnings()).isNotEmpty();
+        assertThat(response.getWarnings()).hasSize(1);
+        assertThat(response.getWarnings()).contains("Please ensure all individual attachments are smaller than 2MB. "
+            + "If you are sure that all attachments are smaller than 2MB, submit the event again to proceed.");
+    }
+
+    @Test
+    void shouldReturnNoWarningAboutAttachmentSizeWhenDocumentsNotAttached() {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(getCaseworkerUser());
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getWarnings()).isEmpty();
+    }
+
     List<ListValue<DivorceDocument>> getListofDocument(int size) {
         List<ListValue<DivorceDocument>> docList = new ArrayList<>();
         while (size > 0) {
@@ -575,5 +639,16 @@ public class CaseworkerGeneralEmailTest {
             size--;
         }
         return docList;
+    }
+
+    private User getCaseworkerUser() {
+        var userDetails = UserInfo
+            .builder()
+            .givenName("testFname")
+            .familyName("testSname")
+            .name("testFname testSname")
+            .build();
+
+        return new User(TEST_AUTHORIZATION_TOKEN, userDetails);
     }
 }
