@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -22,14 +23,22 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
@@ -38,7 +47,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TIME_OF_HEARING;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_FIRM;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -117,6 +130,28 @@ public class CertificateOfEntitlementTemplateContent implements TemplateContent 
         templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
         templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.appliedForFinancialOrder());
+
+        if (applicant.isRepresented()) {
+            templateContent.put(CASE_REFERENCE, formatId(caseId));
+            templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
+            templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
+            if (caseData.getApplicant1().isRepresented()) {
+                templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+            }
+            templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
+            templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+            if (caseData.getApplicant2().isRepresented()) {
+                templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+            }
+            templateContent.put(COURT_NAME, conditionalOrderCourt);
+
+            templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+            templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
+            templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+            templateContent.put(SOLICITOR_REFERENCE, Objects.nonNull(applicant.getSolicitor().getReference())
+                ? applicant.getSolicitor().getReference()
+                : "not provided");
+        }
 
         return templateContent;
     }
