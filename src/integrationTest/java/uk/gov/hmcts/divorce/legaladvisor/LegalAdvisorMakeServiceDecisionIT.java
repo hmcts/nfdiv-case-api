@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -248,7 +249,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .serviceApplicationRefusalReason("refusal reasons")
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
-            )
+            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
             .dueDate(LocalDate.of(2021, 6, 20))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
@@ -300,7 +301,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
                     .serviceApplicationRefusalReason("refusal reasons")
                     .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
                     .build()
-            )
+            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
             .dueDate(LocalDate.of(2021, 6, 20))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
