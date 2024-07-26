@@ -55,4 +55,15 @@ class CaseworkerHwfApplicationAcceptedTest {
         verify(caseworkerHwfApplicationAndPaymentHelper).getState(caseData);
         verify(caseworkerHwfApplicationAndPaymentHelper).setDateSubmittedAndDueDate(caseData);
     }
+
+    @Test
+    void shouldSetDefaultCaseDataRequiredForPostSubmissionCases() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, null);
+
+        verify(caseworkerHwfApplicationAndPaymentHelper).setRequiredCaseFieldsForPostSubmissionCase(caseDetails);
+    }
 }
