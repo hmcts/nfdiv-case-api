@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -28,6 +29,7 @@ import uk.gov.service.notify.NotificationClientException;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +61,14 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
+
+    private static final String WARNING_ATTACHMENT_SIZE
+        = "Please ensure all individual attachments are smaller than 2MB. "
+        + "If you are sure that all attachments are smaller than 2MB, submit the event again to proceed.";
+
+    private static final String WARNING_LABEL_ATTACHMENT_SIZE
+        = "### WARNING: Individual attachments must be less than 2MB "
+        + "or else the general email will fail to send.";
 
     @Autowired
     private DocumentIdProvider documentIdProvider;
@@ -96,6 +106,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailDetails)
+            .label("attachmentWarning", WARNING_LABEL_ATTACHMENT_SIZE)
             .optional(GeneralEmail::getGeneralEmailAttachments)
             .done();
     }
@@ -153,6 +164,13 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
         var caseData = details.getData();
         var generalEmail = caseData.getGeneralEmail();
+
+        final List<String> warnings = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
+            warnings.add(WARNING_ATTACHMENT_SIZE);
+        }
+
         final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
@@ -196,6 +214,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .warnings(warnings)
             .build();
     }
 
