@@ -84,6 +84,17 @@ public class AlternativeService {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfPayment;
 
+    @CCD(
+        label = "Further details for Judge or Legal Advisor",
+        typeOverride = TextArea
+    )
+    private String alternativeServiceJudgeOrLegalAdvisorDetails;
+
+    @CCD(
+        label = "Is fee payment required?"
+    )
+    private YesOrNo alternativeServiceFeeRequired;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
