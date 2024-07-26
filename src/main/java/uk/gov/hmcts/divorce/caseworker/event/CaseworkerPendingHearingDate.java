@@ -9,8 +9,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingDate;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -27,7 +31,7 @@ public class CaseworkerPendingHearingDate implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .event(CASEWORKER_PENDING_HEARING_DATE)
             .forStateTransition(
-                GeneralConsiderationComplete,
+                EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse, RespondentFinalOrderRequested),
                 PendingHearingDate
             )
             .name("Pending hearing date")
