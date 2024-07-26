@@ -91,9 +91,11 @@ class CertificateOfEntitlementTemplateContentTest {
     void shouldProvideCorrectTemplateContentForRepresentedCertificateOfEntitlementCoverLetter() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setSolicitor(getOfflineSolicitor());
+        caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.getApplicant2().setSolicitor(getOfflineSolicitor());
+        caseData.getApplicant2().getSolicitor().setReference(TEST_REFERENCE);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.NO);
 
