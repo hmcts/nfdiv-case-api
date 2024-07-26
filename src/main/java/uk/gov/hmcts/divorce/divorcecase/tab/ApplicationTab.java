@@ -259,7 +259,9 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorAddressOverseas", APPLICANT_1_REPRESENTED_OVERSEAS)
             .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
-            .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
+            .field(
+                "applicant1SolicitorOrganisationPolicy",
+                "applicant1SolicitorRepresented=\"Yes\" AND applicant1SolicitorOrganisationPolicy.Organisation.OrganisationID=\"*\"")
             .field("applicant1SolicitorAgreeToReceiveEmailsCheckbox", "applicant1SolicitorRepresented=\"Yes\"");
     }
 
@@ -328,7 +330,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented!=\"No\"")
             .field("applicant2SolicitorFirmName", "applicant2SolicitorRepresented!=\"No\"")
-            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented!=\"No\"")
+            .field(
+                "applicant2SolicitorOrganisationPolicy",
+                "applicant2SolicitorRepresented!=\"No\" AND applicant2SolicitorOrganisationPolicy.Organisation.OrganisationID=\"*\""
+            )
             .field("applicant2SolicitorAgreeToReceiveEmailsCheckbox", "applicant2SolicitorRepresented!=\"No\"")
 
             //Applicant 2 Other proceedings
