@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.EnumSet;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -38,7 +39,7 @@ public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_PART_PAYMENT_MADE)
-            .forStateTransition(EnumSet.of(AwaitingHWFPartPayment, AwaitingHWFEvidence), Submitted)
+            .forStateTransition(EnumSet.of(AwaitingDocuments, AwaitingHWFPartPayment, AwaitingHWFEvidence), Submitted)
             .name(EVENT_NAME_AND_DESCRIPTION)
             .description(EVENT_NAME_AND_DESCRIPTION)
             .aboutToSubmitCallback(this::aboutToSubmit)
