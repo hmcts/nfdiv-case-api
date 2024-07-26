@@ -126,8 +126,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
                 AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
             .field("applicant2Offline", NEVER_SHOW)
-            .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"", "## This is an online AoS response")
-            .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"", "## This is an offline AoS response")
+            .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"",
+                "## This is an online AoS response")
+            .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"",
+                "## This is an offline AoS response")
             .field("confirmReadPetition")
             .field("jurisdictionAgree")
             .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
@@ -139,7 +141,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
-            .field("noticeOfProceedingsEmail","applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
+            .field("noticeOfProceedingsEmail",
+                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
             .field("noticeOfProceedingsSolicitorFirm")
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
@@ -153,7 +156,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
             .field("applicant2HWFNeedHelp", NEVER_SHOW)
-            .field("applicant1HWFReferenceNumber", "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
+            .field("applicant1HWFReferenceNumber",
+                "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
             .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
             .field("newPaperCase", NEVER_SHOW)
@@ -329,7 +333,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("confidentialDocumentsUploaded")
             .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
             .field(CaseData::getConfidentialGeneralEmails)
-            .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);;
+            .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -338,11 +342,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
-            .field("servicePaymentFeePaymentMethod")
-            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\"")
-            .field("servicePaymentFeeAccountNumber", "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
-            .field("servicePaymentFeeAccountReferenceNumber", "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
-            .field("servicePaymentFeeHelpWithFeesReferenceNumber", "servicePaymentFeePaymentMethod=\"feePayByHelp\"")
+            .field("alternativeServiceJudgeOrLegalAdvisorDetails")
+            .field("alternativeServiceFeeRequired")
+            .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeeAccountNumber",
+                "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeeAccountReferenceNumber",
+                "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeeHelpWithFeesReferenceNumber",
+                "servicePaymentFeePaymentMethod=\"feePayByHelp\" AND alternativeServiceFeeRequired=\"Yes\"")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")
@@ -476,9 +485,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "applicationType=\"jointApplication\"",
                 "### Applicant 1")
             .field("isFinalOrderOverdue", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("applicant1SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("applicant2SolicitorRepresented", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant1SolicitorRepresented",
+                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("applicant2SolicitorRepresented",
+                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field("labelContentFinaliseDivorceOrEndCivilPartnership",
+                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicant1WantToApplyForFinalOrder")
             .field("applicant1FinalOrderLateExplanation")
             .field("applicant1FinalOrderStatementOfTruth")
