@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
 import uk.gov.hmcts.divorce.testutil.ManageCaseAssignmentWireMock;
@@ -62,6 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -130,7 +132,14 @@ public class SystemApplyNoticeOfChangeIT {
                 .firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).userIdentifier(USER_IDENTIFIER).build());
 
         OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
-                .organisationIdentifier(USER_IDENTIFIER).name(TEST_ORGANISATION_NAME).build();
+                .organisationIdentifier(USER_IDENTIFIER)
+                .name(TEST_ORGANISATION_NAME)
+                .contactInformation(List.of(
+                    OrganisationContactInformation.builder()
+                        .addressLine1(TEST_SOLICITOR_ADDRESS)
+                        .build()
+                ))
+                .build();
         FindUsersByOrganisationResponse findUsersByOrganisationResponse =
                 FindUsersByOrganisationResponse.builder().users(professionalUsers)
                         .organisationIdentifier(TEST_ORGANISATION_ID).build();
@@ -189,6 +198,8 @@ public class SystemApplyNoticeOfChangeIT {
                         .value(TEST_SOLICITOR_NAME))
                 .andExpect(jsonPath("$.data.applicant1SolicitorEmail")
                         .value(TEST_SOLICITOR_EMAIL))
+                .andExpect(jsonPath("$.data.applicant1SolicitorAddress")
+                        .value(TEST_SOLICITOR_ADDRESS))
                 .andExpect(jsonPath("$.data.applicant1SolicitorOrganisationPolicy.Organisation.OrganisationID")
                         .value(TEST_ORGANISATION_ID))
                 .andExpect(jsonPath("$.data.applicant1SolicitorOrganisationPolicy.Organisation.OrganisationName")
@@ -204,7 +215,9 @@ public class SystemApplyNoticeOfChangeIT {
                 .firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).userIdentifier(USER_IDENTIFIER).build());
 
         OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
-                .organisationIdentifier(USER_IDENTIFIER).name(TEST_ORGANISATION_NAME).build();
+                .organisationIdentifier(USER_IDENTIFIER)
+                .name(TEST_ORGANISATION_NAME)
+            .build();
         FindUsersByOrganisationResponse findUsersByOrganisationResponse =
                 FindUsersByOrganisationResponse.builder().users(professionalUsers)
                         .organisationIdentifier(TEST_ORGANISATION_ID).build();

@@ -36,6 +36,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 
@@ -153,6 +154,7 @@ public final class ManageCaseAssignmentWireMock {
         Solicitor solicitor = Solicitor.builder()
                 .name(TEST_SOLICITOR_NAME)
                 .email(TEST_SOLICITOR_EMAIL)
+                .address(TEST_SOLICITOR_ADDRESS)
                 .organisationPolicy(OrganisationPolicy.<UserRole>builder().organisation(Organisation.builder()
                                 .organisationId(TEST_ORGANISATION_ID)
                                 .organisationName(TEST_ORGANISATION_NAME)

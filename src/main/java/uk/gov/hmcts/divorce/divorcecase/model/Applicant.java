@@ -155,6 +155,7 @@ public class Applicant {
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
+    @CCD(access = {AcaSystemUserAccess.class})
     private Solicitor solicitor;
 
     @CCD(
