@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -102,5 +103,27 @@ class GenerateAndLinkRespondentAnswersTest {
                 RESPONDENT_ANSWERS_DOCUMENT_NAME,
                 caseData,
                 TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotGenerateRespondentAnswersWhenNotOnlineAosSubmittedAndNoOfflineDocumentReceived() {
+
+        final Document documentLink = new Document("url", "filename", "binary url");
+        final ListValue<DivorceDocument> respondentAnswersListValue = ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder()
+                        .documentType(RESPONDENT_ANSWERS)
+                        .documentLink(documentLink)
+                        .build())
+                .build();
+
+        final CaseData caseData = caseData();
+        caseData.getDocuments().setDocumentsUploaded(singletonList(respondentAnswersListValue));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        generateAndLinkRespondentAnswers.apply(caseDetails);
+        verifyNoInteractions(documentGenerator);
     }
 }
