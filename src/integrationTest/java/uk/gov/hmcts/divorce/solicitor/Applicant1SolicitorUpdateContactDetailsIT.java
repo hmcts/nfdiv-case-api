@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP1_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -58,9 +59,6 @@ public class Applicant1SolicitorUpdateContactDetailsIT {
 
     private static final String SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_ERROR =
         "classpath:solicitor-update-contact-details-mid-event-error-response.json";
-
-    private static final String APP1_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL =
-        "/callbacks/mid-event?page=Applicant1SolUpdateContactDetails";
 
     @Autowired
     private MockMvc mockMvc;

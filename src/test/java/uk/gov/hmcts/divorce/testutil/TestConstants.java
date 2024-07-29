@@ -26,6 +26,8 @@ public final class TestConstants {
     public static final String ABOUT_THE_SOL_MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
     public static final String SOL_PAYMENT_MID_EVENT_URL = "/callbacks/mid-event?page=SolPayment";
     public static final String APP2_SOL_FO_PAYMENT_MID_EVENT_URL = "/callbacks/mid-event?page=SolFinalOrderPayment";
+    public static final String APP1_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL = "/callbacks/mid-event?page=Applicant1SolUpdateContactDetails";
+    public static final String APP2_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL = "/callbacks/mid-event?page=Applicant2SolUpdateContactDetails";
     public static final String CREATE_GENERAL_ORDER_MID_EVENT_URL = "/callbacks/mid-event?page=CreateGeneralOrder";
     public static final String CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL = "/callbacks/mid-event?page=refusalOrderClarification";
     public static final String CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL = "/callbacks/mid-event?page=amendApplication";
