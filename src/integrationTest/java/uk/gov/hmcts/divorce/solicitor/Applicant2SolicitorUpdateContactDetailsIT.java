@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_UPDATE_CONTACT_DETAILS_ERROR_RESPONSE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -56,9 +57,6 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     PrdOrganisationWireMock.PropertiesInitializer.class
 })
 public class Applicant2SolicitorUpdateContactDetailsIT {
-
-    private static final String SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_ERROR =
-        "classpath:solicitor-update-contact-details-mid-event-error-response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -83,7 +81,7 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
     }
 
     @Test
-    void shouldValidateApplicant2SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
+    void shouldValidateApplicant2SolicitorEmailAndReturnNoErrorsWhenEmailIsLinkedToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
@@ -96,9 +94,7 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
                     callbackRequest(caseDataWithApplicant2Org(), APP2_SOLICITOR_UPDATE_CONTACT_DETAILS))
                 )
                 .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
+            .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -107,7 +103,7 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
     }
 
     @Test
-    public void shouldValidateApplicant2SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
+    public void shouldValidateApplicant2SolicitorEmailAndReturnErrorWhenEmailIsNotLinkedToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
@@ -120,14 +116,12 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
                     callbackRequest(caseDataWithApplicant2Org(), APP2_SOLICITOR_UPDATE_CONTACT_DETAILS))
                 )
                 .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
+            .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
-        assertEquals(expectedResponse(SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_ERROR), jsonStringResponse, STRICT);
+        assertEquals(expectedResponse(SOLICITOR_UPDATE_CONTACT_DETAILS_ERROR_RESPONSE), jsonStringResponse, STRICT);
     }
 
     private CaseData caseDataWithApplicant2Org() {
@@ -143,8 +137,7 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
         var applicant = getApplicantWithAddress();
         applicant.setFinancialOrder(NO);
 
-        return CaseData
-            .builder()
+        return CaseData.builder()
             .applicant2(applicant)
             .divorceOrDissolution(DIVORCE)
             .build();

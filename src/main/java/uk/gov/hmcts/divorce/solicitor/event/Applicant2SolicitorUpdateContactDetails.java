@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -30,17 +30,14 @@ import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateCont
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant2SolicitorUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APP2_SOLICITOR_UPDATE_CONTACT_DETAILS = "app2-solicitor-update-contact-details";
 
-    private static final String APP2_SOL_UPDATE_CONTACT_DETAILS_PAGE = "Applicant2SolUpdateContactDetails";
+    private final SolicitorCreateApplicationService solicitorCreateApplicationService;
 
-    @Autowired
-    private SolicitorCreateApplicationService solicitorCreateApplicationService;
-
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -53,7 +50,7 @@ public class Applicant2SolicitorUpdateContactDetails implements CCDConfig<CaseDa
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
-            .page(APP2_SOL_UPDATE_CONTACT_DETAILS_PAGE, this::midEvent)
+            .page("Applicant2SolUpdateContactDetails", this::midEvent)
             .pageLabel("Update your contact details")
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)

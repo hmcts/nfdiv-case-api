@@ -22,14 +22,11 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateContactDetails.APP1_SOLICITOR_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateContactDetails.INVALID_EMAIL_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,15 +53,12 @@ class Applicant1SolicitorUpdateContactDetailsTest {
     }
 
     @Test
-    void shouldReturnValidationErrorWhenSolicitorEmailIsNotLinkedToOrg() {
-        Solicitor solicitor = Solicitor.builder()
-            .email(TEST_SOLICITOR_EMAIL)
-            .build();
+    void shouldReturnErrorsWhenEmailValidationIsUnsuccessful() {
+        Solicitor solicitor = Solicitor.builder().build();
         var caseDetails = caseDetailsWithApplicant1Solicitor(solicitor);
 
-        when(solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            solicitor, TEST_CASE_ID, null
-        )).thenReturn(invalidCaseInfo());
+        when(solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(solicitor, TEST_CASE_ID, null))
+            .thenReturn(invalidCaseInfoResult());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1SolicitorUpdateContactDetails.midEvent(caseDetails, null);
@@ -73,13 +67,12 @@ class Applicant1SolicitorUpdateContactDetailsTest {
     }
 
     @Test
-    void shouldNotReturnValidationErrorWhenSolicitorEmailIsLinkedToOrg() {
-        Solicitor solicitor = Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build();
+    void shouldNotReturnErrorsWhenEmailValidationIsSuccessful() {
+        Solicitor solicitor = Solicitor.builder().build();
         var caseDetails = caseDetailsWithApplicant1Solicitor(solicitor);
 
-        when(solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            solicitor, TEST_CASE_ID, null
-        )).thenReturn(validCaseInfo());
+        when(solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(solicitor, TEST_CASE_ID, null))
+            .thenReturn(validCaseInfoResult());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1SolicitorUpdateContactDetails.midEvent(caseDetails, null);
@@ -90,12 +83,10 @@ class Applicant1SolicitorUpdateContactDetailsTest {
     private CaseDetails<CaseData, State> caseDetailsWithApplicant1Solicitor(Solicitor solicitor) {
         var applicant1 = getApplicantWithAddress();
         applicant1.setSolicitor(solicitor);
-        applicant1.setFinancialOrder(NO);
 
         CaseData data = CaseData
             .builder()
             .applicant1(applicant1)
-            .divorceOrDissolution(DIVORCE)
             .build();
 
         return CaseDetails.<CaseData, State>builder()
@@ -104,13 +95,13 @@ class Applicant1SolicitorUpdateContactDetailsTest {
             .build();
     }
 
-    private CaseInfo invalidCaseInfo() {
+    private CaseInfo invalidCaseInfoResult() {
         return CaseInfo.builder()
             .errors(singletonList("Please select an organisation you belong to"))
             .build();
     }
 
-    private CaseInfo validCaseInfo() {
+    private CaseInfo validCaseInfoResult() {
         return CaseInfo.builder().build();
     }
 }

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -29,19 +29,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APP1_SOLICITOR_UPDATE_CONTACT_DETAILS = "app1-solicitor-update-contact-details";
 
     public static final String INVALID_EMAIL_ERROR = "Please enter an email address that is linked to your organisation";
 
-    private static final String APP1_SOL_UPDATE_CONTACT_DETAILS_PAGE = "Applicant1SolUpdateContactDetails";
+    private final SolicitorCreateApplicationService solicitorCreateApplicationService;
 
-    @Autowired
-    private SolicitorCreateApplicationService solicitorCreateApplicationService;
-
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -54,7 +51,7 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
-            .page(APP1_SOL_UPDATE_CONTACT_DETAILS_PAGE, this::midEvent)
+            .page("Applicant1SolUpdateContactDetails", this::midEvent)
             .pageLabel("Update your contact details")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
