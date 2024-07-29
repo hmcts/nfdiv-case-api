@@ -84,16 +84,7 @@ class GenerateAndLinkRespondentAnswersTest {
     @Test
     void shouldGenerateRespondentAnswersWhenOnlineAosSubmitted() {
 
-        final Document documentLink = new Document("url", "filename", "binary url");
-        final ListValue<DivorceDocument> respondentAnswersListValue = ListValue.<DivorceDocument>builder()
-                .value(DivorceDocument.builder()
-                        .documentType(RESPONDENT_ANSWERS)
-                        .documentLink(documentLink)
-                        .build())
-                .build();
-
         final CaseData caseData = caseData();
-        caseData.getDocuments().setDocumentsGenerated(singletonList(respondentAnswersListValue));
         AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService
                 .builder()
                 .dateAosSubmitted(LocalDateTime.now())
