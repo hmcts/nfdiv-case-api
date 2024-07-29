@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
@@ -55,11 +54,11 @@ class GenerateAndLinkRespondentAnswersTest {
 
         final CaseDetails<CaseData, State> result = generateAndLinkRespondentAnswers.apply(caseDetails);
 
-        verify(documentGenerator).generateAndStoreCaseDocument(eq(RESPONDENT_ANSWERS),
-            eq(RESPONDENT_ANSWERS_TEMPLATE_ID),
-            eq(RESPONDENT_ANSWERS_DOCUMENT_NAME),
-            eq(caseData),
-            eq(TEST_CASE_ID));
+        verify(documentGenerator).generateAndStoreCaseDocument(RESPONDENT_ANSWERS,
+            RESPONDENT_ANSWERS_TEMPLATE_ID,
+            RESPONDENT_ANSWERS_DOCUMENT_NAME,
+            caseData,
+            TEST_CASE_ID);
         assertThat(result.getData().getConditionalOrder().getRespondentAnswersLink()).isSameAs(documentLink);
     }
 
@@ -73,11 +72,11 @@ class GenerateAndLinkRespondentAnswersTest {
 
         final CaseDetails<CaseData, State> result = generateAndLinkRespondentAnswers.apply(caseDetails);
 
-        verify(documentGenerator).generateAndStoreCaseDocument(eq(RESPONDENT_ANSWERS),
-            eq(RESPONDENT_ANSWERS_TEMPLATE_ID),
-            eq(RESPONDENT_ANSWERS_DOCUMENT_NAME),
-            eq(caseData),
-            eq(TEST_CASE_ID));
+        verify(documentGenerator).generateAndStoreCaseDocument(RESPONDENT_ANSWERS,
+            RESPONDENT_ANSWERS_TEMPLATE_ID,
+            RESPONDENT_ANSWERS_DOCUMENT_NAME,
+            caseData,
+            TEST_CASE_ID);
         assertThat(result.getData().getConditionalOrder().getRespondentAnswersLink()).isNull();
     }
 
@@ -96,7 +95,7 @@ class GenerateAndLinkRespondentAnswersTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> result = generateAndLinkRespondentAnswers.apply(caseDetails);
+        generateAndLinkRespondentAnswers.apply(caseDetails);
 
         verify(documentGenerator).generateAndStoreCaseDocument(RESPONDENT_ANSWERS,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
