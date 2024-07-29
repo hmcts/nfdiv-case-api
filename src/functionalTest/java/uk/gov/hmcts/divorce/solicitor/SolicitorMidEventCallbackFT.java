@@ -22,7 +22,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_THE_SOL_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
