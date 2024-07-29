@@ -35,9 +35,9 @@ import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorUpdateCont
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP2_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -88,11 +88,13 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
 
-        final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(APP2_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
+        final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant2Org(), APP2_SOLICITOR_UPDATE_CONTACT_DETAILS)))
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(caseDataWithApplicant2Org(), APP2_SOLICITOR_UPDATE_CONTACT_DETAILS))
+                )
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -110,11 +112,13 @@ public class Applicant2SolicitorUpdateContactDetailsIT {
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
 
-        final String jsonStringResponse = mockMvc.perform(post(APP2_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
+        final String jsonStringResponse = mockMvc.perform(post(APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant2Org(), APP2_SOLICITOR_UPDATE_CONTACT_DETAILS)))
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(caseDataWithApplicant2Org(), APP2_SOLICITOR_UPDATE_CONTACT_DETAILS))
+                )
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()

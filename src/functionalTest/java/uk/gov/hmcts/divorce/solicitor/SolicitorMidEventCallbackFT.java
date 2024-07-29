@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateCont
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_THE_SOL_MID_EVENT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP1_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP1_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -69,7 +69,7 @@ public class SolicitorMidEventCallbackFT extends FunctionalTestSuite {
     private static Stream<Arguments> midEventUrlAndEventIdParameters() {
         return Stream.of(
             Arguments.of(ABOUT_THE_SOL_MID_EVENT_URL, SOLICITOR_CREATE),
-            Arguments.of(APP1_SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL, APP1_SOLICITOR_UPDATE_CONTACT_DETAILS)
+            Arguments.of(APP1_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL, APP1_SOLICITOR_UPDATE_CONTACT_DETAILS)
         );
     }
 }
