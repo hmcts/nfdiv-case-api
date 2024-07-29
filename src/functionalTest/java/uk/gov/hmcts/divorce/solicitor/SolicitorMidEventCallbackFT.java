@@ -22,10 +22,12 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateContactDetails.APP1_SOLICITOR_UPDATE_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorUpdateContactDetails.APP2_SOLICITOR_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_THE_SOL_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP1_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -69,7 +71,8 @@ public class SolicitorMidEventCallbackFT extends FunctionalTestSuite {
     private static Stream<Arguments> midEventUrlAndEventIdParameters() {
         return Stream.of(
             Arguments.of(ABOUT_THE_SOL_MID_EVENT_URL, SOLICITOR_CREATE),
-            Arguments.of(APP1_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL, APP1_SOLICITOR_UPDATE_CONTACT_DETAILS)
+            Arguments.of(APP1_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL, APP1_SOLICITOR_UPDATE_CONTACT_DETAILS),
+            Arguments.of(APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL, APP2_SOLICITOR_UPDATE_CONTACT_DETAILS)
         );
     }
 }

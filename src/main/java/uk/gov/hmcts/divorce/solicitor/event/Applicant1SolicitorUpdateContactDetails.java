@@ -1,16 +1,25 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant1SolUpdateContactDetails;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
+import java.util.List;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -24,18 +33,19 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
 
     public static final String APP1_SOLICITOR_UPDATE_CONTACT_DETAILS = "app1-solicitor-update-contact-details";
 
+    public static final String INVALID_EMAIL_ERROR = "Please enter an email address that is linked to your organisation";
+
+    private static final String APP1_SOL_UPDATE_CONTACT_DETAILS_PAGE = "Applicant1SolUpdateContactDetails";
+
     @Autowired
-    private Applicant1SolUpdateContactDetails applicant1SolUpdateContactDetails;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
-        applicant1SolUpdateContactDetails.addTo(pageBuilder);
-    }
-
-    private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
-        return new PageBuilder(configBuilder
+        new PageBuilder(configBuilder
             .event(APP1_SOLICITOR_UPDATE_CONTACT_DETAILS)
             .forAllStates()
             .name("Update your contact info")
@@ -43,10 +53,33 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
-            .grantHistoryOnly(
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR,
-                JUDGE));
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
+            .page(APP1_SOL_UPDATE_CONTACT_DETAILS_PAGE, this::midEvent)
+            .pageLabel("Update your contact details")
+            .complex(CaseData::getApplicant1)
+                .complex(Applicant::getSolicitor)
+                    .mandatoryWithLabel(Solicitor::getName, "Your name")
+                    .mandatoryWithLabel(Solicitor::getPhone, "Your phone number")
+                    .mandatoryWithLabel(Solicitor::getEmail, "Your email")
+                    .mandatory(Solicitor::getAgreeToReceiveEmailsCheckbox)
+                    .mandatoryWithLabel(Solicitor::getAddress, "Firm address")
+                    .mandatory(Solicitor::getAddressOverseas)
+                .done()
+            .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> detailsBefore) {
+        log.info("{} Mid-event callback invoked for Case Id: {}", APP1_SOLICITOR_UPDATE_CONTACT_DETAILS, details.getId());
+
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
+            details.getData().getApplicant1().getSolicitor(), details.getId(), request.getHeader(AUTHORIZATION)
+        );
+
+        if (caseInfo.getErrors() != null && !caseInfo.getErrors().isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder().errors(List.of(INVALID_EMAIL_ERROR)).build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 }
