@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -34,7 +36,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_PAYMENT_MADE)
-            .forStates(AwaitingPayment, AwaitingHWFDecision, AwaitingDocuments)
+            .forStates(AwaitingHWFPartPayment, AwaitingPayment, AwaitingHWFDecision, AwaitingDocuments, AwaitingHWFEvidence)
             .name("Payment made")
             .description("Payment made")
             .aboutToSubmitCallback(this::aboutToSubmit)
