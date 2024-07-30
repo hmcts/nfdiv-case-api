@@ -100,6 +100,13 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         var caseData = details.getData();
 
+        if(caseData.getConditionalOrder().getGrantedDate() == null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("No Conditional Order Granted Date found.  Unable to continue."))
+                .build();
+        }
+
         if (!YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
