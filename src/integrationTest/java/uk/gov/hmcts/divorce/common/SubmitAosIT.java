@@ -32,6 +32,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -64,6 +65,7 @@ import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -152,6 +154,9 @@ public class SubmitAosIT {
 
     @MockBean
     private CcdUpdateService ccdUpdateService;
+
+    @MockBean
+    private PaymentService paymentService;
 
     @MockBean
     private Clock clock;
@@ -350,7 +355,8 @@ public class SubmitAosIT {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.setSupplementaryCaseType(NA);
         data.setApplicationType(SOLE_APPLICATION);
-
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString()))
+            .thenReturn(Double.parseDouble("50.0"));
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
