@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -10,34 +11,35 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.EnumSet;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingDate;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole> {
-
-    public static final String CASEWORKER_HWF_REFUSED = "caseworker-hwf-refused";
+@Slf4j
+public class CaseworkerPendingHearingDate implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CASEWORKER_PENDING_HEARING_DATE = "caseworker-pending-hearing-date";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_HWF_REFUSED)
+            .event(CASEWORKER_PENDING_HEARING_DATE)
             .forStateTransition(
-                EnumSet.of(AwaitingDocuments, AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment),
-                AwaitingDocuments
+                EnumSet.of(GeneralConsiderationComplete, AwaitingDwpResponse, RespondentFinalOrderRequested),
+                PendingHearingDate
             )
-            .name("HWF refused")
-            .description("HWF refused")
+            .name("Pending hearing date")
+            .description("Pending hearing date")
             .showEventNotes()
+            .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE));
+            .grant(CREATE_READ_UPDATE, SUPER_USER)
+            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE));
     }
 }

@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -494,27 +495,46 @@ class LegalAdvisorMakeServiceDecisionTest {
         final CaseData caseData = CaseData.builder()
             .alternativeService(
                 AlternativeService
-                    .builder()
-                    .deemedServiceDate(LocalDate.now(clock))
-                    .serviceApplicationGranted(NO)
-                    .build()
-            )
-            .build();
+                        .builder()
+                        .deemedServiceDate(LocalDate.now(clock))
+                        .serviceApplicationGranted(NO)
+                        .alternativeServiceType(DISPENSED)
+                        .build()
+        )
+                .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(AwaitingServiceConsideration);
         caseDetails.setData(caseData);
 
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        var orderToDispensedDoc = new Document(
+                DOCUMENT_URL,
+                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
+                DOCUMENT_URL + "/binary"
+        );
+
+        when(
+                caseDataDocumentService.renderDocument(
+                        templateContent,
+                        TEST_CASE_ID,
+                        SERVICE_REFUSAL_TEMPLATE_ID,
+                        ENGLISH,
+                        DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
+                )).thenReturn(orderToDispensedDoc);
+
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getState()).isEqualTo(AwaitingAos);
+        assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
 
         ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test
@@ -530,7 +550,7 @@ class LegalAdvisorMakeServiceDecisionTest {
                     .serviceApplicationGranted(NO)
                     .alternativeServiceType(DISPENSED)
                     .build()
-            )
+            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -622,7 +642,7 @@ class LegalAdvisorMakeServiceDecisionTest {
                     .serviceApplicationGranted(NO)
                     .alternativeServiceType(DEEMED)
                     .build()
-            )
+            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
