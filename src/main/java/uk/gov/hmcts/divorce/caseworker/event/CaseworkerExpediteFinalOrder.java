@@ -88,7 +88,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
         var caseData = details.getData();
 
-        if(caseData.getConditionalOrder().getGrantedDate() == null) {
+        if (caseData.getConditionalOrder().getGrantedDate() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(Collections.singletonList("No Conditional Order Granted Date found.  Unable to continue."))
