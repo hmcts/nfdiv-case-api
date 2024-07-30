@@ -126,7 +126,7 @@ public class CertificateOfEntitlementTemplateContent implements TemplateContent 
 
         templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.appliedForFinancialOrder());
 
-        if (applicant.isRepresented()) {
+        if (applicant != null && applicant.isRepresented()) {
             if (caseData.getApplicant1().isRepresented()) {
                 templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
             }
