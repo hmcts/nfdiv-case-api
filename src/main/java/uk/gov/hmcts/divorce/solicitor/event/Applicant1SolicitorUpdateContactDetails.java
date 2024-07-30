@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -74,7 +75,7 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
             details.getData().getApplicant1().getSolicitor(), details.getId(), request.getHeader(AUTHORIZATION)
         );
 
-        if (caseInfo.getErrors() != null && !caseInfo.getErrors().isEmpty()) {
+        if (CollectionUtils.isNotEmpty(caseInfo.getErrors())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder().errors(List.of(INVALID_EMAIL_ERROR)).build();
         }
 
