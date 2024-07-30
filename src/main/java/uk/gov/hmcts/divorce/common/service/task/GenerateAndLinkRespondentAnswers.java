@@ -31,7 +31,7 @@ public class GenerateAndLinkRespondentAnswers implements CaseTask {
         final var haveReceivedOfflineRespAnswers = emptyIfNull(caseData.getDocuments().getDocumentsUploaded()).stream()
             .anyMatch(divorceDocumentListValue -> RESPONDENT_ANSWERS.equals(divorceDocumentListValue.getValue().getDocumentType()));
 
-        if (!haveReceivedOfflineRespAnswers || !isEmpty(caseData.getAcknowledgementOfService().getDateAosSubmitted())) {
+        if (!haveReceivedOfflineRespAnswers || !isEmpty(caseData.getAcknowledgementOfService().getAosIsDrafted())) {
             documentGenerator.generateAndStoreCaseDocument(
                 RESPONDENT_ANSWERS,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
