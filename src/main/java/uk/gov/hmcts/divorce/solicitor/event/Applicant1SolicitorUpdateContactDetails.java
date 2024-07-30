@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -44,9 +45,9 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(APP1_SOLICITOR_UPDATE_CONTACT_DETAILS)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name("Update contact info")
-            .description("Update your contact details")
+            .description("Update contact info")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
