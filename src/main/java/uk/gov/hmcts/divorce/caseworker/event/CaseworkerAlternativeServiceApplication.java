@@ -7,9 +7,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -21,7 +23,9 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -64,6 +68,8 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
             .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getReceivedServiceApplicationDate)
                 .mandatory(AlternativeService::getAlternativeServiceType)
+                .optional(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
+                .mandatory(AlternativeService::getAlternativeServiceFeeRequired)
                 .done();
     }
 
@@ -77,11 +83,19 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
+        State endState = AwaitingServiceConsideration;
+
+        if (YesOrNo.YES == caseData.getAlternativeService().getAlternativeServiceFeeRequired()) {
+            endState = AwaitingServicePayment;
+        } else if (AlternativeServiceType.BAILIFF == caseData.getAlternativeService().getAlternativeServiceType()) {
+            endState = AwaitingBailiffReferral;
+        }
+
         notificationDispatcher.send(generalApplicationReceivedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(AwaitingServicePayment)
+            .state(endState)
             .build();
     }
 }
