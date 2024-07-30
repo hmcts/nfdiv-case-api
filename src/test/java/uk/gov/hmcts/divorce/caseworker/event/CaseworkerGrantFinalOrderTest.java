@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
@@ -27,6 +28,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -80,6 +82,7 @@ class CaseworkerGrantFinalOrderTest {
     @Test
     public void shouldPopulateDynamicListWithGeneralOrderWhenFinalOrderIsOverdue() {
         final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         caseData.setFinalOrder(FinalOrder.builder()
                 .isFinalOrderOverdue(YesOrNo.YES)
                 .dateFinalOrderEligibleFrom(LocalDate.now())
@@ -113,6 +116,7 @@ class CaseworkerGrantFinalOrderTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
+        assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getListItems()
             .stream().map(DynamicListElement::getLabel)).containsAll(List.of("generalOrder1", "generalOrder2"));
     }
@@ -120,6 +124,7 @@ class CaseworkerGrantFinalOrderTest {
     @Test
     public void shouldNotPopulateDynamicListWithGeneralOrderWhenFinalOrderIsNotOverdue() {
         final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         caseData.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderEligibleFrom(LocalDate.now())
             .build());
@@ -152,7 +157,23 @@ class CaseworkerGrantFinalOrderTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
+        assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames()).isNull();
+    }
+
+    @Test
+    public void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList("No Conditional Order Granted Date found.  Unable to continue."));
     }
 
     @Test
