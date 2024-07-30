@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -31,7 +30,7 @@ public class GenerateAndLinkRespondentAnswers implements CaseTask {
         final var haveReceivedOfflineRespAnswers = emptyIfNull(caseData.getDocuments().getDocumentsUploaded()).stream()
             .anyMatch(divorceDocumentListValue -> RESPONDENT_ANSWERS.equals(divorceDocumentListValue.getValue().getDocumentType()));
 
-        if (!haveReceivedOfflineRespAnswers || !isEmpty(caseData.getAcknowledgementOfService().getDateAosSubmitted())) {
+        if (!haveReceivedOfflineRespAnswers) {
             documentGenerator.generateAndStoreCaseDocument(
                 RESPONDENT_ANSWERS,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
