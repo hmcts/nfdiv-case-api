@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.content.templatecontent.CertificateOfEntitlementTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -60,6 +61,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -123,6 +127,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
 
     @MockBean
     private Clock clock;
+
+    @MockBean
+    private CertificateOfEntitlementTemplateContent certificateOfEntitlementTemplateContent;
 
     @BeforeAll
     static void setUp() {
@@ -222,6 +229,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             )
             .build();
 
+        when(certificateOfEntitlementTemplateContent.getSupportedTemplates()).thenReturn(List.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID));
+
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
@@ -303,6 +312,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             )
             .build();
 
+        when(certificateOfEntitlementTemplateContent.getSupportedTemplates()).thenReturn(List.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID));
+
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
@@ -376,6 +387,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
                     .build()
             )
             .build();
+
+        when(certificateOfEntitlementTemplateContent.getSupportedTemplates()).thenReturn(List.of(CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -465,6 +478,9 @@ public class CaseworkerRegenerateCourtOrdersIT {
                     .build()
             )
             .build();
+
+        when(certificateOfEntitlementTemplateContent.getSupportedTemplates())
+            .thenReturn(List.of(CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -562,6 +578,10 @@ public class CaseworkerRegenerateCourtOrdersIT {
                     .build()
             )
             .build();
+
+        when(certificateOfEntitlementTemplateContent.getSupportedTemplates()).thenReturn(List.of(
+            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+        ));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
