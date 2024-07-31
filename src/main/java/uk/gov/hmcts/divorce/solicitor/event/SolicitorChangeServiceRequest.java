@@ -50,7 +50,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
     public static final String SOLICITOR_CHANGE_SERVICE_REQUEST = "solicitor-change-service-request";
 
-    public static final String NOT_ISSUED_ERROR = "The application must have been issued to use this event.";
+    public static final String NOT_ISSUED_ERROR = "The application must have been issued before you can change the service request.";
 
     @Autowired
     private ApplicationIssuedNotification applicationIssuedNotification;
@@ -90,7 +90,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
             .forStates(POST_SUBMISSION_PRE_AWAITING_CO_STATES)
-            .showCondition("applicationType=\"soleApplication\" AND issueDate=\"*\"")
+            .showCondition("issueDate=\"*\" AND applicationType=\"soleApplication\"")
             .name("Change service request")
             .description("Change service request")
             .showSummary()
