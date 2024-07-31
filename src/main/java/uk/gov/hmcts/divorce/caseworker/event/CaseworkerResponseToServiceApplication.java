@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -53,6 +54,10 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
             .page("uploadDocument")
             .pageLabel("Upload document")
+            .complex(CaseData::getAlternativeService)
+            .mandatory(AlternativeService::getAlternativeServiceType)
+            .mandatory(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
+            .done()
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getDocumentsUploaded)
             .done();
