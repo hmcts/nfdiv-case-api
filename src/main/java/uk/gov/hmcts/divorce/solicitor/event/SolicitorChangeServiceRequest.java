@@ -90,7 +90,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
             .forStates(POST_SUBMISSION_PRE_AWAITING_CO_STATES)
-            .showCondition("issueDate=\"*\"")
+            .showCondition("applicationType=\"soleApplication\" AND issueDate=\"*\"")
             .name("Change service request")
             .description("Change service request")
             .showSummary()
@@ -102,8 +102,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getServiceMethod)
-            .showCondition("applicationType=\"soleApplication\"");
+            .mandatory(Application::getServiceMethod);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
