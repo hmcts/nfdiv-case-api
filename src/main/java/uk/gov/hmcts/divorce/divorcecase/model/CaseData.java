@@ -175,6 +175,10 @@ public class CaseData {
     )
     private List<ListValue<GeneralReferral>> generalReferrals;
 
+    @JsonUnwrapped
+    @Builder.Default
+    private Hearing hearing = new Hearing();
+
     @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
