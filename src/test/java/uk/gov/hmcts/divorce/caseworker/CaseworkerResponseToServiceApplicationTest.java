@@ -60,15 +60,6 @@ class CaseworkerResponseToServiceApplicationTest {
                 .build())
             .build();
 
-        var alternativeServiceOutcomeListValue = ListValue
-            .<AlternativeServiceOutcome>builder()
-            .value(caseData.getAlternativeService().getOutcome())
-            .build();
-
-        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = new ArrayList<>();
-        alternativeServiceOutcomes.add(0, alternativeServiceOutcomeListValue);
-        caseData.setAlternativeServiceOutcomes(alternativeServiceOutcomes);
-
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
         updatedCaseDetails.setId(TEST_CASE_ID);
@@ -92,15 +83,6 @@ class CaseworkerResponseToServiceApplicationTest {
                 .build())
             .build();
 
-        var alternativeServiceOutcomeListValue = ListValue
-            .<AlternativeServiceOutcome>builder()
-            .value(caseData.getAlternativeService().getOutcome())
-            .build();
-
-        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = new ArrayList<>();
-        alternativeServiceOutcomes.add(0, alternativeServiceOutcomeListValue);
-        caseData.setAlternativeServiceOutcomes(alternativeServiceOutcomes);
-
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);
         updatedCaseDetails.setId(TEST_CASE_ID);
@@ -123,15 +105,6 @@ class CaseworkerResponseToServiceApplicationTest {
                 .alternativeServiceType(BAILIFF)
                 .build())
             .build();
-
-        var alternativeServiceOutcomeListValue = ListValue
-            .<AlternativeServiceOutcome>builder()
-            .value(caseData.getAlternativeService().getOutcome())
-            .build();
-
-        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes = new ArrayList<>();
-        alternativeServiceOutcomes.add(0, alternativeServiceOutcomeListValue);
-        caseData.setAlternativeServiceOutcomes(alternativeServiceOutcomes);
 
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
         updatedCaseDetails.setData(caseData);

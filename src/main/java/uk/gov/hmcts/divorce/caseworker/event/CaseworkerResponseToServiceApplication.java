@@ -56,6 +56,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             .pageLabel("Upload document")
             .complex(CaseData::getAlternativeService)
             .mandatory(AlternativeService::getAlternativeServiceType)
+            .mandatory(AlternativeService::getReceivedServiceApplicationDate)
             .mandatory(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
             .done()
             .complex(CaseData::getDocuments)
@@ -93,7 +94,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
         log.info("Caseworker response to service application about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData caseData = details.getData();
-        AlternativeServiceType altServiceType = caseData.getAlternativeServiceOutcomes().get(0).getValue().getAlternativeServiceType();
+        AlternativeServiceType altServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
         State state;
         if (DEEMED.equals(altServiceType) || DISPENSED.equals(altServiceType)) {
