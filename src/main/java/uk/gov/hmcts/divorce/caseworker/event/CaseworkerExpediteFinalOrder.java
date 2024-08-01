@@ -51,6 +51,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_EXPEDITE_FINAL_ORDER = "caseworker-expedite-final-order";
+    public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
+    public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
 
     private final NotificationDispatcher notificationDispatcher;
     private final FinalOrderGrantedNotification finalOrderGrantedNotification;
@@ -88,10 +90,17 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
         var caseData = details.getData();
 
+        if (caseData.getConditionalOrder().getGrantedDate() == null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE))
+                .build();
+        }
+
         if (caseData.getGeneralOrders() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("No general order documents found.  Unable to continue."))
+                .errors(Collections.singletonList(ERROR_NO_GENERAL_ORDER))
                 .build();
         }
 
