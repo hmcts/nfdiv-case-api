@@ -27,6 +27,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.List;
+
 import static java.time.LocalDate.now;
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
@@ -48,6 +50,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
     public static final String SOLICITOR_CHANGE_SERVICE_REQUEST = "solicitor-change-service-request";
 
+    public static final String NOT_ISSUED_ERROR = "The application must have been issued before you can change the service request.";
 
     @Autowired
     private ApplicationIssuedNotification applicationIssuedNotification;
@@ -87,19 +90,34 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
             .forStates(POST_SUBMISSION_PRE_AWAITING_CO_STATES)
+            .showCondition("issueDate=\"*\" AND applicationType=\"soleApplication\"")
             .name("Change service request")
             .description("Change service request")
             .showSummary()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE,
-                SOLICITOR)
+            .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("changeServiceRequest")
             .pageLabel("Change service request")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getServiceMethod)
-            .showCondition("applicationType=\"soleApplication\"");
+            .mandatory(Application::getServiceMethod);
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor change service request about to start callback invoked with Case Id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+        final boolean notIssued = application.getIssueDate() == null;
+
+        if (notIssued) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(NOT_ISSUED_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -111,7 +129,6 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
         final Applicant applicant2 = caseData.getApplicant2();
-        final boolean isIssued = application.getIssueDate() != null;
 
         if (application.isPersonalServiceMethod()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -133,14 +150,9 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             caseData.setDueDate(now().plusDays(dueDateOffsetDays));
         }
 
-        State state = details.getState();
-
-        if (isIssued) {
-            log.info("Regenerate NOP for App and Respondent, and D10 for case id: {}", details.getId());
-            details = caseTasks(generateApplicant1NoticeOfProceeding,
-                generateApplicant2NoticeOfProceedings, generateD10Form).run(details);
-            state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
-        }
+        log.info("Regenerate NOP for App and Respondent, and D10 for case id: {}", details.getId());
+        caseTasks(generateApplicant1NoticeOfProceeding, generateApplicant2NoticeOfProceedings, generateD10Form).run(details);
+        State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -153,22 +165,19 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
 
         log.info("Solicitor change service request submitted callback invoked for case id: {}", details.getId());
         final Application application = details.getData().getApplication();
-        final boolean isIssued = application.getIssueDate() != null;
 
-        if (isIssued) {
-            if (application.isSolicitorServiceMethod()) {
-                final User user = idamService.retrieveSystemUpdateUserDetails();
-                final String serviceAuthorization = authTokenGenerator.generate();
+        if (application.isSolicitorServiceMethod()) {
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuthorization = authTokenGenerator.generate();
 
-                log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
-                applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
+            log.info("Send Notification to Applicant 1 Solicitor for case id: {}", details.getId());
+            applicationIssuedNotification.sendToApplicant1Solicitor(details.getData(), details.getId());
 
-                log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
-                ccdUpdateService.submitEvent(details.getId(), SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
-            } else {
-                log.info("Send Notifications for case id: {}", details.getId());
-                reIssueApplicationService.sendNotifications(details, REISSUE_CASE);
-            }
+            log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+            ccdUpdateService.submitEvent(details.getId(), SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
+        } else {
+            log.info("Send Notifications for case id: {}", details.getId());
+            reIssueApplicationService.sendNotifications(details, REISSUE_CASE);
         }
 
         return SubmittedCallbackResponse.builder().build();

@@ -8,13 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-
-import java.time.LocalDateTime;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,12 +81,12 @@ class GenerateAndLinkRespondentAnswersTest {
     }
 
     @Test
-    void shouldGenerateRespondentAnswersWhenOnlineAosSubmitted() {
+    void shouldGenerateRespondentAnswersWhenOnlineAosIsDrafted() {
 
         final CaseData caseData = caseData();
         AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService
                 .builder()
-                .dateAosSubmitted(LocalDateTime.now())
+                .aosIsDrafted(YesOrNo.YES)
                 .build();
 
         caseData.setAcknowledgementOfService(acknowledgementOfService);
