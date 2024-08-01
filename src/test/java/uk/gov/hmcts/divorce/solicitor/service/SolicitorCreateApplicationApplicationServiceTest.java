@@ -98,13 +98,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
     @Test
     public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .organisationPolicy(organisationPolicy())
-                .email(TEST_SOLICITOR_EMAIL)
-                .build()
-        );
+        Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(organisationPolicy())
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -117,7 +114,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
             .thenReturn(organisationsResponse);
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            caseData,
+            solicitor,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
         );
@@ -133,13 +130,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
     @Test
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .organisationPolicy(organisationPolicy())
-                .email(TEST_SOLICITOR_EMAIL)
-                .build()
-        );
+        Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(organisationPolicy())
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -152,7 +146,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
             .thenReturn(organisationsResponse);
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            caseData,
+            solicitor,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
         );
@@ -168,11 +162,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
     @Test
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        Solicitor solicitor = Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build();
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            caseData,
+            solicitor,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
         );
@@ -204,13 +197,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().organisationPolicy(organisationPolicy()).build()
-        );
+        Solicitor solicitor = Solicitor.builder().organisationPolicy(organisationPolicy()).build();
 
         assertThatThrownBy(() -> solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            caseData,
+            solicitor,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
         ))
@@ -220,13 +210,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
     @Test
     public void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInValid() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder()
-                .organisationPolicy(organisationPolicy())
-                .email("invalidEmail")
-                .build()
-        );
+        Solicitor solicitor = Solicitor.builder()
+            .organisationPolicy(organisationPolicy())
+            .email("invalidEmail")
+            .build();
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -239,7 +226,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
             .thenReturn(organisationsResponse);
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            caseData,
+            solicitor,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN
         );
