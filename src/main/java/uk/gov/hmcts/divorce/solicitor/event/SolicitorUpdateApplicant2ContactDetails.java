@@ -44,7 +44,7 @@ public class SolicitorUpdateApplicant2ContactDetails implements CCDConfig<CaseDa
         return new PageBuilder(configBuilder
             .event(APPLICANT_UPDATE_APPLICANT2_CONTACT_DETAILS)
             .forAllStates()
-            .name("Update contact details")
+            .name("Update applicant contact info")
             .description("Update respondent contact details")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
