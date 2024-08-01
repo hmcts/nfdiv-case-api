@@ -26,7 +26,10 @@ public final class TestConstants {
     public static final String ABOUT_THE_SOL_MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
     public static final String SOL_PAYMENT_MID_EVENT_URL = "/callbacks/mid-event?page=SolPayment";
     public static final String APP2_SOL_FO_PAYMENT_MID_EVENT_URL = "/callbacks/mid-event?page=SolFinalOrderPayment";
-    public static final String SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL = "/callbacks/mid-event?page=SolUpdateContactDetails";
+    public static final String APP1_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL =
+        "/callbacks/mid-event?page=Applicant1SolUpdateContactDetails";
+    public static final String APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL =
+        "/callbacks/mid-event?page=Applicant2SolUpdateContactDetails";
     public static final String CREATE_GENERAL_ORDER_MID_EVENT_URL = "/callbacks/mid-event?page=CreateGeneralOrder";
     public static final String CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL = "/callbacks/mid-event?page=refusalOrderClarification";
     public static final String CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL = "/callbacks/mid-event?page=amendApplication";
@@ -71,6 +74,8 @@ public final class TestConstants {
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";
     public static final String SOLICITOR_MID_EVENT_EMAIL_ERROR = "classpath:solicitor-mid-event-email-error-response.json";
+    public static final String SOLICITOR_UPDATE_CONTACT_DETAILS_ERROR_RESPONSE =
+        "classpath:solicitor-update-contact-details-mid-event-error-response.json";
     public static final String LINE_1_LINE_2_CITY_POSTCODE = "line1\nline2\ncity\npostcode";
     public static final AddressGlobalUK APPLICANT_ADDRESS = AddressGlobalUK.builder()
         .addressLine1("line1")
