@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -30,7 +31,7 @@ public class GenerateAndLinkRespondentAnswers implements CaseTask {
         final var haveReceivedOfflineRespAnswers = emptyIfNull(caseData.getDocuments().getDocumentsUploaded()).stream()
             .anyMatch(divorceDocumentListValue -> RESPONDENT_ANSWERS.equals(divorceDocumentListValue.getValue().getDocumentType()));
 
-        if (!haveReceivedOfflineRespAnswers) {
+        if (!haveReceivedOfflineRespAnswers || YesOrNo.YES == caseData.getAcknowledgementOfService().getAosIsDrafted()) {
             documentGenerator.generateAndStoreCaseDocument(
                 RESPONDENT_ANSWERS,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
