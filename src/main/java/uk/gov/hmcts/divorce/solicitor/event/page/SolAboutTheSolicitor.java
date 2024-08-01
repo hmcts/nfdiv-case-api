@@ -62,7 +62,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
         CaseData caseData = details.getData();
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
-            caseData,
+            caseData.getApplicant1().getSolicitor(),
             details.getId(),
             request.getHeader(AUTHORIZATION)
         );

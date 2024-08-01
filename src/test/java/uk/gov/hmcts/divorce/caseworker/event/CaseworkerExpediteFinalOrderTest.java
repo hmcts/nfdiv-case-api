@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -25,6 +26,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -36,6 +38,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_CO_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -81,23 +85,42 @@ class CaseworkerExpediteFinalOrderTest {
     @Test
     void shouldReturnErrorIfNoGeneralOrderDocuments() {
         final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
 
-        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList(ERROR_NO_GENERAL_ORDER));
     }
 
     @Test
     void shouldPopulateGeneralOrderDocumentNamesDynamicList() {
         final CaseDetails<CaseData, State> details = getCaseDetails();
+        details.getData().setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getDocuments().getGeneralOrderDocumentNames().getListItems()).hasSize(1);
+    }
+
+    @Test
+    public void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
     }
 
     @Test
