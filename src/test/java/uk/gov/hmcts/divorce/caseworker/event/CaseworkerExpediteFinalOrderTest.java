@@ -38,6 +38,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_CO_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -92,7 +94,7 @@ class CaseworkerExpediteFinalOrderTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors())
-            .isEqualTo(Collections.singletonList("No general order documents found.  Unable to continue."));
+            .isEqualTo(Collections.singletonList(ERROR_NO_GENERAL_ORDER));
     }
 
     @Test
@@ -118,7 +120,7 @@ class CaseworkerExpediteFinalOrderTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors())
-            .isEqualTo(Collections.singletonList("No Conditional Order Granted Date found.  Unable to continue."));
+            .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
     }
 
     @Test

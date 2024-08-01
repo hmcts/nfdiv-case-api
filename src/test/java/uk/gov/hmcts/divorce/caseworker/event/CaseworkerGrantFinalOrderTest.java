@@ -40,6 +40,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_CASE_NOT_ELIGIBLE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_NO_CO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -173,7 +175,7 @@ class CaseworkerGrantFinalOrderTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors())
-            .isEqualTo(Collections.singletonList("No Conditional Order Granted Date found.  Unable to continue."));
+            .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
     }
 
     @Test
@@ -253,7 +255,7 @@ class CaseworkerGrantFinalOrderTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNull();
-        assertThat(response.getErrors()).contains("Case is not yet eligible for Final Order");
+        assertThat(response.getErrors()).contains(ERROR_CASE_NOT_ELIGIBLE);
 
         verifyNoInteractions(documentGenerator);
     }

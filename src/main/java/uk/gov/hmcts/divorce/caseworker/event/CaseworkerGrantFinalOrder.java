@@ -54,6 +54,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
     public static final String CASEWORKER_GRANT_FINAL_ORDER = "caseworker-grant-final-order";
     private static final String ALWAYS_HIDE = "generalOrderDocumentNames=\"ALWAYS_HIDE\"";
+    public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
+    public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
+    public static final String ERROR_CASE_NOT_ELIGIBLE = "Case is not yet eligible for Final Order";
 
     private final Clock clock;
     private final DocumentGenerator documentGenerator;
@@ -103,7 +106,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         if (caseData.getConditionalOrder().getGrantedDate() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("No Conditional Order Granted Date found.  Unable to continue."))
+                .errors(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE))
                 .build();
         }
 
@@ -116,7 +119,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         if (CollectionUtils.isEmpty(caseData.getGeneralOrders())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("No general order documents found.  Unable to continue."))
+                .errors(Collections.singletonList(ERROR_NO_GENERAL_ORDER))
                 .build();
         }
 
@@ -163,7 +166,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             && dateFinalOrderEligibleFrom.isAfter(currentDateTime.toLocalDate())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(singletonList("Case is not yet eligible for Final Order"))
+                .errors(singletonList(ERROR_CASE_NOT_ELIGIBLE))
                 .build();
         }
 

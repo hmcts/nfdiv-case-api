@@ -64,6 +64,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_CASE_NOT_ELIGIBLE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_NO_CO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -368,7 +370,7 @@ public class CaseworkerGrantFinalOrderIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.errors").value("No Conditional Order Granted Date found.  Unable to continue."));
+                jsonPath("$.errors").value(ERROR_NO_CO_GRANTED_DATE));
 
         verifyNoInteractions(notificationService);
     }
@@ -398,7 +400,7 @@ public class CaseworkerGrantFinalOrderIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.errors").value("Case is not yet eligible for Final Order"));
+                jsonPath("$.errors").value(ERROR_CASE_NOT_ELIGIBLE));
 
         verifyNoInteractions(notificationService);
     }

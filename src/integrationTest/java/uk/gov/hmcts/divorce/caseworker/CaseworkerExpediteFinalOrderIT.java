@@ -70,6 +70,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_CO_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -306,7 +308,7 @@ public class CaseworkerExpediteFinalOrderIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.errors").value("No Conditional Order Granted Date found.  Unable to continue."));
+                jsonPath("$.errors").value(ERROR_NO_CO_GRANTED_DATE));
 
         verifyNoInteractions(notificationService);
     }
@@ -336,7 +338,7 @@ public class CaseworkerExpediteFinalOrderIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.errors").value("No general order documents found.  Unable to continue."));
+                jsonPath("$.errors").value(ERROR_NO_GENERAL_ORDER));
 
         verifyNoInteractions(notificationService);
     }
