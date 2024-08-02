@@ -39,9 +39,6 @@ public class RegenerateJudicialSeparationCitizenAosResponseLetter implements Cas
         if (caseData.getApplicant1().isApplicantOffline() && !caseData.getApplicant1().isRepresented()) {
             removeAndRegenerateApplicant1(caseId, caseData);
         }
-        if (caseData.getApplicant2().isApplicantOffline() && !caseData.getApplicant2().isRepresented()) {
-            removeAndRegenerateApplicant2(caseId, caseData);
-        }
         return caseDetails;
     }
 
@@ -52,16 +49,6 @@ public class RegenerateJudicialSeparationCitizenAosResponseLetter implements Cas
             log.info("Regenerating applicant 1 js aos response letter for case id {} ", caseId);
             generateJsCitizenAosResponseLetter(caseData, caseId, caseData.getApplicant1());
             caseData.getApplicant1().setJsCitizenAosResponseLetterRegenerated(YES);
-        }
-    }
-
-    public void removeAndRegenerateApplicant2(Long caseId, CaseData caseData) {
-        boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData);
-
-        if (anyDocRemoved) {
-            log.info("Generating applicant 2 cjs aos response letter for case id {} ", caseId);
-            generateJsCitizenAosResponseLetter(caseData, caseId, caseData.getApplicant2());
-            caseData.getApplicant2().setJsCitizenAosResponseLetterRegenerated(YES);
         }
     }
 
