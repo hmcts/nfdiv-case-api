@@ -57,6 +57,13 @@ public enum State {
     AwaitingPayment,
 
     @CCD(
+        label = "Awaiting respondent final order payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingRespondentFOPayment,
+
+    @CCD(
         label = "Application rejected",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -174,6 +181,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     AwaitingGeneralReferralPayment,
+
+    @CCD(
+        label = "Awaiting final order payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingFinalOrderPayment,
 
     @CCD(
         label = "Awaiting HWF decision",
@@ -389,8 +403,7 @@ public enum State {
         label = "Offline document received by CW",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
-    )
-    OfflineDocumentReceived,
+    ) OfflineDocumentReceived,
 
     @CCD(
         label = "Pending hearing date",
@@ -438,8 +451,7 @@ public enum State {
         label = "Submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
-    )
-    Submitted,
+    ) Submitted,
 
     @CCD(
         label = "Welsh Translation requested",

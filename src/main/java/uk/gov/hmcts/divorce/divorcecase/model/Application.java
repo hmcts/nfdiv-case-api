@@ -536,13 +536,6 @@ public class Application {
     }
 
     @JsonIgnore
-    public PaymentStatus getLastPaymentStatus() {
-        return applicationPayments == null || applicationPayments.isEmpty()
-            ? null
-            : applicationPayments.get(applicationPayments.size() - 1).getValue().getStatus();
-    }
-
-    @JsonIgnore
     public boolean applicant1HasStatementOfTruth() {
         return YES.equals(applicant1StatementOfTruth);
     }

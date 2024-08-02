@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -206,6 +207,13 @@ public class FinalOrder {
     private LocalDateTime dateApplicant2SolAppliedForFinalOrder;
 
     @CCD(
+        label = "Date respondent applied for final order",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime dateApplicant2AppliedForFinalOrder;
+
+    @CCD(
         label = "Respondent solicitor responsible for final order application",
         access = {DefaultAccess.class}
     )
@@ -222,6 +230,18 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private String applicant2SolFinalOrderFeeInPounds;
+
+    @CCD(
+        label = "Here are your order details",
+        access = {DefaultAccess.class}
+    )
+    private OrderSummary applicant2FinalOrderFeeOrderSummary;
+
+    @CCD(
+        label = "Respondent final order fee (in pounds)",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2FinalOrderFeeInPounds;
 
     @CCD(
         label = "How is payment being made?",
@@ -296,6 +316,10 @@ public class FinalOrder {
     @JsonUnwrapped(prefix = "app2SolFoHWF")
     @CCD(access = {Applicant2Access.class})
     private HelpWithFees applicant2SolFinalOrderHelpWithFees;
+
+    @JsonUnwrapped(prefix = "applicant2FoHWF")
+    @CCD(access = {Applicant2Access.class})
+    private HelpWithFees applicant2FinalOrderHelpWithFees;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -457,6 +481,13 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private FinalOrderAuthorisation overdueFinalOrderAuthorisation;
+
+    @JsonIgnore
+    public boolean applicant2NeedsHelpWithFees() {
+        return Objects.nonNull(applicant2FinalOrderHelpWithFees)
+            && Objects.nonNull(applicant2FinalOrderHelpWithFees.getNeedHelp())
+            && applicant2FinalOrderHelpWithFees.getNeedHelp().toBoolean();
+    }
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
