@@ -45,7 +45,6 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
-
     private static final String IS_SOLE = "applicationType=\"soleApplication\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED =
@@ -101,6 +100,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialDocumentsTab(configBuilder);
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
+        buildChangeOfRepresentativeTab(configBuilder);
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
@@ -549,5 +549,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(SUPER_USER)
             .showCondition("letterPacks=\"*\"")
             .field("letterPacks");
+    }
+
+    private void buildChangeOfRepresentativeTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("changeOfRepresentatives", "Change of representatives")
+                .forRoles(CASE_WORKER, SUPER_USER)
+                .field("changeOfRepresentatives");
     }
 }
