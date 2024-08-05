@@ -135,6 +135,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("jurisdictionAgree")
             .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
             .field("inWhichCountryIsYourLifeMainlyBased", "jurisdictionAgree=\"No\"")
+            .field("intendToDelay")
             .field("applicant2LegalProceedings")
             .field("applicant2LegalProceedingsDetails")
             .field("dueDate")
