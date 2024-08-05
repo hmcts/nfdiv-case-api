@@ -132,12 +132,9 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
             ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
-        //check if applicant1 or applicant2 and get appropriate partner label
-        if (applicant.equals(caseData.getApplicant1())) {
-            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference));
-        } else {
-            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1(), languagePreference));
-        }
+
+        templateContent.put(PARTNER, getPartnerInfo(caseData,applicant,languagePreference));
+
         templateContent.put(PLACE_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getPlaceOfMarriage());
         templateContent.put(COUNTRY_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getCountryOfMarriage());
         templateContent.put(MARRIAGE_DATE,
@@ -158,6 +155,16 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
         if (caseData.isJudicialSeparationCase() && applicant.isRepresented()) {
             templateVarsForJSSolicitor(templateContent, caseData, applicant);
         }
+    }
+
+    private String getPartnerInfo(CaseData caseData, Applicant applicant, LanguagePreference languagePreference) {
+        final var applicant1 = caseData.getApplicant1();
+        final var applicant2 = caseData.getApplicant2();
+
+        if (applicant.equals(caseData.getApplicant1())) {
+            return commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference);
+        }
+        return commonContent.getPartner(caseData, caseData.getApplicant1(), languagePreference);
     }
 
     void templateVarsForJSSolicitor(Map<String, Object> templateContent,
