@@ -553,6 +553,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildChangeOfRepresentativeTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("changeOfRepresentatives", "Change of representatives")
                 .forRoles(CASE_WORKER, SUPER_USER)
+                .field("nocWhichApplicant", NEVER_SHOW)
+                .field("changeOrganisationRequestField", NEVER_SHOW)
+                .showCondition("changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"")
                 .field("changeOfRepresentatives");
     }
 }
