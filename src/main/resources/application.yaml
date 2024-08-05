@@ -417,7 +417,6 @@ docmosis:
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
       JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx
-      NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx

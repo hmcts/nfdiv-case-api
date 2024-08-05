@@ -34,7 +34,18 @@ public class NotificationDispatcher {
                         final CaseData caseData, final CaseData previousCaseData, final Long caseId,
                         boolean isApplicant1, NoticeType noticeType) {
         if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG) {
-            sendRepresentationGrantedNotifications(isApplicant1, caseData, caseId, applicantNotification);
+            if (isApplicant1) {
+                if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
+                    applicantNotification.sendToApplicant1(caseData, caseId);
+                }
+                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+
+            } else {
+                if (StringUtils.isNotEmpty(caseData.getApplicant2().getEmail())) {
+                    applicantNotification.sendToApplicant2(caseData, caseId);
+                }
+                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            }
         }
         if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG || noticeType == NoticeType.ORG_REMOVED) {
             if (isApplicant1) {
@@ -42,26 +53,6 @@ public class NotificationDispatcher {
             } else {
                 applicantNotification.sendToApplicant2OldSolicitor(previousCaseData, caseId);
             }
-        }
-    }
-
-    private void sendRepresentationGrantedNotifications(boolean isApplicant1, CaseData caseData,
-                                                        long caseId, ApplicantNotification applicantNotification) {
-        if (isApplicant1) {
-            if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
-                applicantNotification.sendToApplicant1(caseData, caseId);
-            } else {
-                applicantNotification.sendToApplicant1Offline(caseData, caseId);
-            }
-            applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
-
-        } else {
-            if (StringUtils.isNotEmpty(caseData.getApplicant2().getEmail())) {
-                applicantNotification.sendToApplicant2(caseData, caseId);
-            } else {
-                applicantNotification.sendToApplicant2Offline(caseData, caseId);
-            }
-            applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
         }
     }
 }

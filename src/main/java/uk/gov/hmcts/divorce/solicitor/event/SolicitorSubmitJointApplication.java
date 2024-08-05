@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
+import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
@@ -147,7 +147,8 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .getContactInformation();
 
         if (!isEmpty(contactInformation)) {
-            final String solicitorAddress = parseOrganisationAddress(contactInformation);
+            final OrganisationContactInformation organisationContactInformation = contactInformation.get(0);
+            final String solicitorAddress = populateSolicitorAddress(organisationContactInformation);
 
             log.info("Setting Applicant 2 solicitor address.  Case ID: {}", caseDetails.getId());
             caseDetails.getData().getApplicant2().getSolicitor().setAddress(solicitorAddress);

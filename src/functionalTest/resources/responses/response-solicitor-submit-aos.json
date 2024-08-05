@@ -7,7 +7,6 @@
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2FirstName": "Jane",
-    "changeOfRepresentatives": [],
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant2LastName": "Smith",

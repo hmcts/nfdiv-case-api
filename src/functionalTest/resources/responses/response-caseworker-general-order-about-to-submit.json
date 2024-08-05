@@ -9,7 +9,6 @@
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2Gender": "female",
-    "changeOfRepresentatives": [],
     "generalOrders": [
       {
         "id": "${json-unit.any-string}",

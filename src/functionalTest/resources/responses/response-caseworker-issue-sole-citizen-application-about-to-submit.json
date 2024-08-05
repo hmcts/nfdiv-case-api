@@ -9,7 +9,6 @@
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LastName": "test_last_name",
-    "changeOfRepresentatives": [],
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Address": {

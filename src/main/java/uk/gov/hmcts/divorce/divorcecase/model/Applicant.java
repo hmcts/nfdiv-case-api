@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
@@ -148,14 +147,10 @@ public class Applicant {
     )
     private ContactDetailsType contactDetailsType;
 
-    @CCD(
-        label = "Is represented by a solicitor?",
-        access = {AcaSystemUserAccess.class}
-    )
+    @CCD(label = "Is represented by a solicitor?")
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
-    @CCD(access = {AcaSystemUserAccess.class})
     private Solicitor solicitor;
 
     @CCD(
@@ -209,10 +204,7 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
-    @CCD(
-        label = "Offline",
-        access = {AcaSystemUserAccess.class}
-    )
+    @CCD(label = "Offline")
     @JsonProperty("Offline") // required because isOffline() confuses Jackson
     private YesOrNo offline;
 

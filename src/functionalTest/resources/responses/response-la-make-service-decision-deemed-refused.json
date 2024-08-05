@@ -7,7 +7,6 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "test@test.com",
-    "changeOfRepresentatives": [],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceOutcomes": [
       {

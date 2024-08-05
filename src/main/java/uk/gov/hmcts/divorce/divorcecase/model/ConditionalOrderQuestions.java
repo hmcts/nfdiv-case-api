@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -44,14 +43,12 @@ public class ConditionalOrderQuestions {
     private String solicitorAdditionalComments;
 
     @CCD(
-        label = "Has applicant submitted conditional order",
-        access = {AcaSystemUserAccess.class}
+        label = "Has applicant submitted conditional order"
     )
     private YesOrNo isSubmitted;
 
     @CCD(
-        label = "Has applicant drafted conditional order",
-        access = {AcaSystemUserAccess.class}
+        label = "Has applicant drafted conditional order"
     )
     private YesOrNo isDrafted;
 

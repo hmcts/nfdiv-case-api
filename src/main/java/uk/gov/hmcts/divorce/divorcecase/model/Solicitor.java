@@ -109,14 +109,6 @@ public class Solicitor {
     }
 
     @JsonIgnore
-    public boolean hasOrgName() {
-        if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
-            return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationName());
-        }
-        return false;
-    }
-
-    @JsonIgnore
     public String getOrganisationId() {
         return Optional.ofNullable(organisationPolicy)
             .map(OrganisationPolicy::getOrganisation)

@@ -8,7 +8,6 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "sentNotifications": {},
-    "changeOfRepresentatives": [],
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1Gender": "female",

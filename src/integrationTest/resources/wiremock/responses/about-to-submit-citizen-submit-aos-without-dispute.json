@@ -1,6 +1,6 @@
 {
   "data": {
-    "changeOfRepresentatives": [],
+    "applicationType": "soleApplication",
     "supplementaryCaseType": "notApplicable",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
