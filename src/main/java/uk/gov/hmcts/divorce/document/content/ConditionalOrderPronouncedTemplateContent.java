@@ -132,7 +132,12 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
             ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference));
+        //check if applicant1 or applicant2 and get appropriate partner label
+        if (applicant.equals(caseData.getApplicant1())) {
+            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference));
+        } else {
+            templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1(), languagePreference));
+        }
         templateContent.put(PLACE_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getPlaceOfMarriage());
         templateContent.put(COUNTRY_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getCountryOfMarriage());
         templateContent.put(MARRIAGE_DATE,
