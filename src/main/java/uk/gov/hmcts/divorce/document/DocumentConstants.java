@@ -36,9 +36,9 @@ public final class DocumentConstants {
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE";
 
     public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
-    public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
+    public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "judicialSeparationOrderGrantedCoversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         = "judicialSeparationOrderGrantedSolicitorCoversheet";
@@ -104,6 +104,8 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID
         = "CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+        = "CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
 
     public static final String USER_ROLES = "user-roles";
