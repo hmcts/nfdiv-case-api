@@ -263,7 +263,7 @@ public class CaseData {
     private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
 
     @CCD(
-            access = {DefaultAccess.class, AcaSystemUserAccess.class},
+            access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
             label = "Change of representatives"
     )
     @Builder.Default
