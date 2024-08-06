@@ -218,12 +218,6 @@ public class Applicant {
     )
     private YesOrNo coPronouncedCoverLetterRegenerated;
 
-    @CCD(
-        label = "JS Citizen AoS Response Letter Regenerated",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jsCitizenAosResponseLetterRegenerated;
-
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
