@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Component
@@ -23,13 +24,13 @@ public class ResendJudicialSeparationCitizenAosResponseNotification implements A
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        if (YES.equals(caseData.getApplicant1().getJsCitizenAosResponseLetterRegenerated())) {
+        if (NO.equals(caseData.getApplication().getJsCitizenAosResponseLettersResent())) {
             if (caseData.getApplicant1().isApplicantOffline()) {
-                if (acknowledgementOfService.isDisputed()) {
-                    log.info("Resending JS citizen aos response letter (disputed) pack to bulk print as applicant1 is offline. Case id: {}", caseId);
-                } else {
-                    log.info("Sending JS citizen aos response letter (without dispute) pack to bulk print as applicant1 is offline. Case id: {}", caseId);
-                }
+                log.info("Resending JS citizen aos response letter ({}) pack to bulk print as applicant1 is offline. Case id: {}",
+                    acknowledgementOfService.isDisputed() ? "disputed" : "without dispute",
+                    caseId
+                );
+
                 final var documentPack = aosResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
 
                 letterPrinter.sendLetters(
@@ -44,7 +45,7 @@ public class ResendJudicialSeparationCitizenAosResponseNotification implements A
                 log.info("Not resending js citizen aos response letter pack to bulk print as applicant1 is not offline. Case id: {}", caseId);
             }
         } else {
-            log.info("Not resending js citizen aos response letter pack to bulk print as letter not regenerated. Case id: {}", caseId);
+            log.info("Not resending js citizen aos response letter pack to bulk print as already resent. Case id: {}", caseId);
         }
     }
 }
