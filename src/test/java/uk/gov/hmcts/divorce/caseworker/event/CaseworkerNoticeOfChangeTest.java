@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
@@ -44,6 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
@@ -58,6 +61,9 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private SolicitorValidationService solicitorValidationService;
+
+    @Mock
+    private ChangeOfRepresentativeService changeOfRepresentativeService;
 
     @Mock
     private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
@@ -232,6 +238,8 @@ class CaseworkerNoticeOfChangeTest {
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(NO);
 
         verify(noticeOfChangeService).revokeCaseAccess(details.getId(), beforeDetails.getData().getApplicant1(), roles);
+        verify(changeOfRepresentativeService).buildChangeOfRepresentative(details.getData(), beforeDetails.getData(),
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), true);
     }
 
     @Test
@@ -251,12 +259,12 @@ class CaseworkerNoticeOfChangeTest {
             .areTheyDigital(YES)
             .build());
 
-        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
-
         var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
         Solicitor newSolicitor = Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)
@@ -357,7 +365,38 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    void shouldHandleNullRepresentationGracefully() {
+    public void shouldSetSolicitorFirmName() {
+        var details = getCaseDetails();
+        var beforeDetails = getCaseDetails();
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
+            .organisationId(TEST_ORG_ID)
+            .organisationName(TEST_ORG_NAME)
+            .build());
+        beforeDetails.getData().getApplicant1().getSolicitor().setOrganisationPolicy(null);
+        details.getData().setNoticeOfChange(NoticeOfChange.builder()
+            .whichApplicant(NoticeOfChange.WhichApplicant.APPLICANT_1)
+            .areTheyRepresented(YES)
+            .areTheyDigital(YES)
+            .build());
+
+        List<String> roles = List.of(UserRole.CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        assertThat(result.getData().getApplicant1().getSolicitor().getFirmName()).isEqualTo(TEST_ORG_NAME);
+        assertThat(result.getData().getApplicant1().isApplicantOffline()).isFalse();
+        assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+
+        verify(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(
+            details.getId(),
+            details.getData().getApplicant1(),
+            beforeDetails.getData().getApplicant1(),
+            roles,
+            APPLICANT_1_SOLICITOR.getRole());
+    }
+
+    @Test
+    public void shouldHandleNullRepresentationGracefully() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(APPLICANT_1)
