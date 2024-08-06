@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedJSCitizenAOSRespo
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.task.RegenerateJSCitizenAosResponseCoverLetter;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -30,6 +31,7 @@ public class SystemRegenerateJsCitizenAosResponseCoverLetter implements CCDConfi
     public static final String REGEN_JS_CITIZEN_AOS_RESPONSE_LETTER =
         "Regen JS Citizen AoS Response";
 
+    private final RegenerateJSCitizenAosResponseCoverLetter regenerateJSCitizenAosResponseCoverLetter;
     private final SendRegeneratedJSCitizenAOSResponseLetters sendRegeneratedJSCitizenAOSResponseLetters;
 
     @Override
@@ -56,6 +58,7 @@ public class SystemRegenerateJsCitizenAosResponseCoverLetter implements CCDConfi
                 log.info("Regenerating JS Citizen AoS Response letter pack for Case Id: {}", details.getId());
 
                 caseTasks(
+                    regenerateJSCitizenAosResponseCoverLetter,
                     sendRegeneratedJSCitizenAOSResponseLetters
                 ).run(details);
             } else {
