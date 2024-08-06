@@ -16,16 +16,14 @@ import java.time.Clock;
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RegenerateJudicialSeparationCitizenAosResponseLetter implements CaseTask {
+public class RegenerateJSCitizenAosResponseCoverLetter implements CaseTask {
 
     private final AosResponseLetterTemplateContent aosResponseLetterTemplateContent;
     private final CaseDataDocumentService caseDataDocumentService;
@@ -37,23 +35,15 @@ public class RegenerateJudicialSeparationCitizenAosResponseLetter implements Cas
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
         if (caseData.getApplicant1().isApplicantOffline() && !caseData.getApplicant1().isRepresented()) {
-            removeAndRegenerateApplicant1(caseId, caseData);
+            regenerateApplicant1CoverSheet(caseId, caseData);
         }
         return caseDetails;
     }
 
-    public void removeAndRegenerateApplicant1(Long caseId, CaseData caseData) {
-        boolean anyDocRemoved = removeExistingCoverLetterIfAny(caseData);
-
-        if (anyDocRemoved) {
-            log.info("Regenerating applicant 1 js aos response letter for case id {} ", caseId);
-            generateJsCitizenAosResponseLetter(caseData, caseId, caseData.getApplicant1());
-            caseData.getApplicant1().setJsCitizenAosResponseLetterRegenerated(YES);
-        }
-    }
-
-    private boolean removeExistingCoverLetterIfAny(final CaseData caseData) {
-        return removeDocumentsBasedOnContactPrivacy(caseData, AOS_RESPONSE_LETTER);
+    public void regenerateApplicant1CoverSheet(Long caseId, CaseData caseData) {
+        log.info("Regenerating applicant 1 js aos response letter for case id {} ", caseId);
+        generateJsCitizenAosResponseLetter(caseData, caseId, caseData.getApplicant1());
+        caseData.getApplicant1().setJsCitizenAosResponseLetterRegenerated(YES);
     }
 
     public void generateJsCitizenAosResponseLetter(final CaseData caseData,
@@ -62,20 +52,12 @@ public class RegenerateJudicialSeparationCitizenAosResponseLetter implements Cas
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            AOS_RESPONSE_LETTER,
+            COVERSHEET,
             aosResponseLetterTemplateContent.getTemplateContent(caseData, caseId, applicant),
             caseId,
-            getTemplateId(caseData),
+            COVERSHEET_APPLICANT,
             applicant.getLanguagePreference(),
-            formatDocumentName(caseId, AOS_RESPONSE_LETTER_DOCUMENT_NAME, now(clock))
+            formatDocumentName(caseId, COVERSHEET_DOCUMENT_NAME, now(clock))
         );
-    }
-
-    private String getTemplateId(CaseData caseData) {
-        if (caseData.getAcknowledgementOfService().isDisputed()) {
-            return NFD_NOP_APP1_JS_SOLE_DISPUTED;
-        } else {
-            return NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
-        }
     }
 }
