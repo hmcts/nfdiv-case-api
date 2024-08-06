@@ -3,6 +3,7 @@
     "case_type_id": "NFD",
     "event_id": "create-paper-case",
     "case_data": {
+      "changeOfRepresentatives": [],
       "applicationType": "soleApplication",
       "paperFormApplicantWillServeApplication": "No",
       "paperFormApplicant1SigningSOT": "Yes",
