@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -407,6 +408,84 @@ class ConditionalOrderPronouncedTemplateContentTest {
             entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(DocmosisTemplateConstants.CASE_REFERENCE, "1616-5914-0147-3378")
+        );
+    }
+
+    @Test
+    void shouldApplyProperPartnerLabelForApp2ConditionalOrderPronouncedTemplate() {
+
+        Map<String, Object> basicDocmosisTemplateContent = new HashMap<>();
+        basicDocmosisTemplateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        basicDocmosisTemplateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        basicDocmosisTemplateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        basicDocmosisTemplateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        final Applicant applicant1 = Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .languagePreferenceWelsh(YesOrNo.NO)
+            .gender(Gender.MALE)
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .firstName(APPLICANT_2_FIRST_NAME)
+            .lastName(APPLICANT_2_LAST_NAME)
+            .languagePreferenceWelsh(YesOrNo.NO)
+            .gender(Gender.FEMALE)
+            .build();
+
+        when(commonContent.getPartner(any(), any(), eq(ENGLISH))).thenReturn("husband");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(basicDocmosisTemplateContent);
+
+        LocalDate coPronouncedDate = LocalDate.of(2022, 6, 10);
+        LocalDate marriageDate = LocalDate.of(2000, 1, 2);
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .application(Application.builder()
+                .marriageDetails(MarriageDetails.builder()
+                    .placeOfMarriage("London")
+                    .countryOfMarriage("UK")
+                    .date(marriageDate)
+                    .build())
+                .build())
+            .conditionalOrder(ConditionalOrder.builder()
+                .dateAndTimeOfHearing(getExpectedLocalDateTime())
+                .court(BIRMINGHAM)
+                .grantedDate(coPronouncedDate)
+                .pronouncementJudge("District Judge")
+                .build())
+            .build();
+
+        final Map<String, Object> result =
+            conditionalOrderPronouncedTemplateContent.apply(caseData, TEST_CASE_ID, applicant2);
+
+        assertThat(result).contains(
+            entry(IS_SOLE, true),
+            entry(IS_DIVORCE, true),
+            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(DOCUMENTS_ISSUED_ON, getTemplateFormatDate()),
+            entry(APPLICANT_1_FULL_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
+            entry(APPLICANT_2_FULL_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME),
+            entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriage"),
+            entry(PARTNER, "husband"),
+            entry(PLACE_OF_MARRIAGE, "London"),
+            entry(COUNTRY_OF_MARRIAGE, "UK"),
+            entry(MARRIAGE_DATE, "2 January 2000"),
+            entry(JUDGE_NAME, "District Judge"),
+            entry(COURT_NAME, "Birmingham Civil and Family Justice Centre"),
+            entry(CO_PRONOUNCED_DATE, "10 June 2022"),
+            entry(DATE_FO_ELIGIBLE_FROM, "23 July 2022"),
+            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
+            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
+            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
+            entry(DocmosisTemplateConstants.CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry(DATE_OF_HEARING, caseData.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
+            entry(TIME_OF_HEARING, caseData.getConditionalOrder().getDateAndTimeOfHearing().format(TIME_FORMATTER)),
+            entry(CommonContent.NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME)
         );
     }
 
