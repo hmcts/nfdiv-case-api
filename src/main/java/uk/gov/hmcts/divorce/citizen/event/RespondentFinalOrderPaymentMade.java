@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRespondentFOPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -38,7 +38,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(RESPONDENT_FINAL_ORDER_PAYMENT_MADE)
-            .forState(AwaitingFinalOrderPayment)
+            .forState(AwaitingRespondentFOPayment)
             .showCondition(NEVER_SHOW)
             .name("Respondent final order payment made")
             .description("Respondent final order payment made")
@@ -63,7 +63,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(validationErrors)
-                .state(AwaitingFinalOrderPayment)
+                .state(AwaitingRespondentFOPayment)
                 .build();
         }
 

@@ -18,9 +18,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 @Service
 public class PaymentValidatorService {
 
-    private final static String ERROR_PAYMENT_IN_PROGRESS = "Payment in progress";
+    private static final String ERROR_PAYMENT_IN_PROGRESS = "Payment in progress";
 
-    private final static String ERROR_PAYMENT_INCOMPLETE = "Payment incomplete";
+    private static final String ERROR_PAYMENT_INCOMPLETE = "Payment incomplete";
 
     public List<String> validatePayments(final List<ListValue<Payment>> payments, Long caseId) {
         List<String> validationErrors = new ArrayList<>();
@@ -41,8 +41,8 @@ public class PaymentValidatorService {
     }
 
     private PaymentStatus lastPaymentStatus(List<ListValue<Payment>> payments) {
-        return CollectionUtils.isEmpty(payments) ?
-            null : payments.get(payments.size() - 1).getValue().getStatus();
+        return CollectionUtils.isEmpty(payments)
+            ? null : payments.get(payments.size() - 1).getValue().getStatus();
     }
 }
 
