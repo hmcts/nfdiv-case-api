@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.common.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
