@@ -36,7 +36,11 @@ public class NotificationDispatcher {
         if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG) {
             sendRepresentationGrantedNotifications(isApplicant1, caseData, caseId, applicantNotification);
         }
-        if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG || noticeType == NoticeType.ORG_REMOVED) {
+
+        boolean representationRemoved = (noticeType == NoticeType.ORG_REMOVED)
+            || (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG && applicantRepresentedBefore(isApplicant1, previousCaseData));
+
+        if (representationRemoved) {
             if (isApplicant1) {
                 applicantNotification.sendToApplicant1OldSolicitor(previousCaseData, caseId);
             } else {
@@ -63,5 +67,10 @@ public class NotificationDispatcher {
             }
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
         }
+    }
+    
+    private boolean applicantRepresentedBefore(final boolean isApplicant1, final CaseData previousCaseData) {
+        return (isApplicant1 && previousCaseData.getApplicant1().isRepresented()) ||
+            (!isApplicant1 && previousCaseData.getApplicant2().isRepresented());
     }
 }
