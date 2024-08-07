@@ -26,7 +26,7 @@ public class ResendJudicialSeparationCitizenAosResponseNotification implements A
 
         if (NO.equals(caseData.getApplication().getJsCitizenAosResponseLettersResent())) {
             if (caseData.getApplicant1().isApplicantOffline()) {
-                log.info("Resending JS citizen aos response letter ({}) pack to bulk print as applicant1 is offline. Case id: {}",
+                log.info("Resending JS citizen aos response ({}) pack to bulk print as applicant1 is offline. Case id: {}",
                     acknowledgementOfService.isDisputed() ? "disputed" : "without dispute",
                     caseId
                 );
@@ -42,10 +42,10 @@ public class ResendJudicialSeparationCitizenAosResponseNotification implements A
                 );
 
             } else {
-                log.info("Not resending js citizen aos response letter pack to bulk print as applicant1 is not offline. Case id: {}", caseId);
+                log.info("Not resending js citizen aos response pack to bulk print as applicant1 is not offline. Case id: {}", caseId);
             }
         } else {
-            log.info("Not resending js citizen aos response letter pack to bulk print as already resent. Case id: {}", caseId);
+            log.info("Not resending js citizen aos response pack to bulk print as already resent. Case id: {}", caseId);
         }
     }
 }
