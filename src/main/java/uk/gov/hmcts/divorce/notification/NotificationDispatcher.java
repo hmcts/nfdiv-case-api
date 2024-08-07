@@ -68,9 +68,9 @@ public class NotificationDispatcher {
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
         }
     }
-    
+
     private boolean applicantRepresentedBefore(final boolean isApplicant1, final CaseData previousCaseData) {
-        return (isApplicant1 && previousCaseData.getApplicant1().isRepresented()) ||
-            (!isApplicant1 && previousCaseData.getApplicant2().isRepresented());
+        return (isApplicant1 && previousCaseData.getApplicant1().isRepresented())
+            || (!isApplicant1 && previousCaseData.getApplicant2().isRepresented());
     }
 }
