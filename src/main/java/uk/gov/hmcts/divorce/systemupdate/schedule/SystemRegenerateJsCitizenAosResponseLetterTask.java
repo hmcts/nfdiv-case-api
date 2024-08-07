@@ -32,11 +32,11 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenA
  */
 public class SystemRegenerateJsCitizenAosResponseLetterTask implements Runnable {
 
-    public final String CASE_ID_CSV = "NFDIV-4237.csv";
-    public final String SEARCH_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after search error";
-    public final String CONFLICT_ERROR =
+    public static final String CASE_ID_CSV = "NFDIV-4237.csv";
+    public static final String SEARCH_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after search error";
+    public static final String CONFLICT_ERROR =
         "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopping due to conflict with another running task";
-    public final String FILE_READ_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after file read error";
+    public static final String FILE_READ_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after file read error";
 
     private final CcdUpdateService ccdUpdateService;
 
