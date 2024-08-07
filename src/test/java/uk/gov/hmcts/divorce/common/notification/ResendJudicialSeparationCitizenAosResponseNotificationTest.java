@@ -45,10 +45,10 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
                 ImmutableMap.of(COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME)
         );
 
-        final String LETTER_TYPE_AOS_RESPONSE_PACK = "aos-response-pack";
+        final String letterTypeAosResponsePack = "aos-response-pack";
 
         when(aosResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1())).thenReturn(documentPack);
-        when(aosResponseDocumentPack.getLetterId()).thenReturn(LETTER_TYPE_AOS_RESPONSE_PACK);
+        when(aosResponseDocumentPack.getLetterId()).thenReturn(letterTypeAosResponsePack);
 
         underTest.sendToApplicant1Offline(caseData, caseId);
 
@@ -57,18 +57,17 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
                 caseId,
                 caseData.getApplicant1(),
                 documentPack,
-                LETTER_TYPE_AOS_RESPONSE_PACK
+                letterTypeAosResponsePack
         );
     }
 
     @Test
     void shouldNotResendLetterToApplicant1WhenPreviouslyResent() {
-        final var caseId = TEST_CASE_ID;
         final var data = validJointApplicant1CaseData();
         data.getApplicant1().setOffline(YES);
         data.getApplication().setJsCitizenAosResponseLettersResent(YES);
 
-        underTest.sendToApplicant1Offline(data, caseId);
+        underTest.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(letterPrinter);
     }
