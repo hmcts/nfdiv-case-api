@@ -37,6 +37,8 @@ public class SystemRegenerateJsCitizenAosResponseLetterTask implements Runnable 
     public static final String CONFLICT_ERROR =
         "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopping due to conflict with another running task";
     public static final String FILE_READ_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after file read error";
+    public static final String SUBMIT_EVENT_ERROR = "Submit event failed for case id: {}, continuing to next case";
+    public static final String DESERIALIZATION_ERROR = "Deserialization failed for case id: {}, continuing to next case";
 
     private final CcdUpdateService ccdUpdateService;
 
@@ -74,15 +76,15 @@ public class SystemRegenerateJsCitizenAosResponseLetterTask implements Runnable 
         }
     }
 
-    private void triggerRegenJsCitizenAosResponseCoverLetterForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
+    public void triggerRegenJsCitizenAosResponseCoverLetterForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
         try {
             log.info("Submitting Regenerate JS Citizen AoS Response letter for Case {}", caseDetails.getId());
             ccdUpdateService.submitEvent(caseDetails.getId(),
                 SYSTEM_REGEN_JS_CITIZEN_AOS_RESPONSE_COVER_LETTER, user, serviceAuth);
         } catch (final CcdManagementException e) {
-            taskHelper.logError("Submit event failed for case id: {}, continuing to next case", caseDetails.getId(), e);
+            taskHelper.logError(SUBMIT_EVENT_ERROR, caseDetails.getId(), e);
         } catch (final IllegalArgumentException e) {
-            taskHelper.logError("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId(), e);
+            taskHelper.logError(DESERIALIZATION_ERROR, caseDetails.getId(), e);
         }
     }
 }

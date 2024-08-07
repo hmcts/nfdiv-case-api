@@ -19,6 +19,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 @Component
 public class ResendJSCitizenAOSResponseLetters implements CaseTask {
 
+    public static final String NOTIFICATION_TEMPLATE_ERROR = "SystemResendJSCitizenAosResponseLetter Notification failed with message: {}";
     private final ResendJudicialSeparationCitizenAosResponseNotification resendJudicialSeparationCitizenAosResponseNotification;
 
     private final NotificationDispatcher notificationDispatcher;
@@ -31,7 +32,7 @@ public class ResendJSCitizenAOSResponseLetters implements CaseTask {
             notificationDispatcher.send(resendJudicialSeparationCitizenAosResponseNotification, data, details.getId());
             data.getApplication().setJsCitizenAosResponseLettersResent(YES);
         } catch (final NotificationTemplateException e) {
-            log.error("SystemResendJSCitizenAosResponseLetter Notification failed with message: {}", e.getMessage(), e);
+            log.error(NOTIFICATION_TEMPLATE_ERROR, e.getMessage(), e);
             data.getApplication().setJsCitizenAosResponseLettersResent(NO);
         }
 
