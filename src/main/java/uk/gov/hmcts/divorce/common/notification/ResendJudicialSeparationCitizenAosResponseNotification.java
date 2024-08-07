@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Component
@@ -24,7 +23,7 @@ public class ResendJudicialSeparationCitizenAosResponseNotification implements A
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
 
-        if (NO.equals(caseData.getApplication().getJsCitizenAosResponseLettersResent())) {
+        if (!YES.equals(caseData.getApplication().getJsCitizenAosResponseLettersResent())) {
             if (caseData.getApplicant1().isApplicantOffline()) {
                 log.info("Resending JS citizen aos response ({}) pack to bulk print as applicant1 is offline. Case id: {}",
                     acknowledgementOfService.isDisputed() ? "disputed" : "without dispute",
