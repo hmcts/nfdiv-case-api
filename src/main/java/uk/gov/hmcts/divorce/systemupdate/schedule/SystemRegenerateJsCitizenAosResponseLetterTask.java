@@ -32,6 +32,12 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenA
  */
 public class SystemRegenerateJsCitizenAosResponseLetterTask implements Runnable {
 
+    public final String CASE_ID_CSV = "NFDIV-4237.csv";
+    public final String SEARCH_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after search error";
+    public final String CONFLICT_ERROR =
+        "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopping due to conflict with another running task";
+    public final String FILE_READ_ERROR = "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after file read error";
+
     private final CcdUpdateService ccdUpdateService;
 
     private final CcdSearchService ccdSearchService;
@@ -49,32 +55,22 @@ public class SystemRegenerateJsCitizenAosResponseLetterTask implements Runnable 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
 
-            List<Long> caseIds = taskHelper.loadCaseIds("NFDIV-4237.csv");
+            List<Long> caseIds = taskHelper.loadCaseIds(CASE_ID_CSV);
             final BoolQueryBuilder query = boolQuery()
                 .filter(QueryBuilders.termsQuery("reference", caseIds));
 
             final List<CaseDetails> caseList =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth);
-            for (int i = 0; i < caseList.size(); i++) {
-                CaseDetails caseDetails = caseList.get(i);
+            for (CaseDetails caseDetails : caseList) {
                 triggerRegenJsCitizenAosResponseCoverLetterForEligibleCases(user, serviceAuth, caseDetails);
             }
-
             log.info("SystemRegenerateJsCitizenAosResponseCoverLetterTask completed.");
         } catch (final CcdSearchCaseException e) {
-            taskHelper.logError(
-                "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after search error",
-                null,
-                e
-            );
+            taskHelper.logError(SEARCH_ERROR, null, e);
         } catch (final CcdConflictException e) {
-            taskHelper.logError(
-                "SystemRegenerateJsCitizenAosResponseCoverLetterTask stopping due to conflict with another running task",
-                null,
-                e
-            );
+            taskHelper.logError(CONFLICT_ERROR, null, e);
         } catch (IOException e) {
-            taskHelper.logError("SystemRegenerateJsCitizenAosResponseCoverLetterTask stopped after file read error", null, e);
+            taskHelper.logError(FILE_READ_ERROR, null, e);
         }
     }
 
