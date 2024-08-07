@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.task.SendRegeneratedJSCitizenAOSResponseLetters;
+import uk.gov.hmcts.divorce.common.service.task.ResendJSCitizenAOSResponseLetters;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -30,7 +30,7 @@ public class SystemRegenerateJsCitizenAosResponseCoverLetter implements CCDConfi
     public static final String REGEN_JS_CITIZEN_AOS_RESPONSE_LETTER =
         "Regen JS Citizen AoS Response";
 
-    private final SendRegeneratedJSCitizenAOSResponseLetters sendRegeneratedJSCitizenAOSResponseLetters;
+    private final ResendJSCitizenAOSResponseLetters resendJSCitizenAOSResponseLetters;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,7 +56,7 @@ public class SystemRegenerateJsCitizenAosResponseCoverLetter implements CCDConfi
                 log.info("Regenerating JS Citizen AoS Response letter pack for Case Id: {}", details.getId());
 
                 caseTasks(
-                    sendRegeneratedJSCitizenAOSResponseLetters
+                    resendJSCitizenAOSResponseLetters
                 ).run(details);
             } else {
                 log.info("No JS Citizen AoS Response letter pack to Regenerate on Case Id: {}", details.getId());

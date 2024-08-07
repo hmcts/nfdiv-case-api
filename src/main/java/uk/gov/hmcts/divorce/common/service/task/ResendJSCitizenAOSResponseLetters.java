@@ -17,7 +17,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class SendRegeneratedJSCitizenAOSResponseLetters implements CaseTask {
+public class ResendJSCitizenAOSResponseLetters implements CaseTask {
 
     private final ResendJudicialSeparationCitizenAosResponseNotification resendJudicialSeparationCitizenAosResponseNotification;
 
