@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMI
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
@@ -52,7 +53,7 @@ public class PronounceCasesTaskTest {
     @Test
     void shouldPronounceCasesTask() {
         final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived);
-        final EnumSet<State> postStates = EnumSet.of(ConditionalOrderPronounced);
+        final EnumSet<State> postStates = EnumSet.of(ConditionalOrderPronounced, SeparationOrderGranted);
 
         final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
         final var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
