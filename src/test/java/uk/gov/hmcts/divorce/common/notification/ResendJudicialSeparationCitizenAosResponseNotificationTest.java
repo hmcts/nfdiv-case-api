@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
@@ -32,7 +33,7 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
     private AosResponseDocumentPack aosResponseDocumentPack;
 
     @InjectMocks
-    private ResendJudicialSeparationCitizenAosResponseNotification underTest;
+    private ResendJudicialSeparationCitizenAosResponseNotification resendJudicialSeparationCitizenAosResponseNotification;
 
     @Test
     void shouldResendLetterToOfflineApplicant1WhenNotAlreadyResent() {
@@ -50,7 +51,7 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
         when(aosResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1())).thenReturn(documentPack);
         when(aosResponseDocumentPack.getLetterId()).thenReturn(letterTypeAosResponsePack);
 
-        underTest.sendToApplicant1Offline(caseData, caseId);
+        resendJudicialSeparationCitizenAosResponseNotification.sendToApplicant1Offline(caseData, caseId);
 
         verify(letterPrinter).sendLetters(
                 caseData,
@@ -62,12 +63,22 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
     }
 
     @Test
+    void shouldNotResendLetterToApplicant1WhenApplicant1NotOffline() {
+        final var data = validJointApplicant1CaseData();
+        data.getApplicant1().setOffline(NO);
+
+        resendJudicialSeparationCitizenAosResponseNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
+
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
     void shouldNotResendLetterToApplicant1WhenPreviouslyResent() {
         final var data = validJointApplicant1CaseData();
         data.getApplicant1().setOffline(YES);
         data.getApplication().setJsCitizenAosResponseLettersResent(YES);
 
-        underTest.sendToApplicant1Offline(data, TEST_CASE_ID);
+        resendJudicialSeparationCitizenAosResponseNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verifyNoInteractions(letterPrinter);
     }

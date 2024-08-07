@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -29,7 +30,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRegenerateJsCitizenAosResponseLetterTask.CASE_ID_CSV;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRegenerateJsCitizenAosResponseLetterTask.CONFLICT_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRegenerateJsCitizenAosResponseLetterTask.DESERIALIZATION_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRegenerateJsCitizenAosResponseLetterTask.FILE_READ_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRegenerateJsCitizenAosResponseLetterTask.SEARCH_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemRegenerateJsCitizenAosResponseLetterTask.SUBMIT_EVENT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +59,7 @@ class SystemRegenerateJsCitizenAosResponseLetterTaskTest {
     private TaskHelper taskHelper;
 
     @InjectMocks
-    private SystemRegenerateJsCitizenAosResponseLetterTask task;
+    private SystemRegenerateJsCitizenAosResponseLetterTask systemRegenerateJsCitizenAosResponseLetterTask;
 
     private User user;
 
@@ -65,7 +73,9 @@ class SystemRegenerateJsCitizenAosResponseLetterTaskTest {
         final List<CaseDetails> caseDetails = new ArrayList<>();
 
         for (int index = 0; index < size; index++) {
-            caseDetails.add(mock(CaseDetails.class));
+            final var mockCaseDetails = mock(CaseDetails.class);
+            mockCaseDetails.setId(TEST_CASE_ID);
+            caseDetails.add(mockCaseDetails);
         }
 
         return caseDetails;
@@ -78,7 +88,7 @@ class SystemRegenerateJsCitizenAosResponseLetterTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(any(), any(), any())).thenReturn(casesToBeUpdated);
 
         // Call the method under test
-        task.run();
+        systemRegenerateJsCitizenAosResponseLetterTask.run();
 
         // Verify that all cases are processed
         verify(ccdUpdateService, times(10)).submitEvent(any(), any(), any(), any());
@@ -88,26 +98,26 @@ class SystemRegenerateJsCitizenAosResponseLetterTaskTest {
     void run_SearchCaseException_LogsError() throws CcdConflictException, IOException {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn("token");
-        when(taskHelper.loadCaseIds(task.CASE_ID_CSV)).thenReturn(new ArrayList<>());
+        when(taskHelper.loadCaseIds(CASE_ID_CSV)).thenReturn(new ArrayList<>());
 
-        doThrow(new CcdSearchCaseException("Search error", null)).when(ccdSearchService)
+        doThrow(new CcdSearchCaseException(SEARCH_ERROR, null)).when(ccdSearchService)
             .searchForAllCasesWithQuery(any(), any(), any());
-        task.run();
+        systemRegenerateJsCitizenAosResponseLetterTask.run();
         // Verify that the logger's error method is called with the expected message
-        verify(taskHelper).logError(eq(task.SEARCH_ERROR), isNull(), isA(CcdSearchCaseException.class));
+        verify(taskHelper).logError(eq(SEARCH_ERROR), isNull(), isA(CcdSearchCaseException.class));
     }
 
     @Test
     void run_conflictException_LogsError() throws CcdConflictException, IOException {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn("token");
-        when(taskHelper.loadCaseIds(task.CASE_ID_CSV)).thenReturn(new ArrayList<>());
+        when(taskHelper.loadCaseIds(CASE_ID_CSV)).thenReturn(new ArrayList<>());
 
-        doThrow(new CcdConflictException("Conflict error", null)).when(ccdSearchService)
+        doThrow(new CcdConflictException(CONFLICT_ERROR, null)).when(ccdSearchService)
             .searchForAllCasesWithQuery(any(), any(), any());
-        task.run();
+        systemRegenerateJsCitizenAosResponseLetterTask.run();
         // Verify that the logger's error method is called with the expected message
-        verify(taskHelper).logError(eq(task.CONFLICT_ERROR), isNull(), isA(CcdConflictException.class));
+        verify(taskHelper).logError(eq(CONFLICT_ERROR), isNull(), isA(CcdConflictException.class));
     }
 
     @Test
@@ -115,11 +125,35 @@ class SystemRegenerateJsCitizenAosResponseLetterTaskTest {
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn("token");
-        when(taskHelper.loadCaseIds(task.CASE_ID_CSV)).thenThrow(new IOException("IO error"));
-        task.run();
+        when(taskHelper.loadCaseIds(CASE_ID_CSV)).thenThrow(new IOException("IO error"));
+        systemRegenerateJsCitizenAosResponseLetterTask.run();
 
         // Verify that the IO error is logged
-        verify(taskHelper).logError(eq(task.FILE_READ_ERROR), isNull(), isA(IOException.class));
+        verify(taskHelper).logError(eq(FILE_READ_ERROR), isNull(), isA(IOException.class));
+    }
+
+    @Test
+    void run_CCDManagementException_LogsError() throws CcdManagementException {
+        CaseDetails caseDetails = CaseDetails.builder().id(TEST_CASE_ID).build();
+
+        doThrow(new CcdManagementException(500, null, null)).when(ccdUpdateService)
+            .submitEvent(any(), any(), any(), any());
+        systemRegenerateJsCitizenAosResponseLetterTask
+            .triggerRegenJsCitizenAosResponseCoverLetterForEligibleCases(user, "token", caseDetails);
+        // Verify that the logger's error method is called with the expected message
+        verify(taskHelper).logError(eq(SUBMIT_EVENT_ERROR), eq(TEST_CASE_ID), isA(CcdManagementException.class));
+    }
+
+    @Test
+    void run_IllegalArgumentException_LogsError() throws CcdManagementException {
+        CaseDetails caseDetails = CaseDetails.builder().id(TEST_CASE_ID).build();
+
+        doThrow(new IllegalArgumentException()).when(ccdUpdateService)
+            .submitEvent(any(), any(), any(), any());
+        systemRegenerateJsCitizenAosResponseLetterTask
+            .triggerRegenJsCitizenAosResponseCoverLetterForEligibleCases(user, "token", caseDetails);
+        // Verify that the logger's error method is called with the expected message
+        verify(taskHelper).logError(eq(DESERIALIZATION_ERROR), eq(TEST_CASE_ID), isA(IllegalArgumentException.class));
     }
 }
 
