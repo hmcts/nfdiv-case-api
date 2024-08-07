@@ -9,6 +9,7 @@
     "marriageDate": "2009-04-20",
     "divorceWho": "wife",
     "sentNotifications": {},
+    "changeOfRepresentatives": [],
     "coCronRetriesRemindApplicantApplyCo": 0,
     "marriageFormationType": "oppositeSexCouple",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
