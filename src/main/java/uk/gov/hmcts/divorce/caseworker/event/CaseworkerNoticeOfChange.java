@@ -19,6 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
+import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
@@ -38,6 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.resetConditionalOrderFields;
 
 @Component
 @RequiredArgsConstructor
@@ -48,7 +51,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
     private final NoticeOfChangeService noticeOfChangeService;
     private final SolicitorValidationService solicitorValidationService;
-
+    private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
 
@@ -178,6 +181,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             details,
             noticeOfChangeService);
 
+        changeOfRepresentativeService.buildChangeOfRepresentative(data, beforeData,
+                ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), isApplicant1);
+
 
         //could get which applicant from case data but use param to avoid mishap
         //this can move to submitted once we have more NOC data on casedata
@@ -251,6 +257,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 safelyClearSolicitorAddress(data.getApplicant1());
             }
+
+            setSolicitorFirmName(data.getApplicant1());
         } else {
             safelySetOrganisationPolicy(data.getApplicant1(), beforeData.getApplicant1());
             safelySetAddress(data.getApplicant1(), beforeData.getApplicant1());
@@ -260,13 +268,23 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
                 safelyClearSolicitorAddress(data.getApplicant2());
             }
+
+            setSolicitorFirmName(data.getApplicant2());
         }
 
         if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-            setConditionalOrderDefaultValues(data);
+            resetConditionalOrderFields(data);
         }
 
         return data;
+    }
+
+    private void setSolicitorFirmName(Applicant applicant) {
+        Solicitor applicantSolicitor = applicant.getSolicitor();
+        if (applicantSolicitor != null && applicantSolicitor.hasOrgName()) {
+            String orgName = applicantSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+            applicantSolicitor.setFirmName(orgName);
+        }
     }
 
     private void safelySetOrganisationPolicy(Applicant target, Applicant source) {
@@ -290,15 +308,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         }
     }
 
-    private void setConditionalOrderDefaultValues(CaseData data) {
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
-        if (!data.getApplicationType().isSole()) {
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
-        }
-    }
-
     private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
         OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
             .orgPolicyCaseAssignedRole(role)
@@ -308,5 +317,4 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         solicitor.setOrganisationPolicy(defaultOrgPolicy);
         return solicitor;
     }
-
 }
