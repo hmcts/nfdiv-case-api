@@ -18,7 +18,7 @@ public enum GeneralReferralType implements HasLabel {
     ORDER_ON_FILLING_OF_ANSWERS("Order on filing of Answers"),
 
     @JsonProperty("permissionOnDaOot")
-    PERMISSION_ON_DA_OOT("Permission on DA OOT"),
+    PERMISSION_ON_DA_OOT("Permission on FO OOT"),
 
     @JsonProperty("disclosureViaDwp")
     DISCLOSURE_VIA_DWP("Disclosure via DWP"),

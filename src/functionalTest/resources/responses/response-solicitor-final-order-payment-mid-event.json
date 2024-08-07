@@ -9,6 +9,7 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant2FirstName": "Olive",
+    "changeOfRepresentatives": [],
     "applicant2LastName": "Oil",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2Email": "simulate-delivered@notifications.service.gov.uk",

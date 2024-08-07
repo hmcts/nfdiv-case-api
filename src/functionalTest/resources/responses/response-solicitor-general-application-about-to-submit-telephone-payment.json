@@ -2,6 +2,7 @@
   "data": {
     "supplementaryCaseType": "notApplicable",
     "sentNotifications": {},
+    "changeOfRepresentatives": [],
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
