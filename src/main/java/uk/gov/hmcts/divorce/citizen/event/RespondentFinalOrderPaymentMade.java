@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String RESPONDENT_FINAL_ORDER_PAYMENT_MADE = "respondent-final-order-payment-made";
+    public static final String RESPONDENT_FINAL_ORDER_PAYMENT_MADE = "final-order-payment-made";
 
     private final PaymentValidatorService paymentValidatorService;
 
@@ -40,7 +40,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
             .event(RESPONDENT_FINAL_ORDER_PAYMENT_MADE)
             .forState(AwaitingRespondentFOPayment)
             .showCondition(NEVER_SHOW)
-            .name("Respondent final order payment made")
+            .name("Final order payment made")
             .description("Respondent final order payment made")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, APPLICANT_2)

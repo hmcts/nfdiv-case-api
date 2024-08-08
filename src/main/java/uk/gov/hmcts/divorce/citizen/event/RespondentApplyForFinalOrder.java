@@ -37,19 +37,17 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 @RequiredArgsConstructor
 public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String RESPONDENT_FINAL_ORDER_REQUESTED = "respondent-final-order-requested";
-
-    public static final String RESPONDENT_APPLY_FOR_FINAL_ORDER = "Respondent final order requested";
+    public static final String RESPONDENT_APPLY_FINAL_ORDER = "respondent-apply-final-order";
 
     private final PaymentService paymentService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(RESPONDENT_FINAL_ORDER_REQUESTED)
+            .event(RESPONDENT_APPLY_FINAL_ORDER)
             .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder)
-            .name(RESPONDENT_APPLY_FOR_FINAL_ORDER)
-            .description(RESPONDENT_APPLY_FOR_FINAL_ORDER)
+            .name("Respondent apply final order")
+            .description("Respondent would like to apply for final order")
             .showCondition(NEVER_SHOW)
             .showSummary()
             .showEventNotes()
@@ -60,7 +58,7 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} About to Submit callback invoked for Case Id: {}", RESPONDENT_FINAL_ORDER_REQUESTED, details.getId());
+        log.info("{} About to Submit callback invoked for Case Id: {}", RESPONDENT_APPLY_FINAL_ORDER, details.getId());
 
         CaseData data = details.getData();
         FinalOrder finalOrder = data.getFinalOrder();
