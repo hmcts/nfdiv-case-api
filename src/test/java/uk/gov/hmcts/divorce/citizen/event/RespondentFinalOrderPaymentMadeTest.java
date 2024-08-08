@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,8 @@ import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRespondentFOPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -37,6 +40,9 @@ public class RespondentFinalOrderPaymentMadeTest {
 
     @Mock
     private PaymentValidatorService paymentValidatorService;
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private RespondentFinalOrderPaymentMade respondentFinalOrderPaymentMade;
@@ -75,6 +81,7 @@ public class RespondentFinalOrderPaymentMadeTest {
 
     @Test
     void givenValidPaymentMadeWhenCallbackIsInvokedThenStateChanges() {
+        setMockClock(clock);
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -92,5 +99,6 @@ public class RespondentFinalOrderPaymentMadeTest {
 
         assertThat(result.getData()).isSameAs(caseData);
         assertThat(result.getState()).isEqualTo(RespondentFinalOrderRequested);
+        assertThat(result.getData().getFinalOrder().getDateApplicant2AppliedForFinalOrder()).isEqualTo(getExpectedLocalDateTime());
     }
 }
