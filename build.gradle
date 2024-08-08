@@ -267,7 +267,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.5'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
