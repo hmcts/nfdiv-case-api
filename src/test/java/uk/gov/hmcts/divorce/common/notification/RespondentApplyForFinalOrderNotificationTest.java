@@ -5,9 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.time.LocalDate;
 
@@ -25,15 +27,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.GENERAL_FEE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -52,11 +59,14 @@ class RespondentApplyForFinalOrderNotificationTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private PaymentService paymentService;
+
     @InjectMocks
     private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
 
     @Test
-    public void shouldNotSendRespondentApplyForFinalOrderEmailToApplicant1() {
+    void shouldNotSendRespondentApplyForFinalOrderEmailToApplicant1() {
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
@@ -68,7 +78,7 @@ class RespondentApplyForFinalOrderNotificationTest {
     }
 
     @Test
-    public void shouldSendRespondentApplyForFinalOrderEmailToApplicant2() {
+    void shouldSendRespondentApplyForFinalOrderEmailToApplicant2() {
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
@@ -85,15 +95,21 @@ class RespondentApplyForFinalOrderNotificationTest {
         );
     }
 
+
     @Test
-    public void shouldSendRespondentApplyForFinalOrderEmailWithCorrectContent() {
+    void shouldSendRespondentApplyForFinalOrderEmailWithCorrectContent() {
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
         data.setApplicationType(SOLE_APPLICATION);
 
+        Double expectedGeneralAppFees = 180.00;
+        String formattedGeneralAppFees = "£180.00";
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE)).thenReturn(expectedGeneralAppFees);
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
+        when(commonContent.getSmartSurvey())
+            .thenReturn("https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email");
 
         respondentApplyForFinalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
@@ -104,7 +120,9 @@ class RespondentApplyForFinalOrderNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
-                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO),
+                hasEntry(GENERAL_FEE, formattedGeneralAppFees),
+                hasEntry(SMART_SURVEY, "https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email")
             )),
             any(),
             any()
@@ -112,7 +130,7 @@ class RespondentApplyForFinalOrderNotificationTest {
     }
 
     @Test
-    public void shouldSendRespondentApplyForFinalOrderEmailToApplicant2Solicitor() {
+    void shouldSendRespondentApplyForFinalOrderEmailToApplicant2Solicitor() {
         final var data = validCaseDataForAwaitingFinalOrder();
         data.getApplication().setIssueDate(LocalDate.of(2021, 4, 5));
         final var applicant2 = getApplicant2(MALE);
