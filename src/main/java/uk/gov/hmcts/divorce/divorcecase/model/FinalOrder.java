@@ -279,7 +279,7 @@ public class FinalOrder {
         label = "Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private List<ListValue<Payment>> finalOrderPayments;
 
