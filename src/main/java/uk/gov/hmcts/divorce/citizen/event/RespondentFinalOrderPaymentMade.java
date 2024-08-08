@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
@@ -33,6 +35,8 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
     public static final String RESPONDENT_FINAL_ORDER_PAYMENT_MADE = "final-order-payment-made";
 
     private final PaymentValidatorService paymentValidatorService;
+
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,6 +70,8 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
                 .state(AwaitingRespondentFOPayment)
                 .build();
         }
+
+        caseData.getFinalOrder().setDateApplicant2AppliedForFinalOrder(LocalDateTime.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
