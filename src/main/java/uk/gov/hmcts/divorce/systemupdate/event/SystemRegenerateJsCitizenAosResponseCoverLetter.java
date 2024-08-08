@@ -13,6 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Collections;
+
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -29,6 +32,10 @@ public class SystemRegenerateJsCitizenAosResponseCoverLetter implements CCDConfi
         "system-regen-js-citizen-aos-response-cover-letter";
     public static final String REGEN_JS_CITIZEN_AOS_RESPONSE_LETTER =
         "Regen JS Citizen AoS Response";
+    public static final String RESPONSE_ALREADY_SENT_ERROR = "Not resending js citizen aos response pack to bulk print as already resent.";
+    public static final String NOT_JS_ERROR = "Not a JS Case.";
+    public static final String APP1_ONLINE_ERROR = "Not resending js citizen aos response pack to bulk print as applicant1 is not offline.";
+    public static final String NO_RESPONSE_PACK_ERROR = "No JS Citizen AoS Response letter pack to Regenerate.";
 
     private final ResendJSCitizenAOSResponseLetters resendJSCitizenAOSResponseLetters;
 
@@ -51,18 +58,38 @@ public class SystemRegenerateJsCitizenAosResponseCoverLetter implements CCDConfi
 
         var caseData = details.getData();
 
-        if (caseData.isJudicialSeparationCase()) {
-            if (caseData.getDocuments().getDocumentGeneratedWithType(AOS_RESPONSE_LETTER).isPresent()) {
-                log.info("Regenerating JS Citizen AoS Response letter pack for Case Id: {}", details.getId());
+        if (YES.equals(caseData.getApplication().getJsCitizenAosResponseLettersResent())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(RESPONSE_ALREADY_SENT_ERROR))
+                .data(caseData)
+                .build();
+        }
 
-                caseTasks(
-                    resendJSCitizenAOSResponseLetters
-                ).run(details);
+        if (caseData.isJudicialSeparationCase()) {
+            if (caseData.getApplicant1().isApplicantOffline()) {
+                if (caseData.getDocuments().getDocumentGeneratedWithType(AOS_RESPONSE_LETTER).isPresent()) {
+                    log.info("Regenerating JS Citizen AoS Response letter pack for Case Id: {}", details.getId());
+
+                    caseTasks(
+                        resendJSCitizenAOSResponseLetters
+                    ).run(details);
+                } else {
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .errors(Collections.singletonList(NO_RESPONSE_PACK_ERROR))
+                        .data(caseData)
+                        .build();
+                }
             } else {
-                log.info("No JS Citizen AoS Response letter pack to Regenerate on Case Id: {}", details.getId());
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(Collections.singletonList(APP1_ONLINE_ERROR))
+                    .data(caseData)
+                    .build();
             }
         } else {
-            log.info("Not a JS Case. Case Id: {}", details.getId());
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(NOT_JS_ERROR))
+                .data(caseData)
+                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

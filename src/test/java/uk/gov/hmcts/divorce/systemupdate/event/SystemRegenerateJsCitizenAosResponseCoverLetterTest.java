@@ -16,16 +16,25 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenAosResponseCoverLetter.APP1_ONLINE_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenAosResponseCoverLetter.NOT_JS_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenAosResponseCoverLetter.NO_RESPONSE_PACK_ERROR;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenAosResponseCoverLetter.RESPONSE_ALREADY_SENT_ERROR;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRegenerateJsCitizenAosResponseCoverLetter.SYSTEM_REGEN_JS_CITIZEN_AOS_RESPONSE_COVER_LETTER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +58,23 @@ class SystemRegenerateJsCitizenAosResponseCoverLetterTest {
     }
 
     @Test
+    void shouldNotRegenerateAosResponsePackWhenAlreadyRegenerated() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setJsCitizenAosResponseLettersResent(YES);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemRegenerateJsCitizenAosResponseCoverLetter.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(RESPONSE_ALREADY_SENT_ERROR));
+        verifyNoInteractions(resendJSCitizenAOSResponseLetters);
+    }
+
+    @Test
     void shouldNotRegenerateAosResponsePackWhenNotJsCase() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
@@ -60,14 +86,16 @@ class SystemRegenerateJsCitizenAosResponseCoverLetterTest {
                 systemRegenerateJsCitizenAosResponseCoverLetter.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(NOT_JS_ERROR));
         verifyNoInteractions(resendJSCitizenAOSResponseLetters);
     }
 
     @Test
-    void shouldNotRegenerateAosResponsePackWhenThereIsNoExistingAosResponseLetterDocOnJsCase() {
+    void shouldNotRegenerateAosResponsePackWhenApp1IsNotOffline() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
-        final CaseData caseData = CaseData.builder().supplementaryCaseType(JUDICIAL_SEPARATION).build();
+        final CaseData caseData = CaseData.builder().applicant1(getApplicant()).supplementaryCaseType(JUDICIAL_SEPARATION).build();
+        caseData.getApplicant1().setOffline(NO);
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
@@ -75,11 +103,29 @@ class SystemRegenerateJsCitizenAosResponseCoverLetterTest {
             systemRegenerateJsCitizenAosResponseCoverLetter.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APP1_ONLINE_ERROR));
         verifyNoInteractions(resendJSCitizenAOSResponseLetters);
     }
 
     @Test
-    void shouldRegenerateAosResponsePackWhenAosResponseLetterDocExistsOnJsCase() {
+    void shouldNotRegenerateAosResponsePackWhenThereIsNoExistingAosResponseLetterDocOnJsCase() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        final CaseData caseData = CaseData.builder().applicant1(getApplicant()).supplementaryCaseType(JUDICIAL_SEPARATION).build();
+        caseData.getApplicant1().setOffline(YES);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemRegenerateJsCitizenAosResponseCoverLetter.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(NO_RESPONSE_PACK_ERROR));
+        verifyNoInteractions(resendJSCitizenAOSResponseLetters);
+    }
+
+    @Test
+    void shouldRegenerateAosResponsePackWhenAosResponseLetterDocExistsOnJsCaseAndApp1IsOffline() {
 
         final var generatedDocuments = Lists.newArrayList(getDivorceDocumentListValue(
             "http://localhost:4200/assets/8c75732c-d640-43bf-a0e9-f33452243696",
@@ -96,7 +142,9 @@ class SystemRegenerateJsCitizenAosResponseCoverLetterTest {
                     .build()
             )
             .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .applicant1(getApplicant())
             .build();
+        caseData.getApplicant1().setOffline(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -107,7 +155,7 @@ class SystemRegenerateJsCitizenAosResponseCoverLetterTest {
             systemRegenerateJsCitizenAosResponseCoverLetter.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
-
+        assertThat(response.getErrors()).isNull();
         verify(resendJSCitizenAOSResponseLetters).apply(caseDetails);
     }
 }

@@ -14,9 +14,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import java.util.Optional;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
@@ -36,7 +34,7 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
     private ResendJudicialSeparationCitizenAosResponseNotification resendJudicialSeparationCitizenAosResponseNotification;
 
     @Test
-    void shouldResendLetterToOfflineApplicant1WhenNotAlreadyResent() {
+    void shouldResendLetterToOfflineApplicant1() {
         final var caseId = TEST_CASE_ID;
         final var caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setOffline(YES);
@@ -60,26 +58,5 @@ class ResendJudicialSeparationCitizenAosResponseNotificationTest {
                 documentPack,
                 letterTypeAosResponsePack
         );
-    }
-
-    @Test
-    void shouldNotResendLetterToApplicant1WhenApplicant1NotOffline() {
-        final var data = validJointApplicant1CaseData();
-        data.getApplicant1().setOffline(NO);
-
-        resendJudicialSeparationCitizenAosResponseNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
-
-        verifyNoInteractions(letterPrinter);
-    }
-
-    @Test
-    void shouldNotResendLetterToApplicant1WhenPreviouslyResent() {
-        final var data = validJointApplicant1CaseData();
-        data.getApplicant1().setOffline(YES);
-        data.getApplication().setJsCitizenAosResponseLettersResent(YES);
-
-        resendJudicialSeparationCitizenAosResponseNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
-
-        verifyNoInteractions(letterPrinter);
     }
 }
