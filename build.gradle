@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.26'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.28'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20240303'
   }
@@ -267,7 +267,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.5'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
@@ -481,3 +481,10 @@ configurations.all {
 }
 
 tasks.cftlibTest.dependsOn(installChromium)
+
+generateCCDConfig.doLast {
+  copy {
+    from file('ccd-definitions')
+    into layout.buildDirectory.dir('definitions/NFD')
+  }
+}
