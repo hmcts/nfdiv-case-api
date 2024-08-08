@@ -177,6 +177,7 @@ uk:
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'd4eb2375-2d61-4a08-88b0-457430056c18'
             NOC_TO_SOLS_EMAIL_NEW_SOL: 'e19d3227-84eb-4b43-afa0-05de1e089003'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '98c2a7a4-79c4-410c-909d-10db0108fe8d'
+            NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
@@ -300,6 +301,7 @@ uk:
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'b3786fd2-4a72-4c5f-b4ed-6635647b1520'
             NOC_TO_SOLS_EMAIL_NEW_SOL: '7fd68c22-f0cc-41ce-af9e-be9f732eab3a'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '977d2857-dcf1-4bc2-97fb-f9b1e13af907'
+            NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
@@ -418,6 +420,7 @@ docmosis:
       JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation.docx
+      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V6.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint.docx
@@ -495,6 +498,7 @@ docmosis:
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
       JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint.docx
+      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
