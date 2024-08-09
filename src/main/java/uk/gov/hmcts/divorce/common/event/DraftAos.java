@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2HowToRespondToApplication;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosAskCourtToDelay;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails;
@@ -52,6 +53,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         new Applicant2SolReviewApplicant1Application(),
         new Applicant2HowToRespondToApplication(),
         new Applicant2SolAosJurisdiction(),
+        new Applicant2SolAosAskCourtToDelay(),
         new Applicant2SolAosOtherProceedings()
     );
     @Autowired
