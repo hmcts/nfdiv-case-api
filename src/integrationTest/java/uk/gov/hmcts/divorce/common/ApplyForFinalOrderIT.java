@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APP
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -68,6 +69,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISAT
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -463,6 +465,49 @@ public class ApplyForFinalOrderIT {
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_BOTH_APPLICANTS_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(WELSH), anyLong());
 
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationWhenSoleApplicationAndApplicant1SolicitorHasAppliedForFinalOrder() throws Exception {
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        final CaseData data = validApplicant1CaseData();
+        data.getApplication().setPreviousState(AwaitingFinalOrder);
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+                .name("App1 Sol")
+                .reference("12344")
+                .email(TEST_SOLICITOR_EMAIL)
+                .build());
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+                .name("App2 Sol")
+                .reference("12344")
+                .email("app2sol@email.com")
+                .build());
+        data.setFinalOrder(FinalOrder.builder()
+                .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
+                .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+                .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
+                        .contentType(APPLICATION_JSON)
+                        .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                        .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                        .content(objectMapper.writeValueAsString(callbackRequest(data, FINAL_ORDER_REQUESTED, "AwaitingFinalOrder")))
+                        .accept(APPLICATION_JSON))
+                .andExpect(
+                        status().isOk()
+            );
+
+        verify(notificationService)
+                .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
         verifyNoMoreInteractions(notificationService);
     }
 }
