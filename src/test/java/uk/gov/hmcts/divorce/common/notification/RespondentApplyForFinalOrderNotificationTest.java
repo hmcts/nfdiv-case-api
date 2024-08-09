@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -104,7 +103,6 @@ class RespondentApplyForFinalOrderNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
 
         Double expectedGeneralAppFees = 180.00;
-        String formattedGeneralAppFees = "£180.00";
         when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE)).thenReturn(expectedGeneralAppFees);
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
@@ -112,7 +110,7 @@ class RespondentApplyForFinalOrderNotificationTest {
             .thenReturn("https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email");
 
         respondentApplyForFinalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
-
+        String formattedGeneralAppFees = "£180.00";
         verify(notificationService).sendEmail(
             any(),
             any(),
