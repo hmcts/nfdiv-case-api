@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -218,6 +219,66 @@ class NotificationDispatcherTest {
         notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
 
         verify(applicantNotification).sendToApplicant2OldSolicitor(previousCaseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCToOldSolIfNewOrgAssignedAndHadRepresentationBefore_Applicant1() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = CaseData.builder().applicant1(
+            Applicant.builder().solicitorRepresented(YES).build()
+        ).build();
+        final boolean isApplicant1 = true;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant1OldSolicitor(previousCaseData, caseId);
+    }
+
+    @Test
+    void shouldSendNOCToOldSolIfNewOrgAssignedAndHadRepresentationBefore_Applicant2() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = CaseData.builder().applicant2(
+            Applicant.builder().solicitorRepresented(YES).build()
+        ).build();
+        final boolean isApplicant1 = false;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification).sendToApplicant2OldSolicitor(previousCaseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendNOCToOldSolIfNewOrgAssignedAndDidNotHaveRepresentationBefore_Applicant1() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = CaseData.builder().applicant1(
+            Applicant.builder().solicitorRepresented(NO).build()
+        ).build();
+        final boolean isApplicant1 = true;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification, never()).sendToApplicant1OldSolicitor(previousCaseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendNOCToOldSolIfNewOrgAssignedAndDidNotHaveRepresentationBefore_Applicant2() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        final CaseData previousCaseData = CaseData.builder().applicant2(
+            Applicant.builder().solicitorRepresented(NO).build()
+        ).build();
+        final boolean isApplicant1 = false;
+        final NoticeType noticeType = NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
+
+        notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
+
+        verify(applicantNotification, never()).sendToApplicant2OldSolicitor(previousCaseData, caseId);
     }
 
     public static class TestNotification implements ApplicantNotification {
