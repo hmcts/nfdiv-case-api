@@ -10,28 +10,29 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRespondentFOPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -39,10 +40,16 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class RespondentFinalOrderPaymentMadeTest {
 
     @Mock
-    private PaymentValidatorService paymentValidatorService;
+    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     @Mock
-    private Clock clock;
+    private ApplyForFinalOrderService applyForFinalOrderService;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private PaymentValidatorService paymentValidatorService;
 
     @InjectMocks
     private RespondentFinalOrderPaymentMade respondentFinalOrderPaymentMade;
@@ -80,8 +87,7 @@ public class RespondentFinalOrderPaymentMadeTest {
     }
 
     @Test
-    void givenValidPaymentMadeWhenCallbackIsInvokedThenStateChanges() {
-        setMockClock(clock);
+    void givenValidPaymentMadeWhenCallbackIsInvokedThenApplyForFinalOrderServiceIsInvoked() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -95,10 +101,24 @@ public class RespondentFinalOrderPaymentMadeTest {
             Collections.emptyList()
         );
 
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant2(details)).thenReturn(details);
+
         final AboutToStartOrSubmitResponse<CaseData, State> result = respondentFinalOrderPaymentMade.aboutToSubmit(details, details);
 
-        assertThat(result.getData()).isSameAs(caseData);
-        assertThat(result.getState()).isEqualTo(RespondentFinalOrderRequested);
-        assertThat(result.getData().getFinalOrder().getDateApplicant2AppliedForFinalOrder()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(result.getState()).isEqualTo(details.getState());
+    }
+
+    @Test
+    void submittedCallbackTriggersAppliedForFinalOrderNotifications() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setState(AwaitingRespondentFOPayment);
+
+        respondentFinalOrderPaymentMade.submitted(details, details);
+
+        verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, details.getData(), TEST_CASE_ID);
     }
 }

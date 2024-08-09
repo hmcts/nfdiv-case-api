@@ -8,18 +8,19 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
+import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRespondentFOPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -34,9 +35,13 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
 
     public static final String RESPONDENT_FINAL_ORDER_PAYMENT_MADE = "final-order-payment-made";
 
+    private final ApplyForFinalOrderService applyForFinalOrderService;
+
     private final PaymentValidatorService paymentValidatorService;
 
-    private final Clock clock;
+    private final Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,7 +54,8 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
             .grantHistoryOnly(SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -71,12 +77,23 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
                 .build();
         }
 
-        caseData.getFinalOrder().setDateApplicant2AppliedForFinalOrder(LocalDateTime.now(clock));
+        CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(RespondentFinalOrderRequested)
+            .data(updatedDetails.getData())
+            .state(updatedDetails.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                            CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Respondent Final Order Payment Made event submitted callback invoked for Case Id: {}", details.getId());
+
+        log.info("Sending Respondent Applied For Final Order Notification for Case Id: {}", details.getId());
+
+        notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
 
