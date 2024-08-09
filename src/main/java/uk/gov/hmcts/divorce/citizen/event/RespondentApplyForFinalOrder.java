@@ -19,8 +19,8 @@ import java.text.NumberFormat;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRespondentFOPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -77,7 +77,7 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
                 )
             );
 
-            state = AwaitingRespondentFOPayment;
+            state = AwaitingFinalOrderPayment;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
