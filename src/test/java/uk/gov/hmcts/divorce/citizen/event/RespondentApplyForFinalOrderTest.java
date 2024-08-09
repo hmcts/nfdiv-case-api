@@ -53,7 +53,7 @@ public class RespondentApplyForFinalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getState()).isEqualTo(State.AwaitingRespondentFOPayment);
+        assertThat(response.getState()).isEqualTo(State.AwaitingFinalOrderPayment);
         assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeInPounds()).isEqualTo("550");
     }

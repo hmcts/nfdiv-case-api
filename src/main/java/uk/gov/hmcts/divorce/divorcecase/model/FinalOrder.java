@@ -233,13 +233,13 @@ public class FinalOrder {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private OrderSummary applicant2FinalOrderFeeOrderSummary;
 
     @CCD(
         label = "Respondent final order fee (in pounds)",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private String applicant2FinalOrderFeeInPounds;
 

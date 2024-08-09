@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRespondentFOPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -71,7 +71,7 @@ public class RespondentFinalOrderPaymentMadeTest {
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setState(AwaitingRespondentFOPayment);
+        details.setState(AwaitingFinalOrderPayment);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(55000).status(DECLINED).build()));
         caseData.getFinalOrder().setFinalOrderPayments(payments);
@@ -83,7 +83,7 @@ public class RespondentFinalOrderPaymentMadeTest {
         final AboutToStartOrSubmitResponse<CaseData, State> result = respondentFinalOrderPaymentMade.aboutToSubmit(details, details);
 
         assertThat(result.getData()).isSameAs(caseData);
-        assertThat(result.getState()).isEqualTo(AwaitingRespondentFOPayment);
+        assertThat(result.getState()).isEqualTo(AwaitingFinalOrderPayment);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RespondentFinalOrderPaymentMadeTest {
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setState(AwaitingRespondentFOPayment);
+        details.setState(AwaitingFinalOrderPayment);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(55000).status(DECLINED).build()));
         caseData.getFinalOrder().setFinalOrderPayments(payments);
@@ -115,7 +115,7 @@ public class RespondentFinalOrderPaymentMadeTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
-        details.setState(AwaitingRespondentFOPayment);
+        details.setState(AwaitingFinalOrderPayment);
 
         respondentFinalOrderPaymentMade.submitted(details, details);
 

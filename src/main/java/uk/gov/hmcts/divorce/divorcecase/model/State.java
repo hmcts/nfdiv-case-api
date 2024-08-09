@@ -229,7 +229,7 @@ public enum State {
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingRespondentFOPayment,
+    AwaitingFinalOrderPayment,
 
     @CCD(
         label = "Awaiting service",
