@@ -58,7 +58,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Date Final Order submitted to HMCTS",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateFinalOrderSubmitted;
@@ -103,7 +103,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Has applicant1 applied for a final order?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant1AppliedForFinalOrderFirst;
 
@@ -115,7 +115,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Has ${labelContentApplicant2} applied for a final order?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2AppliedForFinalOrderFirst;
 
