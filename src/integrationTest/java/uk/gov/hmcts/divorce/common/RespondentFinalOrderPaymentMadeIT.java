@@ -144,7 +144,9 @@ public class RespondentFinalOrderPaymentMadeIT {
 
         performRespondentFinalOrderPaymentMadeRequest(data, SUBMITTED_URL).andExpect(status().isOk());
 
-        verify(notificationService).sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong());
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong()
+        );
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -153,7 +155,9 @@ public class RespondentFinalOrderPaymentMadeIT {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData, RESPONDENT_FINAL_ORDER_PAYMENT_MADE, "AwaitingFinalOrderPayment")))
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(caseData, RESPONDENT_FINAL_ORDER_PAYMENT_MADE, "AwaitingFinalOrderPayment"))
+            )
             .accept(APPLICATION_JSON));
     }
 
