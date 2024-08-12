@@ -207,7 +207,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                 caseIdString,
                 FINAL_ORDER_REQUESTED,
                 applicant.getFullName(),
-                applicant.getAddressOverseas()
+                applicant.getSolicitor().getAddressOverseas()
         );
 
         final UUID letterId = bulkPrintService.print(print);
