@@ -26,6 +26,7 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRemoveCasesFromBulkList.CASEWORKER_REMOVE_CASES_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
@@ -70,7 +71,8 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
         configBuilder
             .event(RESCIND_CONDITIONAL_ORDER)
             .forStates(
-                GeneralConsiderationComplete, AwaitingFinalOrder, ConditionalOrderPronounced, AwaitingPronouncement
+                GeneralConsiderationComplete, AwaitingFinalOrder, AwaitingFinalOrderPayment,
+                ConditionalOrderPronounced, AwaitingPronouncement
             )
             .name("Rescind Conditional order")
             .description("Rescind Conditional order")

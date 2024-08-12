@@ -15,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -481,6 +482,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("doesApplicant1WantToApplyForFinalOrder=\"Yes\" OR doesApplicant2WantToApplyForFinalOrder=\"Yes\" OR "
                 + showForState(
                 AwaitingFinalOrder,
+                AwaitingFinalOrderPayment,
                 AwaitingJointFinalOrder,
                 AwaitingGeneralConsideration,
                 FinalOrderRequested,
