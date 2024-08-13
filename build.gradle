@@ -492,7 +492,7 @@ generateCCDConfig.doLast {
 
 task fortifyScan(type: JavaExec) {
     mainClass = 'uk.gov.hmcts.fortifyclient.FortifyClientMainApp'
-    classpath = sourceSets.test.runtimeClasspath
+    classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
 
