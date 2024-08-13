@@ -27,10 +27,7 @@ class ResetConditionalOrderFlagsTest {
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(
-                    ConditionalOrderQuestions.builder()
-                        .isDrafted(YesOrNo.YES)
-                        .isSubmitted(YesOrNo.YES)
-                        .build()
+                    completedConditionalOrderQuestions()
                 ).build()
             ).build();
 
@@ -54,16 +51,10 @@ class ResetConditionalOrderFlagsTest {
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(
-                    ConditionalOrderQuestions.builder()
-                        .isDrafted(YesOrNo.YES)
-                        .isSubmitted(YesOrNo.YES)
-                        .build()
+                    completedConditionalOrderQuestions()
                 )
                 .conditionalOrderApplicant2Questions(
-                    ConditionalOrderQuestions.builder()
-                        .isDrafted(YesOrNo.YES)
-                        .isSubmitted(YesOrNo.YES)
-                        .build()
+                    completedConditionalOrderQuestions()
                 ).build()
             ).build();
 
@@ -74,7 +65,7 @@ class ResetConditionalOrderFlagsTest {
         resetConditionalOrderFlags.apply(caseDetails);
 
         final ConditionalOrderQuestions app1CoQuestions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
-        final ConditionalOrderQuestions app2CoQuestions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
+        final ConditionalOrderQuestions app2CoQuestions = caseData.getConditionalOrder().getConditionalOrderApplicant2Questions();
 
         assertAll(
             () -> assertEquals(YesOrNo.NO, app1CoQuestions.getIsDrafted()),
@@ -82,5 +73,12 @@ class ResetConditionalOrderFlagsTest {
             () -> assertEquals(YesOrNo.NO, app2CoQuestions.getIsDrafted()),
             () -> assertEquals(YesOrNo.NO, app2CoQuestions.getIsSubmitted())
         );
+    }
+
+    private ConditionalOrderQuestions completedConditionalOrderQuestions() {
+        return ConditionalOrderQuestions.builder()
+            .isDrafted(YesOrNo.YES)
+            .isSubmitted(YesOrNo.YES)
+            .build();
     }
 }

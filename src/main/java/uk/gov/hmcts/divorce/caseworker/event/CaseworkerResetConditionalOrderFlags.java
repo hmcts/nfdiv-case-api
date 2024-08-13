@@ -28,15 +28,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerResetConditionalOrderFlags implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_RESET_CONDITIONAL_ORDER = "caseworker-reset-conditional-order-flags";
+
     private static final String RESET_CONDITIONAL_ORDER = "Reset conditional order flags";
 
     private static final String DESCRIPTION_RESET_CONDITIONAL_ORDER_FLAGS = """
-        This event will reset the conditional order drafted and submitted flags on a case, making the draft conditional order event
-        available for the conditional order to be drafted a second time.
+        This event will reset the conditional order drafted and submitted flags, making the draft conditional order event
+        available again for the case to allow the conditional order to be drafted a second time.
         """;
 
     public static final String WARNING_RESET_CONDITIONAL_ORDER_FLAGS = """
-        ### WARNING: Only continue if you are certain the conditional order must be drafted a second time.
+        ### WARNING: Only continue if you are certain that the conditional order must be drafted again on this case.
         """;
 
     private final ResetConditionalOrderFlags resetConditionalOrderFlags;
@@ -54,7 +55,7 @@ public class CaseworkerResetConditionalOrderFlags implements CCDConfig<CaseData,
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, SOLICITOR, LEGAL_ADVISOR, JUDGE))
-            .page("Reset conditional order flags")
+            .page(RESET_CONDITIONAL_ORDER)
             .pageLabel(RESET_CONDITIONAL_ORDER)
             .label("resetDescription", DESCRIPTION_RESET_CONDITIONAL_ORDER_FLAGS)
             .done();
@@ -64,7 +65,7 @@ public class CaseworkerResetConditionalOrderFlags implements CCDConfig<CaseData,
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("%s about to submit callback invoked: {}, Case Id: {}", CASEWORKER_RESET_CONDITIONAL_ORDER, details.getId());
+        log.info("{} about to submit callback invoked for case Id: {}", CASEWORKER_RESET_CONDITIONAL_ORDER, details.getId());
 
         final CaseDetails<CaseData, State> updatedCaseDetails = resetConditionalOrderFlags.apply(details);
 

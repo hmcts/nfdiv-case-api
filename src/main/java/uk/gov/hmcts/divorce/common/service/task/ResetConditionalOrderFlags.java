@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ResetConditionalOrderFlags implements CaseTask {
     @Override

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,16 +23,12 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerResetConditionalOr
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerResetConditionalOrderFlagsTest {
     @Mock
     private ResetConditionalOrderFlags resetConditionalOrderFlags;
-
-    @Mock
-    private HttpServletRequest request;
 
     @InjectMocks
     private CaseworkerResetConditionalOrderFlags caseworkerResetConditionalOrderFlags;
@@ -53,7 +48,6 @@ public class CaseworkerResetConditionalOrderFlagsTest {
     void shouldResetConditionalOrderFlagsByDelegatingToCaseTask() {
         final var caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingConditionalOrder);
 
@@ -68,7 +62,6 @@ public class CaseworkerResetConditionalOrderFlagsTest {
     void shouldWarnUserWhenTheyTriggerTheEvent() {
         final var caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingConditionalOrder);
 
@@ -77,6 +70,5 @@ public class CaseworkerResetConditionalOrderFlagsTest {
         var response = caseworkerResetConditionalOrderFlags.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getWarnings()).isEqualTo(Collections.singletonList(WARNING_RESET_CONDITIONAL_ORDER_FLAGS));
-        verify(resetConditionalOrderFlags).apply(caseDetails);
     }
 }
