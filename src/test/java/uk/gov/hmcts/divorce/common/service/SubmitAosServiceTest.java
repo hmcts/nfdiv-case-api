@@ -80,7 +80,6 @@ class SubmitAosServiceTest {
 
         when(setSubmitAosState.apply(caseDetails)).thenReturn(caseDetails);
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(generateAndLinkRespondentAnswers.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitOfflineAos(caseDetails);
 
@@ -88,6 +87,5 @@ class SubmitAosServiceTest {
 
         verify(setSubmitAosState).apply(caseDetails);
         verify(setSubmissionAndDueDate).apply(caseDetails);
-        verify(generateAndLinkRespondentAnswers).apply(caseDetails);
     }
 }
