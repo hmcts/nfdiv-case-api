@@ -76,6 +76,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
         + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
 
+    private static final String NOTICE_OF_CHANGE_HAS_BEEN_APPLIED = "changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildWarningsTab(configBuilder);
@@ -553,6 +555,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildChangeOfRepresentativeTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("changeOfRepresentatives", "Change of representatives")
                 .forRoles(CASE_WORKER, SUPER_USER)
+                .field("nocWhichApplicant", NEVER_SHOW)
+                .field("changeOrganisationRequestField", NEVER_SHOW)
+                .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
                 .field("changeOfRepresentatives");
     }
 }

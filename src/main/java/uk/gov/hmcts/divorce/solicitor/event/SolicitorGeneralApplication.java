@@ -13,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationSelectApplicationType;
+import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -24,9 +26,7 @@ import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummary;
-import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectApplicationType;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
-import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationUploadDocument;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
