@@ -2,16 +2,16 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -22,8 +22,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.io.IOException;
@@ -33,10 +33,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Stream.ofNullable;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -62,13 +63,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
 
-    private static final String WARNING_ATTACHMENT_SIZE
-        = "Please ensure all individual attachments are smaller than 2MB. "
-        + "If you are sure that all attachments are smaller than 2MB, submit the event again to proceed.";
-
-    private static final String WARNING_LABEL_ATTACHMENT_SIZE
-        = "### WARNING: Individual attachments must be less than 2MB "
-        + "or else the general email will fail to send.";
+    private static final String WARNING_ATTACHMENTS
+        = "\n ### WARNING: Please check that you have uploaded/selected the correct documents and recipient. \n";
 
     @Autowired
     private DocumentIdProvider documentIdProvider;
@@ -94,9 +90,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .description("Create general email")
             .showSummary()
             .showEventNotes()
-            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
             .page("createGeneralEmail", this::midEvent)
@@ -106,21 +100,20 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
             .mandatory(GeneralEmail::getGeneralEmailDetails)
-            .label("attachmentWarning", WARNING_LABEL_ATTACHMENT_SIZE)
-            .optional(GeneralEmail::getGeneralEmailAttachments)
+            .label("attachmentWarning", WARNING_ATTACHMENTS)
+            .readonly(GeneralEmail::getGeUploadedDocumentNames)
+            .readonly(GeneralEmail::getGeGeneratedDocumentNames)
+            .readonly(GeneralEmail::getGeScannedDocumentNames)
+            .readonly(GeneralEmail::getGeApplicant1DocumentNames)
+            .readonly(GeneralEmail::getGeApplicant2DocumentNames)
+            .readonly(GeneralEmail::getGeAttachedDocumentNames)
+            .readonlyWithLabel(GeneralEmail::getGeUploadedDocumentNames, "Uploaded documents selected")
+            .readonlyWithLabel(GeneralEmail::getGeGeneratedDocumentNames, "Generated documents selected")
+            .readonlyWithLabel(GeneralEmail::getGeScannedDocumentNames, "Scanned documents selected")
+            .readonlyWithLabel(GeneralEmail::getGeApplicant1DocumentNames, "Applicant 1 documents selected")
+            .readonlyWithLabel(GeneralEmail::getGeApplicant2DocumentNames, "Applicant 2 documents selected")
+            .readonlyWithLabel(GeneralEmail::getGeAttachedDocumentNames,"Attached documents")
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
-        CaseData caseData = details.getData();
-
-        //Setting generalEmail to null to ensure stale data is not present when event is launched next
-        caseData.setGeneralEmail(null);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
@@ -135,24 +128,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                 .build();
         }
 
-        final boolean invalidGeneralEmailAttachments = ofNullable(caseData.getGeneralEmail().getGeneralEmailAttachments())
-            .flatMap(Collection::stream)
-            .anyMatch(divorceDocument -> ObjectUtils.isEmpty(divorceDocument.getValue().getDocumentLink()));
-
-        if (invalidGeneralEmailAttachments) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("Please ensure all General Email attachments have been uploaded before continuing"))
-                .build();
-        }
-
-        if (caseData.getGeneralEmail().getGeneralEmailAttachments() != null
-            && caseData.getGeneralEmail().getGeneralEmailAttachments().size() > MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(String.format("Number of attachments on General Email cannot exceed %s",
-                    MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS)))
-                .build();
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -162,19 +137,16 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
 
-        var caseData = details.getData();
-        var generalEmail = caseData.getGeneralEmail();
+        final CaseData caseData = details.getData();
+        final GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        final List<String> warnings = new ArrayList<>();
-
-        if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
-            warnings.add(WARNING_ATTACHMENT_SIZE);
-        }
+        var caseDataCopy = caseData.toBuilder().build();
+        populateSelectedDocsToAttachedList(caseDataCopy);
 
         final String userAuth = httpServletRequest.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
-        List<ListValue<Document>> attachments = ofNullable(generalEmail.getGeneralEmailAttachments())
+        List<ListValue<Document>> attachments = ofNullable(caseDataCopy.getGeneralEmail().getGeneralEmailAttachments())
             .flatMap(Collection::stream)
             .map(divorceDocument -> ListValue.<Document>builder()
                 .id(documentIdProvider.documentId())
@@ -188,6 +160,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .generalEmailCreatedBy(userDetails.getName())
             .generalEmailBody(generalEmail.getGeneralEmailDetails())
             .generalEmailAttachmentLinks(attachments)
+            //.generalEmailSelectedDocuments(addedDocs)
             .build();
 
         ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
@@ -212,31 +185,24 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             }
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .warnings(warnings)
-            .build();
-    }
-
-    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
-                                               final CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("{} submitted callback invoked for Case Id: {}",CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
-
-        CaseData caseData = details.getData();
-
-        //Likely the attached document isn't available in CDAM before aboutToSubmit callback has completed so
-        //to avoid CDAM issues during notification, moving the send call to submitted callback
+        List<String> errors = new ArrayList<String>();
 
         try {
-            generalEmailNotification.send(caseData, details.getId());
+            generalEmailNotification.send(caseDataCopy, details.getId());
         } catch (NotificationClientException e) {
-            throw new RuntimeException(e);
+            log.info("{} about to submit failed due to NotificationClientException : {}", CASEWORKER_CREATE_GENERAL_EMAIL, e.getMessage());
+            errors.add(e.getMessage());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.info("{} about to submit failed due to IOException : {}", CASEWORKER_CREATE_GENERAL_EMAIL, e.getMessage());
+            errors.add(e.getMessage());
         }
 
-        return SubmittedCallbackResponse.builder().build();
+        caseData.setGeneralEmail(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .errors(errors)
+            .build();
     }
 
     public boolean validEmailExists(CaseData caseData) {
@@ -254,6 +220,191 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             return isNotEmpty(applicant.getSolicitor().getEmail());
         } else {
             return isNotEmpty(applicant.getEmail());
+        }
+    }
+
+    private int getTotalNumberOfAttachments(CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+
+        return (generalEmail.getGeUploadedDocumentNames() != null ? generalEmail.getGeUploadedDocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeGeneratedDocumentNames() != null ? generalEmail.getGeGeneratedDocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeScannedDocumentNames() != null ? generalEmail.getGeScannedDocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeApplicant1DocumentNames() != null ? generalEmail.getGeApplicant1DocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeApplicant2DocumentNames() != null ? generalEmail.getGeApplicant2DocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeneralEmailAttachments() != null ? generalEmail.getGeneralEmailAttachments().size() : 0);
+    }
+
+    void populateSelectedDocsToAttachedList(final CaseData caseData) {
+
+        if (caseData.getGeneralEmail().getGeScannedDocumentNames() != null
+        && caseData.getGeneralEmail().getGeScannedDocumentNames().getValue().size() > 0) {
+            addSelectedScannedDocuments(caseData);
+        }
+
+        if (caseData.getGeneralEmail().getGeUploadedDocumentNames() != null
+            && caseData.getGeneralEmail().getGeUploadedDocumentNames().getValue().size() > 0) {
+            addSelectedUploadedDocuments(caseData);
+        }
+
+        if (caseData.getGeneralEmail().getGeGeneratedDocumentNames() != null
+            && caseData.getGeneralEmail().getGeGeneratedDocumentNames().getValue().size() > 0) {
+            addSelectedGeneratedDocuments(caseData);
+        }
+
+        if (caseData.getGeneralEmail().getGeApplicant1DocumentNames() != null
+            && caseData.getGeneralEmail().getGeApplicant1DocumentNames().getValue().size() > 0) {
+            addSelectedApp1Documents(caseData);
+        }
+
+        if (caseData.getGeneralEmail().getGeApplicant2DocumentNames() != null
+            && caseData.getGeneralEmail().getGeApplicant2DocumentNames().getValue().size() > 0) {
+            addSelectedApp2Documents(caseData);
+        }
+    }
+
+    void  addSelectedScannedDocuments (final CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+
+        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+
+        final List<DynamicListElement> selectedDocuments = generalEmail.getGeScannedDocumentNames().getValue();
+
+        for (DynamicListElement element : selectedDocuments) {
+            UUID elementUUIDCode = element.getCode();
+            Optional<ListValue<ScannedDocument>> uploadedDocumentOptional =
+                emptyIfNull(caseData.getDocuments().getScannedDocuments())
+                    .stream()
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .findFirst();
+
+            if (uploadedDocumentOptional.isPresent()) {
+                ListValue<DivorceDocument> emailDoc =
+                    ListValue.<DivorceDocument>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getUrl()).build())
+                        .build();
+                listOfAttachments.add(emailDoc);
+            }
+        }
+        addListToGeneralEmailAttachments(caseData, listOfAttachments);
+    }
+
+    void addSelectedUploadedDocuments (final CaseData caseData) {
+        final GeneralEmail generalEmail = caseData.getGeneralEmail();
+
+        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+
+        final List<DynamicListElement> selectedDocuments = generalEmail.getGeUploadedDocumentNames().getValue();
+
+        for (DynamicListElement element : selectedDocuments) {
+            UUID elementUUIDCode = element.getCode();
+            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
+                emptyIfNull(caseData.getDocuments().getDocumentsUploaded())
+                    .stream()
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .findFirst();
+
+            if (uploadedDocumentOptional.isPresent()) {
+                ListValue<DivorceDocument> emailDoc =
+                    ListValue.<DivorceDocument>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
+                        .build();
+                listOfAttachments.add(emailDoc);
+            }
+        }
+        addListToGeneralEmailAttachments(caseData, listOfAttachments);
+    }
+
+    void addSelectedGeneratedDocuments (final CaseData caseData) {
+        final GeneralEmail generalEmail = caseData.getGeneralEmail();
+
+        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+
+        final List<DynamicListElement> selectedDocuments = generalEmail.getGeGeneratedDocumentNames().getValue();
+
+        for (DynamicListElement element : selectedDocuments) {
+            UUID elementUUIDCode = element.getCode();
+            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
+                emptyIfNull(caseData.getDocuments().getDocumentsGenerated())
+                    .stream()
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .findFirst();
+
+            if (uploadedDocumentOptional.isPresent()) {
+                ListValue<DivorceDocument> emailDoc =
+                    ListValue.<DivorceDocument>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
+                        .build();
+                listOfAttachments.add(emailDoc);
+            }
+        }
+        addListToGeneralEmailAttachments(caseData, listOfAttachments);
+    }
+
+    void addSelectedApp1Documents (final CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+
+        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+
+        final List<DynamicListElement> selectedDocuments = generalEmail.getGeApplicant1DocumentNames().getValue();
+
+        for (DynamicListElement element : selectedDocuments) {
+            UUID elementUUIDCode = element.getCode();
+            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
+                emptyIfNull(caseData.getDocuments().getApplicant1DocumentsUploaded())
+                    .stream()
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .findFirst();
+
+            if (uploadedDocumentOptional.isPresent()) {
+                ListValue<DivorceDocument> emailDoc =
+                    ListValue.<DivorceDocument>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
+                        .build();
+                listOfAttachments.add(emailDoc);
+            }
+        }
+        addListToGeneralEmailAttachments(caseData, listOfAttachments);
+    }
+
+    void addSelectedApp2Documents (final CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+
+        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+
+        final List<DynamicListElement> selectedDocuments = generalEmail.getGeApplicant2DocumentNames().getValue();
+
+        for (DynamicListElement element : selectedDocuments) {
+            UUID elementUUIDCode = element.getCode();
+            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
+                emptyIfNull(caseData.getDocuments().getApplicant2DocumentsUploaded())
+                    .stream()
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .findFirst();
+
+            if (uploadedDocumentOptional.isPresent()) {
+                ListValue<DivorceDocument> emailDoc =
+                    ListValue.<DivorceDocument>builder()
+                        .id(documentIdProvider.documentId())
+                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
+                        .build();
+                listOfAttachments.add(emailDoc);
+            }
+        }
+        addListToGeneralEmailAttachments(caseData, listOfAttachments);
+    }
+
+    void addListToGeneralEmailAttachments(final CaseData caseData,
+                                          List<ListValue<DivorceDocument>> list) {
+        final GeneralEmail generalEmail = caseData.getGeneralEmail();
+        if (isEmpty(generalEmail.getGeneralEmailAttachments())) {
+            generalEmail.setGeneralEmailAttachments(list);
+        } else {
+            list.addAll(generalEmail.getGeneralEmailAttachments());
+            generalEmail.setGeneralEmailAttachments(list);
         }
     }
 }

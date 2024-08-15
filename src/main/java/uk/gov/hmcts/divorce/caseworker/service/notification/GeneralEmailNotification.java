@@ -137,6 +137,10 @@ public class GeneralEmailNotification {
         }
     }
 
+    public void checkAttachmentSize(final CaseData caseData, final Long caseId) throws NotificationClientException, IOException {
+        log.info("Sending General Email Notification for case id: {}", caseId);
+    }
+
     private Map<String, Object> addAttachmentsToTemplateVars(List<ListValue<Document>> documents,
                                                              Map<String,String> vars) throws NotificationClientException, IOException {
         Map<String, Object> templateVarsObj = new HashMap<>(vars);
@@ -144,8 +148,12 @@ public class GeneralEmailNotification {
         int documentId = 0;
         for (ListValue<Document> document : documents) {
             ++documentId;
-            byte[] sotDocument = getDocumentBytes(document.getValue());
-            templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
+            try {
+                byte[] sotDocument = getDocumentBytes(document.getValue());
+                templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
+            } catch (NotificationClientException e) {
+                throw new NotificationClientException("Size exceeds 2MB for file : " + document.getValue().getFilename());
+            }
         }
 
         return templateVarsObj;
