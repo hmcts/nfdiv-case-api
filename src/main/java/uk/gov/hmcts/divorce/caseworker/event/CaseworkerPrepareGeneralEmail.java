@@ -83,7 +83,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
         caseData.getGeneralEmail().setGeGeneratedDocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.GENERATED));
         caseData.getGeneralEmail().setGeApplicant1DocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.APP1_UPLOADED));
         caseData.getGeneralEmail().setGeApplicant2DocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.APP2_UPLOADED));
-        addScannedDocumentsToGeneralEmail(caseData);
+        addScannedDocumentNamesToGeneralEmail(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -92,7 +92,6 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> detailsBefore) {
-
 
         final CaseData caseData = details.getData();
 
@@ -124,7 +123,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         if(generalEmail.getGeneralEmailAttachments() != null) {
-            addAttachedDocumentsToGeneralEmail(caseData);
+            addAttachedDocumentNamesToGeneralEmail(caseData);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -144,21 +143,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
     }
 
     private DynamicMultiSelectList getDivorceDocumentNames (final CaseData caseData, final AttachedDocumentType type) {
-        List<DynamicListElement> lastSelection = null;
-
-        DynamicMultiSelectList lastList = null;
-
-        switch (type) {
-            case UPLOADED -> lastList = caseData.getGeneralEmail().getGeUploadedDocumentNames();
-            case APP1_UPLOADED -> lastList = caseData.getGeneralEmail().getGeApplicant1DocumentNames();
-            case APP2_UPLOADED -> lastList = caseData.getGeneralEmail().getGeApplicant2DocumentNames();
-            case GENERATED -> lastList = caseData.getGeneralEmail().getGeGeneratedDocumentNames();
-        }
-
-        if(lastList != null
-            && (lastList.getValue().size() > 0)) {
-            lastSelection = lastList.getValue();
-        }
+        List<DynamicListElement> lastSelection = getLastSelectedListElements(caseData, type);
 
         List<ListValue<DivorceDocument>> caseDocuments = null;
 
@@ -188,13 +173,29 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
         return emailDocNamesDynamicList;
     }
 
-    private void addScannedDocumentsToGeneralEmail(final CaseData caseData) {
+    private static List<DynamicListElement> getLastSelectedListElements(CaseData caseData, AttachedDocumentType type) {
         List<DynamicListElement> lastSelection = null;
 
-        if(caseData.getGeneralEmail().getGeScannedDocumentNames() != null
-            && (caseData.getGeneralEmail().getGeScannedDocumentNames().getValue().size() > 0)) {
-            lastSelection = caseData.getGeneralEmail().getGeScannedDocumentNames().getValue();
+        DynamicMultiSelectList lastList = null;
+
+        switch (type) {
+            case UPLOADED -> lastList = caseData.getGeneralEmail().getGeUploadedDocumentNames();
+            case APP1_UPLOADED -> lastList = caseData.getGeneralEmail().getGeApplicant1DocumentNames();
+            case APP2_UPLOADED -> lastList = caseData.getGeneralEmail().getGeApplicant2DocumentNames();
+            case GENERATED -> lastList = caseData.getGeneralEmail().getGeGeneratedDocumentNames();
+            case SCANNED -> lastList = caseData.getGeneralEmail().getGeScannedDocumentNames();
         }
+
+        if(lastList != null
+            && (lastList.getValue().size() > 0)) {
+            lastSelection = lastList.getValue();
+        }
+        return lastSelection;
+    }
+
+    private void addScannedDocumentNamesToGeneralEmail(final CaseData caseData) {
+        List<DynamicListElement> lastSelection = getLastSelectedListElements(caseData, AttachedDocumentType.SCANNED);
+
         List<DynamicListElement> scannedDocNames =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
                 .stream()
@@ -214,7 +215,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
         caseData.getGeneralEmail().setGeScannedDocumentNames(emailDocNamesDynamicList);
     }
 
-    private void addAttachedDocumentsToGeneralEmail(final CaseData caseData) {
+    private void addAttachedDocumentNamesToGeneralEmail(final CaseData caseData) {
 
         List<DynamicListElement> attachedDocNames =
             emptyIfNull(caseData.getGeneralEmail().getGeneralEmailAttachments())
