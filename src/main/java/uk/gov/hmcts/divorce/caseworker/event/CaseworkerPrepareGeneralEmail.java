@@ -134,11 +134,11 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
     private int getTotalNumberOfAttachments(CaseData caseData) {
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        return generalEmail.getGeUploadedDocumentNames().getValue().size()
-            + generalEmail.getGeGeneratedDocumentNames().getValue().size()
-            + generalEmail.getGeScannedDocumentNames().getValue().size()
-            + generalEmail.getGeApplicant1DocumentNames().getValue().size()
-            + generalEmail.getGeApplicant2DocumentNames().getValue().size()
+        return (generalEmail.getGeUploadedDocumentNames() != null ? generalEmail.getGeUploadedDocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeGeneratedDocumentNames() != null ? generalEmail.getGeGeneratedDocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeScannedDocumentNames() != null ? generalEmail.getGeScannedDocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeApplicant1DocumentNames() != null ? generalEmail.getGeApplicant1DocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeApplicant2DocumentNames() != null ? generalEmail.getGeApplicant2DocumentNames().getValue().size() : 0)
             + (generalEmail.getGeneralEmailAttachments() != null ? generalEmail.getGeneralEmailAttachments().size() : 0);
     }
 

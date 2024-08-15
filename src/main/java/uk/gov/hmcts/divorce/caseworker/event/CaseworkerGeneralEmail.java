@@ -118,8 +118,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> detailsBefore) {
-
-
         final CaseData caseData = details.getData();
 
         if (!validEmailExists(caseData)) {
@@ -221,17 +219,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         } else {
             return isNotEmpty(applicant.getEmail());
         }
-    }
-
-    private int getTotalNumberOfAttachments(CaseData caseData) {
-        GeneralEmail generalEmail = caseData.getGeneralEmail();
-
-        return (generalEmail.getGeUploadedDocumentNames() != null ? generalEmail.getGeUploadedDocumentNames().getValue().size() : 0)
-            + (generalEmail.getGeGeneratedDocumentNames() != null ? generalEmail.getGeGeneratedDocumentNames().getValue().size() : 0)
-            + (generalEmail.getGeScannedDocumentNames() != null ? generalEmail.getGeScannedDocumentNames().getValue().size() : 0)
-            + (generalEmail.getGeApplicant1DocumentNames() != null ? generalEmail.getGeApplicant1DocumentNames().getValue().size() : 0)
-            + (generalEmail.getGeApplicant2DocumentNames() != null ? generalEmail.getGeApplicant2DocumentNames().getValue().size() : 0)
-            + (generalEmail.getGeneralEmailAttachments() != null ? generalEmail.getGeneralEmailAttachments().size() : 0);
     }
 
     void populateSelectedDocsToAttachedList(final CaseData caseData) {
