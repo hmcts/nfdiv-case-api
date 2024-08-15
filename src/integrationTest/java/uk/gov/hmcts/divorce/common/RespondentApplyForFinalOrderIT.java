@@ -89,7 +89,8 @@ public class RespondentApplyForFinalOrderIT {
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.state").value(AwaitingFinalOrderPayment.name()));
+            .andExpect(jsonPath("$.state").value(AwaitingFinalOrderPayment.name()))
+            .andExpect(jsonPath("$.data.applicant2FinalOrderFeeInPounds").value("550"));
     }
 
     @Test
