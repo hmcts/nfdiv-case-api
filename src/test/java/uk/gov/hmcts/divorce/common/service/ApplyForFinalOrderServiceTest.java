@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
@@ -16,12 +17,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class ApplyForFinalOrderServiceTest {
@@ -43,6 +47,12 @@ class ApplyForFinalOrderServiceTest {
 
     @Mock
     private ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
+
+    @Mock
+    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @Test
     void shouldRunCorrectTasksForApplyForFinalOrderAsApplicant1() {
@@ -121,5 +131,16 @@ class ApplyForFinalOrderServiceTest {
         List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
 
         assertThat(errors).hasSize(0);
+    }
+
+    @Test
+    void shouldSendNotificationsByDelegatingToNotificationDispatcher() {
+        var details = new CaseDetails<CaseData, State>();
+        details.setId(TEST_CASE_ID);
+
+        applyForFinalOrderService.sendRespondentAppliedForFinalOrderNotifications(details);
+
+        verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, details.getData(), TEST_CASE_ID);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 }

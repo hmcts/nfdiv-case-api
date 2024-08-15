@@ -8,11 +8,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -21,7 +23,6 @@ import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -41,6 +42,8 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
     private final PaymentService paymentService;
 
+    private final ApplyForFinalOrderService applyForFinalOrderService;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
@@ -53,6 +56,7 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR);
     }
 
@@ -60,29 +64,51 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} About to Submit callback invoked for Case Id: {}", RESPONDENT_APPLY_FINAL_ORDER, details.getId());
 
-        CaseData data = details.getData();
-        FinalOrder finalOrder = data.getFinalOrder();
-        State state = RespondentFinalOrderRequested;
+        FinalOrder finalOrder = details.getData().getFinalOrder();
+        boolean respondentWillPayWithoutHwf = !finalOrder.applicant2NeedsHelpWithFees();
 
-        if (finalOrder.applicant2NeedsHelpWithFees()) {
-            // HWF logic to be added in NFDIV-4098
+        CaseDetails<CaseData, State> updatedCaseDetails;
+        if (respondentWillPayWithoutHwf) {
+            updatedCaseDetails = setOrderSummaryAndAwaitingPaymentState(details, finalOrder);
         } else {
-            final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
-
-            finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
-
-            finalOrder.setApplicant2FinalOrderFeeInPounds(
-                NumberFormat.getNumberInstance().format(new BigDecimal(
-                    orderSummary.getPaymentTotal()).movePointLeft(2)
-                )
-            );
-
-            state = AwaitingFinalOrderPayment;
+            updatedCaseDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .state(state)
+            .data(updatedCaseDetails.getData())
+            .state(updatedCaseDetails.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                            CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for Case Id: {}", RESPONDENT_APPLY_FINAL_ORDER, details.getId());
+
+        FinalOrder finalOrder = details.getData().getFinalOrder();
+
+        if (finalOrder.applicant2NeedsHelpWithFees()) {
+            applyForFinalOrderService.sendRespondentAppliedForFinalOrderNotifications(beforeDetails);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
+    private CaseDetails<CaseData, State> setOrderSummaryAndAwaitingPaymentState(
+        CaseDetails<CaseData, State> details,
+        FinalOrder finalOrder
+    ) {
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+
+        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+
+        finalOrder.setApplicant2FinalOrderFeeInPounds(
+            NumberFormat.getNumberInstance().format(new BigDecimal(
+                orderSummary.getPaymentTotal()).movePointLeft(2)
+            )
+        );
+
+        details.setState(AwaitingFinalOrderPayment);
+
+        return details;
     }
 }
