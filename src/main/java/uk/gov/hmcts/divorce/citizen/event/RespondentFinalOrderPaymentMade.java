@@ -89,9 +89,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("Respondent Final Order Payment Made event submitted callback invoked for Case Id: {}", details.getId());
 
-        log.info("Sending Respondent Applied For Final Order Notification for Case Id: {}", details.getId());
-
-        notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, details.getData(), details.getId());
+        applyForFinalOrderService.sendRespondentAppliedForFinalOrderNotifications(beforeDetails);
 
         return SubmittedCallbackResponse.builder().build();
     }

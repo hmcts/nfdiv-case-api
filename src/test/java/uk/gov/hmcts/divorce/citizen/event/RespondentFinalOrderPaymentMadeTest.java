@@ -10,14 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,21 +30,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class RespondentFinalOrderPaymentMadeTest {
-
-    @Mock
-    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
-
     @Mock
     private ApplyForFinalOrderService applyForFinalOrderService;
-
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
 
     @Mock
     private PaymentValidatorService paymentValidatorService;
@@ -68,14 +57,12 @@ public class RespondentFinalOrderPaymentMadeTest {
     @Test
     void givenPaymentWasInvalidThenSetStateToAwaitingFoPayment() {
         final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setState(AwaitingFinalOrderPayment);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(55000).status(DECLINED).build()));
         caseData.getFinalOrder().setFinalOrderPayments(payments);
-
         when(paymentValidatorService.validatePayments(payments, details.getId())).thenReturn(
             Collections.singletonList(ERROR_PAYMENT_INCOMPLETE)
         );
@@ -89,7 +76,6 @@ public class RespondentFinalOrderPaymentMadeTest {
     @Test
     void givenValidPaymentMadeWhenCallbackIsInvokedThenApplyForFinalOrderServiceIsInvoked() {
         final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setState(AwaitingFinalOrderPayment);
@@ -100,25 +86,21 @@ public class RespondentFinalOrderPaymentMadeTest {
         when(paymentValidatorService.validatePayments(caseData.getFinalOrder().getFinalOrderPayments(), details.getId())).thenReturn(
             Collections.emptyList()
         );
-
         when(applyForFinalOrderService.applyForFinalOrderAsApplicant2(details)).thenReturn(details);
 
         final AboutToStartOrSubmitResponse<CaseData, State> result = respondentFinalOrderPaymentMade.aboutToSubmit(details, details);
 
+        verify(applyForFinalOrderService).applyForFinalOrderAsApplicant2(details);
         assertThat(result.getState()).isEqualTo(details.getState());
     }
 
     @Test
-    void submittedCallbackTriggersAppliedForFinalOrderNotifications() {
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+    void shouldSendNotificationsByDelegatingToApplyForFinalOrderService() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
         details.setState(AwaitingFinalOrderPayment);
 
         respondentFinalOrderPaymentMade.submitted(details, details);
 
-        verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, details.getData(), TEST_CASE_ID);
+        verify(applyForFinalOrderService).sendRespondentAppliedForFinalOrderNotifications(details);
     }
 }

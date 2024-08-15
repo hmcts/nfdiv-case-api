@@ -12,38 +12,40 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.Payment;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.time.Clock;
-import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
+import static uk.gov.hmcts.divorce.citizen.event.RespondentApplyForFinalOrder.RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -57,7 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class RespondentFinalOrderPaymentMadeIT {
+public class RespondentApplyForFinalOrderIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -66,7 +68,7 @@ public class RespondentFinalOrderPaymentMadeIT {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private AuthTokenGenerator serviceTokenGenerator;
+    private PaymentService paymentService;
 
     @MockBean
     private WebMvcConfig webMvcConfig;
@@ -78,22 +80,25 @@ public class RespondentFinalOrderPaymentMadeIT {
     private NotificationService notificationService;
 
     @Test
-    void shouldReturnErrorsIfPaymentWasUnsuccessful() throws Exception {
-        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithPaymentStatus(PaymentStatus.CANCELLED);
+    void shouldChangeStateToAwaitingFinalOrderPaymentIfRespondentWillPayWithoutHwf() throws Exception {
+        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
 
-        performRespondentFinalOrderPaymentMadeRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE))
+            .thenReturn(orderSummary);
+
+        performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.errors").value(ERROR_PAYMENT_INCOMPLETE))
             .andExpect(jsonPath("$.state").value(AwaitingFinalOrderPayment.name()));
     }
 
     @Test
-    void shouldChangeCaseStateIfPaymentWasSuccessful() throws Exception {
+    void shouldChangeStateToFinalOrderRequestedIfRespondentWillPayWithHwf() throws Exception {
         setMockClock(clock);
 
-        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithPaymentStatus(PaymentStatus.SUCCESS);
+        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.YES);
 
-        performRespondentFinalOrderPaymentMadeRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
+        performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.state").value(RespondentFinalOrderRequested.name()))
             .andExpect(jsonPath("$.data.applicant1AppliedForFinalOrderFirst").value("No"))
@@ -101,12 +106,21 @@ public class RespondentFinalOrderPaymentMadeIT {
     }
 
     @Test
-    void shouldSendSoleAppliedForFinalOrderNotifications() throws Exception {
+    void shouldNotSendSoleAppliedForFinalOrderNotificationsIfWillPayWithoutHwf() throws Exception {
+        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
+
+        performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendSoleAppliedForFinalOrderNotificationsIfHwfRequested() throws Exception {
         setMockClock(clock);
 
-        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithPaymentStatus(PaymentStatus.SUCCESS);
+        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.YES);
 
-        performRespondentFinalOrderPaymentMadeRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
+        performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong()
@@ -114,21 +128,19 @@ public class RespondentFinalOrderPaymentMadeIT {
         verifyNoMoreInteractions(notificationService);
     }
 
-    private ResultActions performRespondentFinalOrderPaymentMadeRequest(CaseData caseData, String url) throws Exception {
+    private ResultActions performRespondentApplyForFinalRequest(CaseData caseData, String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(
-                callbackRequest(caseData, RESPONDENT_FINAL_ORDER_PAYMENT_MADE, "AwaitingFinalOrderPayment"))
+                callbackRequest(caseData, RESPONDENT_APPLY_FINAL_ORDER, "AwaitingFinalOrder"))
             )
             .accept(APPLICATION_JSON));
     }
 
-    private CaseDetails<CaseData, State>  buildTestDataWithPaymentStatus(PaymentStatus status) {
-        List<ListValue<Payment>> payments = singletonList(
-            new ListValue<>("1", Payment.builder().amount(55000).status(status).build())
-        );
+    private CaseDetails<CaseData, State> buildTestDataWithHwfAnswer(YesOrNo respondentNeedsHelpWithFees) {
+        var hwf = HelpWithFees.builder().needHelp(respondentNeedsHelpWithFees).build();
 
         return CaseDetails.<CaseData,State>builder().state(AwaitingFinalOrder)
             .data(
@@ -136,7 +148,7 @@ public class RespondentFinalOrderPaymentMadeIT {
                     .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
                     .applicationType(SOLE_APPLICATION)
                     .applicant2(Applicant.builder().email(TEST_APPLICANT_2_USER_EMAIL).build())
-                    .finalOrder(FinalOrder.builder().finalOrderPayments(payments).build())
+                    .finalOrder(FinalOrder.builder().applicant2FinalOrderHelpWithFees(hwf).build())
                     .build()
             ).build();
     }
