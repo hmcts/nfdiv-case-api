@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.26'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.28'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20240303'
   }
@@ -267,11 +267,11 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
-  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.5'
+  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.6'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.3'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.7.3'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
@@ -309,8 +309,9 @@ dependencies {
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.3'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.2'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.3'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
+  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.4'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -318,11 +319,11 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
 
-  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.3'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.45.1'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.46.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 }
 
@@ -488,3 +489,10 @@ generateCCDConfig.doLast {
     into layout.buildDirectory.dir('definitions/NFD')
   }
 }
+
+task fortifyScan(type: JavaExec) {
+    mainClass = 'uk.gov.hmcts.fortifyclient.FortifyClientMainApp'
+    classpath += sourceSets.test.runtimeClasspath
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
