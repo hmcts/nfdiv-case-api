@@ -158,7 +158,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .generalEmailCreatedBy(userDetails.getName())
             .generalEmailBody(generalEmail.getGeneralEmailDetails())
             .generalEmailAttachmentLinks(attachments)
-            //.generalEmailSelectedDocuments(addedDocs)
             .build();
 
         ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
@@ -222,9 +221,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     }
 
     void populateSelectedDocsToAttachedList(final CaseData caseData) {
-
         if (caseData.getGeneralEmail().getGeScannedDocumentNames() != null
-        && caseData.getGeneralEmail().getGeScannedDocumentNames().getValue().size() > 0) {
+            && caseData.getGeneralEmail().getGeScannedDocumentNames().getValue().size() > 0) {
             addSelectedScannedDocuments(caseData);
         }
 
@@ -249,7 +247,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         }
     }
 
-    void  addSelectedScannedDocuments (final CaseData caseData) {
+    void  addSelectedScannedDocuments(final CaseData caseData) {
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
@@ -257,11 +255,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final List<DynamicListElement> selectedDocuments = generalEmail.getGeScannedDocumentNames().getValue();
 
         for (DynamicListElement element : selectedDocuments) {
-            UUID elementUUIDCode = element.getCode();
+            UUID uuidCode = element.getCode();
             Optional<ListValue<ScannedDocument>> uploadedDocumentOptional =
                 emptyIfNull(caseData.getDocuments().getScannedDocuments())
                     .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
                     .findFirst();
 
             if (uploadedDocumentOptional.isPresent()) {
@@ -276,7 +274,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         addListToGeneralEmailAttachments(caseData, listOfAttachments);
     }
 
-    void addSelectedUploadedDocuments (final CaseData caseData) {
+    void addSelectedUploadedDocuments(final CaseData caseData) {
         final GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
@@ -284,11 +282,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final List<DynamicListElement> selectedDocuments = generalEmail.getGeUploadedDocumentNames().getValue();
 
         for (DynamicListElement element : selectedDocuments) {
-            UUID elementUUIDCode = element.getCode();
+            UUID uuidCode = element.getCode();
             Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
                 emptyIfNull(caseData.getDocuments().getDocumentsUploaded())
                     .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
                     .findFirst();
 
             if (uploadedDocumentOptional.isPresent()) {
@@ -303,7 +301,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         addListToGeneralEmailAttachments(caseData, listOfAttachments);
     }
 
-    void addSelectedGeneratedDocuments (final CaseData caseData) {
+    void addSelectedGeneratedDocuments(final CaseData caseData) {
         final GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
@@ -311,11 +309,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final List<DynamicListElement> selectedDocuments = generalEmail.getGeGeneratedDocumentNames().getValue();
 
         for (DynamicListElement element : selectedDocuments) {
-            UUID elementUUIDCode = element.getCode();
+            UUID uuidCode = element.getCode();
             Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
                 emptyIfNull(caseData.getDocuments().getDocumentsGenerated())
                     .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
                     .findFirst();
 
             if (uploadedDocumentOptional.isPresent()) {
@@ -330,7 +328,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         addListToGeneralEmailAttachments(caseData, listOfAttachments);
     }
 
-    void addSelectedApp1Documents (final CaseData caseData) {
+    void addSelectedApp1Documents(final CaseData caseData) {
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
@@ -338,11 +336,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final List<DynamicListElement> selectedDocuments = generalEmail.getGeApplicant1DocumentNames().getValue();
 
         for (DynamicListElement element : selectedDocuments) {
-            UUID elementUUIDCode = element.getCode();
+            UUID uuidCode = element.getCode();
             Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
                 emptyIfNull(caseData.getDocuments().getApplicant1DocumentsUploaded())
                     .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
                     .findFirst();
 
             if (uploadedDocumentOptional.isPresent()) {
@@ -357,7 +355,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         addListToGeneralEmailAttachments(caseData, listOfAttachments);
     }
 
-    void addSelectedApp2Documents (final CaseData caseData) {
+    void addSelectedApp2Documents(final CaseData caseData) {
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
@@ -365,11 +363,11 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final List<DynamicListElement> selectedDocuments = generalEmail.getGeApplicant2DocumentNames().getValue();
 
         for (DynamicListElement element : selectedDocuments) {
-            UUID elementUUIDCode = element.getCode();
+            UUID uuidCode = element.getCode();
             Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
                 emptyIfNull(caseData.getDocuments().getApplicant2DocumentsUploaded())
                     .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(elementUUIDCode))
+                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
                     .findFirst();
 
             if (uploadedDocumentOptional.isPresent()) {

@@ -122,7 +122,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
         final CaseData caseData = details.getData();
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        if(generalEmail.getGeneralEmailAttachments() != null) {
+        if (generalEmail.getGeneralEmailAttachments() != null) {
             addAttachedDocumentNamesToGeneralEmail(caseData);
         }
 
@@ -142,7 +142,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
             + (generalEmail.getGeneralEmailAttachments() != null ? generalEmail.getGeneralEmailAttachments().size() : 0);
     }
 
-    private DynamicMultiSelectList getDivorceDocumentNames (final CaseData caseData, final AttachedDocumentType type) {
+    private DynamicMultiSelectList getDivorceDocumentNames(final CaseData caseData, final AttachedDocumentType type) {
         List<DynamicListElement> lastSelection = getLastSelectedListElements(caseData, type);
 
         List<ListValue<DivorceDocument>> caseDocuments = null;
@@ -152,6 +152,7 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
             case APP1_UPLOADED -> caseDocuments = caseData.getDocuments().getApplicant1DocumentsUploaded();
             case APP2_UPLOADED -> caseDocuments = caseData.getDocuments().getApplicant2DocumentsUploaded();
             case GENERATED -> caseDocuments = caseData.getDocuments().getDocumentsGenerated();
+            default -> caseDocuments = null;
         }
 
         List<DynamicListElement> uploadedDocNames =
@@ -184,9 +185,10 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
             case APP2_UPLOADED -> lastList = caseData.getGeneralEmail().getGeApplicant2DocumentNames();
             case GENERATED -> lastList = caseData.getGeneralEmail().getGeGeneratedDocumentNames();
             case SCANNED -> lastList = caseData.getGeneralEmail().getGeScannedDocumentNames();
+            default -> lastList = null;
         }
 
-        if(lastList != null
+        if (lastList != null
             && (lastList.getValue().size() > 0)) {
             lastSelection = lastList.getValue();
         }

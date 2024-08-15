@@ -201,7 +201,7 @@ public class CaseworkerPrepareGeneralEmailTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-       AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         final CaseData updatedData = response.getData();
 

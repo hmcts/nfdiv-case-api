@@ -713,8 +713,6 @@ public class CaseworkerGeneralEmailTest {
                 .build()
         );
 
-        var caseDataCopy = caseData.toBuilder().build();
-
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
@@ -730,6 +728,8 @@ public class CaseworkerGeneralEmailTest {
                     .build()
                 )
             );
+
+        var caseDataCopy = caseData.toBuilder().build();
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
