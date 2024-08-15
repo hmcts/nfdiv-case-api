@@ -137,10 +137,6 @@ public class GeneralEmailNotification {
         }
     }
 
-    public void checkAttachmentSize(final CaseData caseData, final Long caseId) throws NotificationClientException, IOException {
-        log.info("Sending General Email Notification for case id: {}", caseId);
-    }
-
     private Map<String, Object> addAttachmentsToTemplateVars(List<ListValue<Document>> documents,
                                                              Map<String,String> vars) throws NotificationClientException, IOException {
         Map<String, Object> templateVarsObj = new HashMap<>(vars);
