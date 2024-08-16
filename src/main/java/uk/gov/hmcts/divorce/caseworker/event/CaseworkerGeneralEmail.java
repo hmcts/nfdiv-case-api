@@ -10,12 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.ccd.sdk.type.DynamicMultiSelectList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
@@ -221,165 +223,82 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     }
 
     void populateSelectedDocsToAttachedList(final CaseData caseData) {
-        if (caseData.getGeneralEmail().getGeScannedDocumentNames() != null
-            && caseData.getGeneralEmail().getGeScannedDocumentNames().getValue().size() > 0) {
-            addSelectedScannedDocuments(caseData);
-        }
-
-        if (caseData.getGeneralEmail().getGeUploadedDocumentNames() != null
-            && caseData.getGeneralEmail().getGeUploadedDocumentNames().getValue().size() > 0) {
-            addSelectedUploadedDocuments(caseData);
-        }
-
-        if (caseData.getGeneralEmail().getGeGeneratedDocumentNames() != null
-            && caseData.getGeneralEmail().getGeGeneratedDocumentNames().getValue().size() > 0) {
-            addSelectedGeneratedDocuments(caseData);
-        }
-
-        if (caseData.getGeneralEmail().getGeApplicant1DocumentNames() != null
-            && caseData.getGeneralEmail().getGeApplicant1DocumentNames().getValue().size() > 0) {
-            addSelectedApp1Documents(caseData);
-        }
-
-        if (caseData.getGeneralEmail().getGeApplicant2DocumentNames() != null
-            && caseData.getGeneralEmail().getGeApplicant2DocumentNames().getValue().size() > 0) {
-            addSelectedApp2Documents(caseData);
-        }
-    }
-
-    void  addSelectedScannedDocuments(final CaseData caseData) {
-        GeneralEmail generalEmail = caseData.getGeneralEmail();
-
-        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
-
-        final List<DynamicListElement> selectedDocuments = generalEmail.getGeScannedDocumentNames().getValue();
-
-        for (DynamicListElement element : selectedDocuments) {
-            UUID uuidCode = element.getCode();
-            Optional<ListValue<ScannedDocument>> uploadedDocumentOptional =
-                emptyIfNull(caseData.getDocuments().getScannedDocuments())
-                    .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
-                    .findFirst();
-
-            if (uploadedDocumentOptional.isPresent()) {
-                ListValue<DivorceDocument> emailDoc =
-                    ListValue.<DivorceDocument>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getUrl()).build())
-                        .build();
-                listOfAttachments.add(emailDoc);
-            }
-        }
-        addListToGeneralEmailAttachments(caseData, listOfAttachments);
-    }
-
-    void addSelectedUploadedDocuments(final CaseData caseData) {
+        final CaseDocuments caseDocuments = caseData.getDocuments();
         final GeneralEmail generalEmail = caseData.getGeneralEmail();
 
-        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+        addSelectedScannedDocuments(caseData, caseDocuments.getScannedDocuments(),
+            generalEmail.getGeScannedDocumentNames());
 
-        final List<DynamicListElement> selectedDocuments = generalEmail.getGeUploadedDocumentNames().getValue();
+        addSelectedDivorceDocuments(caseData, caseDocuments.getDocumentsUploaded(),
+            generalEmail.getGeUploadedDocumentNames());
 
-        for (DynamicListElement element : selectedDocuments) {
-            UUID uuidCode = element.getCode();
-            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
-                emptyIfNull(caseData.getDocuments().getDocumentsUploaded())
-                    .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
-                    .findFirst();
+        addSelectedDivorceDocuments(caseData, caseDocuments.getDocumentsGenerated(),
+            generalEmail.getGeGeneratedDocumentNames());
 
-            if (uploadedDocumentOptional.isPresent()) {
-                ListValue<DivorceDocument> emailDoc =
-                    ListValue.<DivorceDocument>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
-                        .build();
-                listOfAttachments.add(emailDoc);
-            }
-        }
-        addListToGeneralEmailAttachments(caseData, listOfAttachments);
+        addSelectedDivorceDocuments(caseData, caseDocuments.getApplicant1DocumentsUploaded(),
+            generalEmail.getGeApplicant1DocumentNames());
+
+        addSelectedDivorceDocuments(caseData, caseDocuments.getApplicant2DocumentsUploaded(),
+            generalEmail.getGeApplicant2DocumentNames());
     }
 
-    void addSelectedGeneratedDocuments(final CaseData caseData) {
-        final GeneralEmail generalEmail = caseData.getGeneralEmail();
+    void addSelectedScannedDocuments(final CaseData caseData,
+                                     List<ListValue<ScannedDocument>> caseDocuments,
+                                     DynamicMultiSelectList selectList) {
+        if (selectList != null && selectList.getValue().size() > 0) {
+            List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
 
-        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+            final List<DynamicListElement> selectedDocuments = selectList.getValue();
 
-        final List<DynamicListElement> selectedDocuments = generalEmail.getGeGeneratedDocumentNames().getValue();
+            for (DynamicListElement element : selectedDocuments) {
+                UUID uuidCode = element.getCode();
+                Optional<ListValue<ScannedDocument>> uploadedDocumentOptional =
+                    emptyIfNull(caseDocuments)
+                        .stream()
+                        .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
+                        .findFirst();
 
-        for (DynamicListElement element : selectedDocuments) {
-            UUID uuidCode = element.getCode();
-            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
-                emptyIfNull(caseData.getDocuments().getDocumentsGenerated())
-                    .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
-                    .findFirst();
-
-            if (uploadedDocumentOptional.isPresent()) {
-                ListValue<DivorceDocument> emailDoc =
-                    ListValue.<DivorceDocument>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
-                        .build();
-                listOfAttachments.add(emailDoc);
+                if (uploadedDocumentOptional.isPresent()) {
+                    ListValue<DivorceDocument> emailDoc =
+                        ListValue.<DivorceDocument>builder()
+                            .id(documentIdProvider.documentId())
+                            .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getUrl()).build())
+                            .build();
+                    listOfAttachments.add(emailDoc);
+                }
             }
+            addListToGeneralEmailAttachments(caseData, listOfAttachments);
         }
-        addListToGeneralEmailAttachments(caseData, listOfAttachments);
     }
 
-    void addSelectedApp1Documents(final CaseData caseData) {
-        GeneralEmail generalEmail = caseData.getGeneralEmail();
+    void addSelectedDivorceDocuments(final CaseData caseData,
+                              List<ListValue<DivorceDocument>> caseDocuments,
+                              DynamicMultiSelectList selectList) {
+        if (selectList != null && selectList.getValue().size() > 0) {
+            List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
 
-        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+            final List<DynamicListElement> selectedDocuments = selectList.getValue();
 
-        final List<DynamicListElement> selectedDocuments = generalEmail.getGeApplicant1DocumentNames().getValue();
+            for (DynamicListElement element : selectedDocuments) {
+                UUID uuidCode = element.getCode();
+                Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
+                    emptyIfNull(caseDocuments)
+                        .stream()
+                        .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
+                        .findFirst();
 
-        for (DynamicListElement element : selectedDocuments) {
-            UUID uuidCode = element.getCode();
-            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
-                emptyIfNull(caseData.getDocuments().getApplicant1DocumentsUploaded())
-                    .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
-                    .findFirst();
-
-            if (uploadedDocumentOptional.isPresent()) {
-                ListValue<DivorceDocument> emailDoc =
-                    ListValue.<DivorceDocument>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
-                        .build();
-                listOfAttachments.add(emailDoc);
+                if (uploadedDocumentOptional.isPresent()) {
+                    ListValue<DivorceDocument> emailDoc =
+                        ListValue.<DivorceDocument>builder()
+                            .id(documentIdProvider.documentId())
+                            .value(DivorceDocument.builder()
+                                .documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
+                            .build();
+                    listOfAttachments.add(emailDoc);
+                }
             }
+            addListToGeneralEmailAttachments(caseData, listOfAttachments);
         }
-        addListToGeneralEmailAttachments(caseData, listOfAttachments);
-    }
-
-    void addSelectedApp2Documents(final CaseData caseData) {
-        GeneralEmail generalEmail = caseData.getGeneralEmail();
-
-        List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
-
-        final List<DynamicListElement> selectedDocuments = generalEmail.getGeApplicant2DocumentNames().getValue();
-
-        for (DynamicListElement element : selectedDocuments) {
-            UUID uuidCode = element.getCode();
-            Optional<ListValue<DivorceDocument>> uploadedDocumentOptional =
-                emptyIfNull(caseData.getDocuments().getApplicant2DocumentsUploaded())
-                    .stream()
-                    .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
-                    .findFirst();
-
-            if (uploadedDocumentOptional.isPresent()) {
-                ListValue<DivorceDocument> emailDoc =
-                    ListValue.<DivorceDocument>builder()
-                        .id(documentIdProvider.documentId())
-                        .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getDocumentLink()).build())
-                        .build();
-                listOfAttachments.add(emailDoc);
-            }
-        }
-        addListToGeneralEmailAttachments(caseData, listOfAttachments);
     }
 
     void addListToGeneralEmailAttachments(final CaseData caseData,
