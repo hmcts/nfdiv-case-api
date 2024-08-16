@@ -52,7 +52,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
         new PageBuilder(configBuilder
             .event(CASEWORKER_PREPARE_GENERAL_EMAIL)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Prepare general email attachments")
+            .name("Prepare email attachments")
             .description("Prepare general email attachments")
             .showSummary()
             .showEventNotes()
