@@ -28,8 +28,8 @@ import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPrepareGeneralEmail.CASEWORKER_PREPARE_GENERAL_EMAIL;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPrepareGeneralEmail.MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPrepareGeneralEmailAttachments.CASEWORKER_PREPARE_GENERAL_EMAIL;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPrepareGeneralEmailAttachments.MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -37,9 +37,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerPrepareGeneralEmailTest {
+public class CaseworkerPrepareGeneralEmailAttachmentsTest {
     @InjectMocks
-    private CaseworkerPrepareGeneralEmail generalEmail;
+    private CaseworkerPrepareGeneralEmailAttachments generalEmail;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {

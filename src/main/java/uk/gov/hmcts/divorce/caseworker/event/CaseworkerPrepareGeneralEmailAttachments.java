@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseData, State, UserRole> {
 
     public static final int MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS = 10;
 
@@ -52,26 +52,26 @@ public class CaseworkerPrepareGeneralEmail implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_PREPARE_GENERAL_EMAIL)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Prepare general email")
-            .description("Prepare general email")
+            .name("Prepare general email attachments")
+            .description("Prepare general email attachments")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, CASE_WORKER))
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("prepareGeneralEmail", this::midEvent)
-            .pageLabel("Prepare general email")
+            .pageLabel("Prepare general email attachments")
             .label("labelSelectDocuments", "### Select from existing documents")
             .complex(CaseData::getDocuments)
             .done()
             .complex(CaseData::getGeneralEmail)
-            .optional(GeneralEmail::getGeUploadedDocumentNames)
-            .optional(GeneralEmail::getGeGeneratedDocumentNames)
-            .optional(GeneralEmail::getGeScannedDocumentNames)
-            .optional(GeneralEmail::getGeApplicant1DocumentNames)
-            .optional(GeneralEmail::getGeApplicant2DocumentNames)
-            .optional(GeneralEmail::getGeneralEmailAttachments)
+                .optional(GeneralEmail::getGeUploadedDocumentNames)
+                .optional(GeneralEmail::getGeGeneratedDocumentNames)
+                .optional(GeneralEmail::getGeScannedDocumentNames)
+                .optional(GeneralEmail::getGeApplicant1DocumentNames)
+                .optional(GeneralEmail::getGeApplicant2DocumentNames)
+                .optional(GeneralEmail::getGeneralEmailAttachments)
             .done();
     }
 
