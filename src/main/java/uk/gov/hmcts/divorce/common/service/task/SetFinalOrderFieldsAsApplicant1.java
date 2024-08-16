@@ -35,9 +35,9 @@ public class SetFinalOrderFieldsAsApplicant1 implements CaseTask {
             finalOrder.setApplicant1FinalOrderStatementOfTruth(YES);
         }
 
-        final boolean caseIsAwaitingFinalOrder = AwaitingFinalOrder.equals(details.getState())
+        final boolean isInFinalOrderState = AwaitingFinalOrder.equals(details.getState())
             || AwaitingFinalOrderPayment.equals(details.getState());
-        if (caseIsAwaitingFinalOrder
+        if (isInFinalOrderState
             && isNull(finalOrder.getApplicant1AppliedForFinalOrderFirst())
             && isNull(finalOrder.getApplicant2AppliedForFinalOrderFirst())) {
             log.info("Updating final order fields for CaseID {} (SetFinalOrderFields)", details.getId());

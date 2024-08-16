@@ -80,7 +80,7 @@ public class RespondentApplyForFinalOrderIT {
     private NotificationService notificationService;
 
     @Test
-    void shouldChangeStateToAwaitingFinalOrderPaymentIfRespondentWillPayWithoutHwf() throws Exception {
+    void shouldChangeStateToAwaitingFinalOrderPaymentIfRespondentWillMakePayment() throws Exception {
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
 
@@ -94,7 +94,16 @@ public class RespondentApplyForFinalOrderIT {
     }
 
     @Test
-    void shouldChangeStateToFinalOrderRequestedIfRespondentWillPayWithHwf() throws Exception {
+    void shouldNotSendAppliedForFinalOrderNotificationsIfRespondentWillMakePayment() throws Exception {
+        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
+
+        performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldChangeStateToFinalOrderRequestedIfRespondentRequestsHwf() throws Exception {
         setMockClock(clock);
 
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.YES);
@@ -107,16 +116,7 @@ public class RespondentApplyForFinalOrderIT {
     }
 
     @Test
-    void shouldNotSendSoleAppliedForFinalOrderNotificationsIfWillPayWithoutHwf() throws Exception {
-        final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
-
-        performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
-    void shouldSendSoleAppliedForFinalOrderNotificationsIfHwfRequested() throws Exception {
+    void shouldSendAppliedForFinalOrderNotificationsIfRespondentRequestsHwf() throws Exception {
         setMockClock(clock);
 
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.YES);

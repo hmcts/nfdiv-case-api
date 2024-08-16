@@ -8,13 +8,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
@@ -39,10 +37,6 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
 
     private final PaymentValidatorService paymentValidatorService;
 
-    private final Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
-
-    private final NotificationDispatcher notificationDispatcher;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
@@ -63,7 +57,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
         final CaseData caseData = details.getData();
         Long caseId = details.getId();
 
-        log.info("{} about to submit callback invoked CaseID: {}", RESPONDENT_FINAL_ORDER_PAYMENT_MADE, caseId);
+        log.info("{} about to submit callback invoked for CaseID: {}", RESPONDENT_FINAL_ORDER_PAYMENT_MADE, caseId);
 
         List<String> validationErrors = paymentValidatorService.validatePayments(
             caseData.getFinalOrder().getFinalOrderPayments(), caseId
@@ -87,7 +81,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                             CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Respondent Final Order Payment Made event submitted callback invoked for Case Id: {}", details.getId());
+        log.info("{} submitted callback invoked for Case Id: {}", RESPONDENT_FINAL_ORDER_PAYMENT_MADE, details.getId());
 
         applyForFinalOrderService.sendRespondentAppliedForFinalOrderNotifications(beforeDetails);
 

@@ -88,7 +88,7 @@ public class RespondentFinalOrderPaymentMadeIT {
     }
 
     @Test
-    void shouldChangeCaseStateIfPaymentWasSuccessful() throws Exception {
+    void shouldChangeCaseStateToFinalOrderRequestedIfPaymentWasSuccessful() throws Exception {
         setMockClock(clock);
 
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithPaymentStatus(PaymentStatus.SUCCESS);
@@ -101,7 +101,7 @@ public class RespondentFinalOrderPaymentMadeIT {
     }
 
     @Test
-    void shouldSendSoleAppliedForFinalOrderNotifications() throws Exception {
+    void shouldSendAppliedForFinalOrderNotifications() throws Exception {
         setMockClock(clock);
 
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithPaymentStatus(PaymentStatus.SUCCESS);

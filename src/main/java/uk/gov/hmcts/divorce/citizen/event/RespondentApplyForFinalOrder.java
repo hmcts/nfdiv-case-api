@@ -65,10 +65,10 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
         log.info("{} About to Submit callback invoked for Case Id: {}", RESPONDENT_APPLY_FINAL_ORDER, details.getId());
 
         FinalOrder finalOrder = details.getData().getFinalOrder();
-        boolean respondentWillPayWithoutHwf = !finalOrder.applicant2NeedsHelpWithFees();
+        boolean respondentWillMakePayment = !finalOrder.applicant2NeedsHelpWithFees();
 
         CaseDetails<CaseData, State> updatedCaseDetails;
-        if (respondentWillPayWithoutHwf) {
+        if (respondentWillMakePayment) {
             updatedCaseDetails = setOrderSummaryAndAwaitingPaymentState(details, finalOrder);
         } else {
             updatedCaseDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
@@ -84,9 +84,9 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", RESPONDENT_APPLY_FINAL_ORDER, details.getId());
 
-        FinalOrder finalOrder = details.getData().getFinalOrder();
+        boolean respondentRequestedHwf = details.getData().getFinalOrder().applicant2NeedsHelpWithFees();
 
-        if (finalOrder.applicant2NeedsHelpWithFees()) {
+        if (respondentRequestedHwf) {
             applyForFinalOrderService.sendRespondentAppliedForFinalOrderNotifications(beforeDetails);
         }
 
@@ -97,8 +97,9 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
         CaseDetails<CaseData, State> details,
         FinalOrder finalOrder
     ) {
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+        log.info("Setting Order Summary for Respondent Final Order for Case Id: {}", details.getId());
 
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
         finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
 
         finalOrder.setApplicant2FinalOrderFeeInPounds(
