@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -48,11 +49,14 @@ public class AosPackPrinter {
                 app2.getCorrespondenceAddressIsOverseas()
             );
 
-            var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
-                ? !app2.getSolicitor().hasOrgId()
-                : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isApplicantOffline();
+            boolean app2HasSolicitor = app2.isRepresented() && app2.getSolicitor() != null;
+            boolean app2SolicitorIsOffline = !app2.getSolicitor().hasOrgId();
+            boolean app2EmailIsEmpty = StringUtils.isEmpty(app2.getEmail());
+            boolean app2IsOverseas = YES.equals(app2.getCorrespondenceAddressIsOverseas());
 
-            var d10Needed = caseData.getApplicationType().isSole() && app2Offline;
+            var app2NeedsD10 = app2HasSolicitor ? app2SolicitorIsOffline : app2EmailIsEmpty || app2IsOverseas;
+
+            var d10Needed = caseData.getApplicationType().isSole() && app2NeedsD10;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
