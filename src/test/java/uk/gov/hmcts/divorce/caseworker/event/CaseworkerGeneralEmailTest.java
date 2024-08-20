@@ -12,7 +12,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.ccd.sdk.type.DynamicMultiSelectList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
@@ -26,7 +29,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
@@ -36,7 +38,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -46,7 +47,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.CASEWORKER_CREATE_GENERAL_EMAIL;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
@@ -93,161 +93,6 @@ public class CaseworkerGeneralEmailTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .containsExactly(CASEWORKER_CREATE_GENERAL_EMAIL);
-    }
-
-    @Test
-    void shouldSetGeneralEmailToNullInAboutToStart() {
-        final CaseData caseData = caseData();
-        caseData.setGeneralEmail(
-            GeneralEmail
-                .builder()
-                .generalEmailParties(APPLICANT)
-                .generalEmailDetails("some details")
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
-
-        assertNull(response.getData().getGeneralEmail());
-    }
-
-    @Test
-    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() throws Exception {
-        setMockClock(clock);
-
-        final CaseData caseData = caseData();
-        caseData.setGeneralEmail(
-            GeneralEmail
-                .builder()
-                .generalEmailParties(APPLICANT)
-                .generalEmailDetails("some details")
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
-            .thenReturn(new User(
-                    TEST_AUTHORIZATION_TOKEN, UserInfo
-                    .builder()
-                    .givenName("forename")
-                    .familyName("lastname")
-                    .name("forename lastname")
-                    .build()
-                )
-            );
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getGeneralEmails())
-            .extracting("value")
-            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
-            .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
-    }
-
-    @Test
-    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() throws Exception {
-        setMockClock(clock);
-
-        final CaseData caseData = caseData();
-        caseData.setGeneralEmail(
-            GeneralEmail
-                .builder()
-                .generalEmailParties(APPLICANT)
-                .generalEmailDetails("some details 2")
-                .build()
-        );
-
-        var generalEmailDetails = GeneralEmailDetails
-            .builder()
-            .generalEmailDateTime(LocalDateTime.now(clock))
-            .generalEmailParties(RESPONDENT)
-            .generalEmailCreatedBy("forename lastname")
-            .generalEmailBody("some details 1")
-            .build();
-
-        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
-            ListValue
-                .<GeneralEmailDetails>builder()
-                .id(UUID.randomUUID().toString())
-                .value(generalEmailDetails)
-                .build();
-
-        caseData.setGeneralEmails(Lists.newArrayList(generalEmailDetailsListValue));
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
-            .thenReturn(new User(
-                    TEST_AUTHORIZATION_TOKEN, UserInfo
-                    .builder()
-                    .givenName("forename")
-                    .familyName("lastname")
-                    .name("forename lastname")
-                    .build()
-                )
-            );
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getGeneralEmails())
-            .extracting("value")
-            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
-            .contains(
-                tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details 2"),
-                tuple(getExpectedLocalDateTime(), RESPONDENT, "forename lastname", "some details 1")
-            );
-    }
-
-
-    @Test
-    void shouldSetConfidentialGeneralEmailDetails() throws Exception {
-        setMockClock(clock);
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
-        caseData.setGeneralEmail(
-            GeneralEmail
-                .builder()
-                .generalEmailParties(APPLICANT)
-                .generalEmailDetails("some details")
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
-            .thenReturn(new User(
-                    TEST_AUTHORIZATION_TOKEN, UserInfo
-                    .builder()
-                    .givenName("forename")
-                    .familyName("lastname")
-                    .name("forename lastname")
-                    .build()
-                )
-            );
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getConfidentialGeneralEmails())
-            .extracting("value")
-            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
-            .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
-
-        assertNull(response.getData().getGeneralEmails());
     }
 
     @Test
@@ -489,70 +334,160 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldReturnErrorIfDocumentLinkNotProvidedGeneralEmailAttachments() {
-        ListValue<DivorceDocument> generalEmailAttachment = new ListValue<>(
-            "1",
-            DivorceDocument
-                .builder()
-                .build()
-        );
-        final CaseData caseData = caseData();
+    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() throws Exception {
+        setMockClock(clock);
 
+        final CaseData caseData = caseData();
         caseData.setGeneralEmail(
             GeneralEmail
                 .builder()
                 .generalEmailParties(APPLICANT)
                 .generalEmailDetails("some details")
-                .generalEmailAttachments(singletonList(generalEmailAttachment))
                 .build()
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, details);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
 
-        assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains("Please ensure all General Email attachments have been uploaded before continuing");
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails())
+            .extracting("value")
+            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
+            .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
     }
 
     @Test
-    void shouldReturnErrorIfAttachmentsExceedMaxAllowed() {
+    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() throws Exception {
+        setMockClock(clock);
 
         final CaseData caseData = caseData();
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details 2")
+                .build()
+        );
 
+        var generalEmailDetails = GeneralEmailDetails
+            .builder()
+            .generalEmailDateTime(LocalDateTime.now(clock))
+            .generalEmailParties(RESPONDENT)
+            .generalEmailCreatedBy("forename lastname")
+            .generalEmailBody("some details 1")
+            .build();
+
+        ListValue<GeneralEmailDetails> generalEmailDetailsListValue =
+            ListValue
+                .<GeneralEmailDetails>builder()
+                .id(UUID.randomUUID().toString())
+                .value(generalEmailDetails)
+                .build();
+
+        caseData.setGeneralEmails(Lists.newArrayList(generalEmailDetailsListValue));
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails())
+            .extracting("value")
+            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
+            .contains(
+                tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details 2"),
+                tuple(getExpectedLocalDateTime(), RESPONDENT, "forename lastname", "some details 1")
+            );
+    }
+
+
+    @Test
+    void shouldSetConfidentialGeneralEmailDetails() throws Exception {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
         caseData.setGeneralEmail(
             GeneralEmail
                 .builder()
                 .generalEmailParties(APPLICANT)
                 .generalEmailDetails("some details")
-                .generalEmailAttachments(getListofDocument(11))
                 .build()
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, details);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
 
-        assertThat(response.getErrors()).isNotEmpty();
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(String.format(
-            "Number of attachments on General Email cannot exceed %s",MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS));
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getConfidentialGeneralEmails())
+            .extracting("value")
+            .extracting("generalEmailDateTime", "generalEmailParties", "generalEmailCreatedBy", "generalEmailBody")
+            .contains(tuple(getExpectedLocalDateTime(), APPLICANT, "forename lastname", "some details"));
+
+        assertNull(response.getData().getGeneralEmails());
     }
 
     @Test
-    void shouldSendEmailWhenEventSubmitted() throws Exception {
+    void shouldAddSelectedUploadedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+        setMockClock(clock);
 
         final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(1);
+        caseData.getDocuments().setDocumentsUploaded(docs);
 
         caseData.setGeneralEmail(
             GeneralEmail
                 .builder()
                 .generalEmailParties(APPLICANT)
                 .generalEmailDetails("some details")
-                .generalEmailAttachments(getListofDocument(2))
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(null)
+                .geApplicant2DocumentNames(null)
+                .geGeneratedDocumentNames(null)
+                .geUploadedDocumentNames(getDummySelectionList(docs.get(0).getId()))
+                .geScannedDocumentNames(null)
                 .build()
         );
 
@@ -560,13 +495,206 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        SubmittedCallbackResponse response = generalEmail.submitted(details, details);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
 
-        verify(generalEmailNotification).send(caseData,TEST_CASE_ID);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
     }
 
     @Test
-    void shouldReturnWarningAboutAttachmentSizeWhenDocumentsAttached() {
+    void shouldAddSelectedGeneratedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(1);
+        caseData.getDocuments().setDocumentsGenerated(docs);
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(null)
+                .geApplicant2DocumentNames(null)
+                .geGeneratedDocumentNames(getDummySelectionList(docs.get(0).getId()))
+                .geUploadedDocumentNames(null)
+                .geScannedDocumentNames(null)
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldAddSelectedApp1DocsToAttachmentsListInAboutToSubmit() throws Exception {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(1);
+        caseData.getDocuments().setApplicant1DocumentsUploaded(docs);
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(getDummySelectionList(docs.get(0).getId()))
+                .geApplicant2DocumentNames(null)
+                .geGeneratedDocumentNames(null)
+                .geUploadedDocumentNames(null)
+                .geScannedDocumentNames(null)
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldAddSelectedApp2DocsToAttachmentsListInAboutToSubmit() throws Exception {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(1);
+        caseData.getDocuments().setApplicant2DocumentsUploaded(docs);
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(null)
+                .geApplicant2DocumentNames(getDummySelectionList(docs.get(0).getId()))
+                .geGeneratedDocumentNames(null)
+                .geUploadedDocumentNames(null)
+                .geScannedDocumentNames(null)
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldAddSelectedScannedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        List<ListValue<ScannedDocument>> docs = getListOfScannedDocument(1);
+        caseData.getDocuments().setScannedDocuments(docs);
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(null)
+                .geApplicant2DocumentNames(null)
+                .geGeneratedDocumentNames(null)
+                .geUploadedDocumentNames(null)
+                .geScannedDocumentNames(getDummySelectionList(docs.get(0).getId()))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldSendEmailInAboutToSubmit() throws Exception {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -576,7 +704,12 @@ public class CaseworkerGeneralEmailTest {
                 .builder()
                 .generalEmailParties(APPLICANT)
                 .generalEmailDetails("some details")
-                .generalEmailAttachments(getListofDocument(2))
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(null)
+                .geApplicant2DocumentNames(null)
+                .geGeneratedDocumentNames(null)
+                .geUploadedDocumentNames(null)
+                .geScannedDocumentNames(null)
                 .build()
         );
 
@@ -585,54 +718,48 @@ public class CaseworkerGeneralEmailTest {
         details.setId(TEST_CASE_ID);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
 
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(getCaseworkerUser());
-
-        when(documentIdProvider.documentId()).thenReturn("1");
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
-
-        assertThat(response.getWarnings()).isNotEmpty();
-        assertThat(response.getWarnings()).hasSize(1);
-        assertThat(response.getWarnings()).contains("Please ensure all individual attachments are smaller than 2MB. "
-            + "If you are sure that all attachments are smaller than 2MB, submit the event again to proceed.");
-    }
-
-    @Test
-    void shouldReturnNoWarningAboutAttachmentSizeWhenDocumentsNotAttached() {
-        setMockClock(clock);
-
-        final CaseData caseData = caseData();
-
-        caseData.setGeneralEmail(
-            GeneralEmail
-                .builder()
-                .generalEmailParties(APPLICANT)
-                .generalEmailDetails("some details")
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(getCaseworkerUser());
+        var caseDataCopy = caseData.toBuilder().build();
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
-        assertThat(response.getWarnings()).isEmpty();
+        verify(generalEmailNotification).send(caseDataCopy,TEST_CASE_ID);
     }
 
-    List<ListValue<DivorceDocument>> getListofDocument(int size) {
+    private List<ListValue<DivorceDocument>> getListOfDivorceDocument(int size) {
         List<ListValue<DivorceDocument>> docList = new ArrayList<>();
         while (size > 0) {
             ListValue<DivorceDocument> generalEmailAttachment = new ListValue<>(
-                String.valueOf(size),
+                UUID.randomUUID().toString(),
                 DivorceDocument
                     .builder()
                     .documentLink(Document.builder().build())
+                    .build()
+            );
+            docList.add(generalEmailAttachment);
+            size--;
+        }
+        return docList;
+    }
+
+    private List<ListValue<ScannedDocument>> getListOfScannedDocument(int size) {
+        List<ListValue<ScannedDocument>> docList = new ArrayList<>();
+        while (size > 0) {
+            ListValue<ScannedDocument> generalEmailAttachment = new ListValue<>(
+                UUID.randomUUID().toString(),
+                ScannedDocument
+                    .builder()
+                    .url(Document.builder().build())
                     .build()
             );
             docList.add(generalEmailAttachment);
@@ -650,5 +777,18 @@ public class CaseworkerGeneralEmailTest {
             .build();
 
         return new User(TEST_AUTHORIZATION_TOKEN, userDetails);
+    }
+
+    DynamicMultiSelectList getDummySelectionList(String code) {
+        return DynamicMultiSelectList.builder()
+            .listItems(List.of(DynamicListElement.builder()
+                .label("Test")
+                .code(UUID.fromString(code))
+                .build()))
+            .value(List.of(DynamicListElement.builder()
+                .label("Test")
+                .code(UUID.fromString(code))
+                .build()))
+            .build();
     }
 }
