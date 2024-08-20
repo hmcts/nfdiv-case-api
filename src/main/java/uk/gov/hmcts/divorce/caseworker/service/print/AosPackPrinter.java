@@ -50,11 +50,10 @@ public class AosPackPrinter {
             );
 
             boolean app2HasSolicitor = app2.isRepresented() && app2.getSolicitor() != null;
-            boolean app2SolicitorIsOffline = !app2.getSolicitor().hasOrgId();
             boolean app2EmailIsEmpty = StringUtils.isEmpty(app2.getEmail());
             boolean app2IsOverseas = YES.equals(app2.getCorrespondenceAddressIsOverseas());
 
-            var app2NeedsD10 = app2HasSolicitor ? app2SolicitorIsOffline : app2EmailIsEmpty || app2IsOverseas;
+            var app2NeedsD10 = app2HasSolicitor ? !app2.getSolicitor().hasOrgId() : (app2EmailIsEmpty || app2IsOverseas);
 
             var d10Needed = caseData.getApplicationType().isSole() && app2NeedsD10;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
