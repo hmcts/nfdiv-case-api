@@ -81,11 +81,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_APPLIED_FOR_FO_CARD = """
         applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FinalOrderFeeOrderSummary=\"*\"
-    """;
+        """;
 
     public static final String APPLICANT_2_APPLIED_FOR_FO_HWF = """
         applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FoHWFReferenceNumber=\"*\"
-    """;
+        """;
 
     private static final String NOTICE_OF_CHANGE_HAS_BEEN_APPLIED = "changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"";
 
