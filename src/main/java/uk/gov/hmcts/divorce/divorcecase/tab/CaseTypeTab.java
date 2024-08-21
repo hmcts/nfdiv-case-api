@@ -84,7 +84,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     """;
 
     public static final String APPLICANT_2_APPLIED_FOR_FO_HWF = """
-        applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FoHwfRef=\"*\"";
+        applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FoHWFReferenceNumber=\"*\"
     """;
 
     private static final String NOTICE_OF_CHANGE_HAS_BEEN_APPLIED = "changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"";
@@ -544,6 +544,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("labelContentApplicant2", NEVER_SHOW)
             .field("doesApplicant2WantToApplyForFinalOrder")
+            .field("applicant2AppliedForFinalOrder", "applicant2AppliedForFinalOrder=\"Yes\"")
             .field("applicant2FinalOrderExplanation")
             .field("applicant2FinalOrderLateExplanation")
             .field("applicant2FinalOrderStatementOfTruth")
