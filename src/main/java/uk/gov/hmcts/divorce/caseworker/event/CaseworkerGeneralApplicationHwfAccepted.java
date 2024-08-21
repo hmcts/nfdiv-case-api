@@ -31,7 +31,7 @@ public class CaseworkerGeneralApplicationHwfAccepted implements CCDConfig<CaseDa
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_HWF_ACCEPTED)
             .forStates(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome)
-            .name("General application HWF accepted")
+            .name("GenAppHWF accepted")
             .description("General application HWF accepted")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

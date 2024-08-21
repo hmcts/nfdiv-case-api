@@ -28,7 +28,7 @@ public class CaseworkerGeneralApplicationHwfPartPaymentRequired implements CCDCo
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_HWF_PART_PAYMENT_REQUIRED)
             .forStates(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome)
-            .name("General application HWF part payment required")
+            .name("GenAppHWF part pay required")
             .description("General application HWF part payment required")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

@@ -28,7 +28,7 @@ public class CaseworkerGeneralApplicationHwfRefused implements CCDConfig<CaseDat
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_HWF_REFUSED)
             .forStates(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome)
-            .name("General application HWF refused")
+            .name("GenAppHWF refused")
             .description("General application HWF refused")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
