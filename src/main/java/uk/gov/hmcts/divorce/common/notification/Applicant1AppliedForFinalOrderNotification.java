@@ -119,7 +119,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                         caseData.getApplicant1().getSolicitor().getEmail(),
                         NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER,
                         templateVars,
-                        ENGLISH,
+                        caseData.getApplicant1().getLanguagePreference(),
                         caseId
                 );
             }
