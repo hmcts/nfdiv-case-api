@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -116,6 +117,34 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .readonlyWithLabel(GeneralEmail::getGeApplicant2DocumentNames, "Applicant 2 documents selected")
             .readonlyWithLabel(GeneralEmail::getGeAttachedDocumentNames,"Attached documents")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details,
+                                                                      CaseDetails<CaseData, State> detailsBefore) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
+
+       removeStaleGeneralEmailData(details.getData());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
+    private void removeStaleGeneralEmailData(CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+        if (generalEmail == null) {
+            return;
+        }
+
+        List<ListValue<GeneralEmailDetails>> deliveredEmails = caseData.getGeneralEmails();
+        if (!CollectionUtils.isEmpty(deliveredEmails) && generalEmail.hasBeenDelivered(deliveredEmails)) {
+            generalEmail.setGeneralEmailAttachments(null);
+        }
+
+        generalEmail.setGeneralEmailDetails(null);
+        generalEmail.setGeneralEmailParties(null);
+        generalEmail.setGeneralEmailOtherRecipientEmail(null);
+        generalEmail.setGeneralEmailOtherRecipientName(null);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
