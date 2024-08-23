@@ -25,6 +25,7 @@ public class CaseworkerRequestForInformationHelper {
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor.";
+    public static final String FULL_STOP = ".";
 
     private void setBothValues(CaseData caseData) {
         setValues(caseData, caseData.getApplicant1(), false);
@@ -91,7 +92,7 @@ public class CaseworkerRequestForInformationHelper {
                 error += APPLICANT_2;
             }
         }
-        return error + (applicant.isRepresented() ? SOLICITOR : ".");
+        return error + (applicant.isRepresented() ? SOLICITOR : FULL_STOP);
     }
 
     private List<String> getValidationError(CaseData caseData, Applicant applicant) {
