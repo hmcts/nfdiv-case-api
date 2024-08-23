@@ -117,9 +117,9 @@ public class GeneralEmail {
                 .map(listValue -> listValue.getValue().getUrl())
                 .collect(Collectors.toSet());
 
-        return generalEmailDocLinks().equals(deliveredEmailDocLinks)
-                && generalEmailParties.equals(deliveredEmail.getGeneralEmailParties())
-                && generalEmailDetails.equals(deliveredEmail.getGeneralEmailBody());
+        return deliveredEmailDocLinks.equals(generalEmailDocLinks())
+                && deliveredEmail.getGeneralEmailParties().equals(generalEmailParties)
+                && deliveredEmail.getGeneralEmailBody().equals(generalEmailDetails);
     }
 
     @JsonIgnore
