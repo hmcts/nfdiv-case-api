@@ -98,7 +98,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveStaleGeneralEmailData() throws Exception {
+    void shouldRemoveStaleEmailTextAndRecipientDataInAboutToStart() throws Exception {
         final CaseData caseData = caseData();
 
         caseData.setGeneralEmail(
@@ -124,7 +124,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveGeneralEmailAttachmentsIfTheEmailHasAlreadyBeenDelivered() throws Exception {
+    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDelivered() throws Exception {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -166,7 +166,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsIfDeliveredEmailsHadDifferentAttachments() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentAttachments() throws Exception {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -190,6 +190,12 @@ public class CaseworkerGeneralEmailTest {
                         .generalEmailBody("a general email")
                         .generalEmailAttachmentLinks(buildGeneralEmailDetailsAttachmentsWithDocLinks("000-123", "123-456"))
                         .build()
+                ).build(),
+                ListValue.<GeneralEmailDetails>builder().value(
+                    GeneralEmailDetails.builder()
+                        .generalEmailParties(GeneralParties.APPLICANT)
+                        .generalEmailBody("a general email")
+                        .build()
                 ).build()
             )
         );
@@ -209,13 +215,13 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsIfDeliveredEmailsHadNoAttachments() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentContent() throws Exception {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
         caseData.getDocuments().setDocumentsGenerated(docs);
 
-        List<ListValue<DivorceDocument>> generalEmailAttachments = buildGeneralEmailAttachmentsWithDocLinks("123-456", "000-124");
+        List<ListValue<DivorceDocument>> generalEmailAttachments = buildGeneralEmailAttachmentsWithDocLinks("123-456", "000-123");
         caseData.setGeneralEmail(
             GeneralEmail
                 .builder()
@@ -230,10 +236,49 @@ public class CaseworkerGeneralEmailTest {
                 ListValue.<GeneralEmailDetails>builder().value(
                     GeneralEmailDetails.builder()
                         .generalEmailParties(GeneralParties.APPLICANT)
-                        .generalEmailBody("a general email")
+                        .generalEmailBody("a different general email")
+                        .generalEmailAttachmentLinks(buildGeneralEmailDetailsAttachmentsWithDocLinks("000-123", "123-456"))
+                        .build()
+                ).build(),
+                ListValue.<GeneralEmailDetails>builder().value(
+                    GeneralEmailDetails.builder()
+                        .generalEmailParties(GeneralParties.APPLICANT)
+                        .generalEmailBody("a different general email 2")
                         .build()
                 ).build()
             )
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+
+        GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
+        assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailDetails()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailOtherRecipientEmail()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailOtherRecipientName()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailAttachments()).isEqualTo(generalEmailAttachments);
+    }
+
+
+    @Test
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfNoEmailsHaveBeenDelivered() throws Exception {
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
+        caseData.getDocuments().setDocumentsGenerated(docs);
+
+        List<ListValue<DivorceDocument>> generalEmailAttachments = buildGeneralEmailAttachmentsWithDocLinks("123-456", "000-124");
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("a general email")
+                .generalEmailAttachments(generalEmailAttachments)
+                .build()
         );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

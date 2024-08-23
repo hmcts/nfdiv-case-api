@@ -121,7 +121,6 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> detailsBefore) {
         final CaseData caseData = details.getData();
-
         GeneralEmail generalEmail = caseData.getGeneralEmail();
 
         if (generalEmail.getGeneralEmailAttachments() != null) {

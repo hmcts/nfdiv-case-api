@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -123,21 +122,21 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                                                                       CaseDetails<CaseData, State> detailsBefore) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
 
-       removeStaleGeneralEmailData(details.getData());
+        removeStaleGeneralEmailInputData(details.getData());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
     }
 
-    private void removeStaleGeneralEmailData(CaseData caseData) {
+    private void removeStaleGeneralEmailInputData(CaseData caseData) {
         GeneralEmail generalEmail = caseData.getGeneralEmail();
         if (generalEmail == null) {
             return;
         }
 
         List<ListValue<GeneralEmailDetails>> deliveredEmails = caseData.getGeneralEmails();
-        if (!CollectionUtils.isEmpty(deliveredEmails) && generalEmail.hasBeenDelivered(deliveredEmails)) {
+        if (generalEmail.hasBeenDelivered(deliveredEmails)) {
             generalEmail.setGeneralEmailAttachments(null);
         }
 
