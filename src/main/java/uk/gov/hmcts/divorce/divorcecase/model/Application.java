@@ -454,6 +454,12 @@ public class Application {
     private YesOrNo coPronouncedForceConfidentialCoverLetterResentAgain;
 
     @CCD(
+        label = "JS Citizen AOS Response Letters Resent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jsCitizenAosResponseLettersResent;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption",

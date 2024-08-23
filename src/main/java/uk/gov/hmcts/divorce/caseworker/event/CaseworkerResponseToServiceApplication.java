@@ -25,6 +25,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -43,7 +45,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_RESPONSE_TO_SERVICE_APPLICATION)
-            .forStates(AwaitingAos, AosOverdue)
+            .forStates(AwaitingAos, AosOverdue, BailiffRefused, ServiceAdminRefusal)
             .name("Response to service app")
             .description("Response to service application")
             .aboutToStartCallback(this::aboutToStart)

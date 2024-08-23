@@ -3,5 +3,11 @@
   "extends": [
     "local>hmcts/.github:renovate-config",
     "local>hmcts/.github//renovate/automerge-all"
+  ],
+  "packageRules": [
+    {
+      "packageNames": ["com.github.hmcts:fortify-client"],
+      "enabled": false
+    }
   ]
 }
