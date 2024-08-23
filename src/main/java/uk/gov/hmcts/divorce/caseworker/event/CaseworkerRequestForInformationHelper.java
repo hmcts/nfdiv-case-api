@@ -18,13 +18,13 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @Component
 public class CaseworkerRequestForInformationHelper {
 
-    public final String NO_VALID_EMAIL_ERROR
+    public static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for ";
-    public final String THE_APPLICANT = "the Applicant";
-    public final String THIS_PARTY = "this party.";
-    public final String APPLICANT_1 = "Applicant 1";
-    public final String APPLICANT_2 = "Applicant 2";
-    public final String SOLICITOR = "'s Solicitor.";
+    public static final String THE_APPLICANT = "the Applicant";
+    public static final String THIS_PARTY = "this party.";
+    public static final String APPLICANT_1 = "Applicant 1";
+    public static final String APPLICANT_2 = "Applicant 2";
+    public static final String SOLICITOR = "'s Solicitor.";
 
     private void setBothValues(CaseData caseData) {
         setValues(caseData, caseData.getApplicant1(), false);
@@ -109,6 +109,7 @@ public class CaseworkerRequestForInformationHelper {
     private List<String> isEmailValid(CaseData caseData, Applicant applicant) {
         return isApplicantEmailValid(applicant) ? new ArrayList<>() : getValidationError(caseData, applicant);
     }
+
     private List<String> areBothEmailsValid(CaseData caseData) {
         List<String> errors = new ArrayList<>();
         boolean app1Valid = isApplicantEmailValid(caseData.getApplicant1());
