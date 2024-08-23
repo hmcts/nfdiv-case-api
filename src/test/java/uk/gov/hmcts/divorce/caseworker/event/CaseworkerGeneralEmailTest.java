@@ -114,7 +114,7 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
         assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
@@ -155,7 +155,7 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
         assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
@@ -204,7 +204,7 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
         assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
@@ -253,7 +253,7 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
         assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
@@ -285,7 +285,7 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
         assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
@@ -328,7 +328,7 @@ public class CaseworkerGeneralEmailTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
 
         GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
         assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
