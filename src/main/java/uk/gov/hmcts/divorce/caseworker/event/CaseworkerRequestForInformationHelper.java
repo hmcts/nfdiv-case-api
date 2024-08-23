@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Boolean.TRUE;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -41,7 +42,7 @@ public class CaseworkerRequestForInformationHelper {
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
         final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
-        if (setSecondary) {
+        if (TRUE.equals(setSecondary)) {
             requestForInformation.setRequestForInformationSecondaryEmailAddress(emailAddress);
             requestForInformation.setRequestForInformationSecondaryName(name);
         } else {
