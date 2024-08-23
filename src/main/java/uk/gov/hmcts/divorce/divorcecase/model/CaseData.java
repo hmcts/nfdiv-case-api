@@ -321,6 +321,10 @@ public class CaseData {
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
 
+    @JsonUnwrapped
+    @Builder.Default
+    private RequestForInformationList requestForInformationList = new RequestForInformationList();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
