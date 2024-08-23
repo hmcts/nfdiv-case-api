@@ -356,7 +356,9 @@ class CaseworkerRequestForInformationHelperTest {
     void shouldValidateOtherEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(RequestForInformationJointParties.OTHER);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
+            RequestForInformationJointParties.OTHER
+        );
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
 
         List<String> response = caseworkerRequestForInformationHelper.areEmailsValid(caseData);
@@ -368,7 +370,9 @@ class CaseworkerRequestForInformationHelperTest {
     void shouldReturnErrorWhenNoOtherEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(RequestForInformationJointParties.OTHER);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
+            RequestForInformationJointParties.OTHER
+        );
 
         List<String> response = caseworkerRequestForInformationHelper.areEmailsValid(caseData);
 
