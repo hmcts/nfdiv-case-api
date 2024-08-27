@@ -3,11 +3,15 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
@@ -39,6 +45,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerRequestForInformationHelperTest {
 
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
     @InjectMocks
     private CaseworkerRequestForInformationHelper caseworkerRequestForInformationHelper;
 
@@ -48,8 +57,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -75,8 +88,12 @@ class CaseworkerRequestForInformationHelperTest {
         final List<ListValue<RequestForInformation>> requests = new ArrayList<>();
         requests.add(request);
         caseData.getRequestForInformationList().setRequestsForInformation(requests);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(2);
 
         RequestForInformation responseRequestForInformation =
@@ -98,8 +115,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -122,8 +143,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -145,8 +170,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -170,8 +199,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -193,8 +226,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -218,8 +255,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -243,8 +284,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -271,8 +316,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -297,8 +346,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -323,8 +376,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -348,8 +405,12 @@ class CaseworkerRequestForInformationHelperTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
