@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationJoint.CASEWORKER_REQUEST_FOR_INFORMATION_JOINT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -46,6 +47,21 @@ class CaseworkerRequestForInformationJointTest {
     }
 
     @Test
+    void shouldSuccessfullyCompleteMidEventWhenNoErrorsInEmailAddressValidation() {
+        CaseData caseData = caseData();
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+        when(helper.areEmailsValid(any())).thenReturn(new ArrayList<>());
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRequestForInformationJoint.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(Submitted);
+    }
+
+    @Test
     void shouldFailMidEventWhenErrorsInEmailAddressValidation() {
         CaseData caseData = caseData();
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -58,20 +74,7 @@ class CaseworkerRequestForInformationJointTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Error Text"));
-    }
-
-    @Test
-    void shouldSuccessfullyCompleteMidEventWhenNoErrorsInEmailAddressValidation() {
-        CaseData caseData = caseData();
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        when(helper.areEmailsValid(any())).thenReturn(new ArrayList<>());
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformationJoint.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -87,5 +90,6 @@ class CaseworkerRequestForInformationJointTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 }

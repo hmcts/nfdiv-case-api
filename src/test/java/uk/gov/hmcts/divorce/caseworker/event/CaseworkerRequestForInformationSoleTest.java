@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.CASEWORKER_REQUEST_FOR_INFORMATION_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -57,6 +58,7 @@ class CaseworkerRequestForInformationSoleTest {
             caseworkerRequestForInformationSole.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -72,6 +74,7 @@ class CaseworkerRequestForInformationSoleTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Error Text"));
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -87,5 +90,6 @@ class CaseworkerRequestForInformationSoleTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 }

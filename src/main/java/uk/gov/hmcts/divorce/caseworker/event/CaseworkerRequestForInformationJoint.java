@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -83,7 +84,7 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(Submitted) //Ticket says state should be 'AwaitingApplicant' which does not exist - add new state? Clarify.
+            .state(AwaitingDocuments)
             .build();
     }
 }
