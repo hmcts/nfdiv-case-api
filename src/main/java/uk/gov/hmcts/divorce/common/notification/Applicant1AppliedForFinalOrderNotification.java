@@ -206,7 +206,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                 caseIdString,
                 caseIdString,
                 FINAL_ORDER_REQUESTED,
-                applicant.getFullName(),
+                applicant.getSolicitor().getName(),
                 applicant.getSolicitor().getAddressOverseas()
         );
 

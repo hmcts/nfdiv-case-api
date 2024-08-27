@@ -36,8 +36,7 @@ public class SubmitAosService {
     public CaseDetails<CaseData, State> submitOfflineAos(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setSubmitAosState,
-            setSubmissionAndDueDate,
-            generateAndLinkRespondentAnswers
+            setSubmissionAndDueDate
         ).run(caseDetails);
     }
 
