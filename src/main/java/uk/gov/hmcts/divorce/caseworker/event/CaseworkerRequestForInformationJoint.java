@@ -79,10 +79,10 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_JOINT, details.getId());
 
-        helper.setParties(details.getData());
+        CaseData data = helper.setParties(details.getData());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(data)
             .state(Submitted) //Ticket says state should be 'AwaitingApplicant' which does not exist - add new state? Clarify.
             .build();
     }

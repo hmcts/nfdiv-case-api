@@ -64,7 +64,7 @@ public class CaseworkerRequestForInformationHelper {
         }
     }
 
-    public void setParties(CaseData caseData) {
+    public CaseData setParties(CaseData caseData) {
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         final RequestForInformationSoleParties soleAddressToOption = requestForInformation.getRequestForInformationSoleParties();
         final RequestForInformationJointParties jointAddressToOption = requestForInformation.getRequestForInformationJointParties();
@@ -80,6 +80,8 @@ public class CaseworkerRequestForInformationHelper {
         addRequestToList(caseData);
 
         caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation()); //Prevent pre-pop next event run
+
+        return caseData;
     }
 
     private String getValidationErrorString(CaseData caseData, Applicant applicant) {
