@@ -46,6 +46,6 @@ public class GeneralEmailDetails {
     )
     private String generalEmailBody;
 
-    @CCD(label = "Attachments")
+    @CCD(label = "Email Attachments")
     private List<ListValue<Document>> generalEmailAttachmentLinks;
 }

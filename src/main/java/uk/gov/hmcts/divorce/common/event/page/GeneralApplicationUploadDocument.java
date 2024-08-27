@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.common.event.page;
 
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
@@ -20,7 +21,14 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
         pageBuilder.page("generalApplicationUploadDocument", this::midEvent)
             .pageLabel("Upload document")
             .complex(CaseData::getGeneralApplication)
-                .mandatory(GeneralApplication::getGeneralApplicationDocument)
+                .complex(GeneralApplication::getGeneralApplicationDocument)
+                    .optional(DivorceDocument::getDocumentEmailContent)
+                    .optional(DivorceDocument::getDocumentType)
+                    .optional(DivorceDocument::getDocumentComment)
+                    .mandatory(DivorceDocument::getDocumentLink)
+                    .mandatory(DivorceDocument::getDocumentDateAdded)
+                    .mandatory(DivorceDocument::getDocumentFileName)
+                .done()
                 .optional(GeneralApplication::getGeneralApplicationDocumentComments)
             .done();
     }

@@ -8,7 +8,10 @@ properties([
 @Library("Infrastructure")
 
 def type = "java"
-def product = "rpe"
-def component = "spring-boot-template"
+def product = "nfdiv"
+def component = "case-api"
 
-withNightlyPipeline(type, product, component) {}
+withNightlyPipeline(type, product, component) {
+  enableFortifyScan()
+  afterSuccess('fortify-scan') { steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*' }
+}
