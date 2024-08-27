@@ -12,6 +12,8 @@ public final class TestConstants {
     public static final String TEST_FIRST_NAME = "test_first_name";
     public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
+    public static final String TEST_OTHER_NAME = "test_other_name";
+    public static final String TEST_OTHER_EMAIL = "test_other@test.com";
     public static final String TEST_APP2_FIRST_NAME = "test_app2_first_name";
     public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
     public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
@@ -98,6 +100,8 @@ public final class TestConstants {
     public static final String TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT = "The applicant wants to apply for a financial order.";
     public static final String TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the "
         + "money and property will be divided. The application will be done separately.";
+
+    public static final String TEST_TEXT = "Test";
 
     private TestConstants() {
     }
