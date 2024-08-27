@@ -131,6 +131,7 @@ public class CommonContent {
     public static final String SPOUSE_WELSH = "priod";
 
     public static final String SMART_SURVEY = "smartSurvey";
+    public static final String REQUEST_FOR_INFORMATION_DETAILS = "request information details";
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
