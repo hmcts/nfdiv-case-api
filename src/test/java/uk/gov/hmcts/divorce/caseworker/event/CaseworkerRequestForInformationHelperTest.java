@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 
 import java.util.List;
@@ -25,6 +26,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -35,6 +39,301 @@ class CaseworkerRequestForInformationHelperTest {
 
     @InjectMocks
     private CaseworkerRequestForInformationHelper caseworkerRequestForInformationHelper;
+
+    @Test
+    void shouldSetPartyToApplicant1WhenNotRepresentedOnSoleCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isEqualTo(APPLICANT);
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(caseData.getApplicant1().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(caseData.getApplicant1().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToApplicant1SolicitorWhenRepresentedOnSoleCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isEqualTo(APPLICANT);
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToApplicant1WhenNotRepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(APPLICANT1);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(caseData.getApplicant1().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(caseData.getApplicant1().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToApplicant1SolicitorWhenRepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(APPLICANT1);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToApplicant2WhenNotRepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(APPLICANT2);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(caseData.getApplicant2().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(caseData.getApplicant2().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToApplicant2SolicitorWhenRepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(APPLICANT2);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress())
+            .isEqualTo(caseData.getApplicant2().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName())
+            .isEqualTo(caseData.getApplicant2().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartiesToApplicantsWhenNotRepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(BOTH);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(caseData.getApplicant1().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(caseData.getApplicant1().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress())
+            .isEqualTo(caseData.getApplicant2().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isEqualTo(caseData.getApplicant2().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartiesToApplicantSolicitorsWhenRepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(BOTH);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress())
+            .isEqualTo(caseData.getApplicant2().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName())
+            .isEqualTo(caseData.getApplicant2().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartiesToApplicant1SolicitorAndApplicant2WhenApplicant1RepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.setApplicant2(getApplicant());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(BOTH);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName())
+            .isEqualTo(caseData.getApplicant1().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress())
+            .isEqualTo(caseData.getApplicant2().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isEqualTo(caseData.getApplicant2().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartiesToApplicant1AndApplicant2SolicitorWhenApplicant2RepresentedOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(BOTH);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(caseData.getApplicant1().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(caseData.getApplicant1().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress())
+            .isEqualTo(caseData.getApplicant2().getSolicitor().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName())
+            .isEqualTo(caseData.getApplicant2().getSolicitor().getName());
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToOtherOnSoleCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isEqualTo(OTHER);
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(TEST_OTHER_EMAIL);
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(TEST_OTHER_NAME);
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldSetPartyToOtherOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation()
+            .setRequestForInformationJointParties(RequestForInformationJointParties.OTHER);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isEqualTo(RequestForInformationJointParties.OTHER);
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(TEST_OTHER_EMAIL);
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(TEST_OTHER_NAME);
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
 
     @Test
     void shouldValidateApplicantEmailOnSoleCase() {
