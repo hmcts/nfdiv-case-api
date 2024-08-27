@@ -62,6 +62,9 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> detailsBefore) {
+
+        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_SOLE, details.getId());
+
         List<String> errors = helper.areEmailsValid(details.getData());
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
