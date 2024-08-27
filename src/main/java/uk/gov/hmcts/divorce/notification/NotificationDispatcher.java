@@ -4,8 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 
 @Service
 public class NotificationDispatcher {
@@ -72,5 +79,38 @@ public class NotificationDispatcher {
     private boolean applicantRepresentedBefore(final boolean isApplicant1, final CaseData previousCaseData) {
         return (isApplicant1 && previousCaseData.getApplicant1().isRepresented())
             || (!isApplicant1 && previousCaseData.getApplicant2().isRepresented());
+    }
+
+    private void sendRequestForInformationNotification(ApplicantNotification applicantNotification, RequestForInformation requestForInformation, CaseData caseData, Long caseId) {
+        if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())
+            || APPLICANT1.equals(requestForInformation.getRequestForInformationJointParties())) {
+            if (caseData.getApplicant1().isRepresented()) {
+                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant1(caseData, caseId);
+            }
+        } else if (APPLICANT2.equals(requestForInformation.getRequestForInformationJointParties())) {
+            if (caseData.getApplicant2().isRepresented()) {
+                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2(caseData, caseId);
+            }
+        } else if (BOTH.equals(requestForInformation.getRequestForInformationJointParties())) {
+            if (caseData.getApplicant1().isRepresented()) {
+                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant1(caseData, caseId);
+            }
+
+            if (caseData.getApplicant2().isRepresented()) {
+                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2(caseData, caseId);
+            }
+        } else if (OTHER.equals(requestForInformation.getRequestForInformationSoleParties())
+            || RequestForInformationJointParties.OTHER.equals(requestForInformation.getRequestForInformationJointParties())) {
+
+            applicantNotification.sendToOtherRecipient(caseData, caseId, requestForInformation);
+        }
     }
 }
