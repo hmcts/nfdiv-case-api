@@ -9,6 +9,9 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.SolicitorAppliedForFinalOrderSoleTemplateContent;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -16,6 +19,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.allOf;
@@ -31,14 +35,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.NOW_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.WILL_BE_CHECKED_WITHIN_14_DAYS;
@@ -54,6 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,6 +78,14 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private BulkPrintService bulkPrintService;
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Mock
+    private SolicitorAppliedForFinalOrderSoleTemplateContent solicitorAppliedForFinalOrderSoleTemplateContent;
     @Mock
     private FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
 
@@ -416,6 +434,71 @@ class Applicant1AppliedForFinalOrderNotificationTest {
         );
         verifyNoMoreInteractions(notificationService);
         verifyNoMoreInteractions(finalOrderNotificationCommonContent);
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationWhenSoleApplicationAndSolicitorEmailPresent() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+                .name("App1 Sol")
+                .reference("12344")
+                .email(TEST_SOLICITOR_EMAIL)
+                .build());
+        data.setFinalOrder(FinalOrder.builder()
+                .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
+                .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+                .build());
+
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+                .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
+
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+                eq(data.getApplicant1().getSolicitor().getEmail()),
+                eq(NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER),
+                argThat(allOf(
+                        hasEntry(IS_DIVORCE, "yes"),
+                        hasEntry(IS_DISSOLUTION, "no")
+                )),
+                eq(ENGLISH),
+                eq(TEST_CASE_ID)
+        );
+
+        verifyNoMoreInteractions(notificationService);
+
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendApplicant1SolicitorNotificationWhenSoleApplicationAndSolicitorEmailIsNotPresent() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+                .name("App1 Sol")
+                .reference("12344")
+                .build());
+        data.setFinalOrder(FinalOrder.builder()
+                .dateFinalOrderSubmitted(LocalDateTime.of(2022, 9, 10, 1, 0))
+                .applicant1AppliedForFinalOrderFirst(YesOrNo.YES)
+                .build());
+
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+                .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
+
+        when(solicitorAppliedForFinalOrderSoleTemplateContent.getTemplateContent(data,
+                TEST_CASE_ID, data.getApplicant1())).thenReturn(new HashMap<>());
+
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+
+        verify(bulkPrintService).print(any());
+        verify(caseDataDocumentService).renderDocument(new HashMap<>(),
+                TEST_CASE_ID, NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID,
+                data.getApplicant1().getLanguagePreference(), SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME);
+        verifyNoInteractions(notificationService);
     }
 
     private void setupMocks(Clock mockClock) {
