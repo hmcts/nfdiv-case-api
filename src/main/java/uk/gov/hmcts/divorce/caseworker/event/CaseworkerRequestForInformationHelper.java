@@ -1,12 +1,17 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +21,7 @@ import static java.lang.Boolean.TRUE;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@RequiredArgsConstructor
 @Component
 public class CaseworkerRequestForInformationHelper {
 
@@ -27,6 +33,9 @@ public class CaseworkerRequestForInformationHelper {
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor.";
     public static final String FULL_STOP = ".";
+
+    private final RequestForInformationNotification requestForInformationNotification;
+    private final NotificationDispatcher notificationDispatcher;
 
     private void setBothValues(CaseData caseData) {
         setValues(caseData, caseData.getApplicant1(), false);
@@ -64,7 +73,8 @@ public class CaseworkerRequestForInformationHelper {
         }
     }
 
-    public CaseData setParties(CaseData caseData) {
+    public CaseData setParties(CaseDetails<CaseData, State> caseDetails) {
+        final CaseData caseData = caseDetails.getData();
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         final RequestForInformationSoleParties soleAddressToOption = requestForInformation.getRequestForInformationSoleParties();
         final RequestForInformationJointParties jointAddressToOption = requestForInformation.getRequestForInformationJointParties();
@@ -78,6 +88,8 @@ public class CaseworkerRequestForInformationHelper {
         }
 
         addRequestToList(caseData);
+
+        notificationDispatcher.send(requestForInformationNotification, caseData, caseDetails.getId());
 
         caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation()); //Prevent pre-pop next event run
 
