@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,6 +54,33 @@ class CaseworkerRequestForInformationHelperTest {
 
         RequestForInformation responseRequestForInformation =
             response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
+
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isEqualTo(APPLICANT);
+        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isEqualTo(caseData.getApplicant1().getEmail());
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isEqualTo(caseData.getApplicant1().getFullName());
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+    }
+
+    @Test
+    void shouldAddAdditionalRequestToRequestListWhenListIsNotEmpty() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        final ListValue<RequestForInformation> request = new ListValue<>();
+        request.setValue(caseData.getRequestForInformationList().getRequestForInformation());
+        final List<ListValue<RequestForInformation>> requests = new ArrayList<>();
+        requests.add(request);
+        caseData.getRequestForInformationList().setRequestsForInformation(requests);
+
+        CaseData response = caseworkerRequestForInformationHelper.setParties(caseData);
+        assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(2);
+
+        RequestForInformation responseRequestForInformation =
+            response.getRequestForInformationList().getRequestsForInformation().get(1).getValue();
 
         assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isEqualTo(APPLICANT);
         assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
