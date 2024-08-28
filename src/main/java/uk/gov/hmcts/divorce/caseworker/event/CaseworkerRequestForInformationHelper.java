@@ -70,7 +70,7 @@ public class CaseworkerRequestForInformationHelper {
             requests.add(request);
             caseData.getRequestForInformationList().setRequestsForInformation(requests);
         } else {
-            caseData.getRequestForInformationList().getRequestsForInformation().add(request);
+            caseData.getRequestForInformationList().getRequestsForInformation().add(0, request);
         }
     }
 
