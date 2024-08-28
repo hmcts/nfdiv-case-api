@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 
 public interface ApplicantNotification {
 
