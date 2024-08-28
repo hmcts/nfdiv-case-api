@@ -89,9 +89,7 @@ public class CaseworkerRequestForInformationHelper {
 
         addRequestToList(caseData);
 
-        notificationDispatcher.send(requestForInformationNotification, caseData, caseDetails.getId());
-
-        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation()); //Prevent pre-pop next event run
+        notificationDispatcher.sendRequestForInformationNotification(requestForInformationNotification, caseData, caseDetails.getId());
 
         return caseData;
     }
