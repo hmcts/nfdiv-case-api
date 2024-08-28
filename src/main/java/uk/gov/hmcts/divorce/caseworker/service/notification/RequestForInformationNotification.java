@@ -33,10 +33,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_JOINT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_JOINT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_OTHER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -57,13 +56,9 @@ public class RequestForInformationNotification implements ApplicantNotification 
 
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
-        EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
-            ? REQUEST_FOR_INFORMATION_SOLE_SOLICITOR
-            : REQUEST_FOR_INFORMATION_JOINT_SOLICITOR;
-
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
-            emailTemplate,
+            REQUEST_FOR_INFORMATION_SOLICITOR,
             solicitorTemplateContent(
                 caseData,
                 caseId,
@@ -131,7 +126,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
 
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
-            REQUEST_FOR_INFORMATION_JOINT_SOLICITOR,
+            REQUEST_FOR_INFORMATION_SOLICITOR,
             solicitorTemplateContent(
                 caseData,
                 caseId,
@@ -193,7 +188,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
                                                          final Applicant partner,
                                                          final String requestForInformationDetails) {
         Map<String, String> templateVars =
-            commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
+            commonContent.conditionalOrderTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformationDetails);
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 

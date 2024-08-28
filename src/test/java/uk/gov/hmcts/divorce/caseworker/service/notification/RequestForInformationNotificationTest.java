@@ -40,10 +40,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_JOINT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_JOINT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_OTHER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SMART_SURVEY_TEST_URL;
@@ -58,6 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,12 +79,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
-            .thenReturn(getMainTemplateVars());
+        when(commonContent.conditionalOrderTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(caseData.getApplicationType()));
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
-        Map<String, String> templateContent = getApplicantTemplateContent();
+        Map<String, String> templateContent = getApplicantTemplateContent(caseData);
 
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -123,7 +123,7 @@ public class RequestForInformationNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_SOLE_SOLICITOR),
+            eq(REQUEST_FOR_INFORMATION_SOLICITOR),
             eq(templateContent),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -137,12 +137,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
-            .thenReturn(getMainTemplateVars());
+        when(commonContent.conditionalOrderTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(caseData.getApplicationType()));
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
-        Map<String, String> templateContent = getApplicantTemplateContent();
+        Map<String, String> templateContent = getApplicantTemplateContent(caseData);
 
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -175,7 +175,7 @@ public class RequestForInformationNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_JOINT_SOLICITOR),
+            eq(REQUEST_FOR_INFORMATION_SOLICITOR),
             eq(templateContent),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -190,12 +190,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
-            .thenReturn(getMainTemplateVars());
+        when(commonContent.conditionalOrderTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(getConditionalOrderTemplateVars(caseData.getApplicationType()));
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
-        Map<String, String> templateContent = getApplicantTemplateContent();
+        Map<String, String> templateContent = getApplicantTemplateContent(caseData);
 
         requestForInformationNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -228,7 +228,7 @@ public class RequestForInformationNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_JOINT_SOLICITOR),
+            eq(REQUEST_FOR_INFORMATION_SOLICITOR),
             eq(templateContent),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -293,8 +293,8 @@ public class RequestForInformationNotificationTest {
         );
     }
 
-    private Map<String, String> getApplicantTemplateContent() {
-        Map<String, String> templateVars = getMainTemplateVars();
+    private Map<String, String> getApplicantTemplateContent(CaseData caseData) {
+        Map<String, String> templateVars = getConditionalOrderTemplateVars(caseData.getApplicationType());
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT);
         templateVars.put(SMART_SURVEY, SMART_SURVEY_TEST_URL);
 
