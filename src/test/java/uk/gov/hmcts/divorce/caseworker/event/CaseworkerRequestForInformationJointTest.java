@@ -105,7 +105,7 @@ class CaseworkerRequestForInformationJointTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
-        when(helper.setParties(any())).thenReturn(caseData);
+        when(helper.createRequestForInformationAndSendNotifications(any())).thenReturn(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformationJoint.aboutToSubmit(caseDetails, caseDetails);

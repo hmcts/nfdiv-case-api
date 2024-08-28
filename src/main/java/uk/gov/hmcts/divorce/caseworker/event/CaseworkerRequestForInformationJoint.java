@@ -95,7 +95,7 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_JOINT, details.getId());
 
-        CaseData data = helper.setParties(details);
+        CaseData data = helper.createRequestForInformationAndSendNotifications(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

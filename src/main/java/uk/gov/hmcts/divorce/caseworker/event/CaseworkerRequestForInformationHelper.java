@@ -73,8 +73,7 @@ public class CaseworkerRequestForInformationHelper {
         }
     }
 
-    public CaseData setParties(CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
+    private void setParties(CaseData caseData) {
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         final RequestForInformationSoleParties soleAddressToOption = requestForInformation.getRequestForInformationSoleParties();
         final RequestForInformationJointParties jointAddressToOption = requestForInformation.getRequestForInformationJointParties();
@@ -86,6 +85,11 @@ public class CaseworkerRequestForInformationHelper {
         } else if (RequestForInformationJointParties.BOTH.equals(jointAddressToOption)) {
             setBothValues(caseData);
         }
+    }
+
+    public CaseData createRequestForInformationAndSendNotifications(CaseDetails<CaseData, State> caseDetails) {
+        final CaseData caseData = caseDetails.getData();
+        setParties(caseData);
 
         addRequestToList(caseData);
 
