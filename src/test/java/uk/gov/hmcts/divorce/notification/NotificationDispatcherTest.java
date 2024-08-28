@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -481,18 +483,14 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldNotSendRequestForInformationWhenPartiesNotSet() {
-        CaseData caseData = caseData();
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+    void shouldThrowExceptionWhenPartiesNotSet() {
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            CaseData caseData = caseData();
+            CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+            caseDetails.setData(caseData);
+            caseDetails.setId(TEST_CASE_ID);
 
-        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
-
-        verify(applicantNotification, never()).sendToApplicant1(caseData, TEST_CASE_ID);
-        verify(applicantNotification, never()).sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
-        verify(applicantNotification, never()).sendToApplicant2(caseData, TEST_CASE_ID);
-        verify(applicantNotification, never()).sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
-        verify(applicantNotification, never()).sendToOtherRecipient(caseData, TEST_CASE_ID);
+            notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+        });
     }
 }

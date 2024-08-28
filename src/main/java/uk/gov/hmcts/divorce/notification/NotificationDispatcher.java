@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
@@ -83,7 +84,9 @@ public class NotificationDispatcher {
             || (!isApplicant1 && previousCaseData.getApplicant2().isRepresented());
     }
 
-    public void sendRequestForInformationNotification(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
+    public void sendRequestForInformationNotification(ApplicantNotification applicantNotification, CaseData caseData, Long caseId)
+        throws NotificationTemplateException {
+
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())
             || APPLICANT1.equals(requestForInformation.getRequestForInformationJointParties())) {
@@ -115,7 +118,8 @@ public class NotificationDispatcher {
 
             applicantNotification.sendToOtherRecipient(caseData, caseId);
         } else {
-            log.error("Unable to send Request For Information Notification for Case Id {}. RequestForInformation parties not set.", caseId);
+            throw new NotificationTemplateException(
+                "Unable to send Request For Information Notification for Case Id " + caseId + ". RequestForInformation parties not set.");
         }
     }
 }
