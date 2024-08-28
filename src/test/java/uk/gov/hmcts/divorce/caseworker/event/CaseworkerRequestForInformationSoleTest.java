@@ -9,23 +9,29 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.CASEWORKER_REQUEST_FOR_INFORMATION_SOLE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
@@ -36,6 +42,12 @@ class CaseworkerRequestForInformationSoleTest {
 
     @Mock
     private CaseworkerRequestForInformationHelper helper;
+
+    @Mock
+    private RequestForInformationNotification requestForInformationNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private CaseworkerRequestForInformationSole caseworkerRequestForInformationSole;
@@ -105,7 +117,8 @@ class CaseworkerRequestForInformationSoleTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
-        when(helper.createRequestForInformationAndSendNotifications(any())).thenReturn(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        when(helper.createRequestForInformation(any())).thenReturn(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformationSole.aboutToSubmit(caseDetails, caseDetails);
@@ -113,5 +126,22 @@ class CaseworkerRequestForInformationSoleTest {
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData()).isEqualTo(caseData);
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+    }
+
+    @Test
+    void shouldFailAboutToSubmitEventWhenNotificationFails() {
+        CaseData caseData = caseData();
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        when(helper.createRequestForInformation(any())).thenReturn(caseData);
+        doThrow(new NotificationTemplateException(""))
+            .when(notificationDispatcher).sendRequestForInformationNotification(requestForInformationNotification, caseData, TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRequestForInformationSole.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList(REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR + TEST_CASE_ID));
     }
 }

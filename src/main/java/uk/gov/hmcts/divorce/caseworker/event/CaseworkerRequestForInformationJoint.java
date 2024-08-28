@@ -7,13 +7,17 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
+import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -32,7 +36,14 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
 
     public static final String CASEWORKER_REQUEST_FOR_INFORMATION_JOINT = "caseworker-request-for-information-joint";
 
+    public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR
+        = "Unable to send Request for Information Notification for Case Id: ";
+
     private final CaseworkerRequestForInformationHelper helper;
+
+    private final RequestForInformationNotification requestForInformationNotification;
+
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -95,7 +106,20 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_JOINT, details.getId());
 
-        CaseData data = helper.createRequestForInformationAndSendNotifications(details);
+        CaseData data = helper.createRequestForInformation(details);
+
+        try {
+            notificationDispatcher.sendRequestForInformationNotification(
+                requestForInformationNotification,
+                details.getData(),
+                details.getId()
+            );
+        } catch (final NotificationTemplateException e) {
+            log.error("Request for Information Notification for Case Id {} failed with message: {}", details.getId(), e.getMessage(), e);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR + details.getId()))
+                .build();
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -103,5 +127,3 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
             .build();
     }
 }
-
-//Add submitted callback to send notifications
