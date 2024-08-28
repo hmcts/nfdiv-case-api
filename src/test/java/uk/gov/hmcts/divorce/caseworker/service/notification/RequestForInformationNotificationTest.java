@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -43,6 +44,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_IN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_OTHER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SMART_SURVEY_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -99,6 +101,7 @@ public class RequestForInformationNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
@@ -109,6 +112,9 @@ public class RequestForInformationNotificationTest {
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
+        templateContent.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(ISSUE_DATE_POPULATED, YES);
+        templateContent.put(NOT_YET_ISSUED, NO);
 
         requestForInformationNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -259,6 +265,7 @@ public class RequestForInformationNotificationTest {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation()
             .setRequestForInformationJointParties(RequestForInformationJointParties.OTHER);
+        caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
@@ -269,6 +276,8 @@ public class RequestForInformationNotificationTest {
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getOtherRecipientTemplateContent(caseData);
+        templateContent.put(ISSUE_DATE_POPULATED, YES);
+        templateContent.put(NOT_YET_ISSUED, NO);
 
         requestForInformationNotification.sendToOtherRecipient(caseData, TEST_CASE_ID);
 
