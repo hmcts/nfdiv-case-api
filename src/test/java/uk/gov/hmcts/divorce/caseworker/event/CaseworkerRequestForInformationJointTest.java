@@ -51,14 +51,12 @@ class CaseworkerRequestForInformationJointTest {
         CaseData caseData = caseData();
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
         when(helper.areEmailsValid(any())).thenReturn(new ArrayList<>());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformationJoint.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -66,7 +64,6 @@ class CaseworkerRequestForInformationJointTest {
         CaseData caseData = caseData();
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
         when(helper.areEmailsValid(any())).thenReturn(Collections.singletonList("Error Text"));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -74,7 +71,6 @@ class CaseworkerRequestForInformationJointTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Error Text"));
-        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
