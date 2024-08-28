@@ -103,6 +103,8 @@ public final class TestConstants {
 
     public static final String TEST_TEXT = "Test";
 
+    public static final String SMART_SURVEY_TEST_URL = "smartSurveyTestUrl";
+
     private TestConstants() {
     }
 }
