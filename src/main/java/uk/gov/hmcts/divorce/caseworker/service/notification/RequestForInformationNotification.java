@@ -175,8 +175,8 @@ public class RequestForInformationNotification implements ApplicantNotification 
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(DATE_OF_ISSUE, issueDate != null ? issueDate.format(DATE_TIME_FORMATTER) : "");
-        templateVars.put(ISSUE_DATE_POPULATED, issueDate != null ? "true" : "false");
-        templateVars.put(NOT_YET_ISSUED, issueDate == null ? "true" : "false");
+        templateVars.put(ISSUE_DATE_POPULATED, issueDate != null ? YES : NO);
+        templateVars.put(NOT_YET_ISSUED, issueDate == null ? YES : NO);
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");
@@ -210,8 +210,8 @@ public class RequestForInformationNotification implements ApplicantNotification 
         templateVars.put(APPLICANT_NAME, caseData.getApplicant1().getFullName());
         templateVars.put(RESPONDENT_NAME, caseData.getApplicant2().getFullName());
         templateVars.put(RECIPIENT_NAME, requestForInformation.getRequestForInformationName());
-        templateVars.put(ISSUE_DATE_POPULATED, caseData.getApplication().getIssueDate() != null ? "true" : "false");
-        templateVars.put(NOT_YET_ISSUED, caseData.getApplication().getIssueDate() == null ? "true" : "false");
+        templateVars.put(ISSUE_DATE_POPULATED, caseData.getApplication().getIssueDate() != null ? YES : NO);
+        templateVars.put(NOT_YET_ISSUED, caseData.getApplication().getIssueDate() == null ? YES : NO);
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformation.getRequestForInformationDetails());
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 

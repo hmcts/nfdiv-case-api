@@ -300,8 +300,8 @@ public class RequestForInformationNotificationTest {
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(DATE_OF_ISSUE, "");
-        templateVars.put(ISSUE_DATE_POPULATED, "false");
-        templateVars.put(NOT_YET_ISSUED, "true");
+        templateVars.put(ISSUE_DATE_POPULATED, NO);
+        templateVars.put(NOT_YET_ISSUED, YES);
         templateVars.put(SOLICITOR_REFERENCE, "not provided");
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT);
         templateVars.put(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL);
@@ -315,8 +315,8 @@ public class RequestForInformationNotificationTest {
         templateVars.put(APPLICANT_NAME, caseData.getApplicant1().getFullName());
         templateVars.put(RESPONDENT_NAME, caseData.getApplicant2().getFullName());
         templateVars.put(RECIPIENT_NAME, TEST_OTHER_NAME);
-        templateVars.put(ISSUE_DATE_POPULATED, "false");
-        templateVars.put(NOT_YET_ISSUED, "true");
+        templateVars.put(ISSUE_DATE_POPULATED, NO);
+        templateVars.put(NOT_YET_ISSUED, YES);
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT);
         templateVars.put(SMART_SURVEY, SMART_SURVEY_TEST_URL);
 
