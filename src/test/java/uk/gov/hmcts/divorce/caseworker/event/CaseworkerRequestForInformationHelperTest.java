@@ -74,13 +74,13 @@ class CaseworkerRequestForInformationHelperTest {
     }
 
     @Test
-    void shouldAddAdditionalRequestToRequestListWhenListIsNotEmpty() {
+    void shouldAddAdditionalRequestToTopOfRequestListWhenListIsNotEmpty() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
         final ListValue<RequestForInformation> request = new ListValue<>();
-        request.setValue(caseData.getRequestForInformationList().getRequestForInformation());
+        request.setValue(new RequestForInformation());
         final List<ListValue<RequestForInformation>> requests = new ArrayList<>();
         requests.add(request);
         caseData.getRequestForInformationList().setRequestsForInformation(requests);
@@ -93,7 +93,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(2);
 
         RequestForInformation responseRequestForInformation =
-            response.getRequestForInformationList().getRequestsForInformation().get(1).getValue();
+            response.getRequestForInformationList().getRequestsForInformation().get(0).getValue();
 
         assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isEqualTo(APPLICANT);
         assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
