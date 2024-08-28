@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -173,6 +174,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
                                                          final Applicant partner,
                                                          final String requestForInformationDetails) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
+        LocalDate issueDate = caseData.getApplication().getIssueDate();
 
         templateVars.put(APPLICANT_NAME,
             join(" ", caseData.getApplicant1().getFirstName(), caseData.getApplicant1().getLastName()));
@@ -181,9 +183,9 @@ public class RequestForInformationNotification implements ApplicantNotification 
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(ISSUE_DATE_POPULATED, caseData.getApplication().getIssueDate() != null ? "true" : "false");
-        templateVars.put(NOT_YET_ISSUED, caseData.getApplication().getIssueDate() == null ? "true" : "false");
+        templateVars.put(DATE_OF_ISSUE, issueDate != null ? issueDate.format(DATE_TIME_FORMATTER) : "");
+        templateVars.put(ISSUE_DATE_POPULATED, issueDate != null ? "true" : "false");
+        templateVars.put(NOT_YET_ISSUED, issueDate == null ? "true" : "false");
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");
