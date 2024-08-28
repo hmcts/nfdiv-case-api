@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SMART_SURVEY_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
@@ -101,6 +102,7 @@ public class RequestForInformationNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
@@ -115,6 +117,7 @@ public class RequestForInformationNotificationTest {
         templateContent.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(ISSUE_DATE_POPULATED, YES);
         templateContent.put(NOT_YET_ISSUED, NO);
+        templateContent.put(SOLICITOR_REFERENCE, TEST_REFERENCE);
 
         requestForInformationNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
