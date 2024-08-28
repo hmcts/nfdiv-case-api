@@ -76,12 +76,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getApplicantTemplateContent();
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getApplicantTemplateContent();
 
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -102,13 +102,13 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
 
         requestForInformationNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -128,12 +128,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getApplicantTemplateContent();
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getApplicantTemplateContent();
 
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -154,13 +154,13 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
 
         requestForInformationNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -181,12 +181,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getApplicantTemplateContent();
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getApplicantTemplateContent();
 
         requestForInformationNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -207,13 +207,13 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getSolicitorTemplateContent(caseData);
 
         requestForInformationNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -235,12 +235,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getOtherRecipientTemplateContent(caseData);
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getOtherRecipientTemplateContent(caseData);
 
         requestForInformationNotification.sendToOtherRecipient(caseData, TEST_CASE_ID);
 
@@ -263,12 +263,12 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        Map<String, String> templateContent = getOtherRecipientTemplateContent(caseData);
-
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getOtherRecipientTemplateContent(caseData);
 
         requestForInformationNotification.sendToOtherRecipient(caseData, TEST_CASE_ID);
 
