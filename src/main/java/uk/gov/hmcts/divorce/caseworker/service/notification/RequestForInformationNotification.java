@@ -50,9 +50,11 @@ public class RequestForInformationNotification implements ApplicantNotification 
     private final CommonContent commonContent;
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
             ? REQUEST_FOR_INFORMATION_SOLE_SOLICITOR
@@ -74,8 +76,10 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToApplicant1(CaseData caseData, Long caseId, final RequestForInformation requestForInformation) {
+    public void sendToApplicant1(CaseData caseData, Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID, "applicant", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
             ? REQUEST_FOR_INFORMATION_SOLE
@@ -97,9 +101,11 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToApplicant2(CaseData caseData, Long caseId, final RequestForInformation requestForInformation) {
+    public void sendToApplicant2(CaseData caseData, Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "respondent" : "applicant 2", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
             ? REQUEST_FOR_INFORMATION_SOLE
@@ -121,9 +127,11 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "respondent solicitor" : "applicant 2 solicitor", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
             ? REQUEST_FOR_INFORMATION_SOLE_SOLICITOR
@@ -145,8 +153,10 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToOtherRecipient(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
+    public void sendToOtherRecipient(final CaseData caseData, final Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID, "other recipient", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         notificationService.sendEmail(
             requestForInformation.getRequestForInformationEmailAddress(),
