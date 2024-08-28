@@ -37,23 +37,7 @@ public interface ApplicantNotification {
         //No operation
     }
 
-    default void sendToApplicant1(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
-        //No operation
-    }
-
-    default void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
-        //No operation
-    }
-
-    default void sendToApplicant2(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
-        //No operation
-    }
-
-    default void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
-        //No operation
-    }
-
-    default void sendToOtherRecipient(final CaseData caseData, final Long caseId, final RequestForInformation requestForInformation) {
+    default void sendToOtherRecipient(final CaseData caseData, final Long caseId) {
         //No operation
     }
 }
