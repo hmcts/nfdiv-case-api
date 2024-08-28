@@ -45,6 +45,7 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Submit")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
@@ -58,6 +59,18 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
                     .mandatory(RequestForInformation::getRequestForInformationDetails)
                 .done()
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+
+        log.info("{} aboutToStart callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_SOLE, details.getId());
+
+        details.getData().getRequestForInformationList().setRequestForInformation(new RequestForInformation());
+        //Prevent pre-populating fields for new request
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
