@@ -79,6 +79,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_PREPARE_GENERAL_EMAIL, details.getId());
         final CaseData caseData = details.getData();
 
+        caseData.getGeneralEmail().setGeneralEmailAttachments(null);
         caseData.getGeneralEmail().setGeUploadedDocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.UPLOADED));
         caseData.getGeneralEmail().setGeGeneratedDocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.GENERATED));
         caseData.getGeneralEmail().setGeApplicant1DocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.APP1_UPLOADED));
