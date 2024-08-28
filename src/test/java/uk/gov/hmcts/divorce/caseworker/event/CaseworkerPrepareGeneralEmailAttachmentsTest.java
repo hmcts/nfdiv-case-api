@@ -54,6 +54,28 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
     }
 
     @Test
+    void shouldRemoveStaleGeneralEmailAttachmentDataInAboutToStart() {
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralEmail(
+            GeneralEmail.builder()
+                .generalEmailAttachments(List.of(
+                    ListValue.<DivorceDocument>builder().value(
+                        DivorceDocument.builder().documentFileName("dummy").build()
+                    ).build()
+                )).build()
+        );
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getGeneralEmail().getGeneralEmailAttachments()).isNull();
+    }
+
+    @Test
     void shouldAddScannedDocumentsFromCaseDataToGeneralEmailScannedDocNamesInAboutToStart() {
         final CaseData caseData = caseData();
 

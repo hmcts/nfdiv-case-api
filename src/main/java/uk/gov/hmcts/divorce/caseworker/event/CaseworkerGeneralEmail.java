@@ -83,6 +83,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     @Autowired
     private Clock clock;
 
+    private static final String NEVER_SHOW = "generalEmailParties=\"NEVER\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -92,6 +94,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .description("Create general email")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
@@ -115,7 +118,35 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .readonlyWithLabel(GeneralEmail::getGeApplicant1DocumentNames, "Applicant 1 documents selected")
             .readonlyWithLabel(GeneralEmail::getGeApplicant2DocumentNames, "Applicant 2 documents selected")
             .readonlyWithLabel(GeneralEmail::getGeAttachedDocumentNames,"Attached documents")
+            .readonlyNoSummary(GeneralEmail::getGeneralEmailAttachments, NEVER_SHOW)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
+
+        removeStaleGeneralEmailInputData(details.getData());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
+    private void removeStaleGeneralEmailInputData(CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+        if (generalEmail == null) {
+            return;
+        }
+
+        List<ListValue<GeneralEmailDetails>> deliveredEmails = caseData.getGeneralEmails();
+        if (generalEmail.hasBeenDelivered(deliveredEmails)) {
+            generalEmail.setGeneralEmailAttachments(null);
+        }
+
+        generalEmail.setGeneralEmailDetails(null);
+        generalEmail.setGeneralEmailParties(null);
+        generalEmail.setGeneralEmailOtherRecipientEmail(null);
+        generalEmail.setGeneralEmailOtherRecipientName(null);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
