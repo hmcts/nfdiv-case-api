@@ -64,27 +64,6 @@ class CaseworkerRequestForInformationSoleTest {
     }
 
     @Test
-    void shouldClearExistingRequestOnAboutToStart() {
-        CaseData caseData = caseData();
-        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRequestForInformationSole.aboutToStart(caseDetails);
-        final RequestForInformation responseRequestForInformation =
-            response.getData().getRequestForInformationList().getRequestForInformation();
-
-        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
-        assertThat(responseRequestForInformation.getRequestForInformationName()).isNull();
-        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isNull();
-        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isNull();
-    }
-
-    @Test
     void shouldSuccessfullyCompleteMidEventWhenNoErrorsInEmailAddressValidation() {
         CaseData caseData = caseData();
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -114,6 +93,11 @@ class CaseworkerRequestForInformationSoleTest {
     @Test
     void shouldSuccessfullyCompleteAboutToSubmitEvent() {
         CaseData caseData = caseData();
+        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
@@ -122,7 +106,13 @@ class CaseworkerRequestForInformationSoleTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformationSole.aboutToSubmit(caseDetails, caseDetails);
+        final RequestForInformation responseRequestForInformation =
+            response.getData().getRequestForInformationList().getRequestForInformation();
 
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationName()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDetails()).isNull();
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData()).isEqualTo(caseData);
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
