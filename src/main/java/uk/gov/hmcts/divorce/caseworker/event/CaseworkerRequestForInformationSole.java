@@ -98,7 +98,7 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
         try {
             notificationDispatcher.sendRequestForInformationNotification(
                 requestForInformationNotification,
-                details.getData(),
+                data,
                 details.getId()
             );
         } catch (final NotificationTemplateException e) {
@@ -109,7 +109,7 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
         }
 
         //Prevent pre-populating fields for new request
-        details.getData().getRequestForInformationList().setRequestForInformation(new RequestForInformation());
+        data.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
