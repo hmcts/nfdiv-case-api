@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -11,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +43,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerRequestForInformationHelperTest {
 
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
-
     @InjectMocks
     private CaseworkerRequestForInformationHelper caseworkerRequestForInformationHelper;
 
@@ -62,7 +57,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -93,7 +88,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(2);
 
         RequestForInformation responseRequestForInformation =
@@ -120,7 +115,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -148,7 +143,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -175,7 +170,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -204,7 +199,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -231,7 +226,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -260,7 +255,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -289,7 +284,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -321,7 +316,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -351,7 +346,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -381,7 +376,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =
@@ -410,7 +405,7 @@ class CaseworkerRequestForInformationHelperTest {
         caseDetails.setState(Submitted);
         caseDetails.setId(TEST_CASE_ID);
 
-        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformationAndSendNotifications(caseDetails);
+        CaseData response = caseworkerRequestForInformationHelper.createRequestForInformation(caseDetails);
         assertThat(response.getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
 
         RequestForInformation responseRequestForInformation =

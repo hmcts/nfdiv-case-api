@@ -4,14 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +31,6 @@ public class CaseworkerRequestForInformationHelper {
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor.";
     public static final String FULL_STOP = ".";
-
-    private final RequestForInformationNotification requestForInformationNotification;
-    private final NotificationDispatcher notificationDispatcher;
 
     private void setBothValues(CaseData caseData) {
         setValues(caseData, caseData.getApplicant1(), false);
@@ -87,13 +82,11 @@ public class CaseworkerRequestForInformationHelper {
         }
     }
 
-    public CaseData createRequestForInformationAndSendNotifications(CaseDetails<CaseData, State> caseDetails) {
+    public CaseData createRequestForInformation(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
         setParties(caseData);
 
         addRequestToList(caseData);
-
-        notificationDispatcher.sendRequestForInformationNotification(requestForInformationNotification, caseData, caseDetails.getId());
 
         return caseData;
     }
