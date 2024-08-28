@@ -142,7 +142,7 @@ uk:
             SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'dc1a3d51-3e93-4f22-b268-ab0f86676f1f'
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '6db9a294-1613-4926-867a-4302cb0ad6dc'
             JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: 'b51e2cc6-5db0-4ef6-956f-8ec5b1c9c8df'
-            RESPONDENT_APPLY_FOR_FINAL_ORDER: '33b20df5-0967-490b-ac94-daa1569468d7'
+            RESPONDENT_APPLY_FOR_FINAL_ORDER: '341966ab-e39e-4a09-a81e-a8cd0c260dd0'
             RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER: 'f7f00a8a-5fbc-4868-ae67-acbbb890d3de'
             POST_INFORMATION_TO_COURT: '03d15445-c91d-44b0-a8b0-a7755864381e'
             GENERAL_APPLICATION_RECEIVED: '97a51838-789b-4c18-b4b8-9b4ff32e831f'
@@ -182,6 +182,7 @@ uk:
             REQUEST_FOR_INFORMATION_OTHER: 'eb4acb56-09c3-4898-a5df-2fa5c47a2434'
             REQUEST_FOR_INFORMATION_JOINT: 'bd19eafc-d265-41ba-ae8b-68e458390a09'
             REQUEST_FOR_INFORMATION_JOINT_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00'
+            NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
@@ -265,7 +266,7 @@ uk:
             JOINT_APPLICATION_ENDED: '27e89abf-c793-4891-97ce-f54cd9ac0803'
             APPLICANT_APPLY_FOR_FINAL_ORDER: '9a89d8c0-55a5-4534-a9c5-77ff4ed956ad'
             PARTNER_SWITCHED_TO_SOLE_CO: '9b6ffba8-fc6f-4e57-a660-17765e8c9bd0'
-            RESPONDENT_APPLY_FOR_FINAL_ORDER: '33b20df5-0967-490b-ac94-daa1569468d7'
+            RESPONDENT_APPLY_FOR_FINAL_ORDER: 'b43171d2-9f81-40a4-9662-46e3e750cd45'
             RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER: 'f7f00a8a-5fbc-4868-ae67-acbbb890d3de'
             POST_INFORMATION_TO_COURT: 'c407bd28-fd6c-40d6-b320-dd4acb135ec0'
             GENERAL_APPLICATION_RECEIVED: '1f4cd3f9-1092-4703-826c-0685131e6dff'
@@ -310,6 +311,7 @@ uk:
             REQUEST_FOR_INFORMATION_OTHER: 'eb4acb56-09c3-4898-a5df-2fa5c47a2434' #TODO - Welsh translation needed
             REQUEST_FOR_INFORMATION_JOINT: 'bd19eafc-d265-41ba-ae8b-68e458390a09' #TODO - Welsh translation needed
             REQUEST_FOR_INFORMATION_JOINT_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00' #TODO - Welsh translation needed
+            NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
@@ -428,6 +430,7 @@ docmosis:
       JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole_V1.docx
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation.docx
+      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -505,6 +508,7 @@ docmosis:
       NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
       JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole_V1.docx
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
+      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

@@ -132,6 +132,7 @@ public class CommonContent {
 
     public static final String SMART_SURVEY = "smartSurvey";
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "request information details";
+    public static final String GENERAL_FEE = "generalFee";
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
