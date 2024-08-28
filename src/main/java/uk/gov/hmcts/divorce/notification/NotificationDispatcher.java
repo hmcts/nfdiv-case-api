@@ -81,7 +81,8 @@ public class NotificationDispatcher {
             || (!isApplicant1 && previousCaseData.getApplicant2().isRepresented());
     }
 
-    private void sendRequestForInformationNotification(ApplicantNotification applicantNotification, RequestForInformation requestForInformation, CaseData caseData, Long caseId) {
+    public void sendRequestForInformationNotification(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())
             || APPLICANT1.equals(requestForInformation.getRequestForInformationJointParties())) {
             if (caseData.getApplicant1().isRepresented()) {
@@ -110,7 +111,7 @@ public class NotificationDispatcher {
         } else if (OTHER.equals(requestForInformation.getRequestForInformationSoleParties())
             || RequestForInformationJointParties.OTHER.equals(requestForInformation.getRequestForInformationJointParties())) {
 
-            applicantNotification.sendToOtherRecipient(caseData, caseId, requestForInformation);
+            applicantNotification.sendToOtherRecipient(caseData, caseId);
         }
     }
 }
