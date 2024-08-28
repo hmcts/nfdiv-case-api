@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
@@ -14,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 
+@Slf4j
 @Service
 public class NotificationDispatcher {
 
@@ -112,6 +114,8 @@ public class NotificationDispatcher {
             || RequestForInformationJointParties.OTHER.equals(requestForInformation.getRequestForInformationJointParties())) {
 
             applicantNotification.sendToOtherRecipient(caseData, caseId);
+        } else {
+            log.error("Unable to send Request For Information Notification for Case Id {}. RequestForInformation parties not set.", caseId);
         }
     }
 }
