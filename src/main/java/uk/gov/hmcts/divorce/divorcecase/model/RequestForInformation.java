@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 
+import java.time.LocalDateTime;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -51,6 +53,11 @@ public class RequestForInformation {
         typeOverride = Email
     )
     private String requestForInformationSecondaryEmailAddress;
+
+    @CCD(
+        label = "Date/Time Of Request"
+    )
+    private LocalDateTime requestForInformationDateTime;
 
     @CCD(
         label = "Please provide details",

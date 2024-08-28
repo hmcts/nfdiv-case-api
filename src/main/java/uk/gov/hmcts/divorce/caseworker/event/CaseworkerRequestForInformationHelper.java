@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,11 @@ public class CaseworkerRequestForInformationHelper {
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor.";
     public static final String FULL_STOP = ".";
+
+    private void setDateTime(CaseData caseData) {
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        requestForInformation.setRequestForInformationDateTime(LocalDateTime.now());
+    }
 
     private void setBothValues(CaseData caseData) {
         setValues(caseData, caseData.getApplicant1(), false);
@@ -84,6 +90,8 @@ public class CaseworkerRequestForInformationHelper {
 
     public CaseData createRequestForInformation(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
+        setDateTime(caseData);
+
         setParties(caseData);
 
         addRequestToList(caseData);

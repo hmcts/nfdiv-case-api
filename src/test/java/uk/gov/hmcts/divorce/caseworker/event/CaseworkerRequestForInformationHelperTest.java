@@ -70,6 +70,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -101,6 +102,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -130,6 +132,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -156,6 +159,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -185,6 +189,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -212,6 +217,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -241,6 +247,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -269,6 +276,7 @@ class CaseworkerRequestForInformationHelperTest {
             .isEqualTo(caseData.getApplicant2().getEmail());
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isEqualTo(caseData.getApplicant2().getFullName());
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -301,6 +309,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName())
             .isEqualTo(caseData.getApplicant2().getSolicitor().getName());
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -332,6 +341,7 @@ class CaseworkerRequestForInformationHelperTest {
             .isEqualTo(caseData.getApplicant2().getEmail());
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isEqualTo(caseData.getApplicant2().getFullName());
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -361,6 +371,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName())
             .isEqualTo(caseData.getApplicant2().getSolicitor().getName());
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -389,6 +400,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test
@@ -418,6 +430,7 @@ class CaseworkerRequestForInformationHelperTest {
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationSecondaryName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isEqualTo(TEST_TEXT);
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
     }
 
     @Test

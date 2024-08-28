@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -98,6 +99,7 @@ class CaseworkerRequestForInformationJointTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDateTime(LocalDateTime.now());
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
@@ -112,6 +114,7 @@ class CaseworkerRequestForInformationJointTest {
         assertThat(responseRequestForInformation.getRequestForInformationName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNull();
         assertThat(response.getErrors()).isNull();
         assertThat(response.getData()).isEqualTo(caseData);
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
