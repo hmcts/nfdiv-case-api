@@ -178,10 +178,9 @@ uk:
             NOC_TO_SOLS_EMAIL_NEW_SOL: 'e19d3227-84eb-4b43-afa0-05de1e089003'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '98c2a7a4-79c4-410c-909d-10db0108fe8d'
             REQUEST_FOR_INFORMATION_SOLE: 'e8bab44a-c06b-4538-bab9-ef9bbb0dab11'
-            REQUEST_FOR_INFORMATION_SOLE_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00'
+            REQUEST_FOR_INFORMATION_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00'
             REQUEST_FOR_INFORMATION_OTHER: 'eb4acb56-09c3-4898-a5df-2fa5c47a2434'
             REQUEST_FOR_INFORMATION_JOINT: 'bd19eafc-d265-41ba-ae8b-68e458390a09'
-            REQUEST_FOR_INFORMATION_JOINT_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
@@ -307,10 +306,9 @@ uk:
             NOC_TO_SOLS_EMAIL_NEW_SOL: '7fd68c22-f0cc-41ce-af9e-be9f732eab3a'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '977d2857-dcf1-4bc2-97fb-f9b1e13af907'
             REQUEST_FOR_INFORMATION_SOLE: 'e8bab44a-c06b-4538-bab9-ef9bbb0dab11' #TODO - Welsh translation needed
-            REQUEST_FOR_INFORMATION_SOLE_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00' #TODO - Welsh translation needed
+            REQUEST_FOR_INFORMATION_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00' #TODO - Welsh translation needed
             REQUEST_FOR_INFORMATION_OTHER: 'eb4acb56-09c3-4898-a5df-2fa5c47a2434' #TODO - Welsh translation needed
             REQUEST_FOR_INFORMATION_JOINT: 'bd19eafc-d265-41ba-ae8b-68e458390a09' #TODO - Welsh translation needed
-            REQUEST_FOR_INFORMATION_JOINT_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00' #TODO - Welsh translation needed
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
