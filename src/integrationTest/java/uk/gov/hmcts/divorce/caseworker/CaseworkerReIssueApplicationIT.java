@@ -447,7 +447,7 @@ public class CaseworkerReIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V9.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx");
         stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID,
             "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V1.docx");
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "NFD_CP_Dummy_Template.docx");
@@ -1170,7 +1170,7 @@ public class CaseworkerReIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V3.docx");
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V9.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx");
         stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE_ID,
             "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V1.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
