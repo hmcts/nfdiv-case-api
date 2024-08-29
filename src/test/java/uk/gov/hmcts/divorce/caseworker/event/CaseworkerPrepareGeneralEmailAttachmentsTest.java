@@ -110,6 +110,27 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
     }
 
     @Test
+    void shouldHandleUploadedDocumentsWithoutFilesAttachedInAboutToStart() {
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> divorceDocuments = getListOfDivorceDocument(1);
+        divorceDocuments.add(ListValue.<DivorceDocument>builder().value(
+            DivorceDocument.builder().documentEmailContent("dummy content").build()
+        ).build());
+        caseData.getDocuments().setDocumentsUploaded(divorceDocuments);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()).isNotNull();
+        assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()
+            .getListItems().size()).isEqualTo(1);
+    }
+
+    @Test
     void shouldAddGeneratedDocumentsFromCaseDataToGeneralEmailGeneratedDocNamesInAboutToStart() {
         final CaseData caseData = caseData();
 
@@ -279,7 +300,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
                 UUID.randomUUID().toString(),
                 DivorceDocument
                     .builder()
-                    .documentLink(Document.builder().build())
+                    .documentLink(Document.builder().filename("dummy.file").build())
                     .build()
             );
             docList.add(documentListValue);
@@ -295,7 +316,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
                 UUID.randomUUID().toString(),
                 ScannedDocument
                     .builder()
-                    .url(Document.builder().build())
+                    .url(Document.builder().filename("dummy.file").build())
                     .build()
             );
             docList.add(documentListValue);
