@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
@@ -124,7 +124,7 @@ public class RespondentApplyForFinalOrderIT {
         performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
 
         verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong()
+            eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER), anyMap(), eq(ENGLISH), anyLong()
         );
         verifyNoMoreInteractions(notificationService);
     }
