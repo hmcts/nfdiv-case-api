@@ -24,6 +24,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @Component
 public class CaseworkerRequestForInformationHelper {
 
+    public static final String REQUEST_FOR_INFORMATION = "Request For Information";
+    public static final String REQUEST_FOR_INFORMATION_DESCRIPTION = "Request for information";
     public static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for ";
     public static final String THE_APPLICANT = "the Applicant";

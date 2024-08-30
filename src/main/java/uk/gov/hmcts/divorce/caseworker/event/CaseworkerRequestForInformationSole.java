@@ -20,6 +20,8 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import java.util.Collections;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationHelper.REQUEST_FOR_INFORMATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationHelper.REQUEST_FOR_INFORMATION_DESCRIPTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -36,10 +38,6 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
 
     public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR
         = "Unable to send Request for Information Notification for Case Id: ";
-
-    public static final String REQUEST_FOR_INFORMATION = "Request For Information";
-
-    public static final String REQUEST_FOR_INFORMATION_DESCRIPTION = "Request for information";
 
     private final CaseworkerRequestForInformationHelper helper;
 

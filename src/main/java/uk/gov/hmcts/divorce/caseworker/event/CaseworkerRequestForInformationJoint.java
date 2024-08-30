@@ -20,8 +20,8 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import java.util.Collections;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.REQUEST_FOR_INFORMATION;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.REQUEST_FOR_INFORMATION_DESCRIPTION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationHelper.REQUEST_FOR_INFORMATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationHelper.REQUEST_FOR_INFORMATION_DESCRIPTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
