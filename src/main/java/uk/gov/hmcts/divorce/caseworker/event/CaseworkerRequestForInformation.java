@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_REQUEST_FOR_INFORMATION_SOLE = "caseworker-request-for-information-sole";
+    public static final String CASEWORKER_REQUEST_FOR_INFORMATION = "caseworker-request-for-information";
     public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR
         = "Unable to send Request for Information Notification for Case Id: ";
     public static final String NO_VALID_EMAIL_ERROR
@@ -60,7 +60,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_REQUEST_FOR_INFORMATION_SOLE)
+            .event(CASEWORKER_REQUEST_FOR_INFORMATION)
             .forAllStates()
             .name("Request For Information")
             .description("Request for information")
@@ -77,8 +77,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                 .complex(RequestForInformationList::getRequestForInformation)
                     .mandatory(RequestForInformation::getRequestForInformationSoleParties, "applicationType=\"soleApplication\"")
                     .mandatory(RequestForInformation::getRequestForInformationJointParties, "applicationType=\"jointApplication\"")
-                    .mandatory(RequestForInformation::getRequestForInformationName, "requestForInformationSoleParties=\"other\" OR requestForInformationJointParties=\"other\"")
-                    .mandatory(RequestForInformation::getRequestForInformationEmailAddress, "requestForInformationSoleParties=\"other\" OR requestForInformationJointParties=\"other\"")
+                    .mandatory(RequestForInformation::getRequestForInformationName, "requestForInformationSoleParties=\"other\" "
+                        + "OR requestForInformationJointParties=\"other\"")
+                    .mandatory(RequestForInformation::getRequestForInformationEmailAddress, "requestForInformationSoleParties=\"other\" "
+                        + "OR requestForInformationJointParties=\"other\"")
                     .mandatory(RequestForInformation::getRequestForInformationDetails)
                 .done()
             .done();
@@ -87,7 +89,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> detailsBefore) {
 
-        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_SOLE, details.getId());
+        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION, details.getId());
 
         List<String> errors = areEmailsValid(details.getData());
         if (!errors.isEmpty()) {
@@ -104,7 +106,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_SOLE, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION, details.getId());
 
         final CaseData caseData = details.getData();
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
@@ -115,23 +117,23 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         final RequestForInformationJointParties jointAddressToOption = requestForInformation.getRequestForInformationJointParties();
         if (RequestForInformationSoleParties.APPLICANT.equals(soleAddressToOption)
             || RequestForInformationJointParties.APPLICANT1.equals(jointAddressToOption)) {
-            setValues(caseData, caseData.getApplicant1(), false);
+            setValues(requestForInformation, caseData.getApplicant1(), false);
         } else if (RequestForInformationJointParties.APPLICANT2.equals(jointAddressToOption)) {
-            setValues(caseData, caseData.getApplicant2(), false);
+            setValues(requestForInformation, caseData.getApplicant2(), false);
         } else if (RequestForInformationJointParties.BOTH.equals(jointAddressToOption)) {
-            setValues(caseData, caseData.getApplicant1(), false);
-            setValues(caseData, caseData.getApplicant2(), true);
+            setValues(requestForInformation, caseData.getApplicant1(), false);
+            setValues(requestForInformation, caseData.getApplicant2(), true);
         }
 
-        final ListValue<RequestForInformation> request = new ListValue<>();
-        request.setValue(caseData.getRequestForInformationList().getRequestForInformation());
+        final ListValue<RequestForInformation> newRequest = new ListValue<>();
+        newRequest.setValue(requestForInformation);
 
         if (isEmpty(caseData.getRequestForInformationList().getRequestsForInformation())) {
             List<ListValue<RequestForInformation>> requests = new ArrayList<>();
-            requests.add(request);
+            requests.add(newRequest);
             caseData.getRequestForInformationList().setRequestsForInformation(requests);
         } else {
-            caseData.getRequestForInformationList().getRequestsForInformation().add(0, request);
+            caseData.getRequestForInformationList().getRequestsForInformation().add(0, newRequest);
         }
 
         try {
@@ -222,9 +224,8 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         };
     }
 
-    private void setValues(CaseData caseData, Applicant applicant, Boolean setSecondary) {
+    private void setValues(RequestForInformation requestForInformation, Applicant applicant, Boolean setSecondary) {
         final boolean isRepresented = applicant.isRepresented();
-        final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
         final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
         if (TRUE.equals(setSecondary)) {
