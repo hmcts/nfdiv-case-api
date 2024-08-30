@@ -50,20 +50,20 @@ public class RequestForInformation {
     private String requestForInformationEmailAddress;
 
     @CCD(
-        label = "Secondary Name",
+        label = "Secondary name",
         access = {DefaultAccess.class}
     )
     private String requestForInformationSecondaryName;
 
     @CCD(
-        label = "Secondary Email address",
+        label = "Secondary email address",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
     private String requestForInformationSecondaryEmailAddress;
 
     @CCD(
-        label = "Date/Time Of Request",
+        label = "Date/time of request",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
