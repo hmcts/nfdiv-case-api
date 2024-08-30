@@ -94,7 +94,8 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
             updateMissingFields(caseData, user, serviceAuth);
 
-            log.info("Update case with court hearing event called for Case({}) as court and other fields were not set due to case error", caseId);
+            log.info("Update case with court hearing event called for Case({}) as court and other fields were not set due to case error",
+                    caseId);
 
             ccdUpdateService
                     .submitEvent(caseId, SYSTEM_UPDATE_CASE_COURT_HEARING, user, serviceAuth);
