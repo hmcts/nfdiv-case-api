@@ -20,12 +20,12 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import java.util.Collections;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.REQUEST_FOR_INFORMATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.REQUEST_FOR_INFORMATION_DESCRIPTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -50,8 +50,8 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION_JOINT)
             .forAllStates()
-            .name("Request For Information")
-            .description("Request for information")
+            .name(REQUEST_FOR_INFORMATION)
+            .description(REQUEST_FOR_INFORMATION_DESCRIPTION)
             .showCondition("applicationType=\"jointApplication\"")
             .showSummary()
             .showEventNotes()
@@ -60,7 +60,7 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("requestForInformation", this::midEvent)
-            .pageLabel("Request For Information")
+            .pageLabel(REQUEST_FOR_INFORMATION)
             .complex(CaseData::getRequestForInformationList)
                 .complex(RequestForInformationList::getRequestForInformation)
                     .mandatory(RequestForInformation::getRequestForInformationJointParties)

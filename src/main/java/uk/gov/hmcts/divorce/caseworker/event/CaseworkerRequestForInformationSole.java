@@ -22,10 +22,8 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -39,6 +37,10 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
     public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR
         = "Unable to send Request for Information Notification for Case Id: ";
 
+    public static final String REQUEST_FOR_INFORMATION = "Request For Information";
+
+    public static final String REQUEST_FOR_INFORMATION_DESCRIPTION = "Request for information";
+
     private final CaseworkerRequestForInformationHelper helper;
 
     private final RequestForInformationNotification requestForInformationNotification;
@@ -50,8 +52,8 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION_SOLE)
             .forAllStates()
-            .name("Request For Information")
-            .description("Request for information")
+            .name(REQUEST_FOR_INFORMATION)
+            .description(REQUEST_FOR_INFORMATION_DESCRIPTION)
             .showCondition("applicationType=\"soleApplication\"")
             .showSummary()
             .showEventNotes()
@@ -60,7 +62,7 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("requestForInformation", this::midEvent)
-            .pageLabel("Request For Information")
+            .pageLabel(REQUEST_FOR_INFORMATION)
             .complex(CaseData::getRequestForInformationList)
                 .complex(RequestForInformationList::getRequestForInformation)
                     .mandatory(RequestForInformation::getRequestForInformationSoleParties)
