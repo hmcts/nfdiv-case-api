@@ -58,7 +58,7 @@ public class CaseworkerRequestForInformationJoint implements CCDConfig<CaseData,
             .endButtonLabel("Submit")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("requestForInformation", this::midEvent)
             .pageLabel("Request For Information")
             .complex(CaseData::getRequestForInformationList)
