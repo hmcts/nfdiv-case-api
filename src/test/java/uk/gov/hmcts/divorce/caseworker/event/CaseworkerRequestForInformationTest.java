@@ -25,9 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationJoint.CASEWORKER_REQUEST_FOR_INFORMATION_JOINT;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformationSole.REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.CASEWORKER_REQUEST_FOR_INFORMATION_SOLE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerRequestForInformationJointTest {
+class CaseworkerRequestForInformationTest {
 
     @Mock
     private CaseworkerRequestForInformationHelper helper;
@@ -51,17 +51,17 @@ class CaseworkerRequestForInformationJointTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private CaseworkerRequestForInformationJoint caseworkerRequestForInformationJoint;
+    private CaseworkerRequestForInformation caseworkerRequestForInformation;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerRequestForInformationJoint.configure(configBuilder);
+        caseworkerRequestForInformation.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_REQUEST_FOR_INFORMATION_JOINT);
+            .contains(CASEWORKER_REQUEST_FOR_INFORMATION_SOLE);
     }
 
     @Test
@@ -72,7 +72,7 @@ class CaseworkerRequestForInformationJointTest {
         when(helper.areEmailsValid(any())).thenReturn(new ArrayList<>());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformationJoint.midEvent(caseDetails, caseDetails);
+            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNull();
     }
@@ -85,7 +85,7 @@ class CaseworkerRequestForInformationJointTest {
         when(helper.areEmailsValid(any())).thenReturn(Collections.singletonList("Error Text"));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformationJoint.midEvent(caseDetails, caseDetails);
+            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Error Text"));
@@ -95,7 +95,7 @@ class CaseworkerRequestForInformationJointTest {
     void shouldSuccessfullyCompleteAboutToSubmitEvent() {
         CaseData caseData = caseData();
         caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
@@ -103,14 +103,15 @@ class CaseworkerRequestForInformationJointTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
+        caseDetails.setId(TEST_CASE_ID);
         when(helper.createRequestForInformation(any())).thenReturn(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformationJoint.aboutToSubmit(caseDetails, caseDetails);
+            caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestForInformation();
 
-        assertThat(responseRequestForInformation.getRequestForInformationJointParties()).isNull();
+        assertThat(responseRequestForInformation.getRequestForInformationSoleParties()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationName()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationEmailAddress()).isNull();
         assertThat(responseRequestForInformation.getRequestForInformationDetails()).isNull();
@@ -131,7 +132,7 @@ class CaseworkerRequestForInformationJointTest {
             .when(notificationDispatcher).sendRequestForInformationNotification(requestForInformationNotification, caseData, TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformationJoint.aboutToSubmit(caseDetails, caseDetails);
+            caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR + TEST_CASE_ID));

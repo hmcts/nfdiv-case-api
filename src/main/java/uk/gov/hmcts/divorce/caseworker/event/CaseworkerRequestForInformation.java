@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_REQUEST_FOR_INFORMATION_SOLE = "caseworker-request-for-information-sole";
 
@@ -52,7 +52,6 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
             .forAllStates()
             .name(REQUEST_FOR_INFORMATION)
             .description(REQUEST_FOR_INFORMATION_DESCRIPTION)
-            .showCondition("applicationType=\"soleApplication\"")
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Submit")
@@ -61,11 +60,13 @@ public class CaseworkerRequestForInformationSole implements CCDConfig<CaseData, 
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("requestForInformation", this::midEvent)
             .pageLabel(REQUEST_FOR_INFORMATION)
+            .readonlyNoSummary(CaseData::getApplicationType, "requestForInformationSoleParties=\"NEVER_SHOW\"")
             .complex(CaseData::getRequestForInformationList)
                 .complex(RequestForInformationList::getRequestForInformation)
-                    .mandatory(RequestForInformation::getRequestForInformationSoleParties)
-                    .mandatory(RequestForInformation::getRequestForInformationName, "requestForInformationSoleParties=\"other\"")
-                    .mandatory(RequestForInformation::getRequestForInformationEmailAddress, "requestForInformationSoleParties=\"other\"")
+                    .mandatory(RequestForInformation::getRequestForInformationSoleParties, "applicationType=\"soleApplication\"")
+                    .mandatory(RequestForInformation::getRequestForInformationJointParties, "applicationType=\"jointApplication\"")
+                    .mandatory(RequestForInformation::getRequestForInformationName, "requestForInformationSoleParties=\"other\" OR requestForInformationJointParties=\"other\"")
+                    .mandatory(RequestForInformation::getRequestForInformationEmailAddress, "requestForInformationSoleParties=\"other\" OR requestForInformationJointParties=\"other\"")
                     .mandatory(RequestForInformation::getRequestForInformationDetails)
                 .done()
             .done();
