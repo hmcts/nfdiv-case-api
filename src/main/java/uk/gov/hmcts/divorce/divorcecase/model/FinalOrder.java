@@ -207,6 +207,12 @@ public class FinalOrder {
     private LocalDateTime dateApplicant2SolAppliedForFinalOrder;
 
     @CCD(
+        label = "Respondent applied for final order?",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo applicant2AppliedForFinalOrder;
+
+    @CCD(
         label = "Date respondent applied for final order",
         access = {DefaultAccess.class}
     )
