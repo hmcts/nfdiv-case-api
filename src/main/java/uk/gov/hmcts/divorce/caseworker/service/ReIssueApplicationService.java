@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetails
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -71,6 +72,15 @@ public class ReIssueApplicationService {
     private GenerateD84Form generateD84Form;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
+        if (caseDetails.getData().isJudicialSeparationCase()) {
+            JudicialSeparationReissueOption jsReissueOption = caseDetails.getData().getApplication().getJsReissueOption();
+            switch (jsReissueOption) {
+                case OFFLINE_AOS -> caseDetails.getData().getApplication().setReissueOption(OFFLINE_AOS);
+                case REISSUE_CASE -> caseDetails.getData().getApplication().setReissueOption(REISSUE_CASE);
+                default -> caseDetails.getData().getApplication().setReissueOption(null);
+            }
+            caseDetails.getData().getApplication().setJsReissueOption(null);
+        }
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
