@@ -80,7 +80,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .mandatory(Application::getReissueOption, "supplementaryCaseType=\"notApplicable\"")
                 .mandatory(Application::getJudicialSeparationReissueOption, "supplementaryCaseType!=\"notApplicable\"")
                 .mandatoryWithoutDefaultValue(Application::getServiceMethod,
-                    "reissueOption=\"reissueCase\" OR jsReissueOption=\"reissueCase\"", BLANK_LABEL, true)
+                    "reissueOption=\"reissueCase\" OR judicialSeparationReissueOption=\"reissueCase\"", BLANK_LABEL, true)
                 .done()
             .done();
     }
