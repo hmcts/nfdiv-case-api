@@ -44,7 +44,8 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
         APP2_UPLOADED,
         UPLOADED,
         GENERATED,
-        SCANNED
+        SCANNED,
+        GENERAL_ORDER
     }
 
     @Override
@@ -71,6 +72,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
                 .optional(GeneralEmail::getGeScannedDocumentNames)
                 .optional(GeneralEmail::getGeApplicant1DocumentNames)
                 .optional(GeneralEmail::getGeApplicant2DocumentNames)
+                .optional(GeneralEmail::getGeGeneralOrderDocumentNames)
                 .optional(GeneralEmail::getGeneralEmailAttachments)
             .done();
     }
@@ -85,6 +87,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
         caseData.getGeneralEmail().setGeApplicant1DocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.APP1_UPLOADED));
         caseData.getGeneralEmail().setGeApplicant2DocumentNames(getDivorceDocumentNames(caseData, AttachedDocumentType.APP2_UPLOADED));
         addScannedDocumentNamesToGeneralEmail(caseData);
+        addGeneralOrderDocumentNamesToGeneralEmail(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -140,6 +143,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
             + (generalEmail.getGeScannedDocumentNames() != null ? generalEmail.getGeScannedDocumentNames().getValue().size() : 0)
             + (generalEmail.getGeApplicant1DocumentNames() != null ? generalEmail.getGeApplicant1DocumentNames().getValue().size() : 0)
             + (generalEmail.getGeApplicant2DocumentNames() != null ? generalEmail.getGeApplicant2DocumentNames().getValue().size() : 0)
+            + (generalEmail.getGeGeneralOrderDocumentNames() != null ? generalEmail.getGeGeneralOrderDocumentNames().getValue().size() : 0)
             + (generalEmail.getGeneralEmailAttachments() != null ? generalEmail.getGeneralEmailAttachments().size() : 0);
     }
 
@@ -186,6 +190,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
             case APP2_UPLOADED -> lastList = caseData.getGeneralEmail().getGeApplicant2DocumentNames();
             case GENERATED -> lastList = caseData.getGeneralEmail().getGeGeneratedDocumentNames();
             case SCANNED -> lastList = caseData.getGeneralEmail().getGeScannedDocumentNames();
+            case GENERAL_ORDER -> lastList = caseData.getGeneralEmail().getGeGeneralOrderDocumentNames();
             default -> lastList = null;
         }
 
@@ -216,6 +221,28 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
             .build();
 
         caseData.getGeneralEmail().setGeScannedDocumentNames(emailDocNamesDynamicList);
+    }
+
+    private void addGeneralOrderDocumentNamesToGeneralEmail(final CaseData caseData) {
+        List<DynamicListElement> lastSelection = getLastSelectedListElements(caseData, AttachedDocumentType.GENERAL_ORDER);
+
+        List<DynamicListElement> docNames =
+            emptyIfNull(caseData.getGeneralOrders())
+                .stream()
+                .map(documentListValue ->
+                    DynamicListElement
+                        .builder()
+                        .label(documentListValue.getValue().getGeneralOrderDocument().getDocumentLink().getFilename())
+                        .code(UUID.fromString(documentListValue.getId())).build()
+                ).toList();
+
+        DynamicMultiSelectList emailDocNamesDynamicList = DynamicMultiSelectList
+            .builder()
+            .listItems(docNames)
+            .value(lastSelection)
+            .build();
+
+        caseData.getGeneralEmail().setGeGeneralOrderDocumentNames(emailDocNamesDynamicList);
     }
 
     private void addAttachedDocumentNamesToGeneralEmail(final CaseData caseData) {
