@@ -171,7 +171,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("applicant1Represented", "No");
         caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
-        caseData.put("jsReissueOption", "offlineAos");
+        caseData.put("judicialSeparationReissueOption", "offlineAos");
         caseData.put("dueDate", "2022-01-15");
         caseData.put("accessCode", ACCESS_CODE);
 
@@ -183,7 +183,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     public void shouldReIssueJudicialSeparationApplicationWhenSoleAppRepresentedAndReissuedAsOfflineAOS() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
-        caseData.put("jsReissueOption", "offlineAos");
+        caseData.put("judicialSeparationReissueOption", "offlineAos");
         caseData.put("dueDate", "2022-01-15");
         caseData.put("accessCode", ACCESS_CODE);
 

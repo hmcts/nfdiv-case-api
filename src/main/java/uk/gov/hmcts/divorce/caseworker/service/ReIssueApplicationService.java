@@ -73,13 +73,13 @@ public class ReIssueApplicationService {
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         if (caseDetails.getData().isJudicialSeparationCase()) {
-            JudicialSeparationReissueOption jsReissueOption = caseDetails.getData().getApplication().getJsReissueOption();
+            JudicialSeparationReissueOption jsReissueOption = caseDetails.getData().getApplication().getJudicialSeparationReissueOption();
             switch (jsReissueOption) {
                 case OFFLINE_AOS -> caseDetails.getData().getApplication().setReissueOption(OFFLINE_AOS);
                 case REISSUE_CASE -> caseDetails.getData().getApplication().setReissueOption(REISSUE_CASE);
                 default -> caseDetails.getData().getApplication().setReissueOption(null);
             }
-            caseDetails.getData().getApplication().setJsReissueOption(null);
+            caseDetails.getData().getApplication().setJudicialSeparationReissueOption(null);
         }
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 

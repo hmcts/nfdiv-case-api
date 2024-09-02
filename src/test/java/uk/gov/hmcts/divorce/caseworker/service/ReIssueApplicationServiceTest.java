@@ -151,11 +151,11 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    void shouldRunReIssueApplicationTasksForCitizenJSApplicationWhenReissueTypeIsOfflineAos() {
+    void shouldRunReIssueApplicationTasksForCitizenJudicialSeparationApplicationWhenReissueTypeIsOfflineAos() {
 
         final CaseData caseData = caseData();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.getApplication().setJsReissueOption(JudicialSeparationReissueOption.OFFLINE_AOS);
+        caseData.getApplication().setJudicialSeparationReissueOption(JudicialSeparationReissueOption.OFFLINE_AOS);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -178,7 +178,7 @@ class ReIssueApplicationServiceTest {
         var expectedCaseData = caseData();
         expectedCaseData.getApplicant2().setOffline(YES);
         expectedCaseData.getApplication().setPreviousReissueOption(OFFLINE_AOS);
-        expectedCaseData.getApplication().setJsReissueOption(null);
+        expectedCaseData.getApplication().setJudicialSeparationReissueOption(null);
 
         assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 
@@ -221,11 +221,11 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    void shouldRunReIssueApplicationTasksForCitizenJSApplicationWhenReissueTypeIsReissueCase() {
+    void shouldRunReIssueApplicationTasksForCitizenJudicialSeparationSApplicationWhenReissueTypeIsReissueCase() {
 
         final CaseData caseData = caseData();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.getApplication().setJsReissueOption(JudicialSeparationReissueOption.REISSUE_CASE);
+        caseData.getApplication().setJudicialSeparationReissueOption(JudicialSeparationReissueOption.REISSUE_CASE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -246,7 +246,7 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setPreviousReissueOption(REISSUE_CASE);
-        expectedCaseData.getApplication().setJsReissueOption(null);
+        expectedCaseData.getApplication().setJudicialSeparationReissueOption(null);
 
         assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
 

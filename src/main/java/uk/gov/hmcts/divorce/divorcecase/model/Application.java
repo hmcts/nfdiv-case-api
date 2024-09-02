@@ -473,7 +473,7 @@ public class Application {
         typeParameterOverride = "JudicialSeparationReissueOption",
         access = {SystemUpdateAndSuperUserAccess.class}
     )
-    private JudicialSeparationReissueOption jsReissueOption;
+    private JudicialSeparationReissueOption judicialSeparationReissueOption;
 
     @CCD(
         access = {DefaultAccess.class}
