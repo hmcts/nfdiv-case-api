@@ -75,9 +75,12 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 JUDGE))
             .page("reissueApplication")
             .pageLabel("Reissue Application")
+            .readonlyNoSummary(CaseData::getSupplementaryCaseType)
             .complex(CaseData::getApplication)
-                .mandatory(Application::getReissueOption)
-                .mandatoryWithoutDefaultValue(Application::getServiceMethod, "reissueOption=\"reissueCase\"", BLANK_LABEL, true)
+                .mandatory(Application::getReissueOption, "supplementaryCaseType=\"notApplicable\"")
+                .mandatory(Application::getJsReissueOption, "supplementaryCaseType!=\"notApplicable\"")
+                .mandatoryWithoutDefaultValue(Application::getServiceMethod,
+                    "reissueOption=\"reissueCase\" OR jsReissueOption=\"reissueCase\"", BLANK_LABEL, true)
                 .done()
             .done();
     }
