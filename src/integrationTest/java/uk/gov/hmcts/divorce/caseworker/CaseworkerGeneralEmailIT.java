@@ -53,12 +53,12 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -118,7 +118,7 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmail(getGeneralEmailObject(APPLICANT));
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -164,7 +164,7 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmail(getGeneralEmailObject(APPLICANT));
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -206,7 +206,7 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmail(getGeneralEmailObject(RESPONDENT));
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -253,7 +253,7 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmail(getGeneralEmailObject(RESPONDENT));
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -295,7 +295,7 @@ public class CaseworkerGeneralEmailIT {
 
         caseData.setGeneralEmail(getGeneralEmailObject(OTHER));
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)

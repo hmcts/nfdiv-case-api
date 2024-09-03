@@ -144,8 +144,12 @@ public class GeneralEmailNotification {
         int documentId = 0;
         for (ListValue<Document> document : documents) {
             ++documentId;
-            byte[] sotDocument = getDocumentBytes(document.getValue());
-            templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
+            try {
+                byte[] sotDocument = getDocumentBytes(document.getValue());
+                templateVarsObj.put(String.format("sot%s", documentId), prepareUpload(sotDocument));
+            } catch (NotificationClientException e) {
+                throw new NotificationClientException("Size exceeds 2MB for file : " + document.getValue().getFilename());
+            }
         }
 
         return templateVarsObj;
