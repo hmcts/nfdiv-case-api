@@ -147,6 +147,16 @@ public class AcknowledgementOfService {
     )
     private YesOrNo aosIsDrafted;
 
+    @CCD(
+        label = "Does the respondent intend to ask the court to delay the ${labelContentUnionType}"
+            + " until it is satisfied with their financial situation?",
+        hint = "You will need to complete ‘Form B – Notice of an application to consider the financial position of the "
+            + "respondent after the ${labelContentUnionType}’. The court will need to receive it before"
+            + " the final order is granted.",
+        access = AosAccess.class
+    )
+    private YesOrNo intendToDelay;
+
     @JsonIgnore
     public void setNoticeOfProceedings(final Applicant applicant) {
         noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();

@@ -45,7 +45,6 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
-
     private static final String IS_SOLE = "applicationType=\"soleApplication\"";
     private static final String IS_JOINT = "applicationType=\"jointApplication\"";
     private static final String IS_JOINT_AND_HWF_ENTERED =
@@ -77,6 +76,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
         + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
 
+    private static final String NOTICE_OF_CHANGE_HAS_BEEN_APPLIED = "changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildWarningsTab(configBuilder);
@@ -101,6 +102,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialDocumentsTab(configBuilder);
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
+        buildChangeOfRepresentativeTab(configBuilder);
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
@@ -135,6 +137,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("jurisdictionAgree")
             .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
             .field("inWhichCountryIsYourLifeMainlyBased", "jurisdictionAgree=\"No\"")
+            .field("intendToDelay")
             .field("applicant2LegalProceedings")
             .field("applicant2LegalProceedingsDetails")
             .field("dueDate")
@@ -548,5 +551,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(SUPER_USER)
             .showCondition("letterPacks=\"*\"")
             .field("letterPacks");
+    }
+
+    private void buildChangeOfRepresentativeTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("changeOfRepresentatives", "Change of representatives")
+                .forRoles(CASE_WORKER, SUPER_USER)
+                .field("nocWhichApplicant", NEVER_SHOW)
+                .field("changeOrganisationRequestField", NEVER_SHOW)
+                .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
+                .field("changeOfRepresentatives");
     }
 }

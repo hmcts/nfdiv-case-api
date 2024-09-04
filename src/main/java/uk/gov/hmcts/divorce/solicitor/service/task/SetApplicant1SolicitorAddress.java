@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
+import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
 
 @Component
 @Slf4j
@@ -40,8 +40,7 @@ public class SetApplicant1SolicitorAddress implements CaseTask {
                 .getContactInformation();
 
             if (!isEmpty(contactInformation)) {
-                final OrganisationContactInformation organisationContactInformation = contactInformation.get(0);
-                final String solicitorAddress = populateSolicitorAddress(organisationContactInformation);
+                final String solicitorAddress = parseOrganisationAddress(contactInformation);
 
                 log.info("Setting Applicant 1 solicitor address.  Case ID: {}", caseDetails.getId());
                 caseDetails.getData().getApplicant1().getSolicitor().setAddress(solicitorAddress);

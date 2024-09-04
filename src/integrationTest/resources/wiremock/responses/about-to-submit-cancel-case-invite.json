@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "applicant1ContactDetailsType": "public",
     "applicant1Email": "test@test.com",
