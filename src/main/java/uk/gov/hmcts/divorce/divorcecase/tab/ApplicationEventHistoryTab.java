@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 
 @Component
-public class ApplicationHistoryTab implements CCDConfig<CaseData, State, UserRole> {
+public class ApplicationEventHistoryTab implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildHistoryTab(configBuilder);
