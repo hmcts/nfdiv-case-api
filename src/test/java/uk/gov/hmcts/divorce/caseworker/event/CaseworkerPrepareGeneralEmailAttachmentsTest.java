@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerPrepareGeneralEmailAttachmentsTest {
@@ -204,6 +206,33 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
     }
 
     @Test
+    void shouldAddGeneralOrderDocsFromCaseDataToGeneralEmailGenOrderDocNamesInAboutToStart() {
+        final CaseData caseData = caseData();
+
+        String documentUrl = "http://localhost:8080/4567";
+
+        Document generalOrderDoc1 = new Document(
+            documentUrl,
+            "generalOrder2020-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+
+        final List<ListValue<DivorceGeneralOrder>> generalOrders1 = new ArrayList<>();
+        generalOrders1.add(getDivorceGeneralOrderListValue(generalOrderDoc1, UUID.randomUUID().toString()));
+        caseData.setGeneralOrders(generalOrders1);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getGeneralEmail().getGeGeneralOrderDocumentNames()).isNotNull();
+        assertThat(response.getData().getGeneralEmail().getGeGeneralOrderDocumentNames()
+            .getListItems().size()).isEqualTo(1);
+    }
+
+    @Test
     void shouldReturnErrorIfDocumentLinkNotProvidedGeneralEmailAttachments() {
         ListValue<DivorceDocument> generalEmailAttachment = new ListValue<>(
             "1",
@@ -277,6 +306,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
         updatedData.getGeneralEmail().setGeUploadedDocumentNames(null);
         updatedData.getGeneralEmail().setGeScannedDocumentNames(null);
         updatedData.getGeneralEmail().setGeApplicant1DocumentNames(null);
+        updatedData.getGeneralEmail().setGeGeneralOrderDocumentNames(null);
 
 
         final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
