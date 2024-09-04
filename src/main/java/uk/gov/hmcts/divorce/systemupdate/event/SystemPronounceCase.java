@@ -21,7 +21,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -47,7 +46,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
 @Component
 @RequiredArgsConstructor
@@ -60,7 +58,6 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
     private final NotificationDispatcher notificationDispatcher;
     private final CcdSearchService ccdSearchService;
-    private final CcdUpdateService ccdUpdateService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
     private final ObjectMapper objectMapper;
@@ -93,12 +90,6 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             final var serviceAuth = authTokenGenerator.generate();
 
             updateMissingFields(caseData, user, serviceAuth);
-
-            log.info("Update case with court hearing event called for Case({}) as court and other fields were not set due to case error",
-                    caseId);
-
-            ccdUpdateService
-                    .submitEvent(caseId, SYSTEM_UPDATE_CASE_COURT_HEARING, user, serviceAuth);
         }
 
         generateConditionalOrderGrantedDocs(details, beforeDetails);
@@ -139,9 +130,13 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     private void updateMissingFields(CaseData caseData, User user, String serviceAuth) {
 
         try {
+            var bulkListReference = caseData.getBulkListCaseReferenceLink().getCaseReference();
+
+            log.info("Searching for cases with court name in bulk list ({}) as court and other fields were not set due to case error",
+                    bulkListReference);
+
             final BoolQueryBuilder query = boolQuery()
-                    .must(matchQuery("data.bulkListCaseReferenceLink.CaseReference", caseData.getBulkListCaseReferenceLink()
-                            .getCaseReference()))
+                    .must(matchQuery("data.bulkListCaseReferenceLink.CaseReference", bulkListReference))
                     .must(existsQuery("data.coCourt"));
 
             Map<String, Object> otherCaseData =

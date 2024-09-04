@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -69,9 +68,6 @@ class SystemPronounceCaseTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
-    @Mock
-    private CcdUpdateService ccdUpdateService;
-
     @Mock
     private IdamService idamService;
 
@@ -134,7 +130,6 @@ class SystemPronounceCaseTest {
         verify(notificationDispatcher).send(notification, caseData, details.getId());
         verify(authTokenGenerator).generate();
         verify(ccdSearchService).searchForCasesWithQuery(eq(0), eq(1), any(), any(), any());
-        verify(ccdUpdateService).submitEvent(any(), any(), any(), any());
         verify(idamService).retrieveSystemUpdateUserDetails();
     }
 
@@ -158,7 +153,6 @@ class SystemPronounceCaseTest {
 
         verifyNoInteractions(authTokenGenerator);
         verifyNoInteractions(ccdSearchService);
-        verifyNoInteractions(ccdUpdateService);
         verifyNoInteractions(idamService);
     }
 
