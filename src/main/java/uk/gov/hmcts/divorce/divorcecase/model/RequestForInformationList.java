@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,4 +35,17 @@ public class RequestForInformationList {
     @Builder.Default
     @JsonUnwrapped
     private RequestForInformation requestForInformation = new RequestForInformation();
+
+    @CCD(
+        label = "Request for information response",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    @JsonUnwrapped
+    private RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+
+    @JsonIgnore
+    public RequestForInformation getLatestRequest() {
+        return this.getRequestsForInformation().get(0).getValue();
+    }
 }

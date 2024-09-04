@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,69 +22,47 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestForInformation {
+public class RequestForInformationResponse {
 
     @CCD(
-        label = "Address to sole",
+        label = "Respondee",
         typeOverride = FixedList,
-        typeParameterOverride = "RequestForInformationSoleParties",
+        typeParameterOverride = "RequestForInformationResponseParties",
         access = {DefaultAccess.class}
     )
-    private RequestForInformationSoleParties requestForInformationSoleParties;
-
-    @CCD(
-        label = "Address to joint",
-        typeOverride = FixedList,
-        typeParameterOverride = "RequestForInformationJointParties",
-        access = {DefaultAccess.class}
-    )
-    private RequestForInformationJointParties requestForInformationJointParties;
+    private RequestForInformationResponseParties requestForInformationResponseParties;
 
     @CCD(
         label = "Name",
         access = {DefaultAccess.class}
     )
-    private String requestForInformationName;
+    private String requestForInformationResponseName;
 
     @CCD(
         label = "Email address",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
-    private String requestForInformationEmailAddress;
-
-    @CCD(
-        label = "Secondary name",
-        access = {DefaultAccess.class}
-    )
-    private String requestForInformationSecondaryName;
-
-    @CCD(
-        label = "Secondary email address",
-        typeOverride = Email,
-        access = {DefaultAccess.class}
-    )
-    private String requestForInformationSecondaryEmailAddress;
+    private String requestForInformationResponseEmailAddress;
 
     @CCD(
         label = "Date/time of request",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime requestForInformationDateTime;
+    private LocalDateTime requestForInformationResponseDateTime;
 
     @CCD(
         label = "Please provide details",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String requestForInformationDetails;
+    private String requestForInformationResponseDetails;
 
     @CCD(
-        label = "Responses",
+        label = "Documents uploaded for the Request for Information Response",
         typeOverride = Collection,
-        typeParameterOverride = "RequestForInformationResponse",
-        access = {DefaultAccess.class}
+        typeParameterOverride = "DivorceDocument"
     )
-    private List<ListValue<RequestForInformationResponse>> requestForInformationResponses;
+    private List<ListValue<DivorceDocument>> requestForInformationResponseDocs;
 }
