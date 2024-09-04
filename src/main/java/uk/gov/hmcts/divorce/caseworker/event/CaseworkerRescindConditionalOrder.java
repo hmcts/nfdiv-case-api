@@ -78,7 +78,7 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE);
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, CITIZEN, JUDGE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

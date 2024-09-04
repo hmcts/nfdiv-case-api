@@ -56,7 +56,7 @@ public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, St
             .name("Issue amended application")
             .description("Issue amended application")
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR)
+            .grantHistoryOnly(LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

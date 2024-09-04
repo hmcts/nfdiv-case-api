@@ -35,6 +35,6 @@ public class ConditionalOrderReviewCaseworker implements CCDConfig<CaseData, Sta
                 .description(CONDITIONAL_ORDER_REVIEW_CASEWORKER_EVENT)
                 .showEventNotes()
                 .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
-                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN));
+                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CITIZEN));
     }
 }
