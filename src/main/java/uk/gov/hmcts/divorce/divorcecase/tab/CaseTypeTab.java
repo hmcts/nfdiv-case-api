@@ -386,16 +386,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
             "conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
-            .showCondition("coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\" OR "
-                + showForState(
-                    ConditionalOrderDrafted,
-                    ConditionalOrderPending,
-                    AwaitingLegalAdvisorReferral,
-                    AwaitingPronouncement,
-                    JSAwaitingLA,
-                    SeparationOrderGranted
-                )
-            );
+            .showCondition(getShowConditionForConditionalOrderTab());
         addConditionalOrderTabFields(tabBuilder);
     }
 
@@ -403,17 +394,22 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
                 "conditionalOrderApp2Sol", "Conditional Order")
             .forRoles(APPLICANT_2_SOLICITOR)
-            .showCondition("applicationType=\"jointApplication\" AND coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\" OR "
-                    + showForState(
-                    ConditionalOrderDrafted,
-                    ConditionalOrderPending,
-                    AwaitingLegalAdvisorReferral,
-                    AwaitingPronouncement,
-                    JSAwaitingLA,
-                    SeparationOrderGranted
-                )
+            .showCondition("applicationType=\"jointApplication\" AND "
+                + getShowConditionForConditionalOrderTab()
             );
         addConditionalOrderTabFields(tabBuilder);
+    }
+
+    private String getShowConditionForConditionalOrderTab() {
+        return "coApplicant1SubmittedDate=\"*\" OR coApplicant2SubmittedDate=\"*\" OR "
+            + showForState(
+            ConditionalOrderDrafted,
+            ConditionalOrderPending,
+            AwaitingLegalAdvisorReferral,
+            AwaitingPronouncement,
+            JSAwaitingLA,
+            SeparationOrderGranted
+        );
     }
 
     private void addConditionalOrderTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -462,18 +458,31 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
             "outcomeOfConditionalOrder", "Outcome of Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
-            .showCondition("coGranted=\"*\" OR "
-                + showForState(
-                    AwaitingAdminClarification,
-                    AwaitingClarification,
-                    AwaitingAmendedApplication,
-                    AwaitingPronouncement,
-                    ClarificationSubmitted,
-                    LAReview,
-                    SeparationOrderGranted
-                )
+            .showCondition(getShowConditionForOutcomeOfConditionalOrderTab());
+        addOutcomeOfConditionalOrderTabFields(tabBuilder);
+    }
+
+    private void buildOutcomeOfConditionalOrderTabApp2Sol(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
+                "outcomeOfConditionalOrderApp2Sol", "Outcome of Conditional Order")
+            .forRoles(APPLICANT_2_SOLICITOR)
+            .showCondition("applicationType=\"jointApplication\" AND "
+                + getShowConditionForOutcomeOfConditionalOrderTab()
             );
         addOutcomeOfConditionalOrderTabFields(tabBuilder);
+    }
+
+    private String getShowConditionForOutcomeOfConditionalOrderTab() {
+        return "coGranted=\"*\" OR "
+            + showForState(
+            AwaitingAdminClarification,
+            AwaitingClarification,
+            AwaitingAmendedApplication,
+            AwaitingPronouncement,
+            ClarificationSubmitted,
+            LAReview,
+            SeparationOrderGranted
+        );
     }
 
     private void addOutcomeOfConditionalOrderTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -505,24 +514,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coCertificateOfEntitlementDocument")
             .field("coConditionalOrderGrantedDocument")
             .field("coRescindedDate");
-    }
-
-    private void buildOutcomeOfConditionalOrderTabApp2Sol(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
-                "outcomeOfConditionalOrderApp2Sol", "Outcome of Conditional Order")
-            .forRoles(APPLICANT_2_SOLICITOR)
-            .showCondition("applicationType=\"jointApplication\" AND coGranted=\"*\" OR "
-                    + showForState(
-                    AwaitingAdminClarification,
-                    AwaitingClarification,
-                    AwaitingAmendedApplication,
-                    AwaitingPronouncement,
-                    ClarificationSubmitted,
-                    LAReview,
-                    SeparationOrderGranted
-                )
-            );
-        addOutcomeOfConditionalOrderTabFields(tabBuilder);
     }
 
     private void buildFinalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
