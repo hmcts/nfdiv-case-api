@@ -1,5 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -17,15 +21,25 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
@@ -53,6 +67,20 @@ class SystemPronounceCaseTest {
     @Mock
     private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
+    @Mock
+    private CcdSearchService ccdSearchService;
+    @Mock
+    private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
     @InjectMocks
     private SystemPronounceCase underTest;
 
@@ -70,10 +98,33 @@ class SystemPronounceCaseTest {
     @Test
     void shouldGenerateConditionalOrderGrantedDocAndSetStateToConditionalOrderPronounced() {
         final CaseData caseData = caseData();
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
+        caseData.setConditionalOrder(ConditionalOrder.builder().build());
+
+        final CaseData caseDataWithCourt  = caseData();
+
+        caseDataWithCourt.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
+        caseDataWithCourt.setConditionalOrder(ConditionalOrder.builder().court(ConditionalOrderCourt.BIRMINGHAM).build());
+
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .data(caseData)
             .build();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        Map<String, Object> caseDataMap = mapper.convertValue(caseData, new TypeReference<>(){});
+        Map<String, Object> caseDataMapWithCourt = mapper.convertValue(caseDataWithCourt, new TypeReference<>(){});
+
+        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> cases = new ArrayList<>();
+        cases.add(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().data(caseDataMap).build());
+        cases.add(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().data(caseDataMapWithCourt).build());
+
+        SearchResult searchResult = SearchResult.builder().cases(cases).build();
+
+        when(ccdSearchService.searchForCasesWithQuery(eq(0), eq(1), any(), any(), any())).thenReturn(searchResult);
+        when(objectMapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseDataWithCourt);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
@@ -81,12 +132,17 @@ class SystemPronounceCaseTest {
 
         verify(generateConditionalOrderPronouncedDocument).apply(details);
         verify(notificationDispatcher).send(notification, caseData, details.getId());
+        verify(authTokenGenerator).generate();
+        verify(ccdSearchService).searchForCasesWithQuery(eq(0), eq(1), any(), any(), any());
+        verify(ccdUpdateService).submitEvent(any(), any(), any(), any());
+        verify(idamService).retrieveSystemUpdateUserDetails();
     }
 
     @Test
     void shouldGenerateConditionalOrderGrantedDocAndSetStateToSeparationOrderGranted() {
         final CaseData caseData = caseData();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder().court(ConditionalOrderCourt.BIRMINGHAM).build());
 
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -99,6 +155,11 @@ class SystemPronounceCaseTest {
 
         verify(generateConditionalOrderPronouncedDocument).apply(details);
         verify(notificationDispatcher).send(notification, caseData, details.getId());
+
+        verifyNoInteractions(authTokenGenerator);
+        verifyNoInteractions(ccdSearchService);
+        verifyNoInteractions(ccdUpdateService);
+        verifyNoInteractions(idamService);
     }
 
     @Test
