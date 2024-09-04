@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.DynamicMultiSelectList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
@@ -159,6 +160,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
         List<DynamicListElement> uploadedDocNames =
             emptyIfNull(caseDocuments)
                 .stream()
+                .filter(this::divorceDocumentHasFileAttached)
                 .map(documentListValue ->
                     DynamicListElement
                         .builder()
@@ -173,6 +175,12 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
             .build();
 
         return emailDocNamesDynamicList;
+    }
+
+    private boolean divorceDocumentHasFileAttached(ListValue<DivorceDocument> divorceDocumentListValue) {
+        var divorceDocumentLink = divorceDocumentListValue.getValue().getDocumentLink();
+
+        return divorceDocumentLink != null && divorceDocumentLink.getFilename() != null;
     }
 
     private static List<DynamicListElement> getLastSelectedListElements(CaseData caseData, AttachedDocumentType type) {
@@ -202,6 +210,7 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
         List<DynamicListElement> scannedDocNames =
             emptyIfNull(caseData.getDocuments().getScannedDocuments())
                 .stream()
+                .filter(this::scannedDocumentHasFileAttached)
                 .map(documentListValue ->
                     DynamicListElement
                         .builder()
@@ -216,6 +225,12 @@ public class CaseworkerPrepareGeneralEmailAttachments implements CCDConfig<CaseD
             .build();
 
         caseData.getGeneralEmail().setGeScannedDocumentNames(emailDocNamesDynamicList);
+    }
+
+    private boolean scannedDocumentHasFileAttached(ListValue<ScannedDocument> scannedDocumentListValue) {
+        var scannedDocumentUrl = scannedDocumentListValue.getValue().getUrl();
+
+        return scannedDocumentUrl != null && scannedDocumentUrl.getFilename() != null;
     }
 
     private void addAttachedDocumentNamesToGeneralEmail(final CaseData caseData) {
