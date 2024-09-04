@@ -161,10 +161,11 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
         }
 
-        generalApplication.getGeneralApplicationDocument().setDocumentType(DocumentType.GENERAL_APPLICATION);
-        data.getDocuments().setDocumentsUploaded(
-            addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
-        );
+        generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
+            divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);
+            data.getDocuments().setDocumentsUploaded(
+                    addDocumentToTop(data.getDocuments().getDocumentsUploaded(), divorceDocumentListValue.getValue()));
+        });
 
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())

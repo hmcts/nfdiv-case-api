@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
 
@@ -21,14 +22,7 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
         pageBuilder.page("generalApplicationUploadDocument", this::midEvent)
             .pageLabel("Upload document")
             .complex(CaseData::getGeneralApplication)
-                .complex(GeneralApplication::getGeneralApplicationDocument)
-                    .optional(DivorceDocument::getDocumentEmailContent)
-                    .optional(DivorceDocument::getDocumentType)
-                    .optional(DivorceDocument::getDocumentComment)
-                    .mandatory(DivorceDocument::getDocumentLink)
-                    .mandatory(DivorceDocument::getDocumentDateAdded)
-                    .mandatory(DivorceDocument::getDocumentFileName)
-                .done()
+                .optional(GeneralApplication::getGeneralApplicationDocuments)
                 .optional(GeneralApplication::getGeneralApplicationDocumentComments)
             .done();
     }
@@ -38,8 +32,8 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
         final GeneralApplication generalApplication = caseData.getGeneralApplication();
 
-        if (isNull(generalApplication.getGeneralApplicationDocument())
-            || isNull(generalApplication.getGeneralApplicationDocument().getDocumentLink())) {
+        if (isNull(generalApplication.getGeneralApplicationDocuments())
+            || isEmpty(generalApplication.getGeneralApplicationDocuments())) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(GENERAL_APPLICATION_DOCUMENT_ERROR))

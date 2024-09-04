@@ -329,7 +329,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("generalApplication", "General Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("generalApplications=\"*\"")
-            .field("generalApplications");
+            .field("generalApplications")
+            .field("generalApplicationDocument", "generalApplicationDocument=\"*\"");
     }
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
