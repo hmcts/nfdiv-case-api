@@ -28,7 +28,7 @@ public class SolicitorUpdateApplicationService {
     private SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
 
     @Autowired
-    private SetApplicantAddresses SetApplicantAddresses;
+    private SetApplicantAddresses setApplicantAddresses;
 
     @Autowired
     private SetApplicantGender setApplicantGender;
@@ -37,7 +37,7 @@ public class SolicitorUpdateApplicationService {
 
         return caseTasks(
             setApplicant1SolicitorAddress,
-            SetApplicantAddresses,
+            setApplicantAddresses,
             divorceApplicationRemover,
             divorceApplicationDraft,
             setApplicantGender

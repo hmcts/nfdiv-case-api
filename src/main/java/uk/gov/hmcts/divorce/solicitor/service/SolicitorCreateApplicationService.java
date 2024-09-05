@@ -47,13 +47,13 @@ public class SolicitorCreateApplicationService {
     private SetApplicantGender setApplicantGender;
 
     @Autowired
-    private SetApplicantAddresses SetApplicantAddresses;
+    private SetApplicantAddresses setApplicantAddresses;
 
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
             initialiseSolicitorCreatedApplication,
-            SetApplicantAddresses,
+            setApplicantAddresses,
             solicitorCourtDetails,
             setApplicant1SolicitorAddress,
             divorceApplicationDraft,
