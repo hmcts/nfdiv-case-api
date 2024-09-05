@@ -1,6 +1,8 @@
 server:
   port: 4013
   shutdown: graceful
+  http2:
+    enabled: true
 
 management:
   endpoint:
