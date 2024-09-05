@@ -37,7 +37,7 @@ public class NoticeOfChange {
     private YesOrNo areTheyRepresented;
 
     @CCD(
-        label = "Is the solicitor digital?",
+        label = "Are they intending to be online/digital?",
         access = {CaseworkerAccess.class}
     )
     private YesOrNo areTheyDigital;

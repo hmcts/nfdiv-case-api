@@ -55,6 +55,19 @@ public enum NoticeType {
             noticeOfChangeService.revokeCaseAccess(details.getId(), applicantBefore, roles);
         }
     },
+    ORG_REMOVED_CITIZEN_ONLINE() {
+        @Override
+        public void applyNoticeOfChange(Applicant applicant,
+                                        Applicant applicantBefore,
+                                        List<String> roles,
+                                        String solicitorRole,
+                                        CaseDetails<CaseData, State> details,
+                                        NoticeOfChangeService noticeOfChangeService) {
+
+            noticeOfChangeService.revokeCaseAccess(details.getId(), applicantBefore, roles);
+
+        }
+    },
     OFFLINE_NOC() {
         @Override
         public void applyNoticeOfChange(Applicant applicant,

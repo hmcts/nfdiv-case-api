@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -20,14 +21,15 @@ import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP2_SOL_FO_PAYMENT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
+@Disabled //defect in the api fetching orgs resulting in 500 error for us so we need to disable this test temporarily
 @SpringBootTest
-public class App2SolicitorFinalOrderPaymentMidEventCallbackFT extends FunctionalTestSuite {
+class App2SolicitorFinalOrderPaymentMidEventCallbackFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-app2-sol-apply-for-final-order.json";
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
 
     @Test
-    public void shouldRetrieveAndSetPbaNumbersWhenMidEventCallbackIsInvoked() throws Exception {
+    void shouldRetrieveAndSetPbaNumbersWhenMidEventCallbackIsInvoked() throws Exception {
         Map<String, Object> caseData = caseData(REQUEST);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         caseData.put(FINANCIAL_ORDER, NO);

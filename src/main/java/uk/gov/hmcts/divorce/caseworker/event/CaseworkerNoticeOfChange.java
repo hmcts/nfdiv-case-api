@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,6 +28,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
@@ -54,6 +56,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
+    private final NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -117,7 +120,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                     .done()
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
-                .done();
+            .mandatory(Applicant::getEmail,
+                "(nocWhichApplicant=\"applicant2\" OR nocWhichApplicant=\"applicant1\") "
+                    + "AND nocAreTheyRepresented=\"No\" AND nocAreTheyDigital=\"Yes\"",
+                true)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
@@ -184,9 +191,16 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         changeOfRepresentativeService.buildChangeOfRepresentative(data, beforeData,
                 ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
-
-        //could get which applicant from case data but use param to avoid mishap
-        //this can move to submitted once we have more NOC data on casedata
+        //change to online citizen needs invite sent out
+        if (noticeType == NoticeType.ORG_REMOVED_CITIZEN_ONLINE) {
+            CaseData changedData = details.getData();
+            if (isApplicant1) {
+                changedData.setCaseInviteApp1(changedData.getCaseInviteApp1().generateAccessCode());
+            } else {
+                changedData.setCaseInvite(changedData.getCaseInvite().generateAccessCode());
+            }
+            notificationDispatcher.send(nocSolsToCitizenNotifications, changedData, details.getId());
+        }
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
             beforeData, details.getId(), isApplicant1, noticeType);
 
@@ -208,8 +222,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (!hadOrgBefore) {
             return hasOrgAfter ? NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG : NoticeType.OFFLINE_NOC;
         }
-
+        //distinguish between citizen wishing to be online and offline
         if (!hasOrgAfter) {
+            if (!isEmpty(applicant.getEmail()) && NO == applicant.getSolicitorRepresented()) {
+                return NoticeType.ORG_REMOVED_CITIZEN_ONLINE;
+            }
             return NoticeType.ORG_REMOVED;
         }
 
@@ -317,4 +334,5 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         solicitor.setOrganisationPolicy(defaultOrgPolicy);
         return solicitor;
     }
+
 }

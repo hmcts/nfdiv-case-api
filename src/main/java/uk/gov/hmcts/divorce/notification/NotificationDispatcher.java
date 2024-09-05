@@ -38,6 +38,7 @@ public class NotificationDispatcher {
         }
 
         boolean representationRemoved = (noticeType == NoticeType.ORG_REMOVED)
+            || (noticeType == NoticeType.ORG_REMOVED_CITIZEN_ONLINE && applicantRepresentedBefore(isApplicant1, previousCaseData))
             || (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG && applicantRepresentedBefore(isApplicant1, previousCaseData));
 
         if (representationRemoved) {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -32,9 +33,11 @@ public class NoticeOfChangeService {
         log.info("Revoking case access for roles {} for case {}", roles, caseId);
 
         ccdAccessService.removeUsersWithRole(caseId, roles);
-
-        String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
-
+        String orgId = null; //not sure this supplementary data is actually used for anything other than tests
+        //need to check there is a sols for there to be an org policy
+        if (applicant.getSolicitorRepresented() == YesOrNo.YES) {
+            orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
+        }
         log.info("Resetting supplementary data for org {} on case {}", orgId, caseId);
 
         String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
