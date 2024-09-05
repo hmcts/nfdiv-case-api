@@ -12,7 +12,9 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -35,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerPrepareGeneralEmailAttachmentsTest {
@@ -110,6 +113,48 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
     }
 
     @Test
+    void shouldHandleUploadedDocumentsWithoutFilesAttachedInAboutToStart() {
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> divorceDocuments = getListOfDivorceDocument(1);
+        divorceDocuments.add(ListValue.<DivorceDocument>builder().value(
+            DivorceDocument.builder().documentEmailContent("dummy content").build()
+        ).build());
+        caseData.getDocuments().setDocumentsUploaded(divorceDocuments);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()).isNotNull();
+        assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()
+            .getListItems().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldHandleScannedDocumentsWithoutFilesAttachedInAboutToStart() {
+        final CaseData caseData = caseData();
+
+        List<ListValue<ScannedDocument>> scannedDocuments = getListOfScannedDocument(1);
+        scannedDocuments.add(ListValue.<ScannedDocument>builder().value(
+            ScannedDocument.builder().type(ScannedDocumentType.COVERSHEET).build()
+        ).build());
+        caseData.getDocuments().setScannedDocuments(scannedDocuments);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getGeneralEmail().getGeScannedDocumentNames()).isNotNull();
+        assertThat(response.getData().getGeneralEmail().getGeScannedDocumentNames()
+            .getListItems().size()).isEqualTo(1);
+    }
+
+    @Test
     void shouldAddGeneratedDocumentsFromCaseDataToGeneralEmailGeneratedDocNamesInAboutToStart() {
         final CaseData caseData = caseData();
 
@@ -157,6 +202,33 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeApplicant2DocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeApplicant2DocumentNames()
+            .getListItems().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldAddGeneralOrderDocsFromCaseDataToGeneralEmailGenOrderDocNamesInAboutToStart() {
+        final CaseData caseData = caseData();
+
+        String documentUrl = "http://localhost:8080/4567";
+
+        Document generalOrderDoc1 = new Document(
+            documentUrl,
+            "generalOrder2020-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+
+        final List<ListValue<DivorceGeneralOrder>> generalOrders1 = new ArrayList<>();
+        generalOrders1.add(getDivorceGeneralOrderListValue(generalOrderDoc1, UUID.randomUUID().toString()));
+        caseData.setGeneralOrders(generalOrders1);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getGeneralEmail().getGeGeneralOrderDocumentNames()).isNotNull();
+        assertThat(response.getData().getGeneralEmail().getGeGeneralOrderDocumentNames()
             .getListItems().size()).isEqualTo(1);
     }
 
@@ -234,6 +306,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
         updatedData.getGeneralEmail().setGeUploadedDocumentNames(null);
         updatedData.getGeneralEmail().setGeScannedDocumentNames(null);
         updatedData.getGeneralEmail().setGeApplicant1DocumentNames(null);
+        updatedData.getGeneralEmail().setGeGeneralOrderDocumentNames(null);
 
 
         final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
@@ -279,7 +352,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
                 UUID.randomUUID().toString(),
                 DivorceDocument
                     .builder()
-                    .documentLink(Document.builder().build())
+                    .documentLink(Document.builder().filename("dummy.file").build())
                     .build()
             );
             docList.add(documentListValue);
@@ -295,7 +368,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
                 UUID.randomUUID().toString(),
                 ScannedDocument
                     .builder()
-                    .url(Document.builder().build())
+                    .url(Document.builder().filename("dummy.file").build())
                     .build()
             );
             docList.add(documentListValue);
