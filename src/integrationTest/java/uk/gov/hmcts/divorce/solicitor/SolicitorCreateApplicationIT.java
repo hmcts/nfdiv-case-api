@@ -76,7 +76,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithNonConfidentialAddress;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -293,7 +293,7 @@ class SolicitorCreateApplicationIT {
     }
 
     private static CaseData caseData() {
-        var applicant1 = getApplicantWithAddress();
+        var applicant1 = getApplicantWithNonConfidentialAddress();
         applicant1.setFinancialOrder(NO);
 
         return CaseData

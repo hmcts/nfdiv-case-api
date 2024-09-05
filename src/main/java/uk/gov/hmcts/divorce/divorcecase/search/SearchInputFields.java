@@ -12,11 +12,13 @@ import java.util.List;
 
 import static java.util.List.of;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRM_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
@@ -56,6 +58,7 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant last name").id(APPLICANT_1_LAST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant email").id(APPLICANT_1_EMAIL).build(),
+        SearchField.<UserRole>builder().label("Applicant postcode").id(APPLICANT_1_ADDRESS).listElementCode("PostCode").build(),
         /*
         SearchField.<UserRole>builder().label("Applicant postcode").id(APPLICANT_1_ADDRESS)
             .userRole(UserRole.CASE_WORKER).listElementCode("PostCode").build(),
@@ -67,6 +70,7 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Respondent first name").id(APPLICANT_2_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Respondent last name").id(APPLICANT_2_LAST_NAME).build(),
         SearchField.<UserRole>builder().label("Respondent email").id(APPLICANT_2_EMAIL).build(),
+        SearchField.<UserRole>builder().label("Respondent postcode").id(APPLICANT_2_ADDRESS).listElementCode("PostCode").build(),
         /*
         SearchField.<UserRole>builder().label("Respondent postcode").id(APPLICANT_2_ADDRESS)
             .userRole(UserRole.CASE_WORKER).listElementCode("PostCode").build(),
