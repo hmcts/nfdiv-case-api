@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
@@ -41,6 +43,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -220,6 +223,26 @@ class CommonContentTest {
     }
 
     @Test
+    void shouldSetTemplateVarsForRequestForInformationSole() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
+        final Map<String, String> templateVars = commonContent
+            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, getApplicant(), respondent());
+
+        assertThat(templateVars)
+            .isNotEmpty()
+            .contains(
+                entry(IS_JOINT, "no"),
+                entry(HUSBAND_JOINT, "no"),
+                entry(WIFE_JOINT, "no"),
+                entry(CIVIL_PARTNER_JOINT, "no")
+            );
+    }
+
+    @Test
     void shouldSetTemplateVarsForJointDivorceApplicationWhenPartnerIsMale() {
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
@@ -233,6 +256,31 @@ class CommonContentTest {
             .isNotEmpty()
             .contains(
                 entry(JOINT_CONDITIONAL_ORDER, "yes"),
+                entry(HUSBAND_JOINT, "yes"),
+                entry(WIFE_JOINT, "no"),
+                entry(CIVIL_PARTNER_JOINT, "no")
+            );
+    }
+
+    @Test
+    void shouldSetTemplateVarsForRequestForInformationJointDivorceWhenPartnerIsMale() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .requestForInformationList(RequestForInformationList.builder()
+                .requestForInformation(RequestForInformation.builder()
+                    .requestForInformationJointParties(APPLICANT1)
+                    .build())
+                .build())
+            .build();
+
+        final Map<String, String> templateVars = commonContent
+            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, getApplicant(FEMALE), getApplicant(MALE));
+
+        assertThat(templateVars)
+            .isNotEmpty()
+            .contains(
+                entry(IS_JOINT, "yes"),
                 entry(HUSBAND_JOINT, "yes"),
                 entry(WIFE_JOINT, "no"),
                 entry(CIVIL_PARTNER_JOINT, "no")
@@ -273,6 +321,31 @@ class CommonContentTest {
     }
 
     @Test
+    void shouldSetTemplateVarsForRequestForInformationJointDivorceWhenPartnerIsFemale() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .requestForInformationList(RequestForInformationList.builder()
+                .requestForInformation(RequestForInformation.builder()
+                    .requestForInformationJointParties(APPLICANT1)
+                    .build())
+                .build())
+            .build();
+
+        final Map<String, String> templateVars = commonContent
+            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, getApplicant(MALE), getApplicant(FEMALE));
+
+        assertThat(templateVars)
+            .isNotEmpty()
+            .contains(
+                entry(IS_JOINT, "yes"),
+                entry(HUSBAND_JOINT, "no"),
+                entry(WIFE_JOINT, "yes"),
+                entry(CIVIL_PARTNER_JOINT, "no")
+            );
+    }
+
+    @Test
     void shouldSetTemplateVarsForJointDissolution() {
         final CaseData caseData = CaseData.builder()
             .applicationType(JOINT_APPLICATION)
@@ -286,6 +359,31 @@ class CommonContentTest {
             .isNotEmpty()
             .contains(
                 entry(JOINT_CONDITIONAL_ORDER, "yes"),
+                entry(HUSBAND_JOINT, "no"),
+                entry(WIFE_JOINT, "no"),
+                entry(CIVIL_PARTNER_JOINT, "yes")
+            );
+    }
+
+    @Test
+    void shouldSetTemplateVarsForRequestForInformationJointDissolution() {
+        final CaseData caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DISSOLUTION)
+            .requestForInformationList(RequestForInformationList.builder()
+                .requestForInformation(RequestForInformation.builder()
+                    .requestForInformationJointParties(APPLICANT1)
+                    .build())
+                .build())
+            .build();
+
+        final Map<String, String> templateVars = commonContent
+            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, getApplicant(MALE), getApplicant(FEMALE));
+
+        assertThat(templateVars)
+            .isNotEmpty()
+            .contains(
+                entry(IS_JOINT, "yes"),
                 entry(HUSBAND_JOINT, "no"),
                 entry(WIFE_JOINT, "no"),
                 entry(CIVIL_PARTNER_JOINT, "yes")

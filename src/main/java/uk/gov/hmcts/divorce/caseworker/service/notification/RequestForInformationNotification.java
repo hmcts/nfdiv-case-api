@@ -17,20 +17,25 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_YET_ISSUED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_JOINT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_OTHER;
@@ -182,15 +187,29 @@ public class RequestForInformationNotification implements ApplicantNotification 
         return templateVars;
     }
 
+    private void suppressJointTemplateText(Map<String, String> templateVars) {
+        templateVars.put(HUSBAND_JOINT, NO);
+        templateVars.put(WIFE_JOINT, NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, NO);
+        templateVars.put(IS_JOINT, NO);
+        templateVars.put(SENT_TO_BOTH_APPLICANTS, NO);
+    }
+
     private Map<String, String> applicantTemplateContent(final CaseData caseData,
                                                          final Long caseId,
                                                          final Applicant applicant,
                                                          final Applicant partner,
                                                          final String requestForInformationDetails) {
         Map<String, String> templateVars =
-            commonContent.conditionalOrderTemplateVars(caseData, caseId, applicant, partner);
+            commonContent.requestForInformationTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformationDetails);
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
+
+        if (BOTH.equals(caseData.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())) {
+            templateVars.put(SENT_TO_BOTH_APPLICANTS, YES);
+        } else {
+            suppressJointTemplateText(templateVars);
+        }
 
         return templateVars;
     }

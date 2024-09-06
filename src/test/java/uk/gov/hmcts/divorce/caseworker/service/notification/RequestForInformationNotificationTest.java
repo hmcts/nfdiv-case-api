@@ -19,9 +19,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
@@ -29,11 +31,13 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -57,8 +61,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 public class RequestForInformationNotificationTest {
@@ -79,8 +83,8 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        when(commonContent.conditionalOrderTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
-            .thenReturn(getConditionalOrderTemplateVars(caseData.getApplicationType()));
+        when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getRequestForInformationTemplateVars(caseData.getApplicationType()));
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
@@ -137,12 +141,43 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        when(commonContent.conditionalOrderTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
-            .thenReturn(getConditionalOrderTemplateVars(caseData.getApplicationType()));
+        when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getRequestForInformationTemplateVars(caseData.getApplicationType()));
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent(caseData);
+
+        requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(REQUEST_FOR_INFORMATION_JOINT),
+            eq(templateContent),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldSendRequestForInformationEmailWithoutSuppressedJointDataTemplateTextWhenNotRepresentedOnJointCaseAndSentToBothApplicants() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant(MALE));
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+
+        when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getRequestForInformationTemplateVars(
+                caseData.getApplicationType(), BOTH, caseData.isDivorce(), caseData.getApplicant2()
+            ));
+
+        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getApplicantTemplateContent(caseData);
+        templateContent.put(IS_JOINT, YES);
+        templateContent.put(SENT_TO_BOTH_APPLICANTS, YES);
+        templateContent.put(HUSBAND_JOINT, YES);
 
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -190,8 +225,8 @@ public class RequestForInformationNotificationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
-        when(commonContent.conditionalOrderTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
-            .thenReturn(getConditionalOrderTemplateVars(caseData.getApplicationType()));
+        when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(getRequestForInformationTemplateVars(caseData.getApplicationType()));
 
         when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
@@ -294,7 +329,7 @@ public class RequestForInformationNotificationTest {
     }
 
     private Map<String, String> getApplicantTemplateContent(CaseData caseData) {
-        Map<String, String> templateVars = getConditionalOrderTemplateVars(caseData.getApplicationType());
+        Map<String, String> templateVars = getRequestForInformationTemplateVars(caseData.getApplicationType());
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT);
         templateVars.put(SMART_SURVEY, SMART_SURVEY_TEST_URL);
 
