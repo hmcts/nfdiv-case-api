@@ -58,6 +58,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -108,6 +109,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
@@ -148,6 +150,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
@@ -840,6 +843,36 @@ public class TestDataHelper {
         if (applicationType.equals(JOINT_APPLICATION)) {
             templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.YES);
             templateVars.put(WIFE_JOINT, CommonContent.YES);
+        }
+        return templateVars;
+    }
+
+    public static Map<String, String> getRequestForInformationTemplateVars(ApplicationType applicationType) {
+        Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(IS_JOINT, CommonContent.NO);
+        templateVars.put(WIFE_JOINT, CommonContent.NO);
+        templateVars.put(HUSBAND_JOINT, CommonContent.NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.NO);
+        templateVars.put(SENT_TO_BOTH_APPLICANTS, CommonContent.NO);
+
+        return templateVars;
+    }
+
+    public static Map<String, String> getRequestForInformationTemplateVars(ApplicationType applicationType,
+                                                                           RequestForInformationJointParties parties,
+                                                                           Boolean isDivorce,
+                                                                           Applicant partner) {
+        Map<String, String> templateVars = getRequestForInformationTemplateVars(applicationType);
+
+        if (applicationType.equals(JOINT_APPLICATION) && parties.equals(BOTH)) {
+            templateVars.put(IS_JOINT, CommonContent.YES);
+            templateVars.put(SENT_TO_BOTH_APPLICANTS, CommonContent.YES);
+            if (isDivorce) {
+                templateVars.put(HUSBAND_JOINT, MALE.equals(partner.getGender()) ? CommonContent.YES : CommonContent.NO);
+                templateVars.put(WIFE_JOINT, FEMALE.equals(partner.getGender()) ? CommonContent.YES : CommonContent.NO);
+            } else {
+                templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.YES);
+            }
         }
         return templateVars;
     }
