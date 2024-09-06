@@ -53,14 +53,15 @@ public class RequestForInformationResponse {
     private LocalDateTime requestForInformationResponseDateTime;
 
     @CCD(
-        label = "Please provide details",
+        label = "Write your response below if the court has asked for additional information. If the court has just asked for documents, "
+            + " then you do not need to write anything unless you think it's useful information.",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String requestForInformationResponseDetails;
 
     @CCD(
-        label = "Documents uploaded for the Request for Information Response",
+        label = "Upload documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
