@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
@@ -83,6 +84,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     @Autowired
     private Clock clock;
 
+    private static final String NEVER_SHOW = "generalEmailParties=\"NEVER\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -92,6 +95,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .description("Create general email")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
@@ -108,14 +112,44 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .readonly(GeneralEmail::getGeScannedDocumentNames)
             .readonly(GeneralEmail::getGeApplicant1DocumentNames)
             .readonly(GeneralEmail::getGeApplicant2DocumentNames)
+            .readonly(GeneralEmail::getGeGeneralOrderDocumentNames)
             .readonly(GeneralEmail::getGeAttachedDocumentNames)
             .readonlyWithLabel(GeneralEmail::getGeUploadedDocumentNames, "Uploaded documents selected")
             .readonlyWithLabel(GeneralEmail::getGeGeneratedDocumentNames, "Generated documents selected")
             .readonlyWithLabel(GeneralEmail::getGeScannedDocumentNames, "Scanned documents selected")
             .readonlyWithLabel(GeneralEmail::getGeApplicant1DocumentNames, "Applicant 1 documents selected")
             .readonlyWithLabel(GeneralEmail::getGeApplicant2DocumentNames, "Applicant 2 documents selected")
+            .readonlyWithLabel(GeneralEmail::getGeGeneralOrderDocumentNames, "General Order documents selected")
             .readonlyWithLabel(GeneralEmail::getGeAttachedDocumentNames,"Attached documents")
+            .readonlyNoSummary(GeneralEmail::getGeneralEmailAttachments, NEVER_SHOW)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CREATE_GENERAL_EMAIL, details.getId());
+
+        removeStaleGeneralEmailInputData(details.getData());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
+    private void removeStaleGeneralEmailInputData(CaseData caseData) {
+        GeneralEmail generalEmail = caseData.getGeneralEmail();
+        if (generalEmail == null) {
+            return;
+        }
+
+        if (generalEmail.hasBeenDelivered(caseData.getGeneralEmails())
+            || generalEmail.hasBeenDelivered(caseData.getConfidentialGeneralEmails())) {
+            generalEmail.setGeneralEmailAttachments(null);
+        }
+
+        generalEmail.setGeneralEmailDetails(null);
+        generalEmail.setGeneralEmailParties(null);
+        generalEmail.setGeneralEmailOtherRecipientEmail(null);
+        generalEmail.setGeneralEmailOtherRecipientName(null);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
@@ -229,6 +263,9 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         addSelectedScannedDocuments(caseData, caseDocuments.getScannedDocuments(),
             generalEmail.getGeScannedDocumentNames());
 
+        addSelectedGeneraOrderDocuments(caseData, caseData.getGeneralOrders(),
+            generalEmail.getGeGeneralOrderDocumentNames());
+
         addSelectedDivorceDocuments(caseData, caseDocuments.getDocumentsUploaded(),
             generalEmail.getGeUploadedDocumentNames());
 
@@ -263,6 +300,37 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
                         ListValue.<DivorceDocument>builder()
                             .id(documentIdProvider.documentId())
                             .value(DivorceDocument.builder().documentLink(uploadedDocumentOptional.get().getValue().getUrl()).build())
+                            .build();
+                    listOfAttachments.add(emailDoc);
+                }
+            }
+            addListToGeneralEmailAttachments(caseData, listOfAttachments);
+        }
+    }
+
+    void addSelectedGeneraOrderDocuments(final CaseData caseData,
+                                     List<ListValue<DivorceGeneralOrder>> genOrders,
+                                     DynamicMultiSelectList selectList) {
+        if (selectList != null && selectList.getValue().size() > 0) {
+            List<ListValue<DivorceDocument>> listOfAttachments = new ArrayList<>();
+
+            final List<DynamicListElement> selectedDocuments = selectList.getValue();
+
+            for (DynamicListElement element : selectedDocuments) {
+                UUID uuidCode = element.getCode();
+                Optional<ListValue<DivorceGeneralOrder>> generalOrderListValue =
+                    emptyIfNull(genOrders)
+                        .stream()
+                        .filter(doc -> UUID.fromString(doc.getId()).equals(uuidCode))
+                        .findFirst();
+
+                if (generalOrderListValue.isPresent()) {
+                    ListValue<DivorceDocument> emailDoc =
+                        ListValue.<DivorceDocument>builder()
+                            .id(documentIdProvider.documentId())
+                            .value(DivorceDocument.builder()
+                                .documentLink(generalOrderListValue.get().getValue().getGeneralOrderDocument().getDocumentLink())
+                                .build())
                             .build();
                     listOfAttachments.add(emailDoc);
                 }

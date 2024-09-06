@@ -1,9 +1,11 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicMultiSelectList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -12,7 +14,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
@@ -80,6 +85,12 @@ public class GeneralEmail {
     private DynamicMultiSelectList geApplicant2DocumentNames;
 
     @CCD(
+        label = "Select general order documents to attach",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private DynamicMultiSelectList geGeneralOrderDocumentNames;
+
+    @CCD(
         label = "Add attachments",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
@@ -92,4 +103,37 @@ public class GeneralEmail {
         access = {CaseworkerAccessOnlyAccess.class}
     )
     private DynamicMultiSelectList geAttachedDocumentNames;
+
+    @JsonIgnore
+    public boolean hasBeenDelivered(List<ListValue<GeneralEmailDetails>> deliveredEmails) {
+        if (CollectionUtils.isEmpty(deliveredEmails)) {
+            return false;
+        }
+
+        return deliveredEmails.stream()
+            .map(ListValue::getValue)
+            .anyMatch(this::identicalEmailDetails);
+    }
+
+    @JsonIgnore
+    private boolean identicalEmailDetails(GeneralEmailDetails deliveredEmail) {
+        Set<String> deliveredEmailDocLinks = deliveredEmail.getGeneralEmailAttachmentLinks() == null
+            ? Collections.emptySet()
+            : deliveredEmail.getGeneralEmailAttachmentLinks().stream()
+                .map(listValue -> listValue.getValue().getUrl())
+                .collect(Collectors.toSet());
+
+        return deliveredEmailDocLinks.equals(generalEmailDocLinks())
+                && deliveredEmail.getGeneralEmailParties().equals(generalEmailParties)
+                && deliveredEmail.getGeneralEmailBody().equals(generalEmailDetails);
+    }
+
+    @JsonIgnore
+    private Set<String> generalEmailDocLinks() {
+        return generalEmailAttachments == null
+            ? Collections.emptySet()
+            : generalEmailAttachments.stream()
+            .map(listValue -> listValue.getValue().getDocumentLink().getUrl())
+            .collect(Collectors.toSet());
+    }
 }
