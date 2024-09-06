@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -9,23 +10,29 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -36,25 +43,28 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
 
     public static final String SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION = "solicitor-respond-request-info";
 
+    private final CcdAccessService ccdAccessService;
+    private final HttpServletRequest request;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
                 .event(SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION)
                 .forAllStates()
-                .name("Request For Info Response")
-                .description("Request for information response")
+                .name("Submit Response")
+                .description("Submit response")
                 .showSummary()
                 .showEventNotes()
                 .endButtonLabel("Submit")
                 .aboutToSubmitCallback(this::aboutToSubmit)
-                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
+                .grant(CREATE_READ_UPDATE, SOLICITOR)
                 .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
                 .page("requestForInformationResponse")
-                .pageLabel("Request For Information Response")
+                .pageLabel("Submit Response")
                 .complex(CaseData::getRequestForInformationList)
                     .complex(RequestForInformationList::getRequestForInformationResponse)
-                        .mandatory(RequestForInformationResponse::getRequestForInformationResponseDetails)
                         .optional(RequestForInformationResponse::getRequestForInformationResponseDocs)
+                        .optional(RequestForInformationResponse::getRequestForInformationResponseDetails)
                     .done()
                 .done();
     }
@@ -67,10 +77,15 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
         RequestForInformationResponse requestForInformationResponse =
             data.getRequestForInformationList().getRequestForInformationResponse();
 
-        requestForInformationResponse.setRequestForInformationResponseParties(APPLICANT1SOLICITOR);
-        requestForInformationResponse.setRequestForInformationResponseName(data.getApplicant1().getSolicitor().getName());
-        requestForInformationResponse.setRequestForInformationResponseEmailAddress(data.getApplicant1().getSolicitor().getEmail());
-        requestForInformationResponse.setRequestForInformationResponseDateTime(LocalDateTime.now());
+        if (isApplicant1Solicitor(details.getId())) {
+            buildRequestForInformationResponse(requestForInformationResponse, data.getApplicant1(), APPLICANT1SOLICITOR);
+        } else if (isApplicant2Solicitor(details.getId())) {
+            buildRequestForInformationResponse(requestForInformationResponse, data.getApplicant2(), APPLICANT2SOLICITOR);
+        } else {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList("Unable to submit response for Case Id: " + details.getId()))
+                .build();
+        }
 
         final ListValue<RequestForInformationResponse> newResponse = new ListValue<>();
         newResponse.setValue(requestForInformationResponse);
@@ -86,6 +101,23 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(State.AwaitingAos)
             .build();
+    }
+
+    private boolean isApplicant1Solicitor(Long caseId) {
+        return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
+    }
+
+    private boolean isApplicant2Solicitor(Long caseId) {
+        return ccdAccessService.isApplicant2(request.getHeader(AUTHORIZATION), caseId);
+    }
+
+    private void buildRequestForInformationResponse(RequestForInformationResponse requestForInformationResponse,
+                                                    Applicant applicant, RequestForInformationResponseParties party) {
+        requestForInformationResponse.setRequestForInformationResponseParties(party);
+        requestForInformationResponse.setRequestForInformationResponseName(applicant.getSolicitor().getName());
+        requestForInformationResponse.setRequestForInformationResponseEmailAddress(applicant.getSolicitor().getEmail());
+        requestForInformationResponse.setRequestForInformationResponseDateTime(LocalDateTime.now());
     }
 }
