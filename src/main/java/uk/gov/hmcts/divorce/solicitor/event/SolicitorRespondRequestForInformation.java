@@ -99,6 +99,9 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
             latestRequestForInformation.getRequestForInformationResponses().add(0, newResponse);
         }
 
+        //Prevent pre-populating fields for new requests
+        data.getRequestForInformationList().setRequestForInformationResponse(new RequestForInformationResponse());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(State.AwaitingAos)
