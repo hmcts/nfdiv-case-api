@@ -11,9 +11,11 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Boolean.TRUE;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -117,6 +119,20 @@ public class RequestForInformation {
         } else {
             this.setRequestForInformationEmailAddress(emailAddress);
             this.setRequestForInformationName(name);
+        }
+    }
+
+    @JsonIgnore
+    public void addResponseToList(RequestForInformationResponse requestForInformationResponse) {
+        final ListValue<RequestForInformationResponse> newResponse = new ListValue<>();
+        newResponse.setValue(requestForInformationResponse);
+
+        if (isEmpty(this.getRequestForInformationResponses())) {
+            List<ListValue<RequestForInformationResponse>> responses = new ArrayList<>();
+            responses.add(newResponse);
+            this.setRequestForInformationResponses(responses);
+        } else {
+            this.getRequestForInformationResponses().add(0, newResponse);
         }
     }
 }
