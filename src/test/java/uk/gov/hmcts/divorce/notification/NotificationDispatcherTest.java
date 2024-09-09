@@ -484,12 +484,12 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldThrowExceptionWhenPartiesNotSet() {
-        Assertions.assertThrows(NotificationTemplateException.class, () -> {
-            CaseData caseData = caseData();
-            CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-            caseDetails.setData(caseData);
-            caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = caseData();
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
 
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
             notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
         });
     }
