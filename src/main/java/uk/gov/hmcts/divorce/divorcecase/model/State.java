@@ -106,6 +106,13 @@ public enum State {
     AwaitingDocuments,
 
     @CCD(
+        label = "Requested Information Submitted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    RequestedInformationSubmitted,
+
+    @CCD(
         label = "Awaiting applicant 1 response",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, SolicitorAccess.class}
@@ -471,7 +478,8 @@ public enum State {
         Applicant2Approved,
         AwaitingPayment,
         AwaitingHWFDecision,
-        AwaitingDocuments
+        AwaitingDocuments,
+        RequestedInformationSubmitted
     );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
@@ -504,6 +512,7 @@ public enum State {
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
+        RequestedInformationSubmitted,
         Submitted,
         Withdrawn,
         Rejected

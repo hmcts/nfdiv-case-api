@@ -29,6 +29,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -104,7 +105,7 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(State.AwaitingAos)
+            .state(RequestedInformationSubmitted)
             .build();
     }
 
