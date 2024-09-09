@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
@@ -70,6 +71,10 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder()
             .label("Respondent Solicitor Applied For Final Order")
             .id(APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER)
+            .build(),
+        SearchField.<UserRole>builder()
+            .label("Respondent Applied For Final Order")
+            .id(APPLICANT_2_APPLIED_FOR_FINAL_ORDER)
             .build()
         );
 

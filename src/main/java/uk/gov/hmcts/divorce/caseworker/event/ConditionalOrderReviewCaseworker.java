@@ -15,7 +15,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -35,6 +34,6 @@ public class ConditionalOrderReviewCaseworker implements CCDConfig<CaseData, Sta
                 .description(CONDITIONAL_ORDER_REVIEW_CASEWORKER_EVENT)
                 .showEventNotes()
                 .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
-                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN));
+                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CITIZEN));
     }
 }
