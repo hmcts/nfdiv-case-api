@@ -65,7 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-public class RequestForInformationNotificationTest {
+class RequestForInformationNotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -93,11 +93,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_SOLE),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            REQUEST_FOR_INFORMATION_SOLE,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -126,11 +126,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_SOLICITOR_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_SOLICITOR),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_SOLICITOR_EMAIL,
+            REQUEST_FOR_INFORMATION_SOLICITOR,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -151,11 +151,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_JOINT),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            REQUEST_FOR_INFORMATION_JOINT,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -182,11 +182,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_JOINT),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            REQUEST_FOR_INFORMATION_JOINT,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -235,11 +235,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_JOINT),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            REQUEST_FOR_INFORMATION_JOINT,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -262,11 +262,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_SOLICITOR_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_SOLICITOR),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_SOLICITOR_EMAIL,
+            REQUEST_FOR_INFORMATION_SOLICITOR,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -289,11 +289,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToOtherRecipient(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_OTHER_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_OTHER),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_OTHER_EMAIL,
+            REQUEST_FOR_INFORMATION_OTHER,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
@@ -320,11 +320,11 @@ public class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToOtherRecipient(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_OTHER_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_OTHER),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_OTHER_EMAIL,
+            REQUEST_FOR_INFORMATION_OTHER,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 
