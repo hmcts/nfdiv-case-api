@@ -8,24 +8,16 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
@@ -79,26 +71,16 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
             data.getRequestForInformationList().getRequestForInformationResponse();
 
         if (isApplicant1Solicitor(details.getId())) {
-            buildRequestForInformationResponse(requestForInformationResponse, data.getApplicant1(), APPLICANT1SOLICITOR);
+            requestForInformationResponse.setValues(data.getApplicant1(), APPLICANT1SOLICITOR);
         } else if (isApplicant2Solicitor(details.getId())) {
-            buildRequestForInformationResponse(requestForInformationResponse, data.getApplicant2(), APPLICANT2SOLICITOR);
+            requestForInformationResponse.setValues(data.getApplicant2(), APPLICANT2SOLICITOR);
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList("Unable to submit response for Case Id: " + details.getId()))
                 .build();
         }
 
-        final ListValue<RequestForInformationResponse> newResponse = new ListValue<>();
-        newResponse.setValue(requestForInformationResponse);
-
-        final RequestForInformation latestRequestForInformation = data.getRequestForInformationList().getLatestRequest();
-        if (isEmpty(latestRequestForInformation.getRequestForInformationResponses())) {
-            List<ListValue<RequestForInformationResponse>> responses = new ArrayList<>();
-            responses.add(newResponse);
-            latestRequestForInformation.setRequestForInformationResponses(responses);
-        } else {
-            latestRequestForInformation.getRequestForInformationResponses().add(0, newResponse);
-        }
+        data.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
 
         //Prevent pre-populating fields for new requests
         data.getRequestForInformationList().setRequestForInformationResponse(new RequestForInformationResponse());
@@ -115,13 +97,5 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
 
     private boolean isApplicant2Solicitor(Long caseId) {
         return ccdAccessService.isApplicant2(request.getHeader(AUTHORIZATION), caseId);
-    }
-
-    private void buildRequestForInformationResponse(RequestForInformationResponse requestForInformationResponse,
-                                                    Applicant applicant, RequestForInformationResponseParties party) {
-        requestForInformationResponse.setRequestForInformationResponseParties(party);
-        requestForInformationResponse.setRequestForInformationResponseName(applicant.getSolicitor().getName());
-        requestForInformationResponse.setRequestForInformationResponseEmailAddress(applicant.getSolicitor().getEmail());
-        requestForInformationResponse.setRequestForInformationResponseDateTime(LocalDateTime.now());
     }
 }

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -66,4 +67,12 @@ public class RequestForInformationResponse {
         typeParameterOverride = "DivorceDocument"
     )
     private List<ListValue<DivorceDocument>> requestForInformationResponseDocs;
+
+    @JsonIgnore
+    public void setValues(Applicant applicant, RequestForInformationResponseParties party) {
+        this.setRequestForInformationResponseParties(party);
+        this.setRequestForInformationResponseName(applicant.getSolicitor().getName());
+        this.setRequestForInformationResponseEmailAddress(applicant.getSolicitor().getEmail());
+        this.setRequestForInformationResponseDateTime(LocalDateTime.now());
+    }
 }
