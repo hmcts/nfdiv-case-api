@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2S
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Service
+@Slf4j
 public class ApplyForFinalOrderService {
 
     private static final String APP1_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE = "Applicant / Applicant 1 has already applied for final order.";
@@ -37,6 +41,12 @@ public class ApplyForFinalOrderService {
 
     @Autowired
     private ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
+
+    @Autowired
+    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -75,5 +85,11 @@ public class ApplyForFinalOrderService {
         }
 
         return errors;
+    }
+
+    public void sendRespondentAppliedForFinalOrderNotifications(final CaseDetails<CaseData, State> caseDetails) {
+        log.info("Sending Respondent Applied For Final Order Notification for Case Id: {}", caseDetails.getId());
+
+        notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, caseDetails.getData(), caseDetails.getId());
     }
 }

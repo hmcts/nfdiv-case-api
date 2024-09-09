@@ -105,7 +105,7 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + FULL_STOP);
     }
 
@@ -137,7 +137,7 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR);
     }
 
@@ -167,7 +167,7 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY);
     }
 
@@ -586,7 +586,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -622,7 +622,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(2);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(2);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -654,7 +654,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -687,7 +687,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -719,7 +719,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -753,7 +753,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -785,7 +785,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -819,7 +819,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -853,7 +853,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -890,7 +890,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -925,7 +925,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -960,7 +960,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
@@ -994,7 +994,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();

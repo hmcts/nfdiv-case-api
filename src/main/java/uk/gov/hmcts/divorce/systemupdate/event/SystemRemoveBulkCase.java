@@ -14,6 +14,7 @@ import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
@@ -42,6 +43,7 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
         Archived,
         OfflineDocumentReceived,
         AwaitingFinalOrder,
+        AwaitingFinalOrderPayment,
         FinalOrderPending,
         FinalOrderComplete,
         FinalOrderRequested

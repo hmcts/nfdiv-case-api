@@ -847,7 +847,7 @@ public class TestDataHelper {
         return templateVars;
     }
 
-    public static Map<String, String> getRequestForInformationTemplateVars(ApplicationType applicationType) {
+    public static Map<String, String> getRequestForInformationTemplateVars() {
         Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(IS_JOINT, CommonContent.NO);
         templateVars.put(WIFE_JOINT, CommonContent.NO);
@@ -862,7 +862,7 @@ public class TestDataHelper {
                                                                            RequestForInformationJointParties parties,
                                                                            Boolean isDivorce,
                                                                            Applicant partner) {
-        Map<String, String> templateVars = getRequestForInformationTemplateVars(applicationType);
+        Map<String, String> templateVars = getRequestForInformationTemplateVars();
 
         if (applicationType.equals(JOINT_APPLICATION) && parties.equals(BOTH)) {
             templateVars.put(IS_JOINT, CommonContent.YES);

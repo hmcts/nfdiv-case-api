@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -21,13 +20,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.Boolean.TRUE;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -111,30 +107,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         final CaseData caseData = details.getData();
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
-        requestForInformation.setRequestForInformationDateTime(LocalDateTime.now());
+        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
 
-        final RequestForInformationSoleParties soleAddressToOption = requestForInformation.getRequestForInformationSoleParties();
-        final RequestForInformationJointParties jointAddressToOption = requestForInformation.getRequestForInformationJointParties();
-        if (RequestForInformationSoleParties.APPLICANT.equals(soleAddressToOption)
-            || RequestForInformationJointParties.APPLICANT1.equals(jointAddressToOption)) {
-            setValues(requestForInformation, caseData.getApplicant1(), false);
-        } else if (RequestForInformationJointParties.APPLICANT2.equals(jointAddressToOption)) {
-            setValues(requestForInformation, caseData.getApplicant2(), false);
-        } else if (RequestForInformationJointParties.BOTH.equals(jointAddressToOption)) {
-            setValues(requestForInformation, caseData.getApplicant1(), false);
-            setValues(requestForInformation, caseData.getApplicant2(), true);
-        }
-
-        final ListValue<RequestForInformation> newRequest = new ListValue<>();
-        newRequest.setValue(requestForInformation);
-
-        if (isEmpty(caseData.getRequestForInformationList().getRequestsForInformation())) {
-            List<ListValue<RequestForInformation>> requests = new ArrayList<>();
-            requests.add(newRequest);
-            caseData.getRequestForInformationList().setRequestsForInformation(requests);
-        } else {
-            caseData.getRequestForInformationList().getRequestsForInformation().add(0, newRequest);
-        }
+        caseData.getRequestForInformationList().addRequestToList(requestForInformation);
 
         try {
             notificationDispatcher.sendRequestForInformationNotification(
@@ -222,18 +197,5 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             case BOTH -> areBothEmailsValid(caseData);
             case OTHER -> isOtherEmailValid(requestForInformation.getRequestForInformationEmailAddress());
         };
-    }
-
-    private void setValues(RequestForInformation requestForInformation, Applicant applicant, Boolean setSecondary) {
-        final boolean isRepresented = applicant.isRepresented();
-        final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
-        final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
-        if (TRUE.equals(setSecondary)) {
-            requestForInformation.setRequestForInformationSecondaryEmailAddress(emailAddress);
-            requestForInformation.setRequestForInformationSecondaryName(name);
-        } else {
-            requestForInformation.setRequestForInformationEmailAddress(emailAddress);
-            requestForInformation.setRequestForInformationName(name);
-        }
     }
 }
