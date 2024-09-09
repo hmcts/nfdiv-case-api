@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -76,6 +77,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
         + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
+
+    public static final String APPLICANT_2_APPLIED_FOR_FO = "applicant2AppliedForFinalOrder=\"Yes\"";
+
+    public static final String APPLICANT_2_APPLIED_FOR_FO_CARD = """
+        applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FinalOrderFeeOrderSummary=\"*\"
+        """;
+
+    public static final String APPLICANT_2_APPLIED_FOR_FO_HWF = """
+        applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FoHWFReferenceNumber=\"*\"
+        """;
 
     private static final String NOTICE_OF_CHANGE_HAS_BEEN_APPLIED = "changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"";
 
@@ -183,6 +194,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("finalOrderPbaNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
             .field("applicant2SolFinalOrderFeeAccountReference", APPLICANT_2_SOL_APPLIED_FOR_FO)
             .field("app2SolFoHWFReferenceNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_HWF)
+            .label("Applicant2-PaymentHeading", APPLICANT_2_APPLIED_FOR_FO, "### Respondent Final Order")
+            .field("applicant2FinalOrderFeeOrderSummary", APPLICANT_2_APPLIED_FOR_FO_CARD)
+            .field("applicant2FoHWFNeedHelp", APPLICANT_2_APPLIED_FOR_FO_HWF)
+            .field("applicant2FoHWFReferenceNumber", APPLICANT_2_APPLIED_FOR_FO_HWF)
             .field("generalApplicationFeeOrderSummary")
             .field("generalApplicationFeePaymentMethod")
             .field("generalApplicationFeeAccountNumber")
@@ -522,6 +537,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("doesApplicant1WantToApplyForFinalOrder=\"Yes\" OR doesApplicant2WantToApplyForFinalOrder=\"Yes\" OR "
                 + showForState(
                 AwaitingFinalOrder,
+                AwaitingFinalOrderPayment,
                 AwaitingJointFinalOrder,
                 AwaitingGeneralConsideration,
                 FinalOrderRequested,
@@ -569,6 +585,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("labelContentApplicant2", NEVER_SHOW)
             .field("doesApplicant2WantToApplyForFinalOrder")
+            .field("applicant2AppliedForFinalOrder", "applicant2AppliedForFinalOrder=\"Yes\"")
             .field("applicant2FinalOrderExplanation")
             .field("applicant2FinalOrderLateExplanation")
             .field("applicant2FinalOrderStatementOfTruth")

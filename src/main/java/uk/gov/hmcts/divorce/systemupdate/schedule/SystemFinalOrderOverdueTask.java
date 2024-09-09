@@ -23,6 +23,7 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyFinalOrderOverdue.SYSTEM_FINAL_ORDER_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -64,6 +65,7 @@ public class SystemFinalOrderOverdueTask implements Runnable {
                     .must(
                         boolQuery()
                             .should(matchQuery(STATE, AwaitingFinalOrder))
+                            .should(matchQuery(STATE, AwaitingFinalOrderPayment))
                             .should(matchQuery(STATE, AwaitingJointFinalOrder))
                             .minimumShouldMatch(1)
                     )
@@ -75,7 +77,9 @@ public class SystemFinalOrderOverdueTask implements Runnable {
 
 
             final List<CaseDetails> casesInAwaitingFinalOrderState =
-                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingFinalOrder, AwaitingJointFinalOrder);
+                ccdSearchService.searchForAllCasesWithQuery(
+                    query, user, serviceAuth, AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder
+                );
 
             for (final CaseDetails caseDetails : casesInAwaitingFinalOrderState) {
                 triggerFinalOrderEventForEligibleCases(user, serviceAuth, caseDetails);
