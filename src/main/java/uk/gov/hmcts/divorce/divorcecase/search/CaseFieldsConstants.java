@@ -33,6 +33,7 @@ public final class CaseFieldsConstants {
     public static final String RESPONDENT_WELSH_TRANSLATION = "applicant2LanguagePreferenceWelsh";
     public static final String SCANNED_SUBTYPE_RECEIVED = "scannedSubtypeReceived";
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER = "applicant2SolAppliedForFinalOrder";
+    public static final String APPLICANT_2_APPLIED_FOR_FINAL_ORDER = "applicant2AppliedForFinalOrder";
 
     // required for Checkstyle
     private CaseFieldsConstants() {
