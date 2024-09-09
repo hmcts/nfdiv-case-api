@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import static java.lang.String.join;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -209,11 +208,11 @@ class RequestForInformationNotificationTest {
         requestForInformationNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_SOLICITOR_EMAIL),
-            eq(REQUEST_FOR_INFORMATION_SOLICITOR),
-            eq(templateContent),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_SOLICITOR_EMAIL,
+            REQUEST_FOR_INFORMATION_SOLICITOR,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
         );
     }
 

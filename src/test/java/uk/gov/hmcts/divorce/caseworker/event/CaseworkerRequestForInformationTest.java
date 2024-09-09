@@ -654,7 +654,7 @@ class CaseworkerRequestForInformationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestsForInformation()).hasSize(1);
 
         final RequestForInformation responseRequestForInformation =
             response.getData().getRequestForInformationList().getRequestsForInformation().get(0).getValue();
