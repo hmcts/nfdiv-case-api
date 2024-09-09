@@ -19,6 +19,7 @@ import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmailDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
@@ -60,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerGeneralEmailTest {
@@ -140,6 +142,48 @@ public class CaseworkerGeneralEmailTest {
         );
 
         caseData.setGeneralEmails(
+            List.of(
+                ListValue.<GeneralEmailDetails>builder().value(
+                    GeneralEmailDetails.builder()
+                        .generalEmailParties(GeneralParties.APPLICANT)
+                        .generalEmailBody("a general email")
+                        .generalEmailAttachmentLinks(buildGeneralEmailDetailsAttachmentsWithDocLinks("000-123", "123-456"))
+                        .build()
+                ).build()
+            )
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToStart(details);
+
+        GeneralEmail updatedGeneralEmail = response.getData().getGeneralEmail();
+        assertThat(updatedGeneralEmail.getGeneralEmailParties()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailDetails()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailOtherRecipientEmail()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailOtherRecipientName()).isNull();
+        assertThat(updatedGeneralEmail.getGeneralEmailAttachments()).isNull();
+    }
+
+    @Test
+    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDeliveredConfidential() throws Exception {
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
+        caseData.getDocuments().setDocumentsGenerated(docs);
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("a general email")
+                .generalEmailAttachments(buildGeneralEmailAttachmentsWithDocLinks("123-456", "000-123"))
+                .build()
+        );
+
+        caseData.setConfidentialGeneralEmails(
             List.of(
                 ListValue.<GeneralEmailDetails>builder().value(
                     GeneralEmailDetails.builder()
@@ -731,6 +775,8 @@ public class CaseworkerGeneralEmailTest {
                 .geGeneratedDocumentNames(null)
                 .geUploadedDocumentNames(getDummySelectionList(docs.get(0).getId()))
                 .geScannedDocumentNames(null)
+                .geGeneralOrderDocumentNames(null)
+                .geGeneralOrderDocumentNames(null)
                 .build()
         );
 
@@ -776,6 +822,7 @@ public class CaseworkerGeneralEmailTest {
                 .geGeneratedDocumentNames(getDummySelectionList(docs.get(0).getId()))
                 .geUploadedDocumentNames(null)
                 .geScannedDocumentNames(null)
+                .geGeneralOrderDocumentNames(null)
                 .build()
         );
 
@@ -821,6 +868,7 @@ public class CaseworkerGeneralEmailTest {
                 .geGeneratedDocumentNames(null)
                 .geUploadedDocumentNames(null)
                 .geScannedDocumentNames(null)
+                .geGeneralOrderDocumentNames(null)
                 .build()
         );
 
@@ -866,6 +914,7 @@ public class CaseworkerGeneralEmailTest {
                 .geGeneratedDocumentNames(null)
                 .geUploadedDocumentNames(null)
                 .geScannedDocumentNames(null)
+                .geGeneralOrderDocumentNames(null)
                 .build()
         );
 
@@ -911,6 +960,62 @@ public class CaseworkerGeneralEmailTest {
                 .geGeneratedDocumentNames(null)
                 .geUploadedDocumentNames(null)
                 .geScannedDocumentNames(getDummySelectionList(docs.get(0).getId()))
+                .geGeneralOrderDocumentNames(null)
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+            .thenReturn(new User(
+                    TEST_AUTHORIZATION_TOKEN, UserInfo
+                    .builder()
+                    .givenName("forename")
+                    .familyName("lastname")
+                    .name("forename lastname")
+                    .build()
+                )
+            );
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldAddSelectedGenOrderDocsToAttachmentsListInAboutToSubmit() throws Exception {
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+
+        String documentUrl = "http://localhost:8080/4567";
+
+        Document generalOrderDoc1 = new Document(
+            documentUrl,
+            "generalOrder2020-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+
+        final List<ListValue<DivorceGeneralOrder>> generalOrders = new ArrayList<>();
+        generalOrders.add(getDivorceGeneralOrderListValue(generalOrderDoc1, UUID.randomUUID().toString()));
+        caseData.setGeneralOrders(generalOrders);
+
+        caseData.setGeneralEmail(
+            GeneralEmail
+                .builder()
+                .generalEmailParties(APPLICANT)
+                .generalEmailDetails("some details")
+                .generalEmailAttachments(getListOfDivorceDocument(2))
+                .geApplicant1DocumentNames(null)
+                .geApplicant2DocumentNames(null)
+                .geGeneratedDocumentNames(null)
+                .geUploadedDocumentNames(null)
+                .geScannedDocumentNames(null)
+                .geGeneralOrderDocumentNames(getDummySelectionList(generalOrders.get(0).getId()))
                 .build()
         );
 
@@ -953,6 +1058,7 @@ public class CaseworkerGeneralEmailTest {
                 .geGeneratedDocumentNames(null)
                 .geUploadedDocumentNames(null)
                 .geScannedDocumentNames(null)
+                .geGeneralOrderDocumentNames(null)
                 .build()
         );
 

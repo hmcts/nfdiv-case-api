@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.NOW_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.WILL_BE_CHECKED_WITHIN_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.WILL_BE_CHECKED_WITHIN_2_DAYS;
@@ -84,7 +84,7 @@ class Applicant2AppliedForFinalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_APPLIED_FOR_FINAL_ORDER),
+            eq(SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER),
             any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -111,7 +111,7 @@ class Applicant2AppliedForFinalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_APPLIED_FOR_FINAL_ORDER),
+            eq(SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER),
             any(),
             eq(WELSH),
             eq(TEST_CASE_ID)
@@ -142,7 +142,7 @@ class Applicant2AppliedForFinalOrderNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_APPLIED_FOR_FINAL_ORDER),
+            eq(SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER),
             argThat(allOf(
                 hasEntry(WILL_BE_CHECKED_WITHIN_2_DAYS, CommonContent.NO),
                 hasEntry(WILL_BE_CHECKED_WITHIN_14_DAYS, CommonContent.YES),
