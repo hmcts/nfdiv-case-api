@@ -14,6 +14,7 @@ import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
@@ -29,7 +30,7 @@ public class SetDateSubmitted implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final State state = caseDetails.getState();
 
-        EnumSet<State> submittedStates = EnumSet.of(Submitted, AwaitingDocuments, AwaitingHWFDecision);
+        EnumSet<State> submittedStates = EnumSet.of(Submitted, AwaitingDocuments, RequestedInformationSubmitted, AwaitingHWFDecision);
 
         if (submittedStates.contains(state) || submittedStates.contains(caseData.getApplication().getWelshPreviousState())) {
             caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));

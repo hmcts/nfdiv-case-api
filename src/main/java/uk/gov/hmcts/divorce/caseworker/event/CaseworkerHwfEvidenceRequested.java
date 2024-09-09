@@ -14,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -31,7 +32,10 @@ public class CaseworkerHwfEvidenceRequested implements CCDConfig<CaseData, State
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CASEWORKER_HWF_EVIDENCE_REQUESTED)
-            .forStateTransition(EnumSet.of(AwaitingDocuments, AwaitingHWFPartPayment, AwaitingHWFDecision), AwaitingHWFEvidence)
+            .forStateTransition(
+                EnumSet.of(AwaitingDocuments, RequestedInformationSubmitted, AwaitingHWFPartPayment, AwaitingHWFDecision),
+                AwaitingHWFEvidence
+            )
             .name("HWF evidence required")
             .description("HWF evidence required")
             .showSummary()
