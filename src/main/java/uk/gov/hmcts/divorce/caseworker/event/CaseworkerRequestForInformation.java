@@ -107,7 +107,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         final CaseData caseData = details.getData();
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
-        caseData.getRequestForInformationList().getRequestForInformation().setValuesFromCaseData(caseData);
+        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
 
         caseData.getRequestForInformationList().addRequestToList(requestForInformation);
 

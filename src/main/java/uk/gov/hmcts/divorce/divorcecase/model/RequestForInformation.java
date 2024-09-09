@@ -79,24 +79,24 @@ public class RequestForInformation {
     private String requestForInformationDetails;
 
     @JsonIgnore
-    public void setValuesFromCaseData(CaseData caseData) {
+    public void setValues(CaseData caseData) {
         this.setRequestForInformationDateTime(LocalDateTime.now());
 
         final RequestForInformationSoleParties soleParties = this.getRequestForInformationSoleParties();
         final RequestForInformationJointParties jointParties = this.getRequestForInformationJointParties();
         if (RequestForInformationSoleParties.APPLICANT.equals(soleParties)
             || RequestForInformationJointParties.APPLICANT1.equals(jointParties)) {
-            this.setValues(caseData.getApplicant1(), false);
+            this.setNameAndEmail(caseData.getApplicant1(), false);
         } else if (RequestForInformationJointParties.APPLICANT2.equals(jointParties)) {
-            this.setValues(caseData.getApplicant2(), false);
+            this.setNameAndEmail(caseData.getApplicant2(), false);
         } else if (RequestForInformationJointParties.BOTH.equals(jointParties)) {
-            this.setValues(caseData.getApplicant1(), false);
-            this.setValues(caseData.getApplicant2(), true);
+            this.setNameAndEmail(caseData.getApplicant1(), false);
+            this.setNameAndEmail(caseData.getApplicant2(), true);
         }
     }
 
     @JsonIgnore
-    private void setValues(Applicant applicant, Boolean setSecondary) {
+    private void setNameAndEmail(Applicant applicant, Boolean setSecondary) {
         final boolean isRepresented = applicant.isRepresented();
         final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
         final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
