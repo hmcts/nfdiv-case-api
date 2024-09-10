@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION = "solicitor-respond-request-info";
+    public static final String UNABLE_TO_SUBMIT_RESPONSE_ERROR = "Unable to submit response for Case Id: ";
 
     private final CcdAccessService ccdAccessService;
     private final HttpServletRequest request;
@@ -76,7 +77,7 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
             requestForInformationResponse.setValues(data.getApplicant2(), APPLICANT2SOLICITOR);
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList("Unable to submit response for Case Id: " + details.getId()))
+                .errors(Collections.singletonList(UNABLE_TO_SUBMIT_RESPONSE_ERROR + details.getId()))
                 .build();
         }
 
