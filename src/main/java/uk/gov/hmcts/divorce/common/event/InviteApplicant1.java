@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -17,7 +18,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -50,7 +50,7 @@ public class InviteApplicant1 implements CCDConfig<CaseData, State, UserRole> {
             .name("Invite Applicant 1")
             .description("Invite Applicant 1 back online")
             .showSummary()
-            .showCondition("applicant1SolicitorRepresented=\"No\" AND applicant1Offline=\"Yes\"")
+            .showCondition("applicant1SolicitorRepresented=\"No\"")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(
@@ -71,7 +71,7 @@ public class InviteApplicant1 implements CCDConfig<CaseData, State, UserRole> {
         if (!data.getApplicant1().isRepresented()) {
 
             log.info("Applicant 1 is not represented processing case data validation");
-            //TODO more thorough validation
+            //TODO do i need other validation
             // final List<String> validationErrors = validateApplicant1BasicCase(data);
             if (null == data.getApplicant1().getEmail()) {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -82,22 +82,19 @@ public class InviteApplicant1 implements CCDConfig<CaseData, State, UserRole> {
             }
 
             log.info("Generating access code to allow app1 to go online");
-            data.setCaseInviteApp1(data.getCaseInviteApp1().generateAccessCode());
+            CaseInviteApp1 invite = CaseInviteApp1.builder()
+                .applicant1InviteEmailAddress(data.getApplicant1().getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInviteApp1(invite);
         }
 
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
         notificationDispatcher.send(applicationSentForReviewNotification, data, details.getId());
+        log.info("Applicant 1 is represented so skipping state update");
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
 
-        if (!data.getApplicant2().isRepresented()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(data)
-                .state(AwaitingApplicant2Response)
-                .build();
-        } else {
-            log.info("Applicant 2 is represented so skipping state update");
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(data)
-                .build();
-        }
     }
 }

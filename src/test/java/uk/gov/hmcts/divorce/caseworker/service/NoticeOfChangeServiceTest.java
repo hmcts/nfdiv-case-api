@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -61,7 +62,7 @@ class NoticeOfChangeServiceTest {
     private NoticeOfChangeService noticeOfChangeService;
 
     @Test
-    public void shouldRevokeAccessForOrganisation() {
+    void shouldRevokeAccessForOrganisation() {
         Applicant applicant = getApplicant(UserRole.APPLICANT_1_SOLICITOR);
         Long caseId = 1234567890L;
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -81,7 +82,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldChangeAccessWithinOrganisation() {
+    void shouldChangeAccessWithinOrganisation() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
 
@@ -107,7 +108,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldThrowNoSuchElementExceptionWhenUserNotFound() {
+    void shouldThrowNoSuchElementExceptionWhenUserNotFound() {
         Applicant applicant = getApplicant(UserRole.APPLICANT_1_SOLICITOR);
         Long caseId = 1234567890L;
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -127,7 +128,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldThrowIllegalArgumentExceptionWhenUserIsNotInSpecifiedOrg() {
+    void shouldThrowIllegalArgumentExceptionWhenUserIsNotInSpecifiedOrg() {
         Applicant applicant = getApplicant(UserRole.APPLICANT_1_SOLICITOR);
         Long caseId = 1234567890L;
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -148,7 +149,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasNotDigital() {
+    void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasNotDigital() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
 
@@ -184,7 +185,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasDigital() {
+    void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasDigital() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
 
@@ -238,6 +239,7 @@ class NoticeOfChangeServiceTest {
                     .email(TEST_SOLICITOR_EMAIL)
                     .build()
             )
+            .solicitorRepresented(YesOrNo.YES)
             .build();
     }
 

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -195,7 +196,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (noticeType == NoticeType.ORG_REMOVED_CITIZEN_ONLINE) {
             CaseData changedData = details.getData();
             if (isApplicant1) {
-                changedData.setCaseInviteApp1(changedData.getCaseInviteApp1().generateAccessCode());
+                CaseInviteApp1 invite = CaseInviteApp1.builder()
+                    .applicant1InviteEmailAddress(changedData.getApplicant1().getEmail())
+                    .build()
+                    .generateAccessCode();
+                changedData.setCaseInviteApp1(invite);
             } else {
                 changedData.setCaseInvite(changedData.getCaseInvite().generateAccessCode());
             }
