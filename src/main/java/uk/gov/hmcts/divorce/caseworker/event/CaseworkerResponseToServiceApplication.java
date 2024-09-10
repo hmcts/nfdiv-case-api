@@ -95,13 +95,14 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
+        log.info("Caseworker response to service application midEvent callback invoked for Case Id: {}", details.getId());
         CaseData caseData = details.getData();
         List<String> errors = new ArrayList<>();
 
         AlternativeService altService = caseData.getAlternativeService();
         if (isNotEmpty(altService.getServiceApplicationDocuments())
             && altService.getServiceApplicationDocuments().size() > MAX_ATTACHMENTS_PER_APP) {
-            errors.add("Exceeds allowed number of document attachments");
+            errors.add(String.format("Maximum supported uploads is %s", MAX_ATTACHMENTS_PER_APP));
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

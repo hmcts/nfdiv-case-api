@@ -229,7 +229,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         assertThat(response.getErrors()).isNotEmpty();
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains("Exceeds allowed number of document attachments");
+        assertThat(response.getErrors()).contains("Maximum supported uploads is 5");
     }
 
     @Test
