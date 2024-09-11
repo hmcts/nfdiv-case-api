@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -29,20 +29,17 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class ApplicationOutstandingActionNotification implements ApplicantNotification {
 
     public static final String PAPERS_SERVED_ANOTHER_WAY = "papersServedAnotherWay";
     public static final String DIVORCE_SERVED_ANOTHER_WAY = "divorceServedAnotherWay";
-    public static final String SERVE_WIFE_ANOTHER_WAY = "serveWifeAnotherWay";
-    public static final String SERVE_HUSBAND_ANOTHER_WAY = "serveHusbandAnotherWay";
     public static final String DISSOLUTION_SERVED_ANOTHER_WAY = "dissolutionServedAnotherWay";
 
     public static final String SEND_DOCUMENTS_TO_COURT = "sendDocumentsToCourt";
     public static final String SEND_DOCUMENTS_TO_COURT_DIVORCE = "sendDocumentsToCourtDivorce";
     public static final String SEND_DOCUMENTS_TO_COURT_DISSOLUTION = "sendDocumentsToCourtDissolution";
-    public static final String CONDITIONAL_REFERENCE_NUMBER = "conditional reference number";
-    public static final String CONDITIONAL_COURT_EMAIL = "conditional court email";
     public static final String MISSING_MARRIAGE_CERTIFICATE = "mariageCertificate";
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE = "civilPartnershipCertificate";
     public static final String MISSING_FOREIGN_MARRIAGE_CERTIFICATE = "foreignMarriageCertificate";
@@ -51,11 +48,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
 
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private CommonContent commonContent;
+    private final NotificationService notificationService;
+    private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -109,11 +103,12 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
         boolean servedAnotherWay = soleServingAnotherWay && caseData.isDivorce();
         String divorceOrDissolution = caseData.isDivorce() ? "divorce" : "";
+        String partner = soleServingAnotherWay ? commonContent.getPartner(caseData, caseData.getApplicant1(),
+                caseData.getApplicant1().getLanguagePreference()) : "";
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
         templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
-        templateVars.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1(),
-                caseData.getApplicant1().getLanguagePreference()));
+        templateVars.put(PARTNER,  partner);
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, servedAnotherWay ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, !servedAnotherWay ? YES : NO);
         return templateVars;
