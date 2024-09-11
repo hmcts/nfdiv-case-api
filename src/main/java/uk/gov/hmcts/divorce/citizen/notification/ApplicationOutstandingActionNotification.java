@@ -18,10 +18,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -102,12 +105,14 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         Map<String, String> templateVars = new HashMap<>();
 
         boolean servedAnotherWay = soleServingAnotherWay && caseData.isDivorce();
-        String divorceOrDissolution = caseData.isDivorce() ? "divorce" : "";
+        boolean languagePreferenceWelsh = WELSH == caseData.getApplicant1().getLanguagePreference();
+        String welshDivorceOrDissolution = caseData.isDivorce() ? DIVORCE_WELSH : "";
+        String divorceOrDissolution = caseData.isDivorce() ? DIVORCE : "";
         String partner = soleServingAnotherWay ? commonContent.getPartner(caseData, caseData.getApplicant1(),
                 caseData.getApplicant1().getLanguagePreference()) : "";
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
-        templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
+        templateVars.put(DIVORCE_OR_DISSOLUTION, languagePreferenceWelsh ? welshDivorceOrDissolution : divorceOrDissolution);
         templateVars.put(PARTNER,  partner);
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, servedAnotherWay ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, !servedAnotherWay ? YES : NO);
