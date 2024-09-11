@@ -21,7 +21,7 @@ import java.util.Collections;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -45,7 +45,7 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
                 .event(SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION)
-                .forStates(AwaitingDocuments, RequestedInformationSubmitted)
+                .forStates(InformationRequested, RequestedInformationSubmitted)
                 .name("Submit Response")
                 .description("Submit response")
                 .showSummary()
