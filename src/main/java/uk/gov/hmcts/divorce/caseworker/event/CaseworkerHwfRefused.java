@@ -14,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -31,7 +32,13 @@ public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_REFUSED)
             .forStateTransition(
-                EnumSet.of(AwaitingDocuments, AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment),
+                EnumSet.of(
+                    AwaitingDocuments,
+                    InformationRequested,
+                    AwaitingHWFDecision,
+                    AwaitingHWFEvidence,
+                    AwaitingHWFPartPayment
+                ),
                 AwaitingDocuments
             )
             .name("HWF refused")

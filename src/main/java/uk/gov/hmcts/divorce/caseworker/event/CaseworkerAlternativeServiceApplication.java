@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -55,7 +56,15 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_RECEIVED)
-            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments, GeneralApplicationReceived)
+            .forStates(
+                AosOverdue,
+                AwaitingAos,
+                AosDrafted,
+                Submitted,
+                AwaitingDocuments,
+                InformationRequested,
+                GeneralApplicationReceived
+            )
             .name("Service application received")
             .description("Service application received")
             .showSummary()

@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
@@ -140,8 +141,18 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND coSwitchedToSole!=\"Yes\" AND "
                 + notShowForState(
-                Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
-                AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
+                    Draft,
+                    AwaitingHWFDecision,
+                    AwaitingPayment,
+                    Submitted,
+                    AwaitingDocuments,
+                    InformationRequested,
+                    AwaitingAos,
+                    AosDrafted,
+                    AosOverdue,
+                    AwaitingService
+                )
+            )
             .field("applicant2Offline", NEVER_SHOW)
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"",
                 "## This is an online AoS response")
