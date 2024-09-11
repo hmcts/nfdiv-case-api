@@ -85,6 +85,12 @@ public class GeneralEmail {
     private DynamicMultiSelectList geApplicant2DocumentNames;
 
     @CCD(
+        label = "Select general order documents to attach",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private DynamicMultiSelectList geGeneralOrderDocumentNames;
+
+    @CCD(
         label = "Add attachments",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",

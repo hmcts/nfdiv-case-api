@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,12 +15,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.EnumSet;
+import java.util.Map;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
@@ -43,6 +57,10 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
     private final GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
     private final RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
     private final NotificationDispatcher notificationDispatcher;
+    private final CcdSearchService ccdSearchService;
+    private final IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,6 +84,13 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         final Long caseId = details.getId();
 
         log.info("Conditional order pronounced for Case({})", caseId);
+
+        if (isEmpty(caseData.getConditionalOrder().getCourt())) {
+            final var user = idamService.retrieveSystemUpdateUserDetails();
+            final var serviceAuth = authTokenGenerator.generate();
+
+            updateMissingFields(caseData, user, serviceAuth);
+        }
 
         generateConditionalOrderGrantedDocs(details, beforeDetails);
         notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
@@ -102,4 +127,35 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         }
     }
 
+    private void updateMissingFields(CaseData caseData, User user, String serviceAuth) {
+
+        try {
+            var bulkListReference = caseData.getBulkListCaseReferenceLink().getCaseReference();
+
+            log.info("Searching for cases with court name in bulk list ({}) as court and other fields were not set due to case error",
+                    bulkListReference);
+
+            final BoolQueryBuilder query = boolQuery()
+                    .must(matchQuery("data.bulkListCaseReferenceLink.CaseReference", bulkListReference))
+                    .must(existsQuery("data.coCourt"));
+
+            Map<String, Object> otherCaseData =
+                    ccdSearchService.searchForCasesWithQuery(0, 1, query, user, serviceAuth)
+                            .getCases().stream().findFirst().orElseThrow().getData();
+
+            CaseData convertedCaseData = objectMapper.convertValue(otherCaseData, CaseData.class);
+
+            ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+
+            conditionalOrder.setCourt(convertedCaseData.getConditionalOrder().getCourt());
+            conditionalOrder.setDateAndTimeOfHearing(convertedCaseData.getConditionalOrder().getDateAndTimeOfHearing());
+            conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant1(NO);
+            conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant2(NO);
+
+        } catch (final CcdSearchCaseException e) {
+            log.error("Search for cases in bulk list stopped after error ", e);
+        } catch (final CcdConflictException e) {
+            log.info("Error returned");
+        }
+    }
 }

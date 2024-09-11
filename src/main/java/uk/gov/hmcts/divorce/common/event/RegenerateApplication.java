@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -37,7 +38,7 @@ public class RegenerateApplication implements CCDConfig<CaseData, State, UserRol
             .name("Regenerate D8")
             .description("Regenerate D8")
             .grant(CREATE_READ_UPDATE, CREATOR, SYSTEMUPDATE)
-            .grantHistoryOnly(LEGAL_ADVISOR, SUPER_USER, JUDGE)
+            .grantHistoryOnly(LEGAL_ADVISOR, SUPER_USER, JUDGE, CASE_WORKER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

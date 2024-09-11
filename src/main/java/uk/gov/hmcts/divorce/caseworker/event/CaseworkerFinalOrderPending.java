@@ -11,13 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -30,11 +30,11 @@ public class CaseworkerFinalOrderPending implements CCDConfig<CaseData, State, U
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_FINAL_ORDER_PENDING)
-            .forStateTransition(EnumSet.of(FinalOrderRequested, AwaitingFinalOrder), FinalOrderPending)
+            .forStateTransition(EnumSet.of(FinalOrderRequested, AwaitingFinalOrder, AwaitingFinalOrderPayment), FinalOrderPending)
             .name("Final Order pending")
             .description("Final Order pending")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE));
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, CITIZEN, JUDGE));
     }
 }
