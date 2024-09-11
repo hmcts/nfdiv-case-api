@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
@@ -146,6 +147,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingPayment,
                     Submitted,
                     AwaitingDocuments,
+                    InformationRequested,
                     RequestedInformationSubmitted,
                     AwaitingAos,
                     AosDrafted,

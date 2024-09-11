@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -42,6 +43,7 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
                 AwaitingHWFDecision,
                 AwaitingPayment,
                 AwaitingDocuments,
+                InformationRequested,
                 RequestedInformationSubmitted,
                 AwaitingHWFEvidence
             )

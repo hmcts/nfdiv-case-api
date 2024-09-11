@@ -43,7 +43,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -570,7 +570,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -601,7 +601,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -637,7 +637,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -671,7 +671,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -702,7 +702,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -736,7 +736,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -768,7 +768,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -802,7 +802,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -835,7 +835,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -872,7 +872,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -908,7 +908,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -942,7 +942,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -975,7 +975,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
     @Test
@@ -1009,7 +1009,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(responseRequestForInformation.getRequestForInformationDateTime()).isNotNull();
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getState()).isEqualTo(InformationRequested);
     }
 
 }

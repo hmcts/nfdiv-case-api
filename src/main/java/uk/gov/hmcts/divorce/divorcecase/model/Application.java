@@ -468,6 +468,14 @@ public class Application {
     private ReissueOption reissueOption;
 
     @CCD(
+        label = "What would you like to reissue?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "JudicialSeparationReissueOption",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
+    private JudicialSeparationReissueOption judicialSeparationReissueOption;
+
+    @CCD(
         access = {DefaultAccess.class}
     )
     private ReissueOption previousReissueOption;

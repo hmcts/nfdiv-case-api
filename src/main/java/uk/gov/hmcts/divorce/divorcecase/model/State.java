@@ -358,6 +358,13 @@ public enum State {
     GeneralConsiderationComplete,
 
     @CCD(
+        label = "Information Requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    InformationRequested,
+
+    @CCD(
         label = "Issued to bailiff",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
