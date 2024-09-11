@@ -6,6 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForFinalOrderDocumentPack;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.PaymentService;
@@ -17,10 +20,12 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -53,6 +58,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAwait
 class RespondentApplyForFinalOrderNotificationTest {
 
     @Mock
+    private ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
+
+    @Mock
     private CommonContent commonContent;
 
     @Mock
@@ -60,6 +68,9 @@ class RespondentApplyForFinalOrderNotificationTest {
 
     @Mock
     private PaymentService paymentService;
+
+    @Mock
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
@@ -155,5 +166,44 @@ class RespondentApplyForFinalOrderNotificationTest {
             eq(applicant2.getLanguagePreference()),
             any()
         );
+    }
+
+    @Test
+    void shouldNotSendRespondentApplyForFinalOrderOfflineNotificationForJoint() {
+        final var data = validCaseDataForAwaitingFinalOrder();
+        final var applicant2 = getApplicant2(MALE);
+        data.setApplicant2(applicant2);
+        data.setApplicationType(JOINT_APPLICATION);
+
+        respondentApplyForFinalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
+    void shouldSendRespondentApplyForFinalOrderOfflineNotificationForSole() {
+        final var data = validCaseDataForAwaitingFinalOrder();
+        final var applicant2 = getApplicant2(MALE);
+        data.setApplicant2(applicant2);
+        data.setApplicationType(SOLE_APPLICATION);
+
+        DocumentPackInfo documentPackInfo = mock(DocumentPackInfo.class);
+
+        when(applyForFinalOrderDocumentPack.getDocumentPack(
+            data,
+            data.getApplicant2())).thenReturn(documentPackInfo);
+
+        respondentApplyForFinalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
+
+        verify(applyForFinalOrderDocumentPack).getDocumentPack(
+            data,
+            data.getApplicant2());
+
+        verify(letterPrinter).sendLetters(
+            data,
+            TEST_CASE_ID,
+            data.getApplicant2(),
+            documentPackInfo,
+            applyForFinalOrderDocumentPack.getLetterId());
     }
 }

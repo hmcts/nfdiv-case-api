@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForFinalOrderDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -31,16 +33,14 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class RespondentApplyForFinalOrderNotification implements ApplicantNotification {
 
-    @Autowired
-    private CommonContent commonContent;
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private PaymentService paymentService;
+    private final CommonContent commonContent;
+    private final NotificationService notificationService;
+    private final PaymentService paymentService;
+    private final ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
@@ -72,6 +72,20 @@ public class RespondentApplyForFinalOrderNotification implements ApplicantNotifi
             applicant2.getLanguagePreference(),
             id
         );
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
+        if (caseData.getApplicationType().isSole()) {
+            log.info("Notifying offline respondent that they can apply for a final order: {}", id);
+            var documentPack = applyForFinalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant2());
+            letterPrinter.sendLetters(
+                caseData,
+                id,
+                caseData.getApplicant2(),
+                documentPack,
+                applyForFinalOrderDocumentPack.getLetterId());
+        }
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String generalAppFees) {
