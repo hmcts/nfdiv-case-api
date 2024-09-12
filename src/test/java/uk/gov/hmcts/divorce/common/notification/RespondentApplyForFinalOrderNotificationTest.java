@@ -169,18 +169,6 @@ class RespondentApplyForFinalOrderNotificationTest {
     }
 
     @Test
-    void shouldNotSendRespondentApplyForFinalOrderOfflineNotificationForJoint() {
-        final var data = validCaseDataForAwaitingFinalOrder();
-        final var applicant2 = getApplicant2(MALE);
-        data.setApplicant2(applicant2);
-        data.setApplicationType(JOINT_APPLICATION);
-
-        respondentApplyForFinalOrderNotification.sendToApplicant2Offline(data, TEST_CASE_ID);
-
-        verifyNoInteractions(letterPrinter);
-    }
-
-    @Test
     void shouldSendRespondentApplyForFinalOrderOfflineNotificationForSole() {
         final var data = validCaseDataForAwaitingFinalOrder();
         final var applicant2 = getApplicant2(MALE);

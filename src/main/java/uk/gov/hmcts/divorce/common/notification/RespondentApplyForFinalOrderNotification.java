@@ -76,16 +76,14 @@ public class RespondentApplyForFinalOrderNotification implements ApplicantNotifi
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
-        if (caseData.getApplicationType().isSole()) {
-            log.info("Notifying offline respondent that they can apply for a final order: {}", id);
-            var documentPack = applyForFinalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant2());
-            letterPrinter.sendLetters(
-                caseData,
-                id,
-                caseData.getApplicant2(),
-                documentPack,
-                applyForFinalOrderDocumentPack.getLetterId());
-        }
+        log.info("Notifying offline respondent that they can apply for a final order: {}", id);
+        var documentPack = applyForFinalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant2());
+        letterPrinter.sendLetters(
+            caseData,
+            id,
+            caseData.getApplicant2(),
+            documentPack,
+            applyForFinalOrderDocumentPack.getLetterId());
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String generalAppFees) {
