@@ -47,8 +47,7 @@ public class GeneralApplication {
     private GeneralApplicationFee generalApplicationFeeType;
 
     @CCD(
-            label = "General Application Document",
-            showCondition = NEVER_SHOW
+            label = "General Application Document"
     )
     private DivorceDocument generalApplicationDocument;
 

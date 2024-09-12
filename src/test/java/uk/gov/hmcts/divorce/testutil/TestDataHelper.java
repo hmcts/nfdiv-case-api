@@ -1159,6 +1159,22 @@ public class TestDataHelper {
         return singletonList(scannedDocListValue);
     }
 
+    public static List<ListValue<DivorceDocument>> getListOfDivorceDocumentListValue(int sizeOfList) {
+        List<ListValue<DivorceDocument>> docList = new ArrayList<>();
+        while (sizeOfList > 0) {
+            ListValue<DivorceDocument> documentListValue = new ListValue<>(
+                UUID.randomUUID().toString(),
+                DivorceDocument
+                    .builder()
+                    .documentLink(Document.builder().filename("dummy.file").build())
+                    .build()
+            );
+            docList.add(documentListValue);
+            sizeOfList--;
+        }
+        return docList;
+    }
+
     public static List<InputScannedDoc> inputScannedDocuments(FormType formType) {
         var inputScannedDoc = InputScannedDoc
             .builder()
