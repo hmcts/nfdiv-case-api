@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME;
@@ -56,7 +55,7 @@ public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, St
             .name("Issue amended application")
             .description("Issue amended application")
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR)
+            .grantHistoryOnly(LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
