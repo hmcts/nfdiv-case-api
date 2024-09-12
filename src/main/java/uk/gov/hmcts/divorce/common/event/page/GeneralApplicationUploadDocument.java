@@ -2,12 +2,16 @@ package uk.gov.hmcts.divorce.common.event.page;
 
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
@@ -40,8 +44,41 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
                 .build();
         }
 
+        List<String> documentErrors =
+            validateUploadedDocumentsForMandatoryFields(generalApplication.getGeneralApplicationDocuments());
+
+        if (!documentErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(documentErrors)
+                .build();
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private List<String> validateUploadedDocumentsForMandatoryFields(List<ListValue<DivorceDocument>> docs) {
+        List<String> errors = new ArrayList<>();
+
+        if(docs.stream()
+            .map(ListValue::getValue)
+            .anyMatch(doc -> isNull(doc.getDocumentLink()))) {
+            errors.add("No document attached to one or more uploads");
+        }
+
+        if(docs.stream()
+            .map(ListValue::getValue)
+            .anyMatch(doc -> isNull(doc.getDocumentDateAdded()))) {
+            errors.add("Date is a required for uploads");
+        }
+
+        if(docs.stream()
+            .map(ListValue::getValue)
+            .anyMatch(doc -> isNull(doc.getDocumentFileName()))) {
+            errors.add("Filename is required for uploads");
+        }
+
+        return errors;
     }
 }
