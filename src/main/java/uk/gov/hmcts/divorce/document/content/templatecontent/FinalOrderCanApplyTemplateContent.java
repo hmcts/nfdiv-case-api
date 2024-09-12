@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
@@ -54,9 +55,15 @@ public class FinalOrderCanApplyTemplateContent implements TemplateContent {
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         templateContent.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
                 .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(),
-                caseData.getApplicant1().getLanguagePreference()));
+        templateContent.put(PARTNER, getPartnerInfo(caseData,applicant,applicant.getLanguagePreference()));
 
         return templateContent;
+    }
+
+    private String getPartnerInfo(CaseData caseData, Applicant applicant, LanguagePreference languagePreference) {
+        if (applicant.equals(caseData.getApplicant1())) {
+            return commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference);
+        }
+        return commonContent.getPartner(caseData, caseData.getApplicant1(), languagePreference);
     }
 }
