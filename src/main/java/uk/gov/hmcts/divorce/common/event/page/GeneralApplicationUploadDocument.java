@@ -61,19 +61,19 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
     private List<String> validateUploadedDocumentsForMandatoryFields(List<ListValue<DivorceDocument>> docs) {
         List<String> errors = new ArrayList<>();
 
-        if(docs.stream()
+        if (docs.stream()
             .map(ListValue::getValue)
             .anyMatch(doc -> isNull(doc.getDocumentLink()))) {
             errors.add("No document attached to one or more uploads");
         }
 
-        if(docs.stream()
+        if (docs.stream()
             .map(ListValue::getValue)
             .anyMatch(doc -> isNull(doc.getDocumentDateAdded()))) {
             errors.add("Date is a required for uploads");
         }
 
-        if(docs.stream()
+        if (docs.stream()
             .map(ListValue::getValue)
             .anyMatch(doc -> isNull(doc.getDocumentFileName()))) {
             errors.add("Filename is required for uploads");

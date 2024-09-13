@@ -59,7 +59,9 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -127,7 +129,10 @@ public class SolicitorGeneralApplicationTest {
                 .documentLink(Document.builder().build())
                 .build();
         final CaseData caseData = caseData();
-        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -139,7 +144,8 @@ public class SolicitorGeneralApplicationTest {
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isEqualTo(document);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
+            .isEqualTo(docs.get(0).getValue());
     }
 
     @Test
@@ -164,6 +170,10 @@ public class SolicitorGeneralApplicationTest {
         payments.add(paymentListValue);
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicationPayments(payments);
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
 
         final OrderSummary generalApplicationOrderSummary = OrderSummary.builder()
             .paymentTotal("500")
@@ -194,11 +204,7 @@ public class SolicitorGeneralApplicationTest {
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
                         .build()
                 )
-                .generalApplicationDocument(
-                    DivorceDocument.builder()
-                        .documentLink(Document.builder().build())
-                        .build()
-                )
+                .generalApplicationDocuments(docs)
                 .build()
         );
 
@@ -428,7 +434,6 @@ public class SolicitorGeneralApplicationTest {
             .documentLink(Document.builder().build())
             .build();
         final CaseData caseData = caseData();
-        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
         caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

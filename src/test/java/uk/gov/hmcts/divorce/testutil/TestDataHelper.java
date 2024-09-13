@@ -1166,7 +1166,11 @@ public class TestDataHelper {
                 UUID.randomUUID().toString(),
                 DivorceDocument
                     .builder()
-                    .documentLink(Document.builder().filename("dummy.file").build())
+                    .documentLink(Document.builder()
+                        .url("http://localhost:4200/assets/d11")
+                        .filename("dummy.file")
+                        .binaryUrl("dummy.file/binary")
+                        .build())
                     .build()
             );
             docList.add(documentListValue);

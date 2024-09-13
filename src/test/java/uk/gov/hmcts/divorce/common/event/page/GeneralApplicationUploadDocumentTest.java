@@ -14,9 +14,9 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneralApplicationUploadDocumentTest {
