@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationRespon
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorRespondRequestForInformation.MUST_ADD_DOCS_OR_DESCRIPTION_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorRespondRequestForInformation.SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorRespondRequestForInformation.UNABLE_TO_SUBMIT_RESPONSE_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -73,6 +74,41 @@ class SolicitorRespondRequestForInformationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION);
+    }
+
+    @Test
+    void shouldReturnErrorIfNoDescriptionOrDocuments() {
+        final CaseDetails<CaseData, State> caseDetails = getCaseDetails();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorRespondRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(MUST_ADD_DOCS_OR_DESCRIPTION_ERROR);
+    }
+
+    @Test
+    void shouldNotReturnErrorIfDocumentsButNoDescription() {
+        final CaseDetails<CaseData, State> caseDetails = getCaseDetails();
+        final CaseData caseData = caseDetails.getData();
+        addDocumentToResponse(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorRespondRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldNotReturnErrorIfDescriptionButNoDocuments() {
+        final CaseDetails<CaseData, State> caseDetails = getCaseDetails();
+        final CaseData caseData = caseDetails.getData();
+        caseData.getRequestForInformationList().getRequestForInformationResponse().setRequestForInformationResponseDetails(TEST_TEXT);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorRespondRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
