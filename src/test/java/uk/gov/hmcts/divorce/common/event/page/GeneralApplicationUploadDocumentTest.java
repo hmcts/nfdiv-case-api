@@ -43,6 +43,25 @@ public class GeneralApplicationUploadDocumentTest {
     }
 
     @Test
+    public void shouldReturnErrorIfDocumentsUploadedExceedsMaxNumber() {
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralApplication(GeneralApplication.builder()
+            .generalApplicationDocuments(getListOfDivorceDocumentListValue(11))
+            .build()
+        );
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains("Maximum uploads allowed for event is 10");
+    }
+
+    @Test
     public void shouldNotReturnErrorIfDocumentIsUploadedAndWellFormed() {
         final CaseData caseData = caseData();
 

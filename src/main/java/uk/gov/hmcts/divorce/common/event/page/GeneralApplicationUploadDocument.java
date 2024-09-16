@@ -20,6 +20,9 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
 
     private static final String GENERAL_APPLICATION_DOCUMENT_ERROR = "Please upload a document in order to continue";
+    private static final int GENERAL_APPLICATION_MAX_NUMBER = 10;
+    private static final String GENERAL_APPLICATION_MAX_NUMBER_ERROR =
+        String.format("Maximum uploads allowed for event is %d",GENERAL_APPLICATION_MAX_NUMBER);
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -41,6 +44,12 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(GENERAL_APPLICATION_DOCUMENT_ERROR))
+                .build();
+        }
+
+        if (generalApplication.getGeneralApplicationDocuments().size() > GENERAL_APPLICATION_MAX_NUMBER) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(GENERAL_APPLICATION_MAX_NUMBER_ERROR))
                 .build();
         }
 
