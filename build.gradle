@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.2.3'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.10'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1356'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1358'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -324,7 +324,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.46.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.47.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 }
 
