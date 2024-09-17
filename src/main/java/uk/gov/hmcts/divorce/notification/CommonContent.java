@@ -258,6 +258,7 @@ public class CommonContent {
         final boolean jointApplication = !caseData.getApplicationType().isSole();
 
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
+        templateVars.put(IS_SOLE, jointApplication ? NO : YES);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
             && MALE.equals(partner.getGender())
