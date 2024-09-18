@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.event.CaseworkerResponseToServiceApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -15,9 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerResponseToServiceApplication.CASEWORKER_RESPONSE_TO_SERVICE_APPLICATION;
@@ -203,5 +207,88 @@ class CaseworkerResponseToServiceApplicationTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorIfAttachedDocumentsExceedsMaxNumberAllowed() {
+
+        CaseData caseData = CaseData.builder()
+            .alternativeService(AlternativeService
+                .builder()
+                .alternativeServiceType(DISPENSED)
+                .serviceApplicationDocuments(getListOfDivorceDocument(6))
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains("Maximum supported uploads is 5");
+    }
+
+    @Test
+    void shouldNotReturnErrorIfAttachedDocumentsIsWithinMaxNumberAllowed() {
+
+        CaseData caseData = CaseData.builder()
+            .alternativeService(AlternativeService
+                .builder()
+                .alternativeServiceType(DISPENSED)
+                .serviceApplicationDocuments(getListOfDivorceDocument(2))
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.midEvent(details, details);
+
+        assertThat(response.getErrors()).isEmpty();
+    }
+
+    @Test
+    void shouldAddAttachedDocumentsToCaseDocuments() {
+        CaseData caseData = CaseData.builder()
+            .alternativeService(AlternativeService
+                .builder()
+                .alternativeServiceType(DISPENSED)
+                .serviceApplicationDocuments(getListOfDivorceDocument(2))
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToSubmit(
+            details,
+            CaseDetails.<CaseData, State>builder().build()
+        );
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+    }
+
+    private List<ListValue<DivorceDocument>> getListOfDivorceDocument(int size) {
+        List<ListValue<DivorceDocument>> docList = new ArrayList<>();
+        while (size > 0) {
+            ListValue<DivorceDocument> documentListValue = new ListValue<>(
+                UUID.randomUUID().toString(),
+                DivorceDocument
+                    .builder()
+                    .documentLink(Document.builder().filename("dummy.file").build())
+                    .build()
+            );
+            docList.add(documentListValue);
+            size--;
+        }
+        return docList;
     }
 }
