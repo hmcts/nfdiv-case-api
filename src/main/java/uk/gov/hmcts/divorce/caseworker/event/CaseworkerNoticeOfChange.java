@@ -247,12 +247,14 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
     private void updateSolicitorInformation(CaseData data, UserRole orgPolicyCaseAssignedRole, Applicant applicant) {
         if (!YesOrNo.YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
-            Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(new Solicitor(), orgPolicyCaseAssignedRole);
+            Solicitor solicitor = changeOfRepresentativeService.solicitorWithDefaultOrganisationPolicy(
+                new Solicitor(), orgPolicyCaseAssignedRole);
             applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(NO);
             applicant.setOffline(YES);
         } else if (!YesOrNo.YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
-            Solicitor solicitor = solicitorWithDefaultOrganisationPolicy(applicant.getSolicitor(), orgPolicyCaseAssignedRole);
+            Solicitor solicitor = changeOfRepresentativeService.solicitorWithDefaultOrganisationPolicy(
+                applicant.getSolicitor(), orgPolicyCaseAssignedRole);
             applicant.setSolicitor(solicitor);
             applicant.setSolicitorRepresented(YES);
             applicant.setOffline(YES);
@@ -328,16 +330,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (applicant != null && applicant.getSolicitor() != null) {
             applicant.getSolicitor().setAddress(null);
         }
-    }
-
-    private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
-        OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
-            .orgPolicyCaseAssignedRole(role)
-            .organisation(new Organisation(null, null))
-            .build();
-
-        solicitor.setOrganisationPolicy(defaultOrgPolicy);
-        return solicitor;
     }
 
 }

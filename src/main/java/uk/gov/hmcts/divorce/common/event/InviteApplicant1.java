@@ -71,8 +71,6 @@ public class InviteApplicant1 implements CCDConfig<CaseData, State, UserRole> {
         if (!data.getApplicant1().isRepresented()) {
 
             log.info("Applicant 1 is not represented processing case data validation");
-            //TODO do i need other validation
-            // final List<String> validationErrors = validateApplicant1BasicCase(data);
             if (null == data.getApplicant1().getEmail()) {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(data)

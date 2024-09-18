@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 import uk.gov.hmcts.divorce.noticeofchange.model.Representative;
@@ -65,10 +67,8 @@ public class ChangeOfRepresentativeService {
                 .getOrganisationByUserId(sysUserToken, s2sToken, nocRequestingUser.getUserIdentifier());
             orgToAdd.setOrganisationName(nocSolicitorOrg.getName());
 
-            Solicitor beforeSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();;
-            if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
-                removedRepresentative = updateRepresentative(beforeSolicitor);
-            }
+            Solicitor beforeSolicitor = isApplicant1 ? caseData.getApplicant1().getSolicitor()  : caseData.getApplicant2().getSolicitor();
+            removedRepresentative = updateRemovedRepresentative(beforeSolicitor, removedRepresentative);
             updateOrgPolicyAndSolicitorDetails(currentSolicitor,  nocSolicitorOrg, nocRequestingUser, loggedInUserEmail);
             setApplicantRepresented(isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2());
             updatedBy = String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName());
@@ -79,14 +79,19 @@ public class ChangeOfRepresentativeService {
                     : beforeCaseData.getApplicant2().getSolicitor();
             updatedBy = userDetails.getName();
             addedRepresentative = updateRepresentative(currentSolicitor);
-            if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
-                removedRepresentative = updateRepresentative(beforeSolicitor);
-            }
+            removedRepresentative = updateRemovedRepresentative(beforeSolicitor, removedRepresentative);
         }
 
         updateChangeOfRepresentativeTab(caseData, clientName, updatedBy,
                 updatedVia, addedRepresentative,
                 removedRepresentative, getParty(isApplicant1, caseData.getApplicationType()));
+    }
+
+    private Representative updateRemovedRepresentative(Solicitor beforeSolicitor, Representative removedRepresentative) {
+        if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {
+            removedRepresentative = updateRepresentative(beforeSolicitor);
+        }
+        return removedRepresentative;
     }
 
     private String getParty(boolean isApplicant1, ApplicationType applicationType) {
@@ -168,5 +173,15 @@ public class ChangeOfRepresentativeService {
                 .build()));
         Collections.reverse(representatives);
         caseData.setChangeOfRepresentatives(representatives);
+    }
+
+    public Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
+        OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
+            .orgPolicyCaseAssignedRole(role)
+            .organisation(new Organisation(null, null))
+            .build();
+
+        solicitor.setOrganisationPolicy(defaultOrgPolicy);
+        return solicitor;
     }
 }
