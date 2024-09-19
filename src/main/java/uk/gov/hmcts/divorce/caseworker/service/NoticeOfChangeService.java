@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -27,6 +29,7 @@ public class NoticeOfChangeService {
     private final SolicitorValidationService solicitorValidationService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
+    private final OrganisationClient organisationClient;
 
     public void revokeCaseAccess(Long caseId, Applicant applicant, List<String> roles) {
         log.info("Revoking case access for roles {} for case {}", roles, caseId);
@@ -90,7 +93,8 @@ public class NoticeOfChangeService {
                                                        String solicitorRole) {
         log.info("Applying Notice of Change Decision and granting access to new sol for case {}", caseId);
 
-        final String solicitorId = getSolicitorId(caseId, applicant.getSolicitor());
+        final Solicitor newSolicitor = applicant.getSolicitor();
+        final String newSolicitorId = getSolicitorId(caseId, newSolicitor);
         final boolean wasPreviousRepresentationDigital = ccdAccessService.getCaseAssignmentUserRoles(caseId).stream()
             .anyMatch(userRole -> userRole.getCaseRole().equals(solicitorRole));
 
@@ -100,8 +104,15 @@ public class NoticeOfChangeService {
         }
 
 
-        if (StringUtils.isNotBlank(solicitorId)) {
-            grantCaseAccessForNewSol(caseId, applicant, solicitorId, UserRole.fromString(solicitorRole));
+        if (StringUtils.isBlank(newSolicitorId)) {
+            return;
+        }
+
+        grantCaseAccessForNewSol(caseId, applicant, newSolicitorId, UserRole.fromString(solicitorRole));
+
+        if (newSolicitor.getAddress() == null) {
+            OrganisationsResponse organisationDetails = getSolicitorOrganisationDetails(newSolicitorId);
+            newSolicitor.setAddressToDefaultOrganisationAddress(organisationDetails);
         }
     }
 
@@ -148,5 +159,11 @@ public class NoticeOfChangeService {
         }
 
         return userId;
+    }
+
+    private OrganisationsResponse getSolicitorOrganisationDetails(String solicitorId) {
+        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
+        return organisationClient.getOrganisationByUserId(sysUserToken, s2sToken, solicitorId);
     }
 }

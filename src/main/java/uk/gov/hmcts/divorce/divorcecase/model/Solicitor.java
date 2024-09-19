@@ -19,7 +19,11 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -28,6 +32,7 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
 
 @Data
 @AllArgsConstructor
@@ -122,6 +127,22 @@ public class Solicitor {
             .map(OrganisationPolicy::getOrganisation)
             .map(Organisation::getOrganisationId)
             .orElse(null);
+    }
+
+    @JsonIgnore
+    public void setAddressToDefaultOrganisationAddress(OrganisationsResponse organisationResponse) {
+        if (organisationResponse == null) {
+            return;
+        }
+        List<OrganisationContactInformation> contactInformation = organisationResponse.getContactInformation();
+
+        if (Objects.nonNull(contactInformation) && !contactInformation.isEmpty()) {
+            setAddress(parseOrganisationAddress(contactInformation));
+        } else {
+            setAddress(null);
+        }
+
+        setAddressOverseas(null);
     }
 
     public String getAddress() {

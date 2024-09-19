@@ -108,17 +108,9 @@ public class ChangeOfRepresentativeService {
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
         applicantSolicitor.setFirmName(nocRequestingUserOrg.getName());
-
-        List<OrganisationContactInformation> contactInformation = nocRequestingUserOrg.getContactInformation();
-        if (Objects.nonNull(contactInformation) && !contactInformation.isEmpty()) {
-            applicantSolicitor.setAddress(parseOrganisationAddress(contactInformation));
-        } else {
-            applicantSolicitor.setAddress(null);
-        }
-
+        applicantSolicitor.setAddressToDefaultOrganisationAddress(nocRequestingUserOrg);
         applicantSolicitor.setAgreeToReceiveEmailsCheckbox(Collections.emptySet());
         applicantSolicitor.setReference(null);
-        applicantSolicitor.setAddressOverseas(null);
         applicantSolicitor.setPhone(null);
     }
 
