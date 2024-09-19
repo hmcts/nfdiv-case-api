@@ -3,8 +3,13 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 
 class SolicitorTest {
 
@@ -129,5 +134,44 @@ class SolicitorTest {
 
         assertThat(solicitor1.getOrganisationId()).isEqualTo(null);
         assertThat(solicitor2.getOrganisationId()).isEqualTo(null);
+    }
+
+//    OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
+//        .name(TEST_ORG_NAME)
+//        .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
+//        .build();
+
+    @Test
+    void shouldHandleNullWhenSettingAddressToMatchOrgAddress() {
+        final Solicitor solicitor = Solicitor.builder().build();
+
+        solicitor.setAddressToDefaultOrganisationAddress(null);
+
+        assertThat(solicitor.getAddress()).isEqualTo(null);
+    }
+
+    @Test
+    void shouldHandleMissingOrgContactInformationWhenSettingSolAddressToMatchOrgAddress() {
+        final OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
+            .contactInformation(null)
+            .build();
+        final Solicitor solicitor = Solicitor.builder().build();
+
+        solicitor.setAddressToDefaultOrganisationAddress(organisationResponse);
+
+        assertThat(solicitor.getAddress()).isEqualTo(null);
+    }
+
+    @Test
+    void shouldSetSolAddressWhenOrgContactInformationIsPresent() {
+        final OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
+            .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
+            .build();
+        final Solicitor solicitor = Solicitor.builder().build();
+
+        solicitor.setAddressToDefaultOrganisationAddress(organisationResponse);
+
+        assertThat(solicitor.getAddress()).isEqualTo(TEST_SOLICITOR_ADDRESS);
+        assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
     }
 }
