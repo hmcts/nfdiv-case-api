@@ -97,9 +97,9 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
             data.getRequestForInformationList().getRequestForInformationResponse();
 
         if (isApplicant1Solicitor(details.getId())) {
-            requestForInformationResponse.setValues(data.getApplicant1(), APPLICANT1SOLICITOR);
+            requestForInformationResponse.setValues(data, APPLICANT1SOLICITOR);
         } else if (isApplicant2Solicitor(details.getId())) {
-            requestForInformationResponse.setValues(data.getApplicant2(), APPLICANT2SOLICITOR);
+            requestForInformationResponse.setValues(data, APPLICANT2SOLICITOR);
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(UNABLE_TO_SUBMIT_RESPONSE_ERROR + details.getId()))

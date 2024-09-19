@@ -18,6 +18,9 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 
 @Data
 @Builder
@@ -69,10 +72,19 @@ public class RequestForInformationResponse {
     private List<ListValue<DivorceDocument>> requestForInformationResponseDocs;
 
     @JsonIgnore
-    public void setValues(Applicant applicant, RequestForInformationResponseParties party) {
+    public void setValues(CaseData caseData, RequestForInformationResponseParties party) {
+        final Applicant applicant = party.equals(APPLICANT1) || party.equals(APPLICANT1SOLICITOR)
+            ? caseData.getApplicant1()
+            : caseData.getApplicant2();
+        final String name = party.equals(APPLICANT1SOLICITOR) || party.equals(APPLICANT2SOLICITOR)
+            ? applicant.getSolicitor().getName()
+            : applicant.getFullName();
+        final String email = party.equals(APPLICANT1SOLICITOR) || party.equals(APPLICANT2SOLICITOR)
+            ? applicant.getSolicitor().getEmail()
+            : applicant.getEmail();
         this.setRequestForInformationResponseParties(party);
-        this.setRequestForInformationResponseName(applicant.getSolicitor().getName());
-        this.setRequestForInformationResponseEmailAddress(applicant.getSolicitor().getEmail());
+        this.setRequestForInformationResponseName(name);
+        this.setRequestForInformationResponseEmailAddress(email);
         this.setRequestForInformationResponseDateTime(LocalDateTime.now());
     }
 }

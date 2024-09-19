@@ -376,7 +376,7 @@ class SolicitorRespondRequestForInformationTest {
         RequestForInformationResponse requestForInformationResponse =
             caseData.getRequestForInformationList().getRequestForInformationResponse();
         requestForInformationResponse.setValues(
-            applicant,
+            caseData,
             caseData.getApplicant1().equals(applicant) ? APPLICANT1SOLICITOR : APPLICANT2SOLICITOR
         );
         requestForInformationResponse.setRequestForInformationResponseDetails(TEST_TEXT);
