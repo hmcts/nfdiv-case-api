@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -65,6 +66,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 Holding,
                 AwaitingDocuments,
                 InformationRequested,
+                RequestedInformationSubmitted,
                 AwaitingService,
                 AwaitingDwpResponse,
                 AwaitingJsNullity

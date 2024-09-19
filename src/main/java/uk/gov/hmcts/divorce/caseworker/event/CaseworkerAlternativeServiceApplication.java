@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsid
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -63,6 +64,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
                 Submitted,
                 AwaitingDocuments,
                 InformationRequested,
+                RequestedInformationSubmitted,
                 GeneralApplicationReceived
             )
             .name("Service application received")

@@ -38,6 +38,14 @@ public class RequestForInformationList {
     @JsonUnwrapped
     private RequestForInformation requestForInformation = new RequestForInformation();
 
+    @CCD(
+        label = "Request for information response",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    @JsonUnwrapped
+    private RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+
     @JsonIgnore
     public RequestForInformation getLatestRequest() {
         return this.getRequestsForInformation().get(0).getValue();

@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -43,6 +44,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
                 AwaitingHWFDecision,
                 AwaitingDocuments,
                 InformationRequested,
+                RequestedInformationSubmitted,
                 AwaitingHWFEvidence
             )
             .name("Payment made")

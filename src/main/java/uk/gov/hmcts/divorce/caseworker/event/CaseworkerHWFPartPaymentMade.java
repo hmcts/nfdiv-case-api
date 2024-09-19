@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -41,7 +42,13 @@ public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_PART_PAYMENT_MADE)
             .forStateTransition(
-                EnumSet.of(AwaitingDocuments, InformationRequested, AwaitingHWFPartPayment, AwaitingHWFEvidence),
+                EnumSet.of(
+                    AwaitingDocuments,
+                    InformationRequested,
+                    RequestedInformationSubmitted,
+                    AwaitingHWFPartPayment,
+                    AwaitingHWFEvidence
+                ),
                 Submitted
             )
             .name(EVENT_NAME_AND_DESCRIPTION)
