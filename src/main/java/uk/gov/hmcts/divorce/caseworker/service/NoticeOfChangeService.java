@@ -93,8 +93,8 @@ public class NoticeOfChangeService {
                                                        String solicitorRole) {
         log.info("Applying Notice of Change Decision and granting access to new sol for case {}", caseId);
 
-        final Solicitor newSolicitor = applicant.getSolicitor();
-        final String newSolicitorId = getSolicitorId(caseId, newSolicitor);
+        final Solicitor solicitor = applicant.getSolicitor();
+        final String solicitorId = getSolicitorId(caseId, solicitor);
         final boolean wasPreviousRepresentationDigital = ccdAccessService.getCaseAssignmentUserRoles(caseId).stream()
             .anyMatch(userRole -> userRole.getCaseRole().equals(solicitorRole));
 
@@ -104,15 +104,15 @@ public class NoticeOfChangeService {
         }
 
 
-        if (StringUtils.isBlank(newSolicitorId)) {
+        if (StringUtils.isBlank(solicitorId)) {
             return;
         }
 
-        grantCaseAccessForNewSol(caseId, applicant, newSolicitorId, UserRole.fromString(solicitorRole));
+        grantCaseAccessForNewSol(caseId, applicant, solicitorId, UserRole.fromString(solicitorRole));
 
-        if (newSolicitor.getAddress() == null) {
-            OrganisationsResponse organisationDetails = getSolicitorOrganisationDetails(newSolicitorId);
-            newSolicitor.setAddressToDefaultOrganisationAddress(organisationDetails);
+        if (solicitor.getAddress() == null) {
+            OrganisationsResponse organisationDetails = getSolicitorOrganisationDetails(solicitorId);
+            solicitor.setAddressToOrganisationDefault(organisationDetails);
         }
     }
 

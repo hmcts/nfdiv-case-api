@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -19,11 +20,8 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -130,18 +128,12 @@ public class Solicitor {
     }
 
     @JsonIgnore
-    public void setAddressToDefaultOrganisationAddress(OrganisationsResponse organisationResponse) {
-        if (organisationResponse == null) {
-            return;
-        }
-        List<OrganisationContactInformation> contactInformation = organisationResponse.getContactInformation();
-
-        if (Objects.nonNull(contactInformation) && !contactInformation.isEmpty()) {
-            setAddress(parseOrganisationAddress(contactInformation));
-        } else {
+    public void setAddressToOrganisationDefault(OrganisationsResponse organisationResponse) {
+        if (organisationResponse == null || CollectionUtils.isEmpty(organisationResponse.getContactInformation())) {
             setAddress(null);
+        } else {
+            setAddress(parseOrganisationAddress(organisationResponse.getContactInformation()));
         }
-
         setAddressOverseas(null);
     }
 

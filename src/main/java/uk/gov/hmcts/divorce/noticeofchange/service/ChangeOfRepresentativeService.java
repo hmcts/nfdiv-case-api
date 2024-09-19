@@ -105,7 +105,7 @@ public class ChangeOfRepresentativeService {
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
         applicantSolicitor.setFirmName(nocRequestingUserOrg.getName());
-        applicantSolicitor.setAddressToDefaultOrganisationAddress(nocRequestingUserOrg);
+        applicantSolicitor.setAddressToOrganisationDefault(nocRequestingUserOrg);
         applicantSolicitor.setAgreeToReceiveEmailsCheckbox(Collections.emptySet());
         applicantSolicitor.setReference(null);
         applicantSolicitor.setPhone(null);

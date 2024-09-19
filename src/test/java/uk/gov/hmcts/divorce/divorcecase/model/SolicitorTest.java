@@ -136,40 +136,37 @@ class SolicitorTest {
         assertThat(solicitor2.getOrganisationId()).isEqualTo(null);
     }
 
-//    OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
-//        .name(TEST_ORG_NAME)
-//        .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
-//        .build();
-
     @Test
-    void shouldHandleNullWhenSettingAddressToMatchOrgAddress() {
+    void shouldHandleNullOrganisationResponseWhenSettingAddressToMatchOrganisation() {
         final Solicitor solicitor = Solicitor.builder().build();
 
-        solicitor.setAddressToDefaultOrganisationAddress(null);
+        solicitor.setAddressToOrganisationDefault(null);
 
         assertThat(solicitor.getAddress()).isEqualTo(null);
+        assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
     }
 
     @Test
-    void shouldHandleMissingOrgContactInformationWhenSettingSolAddressToMatchOrgAddress() {
+    void shouldHandleMissingContactInformationWhenSettingSolAddressToMatchOrganisation() {
         final OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
             .contactInformation(null)
             .build();
         final Solicitor solicitor = Solicitor.builder().build();
 
-        solicitor.setAddressToDefaultOrganisationAddress(organisationResponse);
+        solicitor.setAddressToOrganisationDefault(organisationResponse);
 
         assertThat(solicitor.getAddress()).isEqualTo(null);
+        assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
     }
 
     @Test
-    void shouldSetSolAddressWhenOrgContactInformationIsPresent() {
+    void shouldSetSolAddressWhenOrganisationContactInformationIsPresent() {
         final OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
             .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
             .build();
         final Solicitor solicitor = Solicitor.builder().build();
 
-        solicitor.setAddressToDefaultOrganisationAddress(organisationResponse);
+        solicitor.setAddressToOrganisationDefault(organisationResponse);
 
         assertThat(solicitor.getAddress()).isEqualTo(TEST_SOLICITOR_ADDRESS);
         assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
