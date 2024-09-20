@@ -78,6 +78,7 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
             .pageLabel("Submit response for RFI")
             .complex(CaseData::getRequestForInformationList)
                 .complex(RequestForInformationList::getRequestForInformationResponse)
+                    .readonly(RequestForInformationResponse::getRequestForInformationResponseDocs)
                     .readonly(RequestForInformationResponse::getRequestForInformationResponseDetails)
                 .done()
             .done();
