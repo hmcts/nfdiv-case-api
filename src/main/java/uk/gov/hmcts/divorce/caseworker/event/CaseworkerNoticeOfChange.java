@@ -254,9 +254,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
                 safelySetAddress(data.getApplicant1(), beforeData.getApplicant1());
             }
-            if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
-                safelyClearSolicitorAddress(data.getApplicant1());
-            }
 
             setSolicitorFirmName(data.getApplicant1());
         } else {
@@ -264,9 +261,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             safelySetAddress(data.getApplicant1(), beforeData.getApplicant1());
             if (YES.equals(data.getNoticeOfChange().getAreTheyRepresented())) {
                 safelySetAddress(data.getApplicant2(), beforeData.getApplicant2());
-            }
-            if (YES.equals(data.getNoticeOfChange().getAreTheyDigital())) {
-                safelyClearSolicitorAddress(data.getApplicant2());
             }
 
             setSolicitorFirmName(data.getApplicant2());
