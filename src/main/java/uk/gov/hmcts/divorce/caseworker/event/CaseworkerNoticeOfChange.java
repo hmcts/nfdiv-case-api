@@ -296,12 +296,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         }
     }
 
-    private void safelyClearSolicitorAddress(Applicant applicant) {
-        if (applicant != null && applicant.getSolicitor() != null) {
-            applicant.getSolicitor().setAddress(null);
-        }
-    }
-
     private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
         OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
             .orgPolicyCaseAssignedRole(role)
