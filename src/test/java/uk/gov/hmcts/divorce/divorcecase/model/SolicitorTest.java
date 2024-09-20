@@ -137,7 +137,7 @@ class SolicitorTest {
     }
 
     @Test
-    void shouldHandleNullOrganisationResponseWhenSettingAddressToMatchOrganisation() {
+    void shouldHandleNullOrganisationResponseWhenSettingAddressToOrganisationDefault() {
         final Solicitor solicitor = Solicitor.builder().build();
 
         solicitor.setAddressToOrganisationDefault(null);
@@ -147,7 +147,7 @@ class SolicitorTest {
     }
 
     @Test
-    void shouldHandleMissingContactInformationWhenSettingSolAddressToMatchOrganisation() {
+    void shouldHandleMissingContactInformationWhenSettingAddressToOrganisationDefault() {
         final OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
             .contactInformation(null)
             .build();
@@ -160,7 +160,7 @@ class SolicitorTest {
     }
 
     @Test
-    void shouldSetSolAddressWhenOrganisationContactInformationIsPresent() {
+    void shouldSetAddressWhenOrganisationContactInformationIsPresent() {
         final OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
             .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
             .build();
