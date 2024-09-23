@@ -244,6 +244,12 @@ public class FinalOrder {
     private OrderSummary applicant2FinalOrderFeeOrderSummary;
 
     @CCD(
+        label = "Final Order Fee Service Request Reference",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2FinalOrderFeeServiceRequestReference;
+
+    @CCD(
         label = "Respondent final order fee (in pounds)",
         access = {DefaultAccess.class, Applicant2Access.class}
     )

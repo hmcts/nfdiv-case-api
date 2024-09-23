@@ -13,11 +13,14 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceReferenceRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -69,12 +72,16 @@ public class PaymentService {
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
     public static final String CA_E0003 = "CA-E0003";
+    private static final String HMCTS_ORG_ID = "ABA1";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
 
     @Autowired
     private FeesAndPaymentsClient feesAndPaymentsClient;
+
+    @Autowired
+    private PaymentClient paymentClient;
 
     @Autowired
     private PaymentPbaClient paymentPbaClient;
@@ -84,6 +91,55 @@ public class PaymentService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    public Optional<String> createServiceRequestReference(
+        CaseData caseData,
+        Long caseId,
+        String responsibleParty,
+        OrderSummary orderSummary
+    ) {
+
+        log.info("Creating service request reference for case id {}", caseId);
+
+        String callbackUrl = caseData.getCitizenPaymentCallbackUrl();
+        final Fee fee = getFeeValue(orderSummary);
+        List<PaymentItem> paymentItemList = populateFeesPaymentItems(
+            caseId,
+            orderSummary.getPaymentTotal(),
+            fee,
+            caseData.getApplication().getFeeAccountReference()
+        );
+
+        try {
+            var serviceReferenceResponse = paymentClient.createServiceReference(
+                httpServletRequest.getHeader(AUTHORIZATION),
+                authTokenGenerator.generate(),
+                createServiceReferenceRequest(callbackUrl, caseId, responsibleParty, paymentItemList)
+            );
+
+            String serviceReference = Optional.ofNullable(serviceReferenceResponse)
+                .map(response ->
+                    Optional.ofNullable(response.getBody())
+                        .map(ServiceReferenceResponse::getServiceRequestReference)
+                        .orElseGet(() -> null)
+                )
+                .orElseGet(() -> null);
+
+            log.info("Successfully created service request reference {} for case id {}", serviceReference, caseId);
+
+            if (serviceReference != null) {
+                Optional.of(serviceReference);
+            }
+
+        } catch (FeignException exception) {
+            log.error("Failed to create service request reference for case id {}, error: {}",
+                caseId,
+                exception.getMessage()
+            );
+        }
+
+        return Optional.empty();
+    }
 
     public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
         final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
@@ -293,6 +349,26 @@ public class PaymentService {
         creditAccountPaymentRequest.setFees(paymentItemList);
 
         return creditAccountPaymentRequest;
+    }
+
+    private CreateServiceReferenceRequest createServiceReferenceRequest(
+        String callBackUrl,
+        Long caseId,
+        String responsibleParty,
+        List<PaymentItem> paymentItemList
+    ) {
+        return CreateServiceReferenceRequest.builder()
+            .ccdCaseNumber(caseId)
+            .caseReference(caseId)
+            .callBackUrl(callBackUrl)
+            .hmctsOrgId(HMCTS_ORG_ID)
+            .fees(paymentItemList)
+            .casePaymentRequest(
+                CasePaymentRequest.builder()
+                    .responsibleParty(responsibleParty)
+                    .action("payment")
+                    .build()
+            ).build();
     }
 
     private List<PaymentItem> populateFeesPaymentItems(
