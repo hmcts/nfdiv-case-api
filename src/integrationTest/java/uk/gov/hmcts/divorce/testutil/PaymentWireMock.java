@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -12,9 +13,11 @@ import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceReferenceRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
+import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.OrganisationEntityResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaOrganisationResponse;
 
@@ -35,6 +38,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 
@@ -58,6 +63,22 @@ public final class PaymentWireMock {
             PAYMENTS_SERVER.stop();
             PAYMENTS_SERVER.resetAll();
         }
+    }
+
+    public static void stubCreateServiceRequest(HttpStatus status, CreateServiceReferenceRequest request) throws JsonProcessingException {
+        OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        PAYMENTS_SERVER.stubFor(post("/service-request")
+            .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
+            .withRequestBody(new EqualToJsonPattern(OBJECT_MAPPER.writeValueAsString(request), true, true))
+            .willReturn(aResponse()
+                .withStatus(status.value())
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .withBody(OBJECT_MAPPER.writeValueAsString(
+                    ServiceReferenceResponse.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build())
+                ))
+        );
     }
 
     public static void stubCreditAccountPayment(HttpStatus status, CreditAccountPaymentResponse response) throws JsonProcessingException {

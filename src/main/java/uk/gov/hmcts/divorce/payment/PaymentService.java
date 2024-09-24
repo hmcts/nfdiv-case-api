@@ -26,6 +26,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -72,7 +73,8 @@ public class PaymentService {
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
     public static final String CA_E0003 = "CA-E0003";
-    private static final String HMCTS_ORG_ID = "ABA1";
+    public static final String HMCTS_ORG_ID = "ABA1";
+    private static final String ERROR_SERVICE_REF_REQUEST = "Failed to create service reference for case: %s";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -92,53 +94,53 @@ public class PaymentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public Optional<String> createServiceRequestReference(
-        CaseData caseData,
+    public static class PaymentServiceException extends RuntimeException {
+        public PaymentServiceException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    public String createServiceRequestReference(
+        String callbackUrl,
         Long caseId,
         String responsibleParty,
         OrderSummary orderSummary
     ) {
-
-        log.info("Creating service request reference for case id {}", caseId);
-
-        String callbackUrl = caseData.getCitizenPaymentCallbackUrl();
-        final Fee fee = getFeeValue(orderSummary);
-        List<PaymentItem> paymentItemList = populateFeesPaymentItems(
-            caseId,
-            orderSummary.getPaymentTotal(),
-            fee,
-            caseData.getApplication().getFeeAccountReference()
-        );
-
         try {
+            log.info("Creating service request reference for case id: {}", caseId);
+
+            final Fee fee = getFeeValue(orderSummary);
+            final PaymentItem paymentItem = PaymentItem
+                .builder()
+                .ccdCaseNumber(String.valueOf(caseId))
+                .calculatedAmount(penceToPounds(orderSummary.getPaymentTotal()))
+                .code(fee.getCode())
+                .version(fee.getVersion())
+                .build();
+
             var serviceReferenceResponse = paymentClient.createServiceReference(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                createServiceReferenceRequest(callbackUrl, caseId, responsibleParty, paymentItemList)
+                createServiceReferenceRequest(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
             );
 
             String serviceReference = Optional.ofNullable(serviceReferenceResponse)
                 .map(response ->
                     Optional.ofNullable(response.getBody())
                         .map(ServiceReferenceResponse::getServiceRequestReference)
-                        .orElseGet(() -> null)
+                        .filter(serviceRef -> !serviceRef.isEmpty())
+                        .orElseThrow()
                 )
-                .orElseGet(() -> null);
+                .orElseThrow();
 
-            log.info("Successfully created service request reference {} for case id {}", serviceReference, caseId);
+            log.info("Successfully created service request reference: {}, for case id: {}", serviceReference, caseId);
 
-            if (serviceReference != null) {
-                Optional.of(serviceReference);
-            }
+            return serviceReference;
+        } catch (FeignException | NoSuchElementException e) {
+            log.error("Failed to create service request reference for case id: {}, error: {}", caseId, e.getMessage());
 
-        } catch (FeignException exception) {
-            log.error("Failed to create service request reference for case id {}, error: {}",
-                caseId,
-                exception.getMessage()
-            );
+            throw new PaymentServiceException(String.format(ERROR_SERVICE_REF_REQUEST, caseId), e);
         }
-
-        return Optional.empty();
     }
 
     public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {

@@ -43,6 +43,7 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+        request.put("citizenPaymentCallbackUrl", "payment-callback");
 
         Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
 
@@ -76,6 +77,7 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
     public void shouldPassValidationAndGiveSuccessWhenApplicant1AppliesAsJointApplication() throws IOException {
         Map<String, Object> request = caseData(REQUEST_JOINT);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+        request.put("citizenPaymentCallbackUrl", "payment-callback");
 
         Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
 

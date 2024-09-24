@@ -15,9 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
@@ -91,19 +89,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
-            application.setApplicationFeeOrderSummary(orderSummary);
-
-            String partyMakingPayment = data.getApplicant1().getFullName();
-            Optional<String> serviceRequest = paymentService.createServiceRequestReference(
-                data, details.getId(), partyMakingPayment, orderSummary
-            );
-            if (serviceRequest.isEmpty()) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(Collections.singletonList("Failed to create service request"))
-                    .build();
-            }
-            application.setApplicationFeeServiceRequestReference(SERVICE_DIVORCE);
+            setOrderSummaryAndServiceRequestReference(data, details.getId());
 
             state = AwaitingPayment;
         }
@@ -117,5 +103,19 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
+    private void setOrderSummaryAndServiceRequestReference(CaseData data, Long caseId) {
+        Application application = data.getApplication();
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
+        application.setApplicationFeeOrderSummary(orderSummary);
+
+        if (application.getApplicationFeeServiceRequestReference() == null) {
+            final String paymentCallbackUrl = data.getCitizenPaymentCallbackUrl();
+            final String responsibleParty = data.getApplicant1().getFullName();
+            final String serviceRequestReference = paymentService.createServiceRequestReference(
+                paymentCallbackUrl, caseId, responsibleParty, orderSummary
+            );
+            application.setApplicationFeeServiceRequestReference(serviceRequestReference);
+        }
+    }
 }
 
