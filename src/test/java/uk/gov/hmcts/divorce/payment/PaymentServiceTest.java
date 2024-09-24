@@ -18,10 +18,12 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceReferenceRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -68,6 +70,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
@@ -89,6 +92,9 @@ public class PaymentServiceTest {
 
     @Mock
     private PaymentPbaClient paymentPbaClient;
+
+    @Mock
+    private PaymentClient paymentClient;
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -204,6 +210,26 @@ public class PaymentServiceTest {
         assertThatThrownBy(() -> paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_INVALID))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
+    }
+
+    @Test
+    public void shouldCreateServiceRequests() {
+        var serviceRefResponse = ServiceReferenceResponse.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        when(paymentClient.createServiceReference(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CreateServiceReferenceRequest.class)
+            )
+        ).thenReturn(ResponseEntity.ok().body(serviceRefResponse));
+
+        String result = paymentService.createServiceRequestReference(
+            "payment-callback", TEST_CASE_ID, "respondent", orderSummaryWithFee()
+        );
+
+        assertThat(result).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
     @Test
