@@ -89,7 +89,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            setOrderSummaryAndServiceRequestReference(data, details.getId());
+            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
+                EVENT_ISSUE,KEYWORD_DIVORCE);
+            application.setApplicationFeeOrderSummary(orderSummary);
 
             state = AwaitingPayment;
         }
@@ -103,19 +105,5 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private void setOrderSummaryAndServiceRequestReference(CaseData data, Long caseId) {
-        Application application = data.getApplication();
-        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
-        application.setApplicationFeeOrderSummary(orderSummary);
-
-        if (application.getApplicationFeeServiceRequestReference() == null) {
-            final String paymentCallbackUrl = data.getCitizenPaymentCallbackUrl();
-            final String responsibleParty = data.getApplicant1().getFullName();
-            final String serviceRequestReference = paymentService.createServiceRequestReference(
-                paymentCallbackUrl, caseId, responsibleParty, orderSummary
-            );
-            application.setApplicationFeeServiceRequestReference(serviceRequestReference);
-        }
-    }
 }
 
