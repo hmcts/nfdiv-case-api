@@ -37,8 +37,8 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
             .event(CITIZEN_CREATE_SERVICE_REQUEST)
             .forStates(AwaitingPayment, AwaitingFinalOrderPayment)
             .showCondition(NEVER_SHOW)
-            .name("Create Service Request for Payment")
-            .description("Create Service Request for Payment")
+            .name("Create Payment Service Request")
+            .description("Create Payment Service Request")
             .grant(CREATE_READ_UPDATE, CITIZEN)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

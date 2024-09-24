@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
-import uk.gov.hmcts.divorce.payment.model.CreateServiceReferenceRequest;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
@@ -118,10 +118,10 @@ public class PaymentService {
                 .version(fee.getVersion())
                 .build();
 
-            var serviceReferenceResponse = paymentClient.createServiceReference(
+            var serviceReferenceResponse = paymentClient.createServiceRequest(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                createServiceReferenceRequest(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
+                createServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
             );
 
             String serviceReference = Optional.ofNullable(serviceReferenceResponse)
@@ -353,13 +353,13 @@ public class PaymentService {
         return creditAccountPaymentRequest;
     }
 
-    private CreateServiceReferenceRequest createServiceReferenceRequest(
+    private CreateServiceRequestBody createServiceRequestBody(
         String callBackUrl,
         Long caseId,
         String responsibleParty,
         List<PaymentItem> paymentItemList
     ) {
-        return CreateServiceReferenceRequest.builder()
+        return CreateServiceRequestBody.builder()
             .ccdCaseNumber(caseId)
             .caseReference(caseId)
             .callBackUrl(callBackUrl)

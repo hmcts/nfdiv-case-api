@@ -245,7 +245,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Final Order Fee Service Request Reference",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private String applicant2FinalOrderFeeServiceRequestReference;
 

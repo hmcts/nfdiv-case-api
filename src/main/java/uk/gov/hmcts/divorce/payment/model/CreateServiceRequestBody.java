@@ -14,7 +14,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Builder
-public class CreateServiceReferenceRequest {
+public class CreateServiceRequestBody {
 
     private Long caseReference;
 

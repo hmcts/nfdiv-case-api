@@ -18,7 +18,7 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.payment.model.CreateServiceReferenceRequest;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
@@ -218,10 +218,10 @@ public class PaymentServiceTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        when(paymentClient.createServiceReference(
+        when(paymentClient.createServiceRequest(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                any(CreateServiceReferenceRequest.class)
+                any(CreateServiceRequestBody.class)
             )
         ).thenReturn(ResponseEntity.ok().body(serviceRefResponse));
 

@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.payment.model.CreateServiceReferenceRequest;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
@@ -65,7 +65,7 @@ public final class PaymentWireMock {
         }
     }
 
-    public static void stubCreateServiceRequest(HttpStatus status, CreateServiceReferenceRequest request) throws JsonProcessingException {
+    public static void stubCreateServiceRequest(HttpStatus status, CreateServiceRequestBody request) throws JsonProcessingException {
         OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         PAYMENTS_SERVER.stubFor(post("/service-request")
