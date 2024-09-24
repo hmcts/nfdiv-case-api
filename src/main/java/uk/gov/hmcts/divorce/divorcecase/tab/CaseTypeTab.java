@@ -227,6 +227,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("documents", "Documents")
+            .field("coCertificateOfEntitlementDocument")
             .field("documentsGenerated")
             .field("applicant1DocumentsUploaded")
             .field("applicant2DocumentsUploaded")
@@ -235,7 +236,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
-            .field("coCertificateOfEntitlementDocument")
             .field("coProofOfServiceUploadDocuments");
     }
 
