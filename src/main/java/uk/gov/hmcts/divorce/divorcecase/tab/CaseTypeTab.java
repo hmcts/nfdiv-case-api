@@ -92,7 +92,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
         buildWarningsTab(configBuilder);
+        buildMatchesTab(configBuilder);
         buildStateTab(configBuilder);
         buildAosTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
@@ -619,5 +621,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 .field("changeOrganisationRequestField", NEVER_SHOW)
                 .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
                 .field("changeOfRepresentatives");
+    }
+
+    private void buildMatchesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("matches", "Matches")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field(CaseData::getCaseMatches);
     }
 }
