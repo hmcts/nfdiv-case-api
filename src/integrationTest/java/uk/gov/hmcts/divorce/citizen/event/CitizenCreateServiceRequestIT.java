@@ -13,18 +13,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
-import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
-import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import java.util.List;
-
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -34,17 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.divorce.citizen.event.CitizenCreateServiceRequest.CITIZEN_CREATE_SERVICE_REQUEST;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.HMCTS_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 
@@ -84,10 +82,10 @@ public class CitizenCreateServiceRequestIT {
     @Test
     public void givenCaseInAwaitingPaymentThenSetApplicationFeeServiceReference() throws Exception {
         var data = validApplicant1CaseData();
-        data.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceRequestBody(data));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data));
 
         triggerCitizenCreateServiceRequest(data, AwaitingPayment)
             .andExpect(jsonPath("$.data.applicationFeeServiceRequestReference")
@@ -97,10 +95,10 @@ public class CitizenCreateServiceRequestIT {
     @Test
     public void givenCaseInAwaitingFinalOrderPaymentThenSetFinalOrderFeeServiceReference() throws Exception {
         var data = validApplicant1CaseData();
-        data.getFinalOrder().setApplicant2FinalOrderFeeOrderSummary(orderSummaryWithFee());
+        data.getFinalOrder().setApplicant2FinalOrderFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceRequestBody(data));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data));
 
         triggerCitizenCreateServiceRequest(data, AwaitingFinalOrderPayment)
             .andExpect(jsonPath("$.data.applicant2FinalOrderFeeServiceRequestReference")
@@ -123,24 +121,24 @@ public class CitizenCreateServiceRequestIT {
             .andExpect(status().isOk());
     }
 
-    private CreateServiceRequestBody buildServiceRequestBody(CaseData data) {
-        return CreateServiceRequestBody.builder()
-            .ccdCaseNumber(TEST_CASE_ID)
-            .caseReference(TEST_CASE_ID)
-            .callBackUrl(data.getCitizenPaymentCallbackUrl())
-            .hmctsOrgId(HMCTS_ORG_ID)
-            .fees(List.of(
-                PaymentItem.builder()
-                    .ccdCaseNumber(TEST_CASE_ID.toString())
-                    .calculatedAmount("550")
-                    .code("FEE002")
-                    .build()
-            ))
-            .casePaymentRequest(
-                CasePaymentRequest.builder()
-                    .responsibleParty(data.getApplicant1().getFullName())
-                    .action("payment")
-                    .build()
-            ).build();
+    private static ListValue<Fee> getFeeListValue() {
+        return ListValue
+            .<Fee>builder()
+            .value(Fee
+                .builder()
+                .amount("1000")
+                .code(FEE_CODE)
+                .version("1")
+                .build()
+            )
+            .build();
+    }
+
+    private static OrderSummary orderSummary() {
+        return OrderSummary
+            .builder()
+            .paymentTotal("1000")
+            .fees(singletonList(getFeeListValue()))
+            .build();
     }
 }

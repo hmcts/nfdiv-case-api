@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
@@ -34,7 +36,9 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
+import static uk.gov.hmcts.divorce.payment.PaymentService.HMCTS_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -124,6 +128,28 @@ public final class PaymentWireMock {
                 .and("pba.ref.data.service.url=" + "http://localhost:" + PAYMENTS_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
+    }
+
+    public static CreateServiceRequestBody buildServiceReferenceRequest(CaseData data) {
+        return CreateServiceRequestBody.builder()
+            .ccdCaseNumber(TEST_CASE_ID)
+            .caseReference(TEST_CASE_ID)
+            .callBackUrl(data.getCitizenPaymentCallbackUrl())
+            .hmctsOrgId(HMCTS_ORG_ID)
+            .fees(List.of(
+                PaymentItem.builder()
+                    .ccdCaseNumber(TEST_CASE_ID.toString())
+                    .calculatedAmount("10")
+                    .version("1")
+                    .code(FEE_CODE)
+                    .build()
+            ))
+            .casePaymentRequest(
+                CasePaymentRequest.builder()
+                    .responsibleParty(data.getApplicant1().getFullName())
+                    .action("payment")
+                    .build()
+            ).build();
     }
 
     private static CreditAccountPaymentRequest getCreditAccountPaymentRequest(OrderSummary orderSummary) {

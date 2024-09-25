@@ -7,14 +7,9 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
@@ -29,7 +24,9 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
 
     public static final String CITIZEN_CREATE_SERVICE_REQUEST = "citizen-create-service-request";
 
-    private final PaymentService paymentService;
+    private final CitizenSubmitApplication citizenSubmit;
+
+    private final RespondentApplyForFinalOrder respondentApplyForFinalOrder;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -50,44 +47,15 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         final State state = details.getState();
 
         if (AwaitingPayment.equals(state)) {
-            setServiceRequestForApplicationPayment(details);
+            citizenSubmit.setServiceRequestReferenceForApplicationPayment(details.getData(), details.getId());
         } else if (AwaitingFinalOrderPayment.equals(state)) {
-            setServiceRequestForFinalOrderPayment(details);
+            respondentApplyForFinalOrder.setServiceRequestReferenceForFinalOrderPayment(details.getData(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
             .build();
-    }
-
-    private void setServiceRequestForApplicationPayment(CaseDetails<CaseData, State> details) {
-        final CaseData data = details.getData();
-        final Application application = data.getApplication();
-        final OrderSummary orderSummary = application.getApplicationFeeOrderSummary();
-
-        final String serviceRequestReference = createServiceRequest(details, data.getApplicant1(), orderSummary);
-        application.setApplicationFeeServiceRequestReference(serviceRequestReference);
-    }
-
-    private void setServiceRequestForFinalOrderPayment(CaseDetails<CaseData, State> details) {
-        final CaseData data = details.getData();
-        final FinalOrder finalOrder = data.getFinalOrder();
-        final OrderSummary orderSummary = finalOrder.getApplicant2FinalOrderFeeOrderSummary();
-
-        final String serviceRequestReference = createServiceRequest(
-            details, data.getApplicant2(), orderSummary
-        );
-        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);
-    }
-
-    private String createServiceRequest(final CaseDetails<CaseData, State> details, Applicant responsibleParty, OrderSummary orderSummary) {
-        return paymentService.createServiceRequestReference(
-            details.getData().getCitizenPaymentCallbackUrl(),
-            details.getId(),
-            responsibleParty.getFullName(),
-            orderSummary
-        );
     }
 }
 

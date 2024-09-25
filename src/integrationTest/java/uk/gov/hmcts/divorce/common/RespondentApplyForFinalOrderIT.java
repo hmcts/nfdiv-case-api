@@ -1,12 +1,15 @@
 package uk.gov.hmcts.divorce.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,6 +26,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
 
@@ -33,6 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,18 +53,24 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@ContextConfiguration(initializers = {
+    PaymentWireMock.PropertiesInitializer.class
+})
 public class RespondentApplyForFinalOrderIT {
 
     @Autowired
@@ -79,6 +91,19 @@ public class RespondentApplyForFinalOrderIT {
     @MockBean
     private NotificationService notificationService;
 
+    @MockBean
+    private AuthTokenGenerator authTokenGenerator;
+
+    @BeforeAll
+    static void setUp() {
+        PaymentWireMock.start();
+    }
+
+    @AfterAll
+    static void tearDown() {
+        PaymentWireMock.stopAndReset();
+    }
+
     @Test
     void shouldChangeStateToAwaitingFinalOrderPaymentIfRespondentWillMakePayment() throws Exception {
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
@@ -87,10 +112,15 @@ public class RespondentApplyForFinalOrderIT {
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE))
             .thenReturn(orderSummary);
 
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseDetails.getData()));
+
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.state").value(AwaitingFinalOrderPayment.name()))
-            .andExpect(jsonPath("$.data.applicant2FinalOrderFeeInPounds").value("550"));
+            .andExpect(jsonPath("$.data.applicant2FinalOrderFeeInPounds").value("550"))
+            .andExpect(
+                jsonPath("$.data.applicant2FinalOrderFeeServiceRequestReference").value(TEST_SERVICE_REFERENCE)
+            );
     }
 
     @Test
@@ -132,7 +162,7 @@ public class RespondentApplyForFinalOrderIT {
     private ResultActions performRespondentApplyForFinalRequest(CaseData caseData, String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
             .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(
                 callbackRequest(caseData, RESPONDENT_APPLY_FINAL_ORDER, "AwaitingFinalOrder"))
