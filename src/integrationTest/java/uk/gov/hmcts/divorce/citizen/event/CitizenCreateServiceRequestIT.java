@@ -85,7 +85,7 @@ public class CitizenCreateServiceRequestIT {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
 
         triggerCitizenCreateServiceRequest(data, AwaitingPayment)
             .andExpect(jsonPath("$.data.applicationFeeServiceRequestReference")
@@ -98,7 +98,7 @@ public class CitizenCreateServiceRequestIT {
         data.getFinalOrder().setApplicant2FinalOrderFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
 
         triggerCitizenCreateServiceRequest(data, AwaitingFinalOrderPayment)
             .andExpect(jsonPath("$.data.applicant2FinalOrderFeeServiceRequestReference")

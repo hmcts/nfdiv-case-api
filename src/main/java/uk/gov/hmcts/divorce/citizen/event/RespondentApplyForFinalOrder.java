@@ -109,9 +109,9 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
             )
         );
 
-        setServiceRequestReferenceForFinalOrderPayment(details.getData(), details.getId());
-
         details.setState(AwaitingFinalOrderPayment);
+
+        setServiceRequestReferenceForFinalOrderPayment(details.getData(), details.getId());
 
         return details;
     }

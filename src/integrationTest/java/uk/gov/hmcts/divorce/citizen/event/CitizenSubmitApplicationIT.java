@@ -112,7 +112,7 @@ public class CitizenSubmitApplicationIT {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -139,7 +139,7 @@ public class CitizenSubmitApplicationIT {
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -216,7 +216,7 @@ public class CitizenSubmitApplicationIT {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

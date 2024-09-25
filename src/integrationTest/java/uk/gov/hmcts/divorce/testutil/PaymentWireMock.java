@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
@@ -42,7 +43,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
@@ -74,7 +74,6 @@ public final class PaymentWireMock {
 
         PAYMENTS_SERVER.stubFor(post("/service-request")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(OBJECT_MAPPER.writeValueAsString(request), true, true))
             .willReturn(aResponse()
                 .withStatus(status.value())
@@ -130,7 +129,7 @@ public final class PaymentWireMock {
         }
     }
 
-    public static CreateServiceRequestBody buildServiceReferenceRequest(CaseData data) {
+    public static CreateServiceRequestBody buildServiceReferenceRequest(CaseData data, Applicant responsibleParty) {
         return CreateServiceRequestBody.builder()
             .ccdCaseNumber(TEST_CASE_ID)
             .caseReference(TEST_CASE_ID)
@@ -146,7 +145,7 @@ public final class PaymentWireMock {
             ))
             .casePaymentRequest(
                 CasePaymentRequest.builder()
-                    .responsibleParty(data.getApplicant1().getFullName())
+                    .responsibleParty(responsibleParty.getFullName())
                     .action("payment")
                     .build()
             ).build();
