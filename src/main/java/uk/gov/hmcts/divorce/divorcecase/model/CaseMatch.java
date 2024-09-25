@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 @Data
 @AllArgsConstructor
@@ -66,11 +65,6 @@ public class CaseMatch {
         typeOverride = FieldType.CaseLink
     )
     private CaseLink caseLink;
-
-    @CCD(
-        label = "Is match valid?"
-    )
-    private YesOrNo valid;
 
     @Override
     public boolean equals(Object o) {

@@ -63,7 +63,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SUPER_USER))
             .page("findmatch")
             .pageLabel("Search for matching cases which have same marriage date and full names")
-            .mandatoryNoSummary(CaseData::getCaseMatches)
+            .readonlyNoSummary(CaseData::getCaseMatches)
             .done();
     }
 
@@ -134,7 +134,6 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
                     .builder()
                     .caseReference(String.valueOf(caseDetail.getId()))
                     .build())
-                .valid(YesOrNo.YES)
                 .build();
 
         }).collect(Collectors.toList());
