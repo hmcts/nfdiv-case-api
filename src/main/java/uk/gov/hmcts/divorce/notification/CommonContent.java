@@ -132,6 +132,7 @@ public class CommonContent {
 
     public static final String SMART_SURVEY = "smartSurvey";
     public static final String GENERAL_FEE = "generalFee";
+    public static final String FINAL_ORDER_FEE = "fee";
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
@@ -258,6 +259,7 @@ public class CommonContent {
         final boolean jointApplication = !caseData.getApplicationType().isSole();
 
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
+        templateVars.put(IS_SOLE, jointApplication ? NO : YES);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
             && MALE.equals(partner.getGender())
