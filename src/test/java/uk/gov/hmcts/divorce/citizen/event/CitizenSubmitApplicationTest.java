@@ -119,14 +119,10 @@ class CitizenSubmitApplicationTest {
         var orderSummary = orderSummary();
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(
-                orderSummary()
-            );
+            .thenReturn(orderSummary());
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(
-                orderSummary()
-            );
+            .thenReturn(orderSummary());
 
         when(paymentService.createServiceRequestReference(
             null, caseId, caseData.getApplicant1().getFullName(), orderSummary
@@ -161,9 +157,7 @@ class CitizenSubmitApplicationTest {
         var orderSummary = orderSummary();
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(
-                orderSummary()
-            );
+            .thenReturn(orderSummary());
 
         when(paymentService.createServiceRequestReference(
             null, caseId, caseData.getApplicant1().getFullName(), orderSummary

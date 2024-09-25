@@ -213,7 +213,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldCreateServiceRequests() {
+    public void shouldSuccessfullyCreateServiceRequests() {
         var serviceRefResponse = ServiceReferenceResponse.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
