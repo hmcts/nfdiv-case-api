@@ -121,7 +121,7 @@ public class PaymentService {
             var serviceReferenceResponse = paymentClient.createServiceRequest(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                createServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
+                buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
             );
 
             String serviceReference = Optional.ofNullable(serviceReferenceResponse)
@@ -353,7 +353,7 @@ public class PaymentService {
         return creditAccountPaymentRequest;
     }
 
-    private CreateServiceRequestBody createServiceRequestBody(
+    private CreateServiceRequestBody buildServiceRequestBody(
         String callBackUrl,
         Long caseId,
         String responsibleParty,

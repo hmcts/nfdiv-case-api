@@ -101,7 +101,6 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
         finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
-        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(SERVICE_OTHER);
 
         finalOrder.setApplicant2FinalOrderFeeInPounds(
             NumberFormat.getNumberInstance().format(new BigDecimal(

@@ -53,7 +53,7 @@ public final class TestConstants {
     public static final String APP_2_CITIZEN_USER_ID = "3";
     public static final String SYSTEM_USER_USER_ID = "4";
     public static final String SUPER_USER_USER_ID = "5";
-    public static final String TEST_SERVICE_REFERENCE = "dummy-service-reference";
+    public static final String TEST_SERVICE_REFERENCE = "test-service-reference";
     public static final String TEST_PAYMENT_CALLBACK_URL = "/payment-callback";
 
     public static final String TEST_SOL_USER_EMAIL = "testsol@test.com";
