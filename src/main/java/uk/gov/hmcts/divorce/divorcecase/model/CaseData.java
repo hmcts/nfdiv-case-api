@@ -43,6 +43,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -564,6 +565,28 @@ public class CaseData {
         if (FINAL_ORDER_APPLICATION.equals(documentType)) {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
             finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
+        }
+    }
+
+    @JsonIgnore
+    public void updateCaseWithGeneralApplication() {
+        GeneralApplication generalApplication = this.getGeneralApplication();
+
+        generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
+            divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);
+            this.getDocuments().setDocumentsUploaded(
+                addDocumentToTop(this.getDocuments().getDocumentsUploaded(), divorceDocumentListValue.getValue()));
+        });
+
+        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(generalApplication)
+            .build();
+
+        if (isNull(this.getGeneralApplications())) {
+            this.setGeneralApplications(singletonList(generalApplicationListValue));
+        } else {
+            this.getGeneralApplications().add(0, generalApplicationListValue);
         }
     }
 }
