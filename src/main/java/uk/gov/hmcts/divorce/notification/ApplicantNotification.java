@@ -35,4 +35,8 @@ public interface ApplicantNotification {
     default void sendToApplicant2OldSolicitor(final CaseData oldCaseData, final Long caseId) {
         //No operation
     }
+
+    default void sendToOtherRecipient(final CaseData caseData, final Long caseId) {
+        //No operation
+    }
 }
