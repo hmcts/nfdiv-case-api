@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.2.3'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.10'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1359'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1371'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.29'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.30'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20240303'
   }
@@ -232,8 +232,8 @@ repositories {
 
 def versions = [
   jackson      : '2.17.2',
-  junit        : '5.11.0',
-  junitPlatform: '1.11.0',
+  junit        : '5.11.1',
+  junitPlatform: '1.11.1',
   lombok       : '1.18.34',
   springBoot   : springBoot.class.package.implementationVersion
 ]
@@ -255,7 +255,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.0'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.3.0-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
