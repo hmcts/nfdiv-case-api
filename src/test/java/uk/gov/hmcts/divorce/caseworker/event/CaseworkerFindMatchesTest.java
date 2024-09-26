@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -15,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseMatch;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -32,6 +35,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerFindMatches.FIND_MATCHES;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 class CaseworkerFindMatchesTest {
 
@@ -53,6 +59,26 @@ class CaseworkerFindMatchesTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void shouldAddConfigurationToConfigBuilder() {
+            ConfigBuilder<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
+
+            caseworkerFindMatches.configure(configBuilder);
+
+            assertThat(getEventsFrom(configBuilder).values())
+                .extracting(Event::getId)
+                .contains(FIND_MATCHES);
+
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getName)
+            .contains("Find matches");
+
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getDescription)
+            .contains("Find matches");
+
     }
 
     @Test
