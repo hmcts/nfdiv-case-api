@@ -52,6 +52,7 @@
     },
     "dataVersion": "${json-unit.any-number}",
     "applicant2SolAppliedForFinalOrder": "No",
-    "warnings": []
+    "warnings": [],
+    "caseMatches": []
   }
 }

@@ -40,7 +40,8 @@
     "dataVersion": "${json-unit.any-number}",
     "issueDate": "${json-unit.any-string}",
     "dueDate": "${json-unit.any-string}",
-    "warnings":[]
+    "warnings":[],
+    "caseMatches": []
   },
   "state": "Holding"
 }
