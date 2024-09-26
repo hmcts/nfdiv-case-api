@@ -1,19 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import java.time.LocalDate;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.ES_DATE_FORMATTER;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -37,6 +22,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.ES_DATE_FORMATTER;
 
 @Component
 @RequiredArgsConstructor
@@ -122,28 +120,30 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
                 .applicant1Name(marriageDetails.getApplicant1Name())
                 .applicant2Name(marriageDetails.getApplicant2Name())
                 .date(marriageDetails.getDate())
-                .applicant1Postcode(caseData.getApplicant1().getAddress().getPostCode() != null ?
-                    caseData.getApplicant1().getAddress().getPostCode() : null)
-                .applicant2Postcode(caseData.getApplicant2().getAddress().getPostCode() != null ?
-                    caseData.getApplicant2().getAddress().getPostCode() : null)
-                .applicant1Town(caseData.getApplicant1().getAddress().getPostTown() != null ?
-                    caseData.getApplicant1().getAddress().getPostTown() : null)
-                .applicant2Town(caseData.getApplicant2().getAddress().getPostTown() != null ?
-                    caseData.getApplicant2().getAddress().getPostTown() : null)
-                .caseLink(CaseLink
-                    .builder()
+                .applicant1Postcode(
+                    caseData.getApplicant1().getAddress() != null && caseData.getApplicant1().getAddress().getPostCode() != null
+                        ? caseData.getApplicant1().getAddress().getPostCode() : null)
+                .applicant2Postcode(
+                    caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostCode() != null
+                    ? caseData.getApplicant2().getAddress().getPostCode() : null)
+                .applicant1Town(
+                    caseData.getApplicant1().getAddress() != null && caseData.getApplicant1().getAddress().getPostTown() != null
+                    ? caseData.getApplicant1().getAddress().getPostTown() : null)
+                .applicant2Town(
+                    caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostTown() != null
+                    ? caseData.getApplicant2().getAddress().getPostTown() : null)
+                .caseLink(CaseLink.builder()
                     .caseReference(String.valueOf(caseDetail.getId()))
                     .build())
                 .build();
-
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     private CaseData getCaseData(Map<String, Object> data) {
         return objectMapper.convertValue(data, CaseData.class);
     }
 
-    private void addMatches(CaseData data, List<CaseMatch> newMatches) {
+    public void addMatches(CaseData data, List<CaseMatch> newMatches) {
         List<ListValue<CaseMatch>> storedMatches = data.getCaseMatches();
         log.info(" addmatches stored count: " + storedMatches.size());
 
@@ -153,12 +153,11 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         List<CaseMatch> filteredNewMatches = newMatches.stream()
             .filter(match -> !existingCaseReferences.contains(match.getCaseLink().getCaseReference()))
-            .collect(Collectors.toList());
+            .toList();
 
         // Convert filtered new matches to ListValue and add them to storedMatches
         storedMatches.addAll(filteredNewMatches.stream()
             .map(match -> ListValue.<CaseMatch>builder().value(match).build())
-            .collect(Collectors.toList()));
+            .toList());
     }
-
 }
