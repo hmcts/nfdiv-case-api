@@ -149,7 +149,7 @@ public class PaymentService {
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
-        return new PbaResponse(INTERNAL_SERVER_ERROR, GENERAL.value(), null);
+        return new PbaResponse(INTERNAL_SERVER_ERROR, ERROR_GENERIC, null);
     }
 
     private CreditAccountPaymentResponse getPaymentResponse(FeignException exception) {
