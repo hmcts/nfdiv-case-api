@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -23,23 +24,22 @@ import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant1SolicitorRespondRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION = "solicitor-respond-request-info";
-    public static final String MUST_ADD_DOCS_OR_DESCRIPTION_ERROR = "You must upload a document or write a response";
+    public static final String APP_1_SOLICITOR_RESPOND_REQUEST_INFO = "app1-solicitor-respond-request-info";
+    public static final String MUST_ADD_DOCS_OR_DETAILS_ERROR = "You must upload a document or write a response";
     public static final String UNABLE_TO_SUBMIT_RESPONSE_ERROR = "Unable to submit response for Case Id: ";
 
     private final CcdAccessService ccdAccessService;
@@ -48,7 +48,7 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-                .event(SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION)
+                .event(APP_1_SOLICITOR_RESPOND_REQUEST_INFO)
                 .forStates(InformationRequested, RequestedInformationSubmitted)
                 .name("Submit Response")
                 .description("Submit response")
@@ -56,14 +56,14 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
                 .showEventNotes()
                 .endButtonLabel("Submit")
                 .aboutToSubmitCallback(this::aboutToSubmit)
-                .grant(CREATE_READ_UPDATE, SOLICITOR)
+                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
                 .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
                 .page("requestForInformationResponse", this::midEvent)
                 .pageLabel("Submit Response")
                 .complex(CaseData::getRequestForInformationList)
-                    .complex(RequestForInformationList::getRequestForInformationResponse)
-                        .optional(RequestForInformationResponse::getRequestForInformationResponseDocs)
-                        .optional(RequestForInformationResponse::getRequestForInformationResponseDetails)
+                    .complex(RequestForInformationList::getRequestForInformationResponseApplicant1Solicitor)
+                        .optional(RequestForInformationResponseDraft::getRfiDraftResponseDetails)
+                        .optional(RequestForInformationResponseDraft::getRfiDraftResponseDocs)
                     .done()
                 .done();
     }
@@ -71,15 +71,16 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> detailsBefore) {
 
-        log.info("{} midEvent callback invoked for Case Id: {}", SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION, details.getId());
+        log.info("{} midEvent callback invoked for Case Id: {}", APP_1_SOLICITOR_RESPOND_REQUEST_INFO, details.getId());
 
-        RequestForInformationResponse response = details.getData().getRequestForInformationList().getRequestForInformationResponse();
-        List<ListValue<DivorceDocument>> responseDocs = response.getRequestForInformationResponseDocs();
-        String responseDetails = response.getRequestForInformationResponseDetails();
+        RequestForInformationResponseDraft response =
+            details.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1Solicitor();
+        List<ListValue<DivorceDocument>> responseDocs = response.getRfiDraftResponseDocs();
+        String responseDetails = response.getRfiDraftResponseDetails();
 
         if ((responseDocs == null || responseDocs.isEmpty()) && (responseDetails == null || responseDetails.isEmpty())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(MUST_ADD_DOCS_OR_DESCRIPTION_ERROR))
+                .errors(Collections.singletonList(MUST_ADD_DOCS_OR_DETAILS_ERROR))
                 .build();
         }
 
@@ -90,16 +91,13 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_RESPOND_REQUEST_FOR_INFORMATION, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", APP_1_SOLICITOR_RESPOND_REQUEST_INFO, details.getId());
 
         CaseData data = details.getData();
-        RequestForInformationResponse requestForInformationResponse =
-            data.getRequestForInformationList().getRequestForInformationResponse();
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
 
         if (isApplicant1Solicitor(details.getId())) {
             requestForInformationResponse.setValues(data, APPLICANT1SOLICITOR);
-        } else if (isApplicant2Solicitor(details.getId())) {
-            requestForInformationResponse.setValues(data, APPLICANT2SOLICITOR);
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(UNABLE_TO_SUBMIT_RESPONSE_ERROR + details.getId()))
@@ -109,7 +107,7 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
         data.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
 
         //Prevent pre-populating fields for new requests
-        data.getRequestForInformationList().setRequestForInformationResponse(new RequestForInformationResponse());
+        data.getRequestForInformationList().setRequestForInformationResponseApplicant1Solicitor(new RequestForInformationResponseDraft());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -119,9 +117,5 @@ public class SolicitorRespondRequestForInformation implements CCDConfig<CaseData
 
     private boolean isApplicant1Solicitor(Long caseId) {
         return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
-    }
-
-    private boolean isApplicant2Solicitor(Long caseId) {
-        return ccdAccessService.isApplicant2(request.getHeader(AUTHORIZATION), caseId);
     }
 }
