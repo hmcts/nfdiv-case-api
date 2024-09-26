@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -151,7 +150,8 @@ class CaseworkerFindMatchesTest {
     }
 
     private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> mockCaseMatchDetails() {
-        uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().build();
+        uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+            .build();
         mockCaseDetails.setId(67890L);
         mockCaseDetails.setData(mockCaseData());
         return List.of(mockCaseDetails);
