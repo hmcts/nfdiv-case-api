@@ -20,6 +20,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 
 @Data
@@ -86,5 +87,21 @@ public class RequestForInformationResponse {
         this.setRequestForInformationResponseName(name);
         this.setRequestForInformationResponseEmailAddress(email);
         this.setRequestForInformationResponseDateTime(LocalDateTime.now());
+
+        if (party.equals(APPLICANT1)) {
+            setDraftValues(caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1());
+        } else if (party.equals(APPLICANT2)) {
+            setDraftValues(caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2());
+        } else if (party.equals(APPLICANT1SOLICITOR)) {
+            setDraftValues(caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1Solicitor());
+        } else if (party.equals(APPLICANT2SOLICITOR)) {
+            setDraftValues(caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2Solicitor());
+        }
+    }
+
+    @JsonIgnore
+    private void setDraftValues(RequestForInformationResponseDraft draft) {
+        this.setRequestForInformationResponseDetails(draft.getRfiDraftResponseDetails());
+        this.setRequestForInformationResponseDocs(draft.getRfiDraftResponseDocs());
     }
 }
