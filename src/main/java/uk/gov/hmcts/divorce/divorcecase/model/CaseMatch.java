@@ -1,11 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-
-import java.time.LocalDate;
-import java.util.Optional;
-
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +8,11 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 
 @Data
 @AllArgsConstructor
