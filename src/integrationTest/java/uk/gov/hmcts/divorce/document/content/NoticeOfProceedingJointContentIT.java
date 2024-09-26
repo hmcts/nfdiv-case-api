@@ -137,7 +137,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(ADDRESS, "line 1\ntown\npostcode");
+        expectedEntries.put(ADDRESS, "line 1\ntown\nUK\npostcode");
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
@@ -206,7 +206,7 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(DUE_DATE, "19 June 2021");
-        expectedEntries.put(ADDRESS, "line 1\ntown\npostcode");
+        expectedEntries.put(ADDRESS, "line 1\ntown\nUK\npostcode");
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);

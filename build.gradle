@@ -20,12 +20,12 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '9.1.0'
-  id 'org.sonarqube' version '5.0.0.4638'
+  id 'org.owasp.dependencycheck' version '10.0.4'
+  id 'org.sonarqube' version '5.1.0.4882'
   id 'org.springframework.boot' version '3.2.3'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'hmcts.ccd.sdk' version '5.5.2'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1210'
+  id 'hmcts.ccd.sdk' version '5.5.10'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1376'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.23'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.30'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20240303'
   }
@@ -231,10 +231,10 @@ repositories {
 }
 
 def versions = [
-  jackson      : '2.17.1',
-  junit        : '5.10.2',
-  junitPlatform: '1.10.2',
-  lombok       : '1.18.32',
+  jackson      : '2.17.2',
+  junit        : '5.11.1',
+  junitPlatform: '1.11.1',
+  lombok       : '1.18.34',
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
@@ -251,15 +251,16 @@ ext.libraries = [
 dependencies {
 // uncomment for local version
 // implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
-  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.4'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.23.1'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.23.1'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.2.0-jre'
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.0'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.4.0'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.5.0'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.10.1') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
@@ -267,27 +268,27 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
-  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.4'
+  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.6'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.2'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.7.3'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
   implementation group: 'org.springframework.retry', name: 'spring-retry'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.1.2'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.1.4'
 
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.21'
-  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.0.1-RELEASE'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.24'
+  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.0-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
-  implementation group: 'commons-validator', name: 'commons-validator', version: '1.8.0'
+  implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -303,14 +304,15 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
-  testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.25.3'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.2'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.1'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.26.3'
+  testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.26.3'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.3'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.2'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.3'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
+  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -318,11 +320,11 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
 
-  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.2'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.43.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.47.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 }
 
@@ -481,3 +483,17 @@ configurations.all {
 }
 
 tasks.cftlibTest.dependsOn(installChromium)
+
+generateCCDConfig.doLast {
+  copy {
+    from file('ccd-definitions')
+    into layout.buildDirectory.dir('definitions/NFD')
+  }
+}
+
+task fortifyScan(type: JavaExec) {
+    mainClass = 'uk.gov.hmcts.fortifyclient.FortifyClientMainApp'
+    classpath += sourceSets.test.runtimeClasspath
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+

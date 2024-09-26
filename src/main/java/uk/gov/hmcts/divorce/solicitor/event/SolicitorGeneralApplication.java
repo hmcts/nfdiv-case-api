@@ -8,29 +8,27 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationSelectApplicationType;
+import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummary;
-import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectApplicationType;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
-import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationUploadDocument;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -38,7 +36,6 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
@@ -60,6 +57,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         "General Application cannot be submitted as this case is currently linked to an active bulk action case";
     private static final String GENERAL_APPLICATION_ORG_POLICY_ERROR =
         "General Application payment could not be completed as the invokers organisation policy did not match any on the case";
+    private static final String GENERAL_APPLICATION_URGENT_CASE_REASON_ERROR =
+        "General Application marked as urgent need an accompanying reason why it is urgent";
 
     @Autowired
     private GeneralApplicationSelectFee generalApplicationSelectFee;
@@ -119,6 +118,14 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         final GeneralApplication generalApplication = data.getGeneralApplication();
 
+        if (generalApplication.getGeneralApplicationUrgentCase() == YesOrNo.YES) {
+            if (isEmpty(generalApplication.getGeneralApplicationUrgentCaseReason())) {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(singletonList(GENERAL_APPLICATION_URGENT_CASE_REASON_ERROR))
+                    .build();
+            }
+        }
+
         if (generalApplication.getGeneralApplicationFee().isPaymentMethodPba()) {
             final Solicitor invokingSolicitor = getInvokingSolicitor(data, request.getHeader(AUTHORIZATION));
 
@@ -150,21 +157,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
         }
 
-        generalApplication.getGeneralApplicationDocument().setDocumentType(DocumentType.GENERAL_APPLICATION);
-        data.getDocuments().setDocumentsUploaded(
-            addDocumentToTop(data.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument())
-        );
-
-        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
-            .id(UUID.randomUUID().toString())
-            .value(generalApplication)
-            .build();
-
-        if (isNull(data.getGeneralApplications())) {
-            data.setGeneralApplications(singletonList(generalApplicationListValue));
-        } else {
-            data.getGeneralApplications().add(0, generalApplicationListValue);
-        }
+        data.updateCaseWithGeneralApplication();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -222,6 +215,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }

@@ -18,12 +18,13 @@ import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJ
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.NOW_PLUS_14_DAYS;
@@ -56,7 +57,7 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
             log.info("Sending Respondent notification informing them that they have applied for final order: {}", caseId);
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
-                SOLE_APPLIED_FOR_FINAL_ORDER,
+                SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER,
                 applicant2TemplateVars(caseData, caseId),
                 caseData.getApplicant2().getLanguagePreference(),
                 caseId
@@ -161,6 +162,7 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         // https://tools.hmcts.net/jira/browse/NFDIV-3687
         templateVars.put(IS_OVERDUE, YES);
         templateVars.put(IN_TIME, NO);
+        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
     }

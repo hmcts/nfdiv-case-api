@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
     "supplementaryCaseType": "notApplicable",
@@ -52,6 +53,7 @@
     },
     "applicant1KnowsApplicant2EmailAddress": "Yes",
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "2021-06-17",
     "applicationPayments": [
       {

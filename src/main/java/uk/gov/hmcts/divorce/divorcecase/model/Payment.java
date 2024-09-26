@@ -56,4 +56,9 @@ public class Payment {
         label = "Transaction Id"
     )
     private String transactionId;
+
+    @CCD(
+        label = "Service Request Reference"
+    )
+    private String serviceRequestReference;
 }

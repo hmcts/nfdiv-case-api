@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 
 public class SolStatementOfTruth implements CcdPageConfiguration {
@@ -22,6 +24,9 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
     private static final String DISSOLUTION_APPLICATION = "divorceOrDissolution = \"dissolution\"";
     private static final String PERSONAL_SERVICE_ERROR =
         "Solicitors cannot select personal service. Select court service or solicitor service before proceeding.";
+    private static final String COURT_SERVICE_ERROR_INT_ADDRESS =
+        "You cannot select Court Service because the Respondent has an international address. "
+            + "Please select Solicitor Service.";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -89,6 +94,13 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
 
         if (PERSONAL_SERVICE.equals(data.getApplication().getServiceMethod())) {
             errors.add(PERSONAL_SERVICE_ERROR);
+        }
+
+        if (COURT_SERVICE.equals(data.getApplication().getServiceMethod())) {
+            if (data.getApplicationType().isSole()
+                && data.getApplicant2().getAddressOverseas() == YesOrNo.YES) {
+                errors.add(COURT_SERVICE_ERROR_INT_ADDRESS);
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

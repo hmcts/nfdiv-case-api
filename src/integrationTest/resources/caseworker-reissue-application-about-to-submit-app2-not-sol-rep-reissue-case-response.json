@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
@@ -54,6 +55,7 @@
     },
     "documentUploadComplete": "Yes",
     "accessCode": "${json-unit.ignore}",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "${json-unit.ignore}",
     "reissueDate": "2021-06-17",
     "applicationPayments": [

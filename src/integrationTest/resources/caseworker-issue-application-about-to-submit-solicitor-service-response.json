@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "supplementaryCaseType": "notApplicable",
@@ -26,7 +27,7 @@
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "testsol",
     "applicant2SolicitorEmail": "solicitor@test.com",
-    "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
+    "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG",
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
@@ -54,6 +55,7 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "2021-06-17",
     "applicationPayments": [
       {

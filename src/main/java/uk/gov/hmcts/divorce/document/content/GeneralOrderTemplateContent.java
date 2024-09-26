@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SITTING_VENUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -98,6 +99,10 @@ public class GeneralOrderTemplateContent {
         } else {
             templateContent.put(APPLICANT_HEADING, APPLICANT_1);
             templateContent.put(RESPONDENT_HEADING, APPLICANT_2);
+        }
+
+        if (StringUtils.isNotBlank(generalOrder.getGeneralOrderJudgeOrLegalAdvisorVenue())) {
+            templateContent.put(SITTING_VENUE, generalOrder.getGeneralOrderJudgeOrLegalAdvisorVenue());
         }
 
         return templateContent;

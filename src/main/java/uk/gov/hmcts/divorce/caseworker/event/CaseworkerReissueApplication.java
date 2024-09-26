@@ -75,9 +75,12 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 JUDGE))
             .page("reissueApplication")
             .pageLabel("Reissue Application")
+            .readonlyNoSummary(CaseData::getSupplementaryCaseType, "serviceMethod=\"NEVER_SHOW\"")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getReissueOption)
-                .mandatoryWithoutDefaultValue(Application::getServiceMethod, "reissueOption=\"reissueCase\"", BLANK_LABEL, true)
+                .mandatory(Application::getReissueOption, "supplementaryCaseType=\"notApplicable\"")
+                .mandatory(Application::getJudicialSeparationReissueOption, "supplementaryCaseType!=\"notApplicable\"")
+                .mandatoryWithoutDefaultValue(Application::getServiceMethod,
+                    "reissueOption=\"reissueCase\" OR judicialSeparationReissueOption=\"reissueCase\"", BLANK_LABEL, true)
                 .done()
             .done();
     }
@@ -113,6 +116,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
+        log.info("Validating Issue for Case Id: {}", details.getId());
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
         if (!isEmpty(caseValidationErrors)) {

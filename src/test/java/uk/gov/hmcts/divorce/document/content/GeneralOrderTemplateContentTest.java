@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_HEADING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SITTING_VENUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -93,6 +94,7 @@ class GeneralOrderTemplateContentTest {
                 entry(GENERAL_ORDER_DATE, "1 January 2021"),
                 entry(GENERAL_ORDER_DETAILS, "some details"),
                 entry(GENERAL_ORDER_MADE_BY, "District Judge some name"),
+                entry(SITTING_VENUE, "Petty France, London"),
                 entry("sitting", ", sitting"),
                 entry(PETITIONER_FULL_NAME, "pet full test_middle_name name"),
                 entry(RESPONDENT_FULL_NAME, "resp full name"),

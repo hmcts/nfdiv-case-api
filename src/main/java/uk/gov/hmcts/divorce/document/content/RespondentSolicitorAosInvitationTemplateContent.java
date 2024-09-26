@@ -55,7 +55,7 @@ public class RespondentSolicitorAosInvitationTemplateContent {
                 .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(null));
 
-        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, caseData.getApplicant2().getPostalAddress());
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck());
 
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         return templateContent;

@@ -59,7 +59,7 @@ public class CoRefusalTemplateContent implements TemplateContent {
 
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
 
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 

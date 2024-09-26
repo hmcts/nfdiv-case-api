@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
@@ -21,6 +20,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
@@ -41,7 +41,7 @@ class SetStateAfterSubmissionTest {
     private SetStateAfterSubmission setStateAfterSubmission;
 
     @Test
-    void shouldSetAwaitingHwfDecisionStateIfCitizenNeedsHelpWithFees() {
+    void shouldSetAwaitingHwfDecisionStateIfSoleCitizenNeedsHelpWithFees() {
 
         final Application application = Application.builder()
             .applicant1HelpWithFees(HelpWithFees.builder()
@@ -64,6 +64,32 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
+    void shouldSetAwaitingPaymentStateIfJointAndOnlyOneCitizenNeedsHelpWithFees() {
+
+        final Application application = Application.builder()
+            .applicant1HelpWithFees(HelpWithFees.builder()
+                .needHelp(YES)
+                .build())
+            .applicant2HelpWithFees(HelpWithFees.builder()
+                .needHelp(NO)
+                .build())
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplication(application);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(Draft);
+
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingPayment);
+    }
+
+    @Test
     void shouldSetAwaitingHwfDecisionStateIfCitizenNeedsHelpWithFeesForJoint() {
 
         final Application application = Application.builder()
@@ -76,7 +102,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -118,7 +144,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final var caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -217,7 +243,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    public void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -235,7 +261,7 @@ class SetStateAfterSubmissionTest {
 
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
-        assertThat(result.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
     @Test
@@ -261,7 +287,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    public void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -269,7 +295,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final var caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -279,7 +305,7 @@ class SetStateAfterSubmissionTest {
 
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
-        assertThat(result.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
     @Test
@@ -293,7 +319,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final var caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -324,7 +350,7 @@ class SetStateAfterSubmissionTest {
             .build();
 
         final var caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(application);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -357,7 +383,7 @@ class SetStateAfterSubmissionTest {
     @Test
     void shouldSetWelshTranslationReviewStateForJointApplicationIfapp1LanguagePreferenceWelshIsYes() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -374,7 +400,7 @@ class SetStateAfterSubmissionTest {
     @Test
     void shouldSetWelshTranslationReviewStateForJointApplicationIfApp2LanguagePreferenceWelshIsYes() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

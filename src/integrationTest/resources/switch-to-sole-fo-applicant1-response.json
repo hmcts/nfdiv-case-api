@@ -34,10 +34,7 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1HWFNeedHelp": "No",
     "applicant2InviteEmailAddress": "applicant2@test.com",
-    "d36ApplicationType": "switchToSole",
-    "d36WhoApplying": "applicant1",
     "finalOrderSwitchedToSole": "Yes",
-    "typeOfDocumentAttached": "D36",
     "dataVersion": 5,
     "warnings": []
   }

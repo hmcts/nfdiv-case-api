@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
@@ -44,9 +45,12 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
+    private static final String ERROR_GENERIC = "Sorry, there is a problem with the service.\n"
+        + "Try again later.";
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
     public static final String EVENT_ISSUE = "issue";
+    public static final String EVENT_COPIES = "copies";
     public static final String EVENT_MISC = "miscellaneous";
     public static final String SERVICE_DIVORCE = "divorce";
     public static final String SERVICE_OTHER = "other";
@@ -59,6 +63,7 @@ public class PaymentService {
     public static final String KEYWORD_FINANCIAL_ORDER_NOTICE = "FinancialOrderOnNotice";
     public static final String KEYWORD_NOTICE = "GAOnNotice";
     public static final String KEYWORD_WITHOUT_NOTICE = "GeneralAppWithoutNotice";
+    public static final String KEYWORD_ABC = "ABC";
 
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
@@ -185,6 +190,10 @@ public class PaymentService {
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
             return new PbaResponse(httpStatus, String.format(NOT_FOUND.value(), pbaNumber), null);
+        }
+
+        if (isGenericErrorRequiredForHttpStatus(httpStatus)) {
+            return new PbaResponse(httpStatus, ERROR_GENERIC, pbaNumber);
         }
 
         CreditAccountPaymentResponse creditAccountPaymentResponse = getPaymentResponse(exception);
@@ -326,5 +335,9 @@ public class PaymentService {
         );
 
         return feeResponse.getAmount();
+    }
+
+    private boolean isGenericErrorRequiredForHttpStatus(HttpStatus httpStatus) {
+        return httpStatus == INTERNAL_SERVER_ERROR || httpStatus == GATEWAY_TIMEOUT;
     }
 }

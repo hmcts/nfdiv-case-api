@@ -23,6 +23,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
@@ -33,6 +34,7 @@ import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.TestResourceUtil;
@@ -68,6 +70,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_CO_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -140,6 +144,9 @@ public class CaseworkerExpediteFinalOrderIT {
 
     @MockBean
     private BulkPrintService bulkPrintService;
+
+    @MockBean
+    private PaymentService paymentService;
 
     @MockBean
     private Clock clock;
@@ -278,7 +285,7 @@ public class CaseworkerExpediteFinalOrderIT {
     }
 
     @Test
-    public void shouldFailValidationWhenAboutToStartCallbackIsInvokedAndNoGeneralOrdersExist() throws Exception {
+    public void shouldFailValidationWhenAboutToStartCallbackIsInvokedAndNoConditionalOrderGrantedDateIsSet() throws Exception {
         final CaseData caseData = caseData();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -301,7 +308,37 @@ public class CaseworkerExpediteFinalOrderIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.errors").value("No general order documents found.  Unable to continue."));
+                jsonPath("$.errors").value(ERROR_NO_CO_GRANTED_DATE));
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void shouldFailValidationWhenAboutToStartCallbackIsInvokedAndNoGeneralOrdersExist() throws Exception {
+        final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(post(ABOUT_TO_START_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            CASEWORKER_EXPEDITE_FINAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.errors").value(ERROR_NO_GENERAL_ORDER));
 
         verifyNoInteractions(notificationService);
     }

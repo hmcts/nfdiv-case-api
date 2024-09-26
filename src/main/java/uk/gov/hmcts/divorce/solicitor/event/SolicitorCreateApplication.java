@@ -97,6 +97,8 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
         CaseData data = details.getData();
+
+        log.info("Validating Marriage Date for Case Id: {}", details.getId());
         final List<String> validationErrors = validateMarriageDate(data, "MarriageDate");
 
         if (!validationErrors.isEmpty()) {

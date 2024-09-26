@@ -11,11 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +35,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateChangeServiceRequest;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
@@ -42,10 +49,13 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
 public class CaseValidationTest {
 
-    private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
+    private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
+    private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
+        " can not be less than one year and one day prior to application submission.";
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
@@ -119,7 +129,7 @@ public class CaseValidationTest {
             .application(
                 Application.builder()
                     .marriageDetails(MarriageDetails.builder()
-                        .date(LocalDate.now().minus(1, YEARS))
+                        .date(LocalDate.now().minusYears(1))
                         .build())
                     .build()
             )
@@ -128,6 +138,98 @@ public class CaseValidationTest {
         List<String> response = validateMarriageDate(caseData, "field");
 
         assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_AGO));
+    }
+
+    @Test
+    public void shouldNotReturnErrorWhenDateIsMoreThanOneYearAgo() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field");
+
+        assertThat(response).isEqualTo(emptyList());
+    }
+
+    @Test
+    public void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCurrentDateWithin1YearAnd1DayOfMarriageDate() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(List.of(SUBMITTED_DATE_IS_NULL, "field" + LESS_THAN_ONE_YEAR_AGO));
+    }
+
+    @Test
+    public void shouldNotReturnErrorWhenApplicationSubmissionDateIsNullAndMarriageDateMoreThan1YearAnd1DayFromCurrentDate() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(emptyList());
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDateIsLessThanOneYearSinceApplicationSubmission() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .dateSubmitted(LocalDateTime.now())
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(List.of("field" + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION));
+    }
+
+    @Test
+    public void shouldNotReturnErrorsWhenDateIsMoreThanOneYearSinceApplicationSubmission() {
+
+        CaseData caseData = CaseData.builder()
+            .application(
+                Application.builder()
+                    .dateSubmitted(LocalDateTime.now())
+                    .marriageDetails(MarriageDetails.builder()
+                        .date(LocalDate.now().minusYears(1).minusDays(1))
+                        .build())
+                    .build()
+            )
+            .build();
+
+        List<String> response = validateMarriageDate(caseData, "field", true);
+
+        assertThat(response).isEqualTo(emptyList());
     }
 
     @Test
@@ -479,5 +581,102 @@ public class CaseValidationTest {
         return BulkActionCaseData.builder()
             .bulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2))
             .build();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndPersonalService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).contains("You may not select Solicitor Service or Personal Service if the respondent is confidential.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndSolicitorService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).contains("You may not select Solicitor Service or Personal Service"
+            + " if the respondent is confidential.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceSoleApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).contains("You may not select court service if respondent has an international address.");
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceJointApp() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialOverseasAndCourtService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
+        applicant2.setAddressOverseas(YES);
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotAndPersonalService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialAndSolicitorService() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        List<String> errors = validateChangeServiceRequest(caseData);
+
+        assertThat(errors).isEmpty();
     }
 }

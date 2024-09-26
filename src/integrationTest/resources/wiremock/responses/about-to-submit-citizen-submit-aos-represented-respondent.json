@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "supplementaryCaseType": "notApplicable",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
@@ -50,6 +51,7 @@
     "howToRespondApplication": "withoutDisputeDivorce",
     "divorceOrDissolution": "divorce",
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "dueDate": "2021-09-16",
     "issueDate": "2021-04-28",
     "jurisdictionApplicant1Residence": "Yes",

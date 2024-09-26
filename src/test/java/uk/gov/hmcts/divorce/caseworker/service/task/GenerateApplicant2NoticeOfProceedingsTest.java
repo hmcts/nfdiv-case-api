@@ -314,6 +314,30 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     }
 
     @Test
+    void shouldGenerateR1WhenSoleWithAppNotRepresentedAndOfflineButHasEmail() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setEmail("notnull@something.com");
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
     void shouldGenerateR1WhenSoleWithAppNotRepresentedAndOnline() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);

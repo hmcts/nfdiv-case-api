@@ -21,7 +21,7 @@ public class AmendCase implements CcdPageConfiguration {
             .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
-                    .optionalWithLabel(MarriageDetails::getDate,
+                    .mandatoryWithLabel(MarriageDetails::getDate,
                         "Date of ${labelContentMarriageOrCivilPartnership}")
                     .optionalWithLabel(MarriageDetails::getPlaceOfMarriage,
                         "Place of ${labelContentMarriageOrCivilPartnership}")

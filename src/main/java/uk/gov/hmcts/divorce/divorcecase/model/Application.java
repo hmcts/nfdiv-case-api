@@ -56,7 +56,7 @@ public class Application {
     private YesOrNo applicant1ScreenHasMarriageBroken;
 
     @CCD(
-        label = "Has applicant 2's marriage broken down irretrievably?",
+        label = "Has applicant 2's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
         access = {Applicant2Access.class}
     )
     private YesOrNo applicant2ScreenHasMarriageBroken;
@@ -454,12 +454,26 @@ public class Application {
     private YesOrNo coPronouncedForceConfidentialCoverLetterResentAgain;
 
     @CCD(
+        label = "JS Citizen AOS Response Letters Resent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jsCitizenAosResponseLettersResent;
+
+    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption",
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private ReissueOption reissueOption;
+
+    @CCD(
+        label = "What would you like to reissue?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "JudicialSeparationReissueOption",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
+    private JudicialSeparationReissueOption judicialSeparationReissueOption;
 
     @CCD(
         access = {DefaultAccess.class}

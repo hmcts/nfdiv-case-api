@@ -76,7 +76,7 @@ public class AosOverdueLetterTemplateContent implements TemplateContent {
             caseData.getApplicant1().getLanguagePreference());
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
-        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getPostalAddress());
+        templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(IS_DIVORCE, caseData.isDivorce());

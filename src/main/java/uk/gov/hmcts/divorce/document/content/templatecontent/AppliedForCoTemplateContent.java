@@ -44,7 +44,7 @@ public class AppliedForCoTemplateContent implements TemplateContent {
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
-        templateContent.put(ADDRESS, applicant.getPostalAddress());
+        templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(DATE_D84_RECEIVED, caseData.getConditionalOrder().getDateD84FormScanned().format(DATE_TIME_FORMATTER));
         templateContent.put(GRANTED_DATE, now(clock).plusWeeks(4).format(DATE_TIME_FORMATTER));

@@ -90,7 +90,7 @@ public class JudicialSeparationCoRefusalTemplateContent implements TemplateConte
         } else {
             templateContent.put(FIRST_NAME, applicant.getFirstName());
             templateContent.put(LAST_NAME, applicant.getLastName());
-            templateContent.put(ADDRESS, applicant.getPostalAddress());
+            templateContent.put(ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
 
             if (caseData.getDivorceOrDissolution().isDivorce()) {
                 templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);

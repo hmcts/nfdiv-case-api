@@ -12,12 +12,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -39,8 +41,9 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
             .event(CITIZEN_APPLICANT2_UPDATE)
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AosDrafted, AosOverdue,
                 ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification, AwaitingService,
-                AwaitingFinalOrder, AwaitingJointFinalOrder, OfflineDocumentReceived))
+                AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder, OfflineDocumentReceived))
             .name("Patch a joint case")
+            .showCondition(NEVER_SHOW)
             .description("Patch a joint divorce or dissolution as applicant 2")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .retries(120, 120)

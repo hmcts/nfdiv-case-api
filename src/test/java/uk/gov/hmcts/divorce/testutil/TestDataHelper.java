@@ -520,6 +520,7 @@ public class TestDataHelper {
 
         final Application application = caseData.getApplication();
         application.setServiceMethod(COURT_SERVICE);
+        application.setDateSubmitted(LocalDateTime.now());
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
         application.setApplicant1StatementOfTruth(YES);
@@ -859,9 +860,8 @@ public class TestDataHelper {
         return templateVars;
     }
 
-    public static Map<String, String> solicitorTemplateVars(CaseData data, Applicant applicant) {
+    public static Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Applicant applicant) {
         Map<String, String> templateVars = getBasicTemplateVars();
-        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference())
@@ -870,6 +870,12 @@ public class TestDataHelper {
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getConfigTemplateVars().get(SIGN_IN_DIVORCE_URL));
+        return templateVars;
+    }
+
+    public static Map<String, String> solicitorTemplateVars(CaseData data, Applicant applicant) {
+        Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, applicant);
+        templateVars.put(ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
@@ -932,6 +938,7 @@ public class TestDataHelper {
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
             .generalOrderJudgeOrLegalAdvisorName("some name")
+            .generalOrderJudgeOrLegalAdvisorVenue("Petty France, London")
             .build();
     }
 
@@ -1157,6 +1164,26 @@ public class TestDataHelper {
             .build();
 
         return singletonList(scannedDocListValue);
+    }
+
+    public static List<ListValue<DivorceDocument>> getListOfDivorceDocumentListValue(int sizeOfList) {
+        List<ListValue<DivorceDocument>> docList = new ArrayList<>();
+        while (sizeOfList > 0) {
+            ListValue<DivorceDocument> documentListValue = new ListValue<>(
+                UUID.randomUUID().toString(),
+                DivorceDocument
+                    .builder()
+                    .documentLink(Document.builder()
+                        .url("http://localhost:4200/assets/d11")
+                        .filename("dummy.file")
+                        .binaryUrl("dummy.file/binary")
+                        .build())
+                    .build()
+            );
+            docList.add(documentListValue);
+            sizeOfList--;
+        }
+        return docList;
     }
 
     public static List<InputScannedDoc> inputScannedDocuments(FormType formType) {

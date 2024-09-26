@@ -66,6 +66,12 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         "${labelContentApplicant2UC} solicitor's postal address",
                         "solicitor’s postal address")
 
+                    .mandatory(Solicitor::getAddressOverseas,
+                            "applicant2SolicitorRepresented=\"Yes\"",
+                            null,
+                            "Is ${labelContentApplicant2UC} solicitor's postal address international?",
+                            "Is solicitor's postal address international?")
+
                     .complex(Solicitor::getOrganisationPolicy, "applicant2SolicitorRepresented=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation)
                             .optional(Organisation::getOrganisationId)
@@ -106,6 +112,10 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     null,
                     "${labelContentApplicant2UC} postal address",
                     "This address will be used to notify them about the application")
+                .mandatory(Applicant::getAddressOverseas,
+                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
+                    null,
+                    "Is ${labelContentApplicant2UC} postal address international?")
             .done();
     }
 

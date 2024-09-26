@@ -98,7 +98,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentIT {
         expectedEntries.put(LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
         expectedEntries.put(REISSUED_DATE, "Reissued on: 18 July 2021");
-        expectedEntries.put(ADDRESS, "line 1\ntown\npostcode");
+        expectedEntries.put(ADDRESS, "line 1\ntown\nUK\npostcode");
         expectedEntries.put(RELATION, "wife");
         expectedEntries.put(JUDICIAL_SEPARATION_PROCEEDINGS, "judicial separation proceedings");
         expectedEntries.put(JUDICIAL_SEPARATION, "judicial separation");

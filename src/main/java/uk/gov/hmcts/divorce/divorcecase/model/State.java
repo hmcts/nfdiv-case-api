@@ -225,6 +225,13 @@ public enum State {
     AwaitingLegalAdvisorReferral,
 
     @CCD(
+        label = "Awaiting respondent final order payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingFinalOrderPayment,
+
+    @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -260,6 +267,13 @@ public enum State {
     AwaitingJsNullity,
 
     @CCD(
+        label = "Bailiff service refused",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    BailiffRefused,
+
+    @CCD(
         label = "Case in bulk action process",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -293,6 +307,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     ConditionalOrderRefused,
+
+    @CCD(
+            label = "Conditional order review caseworker",
+            hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+            access = {DefaultStateAccess.class}
+    )
+    ConditionalOrderReview,
 
     @CCD(
         label = "Draft",
@@ -377,6 +398,13 @@ public enum State {
         access = {DefaultStateAccessExcludingCAA.class}
     )
     OfflineDocumentReceived,
+
+    @CCD(
+        label = "Pending hearing date",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    PendingHearingDate,
 
     @CCD(
         label = "Pending hearing outcome",
@@ -489,10 +517,10 @@ public enum State {
     ));
 
     public static final State[] AOS_STATES = {
-        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral,
+        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
         AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
         AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
-        GeneralApplicationReceived, PendingHearingOutcome
+        GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
@@ -502,6 +530,7 @@ public enum State {
         AwaitingServicePayment,
         AwaitingServiceConsideration,
         AwaitingBailiffReferral,
+        BailiffRefused,
         AosOverdue,
         AosDrafted,
         AwaitingBailiffService,

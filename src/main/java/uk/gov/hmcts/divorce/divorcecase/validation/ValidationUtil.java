@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,10 +25,13 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Slf4j
 public final class ValidationUtil {
 
-    public static final String LESS_THAN_ONE_YEAR_AGO
-        = " can not be less than one year ago.";
+    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
+    public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
+        " can not be less than one year and one day prior to application submission.";
+    public static final String SUBMITTED_DATE_IS_NULL = "Application submitted date is null.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String CONNECTION = "Connection ";
@@ -36,6 +42,10 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateBasicCase(CaseData caseData) {
+        return validateBasicCase(caseData, false);
+    }
+
+    public static List<String> validateBasicCase(CaseData caseData, boolean compareMarriageDateToSubmittedDate) {
         return flattenLists(
             notNull(caseData.getApplicationType(), "ApplicationType"),
             notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
@@ -55,7 +65,7 @@ public final class ValidationUtil {
             !caseData.getApplicant1().isApplicantOffline()
                 ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
-            validateMarriageDate(caseData, "MarriageDate"),
+            validateMarriageDate(caseData, "MarriageDate", compareMarriageDateToSubmittedDate),
             validateJurisdictionConnections(caseData)
         );
     }
@@ -105,6 +115,10 @@ public final class ValidationUtil {
     }
 
     public static List<String> validateMarriageDate(CaseData caseData, String field) {
+        return validateMarriageDate(caseData, field, false);
+    }
+
+    public static List<String> validateMarriageDate(CaseData caseData, String field, Boolean compareToApplicationSubmittedDate) {
 
         LocalDate marriageDate = caseData.getApplication().getMarriageDetails().getDate();
 
@@ -114,8 +128,20 @@ public final class ValidationUtil {
             return List.of(field + IN_THE_FUTURE);
         }
 
-        if (!caseData.isJudicialSeparationCase() && isLessThanOneYearAgo(marriageDate)) {
-            return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+        if (!caseData.isJudicialSeparationCase()) {
+            if (compareToApplicationSubmittedDate) {
+                LocalDateTime submittedDate = caseData.getApplication().getDateSubmitted();
+                if (null == submittedDate) {
+                    log.info("Submitted Date is Null, Comparing Marriage Date with Current Date.");
+                    if (isLessThanOneYearAgo(marriageDate)) {
+                        return List.of(SUBMITTED_DATE_IS_NULL, field + LESS_THAN_ONE_YEAR_AGO);
+                    }
+                } else if (isLessThanOneYearPriorToApplicationSubmission(LocalDate.from(submittedDate), marriageDate)) {
+                    return List.of(field + LESS_THAN_ONE_YEAR_SINCE_SUBMISSION);
+                }
+            } else if (isLessThanOneYearAgo(marriageDate)) {
+                return List.of(field + LESS_THAN_ONE_YEAR_AGO);
+            }
         }
 
         return emptyList();
@@ -151,6 +177,10 @@ public final class ValidationUtil {
         return date.isAfter(LocalDate.now().minusYears(1).minusDays(1));
     }
 
+    private static boolean isLessThanOneYearPriorToApplicationSubmission(LocalDate applicationSubmissionDate, LocalDate marriageDate) {
+        return marriageDate.isAfter(applicationSubmissionDate.minusYears(1).minusDays(1));
+    }
+
     private static boolean isInTheFuture(LocalDate date) {
         return date.isAfter(LocalDate.now());
     }
@@ -169,6 +199,16 @@ public final class ValidationUtil {
             && applicant2ConfidentialContactDetails;
         return personalOrSolicitorServiceCheck
             ? singletonList("You may not select Solicitor Service or Personal Service if the respondent is confidential.")
+            : emptyList();
+    }
+
+    public static List<String> validateCaseFieldsForCourtService(final CaseData caseData) {
+        final boolean courtServiceCheck = (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+            && (caseData.getApplication().isCourtServiceMethod())
+            && !caseData.getApplicant2().isConfidentialContactDetails()
+            && (caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES);
+        return courtServiceCheck
+            ? singletonList("You may not select court service if respondent has an international address.")
             : emptyList();
     }
 

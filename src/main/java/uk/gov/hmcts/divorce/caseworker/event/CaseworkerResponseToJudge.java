@@ -5,6 +5,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -30,7 +31,14 @@ public class CaseworkerResponseToJudge implements CCDConfig<CaseData, State, Use
             .name("Response to judge")
             .description("Response to judge")
             .showEventNotes()
+            .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, JUDGE));
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, JUDGE))
+            .page("generalReferral")
+            .pageLabel("General referral")
+            .complex(CaseData::getGeneralReferral)
+            .mandatory(GeneralReferral::getGeneralReferralType)
+            .mandatory(GeneralReferral::getGeneralReferralJudgeOrLegalAdvisorDetails)
+            .done();
     }
 }

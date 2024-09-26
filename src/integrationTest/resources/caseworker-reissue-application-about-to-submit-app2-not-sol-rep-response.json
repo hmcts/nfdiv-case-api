@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "serviceMethod": "courtService",
     "sentNotifications": {},
@@ -54,6 +55,7 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "2021-06-17",
     "applicationPayments": [

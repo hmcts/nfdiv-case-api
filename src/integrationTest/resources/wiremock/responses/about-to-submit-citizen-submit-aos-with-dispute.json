@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "supplementaryCaseType": "notApplicable",
     "applicant1Email": "test@test.com",
     "serviceMethod": "courtService",
@@ -67,6 +68,7 @@
     "statementOfTruth": "Yes",
     "confirmReadPetition": "Yes",
     "jurisdictionAgree": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "2021-04-28",
     "documentsGenerated": [
       {

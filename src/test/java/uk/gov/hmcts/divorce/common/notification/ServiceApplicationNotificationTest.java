@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
@@ -33,18 +34,27 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVarsPreIssue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -299,5 +309,77 @@ class ServiceApplicationNotificationTest {
         }
 
         serviceApplicationNotification.sendToApplicant1(data, ID);
+    }
+
+    @Test
+    void shouldSendBailiffServiceApplicationSuccessfulEmailToSolicitorWhenApplicantRepresented() {
+        CaseData data = validApplicant1CaseDataWithRepresentation();
+
+        data.getAlternativeService().setAlternativeServiceType(BAILIFF);
+        data.getAlternativeService().setServiceApplicationGranted(GRANTED);
+
+        final Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, data.getApplicant1());
+
+        when(commonContent.solicitorTemplateVarsPreIssue(data, ID, data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        serviceApplicationNotification.sendToApplicant1Solicitor(data, ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SERVICE_APPLICATION_GRANTED_SOLICITOR),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(ID)),
+                hasEntry(IS_DEEMED_SERVICE, NO),
+                hasEntry(IS_DISPENSE_SERVICE, NO),
+                hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(IS_SOLE, YES),
+                hasEntry(IS_JOINT, NO),
+                hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldSendDeemedServiceApplicationRefusedEmailToSolicitorWhenApplicantRepresented() {
+        CaseData data = validApplicant1CaseDataWithRepresentation();
+
+        data.getAlternativeService().setAlternativeServiceType(DEEMED);
+        data.getAlternativeService().setServiceApplicationGranted(NOT_GRANTED);
+
+        final Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, data.getApplicant1());
+
+        when(commonContent.solicitorTemplateVarsPreIssue(data, ID, data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        serviceApplicationNotification.sendToApplicant1Solicitor(data, ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SERVICE_APPLICATION_REJECTED_SOLICITOR),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(ID)),
+                hasEntry(IS_DEEMED_SERVICE, YES),
+                hasEntry(IS_DISPENSE_SERVICE, NO),
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_SOLE, YES),
+                hasEntry(IS_JOINT, NO),
+                hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    CaseData validApplicant1CaseDataWithRepresentation() {
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        return data;
     }
 }

@@ -34,6 +34,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -86,7 +87,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(FINAL_ORDER_REQUESTED_APP2_SOL)
-            .forStates(AwaitingFinalOrder)
+            .forStates(AwaitingFinalOrder, AwaitingFinalOrderPayment)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
             .showCondition("applicationType=\"soleApplication\" AND finalOrderReminderSentApplicant2=\"Yes\"")
@@ -96,6 +97,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
+            .endButtonLabel("Submit Application")
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,

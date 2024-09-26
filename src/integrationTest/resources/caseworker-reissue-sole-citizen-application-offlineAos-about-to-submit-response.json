@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
@@ -52,6 +53,7 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [

@@ -12,6 +12,7 @@ import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.SendEmailResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,11 +34,12 @@ public class NotificationService {
     public void sendEmail(
         String destinationAddress,
         EmailTemplateName template,
-        Map<String, String> templateVars,
+        Map<? extends String, ? extends Object> templateVars,
         LanguagePreference languagePreference,
         Long caseId
     ) {
-        String referenceId = String.format("%s-%s", caseId,  UUID.randomUUID());
+        String referenceId = String.format("%s-%s", caseId, UUID.randomUUID());
+        Map<String,Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
 
         try {
             String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
@@ -48,7 +50,7 @@ public class NotificationService {
                 notificationClient.sendEmail(
                     templateId,
                     destinationAddress,
-                    templateVars,
+                    templateVarsObj,
                     referenceId,
                     replyToId
                 );

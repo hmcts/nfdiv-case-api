@@ -176,6 +176,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("finalOrderCanApplyApp2")
     FINAL_ORDER_CAN_APPLY_APP2("Final order can apply - Applicant 2", true),
 
+    @JsonProperty("finalOrderCanApplyRespondent")
+    FINAL_ORDER_CAN_APPLY_RESPONDENT("Final order can apply - Respondent", true),
+
     @JsonProperty("finalOrderApplication")
     FINAL_ORDER_APPLICATION("Final Order application (D36)", false),
 
@@ -247,7 +250,10 @@ public enum DocumentType implements HasLabel {
     GENERAL_APPLICATION("General application", false),
 
     @JsonProperty("switchToSoleCoLetter")
-    SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter", true);
+    SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter", true),
+
+    @JsonProperty("grantOfRepresentation")
+    GRANT_OF_REPRESENTATION("NoC grant of representation letter", true);
 
     private final String label;
     private final boolean potentiallyConfidential;

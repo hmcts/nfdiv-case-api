@@ -14,9 +14,9 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +30,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isEnglandOrWales;
@@ -123,6 +124,9 @@ public class Applicant {
     @CCD(label = "Address")
     private AddressGlobalUK address;
 
+    @CCD(label = "Is this an international address?")
+    private YesOrNo addressOverseas;
+
     @CCD(
         label = "Phone number",
         regex = "^[0-9 +().-]{9,}$"
@@ -144,10 +148,14 @@ public class Applicant {
     )
     private ContactDetailsType contactDetailsType;
 
-    @CCD(label = "Is represented by a solicitor?")
+    @CCD(
+        label = "Is represented by a solicitor?",
+        access = {AcaSystemUserAccess.class}
+    )
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
+    @CCD(access = {AcaSystemUserAccess.class})
     private Solicitor solicitor;
 
     @CCD(
@@ -201,7 +209,10 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
-    @CCD(label = "Offline")
+    @CCD(
+        label = "Offline",
+        access = {AcaSystemUserAccess.class}
+    )
     @JsonProperty("Offline") // required because isOffline() confuses Jackson
     private YesOrNo offline;
 
@@ -243,15 +254,8 @@ public class Applicant {
     }
 
     @JsonIgnore
-    public String getCorrespondenceAddress() {
-        if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
-        } else if (!isConfidentialContactDetails() && null != address) {
+    private String getApplicantAddress() {
+        if (YES.equals(addressOverseas)) {
             return Stream.of(
                     address.getAddressLine1(),
                     address.getAddressLine2(),
@@ -263,8 +267,38 @@ public class Applicant {
                 )
                 .filter(value -> value != null && !value.isEmpty())
                 .collect(joining("\n"));
+        } else {
+            return Stream.of(
+                    address.getAddressLine1(),
+                    address.getAddressLine2(),
+                    address.getAddressLine3(),
+                    address.getPostTown(),
+                    address.getCounty(),
+                    address.getCountry(),
+                    address.getPostCode()
+                )
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
         }
+    }
 
+    @JsonIgnore
+    public YesOrNo getCorrespondenceAddressIsOverseas() {
+        return this.isRepresented() ? this.getSolicitor().getAddressOverseas() : this.addressOverseas;
+    }
+
+    @JsonIgnore
+    public String getCorrespondenceAddress() {
+        if (isRepresented()) {
+            return Stream.of(
+                    Optional.ofNullable(solicitor.getOrganisationPolicy())
+                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
+                    solicitor.getAddress()
+                ).filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+        } else if (!isConfidentialContactDetails() && null != address) {
+            return getApplicantAddress();
+        }
         return null;
     }
 
@@ -278,29 +312,9 @@ public class Applicant {
                 ).filter(value -> value != null && !value.isEmpty())
                 .collect(joining("\n"));
         } else if (null != address) {
-            return Stream.of(
-                    address.getAddressLine1(),
-                    address.getAddressLine2(),
-                    address.getAddressLine3(),
-                    address.getPostTown(),
-                    address.getCounty(),
-                    address.getPostCode(),
-                    address.getCountry()
-                )
-                .filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return getApplicantAddress();
         }
-
         return null;
-    }
-
-    @JsonIgnore
-    public String getPostalAddress() {
-        if (isRepresented()) {
-            return solicitor.getAddress();
-        }
-
-        return address != null ? AddressUtil.getPostalAddress(address) : null;
     }
 
     @JsonIgnore

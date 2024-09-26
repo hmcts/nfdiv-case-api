@@ -68,6 +68,7 @@ public final class DocmosisTemplateConstants {
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
     public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
     public static final String GENERAL_ORDER_MADE_BY = "generalOrderMadeBy";
+    public static final String SITTING_VENUE = "sittingVenue";
     public static final String PETITIONER_FULL_NAME = "petitionerFullName";
     public static final String RESPONDENT_FULL_NAME = "respondentFullName";
     public static final String APPLICANT_1_EMAIL = "applicant1Email";
@@ -145,6 +146,7 @@ public final class DocmosisTemplateConstants {
     public static final String DEEMED_SERVICE_COST = "deemedServiceCost";
     public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
     public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";
+    public static final String SOLICITOR_ORGANISATION_NAME = "organisationName";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP = "divorceOrCivilPartnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";

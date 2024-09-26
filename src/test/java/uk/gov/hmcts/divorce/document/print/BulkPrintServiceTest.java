@@ -13,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
@@ -120,7 +122,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -194,7 +197,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, false);
@@ -269,7 +273,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.printAosRespondentPack(print, true);
@@ -347,7 +352,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.printWithD10Form(print);
@@ -402,7 +408,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         given(resource.getInputStream()).willThrow(new IOException("Corrupt data"));
@@ -431,7 +438,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -460,7 +468,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
@@ -516,7 +525,8 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         final UUID letterId = bulkPrintService.print(print);
@@ -570,12 +580,147 @@ class BulkPrintServiceTest {
             "1234",
             "5678",
             "letterType",
-            "Test User"
+            "Test User",
+            YesOrNo.NO
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(InvalidResourceException.class)
             .hasMessage("Invalid document resource");
+    }
+
+    @Test
+    void shouldReturnLetterIdForValidRequestWhenOtherDocument() throws IOException {
+        final List<String> roles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUpdateUser = solicitorUser(roles, userId);
+
+        given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
+        given(authTokenGenerator.generate()).willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final UUID uuid = UUID.randomUUID();
+        final byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
+
+        given(sendLetterApi.sendLetter(eq(TEST_SERVICE_AUTH_TOKEN), isA(LetterV3.class)))
+            .willReturn(new SendLetterResponse(uuid));
+
+        given(resource.getInputStream())
+            .willReturn(new ByteArrayInputStream(firstFile))
+            .willReturn(new ByteArrayInputStream(firstFile));
+
+        final ListValue<Document> documentListValue = getDocumentListValue(() -> ResponseEntity.ok(resource));
+
+        final ListValue<Document> documentListValue2 = getDocumentListValue(() -> ResponseEntity.ok(resource));
+
+        final List<Letter> letters = List.of(
+            new Letter(documentListValue.getValue(), 1),
+            new Letter(documentListValue2.getValue(), 2)
+        );
+
+        final Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType",
+            "Test User",
+            YesOrNo.NO
+        );
+
+        final UUID letterId = bulkPrintService.print(print);
+        assertThat(letterId).isEqualTo(uuid);
+
+        verify(sendLetterApi).sendLetter(eq(TEST_SERVICE_AUTH_TOKEN), letterV3ArgumentCaptor.capture());
+
+        final LetterV3 letterV3 = letterV3ArgumentCaptor.getValue();
+        assertThat(letterV3.documents)
+            .extracting("content", "copies")
+            .contains(
+                tuple(getEncoder().encodeToString(firstFile), 1),
+                tuple(getEncoder().encodeToString(firstFile), 2)
+            );
+
+        assertThat(letterV3.additionalData)
+            .contains(
+                entry(LETTER_TYPE_KEY, "letterType"),
+                entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
+            );
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(documentManagementClient).downloadBinary(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            documentListValue.getValue()
+        );
+        verify(authTokenGenerator).generate();
+    }
+
+    @Test
+    void shouldReturnLetterIdForValidRequestWhenInternational() throws IOException {
+        final List<String> roles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUpdateUser = solicitorUser(roles, userId);
+
+        given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
+        given(authTokenGenerator.generate()).willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final UUID uuid = UUID.randomUUID();
+        final byte[] firstFile = "data from file 1".getBytes(StandardCharsets.UTF_8);
+
+        given(sendLetterApi.sendLetter(eq(TEST_SERVICE_AUTH_TOKEN), isA(LetterV3.class)))
+            .willReturn(new SendLetterResponse(uuid));
+
+        given(resource.getInputStream())
+            .willReturn(new ByteArrayInputStream(firstFile))
+            .willReturn(new ByteArrayInputStream(firstFile));
+
+        final ListValue<Document> documentListValue = getDocumentListValue(() -> ResponseEntity.ok(resource));
+
+        final ListValue<Document> documentListValue2 = getDocumentListValue(() -> ResponseEntity.ok(resource));
+
+        final List<Letter> letters = List.of(
+            new Letter(documentListValue.getValue(), 1),
+            new Letter(documentListValue2.getValue(), 2)
+        );
+
+        final Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType",
+            "Test User",
+            YesOrNo.YES
+        );
+
+        final UUID letterId = bulkPrintService.print(print);
+        assertThat(letterId).isEqualTo(uuid);
+
+        verify(sendLetterApi).sendLetter(eq(TEST_SERVICE_AUTH_TOKEN), letterV3ArgumentCaptor.capture());
+
+        final LetterV3 letterV3 = letterV3ArgumentCaptor.getValue();
+        assertThat(letterV3.documents)
+            .extracting("content", "copies")
+            .contains(
+                tuple(getEncoder().encodeToString(firstFile), 1),
+                tuple(getEncoder().encodeToString(firstFile), 2)
+            );
+
+        assertThat(letterV3.additionalData)
+            .contains(
+                entry(LETTER_TYPE_KEY, "letterType"),
+                entry(CASE_REFERENCE_NUMBER_KEY, "5678"),
+                entry(CASE_IDENTIFIER_KEY, "1234"),
+                entry(RECIPIENTS, List.of("1234","Test User", "letterType"))
+            );
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(documentManagementClient).downloadBinary(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            documentListValue.getValue()
+        );
+        verify(authTokenGenerator).generate();
     }
 
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
@@ -595,6 +740,37 @@ class BulkPrintServiceTest {
             .willReturn(responseEntitySupplier.get());
 
         return divorceDocumentListValue;
+    }
+
+    private ListValue<Document> getDocumentListValue(
+        final Supplier<ResponseEntity<Resource>> responseEntitySupplier) {
+
+        final List<String> roles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUpdateUser = solicitorUser(roles, userId);
+
+        given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
+        given(authTokenGenerator.generate()).willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        String documentUrl = "http://localhost:8080/" + UUID.randomUUID().toString();
+
+        Document ccdDocument = new Document(
+            documentUrl,
+            "test-draft-divorce-application.pdf",
+            documentUrl + "/binary"
+        );
+
+        final ListValue<Document> documentListValue = ListValue
+            .<Document>builder()
+            .id(APPLICATION.getLabel())
+            .value(ccdDocument)
+            .build();
+
+        given(documentManagementClient
+            .downloadBinary(SYSTEM_UPDATE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, documentListValue.getValue()))
+            .willReturn(responseEntitySupplier.get());
+
+        return documentListValue;
     }
 
     private User solicitorUser(final List<String> roles, final String userId) {

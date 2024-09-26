@@ -39,7 +39,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
-import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrder.SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
@@ -183,7 +183,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
-        var caseData = details.getData();
+        CaseData caseData = details.getData();
         log.info("Scanned subtype received is {} for case {}", caseData.getDocuments().getScannedSubtypeReceived(), details.getId());
         log.info("Type of document attached is {} for case {}", caseData.getDocuments().getTypeOfDocumentAttached(), details.getId());
 
@@ -191,10 +191,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             return processD10AndSendNotifications(details);
 
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            return processD84AndSendNotifications(details, caseData);
+            return processD84AndSendNotifications(details);
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            return processD36AndSendNotifications(details, caseData);
+            return processD36AndSendNotifications(details);
 
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
@@ -225,9 +225,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details,
-                                                                                         CaseData caseData) {
+    private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying FO D36 for case {}", details.getId());
+        CaseData caseData = details.getData();
 
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
@@ -250,9 +250,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getApplicant2().setOffline(YES);
         }
 
-        final State state = respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
-
-        generalReferralService.caseWorkerGeneralReferral(details);
+        // Should only hit RespondentFinalOrderRequested if Sole, eligible for FO, and from respondent.
+        final State state = caseData.getApplicationType().isSole()
+            && respondentRequested ? RespondentFinalOrderRequested : FinalOrderRequested;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -260,9 +260,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> processD84AndSendNotifications(CaseDetails<CaseData, State> details,
-                                                                                         CaseData caseData) {
+    private AboutToStartOrSubmitResponse<CaseData, State> processD84AndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying CO D84 for case {}", details.getId());
+        CaseData caseData = details.getData();
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, CONDITIONAL_ORDER_APPLICATION);
 
@@ -346,15 +346,22 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             final String serviceAuth = authTokenGenerator.generate();
             ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_CO, user, serviceAuth);
 
-        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())
-            && SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFO event for case id: {}",
-                details.getId());
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            if (SWITCH_TO_SOLE.equals(caseData.getFinalOrder().getD36ApplicationType())) {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback triggering SwitchedToSoleFoOffline event for case id: {}",
+                    details.getId());
 
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-            ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO, user, serviceAuth);
+                final User user = idamService.retrieveSystemUpdateUserDetails();
+                final String serviceAuth = authTokenGenerator.generate();
+
+                ccdUpdateService.submitEvent(details.getId(), SWITCH_TO_SOLE_FO_OFFLINE, user, serviceAuth);
+            } else if (!(caseData.getApplicationType().isSole()
+                && OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying()))) {
+                generalReferralService.caseWorkerGeneralReferral(details);
+            } else {
+                log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
+            }
         }
 
         return SubmittedCallbackResponse.builder().build();

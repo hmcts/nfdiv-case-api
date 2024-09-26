@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "jointApplication",
     "divorceOrDissolution": "divorce",
     "serviceMethod": "courtService",
@@ -50,6 +51,7 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "2021-06-17",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,

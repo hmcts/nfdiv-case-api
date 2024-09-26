@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "divorceOrDissolution": "dissolution",
     "supplementaryCaseType": "notApplicable",
@@ -53,6 +54,7 @@
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "2021-06-17",
     "applicationPayments": [
       {

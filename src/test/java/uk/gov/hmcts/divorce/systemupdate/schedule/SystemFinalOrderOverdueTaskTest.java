@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyFinalOrderOverdue.SYSTEM_FINAL_ORDER_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemFinalOrderOverdueTask.PRONOUNCED_DATE;
@@ -71,6 +72,7 @@ class SystemFinalOrderOverdueTaskTest {
     private static final BoolQueryBuilder query = boolQuery()
         .must(boolQuery()
             .should(matchQuery(STATE, AwaitingFinalOrder))
+            .should(matchQuery(STATE, AwaitingFinalOrderPayment))
             .should(matchQuery(STATE, AwaitingJointFinalOrder))
             .minimumShouldMatch(1))
         .must(
@@ -97,8 +99,9 @@ class SystemFinalOrderOverdueTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2, caseDetails3);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
-            .thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingFinalOrderPayment,AwaitingJointFinalOrder
+        )).thenReturn(caseDetailsList);
 
         task.run();
 
@@ -109,8 +112,9 @@ class SystemFinalOrderOverdueTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
-            .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder
+        )).thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         task.run();
 
@@ -125,8 +129,9 @@ class SystemFinalOrderOverdueTaskTest {
 
         when(caseDetails1.getId()).thenReturn(TEST_CASE_ID);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
-            .thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder
+        )).thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);
@@ -149,8 +154,9 @@ class SystemFinalOrderOverdueTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingJointFinalOrder))
-            .thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(
+            query, user, SERVICE_AUTHORIZATION, AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder
+        )).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_FINAL_ORDER_OVERDUE, user, SERVICE_AUTHORIZATION);

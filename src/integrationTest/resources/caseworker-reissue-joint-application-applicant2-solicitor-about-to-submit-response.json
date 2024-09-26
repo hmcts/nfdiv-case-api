@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "jointApplication",
     "serviceMethod": "courtService",
     "divorceOrDissolution": "divorce",
@@ -52,6 +53,7 @@
     "applicant1KnowsApplicant2EmailAddress": "Yes",
     "previousReissueOption": "reissueCase",
     "documentUploadComplete": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
     "issueDate": "${json-unit.any-string}",
     "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [

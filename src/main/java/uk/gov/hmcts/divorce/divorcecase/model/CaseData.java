@@ -13,12 +13,14 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
+import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
@@ -30,6 +32,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAcc
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -40,6 +43,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -172,6 +176,10 @@ public class CaseData {
     )
     private List<ListValue<GeneralReferral>> generalReferrals;
 
+    @JsonUnwrapped
+    @Builder.Default
+    private Hearing hearing = new Hearing();
+
     @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
@@ -251,6 +259,16 @@ public class CaseData {
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
+
+    @CCD(access = {AcaSystemUserAccess.class})
+    private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
+
+    @CCD(
+            access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
+            label = "Change of representatives"
+    )
+    @Builder.Default
+    private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
 
     @CCD(
         access = {CaseworkerAccess.class}
@@ -547,6 +565,28 @@ public class CaseData {
         if (FINAL_ORDER_APPLICATION.equals(documentType)) {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
             finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
+        }
+    }
+
+    @JsonIgnore
+    public void updateCaseWithGeneralApplication() {
+        GeneralApplication generalApplication = this.getGeneralApplication();
+
+        generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
+            divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);
+            this.getDocuments().setDocumentsUploaded(
+                addDocumentToTop(this.getDocuments().getDocumentsUploaded(), divorceDocumentListValue.getValue()));
+        });
+
+        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(generalApplication)
+            .build();
+
+        if (isNull(this.getGeneralApplications())) {
+            this.setGeneralApplications(singletonList(generalApplicationListValue));
+        } else {
+            this.getGeneralApplications().add(0, generalApplicationListValue);
         }
     }
 }
