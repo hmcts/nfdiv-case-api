@@ -74,7 +74,8 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": []
+    "warnings": [],
+    "caseMatches": []
   },
   "state" : "FinalOrderComplete"
 }
