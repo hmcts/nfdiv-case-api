@@ -7,5 +7,6 @@
   "divorceWho": "wife",
   "marriageFormationType": "oppositeSexCouple",
   "solPaymentHowToPay": "feePayByAccount",
-  "marriageDate": "2009-04-20"
+  "marriageDate": "2009-04-20",
+  "caseMatches" : []
 }

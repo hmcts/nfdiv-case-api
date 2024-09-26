@@ -39,6 +39,7 @@
       ]
     },
     "dataVersion": "${json-unit.any-number}",
+    "caseMatches": [],
     "warnings": []
   }
 }
