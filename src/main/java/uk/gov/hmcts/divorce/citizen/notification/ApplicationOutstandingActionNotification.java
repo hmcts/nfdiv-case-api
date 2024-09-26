@@ -111,7 +111,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
                 caseData.getApplicant1().getLanguagePreference()) : "";
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
-        templateVars.put(DIVORCE_OR_DISSOLUTION, languagePreferenceWelsh ? welshDivorceOrDissolution : divorceOrDissolution);
+        templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
         templateVars.put(PARTNER,  partner);
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, servedAnotherWay ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
