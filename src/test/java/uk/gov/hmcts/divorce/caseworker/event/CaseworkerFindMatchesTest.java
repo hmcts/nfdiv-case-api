@@ -63,13 +63,13 @@ class CaseworkerFindMatchesTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-            ConfigBuilder<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
+        ConfigBuilder<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-            caseworkerFindMatches.configure(configBuilder);
+        caseworkerFindMatches.configure(configBuilder);
 
-            assertThat(getEventsFrom(configBuilder).values())
-                .extracting(Event::getId)
-                .contains(FIND_MATCHES);
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .contains(FIND_MATCHES);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getName)
