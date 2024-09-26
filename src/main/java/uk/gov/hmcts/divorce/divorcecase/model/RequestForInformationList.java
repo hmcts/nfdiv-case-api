@@ -39,12 +39,36 @@ public class RequestForInformationList {
     private RequestForInformation requestForInformation = new RequestForInformation();
 
     @CCD(
-        label = "Request for information response",
+        label = "Request for information response Applicant 1 Draft",
         access = {DefaultAccess.class}
     )
     @Builder.Default
-    @JsonUnwrapped
-    private RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+    @JsonUnwrapped(prefix = "app1")
+    private RequestForInformationResponseDraft requestForInformationResponseApplicant1 = new RequestForInformationResponseDraft();
+
+    @CCD(
+        label = "Request for information response Applicant 1 Solicitor Draft",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    @JsonUnwrapped(prefix = "app1Sol")
+    private RequestForInformationResponseDraft requestForInformationResponseApplicant1Solicitor = new RequestForInformationResponseDraft();
+
+    @CCD(
+        label = "Request for information response Applicant 2 Draft",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    @JsonUnwrapped(prefix = "app2")
+    private RequestForInformationResponseDraft requestForInformationResponseApplicant2 = new RequestForInformationResponseDraft();
+
+    @CCD(
+        label = "Request for information response Applicant 2 Solicitor Draft",
+        access = {DefaultAccess.class}
+    )
+    @Builder.Default
+    @JsonUnwrapped(prefix = "app2Sol")
+    private RequestForInformationResponseDraft requestForInformationResponseApplicant2Solicitor = new RequestForInformationResponseDraft();
 
     @JsonIgnore
     public RequestForInformation getLatestRequest() {
