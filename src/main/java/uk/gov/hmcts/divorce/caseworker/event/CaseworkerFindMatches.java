@@ -35,6 +35,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_S
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.ES_DATE_FORMATTER;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.REFERENCE_KEY;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE_KEY;
 
 @Component
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .forStates(POST_SUBMISSION_STATES)
             .name("Find matches")
             .description("Find matches")
-            .aboutToStartCallback(this::aboutToStart)//.aboutToSubmitCallback(this::aboutToSubmit)
+            .aboutToStartCallback(this::aboutToStart)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SUPER_USER))
             .page("findmatch")
@@ -81,15 +83,15 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     }
 
-    private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
+    List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
                                                                                    MarriageDetails marriageDetails) {
         BoolQueryBuilder nameMatchQuery1 = QueryBuilders.boolQuery()
-            .must(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant1Name()))
-            .must(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant2Name()));
+            .filter(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant1Name()))
+            .filter(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant2Name()));
 
         BoolQueryBuilder nameMatchQuery2 = QueryBuilders.boolQuery()
-            .must(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant2Name()))
-            .must(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant1Name()));
+            .filter(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant2Name()))
+            .filter(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant1Name()));
 
         BoolQueryBuilder nameMatching = QueryBuilders.boolQuery()
             .should(nameMatchQuery1)
@@ -97,14 +99,16 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         LocalDate marriageDate = marriageDetails.getDate();
 
+        List<String> stateValues = POST_SUBMISSION_STATES.stream().map(State::name).toList();
+
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-            .mustNot(QueryBuilders.termQuery("reference.keyword", String.valueOf(details.getId())))
-            .must(QueryBuilders.termQuery("data.marriageDate", marriageDate.format(ES_DATE_FORMATTER)))
-            .must(QueryBuilders.existsQuery("data.marriageDate"))
-            .must(nameMatching);
+            .filter(QueryBuilders.termsQuery(STATE_KEY,stateValues))
+            .mustNot(QueryBuilders.termQuery(REFERENCE_KEY, String.valueOf(details.getId())))
+            .filter(QueryBuilders.termQuery("data.marriageDate", marriageDate.format(ES_DATE_FORMATTER)))
+            .filter(nameMatching);
+
         final var user = idamService.retrieveSystemUpdateUserDetails();
         final var serviceAuth = authTokenGenerator.generate();
-
         return ccdSearchService.searchForAllCasesWithQuery(boolQuery, user, serviceAuth);
     }
 

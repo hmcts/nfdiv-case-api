@@ -96,6 +96,7 @@ class CaseworkerFindMatchesTest {
         verify(ccdSearchService).searchForAllCasesWithQuery(any(), any(), any());
     }
 
+
     @Test
     void shouldNotAddDuplicateMatches() {
         CaseDetails<CaseData, State> caseDetails = buildCaseDetailsWithExistingMatch();
@@ -165,6 +166,7 @@ class CaseworkerFindMatchesTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
+        caseDetails.setState(State.Holding);
         return caseDetails;
     }
 
@@ -179,6 +181,7 @@ class CaseworkerFindMatchesTest {
         uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
             .build();
         mockCaseDetails.setId(67890L);
+        mockCaseDetails.setState(State.Holding.name());
         mockCaseDetails.setData(mockCaseData());
         return List.of(mockCaseDetails);
     }
