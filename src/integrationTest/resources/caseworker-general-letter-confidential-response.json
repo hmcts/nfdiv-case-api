@@ -82,6 +82,7 @@
         }
       }
     ],
-    "supplementaryCaseType": "notApplicable"
+    "supplementaryCaseType": "notApplicable",
+    "caseMatches": []
   }
 }
