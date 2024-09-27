@@ -137,7 +137,8 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "supplementaryCaseType": "notApplicable"
+    "supplementaryCaseType": "notApplicable",
+    "caseMatches": []
   },
   "state": "FinalOrderComplete"
 }

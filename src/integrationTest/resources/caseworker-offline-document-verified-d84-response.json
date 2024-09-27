@@ -83,7 +83,8 @@
     },
     "typeOfDocumentAttached": "D84",
     "dataVersion": 5,
-    "warnings": []
+    "warnings": [],
+    "caseMatches": []
   },
   "state": "JSAwaitingLA"
 }
