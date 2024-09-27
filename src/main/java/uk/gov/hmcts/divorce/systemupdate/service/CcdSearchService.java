@@ -310,7 +310,7 @@ public class CcdSearchService {
 
     public List<CaseDetails> searchJointApplicationsWithAccessCodePostIssueApplication(User user, String serviceAuth) {
 
-        final QueryBuilder issueDateExist = existsQuery("ISSUE_DATE");
+        final QueryBuilder issueDateExist = existsQuery(ISSUE_DATE);
         final QueryBuilder jointApplication = matchQuery(DATA_APPLICATION_TYPE, "jointApplication");
         final QueryBuilder accessCodeNotEmpty = wildcardQuery(ACCESS_CODE, "?*");
 
