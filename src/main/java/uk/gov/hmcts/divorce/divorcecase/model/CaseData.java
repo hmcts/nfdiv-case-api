@@ -43,6 +43,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -582,5 +583,26 @@ public class CaseData {
         return targetList.stream()
             .map(ListValue::getValue)
             .collect(toList());
+
+    @JsonIgnore  
+    public void updateCaseWithGeneralApplication() {
+        GeneralApplication generalApplication = this.getGeneralApplication();
+
+        generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
+            divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);
+            this.getDocuments().setDocumentsUploaded(
+                addDocumentToTop(this.getDocuments().getDocumentsUploaded(), divorceDocumentListValue.getValue()));
+        });
+
+        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(generalApplication)
+            .build();
+
+        if (isNull(this.getGeneralApplications())) {
+            this.setGeneralApplications(singletonList(generalApplicationListValue));
+        } else {
+            this.getGeneralApplications().add(0, generalApplicationListValue);
+        }
     }
 }
