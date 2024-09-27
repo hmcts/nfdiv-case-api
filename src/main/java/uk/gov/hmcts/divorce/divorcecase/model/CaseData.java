@@ -583,8 +583,9 @@ public class CaseData {
         return targetList.stream()
             .map(ListValue::getValue)
             .collect(toList());
+    }
 
-    @JsonIgnore  
+    @JsonIgnore
     public void updateCaseWithGeneralApplication() {
         GeneralApplication generalApplication = this.getGeneralApplication();
 
