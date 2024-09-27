@@ -231,7 +231,7 @@ repositories {
 }
 
 def versions = [
-  jackson      : '2.17.2',
+  jackson      : '2.18.0',
   junit        : '5.11.1',
   junitPlatform: '1.11.1',
   lombok       : '1.18.34',
