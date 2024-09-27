@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -128,5 +129,25 @@ class DraftAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
+    }
+
+    @Test
+    void shouldThrowErrorAndReturnCaseDataOnAboutToStartIfAosHasAlreadyBeenSubmitted() {
+        final CaseData caseData = CaseData.builder().build();
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .dateAosSubmitted(LocalDateTime.of(2021, 10, 26, 10, 0, 0))
+            .build();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setApplication(Application.builder().issueDate(LocalDate.of(2022, 1, 1)).build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AosDrafted);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(
+                "The Acknowledgement Of Service has already been submitted.");
     }
 }
