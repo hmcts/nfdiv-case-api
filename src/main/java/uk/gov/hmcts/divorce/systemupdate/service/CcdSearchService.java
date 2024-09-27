@@ -290,7 +290,7 @@ public class CcdSearchService {
         final User user,
         final String serviceAuth) {
 
-        final QueryBuilder bulkCaseDetailsExist = termsQuery(REFERENCE_KEY, caseReferences);
+        final QueryBuilder bulkCaseDetailsExist = termsQuery("reference", caseReferences);
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
             .query(
