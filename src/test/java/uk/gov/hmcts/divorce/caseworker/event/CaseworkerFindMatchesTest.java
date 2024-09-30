@@ -41,6 +41,8 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 class CaseworkerFindMatchesTest {
 
+    public static final String NAME_ONE = "John Doe";
+    public static final String NAME_TWO = "Jane Doe";
     @Mock
     private CcdSearchService ccdSearchService;
 
@@ -118,14 +120,14 @@ class CaseworkerFindMatchesTest {
 
         List<CaseMatch> newMatches = List.of(
             CaseMatch.builder()
-                .applicant1Name("John Doe")
-                .applicant2Name("Jane Doe")
+                .applicant1Name(NAME_ONE)
+                .applicant2Name(NAME_TWO)
                 .date(LocalDate.of(2000, 1, 1))
                 .caseLink(CaseLink.builder().caseReference("67890").build())
                 .build()
         );
 
-        caseworkerFindMatches.addMatches(caseData, newMatches);
+        caseworkerFindMatches.setToNewMatches(caseData, newMatches);
 
         assertThat(caseData.getCaseMatches())
             .as("Should add exactly 1 new match to case data")
@@ -145,8 +147,8 @@ class CaseworkerFindMatchesTest {
             .caseMatches(new ArrayList<>())
             .application(Application.builder()
                 .marriageDetails(MarriageDetails.builder()
-                    .applicant1Name("John Doe")
-                    .applicant2Name("Jane Doe")
+                    .applicant1Name(NAME_ONE)
+                    .applicant2Name(NAME_TWO)
                     .date(LocalDate.of(2000, 1, 1))
                     .build())
                 .build())
@@ -188,8 +190,8 @@ class CaseworkerFindMatchesTest {
 
     private Map<String, Object> mockCaseData() {
         Map<String, Object> mockCaseData = new HashMap<>();
-        mockCaseData.put("marriageApplicant1Name", "John Doe");
-        mockCaseData.put("marriageApplicant2Name", "Jane Doe");
+        mockCaseData.put("marriageApplicant1Name", NAME_ONE);
+        mockCaseData.put("marriageApplicant2Name", NAME_TWO);
         mockCaseData.put("marriageDate", "2000-01-01");
         return mockCaseData;
     }

@@ -26,8 +26,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -76,7 +74,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         log.info("Case ID: " + details.getId() + " case matching search result: " + caseMatchDetails.size());
 
         List<CaseMatch> newMatches = transformToMatchingCasesList(caseMatchDetails);
-        addMatches(caseData, newMatches);
+        setToNewMatches(caseData, newMatches);
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -147,21 +145,17 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         return objectMapper.convertValue(data, CaseData.class);
     }
 
-    public void addMatches(CaseData data, List<CaseMatch> newMatches) {
+    public void setToNewMatches(CaseData data, List<CaseMatch> newMatches) {
         List<ListValue<CaseMatch>> storedMatches = data.getCaseMatches();
-        log.info(" addmatches stored count: " + storedMatches.size());
+        storedMatches.clear();
 
-        Set<String> existingCaseReferences = storedMatches.stream()
-            .map(match -> match.getValue().getCaseLink().getCaseReference())
-            .collect(Collectors.toSet());
-
-        List<CaseMatch> filteredNewMatches = newMatches.stream()
-            .filter(match -> !existingCaseReferences.contains(match.getCaseLink().getCaseReference()))
-            .toList();
-
-        // Convert filtered new matches to ListValue and add them to storedMatches
-        storedMatches.addAll(filteredNewMatches.stream()
-            .map(match -> ListValue.<CaseMatch>builder().value(match).build())
-            .toList());
+        if (!newMatches.isEmpty()) {
+            storedMatches.addAll(newMatches.stream()
+                .map(match -> ListValue.<CaseMatch>builder().value(match).build())
+                .toList());
+        }
+        if (storedMatches.isEmpty()) {
+            data.setCaseMatches(null);
+        }
     }
 }
