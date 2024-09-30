@@ -100,7 +100,7 @@ class CaseworkerFindMatchesTest {
 
 
     @Test
-    void shouldNotAddDuplicateMatches() {
+    void shouldNotAddDuplicateReferenceMatches() {
         CaseDetails<CaseData, State> caseDetails = buildCaseDetailsWithExistingMatch();
         CaseData caseData = caseDetails.getData();
 
@@ -109,8 +109,8 @@ class CaseworkerFindMatchesTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerFindMatches.aboutToStart(caseDetails);
 
         assertThat(response.getData().getCaseMatches())
-            .as("Should not add duplicate matches but include 2 distinct matches")
-            .hasSize(2);
+            .as("Should not add duplicate matches but include distinct match")
+            .hasSize(1);
 
     }
 
