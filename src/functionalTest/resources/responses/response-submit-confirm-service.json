@@ -37,7 +37,6 @@
     "dueDate": "2022-08-28",
     "dataVersion": "${json-unit.any-number}",
     "warnings": [],
-    "applicationType": "soleApplication",
-    "caseMatches": []
+    "applicationType": "soleApplication"
   }
 }

@@ -39,8 +39,7 @@
     ],
     "dataVersion": "${json-unit.any-number}",
     "warnings":[],
-    "dueDate": "${json-unit.any-string}",
-    "caseMatches": []
+    "dueDate": "${json-unit.any-string}"
   },
   "state": "AwaitingAos"
 }

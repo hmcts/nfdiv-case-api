@@ -47,7 +47,6 @@
       }
     ],
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "caseMatches": []
+    "warnings": []
   }
 }

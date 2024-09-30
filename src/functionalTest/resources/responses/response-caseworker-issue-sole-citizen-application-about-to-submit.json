@@ -119,8 +119,7 @@
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
     "serviceMethod": "courtService",
-    "warnings": [],
-    "caseMatches": []
+    "warnings": []
   },
   "state": "AwaitingAos"
 }
