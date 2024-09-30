@@ -120,8 +120,7 @@
     "noticeOfProceedingsEmail": "applicant2@test.com",
     "dueDate": "2021-07-03",
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "caseMatches": []
+    "warnings": []
   },
   "state": "AwaitingService"
 }

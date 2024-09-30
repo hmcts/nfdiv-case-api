@@ -135,8 +135,7 @@
     ],
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
-    "warnings": [],
-    "caseMatches": []
+    "warnings": []
   },
   "state": "AwaitingAos"
 }

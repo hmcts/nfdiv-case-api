@@ -38,8 +38,7 @@
     "issueDate": "2021-07-01",
     "dueDate": "2021-11-19",
     "applicationType": "soleApplication",
-    "warnings": [],
-    "caseMatches": []
+    "warnings": []
   },
   "state": "Holding"
 }
