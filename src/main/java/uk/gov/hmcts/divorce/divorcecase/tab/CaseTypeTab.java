@@ -70,7 +70,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
         + "applicant2SolicitorRepresented=\"Yes\" AND doesApplicant2WantToApplyForFinalOrder=\"Yes\"";
 
-    public static final String RESPONDENT_APPLIED_FOR_FO_OR_IS_JOINT = "applicant2AppliedForFinalOrderFirst=\"Yes\" OR " + IS_JOINT;
+    public static final String APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT= "applicant2AppliedForFinalOrderFirst=\"Yes\" OR " + IS_JOINT;
 
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO = "applicant2SolAppliedForFinalOrder=\"Yes\"";
 
@@ -80,7 +80,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
         + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
 
-    public static final String RESPONDENT_APPLIED_FOR_FO = "applicant2AppliedForFinalOrderFirst=\"Yes\" AND " + IS_SOLE;
+    public static final String RESPONDENT_APPLIED_FOR_FO = "applicant2AppliedForFinalOrder=\"Yes\" AND " + IS_SOLE;
 
     public static final String RESPONDENT_APPLIED_FOR_FO_CARD = """
         applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FinalOrderFeeOrderSummary=\"*\"
@@ -584,11 +584,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("applicant2AppliedForFinalOrderFirst", NEVER_SHOW)
             .field("labelContentApplicant2", NEVER_SHOW)
-            .field("doesApplicant2WantToApplyForFinalOrder", RESPONDENT_APPLIED_FOR_FO_OR_IS_JOINT)
+            .field("doesApplicant2WantToApplyForFinalOrder", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
             .field("applicant2AppliedForFinalOrder", RESPONDENT_APPLIED_FOR_FO)
-            .field("applicant2FinalOrderExplanation", RESPONDENT_APPLIED_FOR_FO_OR_IS_JOINT)
-            .field("applicant2FinalOrderLateExplanation", RESPONDENT_APPLIED_FOR_FO_OR_IS_JOINT)
-            .field("applicant2FinalOrderStatementOfTruth", RESPONDENT_APPLIED_FOR_FO_OR_IS_JOINT)
+            .field("applicant2FinalOrderExplanation", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field("applicant2FinalOrderLateExplanation", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field("applicant2FinalOrderStatementOfTruth", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
             .label("finalOrderSolApp2StatementOfTruth",
                 IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED,
                 "The applicant believes that the facts stated in the application are true.")
