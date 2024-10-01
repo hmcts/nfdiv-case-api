@@ -70,7 +70,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
         + "applicant2SolicitorRepresented=\"Yes\" AND doesApplicant2WantToApplyForFinalOrder=\"Yes\"";
 
-    public static final String APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT= "applicant2AppliedForFinalOrderFirst=\"Yes\" OR " + IS_JOINT;
+    public static final String APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT = "applicant2AppliedForFinalOrderFirst=\"Yes\" OR " + IS_JOINT;
 
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO = "applicant2SolAppliedForFinalOrder=\"Yes\"";
 
