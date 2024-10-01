@@ -20,15 +20,15 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 @ExtendWith(MockitoExtension.class)
-class GenerateApplicationTest {
+class RegenerateApplicationTest {
     @Mock
     private GenerateApplicationHelper generateApplicationHelper;
 
     @InjectMocks
-    private GenerateApplication generateApplication;
+    private RegenerateApplication regenerateApplication;
 
     @Test
-    void shouldCallGenerateApplicationHelperWithoutRegeneration() {
+    void shouldCallGenerateApplicationHelperWithRegeneration() {
 
         final var caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -45,11 +45,11 @@ class GenerateApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final var result = generateApplication.apply(caseDetails);
+        final var result = regenerateApplication.apply(caseDetails);
 
         verify(generateApplicationHelper)
             .generateApplicationDocument(
                 caseDetails,
-                false);
+                true);
     }
 }
