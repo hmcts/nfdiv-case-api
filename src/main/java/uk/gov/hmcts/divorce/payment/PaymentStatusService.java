@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -70,30 +71,34 @@ public class PaymentStatusService {
         final String userToken = user.getAuthToken();
         final String s2sToken = authTokenGenerator.generate();
 
-        final List<Long> caseIdsWithSuccessfulPayment = casesWithInProgressPayments
+        final List<CaseDetails<CaseData, State>> casesWithSuccessfulPayment = casesWithInProgressPayments
             .parallelStream()
             .filter(caseDetails -> hasSuccessfulPayment(caseDetails, userToken, s2sToken))
-            .map(CaseDetails::getId)
             .toList();
 
-        triggerPaymentMadeEvent(casesWithInProgressPayments, user, s2sToken, caseIdsWithSuccessfulPayment);
-
-        log.info("PaymentStatusService found with successful payments: " + caseIdsWithSuccessfulPayment);
+        triggerPaymentMadeEvent(casesWithSuccessfulPayment, user, s2sToken);
     }
 
-    private void triggerPaymentMadeEvent(List<CaseDetails<CaseData, State>> casesInProgressPayment, User user,  String s2sToken,
-                                         List<Long> caseIdsWithSuccessfulPayment) {
-        casesInProgressPayment.stream().filter(cases -> caseIdsWithSuccessfulPayment.contains(cases.getId())).forEach(successfulPaymentCase -> {
+    private void triggerPaymentMadeEvent(List<CaseDetails<CaseData, State>> casesWithSuccessfulPayment, User user,  String s2sToken) {
+        List<Long> successfulPaymentCaseIds = new ArrayList<>();
+        casesWithSuccessfulPayment.forEach(successfulPaymentCase -> {
 
-            String eventId = AwaitingPayment == successfulPaymentCase.getState() ? CITIZEN_PAYMENT_MADE : RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
-            String caseId = successfulPaymentCase.getId().toString();
+            String eventId = AwaitingPayment == successfulPaymentCase.getState()
+                    ? CITIZEN_PAYMENT_MADE : RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
 
-            log.info("{} event called for {} with successful payment: ", eventId,
-                    caseId);
+            Long caseId = successfulPaymentCase.getId();
 
-            ccdUpdateService.submitEventWithRetry(caseId, eventId,
-                    updateSuccessfulPaymentStatus, user, s2sToken);
+            log.info("{} event called for {} with successful payment: ", eventId, caseId);
+
+            ccdUpdateService.submitEventWithRetry(caseId.toString(), eventId, updateSuccessfulPaymentStatus, user, s2sToken);
+            successfulPaymentCaseIds.add(caseId);
         });
+
+        log.info("PaymentStatusService found with successful payments: " + successfulPaymentCaseIds);
+    }
+
+    private void updateStatus(List<ListValue<Payment>> payments) {
+
     }
 
     private boolean hasInProgressPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails) {

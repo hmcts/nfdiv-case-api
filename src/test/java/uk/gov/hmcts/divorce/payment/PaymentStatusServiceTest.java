@@ -167,9 +167,11 @@ class PaymentStatusServiceTest {
 
     @Test
     void shouldTriggerPaymentEventIfPaymentSuccessfulButInProgress() {
-        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", "")).id(TEST_CASE_ID).state("AwaitingPayment").build();
+        final CaseDetails cd = CaseDetails.builder().data(Map.of("applicationPayments", ""))
+                .id(TEST_CASE_ID).state("AwaitingPayment").build();
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
-        when(paymentClient.getPaymentByReference(TEST_SERVICE_AUTH_TOKEN, SERVICE_AUTHORIZATION, reference)).thenReturn(new uk.gov.hmcts.divorce.payment.model.Payment(
+        when(paymentClient.getPaymentByReference(TEST_SERVICE_AUTH_TOKEN, SERVICE_AUTHORIZATION, reference))
+                .thenReturn(new uk.gov.hmcts.divorce.payment.model.Payment(
                 "Success"));
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
