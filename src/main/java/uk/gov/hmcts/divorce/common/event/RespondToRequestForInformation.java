@@ -20,9 +20,12 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.Collections;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -68,12 +71,19 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
 
         RequestForInformationList requestForInformationList = details.getData().getRequestForInformationList();
         RequestForInformationResponse response = new RequestForInformationResponse();
+        State state = RequestedInformationSubmitted;
 
         if (isApplicant1(details.getId())) {
             response.setValues(details.getData(), APPLICANT1);
+            if (requestForInformationList.getRequestForInformationResponseApplicant1().getRfiDraftResponseCannotUploadDocs() == YES) {
+                state = AwaitingRequestedInformation;
+            }
             requestForInformationList.setRequestForInformationResponseApplicant1(new RequestForInformationResponseDraft());
         } else if (isApplicant2(details.getId())) {
             response.setValues(details.getData(), APPLICANT2);
+            if (requestForInformationList.getRequestForInformationResponseApplicant2().getRfiDraftResponseCannotUploadDocs() == YES) {
+                state = AwaitingRequestedInformation;
+            }
             requestForInformationList.setRequestForInformationResponseApplicant2(new RequestForInformationResponseDraft());
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -84,7 +94,7 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(details.getState()) // Don't change state whilst wip. Do this later.
+            .state(state) // Don't change state whilst wip. Do this later.
             .build();
     }
 
