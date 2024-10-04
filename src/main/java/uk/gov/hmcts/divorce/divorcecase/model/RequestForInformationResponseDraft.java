@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -37,4 +38,10 @@ public class RequestForInformationResponseDraft {
         typeParameterOverride = "DivorceDocument"
     )
     private List<ListValue<DivorceDocument>> rfiDraftResponseDocs;
+
+    @CCD(
+        label = "Cannot upload all or some requested documents",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo rfiDraftResponseCannotUploadDocs;
 }

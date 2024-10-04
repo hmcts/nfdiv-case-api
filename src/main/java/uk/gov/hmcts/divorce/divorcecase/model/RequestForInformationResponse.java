@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -72,6 +73,12 @@ public class RequestForInformationResponse {
     )
     private List<ListValue<DivorceDocument>> requestForInformationResponseDocs;
 
+    @CCD(
+        label = "Cannot upload all or some requested documents",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo requestForInformationResponseCannotUploadDocs;
+
     @JsonIgnore
     public void setValues(CaseData caseData, RequestForInformationResponseParties party) {
         final Applicant applicant = party.equals(APPLICANT1) || party.equals(APPLICANT1SOLICITOR)
@@ -103,5 +110,6 @@ public class RequestForInformationResponse {
     private void setDraftValues(RequestForInformationResponseDraft draft) {
         this.setRequestForInformationResponseDetails(draft.getRfiDraftResponseDetails());
         this.setRequestForInformationResponseDocs(draft.getRfiDraftResponseDocs());
+        this.setRequestForInformationResponseCannotUploadDocs(draft.getRfiDraftResponseCannotUploadDocs());
     }
 }
