@@ -49,7 +49,7 @@ public class Applicant2SolicitorRespondRequestForInformation implements CCDConfi
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
                 .event(APP_2_SOLICITOR_RESPOND_REQUEST_INFO)
-                .forStates(InformationRequested, RequestedInformationSubmitted)
+                .forState(InformationRequested)
                 .name("Submit Response")
                 .description("Submit response")
                 .showSummary()
