@@ -92,7 +92,7 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(state) // Don't change state whilst wip. Do this later.
+            .state(state)
             .build();
     }
 
