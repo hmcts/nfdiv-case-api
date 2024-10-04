@@ -71,25 +71,23 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
 
         RequestForInformationList requestForInformationList = details.getData().getRequestForInformationList();
         RequestForInformationResponse response = new RequestForInformationResponse();
-        State state = RequestedInformationSubmitted;
 
         if (isApplicant1(details.getId())) {
             response.setValues(details.getData(), APPLICANT1);
-            if (requestForInformationList.getRequestForInformationResponseApplicant1().getRfiDraftResponseCannotUploadDocs() == YES) {
-                state = AwaitingRequestedInformation;
-            }
             requestForInformationList.setRequestForInformationResponseApplicant1(new RequestForInformationResponseDraft());
         } else if (isApplicant2(details.getId())) {
             response.setValues(details.getData(), APPLICANT2);
-            if (requestForInformationList.getRequestForInformationResponseApplicant2().getRfiDraftResponseCannotUploadDocs() == YES) {
-                state = AwaitingRequestedInformation;
-            }
             requestForInformationList.setRequestForInformationResponseApplicant2(new RequestForInformationResponseDraft());
         } else {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList("Unable to determine citizen for Case Id: " + details.getId().toString()))
                 .build();
         }
+        State state =
+            requestForInformationList.getLatestRequest().getLatestResponse().getRequestForInformationResponseCannotUploadDocs() == YES
+            ? AwaitingRequestedInformation
+            : RequestedInformationSubmitted;
+
         requestForInformationList.getLatestRequest().addResponseToList(response);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
