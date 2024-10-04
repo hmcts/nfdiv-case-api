@@ -232,6 +232,13 @@ public enum State {
     AwaitingFinalOrderPayment,
 
     @CCD(
+        label = "Awaiting requested information",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingRequestedInformation,
+
+    @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -493,6 +500,7 @@ public enum State {
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
+        AwaitingRequestedInformation,
         RequestedInformationSubmitted
     );
 
@@ -526,6 +534,7 @@ public enum State {
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
+        AwaitingRequestedInformation,
         RequestedInformationSubmitted,
         Submitted,
         Withdrawn,
