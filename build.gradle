@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.2.3'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.10'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1383'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1389'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -232,8 +232,8 @@ repositories {
 
 def versions = [
   jackson      : '2.18.0',
-  junit        : '5.11.1',
-  junitPlatform: '1.11.1',
+  junit        : '5.11.2',
+  junitPlatform: '1.11.2',
   lombok       : '1.18.34',
   springBoot   : springBoot.class.package.implementationVersion
 ]
