@@ -83,12 +83,12 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
                 .errors(Collections.singletonList("Unable to determine citizen for Case Id: " + details.getId().toString()))
                 .build();
         }
+        requestForInformationList.getLatestRequest().addResponseToList(response);
+
         State state =
             requestForInformationList.getLatestRequest().getLatestResponse().getRequestForInformationResponseCannotUploadDocs() == YES
             ? AwaitingRequestedInformation
             : RequestedInformationSubmitted;
-
-        requestForInformationList.getLatestRequest().addResponseToList(response);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
