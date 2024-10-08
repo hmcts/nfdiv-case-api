@@ -18,6 +18,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -45,14 +46,13 @@ public class PaymentStatusService {
 
     private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
 
-
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
         log.info("PaymentStatusService: {} cases in AwaitingPayment state",
             casesInAwaitingPaymentState.size());
 
         final List<CaseDetails<CaseData, State>> casesWithInProgressPayments = casesInAwaitingPaymentState
             .stream()
-            .filter(cd -> cd.getData().containsKey("applicationPayments"))
+            .filter(this::getPayments)
             .map(cd -> caseDetailsConverter.convertToCaseDetailsFromReformModel(cd))
             .filter(this::hasInProgressPayment)
             .toList();
@@ -97,24 +97,31 @@ public class PaymentStatusService {
         log.info("PaymentStatusService found with successful payments: " + successfulPaymentCaseIds);
     }
 
-    private void updateStatus(List<ListValue<Payment>> payments) {
-
-    }
-
     private boolean hasInProgressPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails) {
-        return Optional.ofNullable(caseDetails.getData().getApplication().getApplicationPayments())
+        return Optional.ofNullable(getPayments(caseDetails))
             .orElse(emptyList())
             .stream()
             .anyMatch(ap -> ap.getValue().getStatus().equals(PaymentStatus.IN_PROGRESS));
     }
 
+    private boolean getPayments(uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails) {
+        Map<String, Object> data = caseDetails.getData();
+
+        return Objects.equals(AwaitingPayment.toString(), caseDetails.getState())
+                ? data.containsKey("applicationPayments") : data.containsKey("finalOrderPayments");
+    }
+
+    private List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> getPayments(CaseDetails<CaseData, State> caseDetails) {
+        return AwaitingPayment == caseDetails.getState() ? caseDetails.getData().getApplication().getApplicationPayments()
+                : caseDetails.getData().getFinalOrder().getFinalOrderPayments();
+    }
+
     private boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                                          String userToken, String s2sToken) {
 
-        final List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> applicationPayments
-            = caseDetails.getData().getApplication().getApplicationPayments();
+        final List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> payments = getPayments(caseDetails);
 
-        return Optional.ofNullable(applicationPayments)
+        return Optional.ofNullable(payments)
             .orElse(emptyList())
             .stream()
             .filter(ap -> ap.getValue().getStatus().equals(PaymentStatus.IN_PROGRESS))
