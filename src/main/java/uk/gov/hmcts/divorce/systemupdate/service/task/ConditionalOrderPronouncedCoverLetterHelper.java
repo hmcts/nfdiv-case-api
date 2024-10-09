@@ -116,6 +116,13 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         );
     }
 
+    /*
+    The below code to get the specific template id is out of date. NFDIV-4260 has introduced
+    solicitor specific templates for conditional order granted coversheet. tech-dent ticket
+    NFDIV-4363 has been created to ensure that the regeneration code is up to date and picks up
+    correct template to use and is tested for end use.
+     */
+
     private String getCoverLetterTemplateId(final boolean isJudicialSeparation,
                                             final boolean isRepresented,
                                             final boolean isOfflineRespondent) {

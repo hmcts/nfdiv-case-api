@@ -48,6 +48,8 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_AOS = "draft-aos";
+    public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
+        = "The Acknowledgement Of Service has already been submitted.";
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
@@ -124,6 +126,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private List<String> validateDraftAos(final CaseData caseData) {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
         final List<String> errors = new ArrayList<>();
+
+        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            errors.add(DRAFT_AOS_ALREADY_SUBMITTED_ERROR);
+        }
 
         if (!isNull(acknowledgementOfService) && YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
             errors.add("The Acknowledgement Of Service has already been drafted.");
