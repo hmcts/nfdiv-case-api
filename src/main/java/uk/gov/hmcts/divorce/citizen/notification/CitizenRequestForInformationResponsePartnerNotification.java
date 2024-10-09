@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE_PARTNER;
 
 @Component

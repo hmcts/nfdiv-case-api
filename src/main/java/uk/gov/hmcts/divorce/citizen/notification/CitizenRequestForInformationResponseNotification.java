@@ -7,16 +7,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_JOINT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE_PARTNER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLE;
 
 @Component
 @RequiredArgsConstructor
