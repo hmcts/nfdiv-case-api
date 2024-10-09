@@ -1458,7 +1458,7 @@ public class TestDataHelper {
 
     public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
         final boolean isApplicant2 = isApplicant2(caseData, applicant);
-        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
         final RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
         draft.setRfiDraftResponseDetails(TEST_TEXT);
         addDocumentToRequestForInformationResponseDraft(draft);

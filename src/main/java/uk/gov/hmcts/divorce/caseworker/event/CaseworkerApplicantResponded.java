@@ -30,7 +30,15 @@ public class CaseworkerApplicantResponded implements CCDConfig<CaseData, State, 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_APPLICANT_RESPONDED)
-            .forStateTransition(EnumSet.of(AwaitingDocuments, AwaitingRequestedInformation, InformationRequested, RequestedInformationSubmitted), Submitted)
+            .forStateTransition(
+                EnumSet.of(
+                    AwaitingDocuments,
+                    AwaitingRequestedInformation,
+                    InformationRequested,
+                    RequestedInformationSubmitted
+                ),
+                Submitted
+            )
             .showEventNotes()
             .name("Applicant responded")
             .description("Applicant responded")
