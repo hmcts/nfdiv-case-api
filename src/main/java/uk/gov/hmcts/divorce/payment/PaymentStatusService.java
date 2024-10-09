@@ -53,7 +53,7 @@ public class PaymentStatusService {
         final List<CaseDetails<CaseData, State>> casesWithInProgressPayments = casesInAwaitingPaymentState
             .stream()
             .filter(this::getPayments)
-            .map(cd -> caseDetailsConverter.convertToCaseDetailsFromReformModel(cd))
+            .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
             .filter(this::hasInProgressPayment)
             .toList();
 
