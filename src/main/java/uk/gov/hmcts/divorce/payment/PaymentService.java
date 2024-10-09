@@ -69,6 +69,8 @@ public class PaymentService {
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
     public static final String CA_E0003 = "CA-E0003";
+    public static final String PAYMENT_REFERENCE_ERROR_MESSAGE =
+        "Payment Reference: {} Generating error message for {} error code";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -111,7 +113,7 @@ public class PaymentService {
 
         log.info("Processing PBA payment for case id {}", caseId);
 
-        ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
+        ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity;
 
         try {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
@@ -220,39 +222,39 @@ public class PaymentService {
         HttpStatus httpStatus,
         String errorCode
     ) {
-        String errorMessage = null;
+        String errorMessage;
         if (httpStatus == HttpStatus.FORBIDDEN) {
             switch (errorCode) {
-                case CA_E0001:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                case CA_E0001 -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0001.value(), pbaNumber);
-                    break;
-                case CA_E0004:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                }
+                case CA_E0004 -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0004.value(), pbaNumber);
-                    break;
+                }
 
-                case CA_E0003:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                case CA_E0003 -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0003.value(), pbaNumber);
-                    break;
+                }
 
-                default:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                default -> {
+                    log.info(PAYMENT_REFERENCE_ERROR_MESSAGE,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = GENERAL.value();
-                    break;
+                }
             }
         } else {
             errorMessage = GENERAL.value();
@@ -321,17 +323,27 @@ public class PaymentService {
     }
 
     public Double getServiceCost(String service, String event, String keyword) {
+        try {
+            final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                event,
+                FAMILY,
+                FAMILY_COURT,
+                service,
+                keyword
+            );
+            return feeResponse.getAmount();
 
-        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
-            DEFAULT_CHANNEL,
-            event,
-            FAMILY,
-            FAMILY_COURT,
-            service,
-            keyword
-        );
+        } catch (FeignException e) {
+            //just rethrow
+            throw e;
+        } catch (Exception e) {
 
-        return feeResponse.getAmount();
+            // Log the exception
+            log.error("Failed to retrieve service cost for service: {}, event: {}, keyword: {}", service, event, keyword, e);
+            throw new ServiceCostRetrievalException(
+                "Failed to retrieve service cost for service: " + service + ", event: " + event + ", keyword: " + keyword, e);
+        }
     }
 
     private boolean isGenericErrorRequiredForHttpStatus(HttpStatus httpStatus) {

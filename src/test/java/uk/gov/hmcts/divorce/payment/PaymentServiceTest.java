@@ -6,7 +6,7 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.Assertions;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,6 +38,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,7 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentServiceTest {
+class PaymentServiceTest {
 
     private static final String DEFAULT_CHANNEL = "default";
     private static final String FAMILY = "family";
@@ -106,7 +108,7 @@ public class PaymentServiceTest {
     private PaymentService paymentService;
 
     @Test
-    public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
+    void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
             .getPaymentServiceFee(
@@ -141,7 +143,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnOrderSummaryForServiceEventKeyword() {
+    void shouldReturnOrderSummaryForServiceEventKeyword() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
             .getPaymentServiceFee(
@@ -176,7 +178,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
+    void shouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
@@ -207,7 +209,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
+    void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -238,7 +240,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
+    void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -273,7 +275,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
+    void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -308,7 +310,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
+    void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -431,7 +433,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
+    void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -467,7 +469,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
+    void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -503,7 +505,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn404WhenPaymentAccountIsNotFound() {
+    void shouldReturn404WhenPaymentAccountIsNotFound() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -535,7 +537,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGeneralErrorWhenThereIsAnErrorParsingPaymentResponse() throws Exception {
+    void shouldReturnGeneralErrorWhenThereIsAnErrorParsingPaymentResponse() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -618,8 +620,9 @@ public class PaymentServiceTest {
             .build();
     }
 
+    @SneakyThrows
     @Test
-    public void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
+    void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
         FeeResponse feeResponse = getFeeResponse();
 
         doReturn(feeResponse)
@@ -633,7 +636,7 @@ public class PaymentServiceTest {
                 anyString()
             );
 
-        Assertions.assertEquals(10.0,
+        assertEquals(10.0,
             paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF));
 
         verify(feesAndPaymentsClient)
@@ -648,7 +651,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
+    void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
@@ -672,9 +675,29 @@ public class PaymentServiceTest {
                 anyString(),
                 anyString()
             );
-
         assertThatThrownBy(() -> paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_INVALID))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
+    }
+
+    @Test
+    void testServiceCostRetrievalWithNullResponse() {
+        // Mocking the scenario where feeResponse is null
+        when(feesAndPaymentsClient.getPaymentServiceFee(any(), any(), any(), any(), any(), any())).thenReturn(null);
+
+        // Assert that ServiceCostRetrievalException is thrown
+        assertThrows(ServiceCostRetrievalException.class,
+            () -> paymentService.getServiceCost("service", "event", "keyword"));
+    }
+
+    @Test
+    void testServiceCostRetrievalWithException() {
+        // Mocking the scenario where an exception occurs
+        when(feesAndPaymentsClient.getPaymentServiceFee(any(), any(), any(), any(), any(), any()))
+            .thenThrow(new RuntimeException("Simulated exception"));
+
+        // Assert that ServiceCostRetrievalException is thrown
+        assertThrows(ServiceCostRetrievalException.class,
+            () -> paymentService.getServiceCost("service", "event", "keyword"));
     }
 }
