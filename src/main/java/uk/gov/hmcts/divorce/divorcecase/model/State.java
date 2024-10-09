@@ -225,18 +225,19 @@ public enum State {
     AwaitingLegalAdvisorReferral,
 
     @CCD(
+        label = "Awaiting requested information",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingRequestedInformation,
+
+    @CCD(
         label = "Awaiting respondent final order payment",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
     AwaitingFinalOrderPayment,
 
-    @CCD(
-        label = "Awaiting requested information",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class}
-    )
-    AwaitingRequestedInformation,
 
     @CCD(
         label = "Awaiting service",
