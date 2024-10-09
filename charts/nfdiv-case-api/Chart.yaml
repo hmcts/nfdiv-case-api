@@ -3,7 +3,7 @@ appVersion: "1.0"
 description: A Helm chart for nfdiv-case-api App
 name: nfdiv-case-api
 home: https://github.com/hmcts/nfdiv-case-api
-version: 0.0.93
+version: 0.0.94
 maintainers:
   - name: HMCTS nfdiv team
 dependencies:
@@ -19,6 +19,6 @@ dependencies:
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: nfdiv-frontend.enabled
   - name: ccd-def-cleanup
-    version: ~9.0.3
+    version: ~9.0.4
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: ccd-def-cleanup.enabled
