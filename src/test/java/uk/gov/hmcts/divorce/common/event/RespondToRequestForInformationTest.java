@@ -170,6 +170,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -203,6 +205,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -286,6 +290,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -321,6 +327,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant2())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -356,6 +364,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -391,6 +401,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant2())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -426,6 +438,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
@@ -461,6 +475,8 @@ class RespondToRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant2())
+            .isEqualTo(new RequestForInformationResponseDraft());
 
         final RequestForInformationResponse responseRequestForInformationResponse =
             response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().get(0).getValue();
