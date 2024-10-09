@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.citizen.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.index.DocIDMerger;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -126,7 +125,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
             .build();
     }
 
-    public SubmittedCallbackResponse submitted (CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION, details.getId());
 
         try {
