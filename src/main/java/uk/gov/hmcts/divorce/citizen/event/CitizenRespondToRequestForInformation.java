@@ -1,13 +1,16 @@
-package uk.gov.hmcts.divorce.common.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.index.DocIDMerger;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
@@ -19,12 +22,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParti
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Collections;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
@@ -41,21 +48,28 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RespondToRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
+public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String RESPOND_TO_REQUEST_FOR_INFORMATION = "respond-request-for-info";
+    public static final String CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION = "citizen-respond-request-for-information";
     public static final String UNABLE_TO_DETERMINE_CITIZEN_ERROR = "Unable to determine citizen for Case Id: ";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR = "Unable to apply response. Applicant ";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_MID_ERROR = "not valid for Party (";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_END_ERROR = ") on latest RFI for Case Id: ";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR
+        = "Unable to send Request for Information Response Notification for Case Id: ";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
+        = "Unable to send Request for Information Response Partner Notification for Case Id: ";
 
     private final CcdAccessService ccdAccessService;
     private final HttpServletRequest request;
+    private final NotificationDispatcher notificationDispatcher;
+    private final CitizenRequestForInformationResponseNotification citizenRequestForInformationResponseNotification;
+    private final CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(RESPOND_TO_REQUEST_FOR_INFORMATION)
+            .event(CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION)
             .forState(InformationRequested)
             .name("Submit response for rfi")
             .description("Submit response for RFI")
@@ -75,7 +89,7 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} about to submit callback invoked for Case Id: {}", RESPOND_TO_REQUEST_FOR_INFORMATION, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION, details.getId());
 
         final RequestForInformationList requestForInformationList = details.getData().getRequestForInformationList();
         final RequestForInformationResponse response = new RequestForInformationResponse();
@@ -112,6 +126,44 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
             .build();
     }
 
+    public SubmittedCallbackResponse submitted (CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION, details.getId());
+
+        try {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                details.getData(),
+                details.getId()
+            );
+        } catch (final NotificationTemplateException e) {
+            log.error(
+                "Request for Information Response Notification for Case Id {} failed with message: {}",
+                details.getId(),
+                e.getMessage(),
+                e
+            );
+        }
+
+        if (!details.getData().getApplicationType().isSole()) {
+            try {
+                notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                    citizenRequestForInformationResponsePartnerNotification,
+                    details.getData(),
+                    details.getId()
+                );
+            } catch (final NotificationTemplateException e) {
+                log.error(
+                    "Request for Information Response Partner Notification for Case Id {} failed with message: {}",
+                    details.getId(),
+                    e.getMessage(),
+                    e
+                );
+            }
+        }
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private boolean isApplicant1(Long caseId) {
         return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
     }
@@ -129,7 +181,7 @@ public class RespondToRequestForInformation implements CCDConfig<CaseData, State
         boolean solePartyApplicant = RequestForInformationSoleParties.APPLICANT.equals(soleParties);
         boolean jointPartyApplicant1 = RequestForInformationJointParties.APPLICANT1.equals(jointParties);
         boolean jointPartyApplicant2 = RequestForInformationJointParties.APPLICANT2.equals(jointParties);
-        boolean jointPartyBoth = RequestForInformationJointParties.BOTH.equals(jointParties);
+        boolean jointPartyBoth = BOTH.equals(jointParties);
 
         if (APPLICANT1.equals(party)) {
             return isJoint ? jointPartyApplicant1 || jointPartyBoth : solePartyApplicant;

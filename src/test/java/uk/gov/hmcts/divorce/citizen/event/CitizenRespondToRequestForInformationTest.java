@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.common.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -25,11 +25,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.event.RespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_END_ERROR;
-import static uk.gov.hmcts.divorce.common.event.RespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_MID_ERROR;
-import static uk.gov.hmcts.divorce.common.event.RespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR;
-import static uk.gov.hmcts.divorce.common.event.RespondToRequestForInformation.RESPOND_TO_REQUEST_FOR_INFORMATION;
-import static uk.gov.hmcts.divorce.common.event.RespondToRequestForInformation.UNABLE_TO_DETERMINE_CITIZEN_ERROR;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_END_ERROR;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_MID_ERROR;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.UNABLE_TO_DETERMINE_CITIZEN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
@@ -44,7 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 
 @ExtendWith(MockitoExtension.class)
-class RespondToRequestForInformationTest {
+class CitizenRespondToRequestForInformationTest {
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -53,17 +53,17 @@ class RespondToRequestForInformationTest {
     private HttpServletRequest httpServletRequest;
 
     @InjectMocks
-    private RespondToRequestForInformation respondToRequestForInformation;
+    private CitizenRespondToRequestForInformation citizenRespondToRequestForInformation;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        respondToRequestForInformation.configure(configBuilder);
+        citizenRespondToRequestForInformation.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(RESPOND_TO_REQUEST_FOR_INFORMATION);
+            .contains(CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION);
     }
 
     @Test
@@ -79,7 +79,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant2(any(), any())).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, beforeDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, beforeDetails);
 
         assertThat(response.getErrors()).containsExactly(UNABLE_TO_DETERMINE_CITIZEN_ERROR + TEST_CASE_ID);
     }
@@ -96,7 +96,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).containsExactly(
             CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR
@@ -119,7 +119,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).containsExactly(
             CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR
@@ -142,7 +142,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).containsExactly(
             CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR
@@ -168,7 +168,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -203,7 +203,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -237,7 +237,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).containsExactly(
             CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR
@@ -261,7 +261,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).containsExactly(
             CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR
@@ -288,7 +288,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -325,7 +325,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant2())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -362,7 +362,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -399,7 +399,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant2())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -436,7 +436,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant1(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant1())
             .isEqualTo(new RequestForInformationResponseDraft());
@@ -473,7 +473,7 @@ class RespondToRequestForInformationTest {
         when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            respondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
+            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
         assertThat(response.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationResponses()).hasSize(1);
         assertThat(response.getData().getRequestForInformationList().getRequestForInformationResponseApplicant2())
             .isEqualTo(new RequestForInformationResponseDraft());
