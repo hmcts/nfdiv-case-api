@@ -61,6 +61,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -1384,6 +1385,18 @@ public class TestDataHelper {
     public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails() {
         CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, true, false);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails(
+                                                                            RequestForInformationSoleParties soleParties,
+                                                                            Boolean applicantRepresented,
+                                                                            Boolean applicant2Represented
+    ) {
+        CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(soleParties);
         setRequestForInformationBaseRequestValues(caseData);
 
         return getRequestForInformationBaseDetails(caseData);
