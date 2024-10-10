@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUploadDocument.CASEWORKER_UPLOAD_DOCUMENT;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUploadDocument.ERROR_REMOVE_DOCUMENTS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.ACKNOWLEDGEMENT_OF_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D9D;
@@ -104,6 +105,34 @@ public class CaseworkerUploadDocumentTest {
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc3.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(2).getValue()).isSameAs(doc2.getValue());
+    }
+
+    @Test
+    void shoudlNotAllowDeletionOfExistingDocuments() {
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        final ListValue<DivorceDocument> doc1 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
+
+        final ListValue<DivorceDocument> doc2 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "bailiff.pdf", BAILIFF_SERVICE);
+
+        final CaseData previousCaseData = caseData();
+        previousCaseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
+
+        previousCaseDetails.setData(previousCaseData);
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getDocuments().setDocumentsUploaded(List.of(doc1));
+
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).contains(ERROR_REMOVE_DOCUMENTS);
     }
 
     private ListValue<DivorceDocument> getDocumentListValue(
