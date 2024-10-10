@@ -21,7 +21,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
+import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +38,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -48,9 +52,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
@@ -63,6 +72,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
     FeesWireMock.PropertiesInitializer.class,
+    PaymentWireMock.PropertiesInitializer.class
 })
 public class CitizenSubmitApplicationIT {
 
@@ -81,23 +91,33 @@ public class CitizenSubmitApplicationIT {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
+    @MockBean
+    private AuthTokenGenerator authTokenGenerator;
+
     @BeforeAll
     static void setUp() {
         FeesWireMock.start();
+        PaymentWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
         FeesWireMock.stopAndReset();
+        PaymentWireMock.stopAndReset();
     }
 
     @Test
     public void givenValidCaseDataThenReturnResponseWithNoErrors() throws Exception {
+        var data = validApplicant1CaseData();
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseData(), CITIZEN_SUBMIT)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -114,11 +134,12 @@ public class CitizenSubmitApplicationIT {
 
     @Test
     public void givenValidCaseDataWithHwfThenSendEmailsToApplicant1AndReturnResponseWithNoErrors() throws Exception {
-        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -190,12 +211,18 @@ public class CitizenSubmitApplicationIT {
 
     @Test
     public void givenValidJointCaseDataThenReturnResponseWithNoErrors() throws Exception {
+        var caseData = validApplicant2CaseData();
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(objectMapper.writeValueAsString(callbackRequest(validApplicant2CaseData(), CITIZEN_SUBMIT)))
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
