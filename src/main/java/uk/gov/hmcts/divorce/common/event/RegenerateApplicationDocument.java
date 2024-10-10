@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.RegenerateApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,11 +24,11 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class RegenerateApplication implements CCDConfig<CaseData, State, UserRole> {
+public class RegenerateApplicationDocument implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String REGENERATE_APPLICATION = "regenerate-application";
 
-    private final GenerateApplication generateApplication;
+    private final RegenerateApplication regenerateApplication;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -48,7 +48,7 @@ public class RegenerateApplication implements CCDConfig<CaseData, State, UserRol
 
         log.info("{} about to submit callback invoked for Case Id: {}", REGENERATE_APPLICATION, details.getId());
 
-        final CaseDetails<CaseData, State> result = caseTasks(generateApplication).run(details);
+        final CaseDetails<CaseData, State> result = caseTasks(regenerateApplication).run(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
