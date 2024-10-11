@@ -72,7 +72,7 @@ public class PaymentStatusService {
         final String s2sToken = authTokenGenerator.generate();
 
         final List<CaseDetails<CaseData, State>> casesWithSuccessfulPayment = casesWithInProgressPayments
-            .parallelStream()
+            .stream()
             .filter(caseDetails -> hasSuccessfulPayment(caseDetails, userToken, s2sToken))
             .toList();
 
