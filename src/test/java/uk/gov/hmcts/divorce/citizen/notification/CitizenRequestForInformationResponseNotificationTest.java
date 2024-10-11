@@ -15,11 +15,13 @@ import java.util.Map;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SMART_SURVEY_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
@@ -71,6 +73,37 @@ class CitizenRequestForInformationResponseNotificationTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant1() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1().setRfiDraftResponseDetails(TEST_TEXT);
+        caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1().setRfiDraftResponseCannotUploadDocs(YES);
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
+            .thenReturn(getRequestForInformationTemplateVars());
+
+        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getApplicantTemplateContent();
+
+        citizenRequestForInformationResponseNotification.sendToApplicant1(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_USER_EMAIL,
+            REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseEmailToApplicant2() {
         CaseData caseData = caseData();
         caseData.setApplicant2(getApplicant());
@@ -95,6 +128,38 @@ class CitizenRequestForInformationResponseNotificationTest {
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
             REQUEST_FOR_INFORMATION_RESPONSE,
+            templateContent,
+            ENGLISH,
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant2() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant());
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2().setRfiDraftResponseDetails(TEST_TEXT);
+        caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2().setRfiDraftResponseCannotUploadDocs(YES);
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
+            .thenReturn(getRequestForInformationTemplateVars());
+
+        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+
+        Map<String, String> templateContent = getApplicantTemplateContent();
+
+        citizenRequestForInformationResponseNotification.sendToApplicant2(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_USER_EMAIL,
+            REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS,
             templateContent,
             ENGLISH,
             TEST_CASE_ID

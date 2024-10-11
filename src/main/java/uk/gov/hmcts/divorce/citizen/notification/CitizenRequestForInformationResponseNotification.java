@@ -5,14 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS;
 
 @Component
 @RequiredArgsConstructor
@@ -30,9 +34,16 @@ public class CitizenRequestForInformationResponseNotification implements Applica
         log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
 
+        RequestForInformationResponse latestResponse =
+            caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
+
+        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
+            ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
+            : REQUEST_FOR_INFORMATION_RESPONSE;
+
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            REQUEST_FOR_INFORMATION_RESPONSE,
+            emailTemplateName,
             applicantTemplateContent(
                 caseData,
                 caseId,
@@ -48,9 +59,16 @@ public class CitizenRequestForInformationResponseNotification implements Applica
     public void sendToApplicant2(CaseData caseData, Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
 
+        RequestForInformationResponse latestResponse =
+            caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
+
+        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
+            ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
+            : REQUEST_FOR_INFORMATION_RESPONSE;
+
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
-            REQUEST_FOR_INFORMATION_RESPONSE,
+            emailTemplateName,
             applicantTemplateContent(
                 caseData,
                 caseId,
