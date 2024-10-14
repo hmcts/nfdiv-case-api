@@ -56,6 +56,7 @@ uk:
           smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
         templates:
           english:
+            REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: 'e15fa45a-f100-4b07-b1ca-ad96c633a30d'
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
             OUTSTANDING_ACTIONS: '544c4297-e1c5-44bc-8f02-5661494beb4f'
             APPLICATION_SUBMITTED: '68b87fab-f99f-49c2-a3df-04415d003eb9'
@@ -189,6 +190,7 @@ uk:
             REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS: '552f0eed-8df6-4282-bd1f-c5f6b4db9c42'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
           welsh:
+            REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: 'e15fa45a-f100-4b07-b1ca-ad96c633a30d' #TODO: Welsh translation needed
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
             APPLICATION_SUBMITTED: 'a7fa0582-1b75-4451-88ec-19db06f68563'
