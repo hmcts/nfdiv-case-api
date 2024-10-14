@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -13,14 +12,9 @@ import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
-import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
-import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.OrganisationEntityResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaOrganisationResponse;
 
@@ -37,13 +31,10 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
-import static uk.gov.hmcts.divorce.payment.PaymentService.HMCTS_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 
@@ -67,21 +58,6 @@ public final class PaymentWireMock {
             PAYMENTS_SERVER.stop();
             PAYMENTS_SERVER.resetAll();
         }
-    }
-
-    public static void stubCreateServiceRequest(HttpStatus status, CreateServiceRequestBody request) throws JsonProcessingException {
-        OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        PAYMENTS_SERVER.stubFor(post("/service-request")
-            .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
-            .withRequestBody(new EqualToJsonPattern(OBJECT_MAPPER.writeValueAsString(request), true, true))
-            .willReturn(aResponse()
-                .withStatus(status.value())
-                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody(OBJECT_MAPPER.writeValueAsString(
-                    ServiceReferenceResponse.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build())
-                ))
-        );
     }
 
     public static void stubCreditAccountPayment(HttpStatus status, CreditAccountPaymentResponse response) throws JsonProcessingException {
@@ -127,28 +103,6 @@ public final class PaymentWireMock {
                 .and("pba.ref.data.service.url=" + "http://localhost:" + PAYMENTS_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
-    }
-
-    public static CreateServiceRequestBody buildServiceReferenceRequest(CaseData data, Applicant responsibleParty) {
-        return CreateServiceRequestBody.builder()
-            .ccdCaseNumber(TEST_CASE_ID)
-            .caseReference(TEST_CASE_ID)
-            .callBackUrl(data.getCitizenPaymentCallbackUrl())
-            .hmctsOrgId(HMCTS_ORG_ID)
-            .fees(List.of(
-                PaymentItem.builder()
-                    .ccdCaseNumber(TEST_CASE_ID.toString())
-                    .calculatedAmount("10")
-                    .version("1")
-                    .code(FEE_CODE)
-                    .build()
-            ))
-            .casePaymentRequest(
-                CasePaymentRequest.builder()
-                    .responsibleParty(responsibleParty.getFullName())
-                    .action("payment")
-                    .build()
-            ).build();
     }
 
     private static CreditAccountPaymentRequest getCreditAccountPaymentRequest(OrderSummary orderSummary) {

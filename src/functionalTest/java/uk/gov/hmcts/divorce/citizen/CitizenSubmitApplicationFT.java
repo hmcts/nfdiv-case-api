@@ -20,7 +20,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_PAYMENT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -44,7 +43,6 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
-        request.put("citizenPaymentCallbackUrl", TEST_PAYMENT_CALLBACK_URL);
 
         Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
 
@@ -78,7 +76,6 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
     public void shouldPassValidationAndGiveSuccessWhenApplicant1AppliesAsJointApplication() throws IOException {
         Map<String, Object> request = caseData(REQUEST_JOINT);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
-        request.put("citizenPaymentCallbackUrl", TEST_PAYMENT_CALLBACK_URL);
 
         Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
 

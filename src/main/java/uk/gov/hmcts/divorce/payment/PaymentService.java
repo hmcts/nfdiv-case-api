@@ -13,20 +13,16 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
-import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
-import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -73,17 +69,12 @@ public class PaymentService {
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
     public static final String CA_E0003 = "CA-E0003";
-    public static final String HMCTS_ORG_ID = "ABA1";
-    private static final String ERROR_SERVICE_REF_REQUEST = "Failed to create service reference for case: %s";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
 
     @Autowired
     private FeesAndPaymentsClient feesAndPaymentsClient;
-
-    @Autowired
-    private PaymentClient paymentClient;
 
     @Autowired
     private PaymentPbaClient paymentPbaClient;
@@ -93,55 +84,6 @@ public class PaymentService {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    public static class PaymentServiceException extends RuntimeException {
-        public PaymentServiceException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    public String createServiceRequestReference(
-        String callbackUrl,
-        Long caseId,
-        String responsibleParty,
-        OrderSummary orderSummary
-    ) {
-        try {
-            log.info("Creating service request reference for case id: {}", caseId);
-
-            final Fee fee = getFeeValue(orderSummary);
-            final PaymentItem paymentItem = PaymentItem
-                .builder()
-                .ccdCaseNumber(String.valueOf(caseId))
-                .calculatedAmount(penceToPounds(orderSummary.getPaymentTotal()))
-                .code(fee.getCode())
-                .version(fee.getVersion())
-                .build();
-
-            var serviceReferenceResponse = paymentClient.createServiceRequest(
-                httpServletRequest.getHeader(AUTHORIZATION),
-                authTokenGenerator.generate(),
-                buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
-            );
-
-            String serviceReference = Optional.ofNullable(serviceReferenceResponse)
-                .map(response ->
-                    Optional.ofNullable(response.getBody())
-                        .map(ServiceReferenceResponse::getServiceRequestReference)
-                        .filter(serviceRef -> !serviceRef.isEmpty())
-                        .orElseThrow()
-                )
-                .orElseThrow();
-
-            log.info("Successfully created service request reference: {}, for case id: {}", serviceReference, caseId);
-
-            return serviceReference;
-        } catch (FeignException | NoSuchElementException e) {
-            log.error("Failed to create service request reference for case id: {}, error: {}", caseId, e.getMessage());
-
-            throw new PaymentServiceException(String.format(ERROR_SERVICE_REF_REQUEST, caseId), e);
-        }
-    }
 
     public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
         final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
@@ -351,26 +293,6 @@ public class PaymentService {
         creditAccountPaymentRequest.setFees(paymentItemList);
 
         return creditAccountPaymentRequest;
-    }
-
-    private CreateServiceRequestBody buildServiceRequestBody(
-        String callBackUrl,
-        Long caseId,
-        String responsibleParty,
-        List<PaymentItem> paymentItemList
-    ) {
-        return CreateServiceRequestBody.builder()
-            .ccdCaseNumber(caseId)
-            .caseReference(caseId)
-            .callBackUrl(callBackUrl)
-            .hmctsOrgId(HMCTS_ORG_ID)
-            .fees(paymentItemList)
-            .casePaymentRequest(
-                CasePaymentRequest.builder()
-                    .responsibleParty(responsibleParty)
-                    .action("payment")
-                    .build()
-            ).build();
     }
 
     private List<PaymentItem> populateFeesPaymentItems(
