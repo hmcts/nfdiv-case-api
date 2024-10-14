@@ -12,6 +12,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -35,7 +38,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +61,9 @@ class NoticeOfChangeServiceTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private OrganisationClient organisationClient;
 
     @InjectMocks
     private NoticeOfChangeService noticeOfChangeService;
@@ -151,6 +159,10 @@ class NoticeOfChangeServiceTest {
     public void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasNotDigital() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
+        OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
+            .name(TEST_ORG_NAME)
+            .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
+            .build();
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(TEST_SERVICE_AUTH_TOKEN, null));
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
@@ -161,6 +173,8 @@ class NoticeOfChangeServiceTest {
                 .caseRole(APPLICANT_1_SOLICITOR.getRole())
                 .build()
         ));
+        when(organisationClient.getOrganisationByUserId(TEST_SERVICE_AUTH_TOKEN, SERVICE_AUTHORIZATION, userId))
+            .thenReturn(organisationResponse);
 
         Applicant applicant = getApplicant(UserRole.APPLICANT_2_SOLICITOR);
         Applicant applicantBefore = getApplicant(APPLICANT_2_SOLICITOR);
@@ -181,12 +195,17 @@ class NoticeOfChangeServiceTest {
             SERVICE_AUTHORIZATION,
             TEST_ORG_ID,
             "1");
+        assertEquals(applicant.getSolicitor().getAddress(), TEST_SOLICITOR_ADDRESS);
     }
 
     @Test
     public void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasDigital() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
+        OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
+            .name(TEST_ORG_NAME)
+            .contactInformation(List.of(OrganisationContactInformation.builder().addressLine1(TEST_SOLICITOR_ADDRESS).build()))
+            .build();
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(TEST_SERVICE_AUTH_TOKEN, null));
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
@@ -197,6 +216,8 @@ class NoticeOfChangeServiceTest {
                 .caseRole(APPLICANT_2_SOLICITOR.getRole())
                 .build()
         ));
+        when(organisationClient.getOrganisationByUserId(TEST_SERVICE_AUTH_TOKEN, SERVICE_AUTHORIZATION, userId))
+            .thenReturn(organisationResponse);
 
         Applicant applicant = getApplicant(UserRole.APPLICANT_2_SOLICITOR);
         Applicant applicantBefore = getApplicant(APPLICANT_2_SOLICITOR);
@@ -223,6 +244,7 @@ class NoticeOfChangeServiceTest {
             SERVICE_AUTHORIZATION,
             TEST_ORG_ID,
             "1");
+        assertEquals(applicant.getSolicitor().getAddress(), TEST_SOLICITOR_ADDRESS);
     }
 
     private static Applicant getApplicant(UserRole caseRole) {

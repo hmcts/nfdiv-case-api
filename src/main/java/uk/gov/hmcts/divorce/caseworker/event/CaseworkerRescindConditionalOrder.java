@@ -26,6 +26,7 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRemoveCasesFromBulkList.CASEWORKER_REMOVE_CASES_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
@@ -33,7 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeDocumentsBasedOnContactPrivacy;
@@ -70,7 +70,8 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
         configBuilder
             .event(RESCIND_CONDITIONAL_ORDER)
             .forStates(
-                GeneralConsiderationComplete, AwaitingFinalOrder, ConditionalOrderPronounced, AwaitingPronouncement
+                GeneralConsiderationComplete, AwaitingFinalOrder, AwaitingFinalOrderPayment,
+                ConditionalOrderPronounced, AwaitingPronouncement
             )
             .name("Rescind Conditional order")
             .description("Rescind Conditional order")
@@ -78,7 +79,7 @@ public class CaseworkerRescindConditionalOrder implements CCDConfig<CaseData, St
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE);
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, CITIZEN, JUDGE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

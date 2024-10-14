@@ -187,7 +187,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                     coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
                     caseData.getApplicant2().getLanguagePreference()
                 );
-            } else if (isEmpty(applicant2.getEmail()) || applicant2.isApplicantOffline() || reissuedAsOfflineAOS) {
+            } else if (isEmpty(applicant2.getEmail()) || reissuedAsOfflineAOS) {
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,

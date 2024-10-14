@@ -19,7 +19,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOr
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -54,7 +53,7 @@ public class CaseworkerResetConditionalOrderFlags implements CCDConfig<CaseData,
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER)
-            .grantHistoryOnly(CASE_WORKER, SOLICITOR, LEGAL_ADVISOR, JUDGE))
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page(RESET_CONDITIONAL_ORDER)
             .pageLabel(RESET_CONDITIONAL_ORDER)
             .label("resetDescription", DESCRIPTION_RESET_CONDITIONAL_ORDER_FLAGS)

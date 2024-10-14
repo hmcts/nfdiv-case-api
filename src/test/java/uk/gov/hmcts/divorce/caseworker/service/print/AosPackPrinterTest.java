@@ -91,7 +91,46 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosPackWithoutD10ForRespondentIfRequiredDocumentsArePresent() {
+    void shouldPrintAosPackWithD10ForRespondentIfEmailIsBlank() {
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant2(
+                Applicant.builder()
+                    .email("")
+                    .solicitorRepresented(NO)
+                    .solicitor(Solicitor.builder().build())
+                    .build())
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
+            .build();
+
+        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(randomUUID());
+
+        aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+    }
+
+    @Test
+    void shouldPrintAosPackWithoutD10ForRespondentIfEmailIsPresent() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -117,6 +156,46 @@ class AosPackPrinterTest {
             .build();
 
         when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
+
+        aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
+        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+    }
+
+    @Test
+    void shouldPrintAosPackWithoutD10ForRespondentIfAddressIsOverseas() {
+
+        final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(NOTICE_OF_PROCEEDINGS_APP_2)
+                .build())
+            .build();
+
+        final ListValue<DivorceDocument> doc3 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(APPLICATION)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant2(
+                Applicant.builder()
+                    .email("testresp@test.com")
+                    .addressOverseas(YES)
+                    .solicitorRepresented(NO)
+                    .solicitor(Solicitor.builder().build())
+                    .build())
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
+            .build();
+
+        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(randomUUID());
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
 

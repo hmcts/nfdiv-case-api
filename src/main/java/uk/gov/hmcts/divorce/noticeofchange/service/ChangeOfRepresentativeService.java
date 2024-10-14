@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 import uk.gov.hmcts.divorce.noticeofchange.model.Representative;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.FindUsersByOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.ProfessionalUser;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -25,12 +24,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
 import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor.SOLICITOR_NOTICE_OF_CHANGE;
 
 @Component
@@ -108,17 +105,9 @@ public class ChangeOfRepresentativeService {
         applicantSolicitor.setName(String.join(" ", nocRequestingUser.getFirstName(), nocRequestingUser.getLastName()));
         applicantSolicitor.setEmail(loggedInUserEmail);
         applicantSolicitor.setFirmName(nocRequestingUserOrg.getName());
-
-        List<OrganisationContactInformation> contactInformation = nocRequestingUserOrg.getContactInformation();
-        if (Objects.nonNull(contactInformation) && !contactInformation.isEmpty()) {
-            applicantSolicitor.setAddress(parseOrganisationAddress(contactInformation));
-        } else {
-            applicantSolicitor.setAddress(null);
-        }
-
+        applicantSolicitor.setAddressToOrganisationDefault(nocRequestingUserOrg);
         applicantSolicitor.setAgreeToReceiveEmailsCheckbox(Collections.emptySet());
         applicantSolicitor.setReference(null);
-        applicantSolicitor.setAddressOverseas(null);
         applicantSolicitor.setPhone(null);
     }
 

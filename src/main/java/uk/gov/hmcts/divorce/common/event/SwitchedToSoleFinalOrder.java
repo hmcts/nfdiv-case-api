@@ -91,7 +91,7 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
             log.info("Request made by applicant to switch to sole for case id: {}", caseId);
             // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
             switchToSoleService.switchApplicantData(caseData);
-            switchToSoleService.switchUserRoles(caseData, caseId);
+            switchToSoleService.switchUserRoles(beforeDetails.getData(), caseId);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -5,28 +5,40 @@
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "sentNotifications": {},
     "coCronRetriesRemindApplicantApplyCo": 0,
-    "generalApplicationDocument": {
-      "documentLink": {
-        "document_url": "http://localhost:4200/assets/d11",
-        "document_filename": "GA.pdf",
-        "document_binary_url": "GA.pdf/binary"
-      },
-      "documentDateAdded": "${json-unit.any-string}",
-      "documentType": "generalApplication"
-    },
+    "generalApplicationDocuments": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://localhost:4200/assets/d11",
+            "document_filename": "dummy.file",
+            "document_binary_url": "dummy.file/binary"
+          },
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "generalApplication"
+        }
+      }
+    ],
     "generalApplications": [
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "generalApplicationDocument": {
-            "documentLink": {
-              "document_url": "http://localhost:4200/assets/d11",
-              "document_filename": "GA.pdf",
-              "document_binary_url": "GA.pdf/binary"
-            },
-            "documentDateAdded": "${json-unit.any-string}",
-            "documentType": "generalApplication"
-          }
+          "generalApplicationDocuments": [
+            {
+              "id": "${json-unit.any-string}",
+              "value": {
+                "documentLink": {
+                  "document_url": "http://localhost:4200/assets/d11",
+                  "document_filename": "dummy.file",
+                  "document_binary_url": "dummy.file/binary"
+                },
+                "documentDateAdded": "${json-unit.any-string}",
+                "documentFileName": "${json-unit.any-string}",
+                "documentType": "generalApplication"
+              }
+            }
+          ]
         }
       }
     ],
@@ -36,10 +48,11 @@
         "value": {
           "documentLink": {
             "document_url": "http://localhost:4200/assets/d11",
-            "document_filename": "GA.pdf",
-            "document_binary_url": "GA.pdf/binary"
+            "document_filename": "dummy.file",
+            "document_binary_url": "dummy.file/binary"
           },
           "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "generalApplication"
         }
       }
