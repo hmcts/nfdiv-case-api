@@ -214,23 +214,6 @@ public class TestDataHelper {
             .build();
     }
 
-    public static Applicant getApplicantWithNonConfidentialAddress() {
-        return Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .middleName(TEST_MIDDLE_NAME)
-            .lastName(TEST_LAST_NAME)
-            .email(TEST_USER_EMAIL)
-            .gender(MALE)
-            .languagePreferenceWelsh(NO)
-            .nonConfidentialAddress(AddressGlobalUK.builder()
-                .addressLine1("line 1")
-                .postTown("town")
-                .postCode("postcode")
-                .country("UK")
-                .build())
-            .build();
-    }
-
     public static Applicant getApplicantWithAddress() {
         return Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -240,6 +223,12 @@ public class TestDataHelper {
             .gender(MALE)
             .languagePreferenceWelsh(NO)
             .address(AddressGlobalUK.builder()
+                .addressLine1("line 1")
+                .postTown("town")
+                .postCode("postcode")
+                .country("UK")
+                .build())
+            .nonConfidentialAddress(AddressGlobalUK.builder()
                 .addressLine1("line 1")
                 .postTown("town")
                 .postCode("postcode")
