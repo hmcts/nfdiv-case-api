@@ -23,10 +23,9 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
     public static final String JURISDICTION = "DIVORCE";
 
     public static String getCaseType() {
-        return (CASE_TYPE);
-        /*  return ofNullable(getenv().get("CHANGE_ID"))
+        return ofNullable(getenv().get("CHANGE_ID"))
             .map(num -> CASE_TYPE + "-" + num)
-            .orElse(CASE_TYPE);*/
+            .orElse(CASE_TYPE);
     }
 
     @Override
