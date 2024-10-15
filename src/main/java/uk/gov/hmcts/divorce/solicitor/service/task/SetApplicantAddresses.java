@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 @Component
 @Slf4j
+/* Saves non-confidential applicant addresses that are input by solicitors when they create applications
+into the standard address fields that are used by citizens/CTSC and have restricted access */
 public class SetApplicantAddresses implements CaseTask {
 
     @Override
