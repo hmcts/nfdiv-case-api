@@ -228,12 +228,6 @@ public class TestDataHelper {
                 .postCode("postcode")
                 .country("UK")
                 .build())
-            .nonConfidentialAddress(AddressGlobalUK.builder()
-                .addressLine1("line 1")
-                .postTown("town")
-                .postCode("postcode")
-                .country("UK")
-                .build())
             .build();
     }
 
