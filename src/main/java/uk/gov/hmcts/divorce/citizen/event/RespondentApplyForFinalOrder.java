@@ -110,6 +110,21 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
         details.setState(AwaitingFinalOrderPayment);
 
+        setServiceRequestReferenceForFinalOrderPayment(details.getData(), details.getId());
+
         return details;
+    }
+
+    public void setServiceRequestReferenceForFinalOrderPayment(CaseData data, long caseId) {
+        final FinalOrder finalOrder = data.getFinalOrder();
+
+        final String serviceRequestReference = paymentService.createServiceRequestReference(
+            data.getCitizenPaymentCallbackUrl(),
+            caseId,
+            data.getApplicant2().getFullName(),
+            finalOrder.getApplicant2FinalOrderFeeOrderSummary()
+        );
+
+        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);
     }
 }
