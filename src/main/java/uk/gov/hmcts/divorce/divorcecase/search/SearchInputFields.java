@@ -59,17 +59,25 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant last name").id(APPLICANT_1_LAST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant email").id(APPLICANT_1_EMAIL).build(),
-        SearchField.<UserRole>builder().label("Applicant postcode").id(APPLICANT_1_ADDRESS)
-            .userRole(UserRole.CASE_WORKER).listElementCode("PostCode").build(),
-        SearchField.<UserRole>builder().label("Applicant postcode").id(String.format("%s %s", APPLICANT_1_ADDRESS, UserRole.JUDGE.getRole()))
-            .userRole(UserRole.JUDGE).listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Applicant postcode")
+            .id(APPLICANT_1_ADDRESS)
+            .userRole(UserRole.CASE_WORKER)
+            .listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Applicant postcode")
+            .id(String.format("%s %s", APPLICANT_1_ADDRESS, UserRole.JUDGE.getRole()))
+            .userRole(UserRole.JUDGE)
+            .listElementCode("PostCode").build(),
         SearchField.<UserRole>builder().label("Respondent first name").id(APPLICANT_2_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Respondent last name").id(APPLICANT_2_LAST_NAME).build(),
         SearchField.<UserRole>builder().label("Respondent email").id(APPLICANT_2_EMAIL).build(),
-        SearchField.<UserRole>builder().label("Respondent postcode").id(APPLICANT_2_ADDRESS)
-            .userRole(UserRole.CASE_WORKER).listElementCode("PostCode").build(),
-        SearchField.<UserRole>builder().label("Respondent postcode").id(String.format("%s %s", APPLICANT_2_ADDRESS, UserRole.JUDGE.getRole()))
-            .userRole(UserRole.JUDGE).listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Respondent postcode")
+            .id(APPLICANT_2_ADDRESS)
+            .userRole(UserRole.CASE_WORKER)
+            .listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Respondent postcode")
+            .id(String.format("%s %s", APPLICANT_2_ADDRESS, UserRole.JUDGE.getRole()))
+            .userRole(UserRole.JUDGE)
+            .listElementCode("PostCode").build(),
         SearchField.<UserRole>builder().label("Supplementary evidence handled").id(EVIDENCE_HANDLED).build(),
         SearchField.<UserRole>builder().label("Applicant Welsh Translation").id(APPLICANT_WELSH_TRANSLATION).build(),
         SearchField.<UserRole>builder().label("Respondent Welsh Translation").id(RESPONDENT_WELSH_TRANSLATION).build(),
