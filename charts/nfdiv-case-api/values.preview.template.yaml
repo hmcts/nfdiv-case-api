@@ -25,7 +25,7 @@ java:
         - name: idam-caseworker-username
           alias: IDAM_OLD_DIVORCE_USERNAME
         - name: idam-caseworker-password
-         alias: IDAM_OLD_DIVORCE_PASSWORD
+          alias: IDAM_OLD_DIVORCE_PASSWORD
 nfdiv-frontend:
   enabled: true
   nodejs:
