@@ -21,10 +21,10 @@ public class IdamService {
     private String systemUpdatePassword;
 
     @Value("${idam.divorce.username}")
-    private String divorceUserName = "divorce_as_caseworker_beta@mailinator.com";
+    private String divorceUserName;
 
     @Value("${idam.divorce.password}")
-    private String divorcePassword = "Testing1234";
+    private String divorcePassword;
 
     @Autowired
     private IdamClient idamClient;
