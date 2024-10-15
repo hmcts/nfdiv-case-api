@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformatio
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
@@ -113,6 +115,7 @@ class CaseworkerRequestForInformationTest {
     void shouldValidateApplicantSolicitorEmailOnSoleCase() {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -128,6 +131,7 @@ class CaseworkerRequestForInformationTest {
     void shouldReturnErrorWhenNoApplicantSolicitorEmailOnSoleCase() {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.getApplicant1().getSolicitor().setEmail("");
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
@@ -138,7 +142,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR + FULL_STOP);
     }
 
     @Test
@@ -168,7 +172,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
     }
 
     @Test
@@ -205,6 +209,7 @@ class CaseworkerRequestForInformationTest {
     void shouldValidateApplicant1SolicitorEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -221,6 +226,7 @@ class CaseworkerRequestForInformationTest {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
         caseData.getApplicant1().getSolicitor().setEmail("");
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -230,7 +236,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP);
     }
 
     @Test
@@ -269,6 +275,7 @@ class CaseworkerRequestForInformationTest {
     void shouldValidateApplicant2SolicitorEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -285,6 +292,7 @@ class CaseworkerRequestForInformationTest {
         CaseData caseData = caseData();
         caseData.setApplicant2(applicantRepresentedBySolicitor());
         caseData.getApplicant2().getSolicitor().setEmail("");
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -294,7 +302,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP);
     }
 
     @Test
@@ -374,7 +382,9 @@ class CaseworkerRequestForInformationTest {
     void shouldValidateApplicant1SolicitorAndApplicant2SolicitorEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.getApplicant2().setGender(MALE);
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
@@ -394,7 +404,9 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant2(applicantRepresentedBySolicitor());
         caseData.getApplicant2().setGender(MALE);
         caseData.getApplicant1().getSolicitor().setEmail("");
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.getApplicant2().getSolicitor().setEmail("");
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -405,8 +417,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR
+            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP,
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP
         );
     }
 
@@ -417,6 +429,8 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant2(applicantRepresentedBySolicitor());
         caseData.getApplicant2().setGender(MALE);
         caseData.getApplicant1().getSolicitor().setEmail("");
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -426,14 +440,16 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP);
     }
 
     @Test
     void shouldReturnErrorWhenNoApplicant2SolicitorEmailAndApplicant1SolicitorEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.getApplicant2().setGender(MALE);
         caseData.getApplicant2().getSolicitor().setEmail("");
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -445,7 +461,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP);
     }
 
     @Test
@@ -453,6 +469,7 @@ class CaseworkerRequestForInformationTest {
         CaseData caseData = caseData();
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.getApplicant2().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.getApplicant2().setGender(MALE);
         caseData.getApplicant1().setEmail("");
         caseData.getApplicant2().getSolicitor().setEmail("");
@@ -467,7 +484,7 @@ class CaseworkerRequestForInformationTest {
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
             NO_VALID_EMAIL_ERROR + APPLICANT_1 + FULL_STOP,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP
         );
     }
 
@@ -475,6 +492,7 @@ class CaseworkerRequestForInformationTest {
     void shouldReturnErrorWhenNoApplicant2EmailAndNoApplicant1SolicitorEmailOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant1().getSolicitor().setAgreeToReceiveEmailsCheckbox(Set.of(Solicitor.Prayer.CONFIRM));
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setGender(MALE);
         caseData.getApplicant1().getSolicitor().setEmail("");
@@ -489,7 +507,7 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
+            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP,
             NO_VALID_EMAIL_ERROR + APPLICANT_2 + FULL_STOP
         );
     }
@@ -525,7 +543,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
     }
 
     @Test
