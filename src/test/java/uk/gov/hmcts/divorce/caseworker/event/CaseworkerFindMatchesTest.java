@@ -93,9 +93,10 @@ class CaseworkerFindMatchesTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerFindMatches.aboutToStart(caseDetails);
 
         assertThat(response.getData().getCaseMatches())
-            .as("Should return exactly 1 match on about-to-start event")
-            .hasSize(1);
+            .as("Should return exactly 2 match on about-to-start event")
+            .hasSize(2);
         verify(ccdSearchService).searchForAllCasesWithQuery(any(), any(), any());
+        verify(ccdSearchService).searchForOldDivorceCasesWithQuery(any(), any(), any());
     }
 
 
@@ -110,7 +111,7 @@ class CaseworkerFindMatchesTest {
 
         assertThat(response.getData().getCaseMatches())
             .as("Should not add duplicate matches but include distinct match")
-            .hasSize(1);
+            .hasSize(2);
 
     }
 
@@ -177,12 +178,22 @@ class CaseworkerFindMatchesTest {
         when(authTokenGenerator.generate()).thenReturn("serviceAuthToken");
         when(ccdSearchService.searchForAllCasesWithQuery(any(), any(), any())).thenReturn(mockCaseMatchDetails());
         when(objectMapper.convertValue(any(Map.class), eq(CaseData.class))).thenReturn(caseData);
+        when(ccdSearchService.searchForOldDivorceCasesWithQuery(any(), any(), any())).thenReturn(mockCaseMatchTwoDetails());
     }
 
     private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> mockCaseMatchDetails() {
         uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
             .build();
         mockCaseDetails.setId(67890L);
+        mockCaseDetails.setState(State.Holding.name());
+        mockCaseDetails.setData(mockCaseData());
+        return List.of(mockCaseDetails);
+    }
+
+    private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> mockCaseMatchTwoDetails() {
+        uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+            .build();
+        mockCaseDetails.setId(67894L);
         mockCaseDetails.setState(State.Holding.name());
         mockCaseDetails.setData(mockCaseData());
         return List.of(mockCaseDetails);

@@ -75,7 +75,8 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
         String environmentName = environment.name().toLowerCase(Locale.UK);
         return List.of(
             "build/ccd-config/ccd-" + NoFaultDivorce.getCaseType() + "-" + environmentName + ".xlsx",
-            "build/ccd-config/ccd-" + BulkActionCaseTypeConfig.getCaseType() + "-" + environmentName + ".xlsx"
+            "build/ccd-config/ccd-" + BulkActionCaseTypeConfig.getCaseType() + "-" + environmentName + ".xlsx",
+            "ccd-definitions/DIVORCE_sheet/ccd-DIVORCE.xlsx"
         );
     }
 }

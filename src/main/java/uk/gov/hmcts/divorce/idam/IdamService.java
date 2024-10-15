@@ -20,6 +20,12 @@ public class IdamService {
     @Value("${idam.systemupdate.password}")
     private String systemUpdatePassword;
 
+    @Value("${idam.divorce.username}")
+    private String divorceUserName = "divorce_as_caseworker_beta@mailinator.com";
+
+    @Value("${idam.divorce.password}")
+    private String divorcePassword = "Testing1234";
+
     @Autowired
     private IdamClient idamClient;
 
@@ -34,6 +40,10 @@ public class IdamService {
 
     public User retrieveSystemUpdateUserDetails() {
         return retrieveUser(getCachedIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
+    }
+
+    public User retrieveOldSystemUpdateUserDetails() {
+        return retrieveUser(getCachedIdamOauth2Token(divorceUserName, divorcePassword));
     }
 
     private String getCachedIdamOauth2Token(String username, String password) {

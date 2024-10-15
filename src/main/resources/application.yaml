@@ -323,7 +323,9 @@ idam:
     id: 'divorce'
     secret: ${IDAM_CLIENT_SECRET:123456}
     redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
-
+  divorce:
+    username: ${IDAM_OLD_DIVORCE_USERNAME}
+    password: ${IDAM_OLD_DIVORCE_PASSWORD}
 fee:
   api:
     baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
