@@ -42,6 +42,9 @@ idam:
     id: 'divorce'
     secret: ${OAUTH2_CLIENT_SECRET:dummy}
     redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
+  divorce:
+    username: ${IDAM_OLD_DIVORCE_USERNAME}
+    password: ${IDAM_OLD_DIVORCE_PASSWORD}
 
 s2s-authorised:
   services: ccd_data
