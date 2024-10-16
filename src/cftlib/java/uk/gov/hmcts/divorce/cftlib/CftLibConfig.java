@@ -75,7 +75,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         // Generate CCD definitions
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));
 
-        File source = new File("ccd-definitions/NOC");
+        File source = new File("ccd-definitions");
         File dest = new File("build/definitions/NFD");
         try {
             FileUtils.copyDirectory(source, dest);
@@ -87,7 +87,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         lib.importJsonDefinition(new File("build/definitions/NFD"));
         lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
 
-        Path filePath = Paths.get("ccd-definitions/DIVORCE_sheet/ccd-DIVORCE.xlsx");
+        Path filePath = Paths.get("resources/ccd-DIVORCE.xlsx");
         byte[] defDivorce = Files.readAllBytes(filePath);
         lib.importDefinition(defDivorce);
     }

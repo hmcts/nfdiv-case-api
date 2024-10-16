@@ -35,10 +35,6 @@ apply plugin: 'io.spring.dependency-management'
 group = 'uk.gov.hmcts'
 version = '0.0.1'
 
-ccd {
-  configDir = file('ccd-definitions/definitions')
-}
-
 sourceSets {
   functionalTest {
     java {
@@ -250,7 +246,7 @@ ext.libraries = [
 
 dependencies {
 // uncomment for local version
-//  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.1'

@@ -981,8 +981,10 @@ class CcdSearchServiceTest {
         final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
 
-        doThrow(feignException(500, "Internal Server Error")).when(coreCaseDataApi)
-            .searchCases(SYSTEM_UPDATE_AUTH_TOKEN, SERVICE_AUTHORIZATION, "DIVORCE", getSearchSourceBuilder(0, PAGE_SIZE, query).toString());
+        doThrow(feignException(500, "Internal Server Error"))
+            .when(coreCaseDataApi).searchCases(
+                SYSTEM_UPDATE_AUTH_TOKEN, SERVICE_AUTHORIZATION, "DIVORCE",
+                getSearchSourceBuilder(0, PAGE_SIZE, query).toString());
 
         final CcdSearchCaseException exception = assertThrows(
             CcdSearchCaseException.class,
