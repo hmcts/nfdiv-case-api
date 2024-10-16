@@ -135,6 +135,28 @@ class CaseworkerFindMatchesTest {
             .hasSize(1);
     }
 
+    @Test
+    void shouldSetCaseMatchesToNullWhenNewMatchesIsEmpty() {
+        CaseData caseData = buildEmptyCaseData();
+
+        ListValue<CaseMatch> existingMatch = ListValue.<CaseMatch>builder()
+            .id("1")
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference("123456").build())
+                .build())
+            .build();
+        caseData.getCaseMatches().add(existingMatch);
+
+        List<CaseMatch> newMatches = new ArrayList<>();
+
+        caseworkerFindMatches.setToNewMatches(caseData, newMatches);
+
+        assertThat(caseData.getCaseMatches())
+            .as("Should set case matches to null when new matches list is empty")
+            .isNull();
+    }
+
+
     private CaseDetails<CaseData, State> buildCaseDetails() {
         CaseData caseData = buildEmptyCaseData();
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -206,4 +228,5 @@ class CaseworkerFindMatchesTest {
         mockCaseData.put("marriageDate", "2000-01-01");
         return mockCaseData;
     }
+
 }

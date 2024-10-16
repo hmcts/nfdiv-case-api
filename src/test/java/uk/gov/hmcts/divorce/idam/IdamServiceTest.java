@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_USER_PASSW
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
-public class IdamServiceTest {
+class IdamServiceTest {
 
     @InjectMocks
     private IdamService idamService;
@@ -33,7 +33,7 @@ public class IdamServiceTest {
     private IdamClient idamClient;
 
     @Test
-    public void shouldRetrieveUserWhenValidAuthorizationTokenIsPassed() {
+    void shouldRetrieveUserWhenValidAuthorizationTokenIsPassed() {
         when(idamClient.getUserInfo(SYSTEM_UPDATE_AUTH_TOKEN))
             .thenReturn(userDetails());
 
@@ -45,7 +45,7 @@ public class IdamServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignUnauthorizedExceptionWhenInValidAuthorizationTokenIsPassed() {
+    void shouldThrowFeignUnauthorizedExceptionWhenInValidAuthorizationTokenIsPassed() {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamClient).getUserInfo("Bearer invalid_token");
 
@@ -55,7 +55,7 @@ public class IdamServiceTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionAndRetrieveSystemUpdateUserSuccessfully() {
+    void shouldNotThrowExceptionAndRetrieveSystemUpdateUserSuccessfully() {
         setSystemUserCredentials();
 
         when(idamClient.getAccessToken(TEST_SYSTEM_UPDATE_USER_EMAIL, TEST_SYSTEM_USER_PASSWORD))
@@ -73,7 +73,7 @@ public class IdamServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignUnauthorizedExceptionWhenSystemUpdateUserCredentialsAreInvalid() {
+    void shouldThrowFeignUnauthorizedExceptionWhenSystemUpdateUserCredentialsAreInvalid() {
         setSystemUserCredentials();
 
         doThrow(feignException(401, "Failed to retrieve Idam user"))
@@ -84,9 +84,44 @@ public class IdamServiceTest {
             .hasMessageContaining("Failed to retrieve Idam user");
     }
 
+    @Test
+    void shouldRetrieveOldSystemUpdateUserDetailsSuccessfully() {
+        setDivorceUserCredentials();
+
+        when(idamClient.getAccessToken(TEST_SYSTEM_UPDATE_USER_EMAIL, TEST_SYSTEM_USER_PASSWORD))
+            .thenReturn(SYSTEM_UPDATE_AUTH_TOKEN);
+
+        when(idamClient.getUserInfo(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(userDetails());
+
+        assertThatCode(() -> idamService.retrieveOldSystemUpdateUserDetails())
+            .doesNotThrowAnyException();
+
+        verify(idamClient).getAccessToken(TEST_SYSTEM_UPDATE_USER_EMAIL, TEST_SYSTEM_USER_PASSWORD);
+        verify(idamClient).getUserInfo(SYSTEM_UPDATE_AUTH_TOKEN);
+        verifyNoMoreInteractions(idamClient);
+    }
+
+    @Test
+    void shouldThrowFeignUnauthorizedExceptionWhenDivorceUserCredentialsAreInvalid() {
+        setDivorceUserCredentials();
+
+        doThrow(feignException(401, "Failed to retrieve Idam user"))
+            .when(idamClient).getAccessToken(TEST_SYSTEM_UPDATE_USER_EMAIL, TEST_SYSTEM_USER_PASSWORD);
+
+        assertThatThrownBy(() -> idamService.retrieveOldSystemUpdateUserDetails())
+            .isExactlyInstanceOf(FeignException.Unauthorized.class)
+            .hasMessageContaining("Failed to retrieve Idam user");
+    }
+
     private void setSystemUserCredentials() {
         ReflectionTestUtils.setField(idamService, "systemUpdateUserName", TEST_SYSTEM_UPDATE_USER_EMAIL);
         ReflectionTestUtils.setField(idamService, "systemUpdatePassword", TEST_SYSTEM_USER_PASSWORD);
+    }
+
+    private void setDivorceUserCredentials() {
+        ReflectionTestUtils.setField(idamService, "divorceUserName", TEST_SYSTEM_UPDATE_USER_EMAIL);
+        ReflectionTestUtils.setField(idamService, "divorcePassword", TEST_SYSTEM_USER_PASSWORD);
     }
 
     private UserInfo userDetails() {

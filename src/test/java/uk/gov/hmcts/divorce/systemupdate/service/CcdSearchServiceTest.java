@@ -153,7 +153,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -193,8 +193,8 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
-        assertThat(searchResult.size()).isEqualTo(100);
-        assertThat(searchResult).isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
+        assertThat(searchResult).hasSize(100)
+        .isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
     }
 
     @Test
@@ -247,7 +247,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -296,7 +296,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(
             query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -332,7 +332,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -366,7 +366,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForBulkCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -419,10 +419,10 @@ class CcdSearchServiceTest {
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(3);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(1);
+        assertThat(allPages).hasSize(3);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(1);
     }
 
     @Test
@@ -459,7 +459,7 @@ class CcdSearchServiceTest {
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(2);
+        assertThat(allPages).hasSize(2);
         assertThat(allPages.poll()).isEqualTo(caseDetailsList1);
         assertThat(allPages.poll()).isEqualTo(Stream.of(caseDetailsList2, caseDetailsList3).flatMap(Collection::stream).toList());
         assertThat(allPages.poll()).isNull();
@@ -515,7 +515,7 @@ class CcdSearchServiceTest {
         final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchResult = ccdSearchService
             .searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -566,7 +566,7 @@ class CcdSearchServiceTest {
         final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchResult = ccdSearchService
             .searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -619,7 +619,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForCases(caseReferences, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(4);
+        assertThat(searchResult).hasSize(4);
     }
 
     @Test
@@ -656,7 +656,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -689,7 +689,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -726,7 +726,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -765,11 +765,11 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
-    public void shouldReturnBulkCaseDetailsWithGivenCaseId() {
+    void shouldReturnBulkCaseDetailsWithGivenCaseId() {
         final User user = new User(CASEWORKER_AUTH_TOKEN, UserInfo.builder().uid("123").build());
 
         when(coreCaseDataApi.readForCaseWorker(
@@ -826,11 +826,11 @@ class CcdSearchServiceTest {
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(4);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages).hasSize(4);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
     }
 
 
@@ -927,4 +927,78 @@ class CcdSearchServiceTest {
             .from(from)
             .size(PAGE_SIZE);
     }
+
+    @Test
+    void shouldReturnAllOldDivorceCases() {
+        final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        final List<CaseDetails> caseDetailsList1 = createCaseDetailsList(PAGE_SIZE, 1);
+        final List<CaseDetails> caseDetailsList2 = createCaseDetailsList(PAGE_SIZE - 1, PAGE_SIZE + 1);
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE).cases(caseDetailsList1).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(PAGE_SIZE - 1).cases(caseDetailsList2).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            "DIVORCE",
+            getSearchSourceBuilder(0, PAGE_SIZE, query).toString()))
+            .thenReturn(searchResult1);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            "DIVORCE",
+            getSearchSourceBuilder(PAGE_SIZE, PAGE_SIZE, query).toString()))
+            .thenReturn(searchResult2);
+
+        final List<CaseDetails> result = ccdSearchService.searchForOldDivorceCasesWithQuery(query, user, SERVICE_AUTHORIZATION);
+
+        assertThat(result).hasSize(PAGE_SIZE * 2 - 1);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoOldDivorceCasesFound() {
+        final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        final SearchResult emptySearchResult = SearchResult.builder().total(0).cases(emptyList()).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            "DIVORCE",
+            getSearchSourceBuilder(0, PAGE_SIZE, query).toString()))
+            .thenReturn(emptySearchResult);
+
+        final List<CaseDetails> result = ccdSearchService.searchForOldDivorceCasesWithQuery(query, user, SERVICE_AUTHORIZATION);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void shouldThrowCcdSearchCaseExceptionWhenFeignExceptionOccurs() {
+        final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        doThrow(feignException(500, "Internal Server Error")).when(coreCaseDataApi)
+            .searchCases(SYSTEM_UPDATE_AUTH_TOKEN, SERVICE_AUTHORIZATION, "DIVORCE", getSearchSourceBuilder(0, PAGE_SIZE, query).toString());
+
+        final CcdSearchCaseException exception = assertThrows(
+            CcdSearchCaseException.class,
+            () -> ccdSearchService.searchForOldDivorceCasesWithQuery(query, user, SERVICE_AUTHORIZATION));
+
+        assertThat(exception.getMessage()).contains("Failed to complete search for Old Divorce Cases");
+    }
+
+    private SearchSourceBuilder getSearchSourceBuilder(final int from, final int size, final BoolQueryBuilder query) {
+        return SearchSourceBuilder
+            .searchSource()
+            .sort(DUE_DATE, ASC)
+            .query(query)
+            .from(from)
+            .size(size);
+    }
+
+
 }
