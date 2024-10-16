@@ -108,7 +108,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         if (application.getApplicationFeeOrderSummary() == null) {
             OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
-            EVENT_ISSUE,KEYWORD_DIVORCE);
+                EVENT_ISSUE,KEYWORD_DIVORCE);
             application.setApplicationFeeOrderSummary(orderSummary);
         }
 
