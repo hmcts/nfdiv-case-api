@@ -185,37 +185,6 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         }).toList();
     }
 
-    public List<CaseMatch> transformOldDivorceToMatchingCasesList(
-        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails) {
-
-        return caseMatchDetails.stream().map(caseDetail -> {
-            CaseData caseData = getCaseData(caseDetail.getData());
-            Application application = caseData.getApplication();
-            MarriageDetails marriageDetails = application.getMarriageDetails();
-
-            return CaseMatch.builder()
-                .applicant1Name(marriageDetails.getApplicant1Name())
-                .applicant2Name(marriageDetails.getApplicant2Name())
-                .date(marriageDetails.getDate())
-                .applicant1Postcode(
-                    caseData.getApplicant1().getAddress() != null && caseData.getApplicant1().getAddress().getPostCode() != null
-                        ? caseData.getApplicant1().getAddress().getPostCode() : null)
-                .applicant2Postcode(
-                    caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostCode() != null
-                        ? caseData.getApplicant2().getAddress().getPostCode() : null)
-                .applicant1Town(
-                    caseData.getApplicant1().getAddress() != null && caseData.getApplicant1().getAddress().getPostTown() != null
-                        ? caseData.getApplicant1().getAddress().getPostTown() : null)
-                .applicant2Town(
-                    caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostTown() != null
-                        ? caseData.getApplicant2().getAddress().getPostTown() : null)
-                .caseLink(CaseLink.builder()
-                    .caseReference(String.valueOf(caseDetail.getId()))
-                    .build())
-                .build();
-        }).toList();
-    }
-
     private CaseData getCaseData(Map<String, Object> data) {
         return objectMapper.convertValue(data, CaseData.class);
     }
