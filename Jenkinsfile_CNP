@@ -61,15 +61,6 @@ withPipeline(type, product, component) {
   enableAksStagingDeployment()
   disableLegacyDeployment()
   loadVaultSecrets(secrets)
-// Check if the environment variables were set correctly
-  def idamOldDivorceUsername = sh(script: 'echo $IDAM_OLD_DIVORCE_USERNAME', returnStdout: true).trim()
-
-// Output success or failure messages based on whether the variables are set
-  if (idamOldDivorceUsername) {
-    echo "IDAM_OLD_DIVORCE_USERNAME loaded successfully: ${idamOldDivorceUsername}"
-  } else {
-    echo "Error: IDAM_OLD_DIVORCE_USERNAME failed to load."
-  }
   syncBranchesWithMaster(['perftest', 'ithc', 'demo'])
   enableSlackNotifications('#no-fault-divorce-builds')
   MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component)
