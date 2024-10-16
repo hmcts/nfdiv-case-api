@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
@@ -18,10 +21,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -51,6 +59,15 @@ class CitizenRespondToRequestForInformationTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private CitizenRequestForInformationResponseNotification citizenRequestForInformationResponseNotification;
+
+    @Mock
+    private CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
 
     @InjectMocks
     private CitizenRespondToRequestForInformation citizenRespondToRequestForInformation;
@@ -493,5 +510,156 @@ class CitizenRespondToRequestForInformationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingRequestedInformation);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartyOnlyOnSoleCase() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartyAndPartnerOnJointCase() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToRespondingPartyFailsOnSoleCase() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToRespondingPartyFailsOnJointCase() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToPartnerFails() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                citizenRequestForInformationResponsePartnerNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+    }
+    @Test
+    void shouldReturnErrorWhenSendNotificationToBothPartiesFails() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                citizenRequestForInformationResponsePartnerNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
     }
 }
