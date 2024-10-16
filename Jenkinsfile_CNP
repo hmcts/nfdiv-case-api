@@ -246,7 +246,7 @@ def generateDefinitions() {
     sh "./ccd-build-definition.sh"
   }
 
-  // Copy the new xlsx file from the resources/ccd-definitions-old folder
+  // Copy the new xlsx file from the resources folder
   dir("${WORKSPACE}/resources") {
     // Ensure the directory exists and has the expected file
     sh "cp ccd-DIVORCE.xlsx ${WORKSPACE}/build/ccd-config/"
