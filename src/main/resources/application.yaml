@@ -181,6 +181,8 @@ uk:
             NOC_TO_SOLS_EMAIL_NEW_SOL: 'e19d3227-84eb-4b43-afa0-05de1e089003'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '98c2a7a4-79c4-410c-909d-10db0108fe8d'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
+            FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '740f2b58-6f72-4f07-8c85-26ccb06efd13'
+            RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f0407ced-5060-4e4c-8a22-0852cb0bc66f'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
@@ -306,6 +308,9 @@ uk:
             NOC_TO_SOLS_EMAIL_NEW_SOL: '7fd68c22-f0cc-41ce-af9e-be9f732eab3a'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '977d2857-dcf1-4bc2-97fb-f9b1e13af907'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
+            FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '740f2b58-6f72-4f07-8c85-26ccb06efd13'  #TODO - Welsh translation needed
+            RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f0407ced-5060-4e4c-8a22-0852cb0bc66f'  #TODO - Welsh translation needed
+
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
