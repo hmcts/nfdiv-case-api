@@ -627,6 +627,7 @@ class CitizenRespondToRequestForInformationTest {
             );
         });
     }
+
     @Test
     void shouldReturnErrorWhenSendNotificationToBothPartiesFails() {
         final CaseDetails<CaseData, State> caseDetails =
