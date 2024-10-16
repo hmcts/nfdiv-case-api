@@ -55,9 +55,9 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_MID_ERROR = "not valid for Party (";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_END_ERROR = ") on latest RFI for Case Id: ";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR
-        = "Unable to send Request for Information Response Notification for Case Id: ";
+        = "Request for Information Response Notification for Case Id {} failed with message: {}";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
-        = "Unable to send Request for Information Response Partner Notification for Case Id: ";
+        = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
 
     private final CcdAccessService ccdAccessService;
     private final HttpServletRequest request;
@@ -75,6 +75,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE_DELETE, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 CASE_WORKER,
@@ -136,7 +137,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
             );
         } catch (final NotificationTemplateException e) {
             log.error(
-                "Request for Information Response Notification for Case Id {} failed with message: {}",
+                REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
                 details.getId(),
                 e.getMessage(),
                 e
@@ -152,7 +153,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
                 );
             } catch (final NotificationTemplateException e) {
                 log.error(
-                    "Request for Information Response Partner Notification for Case Id {} failed with message: {}",
+                    REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
                     details.getId(),
                     e.getMessage(),
                     e
