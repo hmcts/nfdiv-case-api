@@ -22,12 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorRespondRequestForInformation.APP_1_SOLICITOR_RESPOND_REQUEST_INFO;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorRespondRequestForInformation.MUST_ADD_DOCS_OR_DETAILS_ERROR;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorRespondRequestForInformation.NOT_AUTHORISED_TO_RESPOND_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorRespondRequestForInformation.UNABLE_TO_SUBMIT_RESPONSE_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -59,6 +62,50 @@ class Applicant1SolicitorRespondRequestForInformationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(APP_1_SOLICITOR_RESPOND_REQUEST_INFO);
+    }
+
+    @Test
+    void shouldReturnErrorIfRequestForOtherParty() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(OTHER, true, false);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1SolicitorRespondRequestForInformation.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NOT_AUTHORISED_TO_RESPOND_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorIfRequestForApplicant2() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT2, true, false);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1SolicitorRespondRequestForInformation.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NOT_AUTHORISED_TO_RESPOND_ERROR);
+    }
+
+    @Test
+    void shouldNotReturnErrorIfRequestForApplicant1() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1SolicitorRespondRequestForInformation.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData()).isEqualTo(caseDetails.getData());
+    }
+
+    @Test
+    void shouldNotReturnErrorIfRequestForBoth() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, true, false);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1SolicitorRespondRequestForInformation.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData()).isEqualTo(caseDetails.getData());
     }
 
     @Test
