@@ -8,6 +8,7 @@ public final class DocumentConstants {
     public static final String DIVORCE_APPLICATION_SOLE = "DIVORCE_APPLICATION_SOLE";
     public static final String DIVORCE_APPLICATION_JOINT = "DIVORCE_APPLICATION_JOINT";
     public static final String DIVORCE_APPLICATION_DOCUMENT_NAME = "divorce-application";
+    public static final String DIVORCE_APPLICATION_DOCUMENT_NAME_REG = "regenerated-divorce-application";
     public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
     public static final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_DISPUTED";
@@ -71,6 +72,7 @@ public final class DocumentConstants {
     public static final String JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_SOLE_APPLICATION";
     public static final String JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_JOINT_APPLICATION";
     public static final String JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME = "judicial-separation-application";
+    public static final String JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME_REG = "regenerated-judicial-separation-application";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";

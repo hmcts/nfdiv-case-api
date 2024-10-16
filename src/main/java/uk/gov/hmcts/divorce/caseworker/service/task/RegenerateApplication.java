@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 @Component
 @Slf4j
-public class GenerateApplication implements CaseTask {
+public class RegenerateApplication implements CaseTask {
 
     @Autowired
     private GenerateApplicationHelper generateApplicationHelper;
@@ -19,9 +19,9 @@ public class GenerateApplication implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
         final Long caseId = caseDetails.getId();
-        log.info("Executing handler to generate application for case id {} ", caseId);
+        log.info("Executing handler to re-generate application for case id {} ", caseId);
 
-        caseDetails =  generateApplicationHelper.generateApplicationDocument(caseDetails, false);
+        caseDetails =  generateApplicationHelper.generateApplicationDocument(caseDetails, true);
 
         return caseDetails;
     }
