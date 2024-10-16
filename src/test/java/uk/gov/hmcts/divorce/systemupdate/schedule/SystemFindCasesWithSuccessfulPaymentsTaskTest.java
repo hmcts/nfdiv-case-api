@@ -25,6 +25,7 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -53,9 +54,11 @@ class SystemFindCasesWithSuccessfulPaymentsTaskTest {
 
     private User user;
     final BoolQueryBuilder query = boolQuery()
-        .filter(matchQuery(STATE, AwaitingPayment))
+            .should(matchQuery(STATE, AwaitingPayment))
+            .should(matchQuery(STATE, AwaitingFinalOrderPayment))
+            .minimumShouldMatch(1)
         .filter(rangeQuery(LAST_MODIFIED)
-            .gte(LocalDate.now().minusWeeks(2)));
+            .gte(LocalDate.now().minusDays(1)));
 
     @BeforeEach
     void setUp() {
@@ -68,7 +71,7 @@ class SystemFindCasesWithSuccessfulPaymentsTaskTest {
     void shouldQueryPaymentApi() {
         CaseDetails caseDetails = CaseDetails.builder().data(Map.of("applicationPayments","SomeObject")).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails);
-        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingPayment))
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingPayment, AwaitingFinalOrderPayment))
             .thenReturn(caseDetailsList);
 
         systemFindCasesWithSuccessfulPaymentsTask.run();
