@@ -102,7 +102,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConditionalOrderTab(configBuilder);
         buildConditionalOrderTabForApp2Sol(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
-        buildOutcomeOfConditionalOrderTabApp2Sol(configBuilder);
         buildFinalOrderTab(configBuilder);
         buildPaymentTab(configBuilder);
         buildDocumentsTab(configBuilder);
@@ -477,18 +476,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
             "outcomeOfConditionalOrder", "Outcome of Conditional Order")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition(getShowConditionForOutcomeOfConditionalOrderTab());
-        addOutcomeOfConditionalOrderTabFields(tabBuilder);
-    }
-
-    private void buildOutcomeOfConditionalOrderTabApp2Sol(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
-                "outcomeOfConditionalOrderApp2Sol", "Outcome of Conditional Order")
-            .forRoles(APPLICANT_2_SOLICITOR)
-            .showCondition("applicationType=\"jointApplication\" AND ("
-                + getShowConditionForOutcomeOfConditionalOrderTab() + ")"
-            );
         addOutcomeOfConditionalOrderTabFields(tabBuilder);
     }
 
