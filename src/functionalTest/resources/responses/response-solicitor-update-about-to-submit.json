@@ -11,6 +11,8 @@
     "solSignStatementOfTruth": "Yes",
     "applicant1FinancialOrder": "No",
     "divorceUnit": "serviceCentre",
+    "applicant1Address": { "AddressLine1": "line1 applicant1" },
+    "applicant2Address": { "AddressLine1": "line1 applicant2" },
     "documentsGenerated": [
       {
         "id": "${json-unit.ignore}",

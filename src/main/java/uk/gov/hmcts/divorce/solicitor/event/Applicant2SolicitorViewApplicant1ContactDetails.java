@@ -12,8 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -29,8 +28,8 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
 
     public static final String APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO = "app2-solicitor-view-app1-contact-info";
     public static final String CONFIDENTIAL_APPLICANT_ERROR = """
-            The applicants contact details are confidential. Please complete a general application
-            to seek permission to obtain the address from the court.
+        The applicants contact details are confidential. Please complete a general application
+        to seek permission to obtain the address from the court.
         """;
 
     @Override
@@ -47,7 +46,7 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
             .page("applicant1ContactDetails")
             .pageLabel("Applicant 1 Contact Details")
             .complex(CaseData::getApplicant1)
-                .readonly(Applicant::getAddress)
+                .readonly(Applicant::getNonConfidentialAddress)
                 .readonly(Applicant::getPhoneNumber)
                 .readonly(Applicant::getEmail)
             .done();
@@ -58,15 +57,18 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
             APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId()
         );
 
-        List<String> errors = new ArrayList<>();
-
         boolean applicantIsConfidential = details.getData().getApplicant1().isConfidentialContactDetails();
         if (applicantIsConfidential) {
-            errors.add(CONFIDENTIAL_APPLICANT_ERROR);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+             .errors(Collections.singletonList(CONFIDENTIAL_APPLICANT_ERROR))
+             .build();
         }
 
+        var applicant1 = details.getData().getApplicant1();
+        applicant1.setNonConfidentialAddress(applicant1.getAddress());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .errors(errors)
+            .data(details.getData())
             .build();
     }
 }
