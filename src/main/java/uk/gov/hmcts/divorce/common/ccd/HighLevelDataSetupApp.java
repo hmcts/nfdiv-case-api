@@ -76,7 +76,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
         return List.of(
             "build/ccd-config/ccd-" + NoFaultDivorce.getCaseType() + "-" + environmentName + ".xlsx",
             "build/ccd-config/ccd-" + BulkActionCaseTypeConfig.getCaseType() + "-" + environmentName + ".xlsx",
-            "ccd-definitions/DIVORCE_sheet/ccd-DIVORCE.xlsx"
+            "build/ccd-config/ccd-DIVORCE.xlsx"
         );
     }
 }
