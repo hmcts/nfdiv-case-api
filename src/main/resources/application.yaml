@@ -53,6 +53,7 @@ uk:
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
+          webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
           smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
         templates:
           english:
