@@ -14,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -33,6 +34,7 @@ public class CaseworkerHwfPartPaymentRequired implements CCDConfig<CaseData, Sta
             .forStateTransition(
                 EnumSet.of(
                     AwaitingDocuments,
+                    AwaitingRequestedInformation,
                     InformationRequested,
                     RequestedInformationSubmitted,
                     AwaitingHWFEvidence,

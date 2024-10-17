@@ -61,6 +61,6 @@ public class CitizenSaveAndCloseTest {
 
         citizenSaveAndClose.submitted(details, details);
 
-        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData, 123456789L, "token");
+        verify(saveAndSignOutNotificationHandler).notifyApplicant(details.getState(), caseData, 123456789L, "token");
     }
 }
