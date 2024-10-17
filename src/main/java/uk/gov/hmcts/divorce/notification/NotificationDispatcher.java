@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -90,29 +91,12 @@ public class NotificationDispatcher {
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
         if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())
             || APPLICANT1.equals(requestForInformation.getRequestForInformationJointParties())) {
-            if (caseData.getApplicant1().isRepresented()) {
-                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
-            } else {
-                applicantNotification.sendToApplicant1(caseData, caseId);
-            }
+            requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);
         } else if (APPLICANT2.equals(requestForInformation.getRequestForInformationJointParties())) {
-            if (caseData.getApplicant2().isRepresented()) {
-                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
-            } else {
-                applicantNotification.sendToApplicant2(caseData, caseId);
-            }
+            requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
         } else if (BOTH.equals(requestForInformation.getRequestForInformationJointParties())) {
-            if (caseData.getApplicant1().isRepresented()) {
-                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
-            } else {
-                applicantNotification.sendToApplicant1(caseData, caseId);
-            }
-
-            if (caseData.getApplicant2().isRepresented()) {
-                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
-            } else {
-                applicantNotification.sendToApplicant2(caseData, caseId);
-            }
+            requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);
+            requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
         } else if (OTHER.equals(requestForInformation.getRequestForInformationSoleParties())
             || RequestForInformationJointParties.OTHER.equals(requestForInformation.getRequestForInformationJointParties())) {
 
@@ -120,6 +104,63 @@ public class NotificationDispatcher {
         } else {
             throw new NotificationTemplateException(
                 "Unable to send Request For Information Notification for Case Id " + caseId + ". RequestForInformation parties not set.");
+        }
+    }
+
+    public void sendRequestForInformationResponseNotification(ApplicantNotification applicantNotification, CaseData caseData, Long caseId)
+        throws NotificationTemplateException {
+
+        RequestForInformationResponseParties requestForInformationResponseParties =
+            caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().getRequestForInformationResponseParties();
+
+        if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)) {
+            applicantNotification.sendToApplicant1(caseData, caseId);
+        } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)) {
+            applicantNotification.sendToApplicant2(caseData, caseId);
+        } else {
+            throw new NotificationTemplateException(
+                "Unable to send Request For Information Response Notification for Case Id "
+                + caseId
+                + ". RequestForInformationResponse parties not set."
+            );
+        }
+    }
+
+    public void sendRequestForInformationResponsePartnerNotification(
+                                                                    ApplicantNotification applicantNotification,
+                                                                    CaseData caseData,
+                                                                    Long caseId
+    ) throws NotificationTemplateException {
+
+        RequestForInformationResponseParties requestForInformationResponseParties =
+            caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().getRequestForInformationResponseParties();
+
+        if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)) {
+            applicantNotification.sendToApplicant2(caseData, caseId);
+        } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)) {
+            applicantNotification.sendToApplicant1(caseData, caseId);
+        } else {
+            throw new NotificationTemplateException(
+                "Unable to send Request For Information Response Partner Notification for Case Id "
+                    + caseId
+                    + ". RequestForInformationResponse parties not set."
+            );
+        }
+    }
+
+    private void requestForInformationSendToApplicant1(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
+        if (caseData.getApplicant1().isRepresented()) {
+            applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+        } else {
+            applicantNotification.sendToApplicant1(caseData, caseId);
+        }
+    }
+
+    private void requestForInformationSendToApplicant2(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
+        if (caseData.getApplicant2().isRepresented()) {
+            applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+        } else {
+            applicantNotification.sendToApplicant2(caseData, caseId);
         }
     }
 }

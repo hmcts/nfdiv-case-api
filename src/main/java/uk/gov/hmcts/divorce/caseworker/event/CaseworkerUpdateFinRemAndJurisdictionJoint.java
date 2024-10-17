@@ -29,6 +29,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.event.RegenerateApplication.REGENERATE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -83,10 +84,7 @@ public class CaseworkerUpdateFinRemAndJurisdictionJoint implements CCDConfig<Cas
             .showEventNotes()
             .grant(CREATE_READ_UPDATE,
                 SUPER_USER)
-            .grantHistoryOnly(
-                SUPER_USER,
-                LEGAL_ADVISOR,
-                JUDGE)
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE)
             .aboutToSubmitCallback(this::midEvent)
             .submittedCallback(this::submitted))
             .page("updateFinRemAndJurisdiction")

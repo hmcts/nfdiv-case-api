@@ -58,8 +58,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -88,6 +93,7 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
@@ -108,8 +114,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -148,6 +159,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
@@ -178,6 +190,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -844,6 +857,36 @@ public class TestDataHelper {
         return templateVars;
     }
 
+    public static Map<String, String> getRequestForInformationTemplateVars() {
+        Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(IS_JOINT, CommonContent.NO);
+        templateVars.put(WIFE_JOINT, CommonContent.NO);
+        templateVars.put(HUSBAND_JOINT, CommonContent.NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.NO);
+        templateVars.put(SENT_TO_BOTH_APPLICANTS, CommonContent.NO);
+
+        return templateVars;
+    }
+
+    public static Map<String, String> getRequestForInformationTemplateVars(ApplicationType applicationType,
+                                                                           RequestForInformationJointParties parties,
+                                                                           Boolean isDivorce,
+                                                                           Applicant partner) {
+        Map<String, String> templateVars = getRequestForInformationTemplateVars();
+
+        if (applicationType.equals(JOINT_APPLICATION) && parties.equals(BOTH)) {
+            templateVars.put(IS_JOINT, CommonContent.YES);
+            templateVars.put(SENT_TO_BOTH_APPLICANTS, CommonContent.YES);
+            if (isDivorce) {
+                templateVars.put(HUSBAND_JOINT, MALE.equals(partner.getGender()) ? CommonContent.YES : CommonContent.NO);
+                templateVars.put(WIFE_JOINT, FEMALE.equals(partner.getGender()) ? CommonContent.YES : CommonContent.NO);
+            } else {
+                templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.YES);
+            }
+        }
+        return templateVars;
+    }
+
     public static Map<String, String> getBasicTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -1337,5 +1380,120 @@ public class TestDataHelper {
                 .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
                 .build())
             .build();
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails() {
+        CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, true, false);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails(
+                                                                            RequestForInformationSoleParties soleParties,
+                                                                            Boolean applicantRepresented,
+                                                                            Boolean applicant2Represented
+    ) {
+        CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(soleParties);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails(
+                                                                                RequestForInformationJointParties jointParties,
+                                                                                Boolean applicantRepresented,
+                                                                                Boolean applicant2Represented
+    ) {
+        CaseData caseData = getRequestForInformationBaseData(JOINT_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(jointParties);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static CaseData getRequestForInformationBaseData(ApplicationType applicationType,
+                                                            Boolean applicantRepresented,
+                                                            Boolean applicant2Represented) {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(applicationType);
+        if (applicantRepresented) {
+            caseData.setApplicant1(applicantRepresentedBySolicitor());
+        }
+        if (applicant2Represented) {
+            caseData.setApplicant2(applicantRepresentedBySolicitor());
+            caseData.getApplicant2().setGender(MALE);
+        } else {
+            caseData.setApplicant2(getApplicant(MALE));
+        }
+
+        return caseData;
+    }
+
+    public static void setRequestForInformationBaseRequestValues(CaseData caseData) {
+        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationBaseDetails(CaseData caseData) {
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> details = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        details.setData(caseData);
+        details.setState(InformationRequested);
+        details.setId(TEST_CASE_ID);
+
+        return details;
+    }
+
+    public static boolean isApplicant2(CaseData caseData, Applicant applicant) {
+        return caseData.getApplicant2().equals(applicant);
+    }
+
+    public static RequestForInformationResponseDraft getRequestForInformationResponseDraft(CaseData caseData, Applicant applicant) {
+        return isApplicant2(caseData, applicant)
+            ? caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2Solicitor()
+            : caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1Solicitor();
+    }
+
+    public static void addDocumentToRequestForInformationResponseDraft(RequestForInformationResponseDraft draft) {
+        final List<ListValue<DivorceDocument>> docs = draft.getRfiDraftResponseDocs();
+        final ListValue<DivorceDocument> uploadedDocument = documentWithType(null);
+
+        if (isEmpty(docs)) {
+            List<ListValue<DivorceDocument>> newDocs = new ArrayList<>();
+            newDocs.add(uploadedDocument);
+            draft.setRfiDraftResponseDocs(newDocs);
+        } else {
+            docs.add(0, uploadedDocument);
+        }
+    }
+
+    public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
+        final boolean isApplicant2 = isApplicant2(caseData, applicant);
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        final RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
+        draft.setRfiDraftResponseDetails(TEST_TEXT);
+        addDocumentToRequestForInformationResponseDraft(draft);
+        if (isApplicant2) {
+            caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
+        } else {
+            caseData.getRequestForInformationList().setRequestForInformationResponseApplicant1Solicitor(draft);
+        }
+
+        requestForInformationResponse.setValues(
+            caseData,
+            isApplicant2 ? APPLICANT2SOLICITOR : APPLICANT1SOLICITOR
+        );
+
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        if (isApplicant2) {
+            caseData.getRequestForInformationList()
+                .setRequestForInformationResponseApplicant2Solicitor(new RequestForInformationResponseDraft());
+        } else {
+            caseData.getRequestForInformationList()
+                .setRequestForInformationResponseApplicant1Solicitor(new RequestForInformationResponseDraft());
+        }
     }
 }

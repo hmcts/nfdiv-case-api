@@ -225,6 +225,21 @@ public enum State {
     AwaitingLegalAdvisorReferral,
 
     @CCD(
+        label = "Awaiting requested information",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingRequestedInformation,
+
+    @CCD(
+        label = "Awaiting respondent final order payment",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingFinalOrderPayment,
+
+
+    @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -351,6 +366,13 @@ public enum State {
     GeneralConsiderationComplete,
 
     @CCD(
+        label = "Information Requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    InformationRequested,
+
+    @CCD(
         label = "Issued to bailiff",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -414,6 +436,13 @@ public enum State {
     BulkCaseReject,
 
     @CCD(
+        label = "Requested Information Submitted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    RequestedInformationSubmitted,
+
+    @CCD(
         label = "Respondent Final order requested",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -471,7 +500,9 @@ public enum State {
         Applicant2Approved,
         AwaitingPayment,
         AwaitingHWFDecision,
-        AwaitingDocuments
+        AwaitingDocuments,
+        AwaitingRequestedInformation,
+        RequestedInformationSubmitted
     );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
@@ -504,6 +535,8 @@ public enum State {
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
+        AwaitingRequestedInformation,
+        RequestedInformationSubmitted,
         Submitted,
         Withdrawn,
         Rejected

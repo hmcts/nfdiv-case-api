@@ -1,6 +1,8 @@
 server:
   port: 4013
   shutdown: graceful
+  http2:
+    enabled: true
 
 management:
   endpoint:
@@ -51,9 +53,11 @@ uk:
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
+          webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
           smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
         templates:
           english:
+            REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: 'e15fa45a-f100-4b07-b1ca-ad96c633a30d'
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
             OUTSTANDING_ACTIONS: '544c4297-e1c5-44bc-8f02-5661494beb4f'
             APPLICATION_SUBMITTED: '68b87fab-f99f-49c2-a3df-04415d003eb9'
@@ -138,6 +142,7 @@ uk:
             PARTNER_SWITCHED_TO_SOLE_CO: 'd5f8728e-3eba-4bc5-b3db-80f6685a4941'
             APPLICANT_APPLY_FOR_FINAL_ORDER: 'e2262285-0134-467c-a92b-80f53f61fb80'
             SOLE_APPLIED_FOR_FINAL_ORDER: '8d383c07-c934-4b33-b803-9f138e1ff36c'
+            SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER: '13e14f62-cff2-46cc-bdf6-2221b2e8425f'
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'a59f92c1-026b-4da2-ae64-7ba93bb7fa29'
             SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'dc1a3d51-3e93-4f22-b268-ab0f86676f1f'
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '6db9a294-1613-4926-867a-4302cb0ad6dc'
@@ -181,8 +186,12 @@ uk:
             REQUEST_FOR_INFORMATION_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00'
             REQUEST_FOR_INFORMATION_OTHER: 'eb4acb56-09c3-4898-a5df-2fa5c47a2434'
             REQUEST_FOR_INFORMATION_JOINT: 'bd19eafc-d265-41ba-ae8b-68e458390a09'
+            REQUEST_FOR_INFORMATION_RESPONSE: 'c6aaa2cc-892b-4f43-a8e6-3b51723faf47'
+            REQUEST_FOR_INFORMATION_RESPONSE_PARTNER: '313f12d3-3a8b-43a8-bbc6-bc0ee18b9ee1'
+            REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS: '552f0eed-8df6-4282-bd1f-c5f6b4db9c42'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
           welsh:
+            REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: 'd7e14a2c-ede8-4f90-8f6f-f7f09ff920c4'
             APPLICATION_SUBMITTED: 'a7fa0582-1b75-4451-88ec-19db06f68563'
@@ -292,6 +301,7 @@ uk:
             JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER: '7cddc0bf-5b2f-4b4a-b4b6-28cfc22d1cd5'
             JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER: '83a57815-f1a2-4ac8-92b4-5597b9bd5b38'
             SOLE_APPLIED_FOR_FINAL_ORDER: '7e64d645-8973-4bac-95ca-49e54c423655'
+            SOLE_RESPONDENT_APPLIED_FOR_FINAL_ORDER: 'bca5ccab-7012-4c66-8744-d4a3767ef880'
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: '24d6bb85-82de-49a5-ae97-aec15ecc0ee8'
             INTEND_TO_SWITCH_TO_SOLE_FO: '2b44b8b2-8a2e-4029-974e-bd14458b1f0b'
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: 'd5e65a52-3132-422d-ac8b-0d285650d475'
@@ -305,10 +315,13 @@ uk:
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'b3786fd2-4a72-4c5f-b4ed-6635647b1520'
             NOC_TO_SOLS_EMAIL_NEW_SOL: '7fd68c22-f0cc-41ce-af9e-be9f732eab3a'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '977d2857-dcf1-4bc2-97fb-f9b1e13af907'
-            REQUEST_FOR_INFORMATION_SOLE: 'e8bab44a-c06b-4538-bab9-ef9bbb0dab11' #TODO - Welsh translation needed
-            REQUEST_FOR_INFORMATION_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00' #TODO - Welsh translation needed
-            REQUEST_FOR_INFORMATION_OTHER: 'eb4acb56-09c3-4898-a5df-2fa5c47a2434' #TODO - Welsh translation needed
-            REQUEST_FOR_INFORMATION_JOINT: 'bd19eafc-d265-41ba-ae8b-68e458390a09' #TODO - Welsh translation needed
+            REQUEST_FOR_INFORMATION_SOLE: 'b28844a6-b59e-4f85-96d4-333eb7b948d0'
+            REQUEST_FOR_INFORMATION_SOLICITOR: '40da03ef-21a7-4c26-94bb-1fd6f728e60b'
+            REQUEST_FOR_INFORMATION_OTHER: 'fa165b2a-b049-482e-8bd7-5667b06c59e1'
+            REQUEST_FOR_INFORMATION_JOINT: '7339db7d-4f0a-4791-93ef-263af65bf676'
+            REQUEST_FOR_INFORMATION_RESPONSE: '80a8b4e6-1f4b-4827-9366-233a7fa3f83b'
+            REQUEST_FOR_INFORMATION_RESPONSE_PARTNER: '605e5c07-add5-4412-81e2-f11b556ea73b'
+            REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS: '107dfd07-7745-4bb8-abc6-11c9ba19e691'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
@@ -393,8 +406,8 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V4.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A2-V5.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V9.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V10.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V2.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V4.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx
@@ -478,8 +491,8 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Sole_V3.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Overseas-Sole-V4-Cy.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx #TODO: add Welsh translation
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V6.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V7.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V8.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V4.docx  #TODO: add translated content
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
@@ -495,7 +508,7 @@ docmosis:
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent_V1.docx #TODO: update welsh content
       JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS_V1.docx #TODO: update welsh content
       CO_GRANTED_COVER_LETTER_JS: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx #TODO: update welsh content
-      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order_V1.docx #TODO: update welsh content
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V1.docx #TODO: update welsh content
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V3.docx #TODO: update welsh content
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx

@@ -24,6 +24,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
@@ -73,7 +74,7 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(FINAL_ORDER_REQUESTED)
-            .forStates(AwaitingFinalOrder, AwaitingJointFinalOrder)
+            .forStates(AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
             .showCondition("doesApplicant1WantToApplyForFinalOrder!=\"Yes\"")

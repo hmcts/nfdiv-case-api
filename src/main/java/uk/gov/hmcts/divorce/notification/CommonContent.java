@@ -62,6 +62,7 @@ public class CommonContent {
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL = "signin url";
     public static final String WEBFORM_URL = "webformUrl";
+    public static final String WEBFORM_CY_URL = "webformCyUrl";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String SIGN_IN_PROFESSIONAL_USERS_URL = "signInProfessionalUsersUrl";
@@ -132,6 +133,7 @@ public class CommonContent {
 
     public static final String SMART_SURVEY = "smartSurvey";
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "request information details";
+    public static final String SENT_TO_BOTH_APPLICANTS = "sentToBothApplicants";
     public static final String GENERAL_FEE = "generalFee";
 
     @Autowired
@@ -154,7 +156,10 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
-        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEBFORM_URL,
+            WELSH.equals(applicant.getLanguagePreference())
+                ? config.getTemplateVars().get(WEBFORM_CY_URL)
+                : config.getTemplateVars().get(WEBFORM_URL));
         return templateVars;
     }
 
@@ -251,14 +256,13 @@ public class CommonContent {
         }
     }
 
-    public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
+    public Map<String, String> jointTemplateVars(final CaseData caseData,
                                                             final Long id,
                                                             final Applicant applicant,
                                                             final Applicant partner) {
         final Map<String, String> templateVars = mainTemplateVars(caseData, id, applicant, partner);
         final boolean jointApplication = !caseData.getApplicationType().isSole();
 
-        templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
             && MALE.equals(partner.getGender())
@@ -270,6 +274,28 @@ public class CommonContent {
         templateVars.put(CIVIL_PARTNER_JOINT, jointApplication
             && !caseData.isDivorce()
             ? YES : NO);
+
+        return templateVars;
+    }
+
+    public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
+                                                            final Long id,
+                                                            final Applicant applicant,
+                                                            final Applicant partner) {
+        final Map<String, String> templateVars = jointTemplateVars(caseData, id, applicant, partner);
+
+        templateVars.put(JOINT_CONDITIONAL_ORDER, !caseData.getApplicationType().isSole() ? YES : NO);
+
+        return templateVars;
+    }
+
+    public Map<String, String> requestForInformationTemplateVars(final CaseData caseData,
+                                                            final Long id,
+                                                            final Applicant applicant,
+                                                            final Applicant partner) {
+        final Map<String, String> templateVars = jointTemplateVars(caseData, id, applicant, partner);
+
+        templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
 
         return templateVars;
     }

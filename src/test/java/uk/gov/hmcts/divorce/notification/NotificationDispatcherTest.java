@@ -11,7 +11,10 @@ import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
@@ -483,14 +486,98 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenPartiesNotSet() {
-        Assertions.assertThrows(NotificationTemplateException.class, () -> {
-            CaseData caseData = caseData();
-            CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-            caseDetails.setData(caseData);
-            caseDetails.setId(TEST_CASE_ID);
+    void sendRequestForInformationNotificationShouldThrowExceptionWhenPartiesNotSet() {
+        CaseData caseData = caseData();
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
 
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
             notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+        });
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseEmailToApplicant1() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseEmailToApplicant2() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void sendRequestForInformationResponseNotificationShouldThrowExceptionWhenPartiesNotSet() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().addRequestToList(new RequestForInformation());
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(new RequestForInformationResponse());
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+        });
+    }
+
+    @Test
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void sendRequestForInformationResponsePartnerNotificationShouldThrowExceptionWhenPartiesNotSet() {
+        CaseData caseData = caseData();
+        caseData.getRequestForInformationList().addRequestToList(new RequestForInformation());
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(new RequestForInformationResponse());
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
         });
     }
 }

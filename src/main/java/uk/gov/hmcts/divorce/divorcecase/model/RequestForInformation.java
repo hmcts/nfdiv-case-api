@@ -1,13 +1,22 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import static java.lang.Boolean.TRUE;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -21,47 +30,114 @@ public class RequestForInformation {
     @CCD(
         label = "Address to sole",
         typeOverride = FixedList,
-        typeParameterOverride = "RequestForInformationSoleParties"
+        typeParameterOverride = "RequestForInformationSoleParties",
+        access = {DefaultAccess.class}
     )
     private RequestForInformationSoleParties requestForInformationSoleParties;
 
     @CCD(
         label = "Address to joint",
         typeOverride = FixedList,
-        typeParameterOverride = "RequestForInformationJointParties"
+        typeParameterOverride = "RequestForInformationJointParties",
+        access = {DefaultAccess.class}
     )
     private RequestForInformationJointParties requestForInformationJointParties;
 
     @CCD(
-        label = "Name"
+        label = "Name",
+        access = {DefaultAccess.class}
     )
     private String requestForInformationName;
 
     @CCD(
         label = "Email address",
-        typeOverride = Email
+        typeOverride = Email,
+        access = {DefaultAccess.class}
     )
     private String requestForInformationEmailAddress;
 
     @CCD(
-        label = "Secondary Name"
+        label = "Secondary name",
+        access = {DefaultAccess.class}
     )
     private String requestForInformationSecondaryName;
 
     @CCD(
-        label = "Secondary Email address",
-        typeOverride = Email
+        label = "Secondary email address",
+        typeOverride = Email,
+        access = {DefaultAccess.class}
     )
     private String requestForInformationSecondaryEmailAddress;
 
     @CCD(
-        label = "Date/Time Of Request"
+        label = "Date/time of request",
+        access = {DefaultAccess.class}
     )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime requestForInformationDateTime;
 
     @CCD(
         label = "Please provide details",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
     )
     private String requestForInformationDetails;
+
+    @CCD(
+        label = "Responses",
+        typeOverride = Collection,
+        typeParameterOverride = "RequestForInformationResponse",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<RequestForInformationResponse>> requestForInformationResponses;
+
+    @JsonIgnore
+    public void setValues(CaseData caseData) {
+        this.setRequestForInformationDateTime(LocalDateTime.now());
+
+        final RequestForInformationSoleParties soleParties = this.getRequestForInformationSoleParties();
+        final RequestForInformationJointParties jointParties = this.getRequestForInformationJointParties();
+        if (RequestForInformationSoleParties.APPLICANT.equals(soleParties)
+            || RequestForInformationJointParties.APPLICANT1.equals(jointParties)) {
+            this.setNameAndEmail(caseData.getApplicant1(), false);
+        } else if (RequestForInformationJointParties.APPLICANT2.equals(jointParties)) {
+            this.setNameAndEmail(caseData.getApplicant2(), false);
+        } else if (RequestForInformationJointParties.BOTH.equals(jointParties)) {
+            this.setNameAndEmail(caseData.getApplicant1(), false);
+            this.setNameAndEmail(caseData.getApplicant2(), true);
+        }
+    }
+
+    @JsonIgnore
+    private void setNameAndEmail(Applicant applicant, Boolean setSecondary) {
+        final boolean isRepresented = applicant.isRepresented();
+        final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
+        final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
+        if (TRUE.equals(setSecondary)) {
+            this.setRequestForInformationSecondaryEmailAddress(emailAddress);
+            this.setRequestForInformationSecondaryName(name);
+        } else {
+            this.setRequestForInformationEmailAddress(emailAddress);
+            this.setRequestForInformationName(name);
+        }
+    }
+
+    @JsonIgnore
+    public void addResponseToList(RequestForInformationResponse requestForInformationResponse) {
+        final ListValue<RequestForInformationResponse> newResponse = new ListValue<>();
+        newResponse.setValue(requestForInformationResponse);
+
+        if (isEmpty(this.getRequestForInformationResponses())) {
+            List<ListValue<RequestForInformationResponse>> responses = new ArrayList<>();
+            responses.add(newResponse);
+            this.setRequestForInformationResponses(responses);
+        } else {
+            this.getRequestForInformationResponses().add(0, newResponse);
+        }
+    }
+
+    @JsonIgnore
+    public RequestForInformationResponse getLatestResponse() {
+        return this.getRequestForInformationResponses().get(0).getValue();
+    }
 }
