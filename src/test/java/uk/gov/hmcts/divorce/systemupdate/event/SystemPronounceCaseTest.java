@@ -30,7 +30,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalO
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
