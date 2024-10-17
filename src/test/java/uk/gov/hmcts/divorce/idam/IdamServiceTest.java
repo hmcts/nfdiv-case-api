@@ -103,19 +103,6 @@ class IdamServiceTest {
         verifyNoMoreInteractions(idamClient);
     }
 
-    @Ignore("logging only for now")
-    @Test
-    void shouldThrowFeignUnauthorizedExceptionWhenDivorceUserCredentialsAreInvalid() {
-        setDivorceUserCredentials();
-
-        doThrow(feignException(401, "Failed to retrieve Idam user"))
-            .when(idamClient).getAccessToken(TEST_SYSTEM_UPDATE_USER_EMAIL, TEST_SYSTEM_USER_PASSWORD);
-
-        assertThatThrownBy(() -> idamService.retrieveOldSystemUpdateUserDetails())
-            .isExactlyInstanceOf(FeignException.Unauthorized.class)
-            .hasMessageContaining("Failed to retrieve Idam user");
-    }
-
     private void setSystemUserCredentials() {
         ReflectionTestUtils.setField(idamService, "systemUpdateUserName", TEST_SYSTEM_UPDATE_USER_EMAIL);
         ReflectionTestUtils.setField(idamService, "systemUpdatePassword", TEST_SYSTEM_USER_PASSWORD);
