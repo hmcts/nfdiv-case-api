@@ -480,6 +480,7 @@ public class CcdSearchService {
             while (totalResults == pageSize && allCaseDetails.size() <= totalMaxResults) {
                 final SearchResult searchResult = searchOldDivorceCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
+                log.info("Search result old divorce cases is {}", searchResult.toString());
                 final List<CaseDetails> pageResults = searchResult.getCases();
                 allCaseDetails.addAll(pageResults);
 
@@ -492,7 +493,7 @@ public class CcdSearchService {
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
-        log.info("old cases query returned %s for query %s", allCaseDetails.size(), query.toString());
+        log.info("old cases query returned {} for query {}", allCaseDetails.size(), query.toString());
         return allCaseDetails.stream().toList();
     }
 

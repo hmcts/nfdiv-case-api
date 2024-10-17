@@ -73,11 +73,11 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         CaseData caseData = details.getData();
         MarriageDetails marriageDetails = caseData.getApplication().getMarriageDetails();
 
-        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> oldcaseMatchDetails = getOldDivorceFreshMatches(marriageDetails);
-        log.info("Case ID: " + details.getId() + " old divorce case matching search result: " + oldcaseMatchDetails.size());
-
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails = getFreshMatches(details, marriageDetails);
         log.info("Case ID: " + details.getId() + " nfdiv case matching search result: " + caseMatchDetails.size());
+
+        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> oldcaseMatchDetails = getOldDivorceFreshMatches(marriageDetails);
+        log.info("Case ID: " + details.getId() + " old divorce case matching search result: " + oldcaseMatchDetails.size());
 
         List<CaseMatch> newMatches = transformToMatchingCasesList(combineCaseDetails(caseMatchDetails, oldcaseMatchDetails));
         setToNewMatches(caseData, newMatches);
