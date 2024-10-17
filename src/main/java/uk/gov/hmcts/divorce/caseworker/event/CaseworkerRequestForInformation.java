@@ -200,8 +200,8 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     }
 
     private List<String> doesEmailMatchApplicantOrSolicitor(CaseData caseData, String email) {
-        Applicant applicant1 = caseData.getApplicant1();
-        Applicant applicant2 = caseData.getApplicant2();
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
 
         List<String> emailAddresses = new ArrayList<>();
         if (null != applicant1.getEmail()) {
