@@ -92,15 +92,20 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             updateMissingFields(caseData, user, serviceAuth);
         }
 
-        generateConditionalOrderGrantedDocs(details, beforeDetails);
-        notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
+        AboutToStartOrSubmitResponse.AboutToStartOrSubmitResponseBuilder<CaseData, State> responseBuilder =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData);
 
-        final State state = caseData.isJudicialSeparationCase() ? SeparationOrderGranted : ConditionalOrderPronounced;
+        if (details.getData().getFinalOrder() == null ||
+            details.getData().getFinalOrder().getGrantedDate() == null) {
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .state(state)
-            .data(caseData)
-            .build();
+            generateConditionalOrderGrantedDocs(details, beforeDetails);
+            notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
+
+            final State state = caseData.isJudicialSeparationCase() ? SeparationOrderGranted : ConditionalOrderPronounced;
+            responseBuilder.state(state);
+        }
+
+        return responseBuilder.build();
     }
 
     private void generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,

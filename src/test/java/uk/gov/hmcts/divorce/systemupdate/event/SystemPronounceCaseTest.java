@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotifi
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -29,6 +30,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalO
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -212,13 +215,68 @@ class SystemPronounceCaseTest {
             .build();
 
         List<ListValue<DivorceDocument>> docs = List.of(coDocumentListValue);
-
         caseData.getDocuments().setDocumentsGenerated(docs);
+        buildConditionalOrder(caseData);
+    }
 
+    @Test
+    void shouldGenerateConditionalOrderGrantedDocsWhenFinalOrderIsNull() {
+        final CaseData caseData = caseData();
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
+        buildConditionalOrder(caseData);
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID
+            )
+            .data(caseData)
+            .build();
+
+        when(generateConditionalOrderPronouncedDocument.apply(details)).thenReturn(details);
+        underTest.aboutToSubmit(details, details);
+        verify(notificationDispatcher).send(any(), eq(caseData), eq(details.getId()));
+    }
+
+    private void buildConditionalOrder(CaseData caseData) {
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .pronouncementJudge("judgeName")
+            .pronouncementJudge("JudgeName")
             .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(LocalDateTime.now())
             .build());
+    }
+
+    @Test
+    void shouldNotGenerateDocsOrSendNotificationWhenFinalOrderDateIsNotNull() {
+        final CaseData caseData = caseData();
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
+        buildConditionalOrder(caseData);
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build());
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        Map<String, Object> mockCaseDataMap = Map.of(
+            "conditionalOrder", Map.of("court", "Birmingham", "dateAndTimeOfHearing", LocalDateTime.now().toString())
+        );
+
+        uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails =
+            uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+                .data(mockCaseDataMap)
+                .build();
+
+        SearchResult searchResult = SearchResult.builder()
+            .cases(List.of(mockCaseDetails))
+            .build();
+        when(ccdSearchService.searchForCasesWithQuery(anyInt(), anyInt(), any(), any(), any())).thenReturn(searchResult);
+
+        CaseData convertedCaseData = caseData();
+        buildConditionalOrder(caseData);
+        when(objectMapper.convertValue(any(Map.class), eq(CaseData.class))).thenReturn(convertedCaseData);
+
+        underTest.aboutToSubmit(details, details);
+
+        verifyNoInteractions(generateConditionalOrderPronouncedDocument);
+        verifyNoInteractions(notificationDispatcher);
     }
 }
