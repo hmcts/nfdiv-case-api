@@ -106,7 +106,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
         requestForInformationList.getLatestRequest().addResponseToList(response);
 
         final State state =
-            requestForInformationList.getLatestRequest().getLatestResponse().getRequestForInformationResponseCannotUploadDocs() == YES
+            YES.equals(requestForInformationList.getLatestRequest().getLatestResponse().getRequestForInformationResponseCannotUploadDocs())
             ? AwaitingRequestedInformation
             : RequestedInformationSubmitted;
 
