@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.idam;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREFIX;
 
 @Service
+@Slf4j
 public class IdamService {
     @Value("${idam.systemupdate.username}")
     private String systemUpdateUserName;
@@ -43,7 +46,14 @@ public class IdamService {
     }
 
     public User retrieveOldSystemUpdateUserDetails() {
-        return retrieveUser(getCachedIdamOauth2Token(divorceUserName, divorcePassword));
+        User user = null;
+
+        try {
+            user = retrieveUser(getCachedIdamOauth2Token(divorceUserName, divorcePassword));
+        } catch(FeignException e) {
+            log.info("Exception in retrieveOldSystemUpdateUserDetails {}", e.getStackTrace());
+        }
+        return user;
     }
 
     private String getCachedIdamOauth2Token(String username, String password) {
