@@ -51,8 +51,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public static final String SOLICITOR = "'s Solicitor";
     public static final String FULL_STOP = ".";
     public static final String PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR =
-        "You cannot use the email address of an Applicant or Solicitor associated with the case. "
-        + "If you wish to do so, select the relevant party instead.";
+        "Please use create general letter event to request information from offline parties.";
 
     private final RequestForInformationNotification requestForInformationNotification;
 
