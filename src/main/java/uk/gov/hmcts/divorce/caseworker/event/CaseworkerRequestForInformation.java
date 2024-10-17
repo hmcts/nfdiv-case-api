@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
