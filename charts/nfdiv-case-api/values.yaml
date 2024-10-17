@@ -36,9 +36,9 @@ java:
           alias: app-insights-connection-string
     div:
       secrets:
-        - name: idam-caseworker-username
+        - name: idam-old-divorce-user
           alias: IDAM_OLD_DIVORCE_USERNAME
-        - name: idam-caseworker-password
+        - name: idam-old-divorce-password
           alias: IDAM_OLD_DIVORCE_PASSWORD
 
 
