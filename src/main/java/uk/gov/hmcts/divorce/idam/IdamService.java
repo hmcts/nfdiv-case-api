@@ -50,7 +50,7 @@ public class IdamService {
 
         try {
             user = retrieveUser(getCachedIdamOauth2Token(divorceUserName, divorcePassword));
-        } catch(FeignException e) {
+        } catch (FeignException e) {
             log.info("Exception in retrieveOldSystemUpdateUserDetails {}", e.getStackTrace());
         }
         return user;
