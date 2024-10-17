@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrd
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -119,6 +120,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
         buildChangeOfRepresentativeTab(configBuilder);
+        buildRequestForInformationTab(configBuilder);
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
@@ -147,6 +149,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingPayment,
                     Submitted,
                     AwaitingDocuments,
+                    AwaitingRequestedInformation,
                     InformationRequested,
                     RequestedInformationSubmitted,
                     AwaitingAos,
@@ -250,6 +253,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("certificateOfServiceDocument")
             .field("coCertificateOfEntitlementDocument")
             .field("coProofOfServiceUploadDocuments");
+    }
+
+    private void buildRequestForInformationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("requestsForInformation", "Requests For Information")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field("requestsForInformation");
     }
 
     private void buildCorrespondenceTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

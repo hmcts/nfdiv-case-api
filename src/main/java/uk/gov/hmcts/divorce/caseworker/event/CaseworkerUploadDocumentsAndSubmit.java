@@ -21,6 +21,7 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -45,7 +46,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT)
-            .forStates(AwaitingDocuments, InformationRequested, RequestedInformationSubmitted)
+            .forStates(AwaitingDocuments, AwaitingRequestedInformation, InformationRequested, RequestedInformationSubmitted)
             .name("Upload documents and submit")
             .description("Upload documents from the applicant and submit")
             .showEventNotes()

@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
@@ -69,6 +70,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
                 Holding,
                 Submitted,
                 AwaitingDocuments,
+                AwaitingRequestedInformation,
                 InformationRequested,
                 RequestedInformationSubmitted,
                 AwaitingPayment)

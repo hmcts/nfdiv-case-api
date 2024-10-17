@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -63,6 +64,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
                 AosDrafted,
                 Submitted,
                 AwaitingDocuments,
+                AwaitingRequestedInformation,
                 InformationRequested,
                 RequestedInformationSubmitted,
                 GeneralApplicationReceived
