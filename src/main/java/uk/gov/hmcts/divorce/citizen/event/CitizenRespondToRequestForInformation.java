@@ -50,7 +50,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION = "citizen-respond-request-for-information";
-    public static final String UNABLE_TO_DETERMINE_CITIZEN_ERROR = "Unable to determine citizen for Case Id: ";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR = "Unable to apply response. Applicant ";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_MID_ERROR = "not valid for Party (";
     public static final String CITIZEN_NOT_VALID_FOR_PARTY_END_ERROR = ") on latest RFI for Case Id: ";
@@ -93,16 +92,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
 
         final RequestForInformationList requestForInformationList = details.getData().getRequestForInformationList();
         final RequestForInformationResponse response = new RequestForInformationResponse();
-        RequestForInformationResponseParties responseParty;
-        if (isApplicant1(details.getId())) {
-            responseParty = APPLICANT1;
-        } else if (isApplicant2(details.getId())) {
-            responseParty = APPLICANT2;
-        } else {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(UNABLE_TO_DETERMINE_CITIZEN_ERROR + details.getId().toString()))
-                .build();
-        }
+        RequestForInformationResponseParties responseParty = isApplicant1(details.getId()) ? APPLICANT1 : APPLICANT2;
 
         if (applicantCanRespondToRequestForInformation(details.getData(), responseParty)) {
             response.setValues(details.getData(), responseParty);
@@ -166,10 +156,6 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
 
     private boolean isApplicant1(Long caseId) {
         return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
-    }
-
-    private boolean isApplicant2(Long caseId) {
-        return ccdAccessService.isApplicant2(request.getHeader(AUTHORIZATION), caseId);
     }
 
     private boolean applicantCanRespondToRequestForInformation(CaseData data, RequestForInformationResponseParties party) {
