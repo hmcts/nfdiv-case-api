@@ -181,7 +181,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -301,7 +301,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -338,7 +338,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -375,7 +375,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -412,7 +412,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
