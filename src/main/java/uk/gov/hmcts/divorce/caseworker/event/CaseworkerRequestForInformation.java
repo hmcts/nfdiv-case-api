@@ -159,7 +159,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     }
 
     private String getOfflinePartyErrorString(CaseData caseData, Applicant applicant) {
-        String error = caseData.getApplicant1().equals(applicant) ? APPLICANT_1 : APPLICANT_2;
+        String error = THE_APPLICANT;
+        if (!caseData.getApplicationType().isSole()) {
+            error = caseData.getApplicant1().equals(applicant) ? APPLICANT_1 : APPLICANT_2;
+        }
         if (applicant.isRepresented()) {
             error += SOLICITOR + SOLICITOR_IS_OFFLINE;
         } else {
