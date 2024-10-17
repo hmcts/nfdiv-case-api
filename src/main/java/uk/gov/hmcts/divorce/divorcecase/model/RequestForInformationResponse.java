@@ -59,22 +59,21 @@ public class RequestForInformationResponse {
     private LocalDateTime requestForInformationResponseDateTime;
 
     @CCD(
-        label = "Write your response below if the court has asked for additional information. If the court has just asked for documents, "
-            + " then you do not need to write anything unless you think it's useful information.",
+        label = "Provided Response",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String requestForInformationResponseDetails;
 
     @CCD(
-        label = "Upload documents",
+        label = "Uploaded documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
     private List<ListValue<DivorceDocument>> requestForInformationResponseDocs;
 
     @CCD(
-        label = "Cannot upload all or some requested documents",
+        label = "Could not upload all or some requested documents",
         access = {DefaultAccess.class}
     )
     private YesOrNo requestForInformationResponseCannotUploadDocs;
