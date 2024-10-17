@@ -51,6 +51,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor";
     public static final String FULL_STOP = ".";
+    public static final String PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR =
+        "You cannot use the email address of an Applicant or Solicitor associated with the case. "
+        + "If you wish to do so, select the relevant party instead.";
 
     private final RequestForInformationNotification requestForInformationNotification;
 
@@ -194,8 +197,33 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         return errors;
     }
 
-    private List<String> isOtherEmailValid(String email) {
-        return isNotEmpty(email) ? new ArrayList<>() : Collections.singletonList(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
+    private List<String> doesEmailMatchApplicantOrSolicitor(CaseData caseData, String email) {
+        Applicant applicant1 = caseData.getApplicant1();
+        Applicant applicant2 = caseData.getApplicant2();
+
+        List<String> emailAddresses = new ArrayList<>();
+        if (null != applicant1.getEmail()) {
+            emailAddresses.add(applicant1.getEmail());
+        }
+        if (applicant1.isRepresented() && null != applicant1.getSolicitor().getEmail()) {
+            emailAddresses.add(applicant1.getSolicitor().getEmail());
+        }
+        if (null != caseData.getApplicant2().getEmail()) {
+            emailAddresses.add(caseData.getApplicant2().getEmail());
+        }
+        if (applicant2.isRepresented() && null != applicant2.getSolicitor().getEmail()) {
+            emailAddresses.add(applicant2.getSolicitor().getEmail());
+        }
+
+        return !emailAddresses.isEmpty() && emailAddresses.contains(email)
+            ? Collections.singletonList(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR)
+            : new ArrayList<>();
+    }
+
+    private List<String> isOtherEmailValid(CaseData caseData, String email) {
+        return isNotEmpty(email)
+            ? doesEmailMatchApplicantOrSolicitor(caseData, email)
+            : Collections.singletonList(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
     }
 
     private List<String> areEmailsValid(CaseData caseData) {
@@ -207,13 +235,13 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         return caseData.getApplicationType().isSole()
             ? switch (soleRecipient) {
             case APPLICANT -> isEmailValid(caseData, caseData.getApplicant1());
-            case OTHER -> isOtherEmailValid(requestForInformation.getRequestForInformationEmailAddress());
+            case OTHER -> isOtherEmailValid(caseData, requestForInformation.getRequestForInformationEmailAddress());
         }
             : switch (jointRecipient) {
             case APPLICANT1 -> isEmailValid(caseData, caseData.getApplicant1());
             case APPLICANT2 -> isEmailValid(caseData, caseData.getApplicant2());
             case BOTH -> areBothEmailsValid(caseData);
-            case OTHER -> isOtherEmailValid(requestForInformation.getRequestForInformationEmailAddress());
+            case OTHER -> isOtherEmailValid(caseData, requestForInformation.getRequestForInformationEmailAddress());
         };
     }
 
