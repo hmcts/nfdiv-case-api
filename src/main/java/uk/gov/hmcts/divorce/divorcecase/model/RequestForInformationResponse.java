@@ -19,6 +19,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
@@ -109,6 +110,8 @@ public class RequestForInformationResponse {
     private void setDraftValues(RequestForInformationResponseDraft draft) {
         this.setRequestForInformationResponseDetails(draft.getRfiDraftResponseDetails());
         this.setRequestForInformationResponseDocs(draft.getRfiDraftResponseDocs());
-        this.setRequestForInformationResponseCannotUploadDocs(draft.getRfiDraftResponseCannotUploadDocs());
+        if (YES.equals(draft.getRfiDraftResponseCannotUploadDocs())) {
+            this.setRequestForInformationResponseCannotUploadDocs(YES);
+        };
     }
 }
