@@ -52,7 +52,7 @@ public class RequestForInformationResponse {
     private String requestForInformationResponseEmailAddress;
 
     @CCD(
-        label = "Date/time of request",
+        label = "Date/time of response",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
