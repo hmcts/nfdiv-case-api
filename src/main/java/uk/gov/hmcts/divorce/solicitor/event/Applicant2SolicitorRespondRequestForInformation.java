@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,12 +16,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
@@ -40,10 +37,6 @@ public class Applicant2SolicitorRespondRequestForInformation implements CCDConfi
 
     public static final String APP_2_SOLICITOR_RESPOND_REQUEST_INFO = "app2-solicitor-respond-request-info";
     public static final String MUST_ADD_DOCS_OR_DETAILS_ERROR = "You must upload a document or write a response";
-    public static final String UNABLE_TO_SUBMIT_RESPONSE_ERROR = "Unable to submit response for Case Id: ";
-
-    private final CcdAccessService ccdAccessService;
-    private final HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -95,14 +88,7 @@ public class Applicant2SolicitorRespondRequestForInformation implements CCDConfi
 
         CaseData data = details.getData();
         RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
-
-        if (isApplicant2Solicitor(details.getId())) {
-            requestForInformationResponse.setValues(data, APPLICANT2SOLICITOR);
-        } else {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(UNABLE_TO_SUBMIT_RESPONSE_ERROR + details.getId()))
-                .build();
-        }
+        requestForInformationResponse.setValues(data, APPLICANT2SOLICITOR);
 
         data.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
 
@@ -113,9 +99,5 @@ public class Applicant2SolicitorRespondRequestForInformation implements CCDConfi
             .data(data)
             .state(RequestedInformationSubmitted)
             .build();
-    }
-
-    private boolean isApplicant2Solicitor(Long caseId) {
-        return ccdAccessService.isApplicant2(request.getHeader(AUTHORIZATION), caseId);
     }
 }
