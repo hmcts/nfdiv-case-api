@@ -112,6 +112,6 @@ public class RequestForInformationResponse {
         this.setRequestForInformationResponseDocs(draft.getRfiDraftResponseDocs());
         if (YES.equals(draft.getRfiDraftResponseCannotUploadDocs())) {
             this.setRequestForInformationResponseCannotUploadDocs(YES);
-        };
+        }
     }
 }
