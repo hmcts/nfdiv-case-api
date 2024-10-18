@@ -93,10 +93,10 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         }
 
         AboutToStartOrSubmitResponse.AboutToStartOrSubmitResponseBuilder<CaseData, State> responseBuilder =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData);
+            AboutToStartOrSubmitResponse.builder();
 
-        if (details.getData().getFinalOrder() == null ||
-            details.getData().getFinalOrder().getGrantedDate() == null) {
+        if (details.getData().getFinalOrder() == null
+            || details.getData().getFinalOrder().getGrantedDate() == null) {
 
             generateConditionalOrderGrantedDocs(details, beforeDetails);
             notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
@@ -105,7 +105,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             responseBuilder.state(state);
         }
 
-        return responseBuilder.build();
+        return responseBuilder.data(caseData).build();
     }
 
     private void generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,
