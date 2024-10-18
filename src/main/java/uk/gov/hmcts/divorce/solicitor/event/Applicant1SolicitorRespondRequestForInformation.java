@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,12 +17,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
@@ -42,12 +39,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class Applicant1SolicitorRespondRequestForInformation implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APP_1_SOLICITOR_RESPOND_REQUEST_INFO = "app1-solicitor-respond-request-info";
+    public static final String MUST_ADD_DOCS_OR_DETAILS_ERROR = "You must upload a document or write a response";
     public static final String NOT_AUTHORISED_TO_RESPOND_ERROR = "You are not authorised to respond to this request.";
-    public static final String MUST_ADD_DOCS_OR_DETAILS_ERROR = "You must upload a document or write a response.";
-    public static final String UNABLE_TO_SUBMIT_RESPONSE_ERROR = "Unable to submit response for Case Id: ";
-
-    private final CcdAccessService ccdAccessService;
-    private final HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -118,14 +111,7 @@ public class Applicant1SolicitorRespondRequestForInformation implements CCDConfi
 
         CaseData data = details.getData();
         RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
-
-        if (isApplicant1Solicitor(details.getId())) {
-            requestForInformationResponse.setValues(data, APPLICANT1SOLICITOR);
-        } else {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(UNABLE_TO_SUBMIT_RESPONSE_ERROR + details.getId()))
-                .build();
-        }
+        requestForInformationResponse.setValues(data, APPLICANT1SOLICITOR);
 
         data.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
 
@@ -136,9 +122,5 @@ public class Applicant1SolicitorRespondRequestForInformation implements CCDConfi
             .data(data)
             .state(RequestedInformationSubmitted)
             .build();
-    }
-
-    private boolean isApplicant1Solicitor(Long caseId) {
-        return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
     }
 }

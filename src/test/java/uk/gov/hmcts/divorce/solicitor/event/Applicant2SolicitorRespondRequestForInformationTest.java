@@ -1,10 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -16,11 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
@@ -31,10 +26,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationS
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorRespondRequestForInformation.NOT_AUTHORISED_TO_RESPOND_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorRespondRequestForInformation.APP_2_SOLICITOR_RESPOND_REQUEST_INFO;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorRespondRequestForInformation.MUST_ADD_DOCS_OR_DETAILS_ERROR;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorRespondRequestForInformation.UNABLE_TO_SUBMIT_RESPONSE_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addDocumentToRequestForInformationResponseDraft;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addResponseToLatestRequestForInformation;
@@ -43,12 +36,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformat
 
 @ExtendWith(MockitoExtension.class)
 class Applicant2SolicitorRespondRequestForInformationTest {
-
-    @Mock
-    private CcdAccessService ccdAccessService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private Applicant2SolicitorRespondRequestForInformation applicant2SolicitorRespondRequestForInformation;
@@ -163,8 +150,6 @@ class Applicant2SolicitorRespondRequestForInformationTest {
         addDocumentToRequestForInformationResponseDraft(draft);
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
 
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
 
@@ -172,24 +157,6 @@ class Applicant2SolicitorRespondRequestForInformationTest {
             getRequestForInformationResponseDraft(response.getData(), response.getData().getApplicant2());
         assertThat(draftResponse.getRfiDraftResponseDetails()).isNull();
         assertThat(draftResponse.getRfiDraftResponseDocs()).isNull();
-    }
-
-    @Test
-    void shouldReturnErrorIfSolicitorNotAssignedToApplicant2() {
-        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
-        final CaseData caseData = caseDetails.getData();
-        RequestForInformationResponseDraft draft = new RequestForInformationResponseDraft();
-        draft.setRfiDraftResponseDetails(TEST_TEXT);
-        addDocumentToRequestForInformationResponseDraft(draft);
-        caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
-
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant2SolicitorRespondRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(UNABLE_TO_SUBMIT_RESPONSE_ERROR + TEST_CASE_ID);
     }
 
     @Test
@@ -202,8 +169,6 @@ class Applicant2SolicitorRespondRequestForInformationTest {
         addDocumentToRequestForInformationResponseDraft(draft);
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
         final Solicitor solicitor = caseData.getApplicant2().getSolicitor();
-
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
@@ -237,9 +202,6 @@ class Applicant2SolicitorRespondRequestForInformationTest {
         caseDetails.setState(RequestedInformationSubmitted);
         final Solicitor app1Solicitor = caseData.getApplicant1().getSolicitor();
         final Solicitor app2Solicitor = caseData.getApplicant2().getSolicitor();
-
-
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.aboutToSubmit(caseDetails, caseDetails);

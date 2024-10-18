@@ -37,7 +37,6 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInfor
 import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_MID_ERROR;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_NOT_VALID_FOR_PARTY_START_ERROR;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenRespondToRequestForInformation.UNABLE_TO_DETERMINE_CITIZEN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
@@ -48,7 +47,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addDocumentToRequestForInformationResponseDraft;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,24 +79,6 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CITIZEN_RESPOND_TO_REQUEST_FOR_INFORMATION);
-    }
-
-    @Test
-    void shouldReturnErrorIfUnableToDetermineCitizen() {
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        when(ccdAccessService.isApplicant1(any(), any())).thenReturn(false);
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(false);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, beforeDetails);
-
-        assertThat(response.getErrors()).containsExactly(UNABLE_TO_DETERMINE_CITIZEN_ERROR + TEST_CASE_ID);
     }
 
     @Test
@@ -156,7 +136,7 @@ class CitizenRespondToRequestForInformationTest {
         draft.setRfiDraftResponseDetails(TEST_TEXT);
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant1(draft);
 
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
+        when(ccdAccessService.isApplicant1(any(), any())).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
@@ -201,7 +181,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -275,7 +255,7 @@ class CitizenRespondToRequestForInformationTest {
         draft.setRfiDraftResponseDetails(TEST_TEXT);
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2(draft);
 
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
+        when(ccdAccessService.isApplicant1(any(), any())).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
@@ -321,7 +301,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -339,7 +319,7 @@ class CitizenRespondToRequestForInformationTest {
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2(draft);
         Applicant applicant = caseData.getApplicant2();
 
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
+        when(ccdAccessService.isApplicant1(any(), any())).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
@@ -358,7 +338,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -395,7 +375,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -413,7 +393,7 @@ class CitizenRespondToRequestForInformationTest {
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2(draft);
         Applicant applicant = caseData.getApplicant2();
 
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
+        when(ccdAccessService.isApplicant1(any(), any())).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
@@ -432,7 +412,7 @@ class CitizenRespondToRequestForInformationTest {
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isEqualTo(NO);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseCannotUploadDocs()).isNull();
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -487,7 +467,7 @@ class CitizenRespondToRequestForInformationTest {
         caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2(draft);
         Applicant applicant = caseData.getApplicant2();
 
-        when(ccdAccessService.isApplicant2(any(), any())).thenReturn(true);
+        when(ccdAccessService.isApplicant1(any(), any())).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenRespondToRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
