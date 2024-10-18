@@ -135,6 +135,9 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
+    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
+    private String citizenPaymentCallbackUrl;
+
     @JsonUnwrapped()
     @Builder.Default
     private FinalOrder finalOrder = new FinalOrder();
