@@ -12,9 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -24,7 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -88,8 +87,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION, details.getId());
 
-        List<String> errors = areApplicantsOnline(details.getData());
-        errors.addAll(areEmailsValid(details.getData()));
+        List<String> errors = new ArrayList<>();
+        areApplicantsOnline(details.getData(), errors);
+        areEmailsValid(details.getData(), errors);
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(errors)
@@ -109,7 +109,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         final CaseData caseData = details.getData();
         final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
-        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
+        requestForInformation.setValues(caseData);
 
         caseData.getRequestForInformationList().addRequestToList(requestForInformation);
 
@@ -148,29 +148,25 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         return error;
     }
 
-    private boolean isApplicantEmailValid(Applicant applicant) {
-        if (applicant.isRepresented()) {
-            return isNotEmpty(applicant.getSolicitor().getEmail());
-        } else {
-            return isNotEmpty(applicant.getEmail());
+    private boolean isApplicantEmailInvalid(Applicant applicant) {
+        return applicant.isRepresented()
+            ? isEmpty(applicant.getSolicitor().getEmail())
+            : isEmpty(applicant.getEmail());
+    }
+
+    private void isEmailValid(CaseData caseData, Applicant applicant, List<String> errors) {
+        if (isApplicantEmailInvalid(applicant)) {
+            errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, applicant));
         }
     }
 
-    private List<String> isEmailValid(CaseData caseData, Applicant applicant) {
-        return isApplicantEmailValid(applicant)
-            ? new ArrayList<>()
-            : Collections.singletonList(getErrorString(NO_VALID_EMAIL_ERROR, caseData, applicant));
-    }
-
-    private List<String> areBothEmailsValid(CaseData caseData) {
-        List<String> errors = new ArrayList<>();
-        if (!isApplicantEmailValid(caseData.getApplicant1())) {
+    private void areBothEmailsValid(CaseData caseData, List<String> errors) {
+        if (isApplicantEmailInvalid(caseData.getApplicant1())) {
             errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, caseData.getApplicant1()));
         }
-        if (!isApplicantEmailValid(caseData.getApplicant2())) {
+        if (isApplicantEmailInvalid(caseData.getApplicant2())) {
             errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, caseData.getApplicant2()));
         }
-        return errors;
     }
 
     private void addEmailToList(String email, List<String> emailAddresses) {
@@ -179,7 +175,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
     }
 
-    private List<String> doesEmailMatchApplicantOrSolicitor(CaseData caseData, String email) {
+    private boolean doesEmailMatchApplicantOrSolicitor(CaseData caseData, String email) {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
@@ -193,71 +189,72 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             addEmailToList(applicant2.getSolicitor().getEmail(), emailAddresses);
         }
 
-        return !emailAddresses.isEmpty() && emailAddresses.contains(email)
-            ? Collections.singletonList(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR)
-            : new ArrayList<>();
+        return !emailAddresses.isEmpty() && emailAddresses.contains(email);
     }
 
-    private List<String> isOtherEmailValid(CaseData caseData, String email) {
-        return isNotEmpty(email)
-            ? doesEmailMatchApplicantOrSolicitor(caseData, email)
-            : Collections.singletonList(NO_VALID_EMAIL_PROVIDED_ERROR);
+    private void isOtherEmailValid(CaseData caseData, String email, List<String> errors) {
+        if (isEmpty(email)) {
+            errors.add(NO_VALID_EMAIL_PROVIDED_ERROR);
+        } else if (doesEmailMatchApplicantOrSolicitor(caseData, email)) {
+            errors.add(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        }
     }
 
-    private List<String> areEmailsValid(CaseData caseData) {
+    private void areEmailsValid(CaseData caseData, List<String> errors) {
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
-        return caseData.getApplicationType().isSole()
-            ? switch (requestForInformation.getRequestForInformationSoleParties()) {
-            case APPLICANT -> isEmailValid(caseData, caseData.getApplicant1());
-            case OTHER -> isOtherEmailValid(caseData, requestForInformation.getRequestForInformationEmailAddress());
+        if (caseData.getApplicationType().isSole()) {
+            switch (requestForInformation.getRequestForInformationSoleParties()) {
+                case APPLICANT -> isEmailValid(caseData, caseData.getApplicant1(), errors);
+                case OTHER -> isOtherEmailValid(caseData, requestForInformation.getRequestForInformationEmailAddress(), errors);
+                default -> { }
+            }
+        } else {
+            switch (requestForInformation.getRequestForInformationJointParties()) {
+                case APPLICANT1 -> isEmailValid(caseData, caseData.getApplicant1(), errors);
+                case APPLICANT2 -> isEmailValid(caseData, caseData.getApplicant2(), errors);
+                case BOTH -> areBothEmailsValid(caseData, errors);
+                case OTHER -> isOtherEmailValid(caseData, requestForInformation.getRequestForInformationEmailAddress(), errors);
+                default -> { }
+            }
         }
-            : switch (requestForInformation.getRequestForInformationJointParties()) {
-            case APPLICANT1 -> isEmailValid(caseData, caseData.getApplicant1());
-            case APPLICANT2 -> isEmailValid(caseData, caseData.getApplicant2());
-            case BOTH -> areBothEmailsValid(caseData);
-            case OTHER -> isOtherEmailValid(caseData, requestForInformation.getRequestForInformationEmailAddress());
-        };
     }
 
-    private List<String> areBothApplicantsOnline(CaseData caseData) {
-        List<String> errors = new ArrayList<>();
-        if (!isApplicantFlaggedOnline(caseData.getApplicant1())) {
+    private boolean isApplicantFlaggedOffline(Applicant applicant) {
+        return applicant.isRepresented()
+            ? !applicant.getSolicitor().hasAgreedToReceiveEmails()
+            : applicant.isApplicantOffline();
+    }
+
+    private void isApplicantOnline(CaseData caseData, Applicant applicant, List<String> errors) {
+        if (isApplicantFlaggedOffline(applicant)) {
+            errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, applicant));
+        }
+    }
+
+    private void areBothApplicantsOnline(CaseData caseData, List<String> errors) {
+        if (isApplicantFlaggedOffline(caseData.getApplicant1())) {
             errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant1()));
         }
-        if (!isApplicantFlaggedOnline(caseData.getApplicant2())) {
+        if (isApplicantFlaggedOffline(caseData.getApplicant2())) {
             errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant2()));
         }
-        return errors;
     }
 
-    private boolean isApplicantFlaggedOnline(Applicant applicant) {
-        if (applicant.isRepresented()) {
-            return applicant.getSolicitor().hasAgreedToReceiveEmails();
-        } else {
-            return !applicant.isApplicantOffline();
-        }
-    }
-
-    private List<String> isApplicantOnline(CaseData caseData, Applicant applicant) {
-        return isApplicantFlaggedOnline(applicant)
-            ? new ArrayList<>()
-            : Collections.singletonList(getErrorString(NOT_ONLINE_ERROR, caseData, applicant));
-    }
-
-    private List<String> areApplicantsOnline(CaseData caseData) {
+    private void areApplicantsOnline(CaseData caseData, List<String> errors) {
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
-        return caseData.getApplicationType().isSole()
-            ? switch (requestForInformation.getRequestForInformationSoleParties()) {
-            case APPLICANT -> isApplicantOnline(caseData, caseData.getApplicant1());
-            case OTHER -> new ArrayList<>();
+        if (caseData.getApplicationType().isSole()) {
+            if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())) {
+                isApplicantOnline(caseData, caseData.getApplicant1(), errors);
+            }
+        } else {
+            switch (requestForInformation.getRequestForInformationJointParties()) {
+                case APPLICANT1 -> isApplicantOnline(caseData, caseData.getApplicant1(), errors);
+                case APPLICANT2 -> isApplicantOnline(caseData, caseData.getApplicant2(), errors);
+                case BOTH -> areBothApplicantsOnline(caseData, errors);
+                default -> { }
+            }
         }
-            : switch (requestForInformation.getRequestForInformationJointParties()) {
-            case APPLICANT1 -> isApplicantOnline(caseData, caseData.getApplicant1());
-            case APPLICANT2 -> isApplicantOnline(caseData, caseData.getApplicant2());
-            case BOTH -> areBothApplicantsOnline(caseData);
-            case OTHER -> new ArrayList<>();
-        };
     }
 }
