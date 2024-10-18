@@ -17,6 +17,7 @@ public final class CaseFieldsConstants {
     public static final String URGENT_CASE = "solUrgentCase";
     public static final String GENERAL_APPLICATION_URGENT_CASE = "generalApplicationUrgentCase";
     public static final String GENERAL_REFERRAL_URGENT_CASE = "generalReferralUrgentCase";
+    public static final String GENERAL_REFERRAL_TYPE = "generalReferralType";
     public static final String FRAUD_REFERRAL_CASE = "generalReferralFraudCase";
     public static final String APPLICANT_1_FIRM_NAME = "applicant1SolicitorFirmName";
     public static final String EVIDENCE_HANDLED = "evidenceHandled";
