@@ -31,17 +31,14 @@ import static org.mockito.Mockito.doThrow;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_1;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_2;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_IS_OFFLINE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.CASEWORKER_REQUEST_FOR_INFORMATION;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.FULL_STOP;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NOT_ONLINE_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NO_VALID_EMAIL_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NO_VALID_EMAIL_PROVIDED_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.SOLICITOR;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.SOLICITOR_IS_OFFLINE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.THE_APPLICANT;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.THIS_PARTY;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.YOU_CANNOT_SEND_AN_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -100,7 +97,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + THE_APPLICANT + APPLICANT_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + THE_APPLICANT);
     }
 
     @Test
@@ -116,7 +113,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + THE_APPLICANT + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + THE_APPLICANT + SOLICITOR);
     }
 
     @Test
@@ -132,7 +129,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + APPLICANT_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1);
     }
 
     @Test
@@ -148,7 +145,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR);
     }
 
     @Test
@@ -165,7 +162,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + APPLICANT_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2);
     }
 
     @Test
@@ -181,7 +178,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR);
     }
 
     @Test
@@ -198,7 +195,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + APPLICANT_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2);
     }
 
     @Test
@@ -214,7 +211,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR);
     }
 
     @Test
@@ -231,7 +228,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + APPLICANT_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1);
     }
 
     @Test
@@ -248,7 +245,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP);
+        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR);
     }
 
     @Test
@@ -267,8 +264,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + APPLICANT_IS_OFFLINE + FULL_STOP,
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + APPLICANT_IS_OFFLINE + FULL_STOP
+            NOT_ONLINE_ERROR + APPLICANT_1,
+            NOT_ONLINE_ERROR + APPLICANT_2
         );
     }
 
@@ -288,8 +285,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP,
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP
+            NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR,
+            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR
         );
     }
 
@@ -309,8 +306,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + APPLICANT_IS_OFFLINE + FULL_STOP,
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP
+            NOT_ONLINE_ERROR + APPLICANT_1,
+            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR
         );
     }
 
@@ -330,8 +327,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_1 + SOLICITOR + SOLICITOR_IS_OFFLINE + FULL_STOP,
-            YOU_CANNOT_SEND_AN_EMAIL + APPLICANT_2 + APPLICANT_IS_OFFLINE + FULL_STOP
+            NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR,
+            NOT_ONLINE_ERROR + APPLICANT_2
         );
     }
 
@@ -362,7 +359,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT);
     }
 
     @Test
@@ -396,7 +393,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR);
     }
 
     @Test
@@ -530,7 +527,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_PROVIDED_ERROR);
     }
 
     @Test
@@ -560,7 +557,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1);
     }
 
     @Test
@@ -594,7 +591,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR);
     }
 
     @Test
@@ -626,7 +623,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2);
     }
 
     @Test
@@ -660,7 +657,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR);
     }
 
     @Test
@@ -695,8 +692,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + FULL_STOP,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + FULL_STOP
+            NO_VALID_EMAIL_ERROR + APPLICANT_1,
+            NO_VALID_EMAIL_ERROR + APPLICANT_2
         );
     }
 
@@ -715,7 +712,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2);
     }
 
     @Test
@@ -733,7 +730,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1);
     }
 
     @Test
@@ -775,8 +772,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP
+            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR
         );
     }
 
@@ -798,7 +795,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR);
     }
 
     @Test
@@ -819,7 +816,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR);
     }
 
     @Test
@@ -841,8 +838,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + FULL_STOP,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR + FULL_STOP
+            NO_VALID_EMAIL_ERROR + APPLICANT_1,
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR
         );
     }
 
@@ -865,8 +862,8 @@ class CaseworkerRequestForInformationTest {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR + FULL_STOP,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + FULL_STOP
+            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
+            NO_VALID_EMAIL_ERROR + APPLICANT_2
         );
     }
 
@@ -1017,7 +1014,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_PROVIDED_ERROR);
     }
 
     @Test

@@ -40,16 +40,13 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public static final String CASEWORKER_REQUEST_FOR_INFORMATION = "caseworker-request-for-information";
     public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR
         = "Unable to send Request for Information Notification for Case Id: ";
-    public static final String YOU_CANNOT_SEND_AN_EMAIL = "You cannot send an email because ";
-    public static final String NO_VALID_EMAIL_ERROR = YOU_CANNOT_SEND_AN_EMAIL + "no email address has been provided for ";
-    public static final String APPLICANT_IS_OFFLINE = " is offline";
-    public static final String SOLICITOR_IS_OFFLINE = " has not agreed to receive emails";
+    public static final String NO_VALID_EMAIL_ERROR = "You cannot send an email because no email address has been provided for: ";
+    public static final String NOT_ONLINE_ERROR = "You cannot send an email because the following party is offline: ";
     public static final String THE_APPLICANT = "the Applicant";
-    public static final String THIS_PARTY = "this party";
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor";
-    public static final String FULL_STOP = ".";
+    public static final String NO_VALID_EMAIL_PROVIDED_ERROR = "You must provide a valid email address.";
     public static final String PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR =
         "Please use create general letter event to request information from offline parties.";
 
@@ -138,39 +135,25 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             .build();
     }
 
-    private String getInvalidEmailErrorString(CaseData caseData, Applicant applicant) {
-        String error = NO_VALID_EMAIL_ERROR;
+    private String getErrorString(String errorString, CaseData caseData, Applicant applicant) {
+        String error = errorString;
         if (caseData.getApplicationType().isSole()) {
             error += THE_APPLICANT;
         } else {
-            if (applicant.equals(caseData.getApplicant1())) {
-                error += APPLICANT_1;
-            } else {
-                error += APPLICANT_2;
-            }
+            error += caseData.getApplicant1().equals(applicant) ? APPLICANT_1 : APPLICANT_2;
         }
-        return error + (applicant.isRepresented() ? SOLICITOR + FULL_STOP : FULL_STOP);
+        if (applicant.isRepresented()) {
+            error += SOLICITOR;
+        }
+        return error;
     }
 
     private List<String> getInvalidEmailError(CaseData caseData, Applicant applicant) {
-        return Collections.singletonList(getInvalidEmailErrorString(caseData, applicant));
-    }
-
-    private String getOfflinePartyErrorString(CaseData caseData, Applicant applicant) {
-        String error = THE_APPLICANT;
-        if (!caseData.getApplicationType().isSole()) {
-            error = caseData.getApplicant1().equals(applicant) ? APPLICANT_1 : APPLICANT_2;
-        }
-        if (applicant.isRepresented()) {
-            error += SOLICITOR + SOLICITOR_IS_OFFLINE;
-        } else {
-            error += APPLICANT_IS_OFFLINE;
-        }
-        return YOU_CANNOT_SEND_AN_EMAIL + error + FULL_STOP;
+        return Collections.singletonList(getErrorString(NO_VALID_EMAIL_ERROR, caseData, applicant));
     }
 
     private List<String> getOfflinePartyError(CaseData caseData, Applicant applicant) {
-        return Collections.singletonList(getOfflinePartyErrorString(caseData, applicant));
+        return Collections.singletonList(getErrorString(NOT_ONLINE_ERROR, caseData, applicant));
     }
 
     private boolean isApplicantEmailValid(Applicant applicant) {
@@ -190,10 +173,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         boolean app1Valid = isApplicantEmailValid(caseData.getApplicant1());
         boolean app2Valid = isApplicantEmailValid(caseData.getApplicant2());
         if (!app1Valid) {
-            errors.add(getInvalidEmailErrorString(caseData, caseData.getApplicant1()));
+            errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, caseData.getApplicant1()));
         }
         if (!app2Valid) {
-            errors.add(getInvalidEmailErrorString(caseData, caseData.getApplicant2()));
+            errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, caseData.getApplicant2()));
         }
         return errors;
     }
@@ -224,7 +207,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     private List<String> isOtherEmailValid(CaseData caseData, String email) {
         return isNotEmpty(email)
             ? doesEmailMatchApplicantOrSolicitor(caseData, email)
-            : Collections.singletonList(NO_VALID_EMAIL_ERROR + THIS_PARTY + FULL_STOP);
+            : Collections.singletonList(NO_VALID_EMAIL_PROVIDED_ERROR);
     }
 
     private List<String> areEmailsValid(CaseData caseData) {
@@ -251,10 +234,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         boolean app1Valid = isApplicantFlaggedOnline(caseData.getApplicant1());
         boolean app2Valid = isApplicantFlaggedOnline(caseData.getApplicant2());
         if (!app1Valid) {
-            errors.add(getOfflinePartyErrorString(caseData, caseData.getApplicant1()));
+            errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant1()));
         }
         if (!app2Valid) {
-            errors.add(getOfflinePartyErrorString(caseData, caseData.getApplicant2()));
+            errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant2()));
         }
         return errors;
     }
