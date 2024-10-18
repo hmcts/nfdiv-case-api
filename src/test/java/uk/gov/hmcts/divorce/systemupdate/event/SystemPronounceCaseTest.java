@@ -258,11 +258,6 @@ class SystemPronounceCaseTest {
             "conditionalOrder", Map.of("court", "Birmingham", "dateAndTimeOfHearing", LocalDateTime.now().toString())
         );
 
-        uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails =
-            uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
-                .data(mockCaseDataMap)
-                .build();
-
         buildConditionalOrder(caseData);
 
         underTest.aboutToSubmit(details, details);
