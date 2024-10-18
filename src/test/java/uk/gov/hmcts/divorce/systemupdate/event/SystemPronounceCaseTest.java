@@ -244,7 +244,7 @@ class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldNotGenerateDocsOrSendNotificationWhenFinalOrderDateIsNotNull() {
+    void shouldNotGenerateDocsOrSendNotificationWhenFinalOrderDateHasValue() {
         final CaseData caseData = caseData();
         caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
         buildConditionalOrder(caseData);
@@ -264,14 +264,7 @@ class SystemPronounceCaseTest {
                 .data(mockCaseDataMap)
                 .build();
 
-        SearchResult searchResult = SearchResult.builder()
-            .cases(List.of(mockCaseDetails))
-            .build();
-        when(ccdSearchService.searchForCasesWithQuery(anyInt(), anyInt(), any(), any(), any())).thenReturn(searchResult);
-
-        CaseData convertedCaseData = caseData();
         buildConditionalOrder(caseData);
-        when(objectMapper.convertValue(any(Map.class), eq(CaseData.class))).thenReturn(convertedCaseData);
 
         underTest.aboutToSubmit(details, details);
 
