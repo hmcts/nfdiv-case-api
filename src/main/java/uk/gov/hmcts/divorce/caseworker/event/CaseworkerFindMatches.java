@@ -29,9 +29,8 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.ES_DATE_FORMATTER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.REFERENCE_KEY;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE_KEY;
@@ -58,7 +57,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .description("Find matches")
             .aboutToStartCallback(this::aboutToStart)
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SUPER_USER))
+            .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER))
             .page("findmatch")
             .pageLabel("Search for matching cases which have same marriage date and full names")
             .readonlyNoSummary(CaseData::getCaseMatches)
