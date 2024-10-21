@@ -137,8 +137,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
 
             final PbaResponse response = paymentService.processPbaPayment(
-                data,
                 details.getId(),
+                "serviceReq",
                 invokingSolicitor,
                 generalApplication.getGeneralApplicationFee().getPbaNumber(),
                 generalApplication.getGeneralApplicationFee().getOrderSummary(),

@@ -89,7 +89,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            setOrderSummaryAndServiceRequestForApplicationPayment(data, details.getId());
+            setOrderSummaryAndServiceRequestForApplicationPayment(data, details.getId(), data.getCitizenPaymentCallbackUrl());
 
             state = AwaitingPayment;
         }
@@ -103,7 +103,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    public void setOrderSummaryAndServiceRequestForApplicationPayment(CaseData data, long caseId) {
+    public void setOrderSummaryAndServiceRequestForApplicationPayment(CaseData data, long caseId, String callbackUrl) {
         final Application application = data.getApplication();
 
         if (application.getApplicationFeeOrderSummary() == null) {
@@ -113,7 +113,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         }
 
         final String serviceRequestReference = paymentService.createServiceRequestReference(
-            data.getCitizenPaymentCallbackUrl(),
+            callbackUrl,
             caseId,
             data.getApplicant1().getFullName(),
             application.getApplicationFeeOrderSummary()

@@ -142,8 +142,8 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
                 .map(dynamicList -> dynamicList.getValue().getLabel());
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
-                    updatedData,
                     updatedDetails.getId(),
+                    "serviceReq",
                     updatedData.getApplicant2().getSolicitor(),
                     pbaNumber.get(),
                     updatedFo.getApplicant2SolFinalOrderFeeOrderSummary(),
