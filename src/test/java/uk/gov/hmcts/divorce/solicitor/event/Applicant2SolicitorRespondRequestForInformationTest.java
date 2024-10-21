@@ -26,8 +26,8 @@ import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorRespondReq
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addDocumentToRequestForInformationResponseDraft;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addResponseToLatestRequestForInformation;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildDraft;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationResponseDraft;
 
@@ -50,7 +50,9 @@ class Applicant2SolicitorRespondRequestForInformationTest {
 
     @Test
     void shouldReturnErrorIfNoDetailsOrDocuments() {
-        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT2, false, true);
+        final CaseData caseData = caseDetails.getData();
+        buildDraft(caseData, caseData.getApplicant2(), false, false, false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.midEvent(caseDetails, caseDetails);
@@ -61,9 +63,9 @@ class Applicant2SolicitorRespondRequestForInformationTest {
 
     @Test
     void shouldNotReturnErrorIfDocumentsButNoDetails() {
-        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT2, false, true);
         final CaseData caseData = caseDetails.getData();
-        addDocumentToRequestForInformationResponseDraft(getRequestForInformationResponseDraft(caseData, caseData.getApplicant2()));
+        buildDraft(caseData, caseData.getApplicant2(), false, true, false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.midEvent(caseDetails, caseDetails);
@@ -73,9 +75,9 @@ class Applicant2SolicitorRespondRequestForInformationTest {
 
     @Test
     void shouldNotReturnErrorIfDetailsButNoDocuments() {
-        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT2, false, true);
         final CaseData caseData = caseDetails.getData();
-        caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2Solicitor().setRfiDraftResponseDetails(TEST_TEXT);
+        buildDraft(caseData, caseData.getApplicant2(), true, false, false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.midEvent(caseDetails, caseDetails);
@@ -87,10 +89,7 @@ class Applicant2SolicitorRespondRequestForInformationTest {
     void shouldClearDefaultResponseObjectAfterAddingResponseToRequestObjectOnJointCase() {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT2, false, true);
         final CaseData caseData = caseDetails.getData();
-        RequestForInformationResponseDraft draft = new RequestForInformationResponseDraft();
-        draft.setRfiDraftResponseDetails(TEST_TEXT);
-        addDocumentToRequestForInformationResponseDraft(draft);
-        caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
+        buildDraft(caseData, caseData.getApplicant2(), true, true, false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorRespondRequestForInformation.aboutToSubmit(caseDetails, caseDetails);
@@ -105,11 +104,7 @@ class Applicant2SolicitorRespondRequestForInformationTest {
     void shouldPopulateDataWithResponseFromApplicant2SolicitorOnJointCase() {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT2, false, true);
         final CaseData caseData = caseDetails.getData();
-        RequestForInformationResponseDraft draft = new RequestForInformationResponseDraft();
-        draft.setRfiDraftResponseDetails(TEST_TEXT);
-        addDocumentToRequestForInformationResponseDraft(draft);
-        addDocumentToRequestForInformationResponseDraft(draft);
-        caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
+        buildDraft(caseData, caseData.getApplicant2(), true, true, false);
         final Solicitor solicitor = caseData.getApplicant2().getSolicitor();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -126,7 +121,7 @@ class Applicant2SolicitorRespondRequestForInformationTest {
             .isEqualTo(solicitor.getName());
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDetails()).isEqualTo(TEST_TEXT);
         assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDateTime()).isNotNull();
-        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(2);
+        assertThat(responseRequestForInformationResponse.getRequestForInformationResponseDocs()).hasSize(1);
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
@@ -137,10 +132,7 @@ class Applicant2SolicitorRespondRequestForInformationTest {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, true, true);
         final CaseData caseData = caseDetails.getData();
         addResponseToLatestRequestForInformation(caseData, caseData.getApplicant1());
-        RequestForInformationResponseDraft draft = new RequestForInformationResponseDraft();
-        draft.setRfiDraftResponseDetails(TEST_TEXT);
-        addDocumentToRequestForInformationResponseDraft(draft);
-        caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
+        buildDraft(caseData, caseData.getApplicant2(), true, true, false);
         caseDetails.setState(RequestedInformationSubmitted);
         final Solicitor app1Solicitor = caseData.getApplicant1().getSolicitor();
         final Solicitor app2Solicitor = caseData.getApplicant2().getSolicitor();

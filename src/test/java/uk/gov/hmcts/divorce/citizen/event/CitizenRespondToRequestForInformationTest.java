@@ -46,7 +46,9 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addCannotUploadResponseToLatestRequestForInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addDocumentToRequestForInformationResponseDraft;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addResponseToLatestRequestForInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 
 @ExtendWith(MockitoExtension.class)
@@ -509,7 +511,7 @@ class CitizenRespondToRequestForInformationTest {
     }
 
     @Test
-    void shouldSendNotificationToRespondingPartyAndPartnerOnJointCase() {
+    void shouldSendNotificationToRespondingPartyOnlyOnJointCase() {
         final CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
         caseDetails.setId(TEST_CASE_ID);
@@ -521,11 +523,7 @@ class CitizenRespondToRequestForInformationTest {
             caseDetails.getData(),
             TEST_CASE_ID
         );
-        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
-            citizenRequestForInformationResponsePartnerNotification,
-            caseDetails.getData(),
-            TEST_CASE_ID
-        );
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -573,6 +571,23 @@ class CitizenRespondToRequestForInformationTest {
                 TEST_CASE_ID
             );
         });
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartyAndPartnerOnJointCaseWhenRFISentToBothAndAllDocsUploaded() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
+        addResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant1());
+        caseDetails.setId(TEST_CASE_ID);
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
         verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
             citizenRequestForInformationResponsePartnerNotification,
             caseDetails.getData(),
@@ -581,9 +596,27 @@ class CitizenRespondToRequestForInformationTest {
     }
 
     @Test
+    void shouldNotSendNotificationToPartnerOnJointCaseWhenRFISentToBothAndNotAllDocsUploaded() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
+        addCannotUploadResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant1());
+        caseDetails.setId(TEST_CASE_ID);
+
+        citizenRespondToRequestForInformation.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
     void shouldReturnErrorWhenSendNotificationToPartnerFails() {
         final CaseDetails<CaseData, State> caseDetails =
-            getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
+        addResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant1());
         caseDetails.setId(TEST_CASE_ID);
 
         doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
@@ -611,7 +644,8 @@ class CitizenRespondToRequestForInformationTest {
     @Test
     void shouldReturnErrorWhenSendNotificationToBothPartiesFails() {
         final CaseDetails<CaseData, State> caseDetails =
-            getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, false, false);
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
+        addResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant1());
         caseDetails.setId(TEST_CASE_ID);
 
         doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
