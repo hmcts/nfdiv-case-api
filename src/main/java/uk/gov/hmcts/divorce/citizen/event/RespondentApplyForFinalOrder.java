@@ -99,17 +99,34 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
     ) {
         log.info("Setting Order Summary for Respondent Final Order for Case Id: {}", details.getId());
 
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
-        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
-
-        finalOrder.setApplicant2FinalOrderFeeInPounds(
-            NumberFormat.getNumberInstance().format(new BigDecimal(
-                orderSummary.getPaymentTotal()).movePointLeft(2)
-            )
-        );
-
         details.setState(AwaitingFinalOrderPayment);
 
+        setOrderSummaryAndServiceRequestForFinalOrderPayment(details.getData(), details.getId());
+
         return details;
+    }
+
+    public void setOrderSummaryAndServiceRequestForFinalOrderPayment(CaseData data, long caseId) {
+        final FinalOrder finalOrder = data.getFinalOrder();
+
+        if (finalOrder.getApplicant2FinalOrderFeeOrderSummary() == null) {
+            final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+            finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+
+            finalOrder.setApplicant2FinalOrderFeeInPounds(
+                NumberFormat.getNumberInstance().format(new BigDecimal(
+                    orderSummary.getPaymentTotal()).movePointLeft(2)
+                )
+            );
+        }
+
+        final String serviceRequestReference = paymentService.createServiceRequestReference(
+            data.getCitizenPaymentCallbackUrl(),
+            caseId,
+            data.getApplicant2().getFullName(),
+            finalOrder.getApplicant2FinalOrderFeeOrderSummary()
+        );
+
+        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);
     }
 }
