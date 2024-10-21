@@ -18,6 +18,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
@@ -50,12 +53,31 @@ class SaveAndSignOutNotificationHandlerTest {
         when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
         when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
 
-        saveAndSignOutNotificationHandler.notifyApplicant(caseData, CASE_ID, USER_TOKEN);
+        saveAndSignOutNotificationHandler.notifyApplicant(Submitted, caseData, CASE_ID, USER_TOKEN);
 
         verify(commonContent).mainTemplateVars(caseData, CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
+            any(),
+            eq(ENGLISH),
+            eq(CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInformationRequested() {
+        CaseData caseData = validApplicant2CaseData();
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
+        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
+        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
+
+        saveAndSignOutNotificationHandler.notifyApplicant(InformationRequested, caseData, CASE_ID, USER_TOKEN);
+
+        verify(commonContent).mainTemplateVars(caseData, CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT),
             any(),
             eq(ENGLISH),
             eq(CASE_ID)
@@ -70,12 +92,32 @@ class SaveAndSignOutNotificationHandlerTest {
         when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(false);
 
 
-        saveAndSignOutNotificationHandler.notifyApplicant(caseData, CASE_ID, USER_TOKEN);
+        saveAndSignOutNotificationHandler.notifyApplicant(Submitted, caseData, CASE_ID, USER_TOKEN);
 
         verify(commonContent).mainTemplateVars(caseData, CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
+            any(),
+            eq(ENGLISH),
+            eq(CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldCallSendEmailToApp2WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInformationRequested() {
+        CaseData caseData = validApplicant2CaseData();
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
+        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
+        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(false);
+
+
+        saveAndSignOutNotificationHandler.notifyApplicant(InformationRequested, caseData, CASE_ID, USER_TOKEN);
+
+        verify(commonContent).mainTemplateVars(caseData, CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT),
             any(),
             eq(ENGLISH),
             eq(CASE_ID)

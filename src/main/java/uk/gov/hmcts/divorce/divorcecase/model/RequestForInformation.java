@@ -135,4 +135,9 @@ public class RequestForInformation {
             this.getRequestForInformationResponses().add(0, newResponse);
         }
     }
+
+    @JsonIgnore
+    public RequestForInformationResponse getLatestResponse() {
+        return this.getRequestForInformationResponses().get(0).getValue();
+    }
 }
