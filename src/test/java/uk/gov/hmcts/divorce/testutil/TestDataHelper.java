@@ -1485,7 +1485,8 @@ public class TestDataHelper {
     private static void setDraft(RequestForInformationList requestForInformationList,
                                  RequestForInformationResponseDraft draft,
                                  boolean isApplicant2,
-                                 boolean isRepresented) {
+                                 boolean isRepresented
+    ) {
         if (isApplicant2) {
             if (isRepresented) {
                 requestForInformationList.setRequestForInformationResponseApplicant2Solicitor(draft);
@@ -1525,7 +1526,12 @@ public class TestDataHelper {
         }
     }
 
-    public static void buildDraft(CaseData caseData, Applicant applicant, boolean addDetails, boolean addDocument, boolean setCannotUpload) {
+    public static void buildDraft(CaseData caseData,
+                                  Applicant applicant,
+                                  boolean addDetails,
+                                  boolean addDocument,
+                                  boolean setCannotUpload
+    ) {
         RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
         if (addDetails) {
             draft.setRfiDraftResponseDetails(TEST_TEXT);
