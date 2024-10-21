@@ -134,7 +134,10 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
             );
         }
 
-        if (!details.getData().getApplicationType().isSole()) {
+        final RequestForInformation requestForInformation = details.getData().getRequestForInformationList().getLatestRequest();
+        if (!details.getData().getApplicationType().isSole()
+            && BOTH.equals(requestForInformation.getRequestForInformationJointParties())
+            && !YES.equals(requestForInformation.getLatestResponse().getRequestForInformationResponseCannotUploadDocs())) {
             try {
                 notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
                     citizenRequestForInformationResponsePartnerNotification,
