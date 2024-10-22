@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -160,13 +161,14 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseData.getFinalOrder().setApplicant2SolFinalOrderFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getFinalOrder().setApplicant2FinalOrderStatementOfTruth(YES);
         caseData.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+        caseData.getFinalOrder().setApplicant2FinalOrderFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
-            caseData,
             TEST_CASE_ID,
+            TEST_SERVICE_REFERENCE,
             caseData.getApplicant2().getSolicitor(),
             PBA_NUMBER,
             orderSummary,
@@ -193,6 +195,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             .organisationPolicy(organisationPolicy())
             .build());
         caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getFinalOrder().setApplicant2FinalOrderFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         caseData.getFinalOrder().setFinalOrderPbaNumbers(
             DynamicList.builder()
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
@@ -206,8 +209,8 @@ class Applicant2SolicitorApplyForFinalOrderTest {
 
         PbaResponse pbaResponse = new PbaResponse(HttpStatus.BAD_REQUEST, "Payment Failed", "1234");
         when(paymentService.processPbaPayment(
-            caseData,
             TEST_CASE_ID,
+            TEST_SERVICE_REFERENCE,
             caseData.getApplicant2().getSolicitor(),
             PBA_NUMBER,
             orderSummary,

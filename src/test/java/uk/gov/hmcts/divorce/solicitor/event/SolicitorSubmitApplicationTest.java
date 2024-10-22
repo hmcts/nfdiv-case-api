@@ -35,6 +35,7 @@ import java.util.UUID;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -54,7 +55,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
@@ -152,7 +152,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(TEST_CASE_ID, any(String.class), null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
@@ -286,7 +286,8 @@ public class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(
+            TEST_CASE_ID, any(String.class), null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
@@ -450,7 +451,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(TEST_CASE_ID, any(String.class), null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
@@ -481,7 +482,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(TEST_CASE_ID, any(String.class), null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
