@@ -17,10 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -228,11 +225,6 @@ public class Applicant {
         access = {DefaultAccess.class}
     )
     private YesOrNo coPronouncedCoverLetterRegenerated;
-
-    @JsonUnwrapped
-    @Builder.Default
-    @CCD(access = {SolicitorAndSystemUpdateAccess.class})
-    private Map<GeneralApplicationFee, FeeDetails> unpaidGeneralApplicationFees = new HashMap<>();
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {

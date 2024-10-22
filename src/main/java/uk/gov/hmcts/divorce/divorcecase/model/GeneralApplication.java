@@ -45,9 +45,6 @@ public class GeneralApplication {
     )
     private GeneralApplicationFee generalApplicationFeeType;
 
-    @CCD(label = "General Application Service Request Reference")
-    private String generalApplicationServiceRequestReference;
-
     @CCD(
             label = "General Application Document"
     )

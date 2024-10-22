@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -9,9 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
@@ -36,6 +35,9 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
     private final HttpServletRequest httpServletRequest;
 
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
@@ -53,22 +55,9 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
         final CaseData caseData = details.getData();
 
-        var generalApplicationFeeType = caseData.getGeneralApplication().getGeneralApplicationFeeType();
-        var unpaidGeneralApplicationFees = caseData.getUnpaidGeneralApplicationFees();
         var generalApplication = caseData.getGeneralApplication();
 
-        final String keyword =
-            FEE0227.getLabel().equals(generalApplicationFeeType.getLabel())
-                ? KEYWORD_NOTICE
-                : KEYWORD_WITHOUT_NOTICE;
-
-        if (unpaidGeneralApplicationFees.containsKey(generalApplicationFeeType)) {
-            var unpaidGeneralApplicationFeeDetails = unpaidGeneralApplicationFees.get(generalApplicationFeeType);
-
-            reuseUnpaidOrderSummaryAndServiceRequest(details, unpaidGeneralApplicationFeeDetails);
-        } else {
-            createNewOrderSummaryAndServiceRequest(details, keyword);
-        }
+        createOrderSummaryAndServiceRequest(details);
 
         DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
@@ -79,34 +68,25 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
             .build();
     }
 
-    private void reuseUnpaidOrderSummaryAndServiceRequest(CaseDetails<CaseData, State> details, FeeDetails unpaidGeneralApplicationFee) {
-        var unpaidOrderSummary = unpaidGeneralApplicationFee.getOrderSummary();
-        var unpaidServiceRequest = unpaidGeneralApplicationFee.getServiceRequestReference();
-
-        details.getData().getGeneralApplication().getGeneralApplicationFee().setOrderSummary(unpaidOrderSummary);
-        details.getData().getGeneralApplication().getGeneralApplicationFee().setServiceRequestReference(unpaidServiceRequest);
-    }
-
-    private void createNewOrderSummaryAndServiceRequest(CaseDetails<CaseData, State> details, String keyword, GeneralApplicationFee fee) {
-        var data = details.getData();
+    private void createOrderSummaryAndServiceRequest(CaseDetails<CaseData, State> details) {
+        CaseData data = details.getData();
+        long caseId = details.getId();
+        var generalApplicationFeeType = data.getGeneralApplication().getGeneralApplicationFeeType();
         var generalApplicationFee = data.getGeneralApplication().getGeneralApplicationFee();
+        String keyword = FEE0227.getLabel().equals(generalApplicationFeeType.getLabel())
+                ? KEYWORD_NOTICE
+                : KEYWORD_WITHOUT_NOTICE;
 
         var orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword);
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
-            data.getCitizenPaymentCallbackUrl(), details.getId(),
-            data.getApplicant2().getFullName(), orderSummary
-        );
-
-        String responsibleParty = ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())
-
         generalApplicationFee.setOrderSummary(orderSummary);
+
+        final String serviceRequestReference = paymentService.createServiceRequestReference(
+            redirectUrl, caseId, responsiblePartyName(caseId, data), orderSummary
+        );
         generalApplicationFee.setServiceRequestReference(serviceRequestReference);
-
-
-        details.getData().getUnpaidGeneralApplicationFees().put(fee, generalApplicationFee);
     }
 
-    private String getResponsibleParty(long caseId, CaseData data) {
+    private String responsiblePartyName(long caseId, CaseData data) {
         String authHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
         return ccdAccessService.isApplicant1(authHeader, caseId) ?
