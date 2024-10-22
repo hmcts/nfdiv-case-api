@@ -242,7 +242,7 @@ public class PaymentServiceTest {
         when(paymentPbaClient.creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             )
         ).thenReturn(responseEntity);
@@ -260,7 +260,7 @@ public class PaymentServiceTest {
         verify(paymentPbaClient).creditAccountPayment(
             eq(TEST_AUTHORIZATION_TOKEN),
             eq(TEST_SERVICE_AUTH_TOKEN),
-            TEST_SERVICE_REFERENCE,
+            eq(TEST_SERVICE_REFERENCE),
             any(CreditAccountPaymentRequest.class)
         );
     }
@@ -285,7 +285,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -321,7 +321,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -347,7 +347,7 @@ public class PaymentServiceTest {
         when(paymentPbaClient.creditAccountPayment(
             eq(TEST_AUTHORIZATION_TOKEN),
             eq(TEST_SERVICE_AUTH_TOKEN),
-            TEST_SERVICE_REFERENCE,
+            eq(TEST_SERVICE_REFERENCE),
             any(CreditAccountPaymentRequest.class)
         )).thenReturn(null);
 
@@ -378,7 +378,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -415,7 +415,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -448,7 +448,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -485,7 +485,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -522,7 +522,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -554,7 +554,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
@@ -591,7 +591,7 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
-                TEST_SERVICE_REFERENCE,
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
