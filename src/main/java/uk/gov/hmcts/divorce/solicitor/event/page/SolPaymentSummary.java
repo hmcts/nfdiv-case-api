@@ -17,8 +17,8 @@ public class SolPaymentSummary implements CcdPageConfiguration {
             .page("SolPaymentSummary")
             .pageLabel("Order Summary")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getApplicationFeeOrderSummary)
-            .readonlyNoSummary(Application::getApplicationFeeServiceRequestReference)
+                .mandatory(Application::getApplicationFeeOrderSummary)
+                .readonlyNoSummary(Application::getApplicationFeeServiceRequestReference)
             .done()
             .label(
                 "LabelSolPaySummaryFeeAccountPara-1",

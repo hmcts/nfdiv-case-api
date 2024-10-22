@@ -31,7 +31,7 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
             .pageLabel("Payment for this final order")
             .label(
                 "FOApp2SolAmountToPay",
-                "Amount to pay: **£${applicant2FinalOrderFeeInPounds}**")
+                "Amount to pay: **£${applicant2SolFinalOrderFeeInPounds}**")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant2SolPaymentHowToPay)
             .done();

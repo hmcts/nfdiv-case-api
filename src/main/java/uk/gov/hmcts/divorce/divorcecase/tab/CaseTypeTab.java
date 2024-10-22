@@ -190,7 +190,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
             .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
             .label("Applicant2Solicitor-PaymentHeading", APPLICANT_2_SOL_APPLIED_FOR_FO, "### Respondent Solicitor")
-            .field("applicant2FinalOrderFeeOrderSummary", APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field("applicant2SolFinalOrderFeeOrderSummary", APPLICANT_2_SOL_APPLIED_FOR_FO)
             .field("applicant2SolPaymentHowToPay", APPLICANT_2_SOL_APPLIED_FOR_FO)
             .field("finalOrderPbaNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
             .field("applicant2SolFinalOrderFeeAccountReference", APPLICANT_2_SOL_APPLIED_FOR_FO)
