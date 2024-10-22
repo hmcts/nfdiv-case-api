@@ -44,7 +44,7 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
             .page("generalApplicationSelectFeeType", this::midEvent)
             .pageLabel("Select Fee Type")
             .complex(CaseData::getGeneralApplication)
-            .mandatory(GeneralApplication::getGeneralApplicationFeeType)
+                .mandatory(GeneralApplication::getGeneralApplicationFeeType)
             .done();
     }
 

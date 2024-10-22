@@ -19,7 +19,7 @@ public class Applicant2SolFinalOrderExplainWhyNeedToApply implements CcdPageConf
             .page("Applicant2SolicitorWhyNeedToApply")
             .pageLabel("Finalising your divorce")
             .complex(CaseData::getFinalOrder)
-                .readonlyNoSummary(FinalOrder::getApplicant2FinalOrderFeeInPounds, ALWAYS_HIDE)
+                .readonlyNoSummary(FinalOrder::getApplicant2SolFinalOrderFeeInPounds, ALWAYS_HIDE)
             .done()
             .label(
                 "FODescription",
@@ -27,7 +27,7 @@ public class Applicant2SolFinalOrderExplainWhyNeedToApply implements CcdPageConf
             )
             .label(
                 "FODescriptionFees",
-                "There will be a fee of **£${applicant2FinalOrderFeeInPounds}**, unless the respondent is eligible for Help with Fees."
+                "There will be a fee of **£${applicant2SolFinalOrderFeeInPounds}**, unless the respondent is eligible for Help with Fees."
             )
             .label(
                 "FORequestText",
