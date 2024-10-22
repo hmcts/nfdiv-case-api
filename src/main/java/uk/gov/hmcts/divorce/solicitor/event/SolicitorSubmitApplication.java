@@ -80,7 +80,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Retrieving order summary");
         final CaseData caseData = details.getData();
-        citizenSubmit.setOrderSummaryAndServiceRequestForApplicationPayment(caseData, details.getId(), redirectUrl);
+        citizenSubmit.prepareCaseDataForApplicationPayment(caseData, details.getId(), redirectUrl);
 
         var application = caseData.getApplication();
         application.setSolApplicationFeeInPounds(

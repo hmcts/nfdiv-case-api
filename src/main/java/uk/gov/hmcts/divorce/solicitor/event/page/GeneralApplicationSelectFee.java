@@ -89,8 +89,8 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
     private String responsiblePartyName(long caseId, CaseData data) {
         String authHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
-        return ccdAccessService.isApplicant1(authHeader, caseId) ?
-            data.getApplicant1().getFullName() :
-            data.getApplicant2().getFullName();
+        return ccdAccessService.isApplicant1(authHeader, caseId)
+            ? data.getApplicant1().getFullName()
+            : data.getApplicant2().getFullName();
     }
 }
