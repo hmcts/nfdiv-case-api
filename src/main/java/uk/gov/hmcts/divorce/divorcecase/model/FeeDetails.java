@@ -55,6 +55,9 @@ public class FeeDetails {
     )
     private String helpWithFeesReferenceNumber;
 
+    @CCD(label = "General Application Service Request Reference")
+    private String serviceRequestReference;
+
     @JsonIgnore
     public boolean isPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getPaymentMethod());

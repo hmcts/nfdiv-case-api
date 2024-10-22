@@ -110,7 +110,7 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
         final FinalOrder finalOrder = data.getFinalOrder();
 
         if (finalOrder.getApplicant2FinalOrderFeeOrderSummary() == null) {
-            final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+            final OrderSummary orderSummary = createOrderSummaryForFinalOrderPayment();
             finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
 
             finalOrder.setApplicant2FinalOrderFeeInPounds(
@@ -128,5 +128,9 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
         );
 
         finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);
+    }
+
+    public OrderSummary createOrderSummaryForFinalOrderPayment() {
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
     }
 }
