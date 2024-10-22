@@ -111,6 +111,9 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseDetails.setId(caseId);
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE)).thenReturn(orderSummary);
+        when(paymentService.createServiceRequestReference(
+            null, 1616591401473378L, "", orderSummary
+        )).thenReturn(TEST_SERVICE_REFERENCE);
         when(orderSummary.getPaymentTotal()).thenReturn("16700");
 
         var midEventCaseData = caseData();
@@ -120,6 +123,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             applicant2SolicitorApplyForFinalOrder.aboutToStart(caseDetails);
 
         assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
         assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeInPounds()).isEqualTo("167");
     }
 

@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
@@ -49,8 +50,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
@@ -105,11 +106,14 @@ public class SolicitorSubmitApplicationIT {
         throws Exception {
         stubForFeesNotFound();
 
+        CaseData data = new CaseData();
+        data.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+
         mockMvc.perform(post(ABOUT_TO_START_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
+                .content(objectMapper.writeValueAsString(callbackRequest(data, SOLICITOR_SUBMIT)))
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
@@ -132,12 +136,13 @@ public class SolicitorSubmitApplicationIT {
             CreditAccountPaymentResponse
                 .builder()
                 .status(SUCCESS.toString())
-                .caseReference(TEST_CASE_ID.toString())
-                .build()
+                .build(),
+            orderSummaryWithFee()
         );
 
         var data = caseDataWithStatementOfTruth();
         data.getApplication().setApplicationPayments(null);
+        data.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         data.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
         data.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
         data.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
