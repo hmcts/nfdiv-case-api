@@ -136,7 +136,7 @@ public class CommonContent {
     public static final String FINAL_ORDER_FEE = "fee";
     public static final String WEB_FORM_TEXT = "webformText";
     public static final String CONTACT_TEXT = "[Contact us using our online form]";
-    public static final String CONTACT_TEXT_WELSH = "[Contact us using our online form]"; //needs welsh text
+    public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
