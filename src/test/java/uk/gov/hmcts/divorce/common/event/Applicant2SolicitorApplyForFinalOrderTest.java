@@ -123,7 +123,8 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             applicant2SolicitorApplyForFinalOrder.aboutToStart(caseDetails);
 
         assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeOrderSummary()).isEqualTo(orderSummary);
-        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
+        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeServiceRequestReference())
+            .isEqualTo(TEST_SERVICE_REFERENCE);
         assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeInPounds()).isEqualTo("167");
     }
 
