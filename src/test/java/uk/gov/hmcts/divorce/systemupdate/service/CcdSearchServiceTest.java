@@ -1014,8 +1014,8 @@ class CcdSearchServiceTest {
         BoolQueryBuilder boolQueryBuilder = boolQuery();
 
         String searchString = String.format(
-            "{\"from\":%d,\"size\":%d,\"query\":{\"bool\":{\"adjust_pure_negative\":%b,\"boost\":%.1f}}," +
-                "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
+            "{\"from\":%d,\"size\":%d,\"query\":{\"bool\":{\"adjust_pure_negative\":%b,\"boost\":%.1f}},"
+                + "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
             0, 10000, true, 1.0, "asc"
         );
         when(coreCaseDataApi2.searchCases(user.getAuthToken(),
