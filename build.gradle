@@ -250,7 +250,7 @@ ext.libraries = [
 
 dependencies {
 // uncomment for local version
-  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+// implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.1'
@@ -315,6 +315,7 @@ dependencies {
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.3'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
+
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath

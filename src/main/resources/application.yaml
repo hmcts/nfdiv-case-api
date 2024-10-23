@@ -34,7 +34,7 @@ azure:
   application-insights:
     instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
 
-report-email: ${REPORT_EMAIL:nfdiv-report-aaaaoneal7otiilqv2nkpn7hb4@moj.org.slack.com}
+report-email: ${REPORT_EMAIL:dummy}
 
 uk:
   gov:
