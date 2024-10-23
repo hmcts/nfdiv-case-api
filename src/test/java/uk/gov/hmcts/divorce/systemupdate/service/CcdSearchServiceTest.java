@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.User;
@@ -24,11 +25,13 @@ import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
@@ -77,6 +80,9 @@ class CcdSearchServiceTest {
 
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
+
+    @Mock
+    private CoreCaseDataApi2 coreCaseDataApi2;
 
     @Mock
     private CaseDetailsConverter caseDetailsConverter;
@@ -153,7 +159,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -193,7 +199,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
         assertThat(searchResult).isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
     }
 
@@ -247,7 +253,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Holding);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -296,7 +302,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(
             query, user, SERVICE_AUTHORIZATION, AwaitingApplicant2Response);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -332,7 +338,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -366,7 +372,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForBulkCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -419,10 +425,10 @@ class CcdSearchServiceTest {
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(3);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(1);
+        assertThat(allPages).hasSize(3);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(1);
     }
 
     @Test
@@ -459,7 +465,7 @@ class CcdSearchServiceTest {
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(2);
+        assertThat(allPages).hasSize(2);
         assertThat(allPages.poll()).isEqualTo(caseDetailsList1);
         assertThat(allPages.poll()).isEqualTo(Stream.of(caseDetailsList2, caseDetailsList3).flatMap(Collection::stream).toList());
         assertThat(allPages.poll()).isNull();
@@ -515,7 +521,7 @@ class CcdSearchServiceTest {
         final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchResult = ccdSearchService
             .searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -566,7 +572,7 @@ class CcdSearchServiceTest {
         final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchResult = ccdSearchService
             .searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(totalCases);
+        assertThat(searchResult).hasSize(totalCases);
     }
 
     @Test
@@ -619,7 +625,7 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForCases(caseReferences, user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(4);
+        assertThat(searchResult).hasSize(4);
     }
 
     @Test
@@ -656,7 +662,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchJointApplicationsWithAccessCodePostIssueApplication(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -689,7 +695,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchCasesInAwaitingAosWhereConfirmReadPetitionIsYes(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -726,7 +732,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
@@ -765,11 +771,11 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test
-    public void shouldReturnBulkCaseDetailsWithGivenCaseId() {
+    void shouldReturnBulkCaseDetailsWithGivenCaseId() {
         final User user = new User(CASEWORKER_AUTH_TOKEN, UserInfo.builder().uid("123").build());
 
         when(coreCaseDataApi.readForCaseWorker(
@@ -826,11 +832,11 @@ class CcdSearchServiceTest {
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(4);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
-        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages).hasSize(4);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
+        assertThat(allPages.poll()).hasSize(BULK_LIST_MAX_PAGE_SIZE);
     }
 
 
@@ -927,4 +933,104 @@ class CcdSearchServiceTest {
             .from(from)
             .size(PAGE_SIZE);
     }
+
+    @Test
+    void shouldReturnAggregatedResultsByStateAndLastStateModifiedDate() {
+        // Arrange
+        ReturnedCaseDetails case1 = ReturnedCaseDetails.builder()
+            .id(1L)
+            .state(State.Submitted) // Assuming State is an enum or object with SUBMITTED
+            .lastModified(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .build();
+
+        ReturnedCaseDetails case2 = ReturnedCaseDetails.builder()
+            .id(2L)
+            .state(State.Submitted)
+            .lastModified(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .build();
+
+        ReturnedCaseDetails case3 = ReturnedCaseDetails.builder()
+            .id(3L)
+            .state(AwaitingAos)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .build();
+
+        List<ReturnedCaseDetails> cases = List.of(case1, case2, case3);
+
+        // Act
+        Map<String, Map<String, Long>> result = ccdSearchService.groupByStateAndLastStateModifiedDate(cases);
+
+        // Assert
+        assertThat(result).hasSize(2); // Two states: Submitted, AwaitingAos
+
+        // Check 'Submitted' state
+        Map<String, Long> submittedResults = result.get(State.Submitted.name());
+        assertThat(submittedResults).hasSize(2); // Two different dates
+        assertThat(result.get("Submitted")).containsEntry("2023-10-20", 1L);
+
+        assertThat(submittedResults).containsEntry("2023-10-20",1L); // One case on 2023-10-20
+        assertThat(submittedResults).containsEntry("2023-10-21",1L); // One case on 2023-10-21
+
+        // Check 'AwaitingAos' state
+        Map<String, Long> awaitingAosResults = result.get(State.AwaitingAos.name());
+        assertThat(awaitingAosResults).hasSize(1); // One date
+        assertThat(awaitingAosResults).containsEntry("2023-10-20",1L); // One case on 2023-10-20
+    }
+
+
+    @Test
+    void shouldReturnAggregatedResultsByStateAndLastStateModifiedDateFromSearch() {
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        ReturnedCaseDetails case1 = ReturnedCaseDetails.builder()
+            .id(1L)
+            .state(State.Submitted)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .build();
+
+        ReturnedCaseDetails case2 = ReturnedCaseDetails.builder()
+            .id(2L)
+            .state(State.Submitted)
+            .lastModified(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .build();
+
+        ReturnedCaseDetails case3 = ReturnedCaseDetails.builder()
+            .id(3L)
+            .state(AwaitingAos)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .build();
+
+        ReturnedCases returnedCases = ReturnedCases.builder()
+            .total(3)
+            .cases(List.of(case1, case2, case3))
+            .build();
+
+        BoolQueryBuilder boolQueryBuilder = boolQuery();
+
+        when(coreCaseDataApi2.searchCases(user.getAuthToken(),
+            SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
+            "{\"from\":0,\"size\":100,\"query\":{\"bool\":{\"adjust_pure_negative\":true,\"boost\":1.0}},\"sort\":[{\"data.dueDate\":{\"order\":\"asc\"}}]}"))
+            .thenReturn(returnedCases);
+
+        when(ccdSearchService.newSearchForCasesWithQuery(boolQueryBuilder, user, SERVICE_AUTHORIZATION))
+            .thenReturn(returnedCases);
+
+        Map<String, Map<String, Long>> result = ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(
+            boolQueryBuilder, user, SERVICE_AUTHORIZATION);
+
+        assertThat(result).hasSize(2);
+
+        // Check 'Submitted' state
+        assertThat(result.get("Submitted")).hasSize(2);
+        assertThat(result.get("Submitted")).containsEntry("2023-10-20", 1L);
+        assertThat(result.get("Submitted")).containsEntry("2023-10-21", 1L);
+
+        // Check 'AwaitingAos' state
+        assertThat(result.get("AwaitingAos")).hasSize(1);
+        assertThat(result.get("AwaitingAos")).containsEntry("2023-10-20",1L);
+    }
+
 }
