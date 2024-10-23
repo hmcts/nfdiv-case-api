@@ -55,7 +55,7 @@ public class FeeDetails {
     )
     private String helpWithFeesReferenceNumber;
 
-    @CCD(label = "General Application Service Request Reference")
+    @CCD(label = "Service request reference")
     private String serviceRequestReference;
 
     @JsonIgnore

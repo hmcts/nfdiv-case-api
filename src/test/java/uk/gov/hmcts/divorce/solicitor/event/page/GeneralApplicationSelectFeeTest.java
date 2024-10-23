@@ -103,6 +103,10 @@ public class GeneralApplicationSelectFeeTest {
             response.getData().getGeneralApplication().getGeneralApplicationFee().getOrderSummary(),
             orderSummary
         );
+        assertEquals(
+            response.getData().getGeneralApplication().getGeneralApplicationFee().getServiceRequestReference(),
+            TEST_SERVICE_REFERENCE
+        );
     }
 
     @Test

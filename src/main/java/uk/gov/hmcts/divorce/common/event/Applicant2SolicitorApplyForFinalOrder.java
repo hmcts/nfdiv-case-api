@@ -191,15 +191,15 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         final FinalOrder finalOrder = data.getFinalOrder();
 
         if (finalOrder.getApplicant2SolFinalOrderFeeOrderSummary() == null) {
-            setOrderSummary(finalOrder);
+            createOrderSummary(finalOrder);
         }
 
         if (finalOrder.getApplicant2FinalOrderFeeServiceRequestReference() == null) {
-            setServiceRequestReference(data, caseId);
+            createServiceRequestReference(data, caseId);
         }
     }
 
-    private void setOrderSummary(FinalOrder finalOrder) {
+    private void createOrderSummary(FinalOrder finalOrder) {
         final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
 
         finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
@@ -210,7 +210,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         );
     }
 
-    private void setServiceRequestReference(CaseData data, long caseId) {
+    private void createServiceRequestReference(CaseData data, long caseId) {
         var finalOrder = data.getFinalOrder();
 
         final String serviceRequestReference = paymentService.createServiceRequestReference(
