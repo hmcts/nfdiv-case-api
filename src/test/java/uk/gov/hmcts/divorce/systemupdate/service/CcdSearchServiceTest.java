@@ -989,18 +989,21 @@ class CcdSearchServiceTest {
             .id(1L)
             .state(State.Submitted)
             .lastModified(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 9, 20, 12, 0))
             .build();
 
         ReturnedCaseDetails case2 = ReturnedCaseDetails.builder()
             .id(2L)
             .state(State.Submitted)
             .lastModified(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 21, 14, 0))
             .build();
 
         ReturnedCaseDetails case3 = ReturnedCaseDetails.builder()
             .id(3L)
             .state(AwaitingAos)
             .lastModified(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 8, 20, 16, 0))
             .build();
 
         ReturnedCases returnedCases = ReturnedCases.builder()
@@ -1025,12 +1028,12 @@ class CcdSearchServiceTest {
 
         // Check 'Submitted' state
         assertThat(result.get("Submitted")).hasSize(2);
-        assertThat(result.get("Submitted")).containsEntry("2023-10-20", 1L);
+        assertThat(result.get("Submitted")).containsEntry("2023-09-20", 1L);
         assertThat(result.get("Submitted")).containsEntry("2023-10-21", 1L);
 
         // Check 'AwaitingAos' state
         assertThat(result.get("AwaitingAos")).hasSize(1);
-        assertThat(result.get("AwaitingAos")).containsEntry("2023-10-20",1L);
+        assertThat(result.get("AwaitingAos")).containsEntry("2023-08-20",1L);
     }
 
 }
