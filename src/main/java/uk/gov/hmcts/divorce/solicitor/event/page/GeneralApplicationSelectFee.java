@@ -10,7 +10,9 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
@@ -55,9 +57,9 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
         final CaseData caseData = details.getData();
 
-        var generalApplication = caseData.getGeneralApplication();
+        prepareCaseDataForGeneralApplicationPayment(details);
 
-        createOrderSummaryAndServiceRequest(details);
+        var generalApplication = caseData.getGeneralApplication();
 
         DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
@@ -68,24 +70,30 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
             .build();
     }
 
-    private void createOrderSummaryAndServiceRequest(CaseDetails<CaseData, State> details) {
+    private void prepareCaseDataForGeneralApplicationPayment(CaseDetails<CaseData, State> details) {
         CaseData data = details.getData();
-        long caseId = details.getId();
-        var generalApplicationFeeType = data.getGeneralApplication().getGeneralApplicationFeeType();
-        var generalApplicationFee = data.getGeneralApplication().getGeneralApplicationFee();
-        String keyword = FEE0227.getLabel().equals(generalApplicationFeeType.getLabel())
-                ? KEYWORD_NOTICE
-                : KEYWORD_WITHOUT_NOTICE;
+        GeneralApplicationFee feeType = data.getGeneralApplication().getGeneralApplicationFeeType();
+        FeeDetails feeDetails = data.getGeneralApplication().getGeneralApplicationFee();
 
-        var orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword);
-        generalApplicationFee.setOrderSummary(orderSummary);
-
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
-            redirectUrl, caseId, responsiblePartyName(caseId, data), orderSummary
-        );
-        generalApplicationFee.setServiceRequestReference(serviceRequestReference);
+        createOrderSummary(feeType, feeDetails);
+        createServiceRequest(details.getId(), data, feeDetails);
     }
 
+    private void createOrderSummary(GeneralApplicationFee feeType, FeeDetails feeDetails) {
+        String keyword = FEE0227.getLabel().equals(feeType.getLabel())
+            ? KEYWORD_NOTICE
+            : KEYWORD_WITHOUT_NOTICE;
+
+        var orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword);
+        feeDetails.setOrderSummary(orderSummary);
+    }
+
+    private void createServiceRequest(long caseId, CaseData data, FeeDetails feeDetails) {
+        final String serviceRequestReference = paymentService.createServiceRequestReference(
+            redirectUrl, caseId, responsiblePartyName(caseId, data), feeDetails.getOrderSummary()
+        );
+        feeDetails.setServiceRequestReference(serviceRequestReference);
+    }
     private String responsiblePartyName(long caseId, CaseData data) {
         String authHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
