@@ -39,6 +39,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES_WITH_ARCHIVED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -208,7 +209,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_GENERAL_APPLICATION)
-            .forStates(POST_ISSUE_STATES)
+            .forStates(POST_ISSUE_STATES_WITH_ARCHIVED)
             .name(GENERAL_APPLICATION)
             .description(GENERAL_APPLICATION)
             .showSummary()
