@@ -94,6 +94,7 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         );
         feeDetails.setServiceRequestReference(serviceRequestReference);
     }
+
     private String responsiblePartyName(long caseId, CaseData data) {
         String authHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
