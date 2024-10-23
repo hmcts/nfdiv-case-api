@@ -513,11 +513,9 @@ public enum State {
         AwaitingDocuments,
         Submitted,
         Withdrawn,
-        Rejected
+        Rejected,
+        Archived
     ));
-
-    public static final EnumSet<State> POST_ISSUE_STATES_WITH_ARCHIVED =
-            EnumSet.complementOf(EnumSet.copyOf(POST_ISSUE_STATES).of(Archived));
 
     public static final State[] AOS_STATES = {
         Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
