@@ -1,5 +1,19 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import com.google.common.collect.ImmutableList;
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.caseworker.service.notification.StateReportNotification;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.service.notify.NotificationClientException;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,20 +29,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationC
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-
-import com.google.common.collect.ImmutableList;
-import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.notification.StateReportNotification;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.service.notify.NotificationClientException;
 
 @Component
 @Slf4j
@@ -82,7 +82,8 @@ public class SystemGenerateCurrentStateCountsReport implements Runnable {
         }
     }
 
-    public ImmutableList.Builder<String> prepareReportData(Map<String, Map<String, Long>> mapByStateAndLastStateModifiedDate, String reportName) {
+    public ImmutableList.Builder<String> prepareReportData(
+        Map<String, Map<String, Long>> mapByStateAndLastStateModifiedDate, String reportName) {
         ImmutableList.Builder<String> fileData = new ImmutableList.Builder<>();
         int rowCount = 0;
 

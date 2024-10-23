@@ -1013,9 +1013,14 @@ class CcdSearchServiceTest {
 
         BoolQueryBuilder boolQueryBuilder = boolQuery();
 
+        String searchString = String.format(
+            "{\"from\":%d,\"size\":%d,\"query\":{\"bool\":{\"adjust_pure_negative\":%b,\"boost\":%.1f}}," +
+                "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
+            0, 10000, true, 1.0, "asc"
+        );
         when(coreCaseDataApi2.searchCases(user.getAuthToken(),
             SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
-            "{\"from\":0,\"size\":10000,\"query\":{\"bool\":{\"adjust_pure_negative\":true,\"boost\":1.0}},\"sort\":[{\"data.dueDate\":{\"order\":\"asc\"}}]}"))
+            searchString))
             .thenReturn(returnedCases);
 
         when(ccdSearchService.newSearchForCasesWithQuery(boolQueryBuilder, user, SERVICE_AUTHORIZATION))
