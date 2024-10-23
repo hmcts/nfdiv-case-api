@@ -38,7 +38,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES_WITH_ARCHIVED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;

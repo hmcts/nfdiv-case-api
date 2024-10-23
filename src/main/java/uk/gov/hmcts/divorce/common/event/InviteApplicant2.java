@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.event;
 
-import java.util.EnumSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +15,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.EnumSet;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
