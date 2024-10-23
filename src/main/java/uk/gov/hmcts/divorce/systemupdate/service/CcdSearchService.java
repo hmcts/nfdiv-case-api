@@ -154,7 +154,7 @@ public class CcdSearchService {
             .sort(DUE_DATE, ASC)
             .query(query)
             .from(0)
-            .size(1000);
+            .size(10000);
 
         return coreCaseDataApi2.searchCases(
             user.getAuthToken(),
@@ -488,7 +488,7 @@ public class CcdSearchService {
 
     public Map<String, Map<String, Long>> searchWithQueryAndGroupByStateAndLastStateModifiedDate(BoolQueryBuilder query, User user,
                                                                                                  String serviceAuth) {
-        // Fetch the cases using case apit but with new returncases to accomodate last state modified date entry
+        // Fetch the cases using case api2 with new returncases to accomodate last state modified date entry
         ReturnedCases cases = newSearchForCasesWithQuery(query, user, serviceAuth);
 
         // Perform manual aggregation by state and lastStateModifiedDate
@@ -506,7 +506,7 @@ public class CcdSearchService {
                 caseDetail -> caseDetail.getState().name(), // Convert State to String
                 Collectors.groupingBy(
                     caseDetail -> caseDetail.getLastStateModifiedDate().toLocalDate().format(dateFormatter), // Format LocalDate to String
-                    Collectors.counting() // Count occurrences
+                    Collectors.counting()
                 )
             ));
     }

@@ -11,9 +11,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class CoreCaseDataApi2Test {
+
+class CoreCaseDataApi2Test {
 
     @Mock
     private CoreCaseDataApi2 coreCaseDataApi2;
@@ -25,21 +29,17 @@ public class CoreCaseDataApi2Test {
 
     @Test
     void shouldRunQuerySuccessfully() {
-        // Arrange
         String authorization = "Bearer auth-token";
         String serviceAuthorization = "ServiceAuth-token";
         String caseType = "divorce";
         String searchString = "{ \"query\": \"criteria\" }";
 
-        // Mock CaseData and State
         CaseData caseData = mock(CaseData.class);
         State state = mock(State.class);
 
-        // Mock LocalDateTime fields
         LocalDateTime lastModified = LocalDateTime.now();
         LocalDateTime lastStateModifiedDate = LocalDateTime.now().minusDays(1);
 
-        // Create a mock ReturnedCaseDetails object
         ReturnedCaseDetails caseDetails = ReturnedCaseDetails.builder()
             .id(1234L)
             .data(caseData)
@@ -48,13 +48,11 @@ public class CoreCaseDataApi2Test {
             .lastStateModifiedDate(lastStateModifiedDate)
             .build();
 
-        // Create a mock ReturnedCases object
         ReturnedCases returnedCases = ReturnedCases.builder()
             .cases(List.of(caseDetails))
             .total(1)
             .build();
 
-        // Mock the behavior of coreCaseDataApi2's runQuery method
         when(coreCaseDataApi2.runQuery(
             authorization,
             serviceAuthorization,
@@ -62,10 +60,8 @@ public class CoreCaseDataApi2Test {
             searchString)
         ).thenReturn(returnedCases);
 
-        // Act
         ReturnedCases result = coreCaseDataApi2.runQuery(authorization, serviceAuthorization, caseType, searchString);
 
-        // Assert
         assertThat(result).isEqualTo(returnedCases);
         assertThat(result.getTotal()).isEqualTo(1);
         assertThat(result.getCases()).hasSize(1);
@@ -81,21 +77,17 @@ public class CoreCaseDataApi2Test {
 
     @Test
     void shouldSearchCasesSuccessfully() {
-        // Arrange
         String authorization = "Bearer auth-token";
         String serviceAuthorization = "ServiceAuth-token";
         String caseType = "divorce";
         String searchString = "{ \"query\": \"criteria\" }";
 
-        // Mock CaseData and State
         CaseData caseData = mock(CaseData.class);
         State state = mock(State.class);
 
-        // Mock LocalDateTime fields
         LocalDateTime lastModified = LocalDateTime.now();
         LocalDateTime lastStateModifiedDate = LocalDateTime.now().minusDays(1);
 
-        // Create a mock ReturnedCaseDetails object
         ReturnedCaseDetails caseDetails = ReturnedCaseDetails.builder()
             .id(1234L)
             .data(caseData)
@@ -104,13 +96,11 @@ public class CoreCaseDataApi2Test {
             .lastStateModifiedDate(lastStateModifiedDate)
             .build();
 
-        // Create a mock ReturnedCases object
         ReturnedCases returnedCases = ReturnedCases.builder()
             .cases(List.of(caseDetails))
             .total(1)
             .build();
 
-        // Mock the behavior of coreCaseDataApi2's searchCases method
         when(coreCaseDataApi2.searchCases(
             authorization,
             serviceAuthorization,
@@ -118,10 +108,8 @@ public class CoreCaseDataApi2Test {
             searchString)
         ).thenReturn(returnedCases);
 
-        // Act
         ReturnedCases result = coreCaseDataApi2.searchCases(authorization, serviceAuthorization, caseType, searchString);
 
-        // Assert
         assertThat(result).isEqualTo(returnedCases);
         assertThat(result.getTotal()).isEqualTo(1);
         assertThat(result.getCases()).hasSize(1);
@@ -132,6 +120,7 @@ public class CoreCaseDataApi2Test {
         assertThat(returnedCaseDetails.getLastModified()).isEqualTo(lastModified);
         assertThat(returnedCaseDetails.getLastStateModifiedDate()).isEqualTo(lastStateModifiedDate);
 
-        verify(coreCaseDataApi2, times(1)).searchCases(authorization, serviceAuthorization, caseType, searchString);
+        verify(coreCaseDataApi2, times(1))
+            .searchCases(authorization, serviceAuthorization, caseType, searchString);
     }
 }

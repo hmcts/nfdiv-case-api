@@ -1012,7 +1012,7 @@ class CcdSearchServiceTest {
 
         when(coreCaseDataApi2.searchCases(user.getAuthToken(),
             SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
-            "{\"from\":0,\"size\":100,\"query\":{\"bool\":{\"adjust_pure_negative\":true,\"boost\":1.0}},\"sort\":[{\"data.dueDate\":{\"order\":\"asc\"}}]}"))
+            "{\"from\":0,\"size\":10000,\"query\":{\"bool\":{\"adjust_pure_negative\":true,\"boost\":1.0}},\"sort\":[{\"data.dueDate\":{\"order\":\"asc\"}}]}"))
             .thenReturn(returnedCases);
 
         when(ccdSearchService.newSearchForCasesWithQuery(boolQueryBuilder, user, SERVICE_AUTHORIZATION))
