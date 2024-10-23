@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
+import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
@@ -33,16 +34,22 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
+import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -99,6 +106,34 @@ public class SolicitorSubmitApplicationIT {
         CaseDataWireMock.stopAndReset();
         FeesWireMock.stopAndReset();
         PaymentWireMock.stopAndReset();
+    }
+
+    @Test
+    public void createsServiceRequestAndOrderSummaryToPrepareCaseForPayment() throws Exception {
+        var data = caseDataWithStatementOfTruth();
+        data.getApplication().setApplicationFeeOrderSummary(null);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+
+        mockMvc.perform(post(ABOUT_TO_START_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, SOLICITOR_SUBMIT)))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.applicationFeeOrderSummary.PaymentTotal")
+                .value("1000")
+            )
+            .andExpect(jsonPath("$.data.applicationFeeServiceRequestReference")
+                .value(TEST_SERVICE_REFERENCE)
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
     }
 
     @Test

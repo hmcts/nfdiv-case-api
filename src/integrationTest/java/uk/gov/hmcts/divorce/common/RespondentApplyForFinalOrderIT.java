@@ -64,7 +64,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties= {"wiremock.reset-mappings-after-each-test=true"}
+)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
     PaymentWireMock.PropertiesInitializer.class,
