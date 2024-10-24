@@ -513,7 +513,8 @@ public enum State {
         AwaitingDocuments,
         Submitted,
         Withdrawn,
-        Rejected
+        Rejected,
+        Archived
     ));
 
     public static final State[] AOS_STATES = {
