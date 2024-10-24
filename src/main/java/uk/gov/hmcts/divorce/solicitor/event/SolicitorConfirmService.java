@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.ConfirmService;
 import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
@@ -58,6 +59,12 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)
             .complex(Application::getSolicitorService)
+            .mandatory(SolicitorService::getFirstAttemptToServe)
+            .mandatory(SolicitorService::getDocumentsPreviouslyReturned, "solServiceFirstAttemptToServe=\"No\"")
+            .mandatory(SolicitorService::getDetailsOfPreviousService, "solServiceDocumentsPreviouslyReturned=\"Yes\""
+                + " AND solServiceFirstAttemptToServe=\"No\"")
+            .mandatory(SolicitorService::getDatePreviousServiceReturned, "solServiceDocumentsPreviouslyReturned=\"Yes\""
+                + " AND solServiceFirstAttemptToServe=\"No\"")
             .mandatory(SolicitorService::getDateOfService)
             .mandatory(SolicitorService::getDocumentsServed)
             .mandatory(SolicitorService::getOnWhomServed)
@@ -102,6 +109,20 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
         confirmService.addToDocumentsUploaded(updateDetails);
 
         log.info("Due date after submit Task is {}", updateDetails.getData().getDueDate());
+
+        final SolicitorService solicitorService = caseData.getApplication().getSolicitorService();
+
+        if (solicitorService.getFirstAttemptToServe() == YesOrNo.YES) {
+            solicitorService.setDocumentsPreviouslyReturned(null);
+            solicitorService.setDetailsOfPreviousService(null);
+            solicitorService.setDatePreviousServiceReturned(null);
+        }
+
+        if (solicitorService.getFirstAttemptToServe() == YesOrNo.NO
+            && solicitorService.getDocumentsPreviouslyReturned() == YesOrNo.NO) {
+            solicitorService.setDetailsOfPreviousService(null);
+            solicitorService.setDatePreviousServiceReturned(null);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())

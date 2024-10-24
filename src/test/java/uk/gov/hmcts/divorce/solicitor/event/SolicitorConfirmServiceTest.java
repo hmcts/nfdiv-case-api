@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_UPLOADED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -202,5 +203,79 @@ public class SolicitorConfirmServiceTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldResetPreviousServiceAttemptFieldsIfFirstServiceAttempt() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().getSolicitorService().setFirstAttemptToServe(YES);
+        caseData.getApplication().getSolicitorService().setDocumentsPreviouslyReturned(YES);
+        caseData.getApplication().getSolicitorService().setDetailsOfPreviousService("details");
+        caseData.getApplication().getSolicitorService().setDatePreviousServiceReturned(
+            LocalDate.of(2021, 1, 1));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        updatedCaseDetails.setData(caseData);
+
+        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(updatedCaseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getSolicitorService().getDocumentsPreviouslyReturned()).isNull();
+        assertThat(response.getData().getApplication().getSolicitorService().getDetailsOfPreviousService()).isNull();
+        assertThat(response.getData().getApplication().getSolicitorService().getDatePreviousServiceReturned()).isNull();
+    }
+
+    @Test
+    void shouldNotResetPreviousServiceAttemptFieldsIfNotFirstServiceAttempt() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().getSolicitorService().setFirstAttemptToServe(NO);
+        caseData.getApplication().getSolicitorService().setDocumentsPreviouslyReturned(YES);
+        caseData.getApplication().getSolicitorService().setDetailsOfPreviousService("details");
+        caseData.getApplication().getSolicitorService().setDatePreviousServiceReturned(
+            LocalDate.of(2021, 1, 1));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        updatedCaseDetails.setData(caseData);
+
+        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(updatedCaseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getSolicitorService().getDocumentsPreviouslyReturned()).isNotNull();
+        assertThat(response.getData().getApplication().getSolicitorService().getDetailsOfPreviousService()).isNotNull();
+        assertThat(response.getData().getApplication().getSolicitorService().getDatePreviousServiceReturned()).isNotNull();
+    }
+
+    @Test
+    void shouldResetPreviousDocumentsReturnedFieldsIfDocumentsNotReturned() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+        caseData.getApplication().getSolicitorService().setFirstAttemptToServe(NO);
+        caseData.getApplication().getSolicitorService().setDocumentsPreviouslyReturned(NO);
+        caseData.getApplication().getSolicitorService().setDetailsOfPreviousService("details");
+        caseData.getApplication().getSolicitorService().setDatePreviousServiceReturned(
+            LocalDate.of(2021, 1, 1));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        updatedCaseDetails.setData(caseData);
+
+        when(submitConfirmService.submitConfirmService(caseDetails)).thenReturn(updatedCaseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorConfirmService.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getSolicitorService().getDetailsOfPreviousService()).isNull();
+        assertThat(response.getData().getApplication().getSolicitorService().getDatePreviousServiceReturned()).isNull();
     }
 }
