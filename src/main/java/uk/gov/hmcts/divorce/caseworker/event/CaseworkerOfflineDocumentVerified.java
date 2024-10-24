@@ -21,6 +21,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -32,6 +39,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,13 +48,19 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
+import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -63,6 +77,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @Component
@@ -97,48 +112,59 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
-            .page("documentTypeReceived")
+            .page("documentTypeReceived", this::midEvent)
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
             .complex(CaseData::getDocuments)
-            .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
+                .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
                 .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"", true)
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-            .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
-            .mandatory(AcknowledgementOfService::getHowToRespondApplication,
-                "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
+                .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
+                .mandatory(AcknowledgementOfService::getHowToRespondApplication,
+                    "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
-            .mandatory(CaseDocuments::getScannedDocumentNames,
-                    "scannedSubtypeReceived!=\"*\" "
-                        + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")")
+                .mandatory(CaseDocuments::getScannedDocumentNames,
+                        "scannedSubtypeReceived!=\"*\" "
+                            + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\") OR typeOfDocumentAttached=\"RFIR\"")
             .done()
             .complex(CaseData::getConditionalOrder)
-            .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
-            .mandatory(ConditionalOrder::getD84ApplicationType,
-                "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
-            .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
+                .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
+                .mandatory(ConditionalOrder::getD84ApplicationType,
+                    "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
+                .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
-            .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
-            .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
-            .mandatory(FinalOrder::getD36ApplicationType,
-                "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
-            .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
-                + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
+                .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
+                .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
+                .mandatory(FinalOrder::getD36ApplicationType,
+                    "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
+                .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
+                    + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
+            .done()
+            .page("selectSenderOfDocument")
+            .showCondition("typeOfDocumentAttached=\"RFIR\"")
+            .complex(CaseData::getRequestForInformationList)
+                .complex(RequestForInformationList::getRequestForInformationOfflineResponseDraft)
+                    .mandatory(RequestForInformationOfflineResponseDraft::getRfiOfflineSoleResponseParties, "applicationType=\"soleApplication\"")
+                    .mandatory(RequestForInformationOfflineResponseDraft::getRfiOfflineJointResponseParties, "applicationType=\"jointApplication\"")
+                    .mandatory(RequestForInformationOfflineResponseDraft::getRfiOfflineResponseOtherName, "rfiOfflineSoleResponseParties=\"other\" "
+                        + "OR rfiOfflineJointResponseParties=\"other\"")
+                    .optional(RequestForInformationOfflineResponseDraft::getRfiOfflineResponseOtherEmail, "rfiOfflineSoleResponseParties=\"other\" "
+                        + "OR rfiOfflineJointResponseParties=\"other\"")
+                    .optionalWithLabel(RequestForInformationOfflineResponseDraft::getRfiOfflineDraftResponseDetails, "Add Notes")
+                .done()
             .done()
             .page("stateToTransitionToOtherDoc")
             .showCondition("applicationType=\"soleApplication\" AND typeOfDocumentAttached=\"Other\"")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getStateToTransitionApplicationTo)
+                .mandatory(Application::getStateToTransitionApplicationTo)
             .done()
-
-
             .page("stateToTransitionToJoint")
             .showCondition("applicationType=\"jointApplication\" AND typeOfDocumentAttached!=\"D84\" OR scannedSubtypeReceived!=\"D84\"")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getStateToTransitionApplicationTo)
+                .mandatory(Application::getStateToTransitionApplicationTo)
             .done();
     }
 
@@ -153,6 +179,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
         } else if (D36.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(FO_D36);
+        } else if (RFIR.equals(scannedSubtypeReceived)) {
+            caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         }
 
         if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
@@ -179,6 +207,18 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData data = details.getData();
+        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
+            setupRfirFields(data);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
@@ -195,7 +235,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD36AndSendNotifications(details);
-
+        } else if (RFI_RESPONSE.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            return processRfiResponseAndSendNotifications(details);
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
 
@@ -321,6 +362,75 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
+    private AboutToStartOrSubmitResponse<CaseData, State> processRfiResponseAndSendNotifications(CaseDetails<CaseData, State> details) {
+        log.info("Verifying RFI Response for case {}", details.getId());
+        final CaseData caseData = details.getData();
+
+        reclassifyScannedDocumentToChosenDocumentType(caseData, REQUEST_FOR_INFORMATION_RESPONSE_DOC);
+
+        // setting the state as document has been received and is being classified by caseworker
+//        details.setState(RequestedInformationSubmitted);
+            // ? Should we allow the caseworker to choose as an option on the event?
+            // It is possible that the citizen has not sent in all requested docs and more may be required.
+            // Should this trigger a notification, or prompt the CW to issue a new RFI?
+            // Should it optionally clear the couldNotUploadDocs flag on the RFI response if it is set?
+
+        caseData.getDocuments().setScannedSubtypeReceived(null);
+
+//      log.info("CaseworkerOfflineDocumentVerified RFI Response processed, sending RFI Response notifications for case: {}", details.getId());
+//      should we trigger any notifications?
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .state(details.getState())
+            .build();
+    }
+
+    private void setupRfirFields(CaseData caseData) {
+        final RequestForInformationResponse existingResponse =
+            caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
+        final RequestForInformationResponseParties existingResponseParties = existingResponse != null
+            ? existingResponse.getRequestForInformationResponseParties()
+            : null;
+        if (existingResponseParties != null) {
+            if (caseData.getApplicationType().isSole()) {
+                final RequestForInformationOfflineResponseSoleParties sender;
+                switch (existingResponseParties) {
+                    case APPLICANT1 -> sender = RequestForInformationOfflineResponseSoleParties.APPLICANT;
+                    case APPLICANT1SOLICITOR -> sender = RequestForInformationOfflineResponseSoleParties.APPLICANTSOLICITOR;
+                    default -> {
+                        sender = RequestForInformationOfflineResponseSoleParties.OTHER;
+                        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineResponseOtherName(
+                            caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationName()
+                        );
+                        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineResponseOtherEmail(
+                            caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationEmailAddress()
+                        );
+                    }
+                }
+                caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineSoleResponseParties(sender);
+            } else {
+                final RequestForInformationOfflineResponseJointParties sender;
+                switch (existingResponseParties) {
+                    case APPLICANT1 -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT1;
+                    case APPLICANT1SOLICITOR -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT1SOLICITOR;
+                    case APPLICANT2 -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT2;
+                    case APPLICANT2SOLICITOR -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT2SOLICITOR;
+                    default -> {
+                        sender = RequestForInformationOfflineResponseJointParties.OTHER;
+                        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineResponseOtherName(
+                            caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationName()
+                        );
+                        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineResponseOtherEmail(
+                            caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationEmailAddress()
+                        );
+                    }
+                }
+                caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineJointResponseParties(sender);
+            }
+        }
+    }
+
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
         if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
             String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
@@ -328,6 +438,21 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
 
             caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, filename);
+        }
+
+        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+            if (caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().isEmpty()) {
+                final RequestForInformationResponse response = new RequestForInformationResponse();
+                response.setValues(caseData, caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft());
+                caseData.getRequestForInformationList().getLatestRequest().addResponseToList(response);
+            } else {
+                final RequestForInformationResponse latestResponse =
+                    caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
+                latestResponse.addOfflineDocument(
+                    caseData,
+                    caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft()
+                );
+            }
         }
     }
 
