@@ -89,11 +89,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
-                EVENT_ISSUE,KEYWORD_DIVORCE);
-            application.setApplicationFeeOrderSummary(orderSummary);
-
-            setServiceRequestReferenceForApplicationPayment(data, details.getId());
+            prepareCaseDataForApplicationPayment(
+                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
+            );
 
             state = AwaitingPayment;
         }
@@ -107,18 +105,25 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    public void setServiceRequestReferenceForApplicationPayment(CaseData data, long caseId) {
-        final Application application = data.getApplication();
+    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
+        Application application = data.getApplication();
 
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
-            data.getCitizenPaymentCallbackUrl(),
-            caseId,
-            data.getApplicant1().getFullName(),
-            application.getApplicationFeeOrderSummary()
-        );
+        if (application.getApplicationFeeOrderSummary() == null) {
+            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
+                EVENT_ISSUE,KEYWORD_DIVORCE);
+            application.setApplicationFeeOrderSummary(orderSummary);
+        }
 
-        application.setApplicationFeeServiceRequestReference(serviceRequestReference);
+        if (application.getApplicationFeeServiceRequestReference() == null) {
+            final String serviceRequestReference = paymentService.createServiceRequestReference(
+                redirectUrl,
+                caseId,
+                data.getApplicant1().getFullName(),
+                application.getApplicationFeeOrderSummary()
+            );
+
+            application.setApplicationFeeServiceRequestReference(serviceRequestReference);
+        }
     }
-
 }
 

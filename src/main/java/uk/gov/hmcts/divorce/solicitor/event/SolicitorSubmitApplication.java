@@ -1,13 +1,14 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
@@ -42,24 +43,21 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT = "solicitor-submit-application";
 
-    @Autowired
-    private PaymentService paymentService;
+    private final CitizenSubmitApplication citizenSubmit;
+    private final PaymentService paymentService;
+    private final SolPayment solPayment;
+    private final SubmissionService submissionService;
 
-    @Autowired
-    private SolPayment solPayment;
-
-    @Autowired
-    private SubmissionService submissionService;
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -81,13 +79,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_SUBMIT, details.getId());
 
         log.info("Retrieving order summary");
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
         final CaseData caseData = details.getData();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+        citizenSubmit.prepareCaseDataForApplicationPayment(caseData, details.getId(), redirectUrl);
 
-        caseData.getApplication().setSolApplicationFeeInPounds(
+        var application = caseData.getApplication();
+        application.setSolApplicationFeeInPounds(
             NumberFormat.getNumberInstance().format(
-                new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2)
+                new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
             )
         );
 
@@ -126,8 +124,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             final Optional<String> pbaNumber = application.getPbaNumber();
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
-                    caseData,
                     caseId,
+                    caseData.getApplication().getApplicationFeeServiceRequestReference(),
                     caseData.getApplicant1().getSolicitor(),
                     pbaNumber.get(),
                     caseData.getApplication().getApplicationFeeOrderSummary(),

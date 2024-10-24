@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -36,7 +36,6 @@ import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.penceToPounds;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0001;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0003;
@@ -160,8 +159,8 @@ public class PaymentService {
             .build();
     }
 
-    public PbaResponse processPbaPayment(CaseData caseData,
-                                         Long caseId,
+    public PbaResponse processPbaPayment(Long caseId,
+                                         String serviceRequestReference,
                                          Solicitor solicitor,
                                          String pbaNumber,
                                          OrderSummary orderSummary,
@@ -175,13 +174,14 @@ public class PaymentService {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                creditAccountPaymentRequest(caseData, caseId, solicitor, pbaNumber, orderSummary, feeAccountReference)
+                serviceRequestReference,
+                creditAccountPaymentRequest(solicitor, pbaNumber, orderSummary, feeAccountReference)
             );
 
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
                 .map(response ->
                     Optional.ofNullable(response.getBody())
-                        .map(CreditAccountPaymentResponse::getReference)
+                        .map(CreditAccountPaymentResponse::getPaymentReference)
                         .orElseGet(() -> null)
                 )
                 .orElseGet(() -> null);
@@ -318,39 +318,19 @@ public class PaymentService {
         return errorMessage;
     }
 
-    private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData,
-                                                                    Long caseId,
-                                                                    Solicitor solicitor,
+    private CreditAccountPaymentRequest creditAccountPaymentRequest(Solicitor solicitor,
                                                                     String pbaNumber,
                                                                     OrderSummary orderSummary,
                                                                     String feeAccountReference) {
 
-        var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
-        creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
-        creditAccountPaymentRequest.setCurrency(GBP);
-        creditAccountPaymentRequest.setAccountNumber(pbaNumber);
-        creditAccountPaymentRequest.setCaseType(getCaseType());
-
-        creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
-
-        creditAccountPaymentRequest.setCustomerReference(feeAccountReference);
-
-        final Fee fee = getFeeValue(orderSummary);
-        creditAccountPaymentRequest.setDescription(fee.getDescription());
-
-        creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
-        creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
-
-        List<PaymentItem> paymentItemList = populateFeesPaymentItems(
-            caseId,
-            orderSummary.getPaymentTotal(),
-            fee,
-            caseData.getApplication().getFeeAccountReference()
-        );
-
-        creditAccountPaymentRequest.setFees(paymentItemList);
-
-        return creditAccountPaymentRequest;
+        return CreditAccountPaymentRequest.builder()
+                .currency(GBP)
+                .accountNumber(pbaNumber)
+                .organisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName())
+                .customerReference(feeAccountReference)
+                .idempotencyKey(String.valueOf(UUID.randomUUID()))
+                .amount(penceToPounds(orderSummary.getPaymentTotal()))
+            .build();
     }
 
     private CreateServiceRequestBody buildServiceRequestBody(

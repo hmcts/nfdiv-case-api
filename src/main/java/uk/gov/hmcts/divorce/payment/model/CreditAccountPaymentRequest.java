@@ -2,46 +2,30 @@ package uk.gov.hmcts.divorce.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.List;
 import java.util.Optional;
 
 @Data
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class CreditAccountPaymentRequest {
 
-    @JsonProperty("ccd_case_number")
-    private String ccdCaseNumber;
-
-    @JsonProperty("account_number")
-    private String accountNumber;
-
-    @JsonProperty("amount")
     private String amount;
 
-    @JsonProperty("fees")
-    private List<PaymentItem> fees;
-
-    @JsonProperty("service")
-    private String service;
+    private String currency;
 
     @JsonProperty("customer_reference")
     private String customerReference;
 
-    @JsonProperty("site_id")
-    private String siteId;
+    @JsonProperty("account_number")
+    private String accountNumber;
 
-    @JsonProperty("case_type")
-    private String caseType;
-
-    @JsonProperty("description")
-    private String description;
-
-    @JsonProperty("currency")
-    private String currency;
+    @JsonProperty("idempotency_key")
+    private String idempotencyKey;
 
     @JsonProperty("organisation_name")
     private String organisationName;

@@ -47,7 +47,9 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         final State state = details.getState();
 
         if (AwaitingPayment.equals(state)) {
-            citizenSubmit.setServiceRequestReferenceForApplicationPayment(details.getData(), details.getId());
+            citizenSubmit.prepareCaseDataForApplicationPayment(
+                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
+            );
         } else if (AwaitingFinalOrderPayment.equals(state)) {
             respondentApplyForFinalOrder.setServiceRequestReferenceForFinalOrderPayment(details.getData(), details.getId());
         }

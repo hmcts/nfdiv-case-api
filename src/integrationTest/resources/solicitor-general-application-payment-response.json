@@ -55,6 +55,7 @@
       "PaymentTotal": "55000"
     },
     "generalApplicationFeePaymentMethod": "feePayByAccount",
+    "generalApplicationFeeServiceRequestReference": "test-service-reference",
     "generalApplicationFeePbaNumbers": {
       "value": {
         "label": "PBA0012345"
@@ -80,6 +81,7 @@
               }
             }
           ],
+          "generalApplicationFeeServiceRequestReference": "test-service-reference",
           "generalApplicationFeeOrderSummary": {
             "Fees": [
               {

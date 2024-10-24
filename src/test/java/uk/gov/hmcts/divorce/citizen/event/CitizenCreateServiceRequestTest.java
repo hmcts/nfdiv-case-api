@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_PAYMENT_CALLBACK_URL;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCreateServiceRequestTest {
@@ -47,6 +48,7 @@ class CitizenCreateServiceRequestTest {
     public void shouldSetServiceRequestForApplicationPaymentIfCaseIsInAwaitingPayment() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = new CaseData();
+        caseData.setCitizenPaymentCallbackUrl(TEST_PAYMENT_CALLBACK_URL);
         long caseId = TEST_CASE_ID;
 
         caseDetails.setState(AwaitingPayment);
@@ -55,7 +57,9 @@ class CitizenCreateServiceRequestTest {
 
         citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(citizenSubmitApplication).setServiceRequestReferenceForApplicationPayment(caseData, caseId);
+        verify(citizenSubmitApplication).prepareCaseDataForApplicationPayment(
+            caseData, caseId, TEST_PAYMENT_CALLBACK_URL
+        );
     }
 
     @Test
