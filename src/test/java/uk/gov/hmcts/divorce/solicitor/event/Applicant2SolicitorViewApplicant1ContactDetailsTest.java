@@ -65,6 +65,6 @@ public class Applicant2SolicitorViewApplicant1ContactDetailsTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorViewApplicant1ContactDetails.aboutToStart(details);
 
-        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getErrors()).isNull();
     }
 }

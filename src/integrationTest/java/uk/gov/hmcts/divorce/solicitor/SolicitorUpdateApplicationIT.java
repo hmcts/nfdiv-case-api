@@ -60,7 +60,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithNonConfidentialAddress;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -169,7 +169,7 @@ public class SolicitorUpdateApplicationIT {
     }
 
     private CaseData caseDataWithNoDocument() {
-        var applicant1 = getApplicantWithAddress();
+        var applicant1 = getApplicantWithNonConfidentialAddress();
         applicant1.setFinancialOrder(NO);
         var application = Application.builder()
             .marriageDetails(
