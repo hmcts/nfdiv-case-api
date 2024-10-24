@@ -406,31 +406,33 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         if (existingResponseParties != null) {
             if (caseData.getApplicationType().isSole()) {
-                final RequestForInformationOfflineResponseSoleParties sender;
                 switch (existingResponseParties) {
-                    case APPLICANT1 -> sender = RequestForInformationOfflineResponseSoleParties.APPLICANT;
-                    case APPLICANT1SOLICITOR -> sender = RequestForInformationOfflineResponseSoleParties.APPLICANTSOLICITOR;
+                    case APPLICANT1 -> offlineDraft
+                        .setRfiOfflineSoleResponseParties(RequestForInformationOfflineResponseSoleParties.APPLICANT);
+                    case APPLICANT1SOLICITOR -> offlineDraft
+                        .setRfiOfflineSoleResponseParties(RequestForInformationOfflineResponseSoleParties.APPLICANTSOLICITOR);
                     default -> {
-                        sender = RequestForInformationOfflineResponseSoleParties.OTHER;
+                        offlineDraft.setRfiOfflineSoleResponseParties(RequestForInformationOfflineResponseSoleParties.OTHER);
                         offlineDraft.setRfiOfflineResponseOtherName(latestRequest.getRequestForInformationName());
                         offlineDraft.setRfiOfflineResponseOtherEmail(latestRequest.getRequestForInformationEmailAddress());
                     }
                 }
-                offlineDraft.setRfiOfflineSoleResponseParties(sender);
             } else {
-                final RequestForInformationOfflineResponseJointParties sender;
                 switch (existingResponseParties) {
-                    case APPLICANT1 -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT1;
-                    case APPLICANT1SOLICITOR -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT1SOLICITOR;
-                    case APPLICANT2 -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT2;
-                    case APPLICANT2SOLICITOR -> sender = RequestForInformationOfflineResponseJointParties.APPLICANT2SOLICITOR;
+                    case APPLICANT1 -> offlineDraft
+                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT1);
+                    case APPLICANT1SOLICITOR -> offlineDraft
+                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT1SOLICITOR);
+                    case APPLICANT2 -> offlineDraft
+                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT2);
+                    case APPLICANT2SOLICITOR -> offlineDraft
+                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT2SOLICITOR);
                     default -> {
-                        sender = RequestForInformationOfflineResponseJointParties.OTHER;
+                        offlineDraft.setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.OTHER);
                         offlineDraft.setRfiOfflineResponseOtherName(latestRequest.getRequestForInformationName());
                         offlineDraft.setRfiOfflineResponseOtherEmail(latestRequest.getRequestForInformationEmailAddress());
                     }
                 }
-                offlineDraft.setRfiOfflineJointResponseParties(sender);
             }
         }
     }
