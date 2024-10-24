@@ -74,7 +74,7 @@ class StateReportNotificationTest {
 
             assertTrue(result, "The method should return true when upload is successful");
             assertTrue(templateVars.containsKey("link_to_file"), "The templateVars should contain 'link_to_file'");
-            assertTrue(templateVars.get("link_to_file").equals(mockJsonResponse), "The JSONObject should be correctly set in templateVars");
+            assertEquals(templateVars.get("link_to_file"), mockJsonResponse, "The JSONObject should be correctly set in templateVars");
         }
     }
 

@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import com.google.common.collect.ImmutableList;
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -18,15 +17,20 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.service.notify.NotificationClientException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SystemGenerateCurrentStateCountsReportTest {
@@ -48,8 +52,7 @@ class SystemGenerateCurrentStateCountsReportTest {
 
     private User user;
 
-    @BeforeEach
-    void setUp() {
+    void setUpUser() {
         user = new User("test-auth-token", null);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn("service-auth-token");
@@ -57,6 +60,7 @@ class SystemGenerateCurrentStateCountsReportTest {
 
     @Test
     void shouldRunSuccessfullyAndSendNotification() throws CcdSearchCaseException, NotificationClientException, IOException {
+        setUpUser();
         Map<String, Map<String, Long>> searchResult = new HashMap<>();
         Map<String, Long> dateMap = new HashMap<>();
         dateMap.put("2023-10-24", 10L);
@@ -73,6 +77,7 @@ class SystemGenerateCurrentStateCountsReportTest {
 
     @Test
     void shouldHandleCcdSearchCaseExceptionGracefully() throws CcdSearchCaseException, NotificationClientException, IOException {
+        setUpUser();
         when(ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
@@ -85,6 +90,7 @@ class SystemGenerateCurrentStateCountsReportTest {
     @Test
     void shouldHandleCcdConflictExceptionGracefully()
         throws CcdSearchCaseException, CcdConflictException, NotificationClientException, IOException {
+        setUpUser();
         Map<String, Map<String, Long>> searchResult = new HashMap<>();
         Map<String, Long> dateMap = new HashMap<>();
         dateMap.put("2023-10-24", 10L);
@@ -104,6 +110,7 @@ class SystemGenerateCurrentStateCountsReportTest {
 
     @Test
     void shouldHandleNotificationClientExceptionGracefully() throws CcdSearchCaseException, NotificationClientException, IOException {
+        setUpUser();
         Map<String, Map<String, Long>> searchResult = new HashMap<>();
         Map<String, Long> dateMap = new HashMap<>();
         dateMap.put("2023-10-24", 10L);
