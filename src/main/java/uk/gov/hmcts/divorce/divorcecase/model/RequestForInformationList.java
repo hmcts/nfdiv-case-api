@@ -17,8 +17,6 @@ import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 
 @Data
 @Builder
