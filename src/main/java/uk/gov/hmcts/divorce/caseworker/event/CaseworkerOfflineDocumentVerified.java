@@ -235,10 +235,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD10AndSendNotifications(details);
-
         } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD84AndSendNotifications(details);
-
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD36AndSendNotifications(details);
         } else if (RFI_RESPONSE.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
@@ -397,7 +395,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     private void setupRfirFields(CaseData caseData) {
         final RequestForInformation latestRequest = caseData.getRequestForInformationList().getLatestRequest();
-        final RequestForInformationResponse existingResponse = latestRequest.getLatestResponse();
+        final RequestForInformationResponse existingResponse =
+            latestRequest.getRequestForInformationResponses() == null || !latestRequest.getRequestForInformationResponses().isEmpty()
+            ? null
+            : latestRequest.getLatestResponse();
         final RequestForInformationResponseParties existingResponseParties = existingResponse != null
             ? existingResponse.getRequestForInformationResponseParties()
             : null;
