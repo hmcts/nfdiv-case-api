@@ -8,6 +8,8 @@ springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
   pathsToMatch: /**
 
+report-email: ${REPORT_EMAIL:dummy}
+
 uk:
   gov:
     notify:

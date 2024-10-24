@@ -20,7 +20,8 @@ java:
           alias: IDAM_SYSTEM_UPDATE_USERNAME
         - name: idam-systemupdate-password
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
-
+        - name: report-email
+          alias: REPORT_EMAIL
 nfdiv-frontend:
   enabled: true
   nodejs:

@@ -38,8 +38,18 @@ public class NotificationService {
         LanguagePreference languagePreference,
         Long caseId
     ) {
-        String referenceId = String.format("%s-%s", caseId, UUID.randomUUID());
-        Map<String,Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
+        sendEmailWithString(destinationAddress, template, templateVars, languagePreference, String.valueOf(caseId));
+    }
+
+    public void sendEmailWithString(
+        String destinationAddress,
+        EmailTemplateName template,
+        Map<? extends String, ? extends Object> templateVars,
+        LanguagePreference languagePreference,
+        String identifierString
+    ) {
+        String referenceId = String.format("%s-%s", identifierString, UUID.randomUUID());
+        Map<String, Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
 
         try {
             String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
@@ -67,7 +77,7 @@ public class NotificationService {
                 notificationClientException
             );
             final String message = notificationClientException.getMessage()
-                + format(" Exception for Case ID: %s", caseId);
+                + format(" Exception for Case ID: %s", identifierString);
             throw new NotificationException(message, notificationClientException);
         }
     }
