@@ -189,7 +189,10 @@ public class CaseDocuments {
         D84NVA("D84NVA"),
 
         @JsonProperty("D36N")
-        D36N("D36N");
+        D36N("D36N"),
+
+        @JsonProperty("RFIR")
+        RFIR("RFIR");
 
         private final String label;
     }
@@ -206,6 +209,9 @@ public class CaseDocuments {
 
         @JsonProperty("D36")
         FO_D36("Application for a final order (D36)"),
+
+        @JsonProperty("RFIR")
+        RFI_RESPONSE("Request for Information Response"),
 
         @JsonProperty("Other")
         OTHER("Other");

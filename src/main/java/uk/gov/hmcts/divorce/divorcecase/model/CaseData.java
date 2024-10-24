@@ -66,6 +66,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -568,6 +569,16 @@ public class CaseData {
         if (FINAL_ORDER_APPLICATION.equals(documentType)) {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
             finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
+        }
+
+        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+            RequestForInformationOfflineResponseDraft offlineDraft =
+                this.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+            if (offlineDraft.getRfiOfflineDraftResponseDocs() == null || offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
+                offlineDraft.addDocument(new RequestForInformationOfflineResponseDoc());
+            }
+
+            offlineDraft.getLatestDocument().setRfiOfflineResponseDoc(divorceDocument);
         }
     }
 }
