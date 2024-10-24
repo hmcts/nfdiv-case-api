@@ -62,7 +62,7 @@ public class StateReportNotification {
         }
     }
 
-    public boolean prepareNotificationUpload(byte[] fileContents, String fileName, RetentionPeriodDuration retentionPeriodDuration,
+    boolean prepareNotificationUpload(byte[] fileContents, String fileName, RetentionPeriodDuration retentionPeriodDuration,
                                              HashMap<String, Object> templateVars) {
         try {
             templateVars.put("link_to_file",
