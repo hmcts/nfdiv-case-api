@@ -82,7 +82,7 @@ class CcdSearchServiceTest {
     private CoreCaseDataApi coreCaseDataApi;
 
     @Mock
-    private CoreCaseDataApi2 coreCaseDataApi2;
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
     @Mock
     private CaseDetailsConverter caseDetailsConverter;
@@ -1018,7 +1018,7 @@ class CcdSearchServiceTest {
                 + "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
             0, 10000, true, 1.0, "asc"
         );
-        when(coreCaseDataApi2.searchCases(user.getAuthToken(),
+        when(coreCaseDataApiWithStateModifiedDate.searchCases(user.getAuthToken(),
             SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
             searchString))
             .thenReturn(returnedCases);

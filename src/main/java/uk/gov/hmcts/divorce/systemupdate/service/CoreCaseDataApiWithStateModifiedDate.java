@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
     url = "${core_case_data.api.url}",
     configuration = CoreCaseDataConfiguration.class
 )
-public interface CoreCaseDataApi2 {
+public interface CoreCaseDataApiWithStateModifiedDate {
 
     @PostMapping(value = "${ccdDataStoreAPIConfiguration.caseMatchingPath}?ctid={caseType}",
         consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -88,7 +88,7 @@ public class CcdSearchService {
     private CoreCaseDataApi coreCaseDataApi;
 
     @Autowired
-    private CoreCaseDataApi2 coreCaseDataApi2;
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
     @Autowired
     private CaseDetailsConverter caseDetailsConverter;
@@ -156,7 +156,7 @@ public class CcdSearchService {
             .from(0)
             .size(10000);
 
-        return coreCaseDataApi2.searchCases(
+        return coreCaseDataApiWithStateModifiedDate.searchCases(
             user.getAuthToken(),
             serviceAuth,
             getCaseType(),
