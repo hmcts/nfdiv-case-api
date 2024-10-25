@@ -483,6 +483,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     && YES.equals(offlineDraft.getRfiOfflineAllDocumentsUploaded())) {
                     latestResponse.setRequestForInformationResponseCannotUploadDocs(null);
                 }
+                // Should we set CannotUploadDocs to YES if the CW does NOT tick allDocumentsUploaded?
+                // Should we *ever* manipulate CannotUploadDocs?  This was info provided by the Citizen.  Is it better to implement and
+                // conditionally show allDocumentsUploaded instead as an additional box, hiding CannotUploadDocs instead of altering the
+                // value?
             }
         }
     }
