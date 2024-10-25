@@ -39,6 +39,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,6 +93,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
     private static final String ALWAYS_HIDE = "typeOfDocumentAttached=\"ALWAYS_HIDE\"";
+    public static final String NO_REQUEST_FOR_INFORMATION_ERROR =
+        "There is no Request for Information on the case.";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -215,7 +218,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         final CaseData data = details.getData();
+        if (data.getRequestForInformationList().getRequestsForInformation() == null
+            || data.getRequestForInformationList().getRequestsForInformation().isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR))
+                .build();
+        }
         if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
             setupRfirFields(data);
         }
@@ -379,6 +389,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         // Should this trigger a notification, or prompt the CW to issue a new RFI?
         // Should it optionally clear the couldNotUploadDocs flag on the RFI response if it is set?
 
+        caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
+            new RequestForInformationOfflineResponseDraft()
+        );
         caseData.getDocuments().setScannedSubtypeReceived(null);
 
         //      log.info(
@@ -448,7 +461,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
 
         if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
-            if (caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().isEmpty()) {
+            if (caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationResponses() == null
+                || caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().isEmpty()) {
                 final RequestForInformationResponse response = new RequestForInformationResponse();
                 response.setValues(caseData, caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft());
                 caseData.getRequestForInformationList().getLatestRequest().addResponseToList(response);
