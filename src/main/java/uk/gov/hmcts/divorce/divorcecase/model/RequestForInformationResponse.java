@@ -140,7 +140,7 @@ public class RequestForInformationResponse {
         this.setRequestForInformationResponseDateTime(LocalDateTime.now());
 
         this.setRequestForInformationResponseDetails(offlineDraft.getRfiOfflineDraftResponseDetails());
-        if (!offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
+        if (offlineDraft.getRfiOfflineDraftResponseDocs() != null && !offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
             for (ListValue<RequestForInformationOfflineResponseDoc> doc : offlineDraft.getRfiOfflineDraftResponseDocs()) {
                 doc.getValue().getRfiOfflineResponseDoc().setDocumentType(REQUEST_FOR_INFORMATION_RESPONSE_DOC);
             }
