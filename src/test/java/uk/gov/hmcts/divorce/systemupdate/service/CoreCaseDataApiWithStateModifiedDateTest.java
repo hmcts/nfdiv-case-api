@@ -72,7 +72,8 @@ class CoreCaseDataApiWithStateModifiedDateTest {
         assertThat(returnedCaseDetails.getLastModified()).isEqualTo(lastModified);
         assertThat(returnedCaseDetails.getLastStateModifiedDate()).isEqualTo(lastStateModifiedDate);
 
-        verify(coreCaseDataApiWithStateModifiedDate, times(1)).runQuery(authorization, serviceAuthorization, caseType, searchString);
+        verify(coreCaseDataApiWithStateModifiedDate, times(1))
+            .runQuery(authorization, serviceAuthorization, caseType, searchString);
     }
 
     @Test
@@ -108,7 +109,8 @@ class CoreCaseDataApiWithStateModifiedDateTest {
             searchString)
         ).thenReturn(returnedCases);
 
-        ReturnedCases result = coreCaseDataApiWithStateModifiedDate.searchCases(authorization, serviceAuthorization, caseType, searchString);
+        ReturnedCases result = coreCaseDataApiWithStateModifiedDate
+            .searchCases(authorization, serviceAuthorization, caseType, searchString);
 
         assertThat(result).isEqualTo(returnedCases);
         assertThat(result.getTotal()).isEqualTo(1);
