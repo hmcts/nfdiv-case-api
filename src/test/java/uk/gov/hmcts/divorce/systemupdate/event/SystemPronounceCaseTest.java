@@ -158,7 +158,7 @@ class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
+    void shouldSkipDocGenerationAndNotificationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
         final CaseData caseData = caseData();
 
         setConditionalOrder(caseData);
@@ -171,7 +171,7 @@ class SystemPronounceCaseTest {
         underTest.aboutToSubmit(details, details);
 
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test

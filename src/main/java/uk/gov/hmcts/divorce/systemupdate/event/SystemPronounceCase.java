@@ -91,25 +91,25 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
 
             updateMissingFields(caseData, user, serviceAuth);
         }
-
         AboutToStartOrSubmitResponse.AboutToStartOrSubmitResponseBuilder<CaseData, State> responseBuilder =
             AboutToStartOrSubmitResponse.builder();
-
-        if (details.getData().getFinalOrder() == null
-            || details.getData().getFinalOrder().getGrantedDate() == null) {
-
-            generateConditionalOrderGrantedDocs(details, beforeDetails);
+        if (!hasFinalOrder(details) && generateConditionalOrderGrantedDocs(details, beforeDetails)) {
             notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
-
             final State state = caseData.isJudicialSeparationCase() ? SeparationOrderGranted : ConditionalOrderPronounced;
             responseBuilder.state(state);
+
         }
 
         return responseBuilder.data(caseData).build();
     }
 
-    private void generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,
-                                                     final CaseDetails<CaseData, State> beforeDetails) {
+    private boolean hasFinalOrder(CaseDetails<CaseData, State> details) {
+        return details.getData().getFinalOrder() != null
+            && details.getData().getFinalOrder().getGrantedDate() != null;
+    }
+
+    private boolean generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,
+                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         final CaseData newCaseData = details.getData();
 
@@ -125,11 +125,13 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                     removeExistingConditionalOrderPronouncedDocument,
                     generateConditionalOrderPronouncedDocument
                 ).run(details);
+                return true;
             }
-
         } else {
             caseTasks(generateConditionalOrderPronouncedDocument).run(details);
+            return true;
         }
+        return false;
     }
 
     private void updateMissingFields(CaseData caseData, User user, String serviceAuth) {
@@ -138,15 +140,15 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             var bulkListReference = caseData.getBulkListCaseReferenceLink().getCaseReference();
 
             log.info("Searching for cases with court name in bulk list ({}) as court and other fields were not set due to case error",
-                    bulkListReference);
+                bulkListReference);
 
             final BoolQueryBuilder query = boolQuery()
-                    .must(matchQuery("data.bulkListCaseReferenceLink.CaseReference", bulkListReference))
-                    .must(existsQuery("data.coCourt"));
+                .must(matchQuery("data.bulkListCaseReferenceLink.CaseReference", bulkListReference))
+                .must(existsQuery("data.coCourt"));
 
             Map<String, Object> otherCaseData =
-                    ccdSearchService.searchForCasesWithQuery(0, 1, query, user, serviceAuth)
-                            .getCases().stream().findFirst().orElseThrow().getData();
+                ccdSearchService.searchForCasesWithQuery(0, 1, query, user, serviceAuth)
+                    .getCases().stream().findFirst().orElseThrow().getData();
 
             CaseData convertedCaseData = objectMapper.convertValue(otherCaseData, CaseData.class);
 
