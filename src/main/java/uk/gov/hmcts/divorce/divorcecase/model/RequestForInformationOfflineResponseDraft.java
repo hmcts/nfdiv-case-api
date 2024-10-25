@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.util.ArrayList;
@@ -65,6 +66,12 @@ public class RequestForInformationOfflineResponseDraft {
         access = {DefaultAccess.class}
     )
     private String rfiOfflineResponseOtherEmail;
+
+    @CCD(
+        label = "All requested documents uploaded",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo rfiOfflineAllDocumentsUploaded;
 
     @JsonIgnore
     public RequestForInformationOfflineResponseDoc getLatestDocument() {

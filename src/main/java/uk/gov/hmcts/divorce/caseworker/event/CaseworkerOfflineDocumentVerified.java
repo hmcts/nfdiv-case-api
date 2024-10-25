@@ -59,10 +59,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -162,6 +164,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                         RequestForInformationOfflineResponseDraft::getRfiOfflineResponseOtherEmail,
                         "rfiOfflineSoleResponseParties=\"other\" OR rfiOfflineJointResponseParties=\"other\""
                     )
+                    .optional(RequestForInformationOfflineResponseDraft::getRfiOfflineAllDocumentsUploaded)
                     .optionalWithLabel(RequestForInformationOfflineResponseDraft::getRfiOfflineDraftResponseDetails, "Add Notes")
                 .done()
             .done()
@@ -379,15 +382,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private AboutToStartOrSubmitResponse<CaseData, State> processRfiResponseAndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying RFI Response for case {}", details.getId());
         final CaseData caseData = details.getData();
+        final State state = YES.equals(
+            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().getRfiOfflineAllDocumentsUploaded()
+        )
+            ? RequestedInformationSubmitted
+            : AwaitingRequestedInformation;
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, REQUEST_FOR_INFORMATION_RESPONSE_DOC);
 
-        // setting the state as document has been received and is being classified by caseworker
-        //        details.setState(RequestedInformationSubmitted);
-        // ? Should we allow the caseworker to choose as an option on the event?
         // It is possible that the citizen has not sent in all requested docs and more may be required.
         // Should this trigger a notification, or prompt the CW to issue a new RFI?
-        // Should it optionally clear the couldNotUploadDocs flag on the RFI response if it is set?
 
         caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
             new RequestForInformationOfflineResponseDraft()
@@ -402,7 +406,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(details.getState())
+            .state(state)
             .build();
     }
 
@@ -469,10 +473,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             } else {
                 final RequestForInformationResponse latestResponse =
                     caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
+                final RequestForInformationOfflineResponseDraft offlineDraft =
+                    caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
                 latestResponse.addOfflineDocument(
                     caseData,
-                    caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft()
+                    offlineDraft
                 );
+                if (YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
+                    && YES.equals(offlineDraft.getRfiOfflineAllDocumentsUploaded())) {
+                    latestResponse.setRequestForInformationResponseCannotUploadDocs(null);
+                }
             }
         }
     }
