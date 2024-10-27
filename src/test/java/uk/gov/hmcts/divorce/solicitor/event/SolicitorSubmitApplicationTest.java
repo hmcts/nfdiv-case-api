@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -25,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 
@@ -36,7 +36,6 @@ import java.util.UUID;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -74,13 +73,13 @@ public class SolicitorSubmitApplicationTest {
     private PaymentService paymentService;
 
     @Mock
+    private PaymentSetupService paymentSetupService;
+
+    @Mock
     private SubmissionService submissionService;
 
     @Mock
     private SolPayment solPayment;
-
-    @Mock
-    private CitizenSubmitApplication citizenSubmit;
 
     @InjectMocks
     private SolicitorSubmitApplication solicitorSubmitApplication;
@@ -91,13 +90,16 @@ public class SolicitorSubmitApplicationTest {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        solicitorSubmitApplication.aboutToStart(caseDetails);
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
+            .thenReturn(orderSummary);
 
-        verify(citizenSubmit).prepareOrderSummary(caseData, caseDetails.getId());
+        var response = solicitorSubmitApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
+            .isEqualTo(orderSummary);
     }
 
     @Test

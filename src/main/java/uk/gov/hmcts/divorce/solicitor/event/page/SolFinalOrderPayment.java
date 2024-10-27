@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
 
     private final PbaService pbaService;
 
-    private final PaymentService paymentService;
+    private final PaymentSetupService paymentSetupService;
 
     @Value("${idam.client.redirect_uri}")
     private String redirectUrl;
@@ -84,9 +84,8 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
     private void prepareServiceRequestReference(CaseData data, long caseId) {
         var finalOrder = data.getFinalOrder();
 
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
-            redirectUrl, caseId,
-            data.getApplicant2().getFullName(), finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
+        final String serviceRequestReference = paymentSetupService.createFinalOrderFeeServiceRequest(
+            data, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
         );
 
         finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);

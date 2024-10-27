@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayment;
 
@@ -24,12 +24,11 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 
 @ExtendWith(MockitoExtension.class)
 class SolFinalOrderPaymentTest {
-
     @Mock
     private PbaService pbaService;
 
     @Mock
-    private PaymentService paymentService;
+    private PaymentSetupService paymentSetupService;
 
     @InjectMocks
 
@@ -48,8 +47,8 @@ class SolFinalOrderPaymentTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        when(paymentService.createServiceRequestReference(
-            null, TEST_CASE_ID, APPLICANT_2_FIRST_NAME, orderSummary
+        when(paymentSetupService.createFinalOrderFeeServiceRequest(
+            caseData, TEST_CASE_ID, null, orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, beforeDetails);

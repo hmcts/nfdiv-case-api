@@ -11,9 +11,9 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
-import uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.util.List;
@@ -26,7 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -34,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +43,7 @@ public class SolPaymentTest {
     private PbaService pbaService;
 
     @Mock
-    private CitizenSubmitApplication citizenSubmit;
+    private PaymentSetupService paymentSetupService;
 
     @InjectMocks
     private SolPayment solPayment;
@@ -71,16 +71,19 @@ public class SolPaymentTest {
 
         when(pbaService.populatePbaDynamicList())
             .thenReturn(pbaNumbers);
+        when(paymentSetupService.createApplicationFeeServiceRequest(any(CaseData.class), eq(TEST_CASE_ID), eq(null)))
+            .thenReturn(TEST_SERVICE_REFERENCE);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solPayment.midEvent(details, details);
 
         DynamicList pbaNumbersResponse = response.getData().getApplication().getPbaNumbers();
 
-        verify(citizenSubmit).prepareServiceRequest(any(CaseData.class), eq(TEST_CASE_ID), eq(null));
         assertThat(pbaNumbersResponse).isNotNull();
         assertThat(pbaNumbersResponse.getListItems())
             .extracting("label")
             .containsExactlyInAnyOrder("PBA0012345", "PBA0012346");
+        assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference())
+            .isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
     @Test

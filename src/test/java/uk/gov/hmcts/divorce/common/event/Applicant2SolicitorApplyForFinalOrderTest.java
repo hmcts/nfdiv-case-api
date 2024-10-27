@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayment;
 
@@ -44,9 +45,6 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinal
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -86,6 +84,9 @@ class Applicant2SolicitorApplyForFinalOrderTest {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private PaymentSetupService paymentSetupService;
+
     @InjectMocks
     private Applicant2SolicitorApplyForFinalOrder applicant2SolicitorApplyForFinalOrder;
 
@@ -110,7 +111,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE)).thenReturn(orderSummary);
+        when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, caseId)).thenReturn(orderSummary);
         when(orderSummary.getPaymentTotal()).thenReturn("16700");
 
         var midEventCaseData = caseData();

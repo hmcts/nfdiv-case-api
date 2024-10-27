@@ -7,9 +7,12 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
@@ -24,9 +27,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
 
     public static final String CITIZEN_CREATE_SERVICE_REQUEST = "citizen-create-service-request";
 
-    private final CitizenSubmitApplication citizenSubmit;
-
-    private final RespondentApplyForFinalOrder respondentApplyForFinalOrder;
+    private final PaymentSetupService paymentSetupService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -47,17 +48,39 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         final State state = details.getState();
 
         if (AwaitingPayment.equals(state)) {
-            citizenSubmit.prepareCaseDataForApplicationPayment(
-                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
-            );
+            prepareServiceRequestForApplicationPayment(details.getData(), details.getId());
         } else if (AwaitingFinalOrderPayment.equals(state)) {
-            respondentApplyForFinalOrder.setServiceRequestReferenceForFinalOrderPayment(details.getData(), details.getId());
+            prepareServiceRequestForFinalOrderPayment(details.getData(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
             .build();
+    }
+
+    private void prepareServiceRequestForApplicationPayment(CaseData data, long caseId) {
+        if (data.getApplication().getApplicationFeeServiceRequestReference() == null) {
+            Application application = data.getApplication();
+
+            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
+                data, caseId, data.getCitizenPaymentCallbackUrl()
+            );
+
+            application.setApplicationFeeServiceRequestReference(serviceRequest);
+        }
+    }
+
+    private void prepareServiceRequestForFinalOrderPayment(CaseData data, long caseId) {
+        if (data.getApplication().getApplicationFeeServiceRequestReference() == null) {
+            FinalOrder finalOrder = data.getFinalOrder();
+
+            String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+                data, caseId, data.getCitizenPaymentCallbackUrl(), finalOrder.getApplicant2FinalOrderFeeOrderSummary()
+            );
+
+            finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
+        }
     }
 }
 

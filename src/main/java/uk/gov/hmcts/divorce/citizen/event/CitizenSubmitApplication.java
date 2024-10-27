@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 
 import java.util.List;
 
@@ -28,9 +28,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
 @Component
@@ -39,7 +36,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     public static final String CITIZEN_SUBMIT = "citizen-submit-application";
 
     @Autowired
-    private PaymentService paymentService;
+    private PaymentSetupService paymentSetupService;
 
     @Autowired
     private SubmissionService submissionService;
@@ -106,32 +103,16 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     }
 
     public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
-        prepareOrderSummary(data, caseId);
-        prepareServiceRequest(data, caseId, redirectUrl);
-    }
-
-    public void prepareOrderSummary(CaseData data, long caseId) {
         Application application = data.getApplication();
 
         if (application.getApplicationFeeOrderSummary() == null) {
-            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
-                EVENT_ISSUE,KEYWORD_DIVORCE);
+            OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
             application.setApplicationFeeOrderSummary(orderSummary);
         }
-    }
-
-    public void prepareServiceRequest(CaseData data, long caseId, String redirectUrl) {
-        Application application = data.getApplication();
 
         if (application.getApplicationFeeServiceRequestReference() == null) {
-            final String serviceRequestReference = paymentService.createServiceRequestReference(
-                redirectUrl,
-                caseId,
-                data.getApplicant1().getFullName(),
-                application.getApplicationFeeOrderSummary()
-            );
-
-            application.setApplicationFeeServiceRequestReference(serviceRequestReference);
+            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
+            application.setApplicationFeeServiceRequestReference(serviceRequest);
         }
     }
 }

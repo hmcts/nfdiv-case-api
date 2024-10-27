@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
@@ -50,10 +51,10 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     public static final String SOLICITOR_SUBMIT = "solicitor-submit-application";
 
-    private final CitizenSubmitApplication citizenSubmit;
     private final PaymentService paymentService;
     private final SolPayment solPayment;
     private final SubmissionService submissionService;
+    private final PaymentSetupService paymentSetupService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -76,9 +77,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Retrieving order summary");
         final CaseData caseData = details.getData();
-        citizenSubmit.prepareOrderSummary(caseData, details.getId());
-
         var application = caseData.getApplication();
+
+        if (application.getApplicationFeeOrderSummary() == null) {
+            OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
+            application.setApplicationFeeOrderSummary(orderSummary);
+        }
+
         application.setSolApplicationFeeInPounds(
             NumberFormat.getNumberInstance().format(
                 new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)

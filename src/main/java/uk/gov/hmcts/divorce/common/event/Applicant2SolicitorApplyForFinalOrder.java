@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2SolFinalOrder;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayAccount;
@@ -43,9 +44,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -66,6 +64,9 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private PaymentSetupService paymentSetupService;
 
     @Autowired
     private SolFinalOrderPayment solFinalOrderPayment;
@@ -187,8 +188,9 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         final FinalOrder finalOrder = data.getFinalOrder();
 
         if (finalOrder.getApplicant2SolFinalOrderFeeOrderSummary() == null) {
-            final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+            final OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
 
+            finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
             finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
             finalOrder.setApplicant2SolFinalOrderFeeInPounds(
                 NumberFormat.getNumberInstance().format(new BigDecimal(
