@@ -15,12 +15,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.model.PaymentItem;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -28,6 +31,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -44,6 +48,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinalOrder.FINAL_ORDER_REQUESTED_APP2_SOL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
@@ -58,6 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP2_SOL_FO_PAYMENT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -65,6 +71,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -72,6 +79,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAwaitingFinalOrder;
 
@@ -95,6 +103,9 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
     private AuthTokenGenerator serviceTokenGenerator;
 
     @MockBean
+    private PbaService pbaService;
+
+    @MockBean
     private WebMvcConfig webMvcConfig;
 
     @MockBean
@@ -116,11 +127,10 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
     }
 
     @Test
-    public void createsServiceRequestAndOrderSummaryToPrepareCaseForPayment() throws Exception {
+    public void createsOrderSummaryToPrepareCaseForPayment() throws Exception {
         var data = validCaseDataForAwaitingFinalOrder();
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_GENERAL, SERVICE_OTHER, KEYWORD_NOTICE);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant2()));
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
                 .contentType(APPLICATION_JSON)
@@ -132,6 +142,37 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
             .andExpect(jsonPath("$.data.applicant2SolFinalOrderFeeOrderSummary.PaymentTotal")
                 .value("1000")
             )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    }
+
+    @Test
+    public void createsServiceRequestToPrepareCaseForPayment() throws Exception {
+        var data = caseDataWithOrderSummary();
+        data.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(
+            data.getApplication().getApplicationFeeOrderSummary()
+        );
+        data.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant2());
+        serviceRequestBody.setFees(List.of(
+            PaymentItem.builder()
+                .ccdCaseNumber(TEST_CASE_ID.toString())
+                .calculatedAmount("550")
+                .code("FEE002")
+                .build()
+        ));
+
+        when(pbaService.populatePbaDynamicList()).thenReturn(new DynamicList());
+        stubCreateServiceRequest(OK, serviceRequestBody);
+
+        mockMvc.perform(post(APP2_SOL_FO_PAYMENT_MID_EVENT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(data, FINAL_ORDER_REQUESTED_APP2_SOL, "AwaitingFinalOrder")))
+                .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.applicant2FinalOrderFeeServiceRequestReference")
                 .value(TEST_SERVICE_REFERENCE)
             )

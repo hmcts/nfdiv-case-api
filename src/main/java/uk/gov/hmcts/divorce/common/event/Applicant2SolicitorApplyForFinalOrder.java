@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -71,9 +70,6 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     @Autowired
     private SolFinalOrderPayment solFinalOrderPayment;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final List<CcdPageConfiguration> pages = List.of(
@@ -114,7 +110,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
-        prepareCaseDataForSolFinalOrderPayment(details.getData(), details.getId());
+        prepareOrderSummary(details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -187,37 +183,18 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private void prepareCaseDataForSolFinalOrderPayment(CaseData data, long caseId) {
+    private void prepareOrderSummary(CaseData data, long caseId) {
         final FinalOrder finalOrder = data.getFinalOrder();
 
         if (finalOrder.getApplicant2SolFinalOrderFeeOrderSummary() == null) {
-            createOrderSummary(finalOrder);
+            final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+
+            finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+            finalOrder.setApplicant2SolFinalOrderFeeInPounds(
+                NumberFormat.getNumberInstance().format(new BigDecimal(
+                    orderSummary.getPaymentTotal()).movePointLeft(2)
+                )
+            );
         }
-
-        if (finalOrder.getApplicant2FinalOrderFeeServiceRequestReference() == null) {
-            createServiceRequestReference(data, caseId);
-        }
-    }
-
-    private void createOrderSummary(FinalOrder finalOrder) {
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
-
-        finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
-        finalOrder.setApplicant2SolFinalOrderFeeInPounds(
-            NumberFormat.getNumberInstance().format(new BigDecimal(
-                orderSummary.getPaymentTotal()).movePointLeft(2)
-            )
-        );
-    }
-
-    private void createServiceRequestReference(CaseData data, long caseId) {
-        var finalOrder = data.getFinalOrder();
-
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
-            redirectUrl, caseId,
-            data.getApplicant2().getFullName(), finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
-        );
-
-        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);
     }
 }

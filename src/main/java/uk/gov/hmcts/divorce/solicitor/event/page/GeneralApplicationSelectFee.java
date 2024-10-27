@@ -56,14 +56,13 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
     ) {
 
         final CaseData caseData = details.getData();
-
-        prepareCaseDataForGeneralApplicationPayment(details);
-
         var generalApplication = caseData.getGeneralApplication();
 
         DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
         generalApplication.getGeneralApplicationFee().setPbaNumbers(pbaNumbersDynamicList);
+
+        prepareCaseDataForGeneralApplicationPayment(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -56,9 +55,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private final SolPayment solPayment;
     private final SubmissionService submissionService;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final List<CcdPageConfiguration> pages = asList(
@@ -80,7 +76,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Retrieving order summary");
         final CaseData caseData = details.getData();
-        citizenSubmit.prepareCaseDataForApplicationPayment(caseData, details.getId(), redirectUrl);
+        citizenSubmit.prepareOrderSummary(caseData, details.getId());
 
         var application = caseData.getApplication();
         application.setSolApplicationFeeInPounds(

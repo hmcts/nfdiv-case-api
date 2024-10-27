@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
@@ -21,8 +22,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -37,6 +41,9 @@ public class SolPaymentTest {
 
     @Mock
     private PbaService pbaService;
+
+    @Mock
+    private CitizenSubmitApplication citizenSubmit;
 
     @InjectMocks
     private SolPayment solPayment;
@@ -69,6 +76,7 @@ public class SolPaymentTest {
 
         DynamicList pbaNumbersResponse = response.getData().getApplication().getPbaNumbers();
 
+        verify(citizenSubmit).prepareServiceRequest(any(CaseData.class), eq(TEST_CASE_ID), eq(null));
         assertThat(pbaNumbersResponse).isNotNull();
         assertThat(pbaNumbersResponse.getListItems())
             .extracting("label")

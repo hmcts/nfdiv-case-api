@@ -97,7 +97,7 @@ public class SolicitorSubmitApplicationTest {
 
         solicitorSubmitApplication.aboutToStart(caseDetails);
 
-        verify(citizenSubmit).prepareCaseDataForApplicationPayment(caseData, caseDetails.getId(), null);
+        verify(citizenSubmit).prepareOrderSummary(caseData, caseDetails.getId());
     }
 
     @Test

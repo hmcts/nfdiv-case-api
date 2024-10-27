@@ -106,6 +106,11 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     }
 
     public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
+        prepareOrderSummary(data, caseId);
+        prepareServiceRequest(data, caseId, redirectUrl);
+    }
+
+    public void prepareOrderSummary(CaseData data, long caseId) {
         Application application = data.getApplication();
 
         if (application.getApplicationFeeOrderSummary() == null) {
@@ -113,6 +118,10 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
                 EVENT_ISSUE,KEYWORD_DIVORCE);
             application.setApplicationFeeOrderSummary(orderSummary);
         }
+    }
+
+    public void prepareServiceRequest(CaseData data, long caseId, String redirectUrl) {
+        Application application = data.getApplication();
 
         if (application.getApplicationFeeServiceRequestReference() == null) {
             final String serviceRequestReference = paymentService.createServiceRequestReference(
