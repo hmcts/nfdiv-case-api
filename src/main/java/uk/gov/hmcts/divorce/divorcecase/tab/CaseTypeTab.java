@@ -94,13 +94,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
         buildWarningsTab(configBuilder);
+        buildMatchesTab(configBuilder);
         buildStateTab(configBuilder);
         buildAosTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildConditionalOrderTabForApp2Sol(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
-        buildOutcomeOfConditionalOrderTabApp2Sol(configBuilder);
         buildFinalOrderTab(configBuilder);
         buildPaymentTab(configBuilder);
         buildDocumentsTab(configBuilder);
@@ -475,18 +476,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
             "outcomeOfConditionalOrder", "Outcome of Conditional Order")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition(getShowConditionForOutcomeOfConditionalOrderTab());
-        addOutcomeOfConditionalOrderTabFields(tabBuilder);
-    }
-
-    private void buildOutcomeOfConditionalOrderTabApp2Sol(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
-                "outcomeOfConditionalOrderApp2Sol", "Outcome of Conditional Order")
-            .forRoles(APPLICANT_2_SOLICITOR)
-            .showCondition("applicationType=\"jointApplication\" AND ("
-                + getShowConditionForOutcomeOfConditionalOrderTab() + ")"
-            );
         addOutcomeOfConditionalOrderTabFields(tabBuilder);
     }
 
@@ -618,5 +609,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 .field("changeOrganisationRequestField", NEVER_SHOW)
                 .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
                 .field("changeOfRepresentatives");
+    }
+
+    private void buildMatchesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("matches", "Matches")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field(CaseData::getCaseMatches);
     }
 }
