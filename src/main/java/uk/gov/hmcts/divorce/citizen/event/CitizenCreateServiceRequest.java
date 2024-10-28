@@ -60,27 +60,23 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
     }
 
     private void prepareServiceRequestForApplicationPayment(CaseData data, long caseId) {
-        if (data.getApplication().getApplicationFeeServiceRequestReference() == null) {
-            Application application = data.getApplication();
+        Application application = data.getApplication();
 
-            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-                data, caseId, data.getCitizenPaymentCallbackUrl()
-            );
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
+            data, caseId, data.getCitizenPaymentCallbackUrl()
+        );
 
-            application.setApplicationFeeServiceRequestReference(serviceRequest);
-        }
+        application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
 
     private void prepareServiceRequestForFinalOrderPayment(CaseData data, long caseId) {
-        if (data.getApplication().getApplicationFeeServiceRequestReference() == null) {
-            FinalOrder finalOrder = data.getFinalOrder();
+        FinalOrder finalOrder = data.getFinalOrder();
 
-            String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-                data, caseId, data.getCitizenPaymentCallbackUrl(), finalOrder.getApplicant2FinalOrderFeeOrderSummary()
-            );
+        String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+            data, caseId, data.getCitizenPaymentCallbackUrl(), finalOrder.getApplicant2FinalOrderFeeOrderSummary()
+        );
 
-            finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
-        }
+        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
     }
 }
 

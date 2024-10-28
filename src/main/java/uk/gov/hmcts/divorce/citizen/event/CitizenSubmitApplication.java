@@ -105,15 +105,11 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
         Application application = data.getApplication();
 
-        if (application.getApplicationFeeOrderSummary() == null) {
-            OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
-            application.setApplicationFeeOrderSummary(orderSummary);
-        }
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
+        application.setApplicationFeeOrderSummary(orderSummary);
 
-        if (application.getApplicationFeeServiceRequestReference() == null) {
-            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
-            application.setApplicationFeeServiceRequestReference(serviceRequest);
-        }
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
+        application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
 }
 

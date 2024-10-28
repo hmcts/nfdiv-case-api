@@ -187,16 +187,14 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     private void prepareOrderSummary(CaseData data, long caseId) {
         final FinalOrder finalOrder = data.getFinalOrder();
 
-        if (finalOrder.getApplicant2SolFinalOrderFeeOrderSummary() == null) {
-            final OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
+        final OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
 
-            finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
-            finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
-            finalOrder.setApplicant2SolFinalOrderFeeInPounds(
-                NumberFormat.getNumberInstance().format(new BigDecimal(
-                    orderSummary.getPaymentTotal()).movePointLeft(2)
-                )
-            );
-        }
+        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeInPounds(
+            NumberFormat.getNumberInstance().format(new BigDecimal(
+                orderSummary.getPaymentTotal()).movePointLeft(2)
+            )
+        );
     }
 }

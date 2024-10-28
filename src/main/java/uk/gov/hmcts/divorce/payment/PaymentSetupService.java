@@ -21,7 +21,6 @@ public class PaymentSetupService {
     private final PaymentService paymentService;
 
     public String createApplicationFeeServiceRequest(CaseData data, long caseId, String redirectUrl) {
-
         if (data.getApplication() != null && data.getApplication().getApplicationFeeServiceRequestReference() != null) {
             return data.getApplication().getApplicationFeeServiceRequestReference();
         }
@@ -37,7 +36,6 @@ public class PaymentSetupService {
     }
 
     public OrderSummary createApplicationFeeOrderSummary(CaseData data, long caseId) {
-
         if (data.getApplication() != null && data.getApplication().getApplicationFeeOrderSummary() != null) {
             return data.getApplication().getApplicationFeeOrderSummary();
         }

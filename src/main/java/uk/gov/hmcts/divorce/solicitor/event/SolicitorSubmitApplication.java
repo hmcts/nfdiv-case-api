@@ -77,13 +77,11 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Retrieving order summary");
         final CaseData caseData = details.getData();
+
         var application = caseData.getApplication();
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
 
-        if (application.getApplicationFeeOrderSummary() == null) {
-            OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
-            application.setApplicationFeeOrderSummary(orderSummary);
-        }
-
+        application.setApplicationFeeOrderSummary(orderSummary);
         application.setSolApplicationFeeInPounds(
             NumberFormat.getNumberInstance().format(
                 new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
