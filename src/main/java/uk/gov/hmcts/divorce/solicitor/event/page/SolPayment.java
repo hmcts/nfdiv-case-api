@@ -68,12 +68,10 @@ public class SolPayment implements CcdPageConfiguration {
             Application application = caseData.getApplication();
             application.setPbaNumbers(pbaNumbersDynamicList);
 
-            if (application.getApplicationFeeServiceRequestReference() == null) {
-                String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-                    caseData, caseId, redirectUrl
-                );
-                application.setApplicationFeeServiceRequestReference(serviceRequest);
-            }
+            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
+                caseData, caseId, redirectUrl
+            );
+            application.setApplicationFeeServiceRequestReference(serviceRequest);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)

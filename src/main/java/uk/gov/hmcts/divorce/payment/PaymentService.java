@@ -166,7 +166,7 @@ public class PaymentService {
                                          OrderSummary orderSummary,
                                          String feeAccountReference) {
 
-        log.info("Processing PBA payment for case id {}", caseId);
+        log.info("Processing PBA payment for case id {}, against service reference {}", caseId, serviceRequestReference);
 
         ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
 
@@ -351,25 +351,6 @@ public class PaymentService {
                     .action("payment")
                     .build()
             ).build();
-    }
-
-    private List<PaymentItem> populateFeesPaymentItems(
-        Long caseId,
-        String paymentTotal,
-        Fee fee,
-        String reference
-    ) {
-        var paymentItem = PaymentItem
-            .builder()
-            .ccdCaseNumber(String.valueOf(caseId))
-            .calculatedAmount(penceToPounds(paymentTotal))
-            .code(fee.getCode())
-            .reference(reference)
-            .version(fee.getVersion())
-            .build();
-
-
-        return singletonList(paymentItem);
     }
 
     private Fee getFeeValue(OrderSummary orderSummary) {

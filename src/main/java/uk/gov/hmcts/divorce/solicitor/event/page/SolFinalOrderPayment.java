@@ -68,12 +68,10 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
             log.info("PBA Numbers {}, Case Id: {}", pbaNumbersDynamicList, caseId);
             finalOrder.setFinalOrderPbaNumbers(pbaNumbersDynamicList);
 
-            if (finalOrder.getApplicant2FinalOrderFeeServiceRequestReference() == null) {
-                String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-                    caseData, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
-                );
-                finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
-            }
+            String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+                caseData, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
+            );
+            finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
