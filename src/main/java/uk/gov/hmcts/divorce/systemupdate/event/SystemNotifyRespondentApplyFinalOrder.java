@@ -43,8 +43,8 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
             .forState(AwaitingFinalOrder)
             .name("Notify respondent final order")
             .description("Notify respondent that they can make a Final Order application")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, CASE_WORKER)
-            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
