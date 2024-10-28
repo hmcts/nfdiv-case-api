@@ -74,6 +74,12 @@ public class CcdSearchService {
     public static final String AOS_RESPONSE = "howToRespondApplication";
     public static final String AWAITING_JS_ANSWER_START_DATE = "awaitingJsAnswerStartDate";
     public static final String SUPPLEMENTARY_CASE_TYPE = "supplementaryCaseType";
+    //.keyword necessary as reference is mapped as text with keyword subfield
+    public static final String REFERENCE_KEY = "reference.keyword";
+    public static final String STATE_KEY = "state.keyword";
+    public static final String DATA_APPLICATION_TYPE = "data.applicationType";
+    public static final String DATA_VERSION = "data.dataVersion";
+    public static final String BULK_CASE_DATA_VERSION = "data.bulkCaseDataVersion";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
@@ -170,11 +176,11 @@ public class CcdSearchService {
             .query(
                 boolQuery()
                     .must(boolQuery()
-                        .mustNot(matchQuery("data.dataVersion", 0))
+                        .mustNot(matchQuery(DATA_VERSION, 0))
                     )
                     .must(boolQuery()
-                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                        .should(boolQuery().mustNot(existsQuery(DATA_VERSION)))
+                        .should(boolQuery().must(rangeQuery(DATA_VERSION).lt(latestVersion)))
                     )
                     .mustNot(matchQuery(STATE, Withdrawn))
                     .mustNot(matchQuery(STATE, Rejected))
@@ -197,11 +203,11 @@ public class CcdSearchService {
             .query(
                 boolQuery()
                     .must(boolQuery()
-                        .mustNot(matchQuery("data.bulkCaseDataVersion", 0))
+                        .mustNot(matchQuery(BULK_CASE_DATA_VERSION, 0))
                     )
                     .must(boolQuery()
-                        .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
-                        .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(latestVersion)))
+                        .should(boolQuery().mustNot(existsQuery(BULK_CASE_DATA_VERSION)))
+                        .should(boolQuery().must(rangeQuery(BULK_CASE_DATA_VERSION).lt(latestVersion)))
                     )
             )
             .from(0)
@@ -328,9 +334,9 @@ public class CcdSearchService {
 
     public List<CaseDetails> searchJointApplicationsWithAccessCodePostIssueApplication(User user, String serviceAuth) {
 
-        final QueryBuilder issueDateExist = existsQuery("data.issueDate");
-        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
-        final QueryBuilder accessCodeNotEmpty = wildcardQuery("data.accessCode", "?*");
+        final QueryBuilder issueDateExist = existsQuery(ISSUE_DATE);
+        final QueryBuilder jointApplication = matchQuery(DATA_APPLICATION_TYPE, "jointApplication");
+        final QueryBuilder accessCodeNotEmpty = wildcardQuery(ACCESS_CODE, "?*");
 
         final QueryBuilder query = boolQuery()
             .must(boolQuery().must(accessCodeNotEmpty))
@@ -362,7 +368,7 @@ public class CcdSearchService {
     public List<CaseDetails> searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
 
         final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
-        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder jointApplication = matchQuery(DATA_APPLICATION_TYPE, "jointApplication");
         final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
 
         final QueryBuilder query = boolQuery()
@@ -395,7 +401,7 @@ public class CcdSearchService {
     public List<CaseDetails> searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
 
         final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
-        final QueryBuilder soleApplication = matchQuery("data.applicationType", "soleApplication");
+        final QueryBuilder soleApplication = matchQuery(DATA_APPLICATION_TYPE, SOLE_APPLICATION);
         final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
         final QueryBuilder applicant2EmailExist = existsQuery("data.applicant2Email");
 
