@@ -55,7 +55,7 @@ class CitizenCreateServiceRequestTest {
 
         citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(citizenSubmitApplication).setOrderSummaryAndServiceRequestForApplicationPayment(caseData, caseId);
+        verify(citizenSubmitApplication).setServiceRequestReferenceForApplicationPayment(caseData, caseId);
     }
 
     @Test
@@ -70,6 +70,6 @@ class CitizenCreateServiceRequestTest {
 
         citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(respondentApplyForFinalOrder).setOrderSummaryAndServiceRequestForFinalOrderPayment(caseData, caseId);
+        verify(respondentApplyForFinalOrder).setServiceRequestReferenceForFinalOrderPayment(caseData, caseId);
     }
 }
