@@ -21,12 +21,15 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.partition;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -91,6 +94,9 @@ public class CcdSearchService {
     private CoreCaseDataApi coreCaseDataApi;
 
     @Autowired
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
+
+    @Autowired
     private CaseDetailsConverter caseDetailsConverter;
 
     @Autowired
@@ -139,6 +145,24 @@ public class CcdSearchService {
             .size(size);
 
         return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            getCaseType(),
+            sourceBuilder.toString());
+    }
+
+    public ReturnedCases newSearchForCasesWithQuery(final BoolQueryBuilder query,
+                                                    final User user,
+                                                    final String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort(DUE_DATE, ASC)
+            .query(query)
+            .from(0)
+            .size(10000);
+
+        return coreCaseDataApiWithStateModifiedDate.searchCases(
             user.getAuthToken(),
             serviceAuth,
             getCaseType(),
@@ -244,11 +268,11 @@ public class CcdSearchService {
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
-                    .should(boolQuery()
-                        .must(boolQuery().mustNot(errorCasesExist))
-                        .must(boolQuery().mustNot(processedCases)))
-                    .should(boolQuery()
-                        .must(boolQuery().must(errorCasesExist))));
+                .should(boolQuery()
+                    .must(boolQuery().mustNot(errorCasesExist))
+                    .must(boolQuery().mustNot(processedCases)))
+                .should(boolQuery()
+                    .must(boolQuery().must(errorCasesExist))));
 
         return searchForBulkCases(user, serviceAuth, query);
     }
@@ -467,4 +491,30 @@ public class CcdSearchService {
 
         return allCaseDetails;
     }
+
+    public Map<String, Map<String, Long>> searchWithQueryAndGroupByStateAndLastStateModifiedDate(BoolQueryBuilder query, User user,
+                                                                                                 String serviceAuth) {
+        // Fetch the cases using case api2 with new returncases to accomodate last state modified date entry
+        ReturnedCases cases = newSearchForCasesWithQuery(query, user, serviceAuth);
+
+        // Perform manual aggregation by state and lastStateModifiedDate
+        return groupByStateAndLastStateModifiedDate(cases.getCases());
+    }
+
+    public Map<String, Map<String, Long>> groupByStateAndLastStateModifiedDate(List<ReturnedCaseDetails> cases) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Group by state as a string and then by formatted lastStateModifiedDate
+        return cases.stream()
+            .filter(
+                caseDetail -> caseDetail.getState() != null)
+            .collect(Collectors.groupingBy(
+                caseDetail -> caseDetail.getState().name(), // Convert State to String
+                Collectors.groupingBy(
+                    caseDetail -> caseDetail.getLastStateModifiedDate().toLocalDate().format(dateFormatter), // Format LocalDate to String
+                    Collectors.counting()
+                )
+            ));
+    }
 }
+
