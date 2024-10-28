@@ -74,11 +74,11 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         GeneralApplicationFee feeType = data.getGeneralApplication().getGeneralApplicationFeeType();
         FeeDetails feeDetails = data.getGeneralApplication().getGeneralApplicationFee();
 
-        createOrderSummary(feeType, feeDetails);
-        createServiceRequest(details.getId(), data, feeDetails);
+        prepareOrderSummary(feeType, feeDetails);
+        prepareServiceRequest(details.getId(), data, feeDetails);
     }
 
-    private void createOrderSummary(GeneralApplicationFee feeType, FeeDetails feeDetails) {
+    private void prepareOrderSummary(GeneralApplicationFee feeType, FeeDetails feeDetails) {
         String keyword = FEE0227.getLabel().equals(feeType.getLabel())
             ? KEYWORD_NOTICE
             : KEYWORD_WITHOUT_NOTICE;
@@ -87,11 +87,11 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         feeDetails.setOrderSummary(orderSummary);
     }
 
-    private void createServiceRequest(long caseId, CaseData data, FeeDetails feeDetails) {
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
+    private void prepareServiceRequest(long caseId, CaseData data, FeeDetails feeDetails) {
+        final String serviceRequest = paymentService.createServiceRequestReference(
             redirectUrl, caseId, responsiblePartyName(caseId, data), feeDetails.getOrderSummary()
         );
-        feeDetails.setServiceRequestReference(serviceRequestReference);
+        feeDetails.setServiceRequestReference(serviceRequest);
     }
 
     private String responsiblePartyName(long caseId, CaseData data) {

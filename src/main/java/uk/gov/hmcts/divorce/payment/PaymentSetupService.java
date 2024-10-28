@@ -44,7 +44,7 @@ public class PaymentSetupService {
 
         log.info("Application fee order summary not found for case id: {}, creating order summary", caseId);
 
-        return paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE,KEYWORD_DIVORCE);
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
     }
 
     public String createFinalOrderFeeServiceRequest(CaseData data, long caseId, String redirectUrl, OrderSummary orderSummary) {

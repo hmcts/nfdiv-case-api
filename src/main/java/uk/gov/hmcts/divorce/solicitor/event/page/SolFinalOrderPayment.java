@@ -53,8 +53,9 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
         log.info("Mid-event callback triggered for SolFinalOrderPayment page Case Id: {}", caseId);
 
         final CaseData caseData = details.getData();
+        final FinalOrder finalOrder = caseData.getFinalOrder();
 
-        if (!caseData.getFinalOrder().isSolicitorPaymentMethodPba()) {
+        if (!finalOrder.isSolicitorPaymentMethodPba()) {
             log.info("Payment method is not PBA for Case Id: {}", caseId);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -65,9 +66,14 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
             final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
             log.info("PBA Numbers {}, Case Id: {}", pbaNumbersDynamicList, caseId);
-            caseData.getFinalOrder().setFinalOrderPbaNumbers(pbaNumbersDynamicList);
+            finalOrder.setFinalOrderPbaNumbers(pbaNumbersDynamicList);
 
-            prepareServiceRequestReference(caseData, caseId);
+            if (finalOrder.getApplicant2FinalOrderFeeServiceRequestReference() == null) {
+                String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+                    caseData, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
+                );
+                finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
+            }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -79,15 +85,5 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
                 .errors(List.of("No PBA numbers associated with the provided email address"))
                 .build();
         }
-    }
-
-    private void prepareServiceRequestReference(CaseData data, long caseId) {
-        var finalOrder = data.getFinalOrder();
-
-        final String serviceRequestReference = paymentSetupService.createFinalOrderFeeServiceRequest(
-            data, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
-        );
-
-        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequestReference);
     }
 }
