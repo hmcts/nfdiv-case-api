@@ -1482,26 +1482,6 @@ public class TestDataHelper {
         draft.addDocument(uploadedDocument);
     }
 
-    private static void setDraft(RequestForInformationList requestForInformationList,
-                                 RequestForInformationResponseDraft draft,
-                                 boolean isApplicant2,
-                                 boolean isRepresented
-    ) {
-        if (isApplicant2) {
-            if (isRepresented) {
-                requestForInformationList.setRequestForInformationResponseApplicant2Solicitor(draft);
-            } else {
-                requestForInformationList.setRequestForInformationResponseApplicant2(draft);
-            }
-        } else {
-            if (isRepresented) {
-                requestForInformationList.setRequestForInformationResponseApplicant1Solicitor(draft);
-            } else {
-                requestForInformationList.setRequestForInformationResponseApplicant1(draft);
-            }
-        }
-    }
-
     private static void clearDraft(RequestForInformationList requestForInformationList, boolean isApplicant2, boolean isRepresented) {
         if (isApplicant2) {
             if (isRepresented) {
@@ -1569,7 +1549,6 @@ public class TestDataHelper {
         if (setCannotUpload) {
             draft.setRfiDraftResponseCannotUploadDocs(YES);
         }
-//        setDraft(caseData.getRequestForInformationList(), draft, isApplicant2(caseData, applicant), applicant.isRepresented());
     }
 
     public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
