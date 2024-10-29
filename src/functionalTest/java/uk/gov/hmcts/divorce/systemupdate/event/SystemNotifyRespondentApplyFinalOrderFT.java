@@ -42,10 +42,10 @@ public class SystemNotifyRespondentApplyFinalOrderFT extends FunctionalTestSuite
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-notify-respondent-apply-final-order.json";
-    private static final String UNREPRESENTED_RESPONSE = "classpath:responses/response-system-notify-respondent-apply-final-order.json";
-
-    private static final String REPRESENTED_RESPONSE = "classpath:responses/response-system-notify-respondent-solicitor-apply-final-order.json";
-
+    private static final String UNREPRESENTED_RESPONSE =
+        "classpath:responses/response-system-notify-respondent-apply-final-order.json";
+    private static final String REPRESENTED_RESPONSE =
+        "classpath:responses/response-system-notify-respondent-solicitor-apply-final-order.json";
 
     @Test
     public void shouldPassValidationAndSendEmailsToRespondent() throws IOException {
