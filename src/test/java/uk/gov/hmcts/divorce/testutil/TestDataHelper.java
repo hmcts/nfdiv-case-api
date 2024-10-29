@@ -98,7 +98,6 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
@@ -1521,7 +1520,8 @@ public class TestDataHelper {
     }
 
     public static void buildOfflineDraft(CaseData caseData, boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
-        RequestForInformationOfflineResponseDraft draft = caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+        RequestForInformationOfflineResponseDraft draft =
+            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
         if (addDetails) {
             draft.setRfiOfflineDraftResponseDetails(TEST_TEXT);
         }
