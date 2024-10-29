@@ -140,9 +140,4 @@ public class RequestForInformation {
     public RequestForInformationResponse getLatestResponse() {
         return this.getRequestForInformationResponses().get(0).getValue();
     }
-
-    @JsonIgnore
-    public boolean hasNotBeenRespondedTo() {
-        return this.getRequestForInformationResponses() == null || this.getRequestForInformationResponses().isEmpty();
-    }
 }
