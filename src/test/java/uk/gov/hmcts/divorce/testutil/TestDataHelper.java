@@ -60,6 +60,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
@@ -1470,16 +1473,13 @@ public class TestDataHelper {
     }
 
     public static void addDocumentToRequestForInformationResponseDraft(RequestForInformationResponseDraft draft) {
-        final List<ListValue<DivorceDocument>> docs = draft.getRfiDraftResponseDocs();
-        final ListValue<DivorceDocument> uploadedDocument = documentWithType(null);
+        final DivorceDocument uploadedDocument = documentWithType(null).getValue();
+        draft.addDocument(uploadedDocument);
+    }
 
-        if (isEmpty(docs)) {
-            List<ListValue<DivorceDocument>> newDocs = new ArrayList<>();
-            newDocs.add(uploadedDocument);
-            draft.setRfiDraftResponseDocs(newDocs);
-        } else {
-            docs.add(0, uploadedDocument);
-        }
+    public static void addDocumentToRequestForInformationOfflineResponseDraft(RequestForInformationOfflineResponseDraft draft) {
+        final DivorceDocument uploadedDocument = documentWithType(null).getValue();
+        draft.addDocument(uploadedDocument);
     }
 
     private static void setDraft(RequestForInformationList requestForInformationList,
@@ -1526,6 +1526,33 @@ public class TestDataHelper {
         }
     }
 
+    public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseSoleParties soleParty,
+                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
+        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineSoleResponseParties(soleParty);
+        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded);
+    }
+
+    public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseJointParties jointParty,
+                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
+        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineJointResponseParties(
+            jointParty
+        );
+        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded);
+    }
+
+    public static void buildOfflineDraft(CaseData caseData, boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
+        RequestForInformationOfflineResponseDraft draft = caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+        if (addDetails) {
+            draft.setRfiOfflineDraftResponseDetails(TEST_TEXT);
+        }
+        if (addDocument) {
+            addDocumentToRequestForInformationOfflineResponseDraft(draft);
+        }
+        if (setAllDocsUploaded) {
+            draft.setRfiOfflineAllDocumentsUploaded(YES);
+        }
+    }
+
     public static void buildDraft(CaseData caseData,
                                   Applicant applicant,
                                   boolean addDetails,
@@ -1542,7 +1569,7 @@ public class TestDataHelper {
         if (setCannotUpload) {
             draft.setRfiDraftResponseCannotUploadDocs(YES);
         }
-        setDraft(caseData.getRequestForInformationList(), draft, isApplicant2(caseData, applicant), applicant.isRepresented());
+//        setDraft(caseData.getRequestForInformationList(), draft, isApplicant2(caseData, applicant), applicant.isRepresented());
     }
 
     public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
@@ -1569,5 +1596,45 @@ public class TestDataHelper {
         requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
 
         clearDraft(requestForInformationList, isApplicant2, applicant.isRepresented());
+    }
+
+    public static void addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseSoleParties soleParty) {
+        buildOfflineDraft(caseData, soleParty, true, true, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseJointParties jointParty) {
+        buildOfflineDraft(caseData, jointParty, true, true, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseSoleParties soleParty) {
+        buildOfflineDraft(caseData, soleParty, true, true, true);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseJointParties jointParty) {
+        buildOfflineDraft(caseData, jointParty, true, true, true);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    private static void addOfflineResponseToLatestRequestForInformation(CaseData caseData) {
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+
+        requestForInformationResponse.setValues(
+            caseData,
+            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft()
+        );
+
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
+            new RequestForInformationOfflineResponseDraft()
+        );
     }
 }
