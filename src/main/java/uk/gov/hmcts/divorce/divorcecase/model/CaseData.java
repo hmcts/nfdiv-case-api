@@ -127,6 +127,10 @@ public class CaseData {
     private CaseInvite caseInvite;
 
     @JsonUnwrapped()
+    @CCD(access = {DefaultAccess.class})
+    private CaseInviteApp1 caseInviteApp1;
+
+    @JsonUnwrapped()
     @Builder.Default
     private AcknowledgementOfService acknowledgementOfService = new AcknowledgementOfService();
 
