@@ -596,7 +596,7 @@ class CitizenRespondToRequestForInformationTest {
     }
 
     @Test
-    void shouldNotSendNotificationToPartnerOnJointCaseWhenRFISentToBothAndNotAllDocsUploaded() {
+    void shouldSendNotificationToPartnerOnJointCaseWhenRFISentToBothAndNotAllDocsUploaded() {
         final CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
         addCannotUploadResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant1());
@@ -609,7 +609,11 @@ class CitizenRespondToRequestForInformationTest {
             caseDetails.getData(),
             TEST_CASE_ID
         );
-        verifyNoMoreInteractions(notificationDispatcher);
+        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
     }
 
     @Test
