@@ -78,15 +78,21 @@ public class RequestForInformationResponse {
     @CCD(
         label = "Offline documents",
         typeOverride = Collection,
-        typeParameterOverride = "RequestForInformationOfflineResponseDoc"
+        typeParameterOverride = "DivorceDocument"
     )
-    private List<ListValue<RequestForInformationOfflineResponseDoc>> rfiOfflineResponseDocs;
+    private List<ListValue<DivorceDocument>> rfiOfflineResponseDocs;
 
     @CCD(
         label = "Could not upload all or some requested documents",
         access = {DefaultAccess.class}
     )
     private YesOrNo requestForInformationResponseCannotUploadDocs;
+
+    @CCD(
+        label = "Offline Response",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo requestForInformationResponseOffline;
 
     @JsonIgnore
     public void setValues(CaseData caseData, RequestForInformationResponseParties party) {
@@ -138,11 +144,12 @@ public class RequestForInformationResponse {
         this.setRequestForInformationResponseName(name);
         this.setRequestForInformationResponseEmailAddress(email);
         this.setRequestForInformationResponseDateTime(LocalDateTime.now());
+        this.setRequestForInformationResponseOffline(YES);
 
         this.setRequestForInformationResponseDetails(offlineDraft.getRfiOfflineDraftResponseDetails());
         if (offlineDraft.getRfiOfflineDraftResponseDocs() != null && !offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
-            for (ListValue<RequestForInformationOfflineResponseDoc> doc : offlineDraft.getRfiOfflineDraftResponseDocs()) {
-                doc.getValue().getRfiOfflineResponseDoc().setDocumentType(REQUEST_FOR_INFORMATION_RESPONSE_DOC);
+            for (ListValue<DivorceDocument> doc : offlineDraft.getRfiOfflineDraftResponseDocs()) {
+                doc.getValue().setDocumentType(REQUEST_FOR_INFORMATION_RESPONSE_DOC);
             }
             this.setRfiOfflineResponseDocs(offlineDraft.getRfiOfflineDraftResponseDocs());
         }
@@ -180,40 +187,7 @@ public class RequestForInformationResponse {
     }
 
     @JsonIgnore
-    public void addOfflineDocument(CaseData caseData, RequestForInformationOfflineResponseDraft offlineDraft) {
-        RequestForInformationOfflineResponseDoc offlineDoc;
-        if (offlineDraft.getRfiOfflineDraftResponseDocs() == null || offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
-            offlineDoc = new RequestForInformationOfflineResponseDoc();
-        } else {
-            offlineDoc = offlineDraft.getLatestDocument();
-        }
-        final RequestForInformationResponseParties party = getOfflineResponseParty(caseData, offlineDraft);
-        offlineDoc.setRfiOfflineResponseDocSender(party);
-        if (party.equals(OTHER)) {
-            offlineDoc.setRfiOfflineResponseDocSenderName(offlineDraft.getRfiOfflineResponseOtherName());
-            offlineDoc.setRfiOfflineResponseDocSenderEmail(offlineDraft.getRfiOfflineResponseOtherEmail());
-        } else {
-            final Applicant applicant = party.equals(APPLICANT1) || party.equals(APPLICANT1SOLICITOR)
-                ? caseData.getApplicant1()
-                : caseData.getApplicant2();
-            final String name = party.equals(APPLICANT1SOLICITOR) || party.equals(APPLICANT2SOLICITOR)
-                ? applicant.getSolicitor().getName()
-                : applicant.getFullName();
-            final String email = party.equals(APPLICANT1SOLICITOR) || party.equals(APPLICANT2SOLICITOR)
-                ? applicant.getSolicitor().getEmail()
-                : applicant.getEmail();
-            offlineDoc.setRfiOfflineResponseDocSenderName(name);
-            offlineDoc.setRfiOfflineResponseDocSenderEmail(email);
-        }
-        offlineDoc.setRfiOfflineResponseDocNotes(offlineDraft.getRfiOfflineDraftResponseDetails());
-        offlineDoc.getRfiOfflineResponseDoc().setDocumentType(REQUEST_FOR_INFORMATION_RESPONSE_DOC);
-
-        if (this.getRfiOfflineResponseDocs() == null || this.getRfiOfflineResponseDocs().isEmpty()) {
-            this.setRfiOfflineResponseDocs(offlineDraft.getRfiOfflineDraftResponseDocs());
-        } else {
-            ListValue<RequestForInformationOfflineResponseDoc> offlineDocListValue = new ListValue<>();
-            offlineDocListValue.setValue(offlineDoc);
-            this.getRfiOfflineResponseDocs().add(0, offlineDocListValue);
-        }
+    public boolean isOffline() {
+        return YES.equals(this.getRequestForInformationResponseOffline());
     }
 }

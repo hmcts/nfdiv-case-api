@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,9 @@ public class RequestForInformationOfflineResponseDraft {
     @CCD(
         label = "Documents",
         typeOverride = Collection,
-        typeParameterOverride = "RequestForInformationOfflineResponseDoc"
+        typeParameterOverride = "DivorceDocument"
     )
-    private List<ListValue<RequestForInformationOfflineResponseDoc>> rfiOfflineDraftResponseDocs;
+    private List<ListValue<DivorceDocument>> rfiOfflineDraftResponseDocs;
 
     @CCD(
         label = "Select sender of document",
@@ -74,17 +75,12 @@ public class RequestForInformationOfflineResponseDraft {
     private YesOrNo rfiOfflineAllDocumentsUploaded;
 
     @JsonIgnore
-    public RequestForInformationOfflineResponseDoc getLatestDocument() {
-        return this.getRfiOfflineDraftResponseDocs().get(0).getValue();
-    }
-
-    @JsonIgnore
-    public void addDocument(RequestForInformationOfflineResponseDoc offlineResponseDoc) {
+    public void addDocument(DivorceDocument offlineResponseDoc) {
         if (this.getRfiOfflineDraftResponseDocs() == null || this.getRfiOfflineDraftResponseDocs().isEmpty()) {
             this.setRfiOfflineDraftResponseDocs(new ArrayList<>());
         }
 
-        ListValue<RequestForInformationOfflineResponseDoc> offlineResponseDocListValue = new ListValue<>();
+        ListValue<DivorceDocument> offlineResponseDocListValue = new ListValue<>();
         offlineResponseDocListValue.setValue(offlineResponseDoc);
         this.getRfiOfflineDraftResponseDocs().add(0, offlineResponseDocListValue);
     }

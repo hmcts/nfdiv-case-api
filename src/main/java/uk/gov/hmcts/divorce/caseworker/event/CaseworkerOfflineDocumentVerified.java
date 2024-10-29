@@ -412,8 +412,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
     private void setupRfirFields(CaseData caseData) {
         final RequestForInformation latestRequest = caseData.getRequestForInformationList().getLatestRequest();
-        final RequestForInformationResponse existingResponse =
-            latestRequest.getRequestForInformationResponses() == null || !latestRequest.getRequestForInformationResponses().isEmpty()
+        final RequestForInformationResponse existingResponse = latestRequest.hasNotBeenRespondedTo()
             ? null
             : latestRequest.getLatestResponse();
         final RequestForInformationResponseParties existingResponseParties = existingResponse != null
@@ -465,29 +464,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
 
         if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
-            if (caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationResponses() == null
-                || caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationResponses().isEmpty()) {
-                final RequestForInformationResponse response = new RequestForInformationResponse();
-                response.setValues(caseData, caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft());
-                caseData.getRequestForInformationList().getLatestRequest().addResponseToList(response);
-            } else {
-                final RequestForInformationResponse latestResponse =
-                    caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
-                final RequestForInformationOfflineResponseDraft offlineDraft =
-                    caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
-                latestResponse.addOfflineDocument(
-                    caseData,
-                    offlineDraft
-                );
-                if (YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-                    && YES.equals(offlineDraft.getRfiOfflineAllDocumentsUploaded())) {
-                    latestResponse.setRequestForInformationResponseCannotUploadDocs(null);
-                }
-                // Should we set CannotUploadDocs to YES if the CW does NOT tick allDocumentsUploaded?
-                // Should we *ever* manipulate CannotUploadDocs?  This was info provided by the Citizen.  Is it better to implement and
-                // conditionally show allDocumentsUploaded instead as an additional box, hiding CannotUploadDocs instead of altering the
-                // value?
-            }
+            final RequestForInformationResponse response = new RequestForInformationResponse();
+            final RequestForInformationOfflineResponseDraft offlineDraft =
+                caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+            response.setValues(caseData, offlineDraft);
+            caseData.getRequestForInformationList().getLatestRequest().addResponseToList(response);
         }
     }
 

@@ -574,11 +574,7 @@ public class CaseData {
         if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
             RequestForInformationOfflineResponseDraft offlineDraft =
                 this.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
-            if (offlineDraft.getRfiOfflineDraftResponseDocs() == null || offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
-                offlineDraft.addDocument(new RequestForInformationOfflineResponseDoc());
-            }
-
-            offlineDraft.getLatestDocument().setRfiOfflineResponseDoc(divorceDocument);
+            offlineDraft.addDocument(divorceDocument);
         }
     }
 }
