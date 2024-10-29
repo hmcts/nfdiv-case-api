@@ -33,6 +33,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.FINAL_O
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -40,7 +42,9 @@ public class SystemNotifyRespondentApplyFinalOrderFT extends FunctionalTestSuite
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-notify-respondent-apply-final-order.json";
-    private static final String RESPONSE = "classpath:responses/response-system-notify-respondent-apply-final-order.json";
+    private static final String UNREPRESENTED_RESPONSE = "classpath:responses/response-system-notify-respondent-apply-final-order.json";
+
+    private static final String REPRESENTED_RESPONSE = "classpath:responses/response-system-notify-respondent-solicitor-apply-final-order.json";
 
 
     @Test
@@ -53,7 +57,23 @@ public class SystemNotifyRespondentApplyFinalOrderFT extends FunctionalTestSuite
 
         assertThatJson(response.asString())
             .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(RESPONSE)));
+            .isEqualTo(json(expectedResponse(UNREPRESENTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldPrepareCaseForPbaPaymentIfRespondentIsRepresented() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("applicant2SolicitorRepresented", YesOrNo.YES);
+        request.put("applicant2SolicitorEmail", TEST_SOL_USER_EMAIL);
+        request.put("applicant2SolicitorName", TEST_SOLICITOR_NAME);
+
+        Response response = triggerCallback(request, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(REPRESENTED_RESPONSE)));
     }
 
     @Test

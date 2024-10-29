@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.ccd;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.hmcts.befta.BeftaMain;
 import uk.gov.hmcts.befta.dse.ccd.CcdEnvironment;
 import uk.gov.hmcts.befta.dse.ccd.CcdRoleConfig;
 import uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore;
@@ -51,7 +52,13 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     @Override
     protected boolean shouldTolerateDataSetupFailure() {
-        return true;
+<<<<<<< Updated upstream
+        return BeftaMain.getConfig().getDefinitionStoreUrl().matches(".*\\.(demo|preview|ithc)\\..*");
+=======
+        var env = getDataSetupEnvironment();
+
+        return CcdEnvironment.PERFTEST == env || CcdEnvironment.DEMO == env || CcdEnvironment.ITHC == env;
+>>>>>>> Stashed changes
     }
 
     @Override
