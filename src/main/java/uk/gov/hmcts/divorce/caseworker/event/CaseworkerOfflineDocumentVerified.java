@@ -9,6 +9,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
@@ -34,6 +36,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -57,6 +60,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
@@ -87,6 +91,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private final HoldingPeriodService holdingPeriodService;
     private final NotificationDispatcher notificationDispatcher;
     private final Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+    private final CitizenRequestForInformationResponseNotification citizenRequestForInformationResponseNotification;
+    private final CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
     private final CcdUpdateService ccdUpdateService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -97,6 +103,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private static final String ALWAYS_HIDE = "typeOfDocumentAttached=\"ALWAYS_HIDE\"";
     public static final String NO_REQUEST_FOR_INFORMATION_ERROR =
         "There is no Request for Information on the case.";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR
+        = "Request for Information Response Notification for Case Id {} failed with message: {}";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
+        = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -382,27 +392,54 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private AboutToStartOrSubmitResponse<CaseData, State> processRfiResponseAndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying RFI Response for case {}", details.getId());
         final CaseData caseData = details.getData();
-        final State state = YES.equals(
+        final boolean allDocumentsUploaded = YES.equals(
             caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().getRfiOfflineAllDocumentsUploaded()
-        )
-            ? RequestedInformationSubmitted
-            : AwaitingRequestedInformation;
+        );
+        final State state = allDocumentsUploaded ? RequestedInformationSubmitted : AwaitingRequestedInformation;
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, REQUEST_FOR_INFORMATION_RESPONSE_DOC);
-
-        // It is possible that the citizen has not sent in all requested docs and more may be required.
-        // Should this trigger a notification, or prompt the CW to issue a new RFI?
 
         caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
             new RequestForInformationOfflineResponseDraft()
         );
         caseData.getDocuments().setScannedSubtypeReceived(null);
 
-        //      log.info(
-        //          "CaseworkerOfflineDocumentVerified RFI Response processed, sending RFI Response notifications for case: {}",
-        //          details.getId()
-        //      );
-        //      should we trigger any notifications?
+        log.info(
+            "CaseworkerOfflineDocumentVerified RFI Response processed, sending RFI Response notifications for case: {}",
+            details.getId()
+        );
+        try {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                details.getData(),
+                details.getId()
+            );
+        } catch (final NotificationTemplateException e) {
+            log.error(
+                REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
+                details.getId(),
+                e.getMessage(),
+                e
+            );
+        }
+
+        if (!caseData.getApplicationType().isSole()
+            && BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
+            try {
+                notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                    citizenRequestForInformationResponsePartnerNotification,
+                    details.getData(),
+                    details.getId()
+                );
+            } catch (final NotificationTemplateException e) {
+                log.error(
+                    REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                    details.getId(),
+                    e.getMessage(),
+                    e
+                );
+            }
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
