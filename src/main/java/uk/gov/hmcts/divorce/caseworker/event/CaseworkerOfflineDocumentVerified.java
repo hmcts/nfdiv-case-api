@@ -23,13 +23,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -239,9 +235,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR))
                 .build();
         }
-        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
-            setupRfirFields(data);
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -445,50 +438,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .data(caseData)
             .state(state)
             .build();
-    }
-
-    private void setupRfirFields(CaseData caseData) {
-        final RequestForInformation latestRequest = caseData.getRequestForInformationList().getLatestRequest();
-        final RequestForInformationResponse existingResponse = latestRequest.hasNotBeenRespondedTo()
-            ? null
-            : latestRequest.getLatestResponse();
-        final RequestForInformationResponseParties existingResponseParties = existingResponse != null
-            ? existingResponse.getRequestForInformationResponseParties()
-            : null;
-        final RequestForInformationOfflineResponseDraft offlineDraft =
-            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
-
-        if (existingResponseParties != null) {
-            if (caseData.getApplicationType().isSole()) {
-                switch (existingResponseParties) {
-                    case APPLICANT1 -> offlineDraft
-                        .setRfiOfflineSoleResponseParties(RequestForInformationOfflineResponseSoleParties.APPLICANT);
-                    case APPLICANT1SOLICITOR -> offlineDraft
-                        .setRfiOfflineSoleResponseParties(RequestForInformationOfflineResponseSoleParties.APPLICANTSOLICITOR);
-                    default -> {
-                        offlineDraft.setRfiOfflineSoleResponseParties(RequestForInformationOfflineResponseSoleParties.OTHER);
-                        offlineDraft.setRfiOfflineResponseOtherName(latestRequest.getRequestForInformationName());
-                        offlineDraft.setRfiOfflineResponseOtherEmail(latestRequest.getRequestForInformationEmailAddress());
-                    }
-                }
-            } else {
-                switch (existingResponseParties) {
-                    case APPLICANT1 -> offlineDraft
-                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT1);
-                    case APPLICANT1SOLICITOR -> offlineDraft
-                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT1SOLICITOR);
-                    case APPLICANT2 -> offlineDraft
-                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT2);
-                    case APPLICANT2SOLICITOR -> offlineDraft
-                        .setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.APPLICANT2SOLICITOR);
-                    default -> {
-                        offlineDraft.setRfiOfflineJointResponseParties(RequestForInformationOfflineResponseJointParties.OTHER);
-                        offlineDraft.setRfiOfflineResponseOtherName(latestRequest.getRequestForInformationName());
-                        offlineDraft.setRfiOfflineResponseOtherEmail(latestRequest.getRequestForInformationEmailAddress());
-                    }
-                }
-            }
-        }
     }
 
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
