@@ -59,8 +59,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
@@ -115,7 +117,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -1451,9 +1455,18 @@ public class TestDataHelper {
     }
 
     public static RequestForInformationResponseDraft getRequestForInformationResponseDraft(CaseData caseData, Applicant applicant) {
-        return isApplicant2(caseData, applicant)
-            ? caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2Solicitor()
-            : caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1Solicitor();
+        RequestForInformationResponseDraft draft;
+        if (isApplicant2(caseData, applicant)) {
+            draft = applicant.isRepresented()
+                ? caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2Solicitor()
+                : caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2();
+        } else {
+            draft = applicant.isRepresented()
+                ? caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1Solicitor()
+                : caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1();
+        }
+
+        return draft;
     }
 
     public static void addDocumentToRequestForInformationResponseDraft(RequestForInformationResponseDraft draft) {
@@ -1469,31 +1482,92 @@ public class TestDataHelper {
         }
     }
 
+    private static void setDraft(RequestForInformationList requestForInformationList,
+                                 RequestForInformationResponseDraft draft,
+                                 boolean isApplicant2,
+                                 boolean isRepresented
+    ) {
+        if (isApplicant2) {
+            if (isRepresented) {
+                requestForInformationList.setRequestForInformationResponseApplicant2Solicitor(draft);
+            } else {
+                requestForInformationList.setRequestForInformationResponseApplicant2(draft);
+            }
+        } else {
+            if (isRepresented) {
+                requestForInformationList.setRequestForInformationResponseApplicant1Solicitor(draft);
+            } else {
+                requestForInformationList.setRequestForInformationResponseApplicant1(draft);
+            }
+        }
+    }
+
+    private static void clearDraft(RequestForInformationList requestForInformationList, boolean isApplicant2, boolean isRepresented) {
+        if (isApplicant2) {
+            if (isRepresented) {
+                requestForInformationList.setRequestForInformationResponseApplicant2Solicitor(new RequestForInformationResponseDraft());
+            } else {
+                requestForInformationList.setRequestForInformationResponseApplicant2(new RequestForInformationResponseDraft());
+            }
+        } else {
+            if (isRepresented) {
+                requestForInformationList.setRequestForInformationResponseApplicant1Solicitor(new RequestForInformationResponseDraft());
+            } else {
+                requestForInformationList.setRequestForInformationResponseApplicant1(new RequestForInformationResponseDraft());
+            }
+        }
+    }
+
+    private static RequestForInformationResponseParties getResponseParty(boolean isApplicant2, boolean isRepresented) {
+        if (isApplicant2) {
+            return isRepresented ? APPLICANT2SOLICITOR : APPLICANT2;
+        } else {
+            return isRepresented ? APPLICANT1SOLICITOR : APPLICANT1;
+        }
+    }
+
+    public static void buildDraft(CaseData caseData,
+                                  Applicant applicant,
+                                  boolean addDetails,
+                                  boolean addDocument,
+                                  boolean setCannotUpload
+    ) {
+        RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
+        if (addDetails) {
+            draft.setRfiDraftResponseDetails(TEST_TEXT);
+        }
+        if (addDocument) {
+            addDocumentToRequestForInformationResponseDraft(draft);
+        }
+        if (setCannotUpload) {
+            draft.setRfiDraftResponseCannotUploadDocs(YES);
+        }
+        setDraft(caseData.getRequestForInformationList(), draft, isApplicant2(caseData, applicant), applicant.isRepresented());
+    }
+
     public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
         final boolean isApplicant2 = isApplicant2(caseData, applicant);
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
         final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
-        final RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
-        draft.setRfiDraftResponseDetails(TEST_TEXT);
-        addDocumentToRequestForInformationResponseDraft(draft);
-        if (isApplicant2) {
-            caseData.getRequestForInformationList().setRequestForInformationResponseApplicant2Solicitor(draft);
-        } else {
-            caseData.getRequestForInformationList().setRequestForInformationResponseApplicant1Solicitor(draft);
-        }
+        buildDraft(caseData, applicant, true, true, false);
 
-        requestForInformationResponse.setValues(
-            caseData,
-            isApplicant2 ? APPLICANT2SOLICITOR : APPLICANT1SOLICITOR
-        );
+        requestForInformationResponse.setValues(caseData, getResponseParty(isApplicant2, applicant.isRepresented()));
 
-        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
 
-        if (isApplicant2) {
-            caseData.getRequestForInformationList()
-                .setRequestForInformationResponseApplicant2Solicitor(new RequestForInformationResponseDraft());
-        } else {
-            caseData.getRequestForInformationList()
-                .setRequestForInformationResponseApplicant1Solicitor(new RequestForInformationResponseDraft());
-        }
+        clearDraft(requestForInformationList, isApplicant2, applicant.isRepresented());
+    }
+
+    public static void addCannotUploadResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
+        final boolean isApplicant2 = isApplicant2(caseData, applicant);
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        buildDraft(caseData, applicant, true, false, true);
+
+        requestForInformationResponse.setValues(caseData, getResponseParty(isApplicant2, applicant.isRepresented()));
+
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        clearDraft(requestForInformationList, isApplicant2, applicant.isRepresented());
     }
 }
