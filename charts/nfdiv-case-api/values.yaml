@@ -34,6 +34,8 @@ java:
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
         - name: app-insights-connection-string
           alias: app-insights-connection-string
+        - name: report-email
+          alias: REPORT_EMAIL
   environment:
     NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
     NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
