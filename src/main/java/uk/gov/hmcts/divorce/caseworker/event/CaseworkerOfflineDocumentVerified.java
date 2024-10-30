@@ -229,8 +229,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                                                                   CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         final CaseData data = details.getData();
-        if (data.getRequestForInformationList().getRequestsForInformation() == null
-            || data.getRequestForInformationList().getRequestsForInformation().isEmpty()) {
+        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())
+            && (
+                data.getRequestForInformationList().getRequestsForInformation() == null
+                || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
+            )
+        ) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR))
                 .build();
