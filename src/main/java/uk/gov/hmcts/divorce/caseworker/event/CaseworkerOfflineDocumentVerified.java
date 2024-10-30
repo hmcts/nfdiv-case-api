@@ -401,43 +401,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         );
         caseData.getDocuments().setScannedSubtypeReceived(null);
 
-        log.info(
-            "CaseworkerOfflineDocumentVerified RFI Response processed, sending RFI Response notifications for case: {}",
-            details.getId()
-        );
-        try {
-            notificationDispatcher.sendRequestForInformationResponseNotification(
-                citizenRequestForInformationResponseNotification,
-                details.getData(),
-                details.getId()
-            );
-        } catch (final NotificationTemplateException e) {
-            log.error(
-                REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
-                details.getId(),
-                e.getMessage(),
-                e
-            );
-        }
-
-        if (!caseData.getApplicationType().isSole()
-            && BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
-            try {
-                notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
-                    citizenRequestForInformationResponsePartnerNotification,
-                    details.getData(),
-                    details.getId()
-                );
-            } catch (final NotificationTemplateException e) {
-                log.error(
-                    REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
-                    details.getId(),
-                    e.getMessage(),
-                    e
-                );
-            }
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(state)
@@ -492,6 +455,43 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 generalReferralService.caseWorkerGeneralReferral(details);
             } else {
                 log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
+            }
+        } else if (RFI_RESPONSE.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            log.info(
+                "CaseworkerOfflineDocumentVerified submitted callback sending RFI Response notifications for case: {}",
+                details.getId()
+            );
+            try {
+                notificationDispatcher.sendRequestForInformationResponseNotification(
+                    citizenRequestForInformationResponseNotification,
+                    details.getData(),
+                    details.getId()
+                );
+            } catch (final NotificationTemplateException e) {
+                log.error(
+                    REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
+                    details.getId(),
+                    e.getMessage(),
+                    e
+                );
+            }
+
+            if (!caseData.getApplicationType().isSole()
+                && BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
+                try {
+                    notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                        citizenRequestForInformationResponsePartnerNotification,
+                        details.getData(),
+                        details.getId()
+                    );
+                } catch (final NotificationTemplateException e) {
+                    log.error(
+                        REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                        details.getId(),
+                        e.getMessage(),
+                        e
+                    );
+                }
             }
         }
 
