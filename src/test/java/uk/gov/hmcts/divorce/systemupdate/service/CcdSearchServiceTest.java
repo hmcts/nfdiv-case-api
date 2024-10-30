@@ -83,7 +83,7 @@ class CcdSearchServiceTest {
     private CoreCaseDataApi coreCaseDataApi;
 
     @Mock
-    private CoreCaseDataApi2 coreCaseDataApi2;
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
     @Mock
     private CaseDetailsConverter caseDetailsConverter;

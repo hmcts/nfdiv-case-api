@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.payment.PaymentClient;
 import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
-import uk.gov.hmcts.divorce.systemupdate.service.CoreCaseDataApi2;
+import uk.gov.hmcts.divorce.systemupdate.service.CoreCaseDataApiWithStateModifiedDate;
 import uk.gov.hmcts.divorce.systemupdate.service.ScheduledTaskRunner;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -41,7 +41,7 @@ import java.util.TimeZone;
         FeesAndPaymentsClient.class,
         DocAssemblyClient.class,
         CoreCaseDataApi.class,
-        CoreCaseDataApi2.class,
+        CoreCaseDataApiWithStateModifiedDate.class,
         CaseAssignmentApi.class,
         CaseDocumentClientApi.class,
         OrganisationClient.class,
