@@ -102,7 +102,7 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(5)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "divorce.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
@@ -121,7 +121,7 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(5)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "dissolution.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
