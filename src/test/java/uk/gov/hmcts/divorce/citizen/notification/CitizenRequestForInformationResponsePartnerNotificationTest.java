@@ -453,14 +453,14 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         );
     }
 
-   private Map<String, String> getApplicantTemplateContent() {
+    private Map<String, String> getApplicantTemplateContent() {
         Map<String, String> templateVars = getRequestForInformationTemplateVars();
         templateVars.put(SMART_SURVEY, SMART_SURVEY_TEST_URL);
 
         return templateVars;
     }
 
-   private Map<String, String> solicitorTemplateContent() {
+    private Map<String, String> solicitorTemplateContent() {
         Map<String, String> templateVars = getMainTemplateVars();
 
         templateVars.put(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME));
