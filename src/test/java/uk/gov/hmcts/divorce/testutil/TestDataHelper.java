@@ -1530,6 +1530,8 @@ public class TestDataHelper {
         }
         if (setAllDocsUploaded) {
             draft.setRfiOfflineAllDocumentsUploaded(YES);
+        } else {
+            draft.setRfiOfflineAllDocumentsUploaded(NO);
         }
     }
 
