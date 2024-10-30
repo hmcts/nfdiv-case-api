@@ -1,21 +1,29 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
@@ -25,6 +33,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorRespondReq
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorRespondRequestForInformation.MUST_ADD_DOCS_OR_DETAILS_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addResponseToLatestRequestForInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildDraft;
@@ -33,6 +42,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformat
 
 @ExtendWith(MockitoExtension.class)
 class Applicant2SolicitorRespondRequestForInformationTest {
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
 
     @InjectMocks
     private Applicant2SolicitorRespondRequestForInformation applicant2SolicitorRespondRequestForInformation;
@@ -167,5 +182,45 @@ class Applicant2SolicitorRespondRequestForInformationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
+    }
+
+    @Test
+    void shouldSendNotificationToOtherPartyOnJointCaseWhenRFISentToBoth() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
+        addResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant2());
+        caseDetails.setId(TEST_CASE_ID);
+
+        applicant2SolicitorRespondRequestForInformation.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToOtherPartyFails() {
+        final CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
+        addResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant2());
+        caseDetails.setId(TEST_CASE_ID);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        applicant2SolicitorRespondRequestForInformation.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                citizenRequestForInformationResponsePartnerNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
     }
 }
