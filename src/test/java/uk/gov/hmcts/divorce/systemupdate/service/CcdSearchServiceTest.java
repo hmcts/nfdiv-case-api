@@ -1021,7 +1021,7 @@ class CcdSearchServiceTest {
                 + "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
             0, 100, true, 1.0, "asc"
         );
-        when(coreCaseDataApi2.searchCases(user.getAuthToken(),
+        when(coreCaseDataApiWithStateModifiedDate.searchCases(user.getAuthToken(),
             SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
             searchString))
             .thenReturn(returnedCases);

@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.partition;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -496,7 +495,7 @@ public class CcdSearchService {
 
         return allCaseDetails;
     }
-    
+
     public Map<String, Map<String, Long>> countAllCasesByStateAndLastModifiedDate(
         final BoolQueryBuilder query, final User user, final String serviceAuth
     ) {
