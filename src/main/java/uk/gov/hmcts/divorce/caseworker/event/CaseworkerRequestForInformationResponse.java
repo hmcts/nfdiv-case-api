@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -152,7 +151,7 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
             try {
                 notificationDispatcher.sendRequestForInformationResponseNotification(
                     citizenRequestForInformationResponseNotification,
-                    details.getData(),
+                    caseData,
                     details.getId()
                 );
             } catch (final NotificationTemplateException e) {
@@ -164,12 +163,12 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
                 );
             }
 
-            if (!details.getData().getApplicationType().isSole()
-                && BOTH.equals(details.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
+            if (!caseData.getApplicationType().isSole()
+                && BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
                 try {
                     notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
                         citizenRequestForInformationResponsePartnerNotification,
-                        details.getData(),
+                        caseData,
                         details.getId()
                     );
                 } catch (final NotificationTemplateException e) {

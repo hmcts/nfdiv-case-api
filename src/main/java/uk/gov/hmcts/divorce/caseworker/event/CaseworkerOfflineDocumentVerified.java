@@ -28,7 +28,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -481,7 +480,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 try {
                     notificationDispatcher.sendRequestForInformationResponseNotification(
                         citizenRequestForInformationResponseNotification,
-                        details.getData(),
+                        caseData,
                         details.getId()
                     );
                 } catch (final NotificationTemplateException e) {
@@ -498,7 +497,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     try {
                         notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
                             citizenRequestForInformationResponsePartnerNotification,
-                            details.getData(),
+                            caseData,
                             details.getId()
                         );
                     } catch (final NotificationTemplateException e) {
