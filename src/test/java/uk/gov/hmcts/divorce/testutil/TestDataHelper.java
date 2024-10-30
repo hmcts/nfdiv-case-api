@@ -34,6 +34,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
@@ -82,6 +83,7 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInf
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -97,6 +99,7 @@ import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -109,6 +112,8 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.builder;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
@@ -174,6 +179,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlementHelper.IS_JOINT;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -1616,6 +1622,45 @@ public class TestDataHelper {
 
         caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
             new RequestForInformationOfflineResponseDraft()
+        );
+    }
+
+    public static void addRfiResponseDocumentToCaseData(CaseData caseData, Clock clock) {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedRfirDocument = ListValue
+            .<ScannedDocument>builder()
+            .id(OTHER.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("RFIR.pdf")
+                    .type(ScannedDocumentType.OTHER)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(RFI_RESPONSE)
+                .scannedDocuments(List.of(scannedRfirDocument))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("RFIR.pdf")
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
         );
     }
 }
