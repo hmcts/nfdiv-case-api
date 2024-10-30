@@ -11,9 +11,13 @@ import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationRes
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -24,6 +28,7 @@ import java.util.Collections;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -134,37 +139,47 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION_RESPONSE, details.getId());
 
-        try {
-            notificationDispatcher.sendRequestForInformationResponseNotification(
-                citizenRequestForInformationResponseNotification,
-                details.getData(),
-                details.getId()
-            );
-        } catch (final NotificationTemplateException e) {
-            log.error(
-                REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
-                details.getId(),
-                e.getMessage(),
-                e
-            );
-        }
+        final CaseData caseData = details.getData();
+        final RequestForInformation latestRequest = caseData.getRequestForInformationList().getLatestRequest();
+        final RequestForInformationSoleParties soleParties = latestRequest.getRequestForInformationSoleParties();
+        final RequestForInformationJointParties jointParties = latestRequest.getRequestForInformationJointParties();
 
-        if (!details.getData().getApplicationType().isSole()
-            && BOTH.equals(details.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
+        if ((caseData.getApplicationType().isSole() && !RequestForInformationSoleParties.OTHER.equals(soleParties))
+            || (!caseData.getApplicationType().isSole() && !OTHER.equals(jointParties))
+        ) {
             try {
-                notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
-                    citizenRequestForInformationResponsePartnerNotification,
+                notificationDispatcher.sendRequestForInformationResponseNotification(
+                    citizenRequestForInformationResponseNotification,
                     details.getData(),
                     details.getId()
                 );
             } catch (final NotificationTemplateException e) {
                 log.error(
-                    REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                    REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
                     details.getId(),
                     e.getMessage(),
                     e
                 );
+            }
+
+            if (!details.getData().getApplicationType().isSole()
+                && BOTH.equals(details.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
+                try {
+                    notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                        citizenRequestForInformationResponsePartnerNotification,
+                        details.getData(),
+                        details.getId()
+                    );
+                } catch (final NotificationTemplateException e) {
+                    log.error(
+                        REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                        details.getId(),
+                        e.getMessage(),
+                        e
+                    );
+                }
             }
         }
 

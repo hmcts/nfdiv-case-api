@@ -23,9 +23,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -57,6 +61,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
@@ -260,7 +265,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD36AndSendNotifications(details);
         } else if (RFI_RESPONSE.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            return processRfiResponseAndSendNotifications(details);
+            return processRfiResponse(details);
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
 
@@ -386,7 +391,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> processRfiResponseAndSendNotifications(CaseDetails<CaseData, State> details) {
+    private AboutToStartOrSubmitResponse<CaseData, State> processRfiResponse(CaseDetails<CaseData, State> details) {
         log.info("Verifying RFI Response for case {}", details.getId());
         final CaseData caseData = details.getData();
         final boolean allDocumentsUploaded = YES.equals(
@@ -457,40 +462,53 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 log.info("CaseID {} is Sole and Respondent Requested FO.  Skipping general referral check.", details.getId());
             }
         } else if (RFI_RESPONSE.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
-            log.info(
-                "CaseworkerOfflineDocumentVerified submitted callback sending RFI Response notifications for case: {}",
-                details.getId()
-            );
-            try {
-                notificationDispatcher.sendRequestForInformationResponseNotification(
-                    citizenRequestForInformationResponseNotification,
-                    details.getData(),
+            final RequestForInformation latestRequest = caseData.getRequestForInformationList().getLatestRequest();
+            final RequestForInformationSoleParties soleParties = latestRequest.getRequestForInformationSoleParties();
+            final RequestForInformationJointParties jointParties = latestRequest.getRequestForInformationJointParties();
+            if ((caseData.getApplicationType().isSole() && RequestForInformationSoleParties.OTHER.equals(soleParties))
+                || (!caseData.getApplicationType().isSole() && OTHER.equals(jointParties))
+            ) {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback not sending RFI Response notifications, "
+                    + "rfi party was OTHER for case: {}",
                     details.getId()
                 );
-            } catch (final NotificationTemplateException e) {
-                log.error(
-                    REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
-                    details.getId(),
-                    e.getMessage(),
-                    e
+            } else {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback sending RFI Response notifications for case: {}",
+                    details.getId()
                 );
-            }
-
-            if (!caseData.getApplicationType().isSole()
-                && BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
                 try {
-                    notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
-                        citizenRequestForInformationResponsePartnerNotification,
+                    notificationDispatcher.sendRequestForInformationResponseNotification(
+                        citizenRequestForInformationResponseNotification,
                         details.getData(),
                         details.getId()
                     );
                 } catch (final NotificationTemplateException e) {
                     log.error(
-                        REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                        REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR,
                         details.getId(),
                         e.getMessage(),
                         e
                     );
+                }
+
+                if (!caseData.getApplicationType().isSole()
+                    && BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
+                    try {
+                        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                            citizenRequestForInformationResponsePartnerNotification,
+                            details.getData(),
+                            details.getId()
+                        );
+                    } catch (final NotificationTemplateException e) {
+                        log.error(
+                            REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                            details.getId(),
+                            e.getMessage(),
+                            e
+                        );
+                    }
                 }
             }
         }
