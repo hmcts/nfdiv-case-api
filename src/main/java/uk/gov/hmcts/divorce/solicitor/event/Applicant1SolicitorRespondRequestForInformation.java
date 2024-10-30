@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty;
@@ -17,12 +18,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
@@ -41,6 +46,11 @@ public class Applicant1SolicitorRespondRequestForInformation implements CCDConfi
     public static final String APP_1_SOLICITOR_RESPOND_REQUEST_INFO = "app1-solicitor-respond-request-info";
     public static final String MUST_ADD_DOCS_OR_DETAILS_ERROR = "You must upload a document or write a response";
     public static final String NOT_AUTHORISED_TO_RESPOND_ERROR = "You are not authorised to respond to this request.";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
+        = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
+
+    private final NotificationDispatcher notificationDispatcher;
+    private final CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -55,6 +65,7 @@ public class Applicant1SolicitorRespondRequestForInformation implements CCDConfi
                 .endButtonLabel("Submit")
                 .aboutToStartCallback(this::aboutToStart)
                 .aboutToSubmitCallback(this::aboutToSubmit)
+                .submittedCallback(this::submitted)
                 .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
                 .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
                 .page("requestForInformationResponse", this::midEvent)
@@ -122,5 +133,30 @@ public class Applicant1SolicitorRespondRequestForInformation implements CCDConfi
             .data(data)
             .state(RequestedInformationSubmitted)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for Case Id: {}", APP_1_SOLICITOR_RESPOND_REQUEST_INFO, details.getId());
+
+        if (!details.getData().getApplicationType().isSole()
+            && BOTH.equals(details.getData().getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())
+        ) {
+            try {
+                notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                    citizenRequestForInformationResponsePartnerNotification,
+                    details.getData(),
+                    details.getId()
+                );
+            } catch (final NotificationTemplateException e) {
+                log.error(
+                    REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR,
+                    details.getId(),
+                    e.getMessage(),
+                    e
+                );
+            }
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
