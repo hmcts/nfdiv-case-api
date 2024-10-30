@@ -34,9 +34,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubty
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -1448,6 +1450,30 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingRequestedInformation);
+    }
+
+    @Test
+    void shouldNotSendNotificationsOnSoleCaseIfRfiSentToOther() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.OTHER, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.OTHER);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotificationsOnJointCaseIfRfiSentToOther() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.OTHER, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.OTHER);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 
     @Test

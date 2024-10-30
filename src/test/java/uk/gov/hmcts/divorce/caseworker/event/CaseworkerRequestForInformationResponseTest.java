@@ -29,6 +29,7 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -149,6 +150,28 @@ class CaseworkerRequestForInformationResponseTest {
     }
 
     @Test
+    void shouldNotSendNotificationsOnSoleCaseIfRfiSentToOther() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.OTHER, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.OTHER);
+
+        caseworkerRequestForInformationResponse.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotificationsOnJointCaseIfRfiSentToOther() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.OTHER, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.OTHER);
+
+        caseworkerRequestForInformationResponse.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
     void shouldSendNotificationToRespondingPartyOnlyOnSoleCase() {
         final CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false);
@@ -249,7 +272,7 @@ class CaseworkerRequestForInformationResponseTest {
         );
     }
 
-   @Test
+    @Test
     void shouldReturnErrorWhenSendNotificationToPartnerFails() {
         final CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationJointParties.BOTH, false, false);
