@@ -170,7 +170,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                         RequestForInformationOfflineResponseDraft::getRfiOfflineResponseOtherEmail,
                         "rfiOfflineSoleResponseParties=\"other\" OR rfiOfflineJointResponseParties=\"other\""
                     )
-                    .optional(RequestForInformationOfflineResponseDraft::getRfiOfflineAllDocumentsUploaded)
+                    .mandatory(RequestForInformationOfflineResponseDraft::getRfiOfflineAllDocumentsUploaded)
                     .optionalWithLabel(RequestForInformationOfflineResponseDraft::getRfiOfflineDraftResponseDetails, "Add Notes")
                 .done()
             .done()
