@@ -136,9 +136,9 @@ public class NotificationDispatcher {
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().getRequestForInformationResponseParties();
 
         if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)) {
-            applicantNotification.sendToApplicant2(caseData, caseId);
+            requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
         } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)) {
-            applicantNotification.sendToApplicant1(caseData, caseId);
+            requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);
         } else {
             throw new NotificationTemplateException(
                 "Unable to send Request For Information Response Partner Notification for Case Id "
