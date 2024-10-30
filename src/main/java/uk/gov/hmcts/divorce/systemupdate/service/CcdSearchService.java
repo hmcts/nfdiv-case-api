@@ -540,7 +540,7 @@ public class CcdSearchService {
                 Map<String, Long> stateMap = aggregatedResults.computeIfAbsent(stateName, k -> new HashMap<>());
 
                 stateMap.merge(lastModifiedDate, 1L, Long::sum);
-        });
+            });
 
         return aggregatedResults;
     }

@@ -964,7 +964,7 @@ class CcdSearchServiceTest {
         final Map<String, Map<String, Long>> result = new HashMap<>();
 
         // Act
-       ccdSearchService.updateCountsByStateAndLastModifiedDate(result, cases);
+        ccdSearchService.updateCountsByStateAndLastModifiedDate(result, cases);
 
         // Assert
         assertThat(result).hasSize(2); // Two states: Submitted, AwaitingAos
