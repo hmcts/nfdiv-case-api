@@ -24,12 +24,12 @@ import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.partition;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -74,6 +74,8 @@ public class CcdSearchService {
     public static final String AOS_RESPONSE = "howToRespondApplication";
     public static final String AWAITING_JS_ANSWER_START_DATE = "awaitingJsAnswerStartDate";
     public static final String SUPPLEMENTARY_CASE_TYPE = "supplementaryCaseType";
+
+    private static final DateTimeFormatter CASE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
@@ -145,7 +147,9 @@ public class CcdSearchService {
             sourceBuilder.toString());
     }
 
-    public ReturnedCases newSearchForCasesWithQuery(final BoolQueryBuilder query,
+    public ReturnedCases newSearchForCasesWithQuery(final int from,
+                                                    final int size,
+                                                    final BoolQueryBuilder query,
                                                     final User user,
                                                     final String serviceAuth) {
 
@@ -153,8 +157,8 @@ public class CcdSearchService {
             .searchSource()
             .sort(DUE_DATE, ASC)
             .query(query)
-            .from(0)
-            .size(10000);
+            .from(from)
+            .size(size);
 
         return coreCaseDataApi2.searchCases(
             user.getAuthToken(),
@@ -485,30 +489,54 @@ public class CcdSearchService {
 
         return allCaseDetails;
     }
+    
+    public Map<String, Map<String, Long>> countAllCasesByStateAndLastModifiedDate(
+        final BoolQueryBuilder query, final User user, final String serviceAuth
+    ) {
+        final Map<String, Map<String, Long>> groupedCaseCounts = new HashMap<>();
 
-    public Map<String, Map<String, Long>> searchWithQueryAndGroupByStateAndLastStateModifiedDate(BoolQueryBuilder query, User user,
-                                                                                                 String serviceAuth) {
-        // Fetch the cases using case api2 with new returncases to accomodate last state modified date entry
-        ReturnedCases cases = newSearchForCasesWithQuery(query, user, serviceAuth);
+        int from = 0;
+        int currentQueryCaseCount = pageSize;
+        int allQueriesCaseCount = 0;
 
-        // Perform manual aggregation by state and lastStateModifiedDate
-        return groupByStateAndLastStateModifiedDate(cases.getCases());
+        try {
+            while (currentQueryCaseCount == pageSize && allQueriesCaseCount <= totalMaxResults) {
+                final ReturnedCases searchResult = newSearchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
+
+                final List<ReturnedCaseDetails> pageResults = searchResult.getCases();
+
+                updateCountsByStateAndLastModifiedDate(groupedCaseCounts, pageResults);
+
+                from += pageSize;
+                currentQueryCaseCount = pageResults.size();
+                allQueriesCaseCount += pageResults.size();
+            }
+            log.info("Processed {} cases in total", allQueriesCaseCount);
+        } catch (final FeignException e) {
+            final String message = String.format("Failed to complete search for Cases");
+            log.info(message, e);
+            throw new CcdSearchCaseException(message, e);
+        }
+
+        return groupedCaseCounts;
     }
 
-    public Map<String, Map<String, Long>> groupByStateAndLastStateModifiedDate(List<ReturnedCaseDetails> cases) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public Map<String, Map<String, Long>> updateCountsByStateAndLastModifiedDate(
+        Map<String, Map<String, Long>> aggregatedResults,
+        List<ReturnedCaseDetails> caseBatch
+    ) {
+        caseBatch.stream()
+            .filter(caseDetail -> caseDetail.getState() != null)
+            .forEach(caseDetail -> {
+                String stateName = caseDetail.getState().name();
+                String lastModifiedDate = caseDetail.getLastStateModifiedDate().toLocalDate().format(CASE_DATE_FORMAT);
 
-        // Group by state as a string and then by formatted lastStateModifiedDate
-        return cases.stream()
-            .filter(
-                caseDetail -> caseDetail.getState() != null)
-            .collect(Collectors.groupingBy(
-                caseDetail -> caseDetail.getState().name(), // Convert State to String
-                Collectors.groupingBy(
-                    caseDetail -> caseDetail.getLastStateModifiedDate().toLocalDate().format(dateFormatter), // Format LocalDate to String
-                    Collectors.counting()
-                )
-            ));
+                Map<String, Long> stateMap = aggregatedResults.computeIfAbsent(stateName, k -> new HashMap<>());
+
+                stateMap.merge(lastModifiedDate, 1L, Long::sum);
+        });
+
+        return aggregatedResults;
     }
 }
 
