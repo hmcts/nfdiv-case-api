@@ -74,6 +74,12 @@ public class RequestForInformationOfflineResponseDraft {
     )
     private YesOrNo rfiOfflineAllDocumentsUploaded;
 
+    @CCD(
+        label = "Send notifications?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo rfiOfflineResponseSendNotifications;
+
     @JsonIgnore
     public void addDocument(DivorceDocument offlineResponseDoc) {
         if (this.getRfiOfflineDraftResponseDocs() == null || this.getRfiOfflineDraftResponseDocs().isEmpty()) {

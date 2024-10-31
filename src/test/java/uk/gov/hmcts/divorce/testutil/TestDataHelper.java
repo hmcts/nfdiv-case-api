@@ -1512,20 +1512,25 @@ public class TestDataHelper {
     }
 
     public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseSoleParties soleParty,
-                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
+                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded, boolean sendNotifications) {
         caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineSoleResponseParties(soleParty);
-        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded);
+        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded, sendNotifications);
     }
 
     public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseJointParties jointParty,
-                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
+                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded, boolean sendNotifications) {
         caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineJointResponseParties(
             jointParty
         );
-        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded);
+        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded, sendNotifications);
     }
 
-    public static void buildOfflineDraft(CaseData caseData, boolean addDetails, boolean addDocument, boolean setAllDocsUploaded) {
+    public static void buildOfflineDraft(CaseData caseData,
+                                         boolean addDetails,
+                                         boolean addDocument,
+                                         boolean setAllDocsUploaded,
+                                         boolean sendNotifications
+    ) {
         RequestForInformationOfflineResponseDraft draft =
             caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
         if (addDetails) {
@@ -1538,6 +1543,11 @@ public class TestDataHelper {
             draft.setRfiOfflineAllDocumentsUploaded(YES);
         } else {
             draft.setRfiOfflineAllDocumentsUploaded(NO);
+        }
+        if (sendNotifications) {
+            draft.setRfiOfflineResponseSendNotifications(YES);
+        } else {
+            draft.setRfiOfflineResponseSendNotifications(NO);
         }
     }
 
@@ -1587,25 +1597,25 @@ public class TestDataHelper {
 
     public static void addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(CaseData caseData,
                                                                        RequestForInformationOfflineResponseSoleParties soleParty) {
-        buildOfflineDraft(caseData, soleParty, true, true, false);
+        buildOfflineDraft(caseData, soleParty, true, true, false, false);
         addOfflineResponseToLatestRequestForInformation(caseData);
     }
 
     public static void addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(CaseData caseData,
                                                                        RequestForInformationOfflineResponseJointParties jointParty) {
-        buildOfflineDraft(caseData, jointParty, true, true, false);
+        buildOfflineDraft(caseData, jointParty, true, true, false, false);
         addOfflineResponseToLatestRequestForInformation(caseData);
     }
 
     public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
                                                                        RequestForInformationOfflineResponseSoleParties soleParty) {
-        buildOfflineDraft(caseData, soleParty, true, true, true);
+        buildOfflineDraft(caseData, soleParty, true, true, true, false);
         addOfflineResponseToLatestRequestForInformation(caseData);
     }
 
     public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
                                                                        RequestForInformationOfflineResponseJointParties jointParty) {
-        buildOfflineDraft(caseData, jointParty, true, true, true);
+        buildOfflineDraft(caseData, jointParty, true, true, true, false);
         addOfflineResponseToLatestRequestForInformation(caseData);
     }
 
@@ -1622,6 +1632,12 @@ public class TestDataHelper {
 
         caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
             new RequestForInformationOfflineResponseDraft()
+        );
+    }
+
+    public static void setSendNotificationFlagOnLatestOfflineResponse(CaseData caseData, boolean sendNotifications) {
+        caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().setRfiOfflineResponseNotificationsRequested(
+            YesOrNo.from(sendNotifications)
         );
     }
 

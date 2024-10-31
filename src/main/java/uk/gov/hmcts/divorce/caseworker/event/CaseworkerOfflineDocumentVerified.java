@@ -47,6 +47,7 @@ import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
@@ -176,6 +177,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     )
                     .mandatory(RequestForInformationOfflineResponseDraft::getRfiOfflineAllDocumentsUploaded)
                     .optionalWithLabel(RequestForInformationOfflineResponseDraft::getRfiOfflineDraftResponseDetails, "Add Notes")
+                    .mandatoryWithLabel(
+                        RequestForInformationOfflineResponseDraft::getRfiOfflineResponseSendNotifications, "Send notifications?"
+                    )
                 .done()
             .done()
             .page("stateToTransitionToOtherDoc")
@@ -464,7 +468,14 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             final RequestForInformation latestRequest = caseData.getRequestForInformationList().getLatestRequest();
             final RequestForInformationSoleParties soleParties = latestRequest.getRequestForInformationSoleParties();
             final RequestForInformationJointParties jointParties = latestRequest.getRequestForInformationJointParties();
-            if ((caseData.getApplicationType().isSole() && RequestForInformationSoleParties.OTHER.equals(soleParties))
+
+            if (NO.equals(latestRequest.getLatestResponse().getRfiOfflineResponseNotificationsRequested())) {
+                log.info(
+                    "CaseworkerOfflineDocumentVerified submitted callback not sending RFI Response notifications, "
+                    + "rfiOfflineResponseNotificationsRequested is NO for case: {}",
+                    details.getId()
+                );
+            } else if ((caseData.getApplicationType().isSole() && RequestForInformationSoleParties.OTHER.equals(soleParties))
                 || (!caseData.getApplicationType().isSole() && OTHER.equals(jointParties))
             ) {
                 log.info(

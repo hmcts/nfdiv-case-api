@@ -114,6 +114,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addRfiResponseDocumen
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildOfflineDraft;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setSendNotificationFlagOnLatestOfflineResponse;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerOfflineDocumentVerifiedTest {
@@ -1418,7 +1419,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     @Test
     void shouldClearDefaultRequestForInformationOfflineResponseDraft() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
-        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true);
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true, false);
         addRfiResponseDocumentToCaseData(caseDetails.getData(), clock);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
@@ -1431,7 +1432,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     @Test
     void shouldSetStateToRequestedInformationSubmittedWhenAllDocumentsUploaded() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
-        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true);
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true, false);
         addRfiResponseDocumentToCaseData(caseDetails.getData(), clock);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
@@ -1443,7 +1444,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     @Test
     void shouldSetStateToAwaitingRequestedInformationWhenAllDocumentsNotUploaded() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
-        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, false);
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, false, false);
         addRfiResponseDocumentToCaseData(caseDetails.getData(), clock);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
@@ -1453,10 +1454,24 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldNotSendNotificationsOnWhenSendNotificationFlagSetToNo() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), false);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
     void shouldNotSendNotificationsOnSoleCaseIfRfiSentToOther() {
         CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationSoleParties.OTHER, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.OTHER);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
@@ -1469,6 +1484,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationJointParties.OTHER, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.OTHER);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
@@ -1480,6 +1496,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldSendNotificationToRespondingPartyOnlyOnSoleCase() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
@@ -1496,6 +1513,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldSendNotificationToRespondingPartyOnlyOnJointCaseWhenRfiNotSentToBothParties() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT1, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
@@ -1512,6 +1530,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldReturnErrorWhenSendNotificationToRespondingPartyFails() {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
@@ -1536,6 +1555,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldSendNotificationToRespondingPartyAndPartnerOnJointCaseWhenRfiSentToBothParties() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
@@ -1556,6 +1576,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldReturnErrorWhenSendNotificationToRespondingPartyFailsOnJointCaseWhenRfiSentToBothParties() {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
@@ -1584,6 +1605,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldReturnErrorWhenSendNotificationToRespondingPartyPartnerFailsOnJointCaseWhenRfiSentToBothParties() {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
@@ -1612,6 +1634,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     void shouldReturnErrorsWhenSendNotificationsFailOnJointCaseWhenRfiSentToBothParties() {
         final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
         addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
         caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
         doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(

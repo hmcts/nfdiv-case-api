@@ -90,7 +90,7 @@ class CaseworkerRequestForInformationResponseTest {
     @Test
     void shouldSetStateToRequestedInformationSubmittedWhenAllDocsProvided() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
-        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true);
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true, false);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformationResponse.aboutToSubmit(caseDetails, caseDetails);
@@ -121,7 +121,7 @@ class CaseworkerRequestForInformationResponseTest {
     @Test
     void shouldSetStateToAwaitingRequestedInformationWhenAllDocsNotProvided() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
-        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, false);
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, false, false);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformationResponse.aboutToSubmit(caseDetails, caseDetails);

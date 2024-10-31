@@ -100,6 +100,12 @@ public class RequestForInformationResponse {
     )
     private YesOrNo rfiOfflineResponseAllDocumentsUploaded;
 
+    @CCD(
+        label = "Notifications requested?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo rfiOfflineResponseNotificationsRequested;
+
     @JsonIgnore
     public void setValues(CaseData caseData, RequestForInformationResponseParties party) {
         final Applicant applicant = party.equals(APPLICANT1) || party.equals(APPLICANT1SOLICITOR)
@@ -152,6 +158,7 @@ public class RequestForInformationResponse {
         this.setRequestForInformationResponseDateTime(LocalDateTime.now());
         this.setRequestForInformationResponseOffline(YES);
         this.setRfiOfflineResponseAllDocumentsUploaded(offlineDraft.getRfiOfflineAllDocumentsUploaded());
+        this.setRfiOfflineResponseNotificationsRequested(offlineDraft.getRfiOfflineResponseSendNotifications());
 
         this.setRequestForInformationResponseDetails(offlineDraft.getRfiOfflineDraftResponseDetails());
         if (offlineDraft.getRfiOfflineDraftResponseDocs() != null && !offlineDraft.getRfiOfflineDraftResponseDocs().isEmpty()) {
