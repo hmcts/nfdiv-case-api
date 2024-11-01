@@ -63,6 +63,8 @@ public class CaseworkerGeneralApplicationReceived implements CCDConfig<CaseData,
 
         data.updateCaseWithGeneralApplication();
 
+        data.getGeneralApplication().setGeneralApplicationTypeOtherComments(null);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(GeneralApplicationReceived)
