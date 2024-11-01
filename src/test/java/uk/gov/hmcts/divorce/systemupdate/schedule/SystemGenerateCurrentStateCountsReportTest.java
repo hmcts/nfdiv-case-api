@@ -66,24 +66,24 @@ class SystemGenerateCurrentStateCountsReportTest {
         dateMap.put("2023-10-24", 10L);
         searchResult.put("Submitted", dateMap);
 
-        when(ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
+        when(ccdSearchService.countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
             .thenReturn(searchResult);
 
         reportTask.run();
 
-        verify(ccdSearchService).searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
+        verify(ccdSearchService).countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
         verify(reportNotificationService).send(ArgumentMatchers.<ImmutableList.Builder<String>>any(), anyString());
     }
 
     @Test
     void shouldHandleCcdSearchCaseExceptionGracefully() throws CcdSearchCaseException, NotificationClientException, IOException {
         setUpUser();
-        when(ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
+        when(ccdSearchService.countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         reportTask.run();
 
-        verify(ccdSearchService).searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
+        verify(ccdSearchService).countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
         verify(reportNotificationService, never()).send(ArgumentMatchers.<ImmutableList.Builder<String>>any(), anyString());
     }
 
@@ -96,7 +96,7 @@ class SystemGenerateCurrentStateCountsReportTest {
         dateMap.put("2023-10-24", 10L);
         searchResult.put("Submitted", dateMap);
 
-        when(ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
+        when(ccdSearchService.countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
             .thenReturn(searchResult);
 
         doThrow(new CcdConflictException("Conflict with another task", mock(FeignException.class)))
@@ -104,7 +104,7 @@ class SystemGenerateCurrentStateCountsReportTest {
 
         reportTask.run();
 
-        verify(ccdSearchService).searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
+        verify(ccdSearchService).countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
         verify(reportNotificationService).send(ArgumentMatchers.<ImmutableList.Builder<String>>any(), anyString());
     }
 
@@ -116,7 +116,7 @@ class SystemGenerateCurrentStateCountsReportTest {
         dateMap.put("2023-10-24", 10L);
         searchResult.put("Submitted", dateMap);
 
-        when(ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
+        when(ccdSearchService.countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString()))
             .thenReturn(searchResult);
 
         doThrow(new NotificationClientException("Notification failed"))
@@ -124,7 +124,7 @@ class SystemGenerateCurrentStateCountsReportTest {
 
         reportTask.run();
 
-        verify(ccdSearchService).searchWithQueryAndGroupByStateAndLastStateModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
+        verify(ccdSearchService).countAllCasesByStateAndLastModifiedDate(any(BoolQueryBuilder.class), eq(user), anyString());
         verify(reportNotificationService).send(ArgumentMatchers.<ImmutableList.Builder<String>>any(), anyString());
     }
 

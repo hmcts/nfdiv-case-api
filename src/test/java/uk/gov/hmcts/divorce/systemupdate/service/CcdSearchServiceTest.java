@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -960,8 +961,10 @@ class CcdSearchServiceTest {
 
         List<ReturnedCaseDetails> cases = List.of(case1, case2, case3);
 
+        final Map<String, Map<String, Long>> result = new HashMap<>();
+
         // Act
-        Map<String, Map<String, Long>> result = ccdSearchService.groupByStateAndLastStateModifiedDate(cases);
+        ccdSearchService.updateCountsByStateAndLastModifiedDate(result, cases);
 
         // Assert
         assertThat(result).hasSize(2); // Two states: Submitted, AwaitingAos
@@ -1016,17 +1019,17 @@ class CcdSearchServiceTest {
         String searchString = String.format(
             "{\"from\":%d,\"size\":%d,\"query\":{\"bool\":{\"adjust_pure_negative\":%b,\"boost\":%.1f}},"
                 + "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
-            0, 10000, true, 1.0, "asc"
+            0, 100, true, 1.0, "asc"
         );
         when(coreCaseDataApiWithStateModifiedDate.searchCases(user.getAuthToken(),
             SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
             searchString))
             .thenReturn(returnedCases);
 
-        when(ccdSearchService.newSearchForCasesWithQuery(boolQueryBuilder, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.newSearchForCasesWithQuery(0, 100, boolQueryBuilder, user, SERVICE_AUTHORIZATION))
             .thenReturn(returnedCases);
 
-        Map<String, Map<String, Long>> result = ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(
+        Map<String, Map<String, Long>> result = ccdSearchService.countAllCasesByStateAndLastModifiedDate(
             boolQueryBuilder, user, SERVICE_AUTHORIZATION);
 
         assertThat(result).hasSize(2);
