@@ -41,15 +41,15 @@ public class StateReportNotification {
     public void send(ImmutableList.Builder<String> preparedData, String reportName) throws NotificationClientException, IOException {
         log.info("Sending Report Email Notification {}", reportName);
 
-        if (null == recipientEmailAddressesCsv) {
-            log.error("Email address is not available for template id {} and daily report {} ", templateName, reportName);
-            return;
-        }
-
         EmailTemplateName templateName;
         templateName = AUTOMATED_DAILY_REPORT;
         Map<String, Object> templateVars = new HashMap<>();
         templateVars.put("reportName", reportName);
+
+        if (null == recipientEmailAddressesCsv) {
+            log.error("Email address is not available for template id {} and daily report {} ", templateName, reportName);
+            return;
+        }
 
         if (!prepareNotificationUpload(convertToBytes(preparedData), reportName, retentionPeriodDuration,
             (HashMap<String, Object>) templateVars)) {
