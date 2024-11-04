@@ -41,13 +41,16 @@ public class StateReportNotification {
     public void send(ImmutableList.Builder<String> preparedData, String reportName) throws NotificationClientException, IOException {
         log.info("Sending Report Email Notification {}", reportName);
 
-        EmailTemplateName templateName;
-        templateName = AUTOMATED_DAILY_REPORT;
         if (null == recipientEmailAddressesCsv) {
             log.error("Email address is not available for template id {} and daily report {} ", templateName, reportName);
+            return;
         }
+
+        EmailTemplateName templateName;
+        templateName = AUTOMATED_DAILY_REPORT;
         Map<String, Object> templateVars = new HashMap<>();
         templateVars.put("reportName", reportName);
+
         if (!prepareNotificationUpload(convertToBytes(preparedData), reportName, retentionPeriodDuration,
             (HashMap<String, Object>) templateVars)) {
             log.error("Failed to prepare upload for daily report {} ", templateName, reportName);
@@ -60,18 +63,21 @@ public class StateReportNotification {
         }
     }
 
-    void sendNotification(String email, EmailTemplateName templateName, Map<String, Object> templateVars, String reportName) {
+    private void sendNotification(
+        String emailAddress, EmailTemplateName templateName,
+        Map<String, Object> templateVars, String reportName
+    ) {
         try {
             notificationService.sendEmailWithString(
-                email,
+                emailAddress,
                 templateName,
                 templateVars,
                 ENGLISH,
                 reportName
             );
-            log.info("Successfully sent daily case state report notification {} to {}", reportName, email);
+            log.info("Successfully sent daily case state report notification {} to {}", reportName, emailAddress);
         } catch (Exception e) {
-            log.info("Daily case state report notification failed for {} to {}", reportName, email);
+            log.info("Daily case state report notification failed for {} to {}", reportName, emailAddress);
         }
     }
 
