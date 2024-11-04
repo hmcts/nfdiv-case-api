@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.User;
@@ -24,11 +25,14 @@ import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
@@ -77,6 +81,9 @@ class CcdSearchServiceTest {
 
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
+
+    @Mock
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
     @Mock
     private CaseDetailsConverter caseDetailsConverter;
@@ -193,8 +200,8 @@ class CcdSearchServiceTest {
 
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, Submitted);
 
-        assertThat(searchResult).hasSize(100)
-        .isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
+        assertThat(searchResult).hasSize(100);
+        assertThat(searchResult).isEqualTo(new HashSet<>(caseDetailsList).stream().toList());
     }
 
     @Test
@@ -765,7 +772,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult).hasSize(100);
+        assertThat(searchResult.size()).isEqualTo(100);
     }
 
     @Test
@@ -929,6 +936,114 @@ class CcdSearchServiceTest {
     }
 
     @Test
+    void shouldReturnAggregatedResultsByStateAndLastStateModifiedDate() {
+        ReturnedCaseDetails case1 = ReturnedCaseDetails.builder()
+            .id(1L)
+            .state(State.Submitted) // Assuming State is an enum or object with SUBMITTED
+            .lastModified(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .build();
+
+        ReturnedCaseDetails case2 = ReturnedCaseDetails.builder()
+            .id(2L)
+            .state(State.Submitted)
+            .lastModified(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .build();
+
+        ReturnedCaseDetails case3 = ReturnedCaseDetails.builder()
+            .id(3L)
+            .state(AwaitingAos)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .build();
+
+        List<ReturnedCaseDetails> cases = List.of(case1, case2, case3);
+
+        final Map<String, Map<String, Long>> result = new HashMap<>();
+
+        // Act
+        ccdSearchService.updateCountsByStateAndLastModifiedDate(result, cases);
+
+        // Assert
+        assertThat(result).hasSize(2); // Two states: Submitted, AwaitingAos
+
+        // Check 'Submitted' state
+        Map<String, Long> submittedResults = result.get(State.Submitted.name());
+        assertThat(submittedResults).hasSize(2); // Two different dates
+        assertThat(result.get("Submitted")).containsEntry("2023-10-20", 1L);
+
+        assertThat(submittedResults).containsEntry("2023-10-20",1L); // One case on 2023-10-20
+        assertThat(submittedResults).containsEntry("2023-10-21",1L); // One case on 2023-10-21
+
+        // Check 'AwaitingAos' state
+        Map<String, Long> awaitingAosResults = result.get(State.AwaitingAos.name());
+        assertThat(awaitingAosResults).hasSize(1); // One date
+        assertThat(awaitingAosResults).containsEntry("2023-10-20",1L); // One case on 2023-10-20
+    }
+
+
+    @Test
+    void shouldReturnAggregatedResultsByStateAndLastStateModifiedDateFromSearch() {
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        ReturnedCaseDetails case1 = ReturnedCaseDetails.builder()
+            .id(1L)
+            .state(State.Submitted)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 12, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 9, 20, 12, 0))
+            .build();
+
+        ReturnedCaseDetails case2 = ReturnedCaseDetails.builder()
+            .id(2L)
+            .state(State.Submitted)
+            .lastModified(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 10, 21, 14, 0))
+            .build();
+
+        ReturnedCaseDetails case3 = ReturnedCaseDetails.builder()
+            .id(3L)
+            .state(AwaitingAos)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 8, 20, 16, 0))
+            .build();
+
+        ReturnedCases returnedCases = ReturnedCases.builder()
+            .total(3)
+            .cases(List.of(case1, case2, case3))
+            .build();
+
+        BoolQueryBuilder boolQueryBuilder = boolQuery();
+
+        String searchString = String.format(
+            "{\"from\":%d,\"size\":%d,\"query\":{\"bool\":{\"adjust_pure_negative\":%b,\"boost\":%.1f}},"
+                + "\"sort\":[{\"data.dueDate\":{\"order\":\"%s\"}}]}",
+            0, 100, true, 1.0, "asc"
+        );
+        when(coreCaseDataApiWithStateModifiedDate.searchCases(user.getAuthToken(),
+            SERVICE_AUTHORIZATION, NoFaultDivorce.getCaseType(),
+            searchString))
+            .thenReturn(returnedCases);
+
+        when(ccdSearchService.newSearchForCasesWithQuery(0, 100, boolQueryBuilder, user, SERVICE_AUTHORIZATION))
+            .thenReturn(returnedCases);
+
+        Map<String, Map<String, Long>> result = ccdSearchService.countAllCasesByStateAndLastModifiedDate(
+            boolQueryBuilder, user, SERVICE_AUTHORIZATION);
+
+        assertThat(result).hasSize(2);
+
+        // Check 'Submitted' state
+        assertThat(result.get("Submitted")).hasSize(2);
+        assertThat(result.get("Submitted")).containsEntry("2023-09-20", 1L);
+        assertThat(result.get("Submitted")).containsEntry("2023-10-21", 1L);
+
+        // Check 'AwaitingAos' state
+        assertThat(result.get("AwaitingAos")).hasSize(1);
+        assertThat(result.get("AwaitingAos")).containsEntry("2023-08-20",1L);
+    }
+
+    @Test
     void shouldReturnAllOldDivorceCases() {
         final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
@@ -1001,6 +1116,4 @@ class CcdSearchServiceTest {
             .from(from)
             .size(size);
     }
-
-
 }

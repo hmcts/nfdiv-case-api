@@ -21,11 +21,14 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.partition;
@@ -78,6 +81,8 @@ public class CcdSearchService {
     public static final String DATA_VERSION = "data.dataVersion";
     public static final String BULK_CASE_DATA_VERSION = "data.bulkCaseDataVersion";
 
+    private static final DateTimeFormatter CASE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
 
@@ -89,6 +94,9 @@ public class CcdSearchService {
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
+
+    @Autowired
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
     @Autowired
     private CaseDetailsConverter caseDetailsConverter;
@@ -139,6 +147,26 @@ public class CcdSearchService {
             .size(size);
 
         return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            getCaseType(),
+            sourceBuilder.toString());
+    }
+
+    public ReturnedCases newSearchForCasesWithQuery(final int from,
+                                                    final int size,
+                                                    final BoolQueryBuilder query,
+                                                    final User user,
+                                                    final String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort(DUE_DATE, ASC)
+            .query(query)
+            .from(from)
+            .size(size);
+
+        return coreCaseDataApiWithStateModifiedDate.searchCases(
             user.getAuthToken(),
             serviceAuth,
             getCaseType(),
@@ -244,11 +272,11 @@ public class CcdSearchService {
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
-                    .should(boolQuery()
-                        .must(boolQuery().mustNot(errorCasesExist))
-                        .must(boolQuery().mustNot(processedCases)))
-                    .should(boolQuery()
-                        .must(boolQuery().must(errorCasesExist))));
+                .should(boolQuery()
+                    .must(boolQuery().mustNot(errorCasesExist))
+                    .must(boolQuery().mustNot(processedCases)))
+                .should(boolQuery()
+                    .must(boolQuery().must(errorCasesExist))));
 
         return searchForBulkCases(user, serviceAuth, query);
     }
@@ -468,6 +496,55 @@ public class CcdSearchService {
         return allCaseDetails;
     }
 
+    public Map<String, Map<String, Long>> countAllCasesByStateAndLastModifiedDate(
+        final BoolQueryBuilder query, final User user, final String serviceAuth
+    ) {
+        final Map<String, Map<String, Long>> groupedCaseCounts = new HashMap<>();
+
+        int from = 0;
+        int currentQueryCaseCount = pageSize;
+        int allQueriesCaseCount = 0;
+
+        try {
+            while (currentQueryCaseCount == pageSize && allQueriesCaseCount <= totalMaxResults) {
+                final ReturnedCases searchResult = newSearchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
+
+                final List<ReturnedCaseDetails> pageResults = searchResult.getCases();
+
+                updateCountsByStateAndLastModifiedDate(groupedCaseCounts, pageResults);
+
+                from += pageSize;
+                currentQueryCaseCount = pageResults.size();
+                allQueriesCaseCount += pageResults.size();
+            }
+            log.info("Processed {} cases in total", allQueriesCaseCount);
+        } catch (final FeignException e) {
+            final String message = String.format("Failed to complete search for Cases");
+            log.info(message, e);
+            throw new CcdSearchCaseException(message, e);
+        }
+
+        return groupedCaseCounts;
+    }
+
+    public Map<String, Map<String, Long>> updateCountsByStateAndLastModifiedDate(
+        Map<String, Map<String, Long>> aggregatedResults,
+        List<ReturnedCaseDetails> caseBatch
+    ) {
+        caseBatch.stream()
+            .filter(caseDetail -> caseDetail.getState() != null)
+            .forEach(caseDetail -> {
+                String stateName = caseDetail.getState().name();
+                String lastModifiedDate = caseDetail.getLastStateModifiedDate().toLocalDate().format(CASE_DATE_FORMAT);
+
+                Map<String, Long> stateMap = aggregatedResults.computeIfAbsent(stateName, k -> new HashMap<>());
+
+                stateMap.merge(lastModifiedDate, 1L, Long::sum);
+            });
+
+        return aggregatedResults;
+    }
+
     public List<CaseDetails> searchForOldDivorceCasesWithQuery(final BoolQueryBuilder query,
                                                                final User user,
                                                                final String serviceAuth) {
@@ -516,5 +593,4 @@ public class CcdSearchService {
             "DIVORCE",
             sourceBuilder.toString());
     }
-
 }

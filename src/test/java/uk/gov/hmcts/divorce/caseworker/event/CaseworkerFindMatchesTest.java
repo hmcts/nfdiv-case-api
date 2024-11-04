@@ -228,5 +228,4 @@ class CaseworkerFindMatchesTest {
         mockCaseData.put("marriageDate", "2000-01-01");
         return mockCaseData;
     }
-
 }
