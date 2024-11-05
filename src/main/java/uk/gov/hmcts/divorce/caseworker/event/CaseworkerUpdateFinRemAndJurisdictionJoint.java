@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.common.event.RegenerateApplication.REGENERATE_APPLICATION;
+import static uk.gov.hmcts.divorce.common.event.RegenerateApplicationDocument.REGENERATE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;

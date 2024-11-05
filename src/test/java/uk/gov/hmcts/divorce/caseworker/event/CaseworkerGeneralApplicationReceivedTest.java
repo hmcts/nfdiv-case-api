@@ -9,11 +9,15 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralApplicationReceived.CASEWORKER_GENERAL_APPLICATION_RECEIVED;
@@ -23,7 +27,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerGeneralApplicationReceivedTest {
@@ -72,7 +78,12 @@ class CaseworkerGeneralApplicationReceivedTest {
             .documentLink(Document.builder().build())
             .build();
         final CaseData caseData = caseData();
-        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -84,7 +95,65 @@ class CaseworkerGeneralApplicationReceivedTest {
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isEqualTo(document);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
+            .isEqualTo(docs.get(0).getValue());
+    }
+
+    @Test
+    void shouldAddGeneralApplicationDocumentsToListOfCaseDocumentsAndUpdateState() {
+        final DivorceDocument document = DivorceDocument.builder()
+            .documentLink(Document.builder().build())
+            .build();
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(2);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
+        docs.get(1).getValue().setDocumentFileName("Testfile");
+        docs.get(1).getValue().setDocumentDateAdded(LOCAL_DATE);
+
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            generalApplicationReceived.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
+            .isEqualTo(docs.get(1).getValue());
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue())
+            .isEqualTo(docs.get(0).getValue());
+    }
+
+    @Test
+    void shouldSetGeneralDocumentTypeForUploadedDocuments() {
+        final DivorceDocument document = DivorceDocument.builder()
+            .documentLink(Document.builder().build())
+            .build();
+        final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            generalApplicationReceived.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments().get(0)
+            .getValue().getDocumentType()).isEqualTo(DocumentType.GENERAL_APPLICATION);
     }
 
     @Test
@@ -96,11 +165,11 @@ class CaseworkerGeneralApplicationReceivedTest {
             .build()
         );
 
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
 
-        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
