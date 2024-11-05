@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CCD_RE
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.EVIDENCE_HANDLED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FRAUD_REFERRAL_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_URGENT_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_URGENT_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.RESPONDENT_WELSH_TRANSLATION;
@@ -53,6 +54,7 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Urgent case").id(URGENT_CASE).build(),
         SearchField.<UserRole>builder().label("Urgent general application case").id(GENERAL_APPLICATION_URGENT_CASE).build(),
         SearchField.<UserRole>builder().label("Urgent general referral case").id(GENERAL_REFERRAL_URGENT_CASE).build(),
+        SearchField.<UserRole>builder().label("General referral type").id(GENERAL_REFERRAL_TYPE).build(),
         SearchField.<UserRole>builder().label("Fraud referral case").id(FRAUD_REFERRAL_CASE).build(),
         SearchField.<UserRole>builder().label("Solicitor firm name").id(APPLICANT_1_FIRM_NAME).build(),
         SearchField.<UserRole>builder().label("Type of service").id(ALTERNATIVE_SERVICE_TYPE).build(),
