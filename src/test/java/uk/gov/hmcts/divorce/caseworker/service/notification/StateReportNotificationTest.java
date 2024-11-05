@@ -52,7 +52,7 @@ class StateReportNotificationTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        stateReportNotification.emailTo = "test@example.com";
+        stateReportNotification.recipientEmailAddressesCsv = "test@example.com";
         fileContents = "test file contents".getBytes();
         fileName = "testFile.csv";
         retentionPeriodDuration = mock(RetentionPeriodDuration.class); // Assuming this is not the focus of the test
@@ -93,7 +93,7 @@ class StateReportNotificationTest {
 
     @Test
     void shouldNotSendEmailWhenEmailToIsNull() throws NotificationClientException, IOException {
-        stateReportNotification.emailTo = null;  // Simulate no email address
+        stateReportNotification.recipientEmailAddressesCsv = null;  // Simulate no email address
 
         stateReportNotification.send(ImmutableList.builder(), "testReport");
 
@@ -126,6 +126,37 @@ class StateReportNotificationTest {
 
         verify(notificationService).sendEmailWithString(
             "test@example.com",
+            EmailTemplateName.AUTOMATED_DAILY_REPORT,
+            expectedTemplateVars,
+            uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH,
+            "testReport"
+        );
+    }
+
+    @Test
+    void shouldSendMultipleEmailsWhenReportEmailAddressesIsAList() throws NotificationClientException, IOException {
+        stateReportNotification.recipientEmailAddressesCsv = "test@example.com,test2@example.com";
+
+        StateReportNotification spyNotification = spy(stateReportNotification);
+
+        doReturn(true).when(spyNotification).prepareNotificationUpload(
+            any(byte[].class), anyString(), any(RetentionPeriodDuration.class), ArgumentMatchers.<HashMap<String, Object>>any());
+
+        spyNotification.send(ImmutableList.builder(), "testReport");
+
+        Map<String, Object> expectedTemplateVars = new HashMap<>();
+        expectedTemplateVars.put("reportName", "testReport");
+
+        verify(notificationService).sendEmailWithString(
+            "test@example.com",
+            EmailTemplateName.AUTOMATED_DAILY_REPORT,
+            expectedTemplateVars,
+            uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH,
+            "testReport"
+        );
+
+        verify(notificationService).sendEmailWithString(
+            "test2@example.com",
             EmailTemplateName.AUTOMATED_DAILY_REPORT,
             expectedTemplateVars,
             uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH,
