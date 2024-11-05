@@ -211,8 +211,8 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .filter(QueryBuilders.termQuery("data.D8MarriagePetitionerName.keyword", marriageDetails.getApplicant2Name()));
 
         BoolQueryBuilder nameMatchQuery2 = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termQuery("data.D8MarriagePetitionerName.keyword", marriageDetails.getApplicant2Name()))
-            .filter(QueryBuilders.termQuery("data.D8MarriageRespondentName.keyword", marriageDetails.getApplicant1Name()));
+            .filter(QueryBuilders.termQuery("data.D8MarriageRespondentName.keyword", marriageDetails.getApplicant2Name()))
+            .filter(QueryBuilders.termQuery("data.D8MarriagePetitionerName.keyword", marriageDetails.getApplicant1Name()));
 
         BoolQueryBuilder nameMatching = QueryBuilders.boolQuery()
             .should(nameMatchQuery1)
