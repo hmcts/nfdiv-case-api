@@ -20,9 +20,13 @@ public class ResetConditionalOrderFlags implements CaseTask {
 
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setStatementOfTruth(null);
         if (data.getApplicationType() != null && !data.getApplicationType().isSole()) {
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
             data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(null);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(null);
         }
 
         return caseDetails;

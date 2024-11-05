@@ -1,10 +1,14 @@
 package uk.gov.hmcts.divorce.payment;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -21,4 +25,10 @@ public interface PaymentClient {
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
         @PathVariable("paymentReference") String paymentReference);
+
+    @PostMapping(value = "/service-request")
+    ResponseEntity<ServiceReferenceResponse> createServiceRequest(
+        @RequestHeader(AUTHORIZATION) String authorisation,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
+        CreateServiceRequestBody createServiceRequestBody);
 }
