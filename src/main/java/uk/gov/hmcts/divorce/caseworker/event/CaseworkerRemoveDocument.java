@@ -173,7 +173,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
     }
 
-    void handleDeletionOfGeneralApplicationDocument(CaseData caseData, DivorceDocument document) {
+    private void handleDeletionOfGeneralApplicationDocument(CaseData caseData, DivorceDocument document) {
         deleteFromCurrentGeneralApplication(caseData, document);
         deleteFromGeneralApplicationCollection(caseData, document);
     }
