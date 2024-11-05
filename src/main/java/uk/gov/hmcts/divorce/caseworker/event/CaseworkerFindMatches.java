@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDataOldDivorce;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseMatch;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -25,8 +26,10 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -79,7 +82,10 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> oldcaseMatchDetails = getOldDivorceFreshMatches(marriageDetails);
         log.info("Case ID: " + details.getId() + " old divorce case matching search result: " + oldcaseMatchDetails.size());
 
-        List<CaseMatch> newMatches = transformToMatchingCasesList(combineCaseDetails(caseMatchDetails, oldcaseMatchDetails));
+        List<CaseMatch> newMatches = new ArrayList<>();
+        newMatches.addAll(transformToMatchingCasesList(caseMatchDetails));
+        newMatches.addAll(transformOldCaseToMatchingCasesList(oldcaseMatchDetails));
+
         setToNewMatches(caseData, newMatches);
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -147,8 +153,42 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         }).toList();
     }
 
+    public List<CaseMatch> transformOldCaseToMatchingCasesList(
+        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails) {
+
+        if (caseMatchDetails == null || caseMatchDetails.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return caseMatchDetails.stream()
+            .map(caseDetail -> {
+                CaseDataOldDivorce caseData = getCaseDataOldDivorce(caseDetail.getData());
+
+                // Handle potential null values in fields by using Optional
+                return CaseMatch.builder()
+                    .applicant1Name(Optional.ofNullable(caseData.getD8MarriagePetitionerName()).orElse(""))
+                    .applicant2Name(Optional.ofNullable(caseData.getD8MarriageRespondentName()).orElse(""))
+                    .date(Optional.ofNullable(caseData.getD8MarriageDate())
+                        .map(LocalDate::parse)
+                        .orElse(null))
+                    .applicant1Postcode(Optional.ofNullable(caseData.getD8PetitionerPostCode()).orElse(""))
+                    .applicant2Postcode(Optional.ofNullable(caseData.getD8RespondentPostCode()).orElse(""))
+                    .applicant1Town(Optional.ofNullable(caseData.getD8PetitionerPostTown()).orElse(""))
+                    .applicant2Town(Optional.ofNullable(caseData.getD8RespondentPostTown()).orElse(""))
+                    .caseLink(CaseLink.builder()
+                        .caseReference(String.valueOf(caseDetail.getId()))
+                        .build())
+                    .build();
+            })
+            .toList();
+    }
+
     private CaseData getCaseData(Map<String, Object> data) {
         return objectMapper.convertValue(data, CaseData.class);
+    }
+
+    private CaseDataOldDivorce getCaseDataOldDivorce(Map<String, Object> data) {
+        return objectMapper.convertValue(data, CaseDataOldDivorce.class);
     }
 
     public void setToNewMatches(CaseData data, List<CaseMatch> newMatches) {
@@ -187,17 +227,5 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         final var serviceAuth = authTokenGenerator.generate();
 
         return ccdSearchService.searchForOldDivorceCasesWithQuery(oldDivorceQuery, user, serviceAuth);
-    }
-
-    public List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> combineCaseDetails(
-        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> oldCasesDetails,
-        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> newCasesDetails) {
-
-        // Create a new modifiable list from newCasesDetails
-        List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> combinedCasesDetails = new ArrayList<>(newCasesDetails);
-
-        combinedCasesDetails.addAll(oldCasesDetails);
-
-        return combinedCasesDetails;
     }
 }
