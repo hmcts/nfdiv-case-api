@@ -277,6 +277,20 @@ public class CaseDocuments {
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
+    public static <T> boolean hasDeletedDocuments(final List<ListValue<T>> after,
+                                                final List<ListValue<T>> before) {
+
+        if (isNull(after) && !before.isEmpty()) {
+            return true;
+        } else if (isNull(before)) {
+            return false;
+        }
+
+        return !before.stream()
+            .allMatch(beforeValue -> after.stream()
+                .anyMatch(afterValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
+    }
+
     public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,
                                                           final DocumentType documentType) {
         return Stream.ofNullable(documents)

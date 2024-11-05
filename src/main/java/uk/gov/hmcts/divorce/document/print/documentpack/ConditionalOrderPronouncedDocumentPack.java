@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_SOL_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
@@ -141,6 +143,42 @@ public class ConditionalOrderPronouncedDocumentPack implements DocumentPack {
             CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
         )
     );
+    private static final DocumentPackInfo APPLICANT_1_SOL_SOLE_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID),
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
+        ),
+        ImmutableMap.of(
+            CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
+        )
+    );
+    private static final DocumentPackInfo APPLICANT_2_SOL_SOLE_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, Optional.of(CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_SOL_TEMPLATE_ID),
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
+        ),
+        ImmutableMap.of(
+            CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_SOL_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
+        )
+    );
+    private static final DocumentPackInfo APPLICANT_1_SOL_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1, Optional.of(CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID),
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
+        ),
+        ImmutableMap.of(
+            CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
+        )
+    );
+    private static final DocumentPackInfo APPLICANT_2_SOL_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2, Optional.of(CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID),
+            CONDITIONAL_ORDER_GRANTED, Optional.empty()
+        ),
+        ImmutableMap.of(
+            CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID, CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME
+        )
+    );
 
     @Override
     public String getLetterId() {
@@ -154,7 +192,7 @@ public class ConditionalOrderPronouncedDocumentPack implements DocumentPack {
         boolean isApplicant1 = applicant.equals(caseData.getApplicant1());
         boolean isRepresented = applicant.isRepresented();
         boolean isDivorce = caseData.isDivorce();
-        boolean isOfflineRespondent = caseData.getApplicationType().isSole();// respondent is applicant2 only
+        boolean isSole = caseData.getApplicationType().isSole();
 
         if (isJudicialSeparation) {
             if (isDivorce) {
@@ -175,12 +213,22 @@ public class ConditionalOrderPronouncedDocumentPack implements DocumentPack {
                 }
             }
         } else {
-            if (isOfflineRespondent) {
-                return isApplicant1 ? APPLICANT_1_SOLE_CONDITIONAL_ORDER_PACK :
-                    APPLICANT_2_SOLE_CONDITIONAL_ORDER_PACK;
+            if (isSole) {
+                if (isRepresented) {
+                    return isApplicant1 ? APPLICANT_1_SOL_SOLE_CONDITIONAL_ORDER_PACK :
+                        APPLICANT_2_SOL_SOLE_CONDITIONAL_ORDER_PACK;
+                } else {
+                    return isApplicant1 ? APPLICANT_1_SOLE_CONDITIONAL_ORDER_PACK :
+                        APPLICANT_2_SOLE_CONDITIONAL_ORDER_PACK;
+                }
             } else {
-                return isApplicant1 ? APPLICANT_1_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK :
-                    APPLICANT_2_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK;
+                if (isRepresented) {
+                    return isApplicant1 ? APPLICANT_1_SOL_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK :
+                        APPLICANT_2_SOL_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK;
+                } else {
+                    return isApplicant1 ? APPLICANT_1_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK :
+                        APPLICANT_2_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK;
+                }
             }
         }
     }

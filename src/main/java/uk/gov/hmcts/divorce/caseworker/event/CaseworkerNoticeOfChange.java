@@ -332,4 +332,13 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         }
     }
 
+    private Solicitor solicitorWithDefaultOrganisationPolicy(Solicitor solicitor, UserRole role) {
+        OrganisationPolicy<UserRole> defaultOrgPolicy = OrganisationPolicy.<UserRole>builder()
+            .orgPolicyCaseAssignedRole(role)
+            .organisation(new Organisation(null, null))
+            .build();
+
+        solicitor.setOrganisationPolicy(defaultOrgPolicy);
+        return solicitor;
+    }
 }

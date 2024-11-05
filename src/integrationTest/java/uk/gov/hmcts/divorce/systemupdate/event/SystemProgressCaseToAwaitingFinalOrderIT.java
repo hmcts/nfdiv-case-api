@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -103,6 +104,9 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @MockBean
+    private PaymentService paymentService;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -195,7 +199,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    public void shouldSendEmailsToOnlineApplicantsInJointCase() throws Exception {
+    void shouldSendEmailsToOnlineApplicantsInJointCase() throws Exception {
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -224,7 +228,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    public void shouldSendEmailsToSolicitorsInJointCaseWhenBothApplicantsAreRepresented() throws Exception {
+    void shouldSendEmailsToSolicitorsInJointCaseWhenBothApplicantsAreRepresented() throws Exception {
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);

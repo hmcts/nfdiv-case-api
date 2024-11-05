@@ -12,11 +12,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,9 +30,8 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.CANCELLED;
+import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
-import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -42,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenPaymentMadeTest {
+class CitizenPaymentMadeTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";
@@ -52,6 +55,9 @@ public class CitizenPaymentMadeTest {
 
     @Mock
     private SubmissionService submissionService;
+
+    @Mock
+    private PaymentValidatorService paymentValidatorService;
 
     @InjectMocks
     private CitizenPaymentMade citizenPaymentMade;
@@ -68,47 +74,30 @@ public class CitizenPaymentMadeTest {
     }
 
     @Test
-    void givenLastPaymentInProgressCaseDataWhenCallbackIsInvokedThenSetToAwaitingPayment() {
+    void givenPaymentWasInvalidThenSetStateToAwaitingPaymentAndDontSubmitApplication() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setState(Draft);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        Payment payment = Payment.builder().amount(55000).status(IN_PROGRESS).build();
-        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(55000).status(DECLINED).build()));
+        caseData.getApplication().setApplicationPayments(payments);
 
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
+        when(paymentValidatorService.validatePayments(payments, details.getId())).thenReturn(
+            Collections.singletonList(ERROR_PAYMENT_INCOMPLETE)
+        );
 
-        final var response = citizenPaymentMade.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> result = citizenPaymentMade.aboutToSubmit(details, details);
 
+        assertThat(result.getData()).isSameAs(caseData);
+        assertThat(result.getState()).isEqualTo(AwaitingPayment);
         verifyNoInteractions(submissionService);
-        assertThat(response.getState()).isEqualTo(AwaitingPayment);
-    }
-
-    @Test
-    void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToAwaitingPayment() {
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-
-        Payment payment = Payment.builder().amount(55000).status(CANCELLED).build();
-        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        final var response = citizenPaymentMade.aboutToSubmit(details, details);
-
-        verifyNoInteractions(submissionService);
-        assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test
@@ -128,6 +117,10 @@ public class CitizenPaymentMadeTest {
         final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
         expectedDetails.setData(expectedCaseData);
         expectedDetails.setState(Submitted);
+
+        when(paymentValidatorService.validatePayments(caseData.getApplication().getApplicationPayments(), details.getId())).thenReturn(
+            Collections.emptyList()
+        );
 
         when(submissionService.submitApplication(details)).thenReturn(expectedDetails);
 
@@ -155,33 +148,15 @@ public class CitizenPaymentMadeTest {
         details.setData(caseData);
         details.setState(Draft);
 
+        when(paymentValidatorService.validatePayments(caseData.getApplication().getApplicationPayments(), details.getId())).thenReturn(
+            Collections.emptyList()
+        );
+
         final AboutToStartOrSubmitResponse<CaseData, State> result = citizenPaymentMade.aboutToSubmit(details, details);
 
         assertThat(result.getData()).isSameAs(caseData);
         assertThat(result.getState()).isEqualTo(Draft);
         assertThat(result.getErrors()).contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE);
-        verifyNoInteractions(submissionService);
-    }
-
-    @Test
-    void givenInvalidPaymentWhenThenDontSubmitApplication() {
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-
-        Payment payment = Payment.builder().amount(55000).status(DECLINED).build();
-        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setState(Draft);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> result = citizenPaymentMade.aboutToSubmit(details, details);
-
-        assertThat(result.getData()).isSameAs(caseData);
-        assertThat(result.getState()).isEqualTo(AwaitingPayment);
         verifyNoInteractions(submissionService);
     }
 
@@ -203,6 +178,10 @@ public class CitizenPaymentMadeTest {
         details.setData(caseData);
         final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
         expectedDetails.setData(expectedCaseData);
+
+        when(paymentValidatorService.validatePayments(caseData.getApplication().getApplicationPayments(), details.getId())).thenReturn(
+            Collections.emptyList()
+        );
 
         when(submissionService.submitApplication(details)).thenReturn(expectedDetails);
 

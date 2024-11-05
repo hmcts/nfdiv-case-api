@@ -25,6 +25,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
@@ -142,7 +143,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
     IdamWireMock.PropertiesInitializer.class,
     CdamWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class})
-public class CaseworkerReIssueApplicationIT {
+class CaseworkerReIssueApplicationIT {
 
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-response.json";
@@ -1923,7 +1924,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setOffline(YES);
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setJudicialSeparationReissueOption(JudicialSeparationReissueOption.OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(121));
 
@@ -1975,7 +1976,7 @@ public class CaseworkerReIssueApplicationIT {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setSolSignStatementOfTruth(null);
-        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setJudicialSeparationReissueOption(JudicialSeparationReissueOption.OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant1().setOffline(YES);
@@ -2021,7 +2022,7 @@ public class CaseworkerReIssueApplicationIT {
     void shouldSetReIssueDateAndGenerateDocumentsForSoleApplicantSolicitorJudicialSeparation() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
-        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setJudicialSeparationReissueOption(JudicialSeparationReissueOption.OFFLINE_AOS);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 17));
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()

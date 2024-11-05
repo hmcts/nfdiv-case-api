@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
+class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     private static final String SOLICITOR_REQUEST_DIGITAL_AOS =
         "classpath:request/casedata/ccd-callback-caseworker-reissue-digital-aos-application-about-to-submit.json";
@@ -52,7 +52,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     @Test
     @Disabled("CDAM requires the case to exist")
-    public void shouldGenerateRespondentAosAndSendEmailToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos() throws Exception {
+    void shouldGenerateRespondentAosAndSendEmailToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_DIGITAL_AOS);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
@@ -67,7 +67,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendNotificationsToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos() throws Exception {
+    void shouldSendNotificationsToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_DIGITAL_AOS);
         caseData.put("previousReissueOption", "digitalAos");
         caseData.put("dueDate", "2022-01-15");
@@ -78,7 +78,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     @Test
     @Disabled("CDAM requires the case to exist")
-    public void shouldGenerateRespondentAosAndD10DocumentAndSendEmailToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos()
+    void shouldGenerateRespondentAosAndD10DocumentAndSendEmailToApplicantAndRespondentSolicitorWhenReissueTypeIsDigitalAos()
         throws Exception {
 
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_DIGITAL_AOS);
@@ -97,7 +97,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     @Test
     @Disabled("CDAM requires the case to exist")
-    public void shouldGenerateRespondentAosAndSentAosPackAndNotSendEmailNotificationWhenReissueTypeIsOfflineAos() throws Exception {
+    void shouldGenerateRespondentAosAndSentAosPackAndNotSendEmailNotificationWhenReissueTypeIsOfflineAos() throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_OFFLINE_AOS);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
@@ -113,7 +113,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
 
     @Test
     @Disabled("CDAM requires the case to exist")
-    public void shouldGenerateRespondentAosAndMiniApplicationAndSentAosPackAndSendEmailNotificationWhenReissueTypeIsReissueCase()
+    void shouldGenerateRespondentAosAndMiniApplicationAndSentAosPackAndSendEmailNotificationWhenReissueTypeIsReissueCase()
         throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_REISSUE_CASE);
         final Response response = triggerCallback(caseData, CASEWORKER_REISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
@@ -130,7 +130,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendAosPackAndSendEmailNotificationWhenReissueTypeIsReissueCase()
+    void shouldSendAosPackAndSendEmailNotificationWhenReissueTypeIsReissueCase()
         throws Exception {
         final Map<String, Object> caseData = caseData(SOLICITOR_REQUEST_REISSUE_CASE);
         caseData.put("serviceMethod", COURT_SERVICE);
@@ -143,7 +143,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldSendReIssueEmailNotificationWhenSoleApplicationAndApplicantIsRepresented() throws Exception {
+    void shouldSendReIssueEmailNotificationWhenSoleApplicationAndApplicantIsRepresented() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("serviceMethod", COURT_SERVICE);
         caseData.put("previousReissueOption", "digitalAos");
@@ -155,7 +155,7 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldGenerateOfflineAOSRespondentNOPWhenSoleApplicationAndReissuedAsOfflineAOS() throws Exception {
+    void shouldGenerateOfflineAOSRespondentNOPWhenSoleApplicationAndReissuedAsOfflineAOS() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("serviceMethod", COURT_SERVICE);
         caseData.put("reissueOption", "offlineAos");
@@ -167,11 +167,11 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldReIssueApplicationWhenSoleJudicialSeparationAndReissuedAsOfflineAOS() throws Exception {
+    void shouldReIssueApplicationWhenSoleJudicialSeparationAndReissuedAsOfflineAOS() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("applicant1Represented", "No");
         caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
-        caseData.put("reissueOption", "offlineAos");
+        caseData.put("judicialSeparationReissueOption", "offlineAos");
         caseData.put("dueDate", "2022-01-15");
         caseData.put("accessCode", ACCESS_CODE);
 
@@ -180,10 +180,10 @@ public class CaseworkerReissueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldReIssueJudicialSeparationApplicationWhenSoleAppRepresentedAndReissuedAsOfflineAOS() throws Exception {
+    void shouldReIssueJudicialSeparationApplicationWhenSoleAppRepresentedAndReissuedAsOfflineAOS() throws Exception {
         final Map<String, Object> caseData = caseData(RE_ISSUE_SOLE_APPLICATION_REQUEST);
         caseData.put("supplementaryCaseType", JUDICIAL_SEPARATION);
-        caseData.put("reissueOption", "offlineAos");
+        caseData.put("judicialSeparationReissueOption", "offlineAos");
         caseData.put("dueDate", "2022-01-15");
         caseData.put("accessCode", ACCESS_CODE);
 

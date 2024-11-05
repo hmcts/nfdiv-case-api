@@ -28,6 +28,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
@@ -59,11 +60,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorGeneralApplicationTest {
+class SolicitorGeneralApplicationTest {
 
     private static final String PBA_NUMBER = "PBA0012345";
     private static final String FEE_ACCOUNT_REF = "REF01";
@@ -127,7 +130,10 @@ public class SolicitorGeneralApplicationTest {
                 .documentLink(Document.builder().build())
                 .build();
         final CaseData caseData = caseData();
-        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -139,7 +145,57 @@ public class SolicitorGeneralApplicationTest {
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isEqualTo(document);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
+            .isEqualTo(docs.get(0).getValue());
+    }
+
+    @Test
+    void shouldAddGeneralApplicationDocumentsToListOfCaseDocumentsAndUpdateState() {
+        final DivorceDocument document = DivorceDocument.builder()
+            .documentLink(Document.builder().build())
+            .build();
+        final CaseData caseData = caseData();
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(2);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+        docs.get(1).getValue().setDocumentFileName("Testfile");
+        docs.get(1).getValue().setDocumentDateAdded(LOCAL_DATE);
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
+            .isEqualTo(docs.get(1).getValue());
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue())
+            .isEqualTo(docs.get(0).getValue());
+    }
+
+    @Test
+    void shouldSetGeneralDocumentTypeForUploadedDocuments() {
+        final CaseData caseData = caseData();
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+        caseData.getGeneralApplication().setGeneralApplicationDocuments(docs);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments().get(0)
+            .getValue().getDocumentType()).isEqualTo(DocumentType.GENERAL_APPLICATION);
     }
 
     @Test
@@ -164,6 +220,10 @@ public class SolicitorGeneralApplicationTest {
         payments.add(paymentListValue);
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicationPayments(payments);
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
 
         final OrderSummary generalApplicationOrderSummary = OrderSummary.builder()
             .paymentTotal("500")
@@ -194,11 +254,7 @@ public class SolicitorGeneralApplicationTest {
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
                         .build()
                 )
-                .generalApplicationDocument(
-                    DivorceDocument.builder()
-                        .documentLink(Document.builder().build())
-                        .build()
-                )
+                .generalApplicationDocuments(docs)
                 .build()
         );
 
@@ -428,7 +484,6 @@ public class SolicitorGeneralApplicationTest {
             .documentLink(Document.builder().build())
             .build();
         final CaseData caseData = caseData();
-        caseData.getGeneralApplication().setGeneralApplicationDocument(document);
         caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

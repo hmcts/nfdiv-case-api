@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +74,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
+    void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -89,7 +90,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
+    void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -107,7 +108,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
+    void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -115,24 +116,29 @@ class CitizenSubmitApplicationTest {
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-
         var orderSummary = orderSummary();
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(
-                orderSummary()
-            );
+            .thenReturn(orderSummary());
+
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
+            .thenReturn(orderSummary());
+
+        when(paymentService.createServiceRequestReference(
+            null, caseId, caseData.getApplicant1().getFullName(), orderSummary
+        )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
     }
 
     @Test
-    public void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
+    void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -151,20 +157,23 @@ class CitizenSubmitApplicationTest {
         var orderSummary = orderSummary();
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(
-                orderSummary()
-            );
+            .thenReturn(orderSummary());
+
+        when(paymentService.createServiceRequestReference(
+            null, caseId, caseData.getApplicant1().getFullName(), orderSummary
+        )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
+    void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -187,7 +196,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
+    void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -250,5 +259,4 @@ class CitizenSubmitApplicationTest {
         caseData.getApplication().setJurisdiction(jurisdiction);
         return caseData;
     }
-
 }

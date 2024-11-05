@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -36,6 +37,21 @@ class SetFinalOrderFieldsAsApplicant2Test {
         final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(AwaitingFinalOrder).id(TEST_CASE_ID).data(caseData)
+            .build();
+
+        CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
+        assertThat(result.getData().getFinalOrder().getApplicant2AppliedForFinalOrderFirst()).isEqualTo(YesOrNo.YES);
+        assertThat(result.getData().getFinalOrder().getApplicant1AppliedForFinalOrderFirst()).isEqualTo(YesOrNo.NO);
+        assertThat(result.getData().getFinalOrder().getDateFinalOrderSubmitted()).isEqualTo(LocalDateTime.now(clock));
+    }
+
+    @Test
+    void shouldUpdateFinalOrderFieldsIfNotSetAndAwaitingFinalOrderPayment() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder().build();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .state(AwaitingFinalOrderPayment).id(TEST_CASE_ID).data(caseData)
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
@@ -92,7 +108,7 @@ class SetFinalOrderFieldsAsApplicant2Test {
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
         assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(YesOrNo.YES);
-        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isNull();
     }
 
     @Test
@@ -106,7 +122,7 @@ class SetFinalOrderFieldsAsApplicant2Test {
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
-        assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(null);
-        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+        assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isNull();
+        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isNull();
     }
 }

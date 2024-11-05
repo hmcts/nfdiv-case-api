@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -37,7 +38,7 @@ public class SystemRemindApplicantsApplyForFinalOrder implements CCDConfig<CaseD
 
         configBuilder
             .event(SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER)
-            .forStates(AwaitingFinalOrder)
+            .forStates(AwaitingFinalOrder, AwaitingFinalOrderPayment)
             .name("Remind Applicants Final Order")
             .description("Remind Applicant(s) that they can apply for a Final Order")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

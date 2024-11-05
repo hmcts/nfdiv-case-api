@@ -246,6 +246,12 @@ public class Application {
     private OrderSummary applicationFeeOrderSummary;
 
     @CCD(
+        label = "Application Fee Service Request Reference",
+        access = {DefaultAccess.class}
+    )
+    private String applicationFeeServiceRequestReference;
+
+    @CCD(
         label = "The respondent agrees that the divorce service can send notifications by email.",
         access = {DefaultAccess.class, Applicant2Access.class}
     )
@@ -466,6 +472,14 @@ public class Application {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private ReissueOption reissueOption;
+
+    @CCD(
+        label = "What would you like to reissue?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "JudicialSeparationReissueOption",
+        access = {SystemUpdateAndSuperUserAccess.class}
+    )
+    private JudicialSeparationReissueOption judicialSeparationReissueOption;
 
     @CCD(
         access = {DefaultAccess.class}
