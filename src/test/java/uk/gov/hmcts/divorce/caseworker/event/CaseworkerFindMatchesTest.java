@@ -235,7 +235,6 @@ class CaseworkerFindMatchesTest {
         return oldCaseData;
     }
 
-    // Mock details for old divorce cases with matching CaseDataOldDivorce
     private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> mockCaseMatchTwoDetails(CaseDataOldDivorce oldCaseData) {
         Map<String, Object> mockDataMap = new HashMap<>();
         mockDataMap.put("D8MarriagePetitionerName", oldCaseData.getD8MarriagePetitionerName());
@@ -263,16 +262,6 @@ class CaseworkerFindMatchesTest {
         mockCaseDetails.setId(67890L);
         mockCaseDetails.setState(State.Holding.name());
         mockCaseDetails.setData(mockCaseData());
-        return List.of(mockCaseDetails);
-    }
-
-    private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> mockCaseMatchTwoDetails() {
-        uk.gov.hmcts.reform.ccd.client.model.CaseDetails mockCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
-            .build();
-        mockCaseDetails.setId(67894L);
-        mockCaseDetails.setState(State.Holding.name());
-        mockCaseDetails.setData(mockCaseData());
-
         return List.of(mockCaseDetails);
     }
 
