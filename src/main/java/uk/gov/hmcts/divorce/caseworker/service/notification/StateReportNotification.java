@@ -13,6 +13,7 @@ import uk.gov.service.notify.RetentionPeriodDuration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import static uk.gov.service.notify.NotificationClient.prepareUpload;
 public class StateReportNotification {
 
     @Value("${report-email}")
-    String emailTo;
+    String recipientEmailAddressesCsv;
 
     @Autowired
     NotificationService notificationService;
@@ -42,23 +43,41 @@ public class StateReportNotification {
 
         EmailTemplateName templateName;
         templateName = AUTOMATED_DAILY_REPORT;
-        if (null == emailTo) {
-            log.error("Email address is not available for template id {} and daily report {} ", templateName, reportName);
-        }
         Map<String, Object> templateVars = new HashMap<>();
         templateVars.put("reportName", reportName);
+
+        if (null == recipientEmailAddressesCsv) {
+            log.error("Email address is not available for template id {} and daily report {} ", templateName, reportName);
+            return;
+        }
+
         if (!prepareNotificationUpload(convertToBytes(preparedData), reportName, retentionPeriodDuration,
             (HashMap<String, Object>) templateVars)) {
             log.error("Failed to prepare upload for daily report {} ", templateName, reportName);
         } else {
+            String[] recipientEmailAddresses = recipientEmailAddressesCsv.split(",");
+
+            Arrays.stream(recipientEmailAddresses)
+                .map(String::trim)
+                .forEach(emailAddress -> sendNotification(emailAddress, templateName, templateVars, reportName));
+        }
+    }
+
+    private void sendNotification(
+        String emailAddress, EmailTemplateName templateName,
+        Map<String, Object> templateVars, String reportName
+    ) {
+        try {
             notificationService.sendEmailWithString(
-                emailTo,
+                emailAddress,
                 templateName,
                 templateVars,
                 ENGLISH,
                 reportName
             );
-            log.info("Successfully sent daily report notification {}", reportName);
+            log.info("Successfully sent daily case state report notification {} to {}", reportName, emailAddress);
+        } catch (Exception e) {
+            log.info("Daily case state report notification failed for {} to {}", reportName, emailAddress);
         }
     }
 
