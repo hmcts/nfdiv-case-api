@@ -73,6 +73,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED = "isFinalOrderOverdue=\"Yes\" AND "
         + "applicant2SolicitorRepresented=\"Yes\" AND doesApplicant2WantToApplyForFinalOrder=\"Yes\"";
 
+    public static final String APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT = "applicant2AppliedForFinalOrderFirst=\"Yes\" OR " + IS_JOINT;
+
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO = "applicant2SolAppliedForFinalOrder=\"Yes\"";
 
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_PBA = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
@@ -81,13 +83,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     public static final String APPLICANT_2_SOL_APPLIED_FOR_FO_HWF = "applicant2SolAppliedForFinalOrder=\"Yes\" AND "
         + "applicant2SolPaymentHowToPay=\"feesHelpWith\"";
 
-    public static final String APPLICANT_2_APPLIED_FOR_FO = "applicant2AppliedForFinalOrder=\"Yes\"";
+    public static final String RESPONDENT_APPLIED_FOR_FO = "applicant2AppliedForFinalOrder=\"Yes\" AND " + IS_SOLE;
 
-    public static final String APPLICANT_2_APPLIED_FOR_FO_CARD = """
+    public static final String RESPONDENT_APPLIED_FOR_FO_CARD = """
         applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FinalOrderFeeOrderSummary=\"*\"
         """;
 
-    public static final String APPLICANT_2_APPLIED_FOR_FO_HWF = """
+    public static final String RESPONDENT_APPLIED_FOR_FO_HWF = """
         applicant2AppliedForFinalOrder=\"Yes\" AND applicant2FoHWFReferenceNumber=\"*\"
         """;
 
@@ -95,13 +97,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
         buildWarningsTab(configBuilder);
+        buildMatchesTab(configBuilder);
         buildStateTab(configBuilder);
         buildAosTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildConditionalOrderTabForApp2Sol(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
-        buildOutcomeOfConditionalOrderTabApp2Sol(configBuilder);
         buildFinalOrderTab(configBuilder);
         buildPaymentTab(configBuilder);
         buildDocumentsTab(configBuilder);
@@ -210,10 +213,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("finalOrderPbaNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
             .field("applicant2SolFinalOrderFeeAccountReference", APPLICANT_2_SOL_APPLIED_FOR_FO)
             .field("app2SolFoHWFReferenceNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_HWF)
-            .label("Applicant2-PaymentHeading", APPLICANT_2_APPLIED_FOR_FO, "### Respondent Final Order")
-            .field("applicant2FinalOrderFeeOrderSummary", APPLICANT_2_APPLIED_FOR_FO_CARD)
-            .field("applicant2FoHWFNeedHelp", APPLICANT_2_APPLIED_FOR_FO_HWF)
-            .field("applicant2FoHWFReferenceNumber", APPLICANT_2_APPLIED_FOR_FO_HWF)
+            .label("Applicant2-PaymentHeading", RESPONDENT_APPLIED_FOR_FO, "### Respondent Final Order")
+            .field("applicant2FinalOrderFeeOrderSummary", RESPONDENT_APPLIED_FOR_FO_CARD)
+            .field("applicant2FoHWFNeedHelp", RESPONDENT_APPLIED_FOR_FO_HWF)
+            .field("applicant2FoHWFReferenceNumber", RESPONDENT_APPLIED_FOR_FO_HWF)
             .field("generalApplicationFeeOrderSummary")
             .field("generalApplicationFeePaymentMethod")
             .field("generalApplicationFeeAccountNumber")
@@ -243,6 +246,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("documents", "Documents")
+            .field("coCertificateOfEntitlementDocument")
             .field("documentsGenerated")
             .field("applicant1DocumentsUploaded")
             .field("applicant2DocumentsUploaded")
@@ -251,7 +255,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
-            .field("coCertificateOfEntitlementDocument")
             .field("coProofOfServiceUploadDocuments");
     }
 
@@ -495,18 +498,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
             "outcomeOfConditionalOrder", "Outcome of Conditional Order")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition(getShowConditionForOutcomeOfConditionalOrderTab());
-        addOutcomeOfConditionalOrderTabFields(tabBuilder);
-    }
-
-    private void buildOutcomeOfConditionalOrderTabApp2Sol(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab(
-                "outcomeOfConditionalOrderApp2Sol", "Outcome of Conditional Order")
-            .forRoles(APPLICANT_2_SOLICITOR)
-            .showCondition("applicationType=\"jointApplication\" AND ("
-                + getShowConditionForOutcomeOfConditionalOrderTab() + ")"
-            );
         addOutcomeOfConditionalOrderTabFields(tabBuilder);
     }
 
@@ -596,22 +589,19 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("doesApplicant2IntendToSwitchToSole")
             .field("dateApplicant2DeclaredIntentionToSwitchToSoleFo")
             .field("finalOrderSwitchedToSole")
-            .label("labelFinalOrderDetails-SoleRespondent",
-                "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
-                "### Respondent")
-            .label("labelFinalOrderDetails-Applicant2",
-                "applicationType=\"jointApplication\"",
-                "### Applicant 2")
+            .label("labelFinalOrderDetails-SoleRespondent", RESPONDENT_APPLIED_FOR_FO, "### Respondent")
+            .label("labelFinalOrderDetails-Applicant2", IS_JOINT,"### Applicant 2")
             .field("applicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("dateApplicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("applicant2SolFinalOrderWhyNeedToApply", "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field("applicant2AppliedForFinalOrderFirst", NEVER_SHOW)
             .field("labelContentApplicant2", NEVER_SHOW)
-            .field("doesApplicant2WantToApplyForFinalOrder")
-            .field("applicant2AppliedForFinalOrder", "applicant2AppliedForFinalOrder=\"Yes\"")
-            .field("applicant2FinalOrderExplanation")
-            .field("applicant2FinalOrderLateExplanation")
-            .field("applicant2FinalOrderStatementOfTruth")
+            .field("doesApplicant2WantToApplyForFinalOrder", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field("applicant2AppliedForFinalOrder", RESPONDENT_APPLIED_FOR_FO)
+            .field("applicant2FinalOrderExplanation", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field("applicant2FinalOrderLateExplanation", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field("applicant2FinalOrderStatementOfTruth", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
             .label("finalOrderSolApp2StatementOfTruth",
                 IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED,
                 "The applicant believes that the facts stated in the application are true.")
@@ -641,5 +631,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 .field("changeOrganisationRequestField", NEVER_SHOW)
                 .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
                 .field("changeOfRepresentatives");
+    }
+
+    private void buildMatchesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("matches", "Matches")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field(CaseData::getCaseMatches);
     }
 }

@@ -21,15 +21,19 @@
         "channel": "online"
       }
     }],
-    "generalApplicationDocument": {
-      "documentLink": {
-        "document_url": "http://localhost:4200/assets/d11",
-        "document_filename": "GA.pdf",
-        "document_binary_url": "GA.pdf/binary"
-      },
-      "documentDateAdded": "2022-05-04",
-      "documentType": "generalApplication"
-    },
+    "generalApplicationDocuments": [
+      {
+        "id": "1234",
+        "value": {
+          "documentLink": {
+            "document_url": "http://localhost:4200/assets/d11",
+            "document_filename": "dummy.file",
+            "document_binary_url": "dummy.file/binary"
+          },
+          "documentType": "generalApplication"
+        }
+      }
+    ],
     "generalApplicationFeeOrderSummary": {
       "Fees": [{
         "id": "1",
@@ -52,10 +56,9 @@
       "value": {
         "documentLink": {
           "document_url": "http://localhost:4200/assets/d11",
-          "document_filename": "GA.pdf",
-          "document_binary_url": "GA.pdf/binary"
+          "document_filename": "dummy.file",
+          "document_binary_url": "dummy.file/binary"
         },
-        "documentDateAdded": "2022-05-04",
         "documentType": "generalApplication"
       }
     }],
