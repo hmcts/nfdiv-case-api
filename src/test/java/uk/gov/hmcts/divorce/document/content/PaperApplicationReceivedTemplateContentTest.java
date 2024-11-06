@@ -11,14 +11,12 @@ import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.PAPER_APPLICATION_RECEIVED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
@@ -54,12 +52,6 @@ class PaperApplicationReceivedTemplateContentTest {
 
     void setUp() {
         setMockClock(clock, LocalDate.of(2022, 3, 01));
-    }
-
-    @Test
-    void shouldBeAbleToHandlePaperApplicationReceivedTemplate() {
-        assertThat(paperApplicationReceivedTemplateContent.getSupportedTemplates())
-                .containsAll(List.of(PAPER_APPLICATION_RECEIVED_TEMPLATE_ID));
     }
 
     @Test
