@@ -168,8 +168,8 @@ class SolicitorRemoveRepresentationTest {
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
-        assertThat(result.getConfirmationHeader()).equals(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
-        assertThat(result.getConfirmationBody()).equals(
+        assertThat(result.getConfirmationHeader()).isEqualTo(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
+        assertThat(result.getConfirmationBody()).isEqualTo(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
         );
     }
@@ -187,8 +187,8 @@ class SolicitorRemoveRepresentationTest {
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
-        assertThat(result.getConfirmationHeader()).equals(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
-        assertThat(result.getConfirmationBody()).equals(
+        assertThat(result.getConfirmationHeader()).isEqualTo(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
+        assertThat(result.getConfirmationBody()).isEqualTo(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
         );
     }
