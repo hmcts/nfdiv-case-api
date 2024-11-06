@@ -348,6 +348,7 @@ public class CommonContent {
                 ? applicant.getSolicitor().getReference()
                 : NOT_PROVIDED);
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         return templateVars;
     }
 

@@ -60,12 +60,11 @@ public class SystemGenerateCurrentStateCountsReport implements Runnable {
         try {
             final BoolQueryBuilder query = boolQuery()
                 .must(termsQuery("state.keyword", List.of(Submitted.name(),AwaitingHWFDecision.name(),
-                OfflineDocumentReceived.name(), NewPaperCase.name(), FinalOrderRequested.name(),
-                GeneralApplicationReceived.name(), GeneralConsiderationComplete.name())));
+                    OfflineDocumentReceived.name(), NewPaperCase.name(), FinalOrderRequested.name(),
+                    GeneralApplicationReceived.name(), GeneralConsiderationComplete.name())));
 
             Map<String, Map<String, Long>> mapByStateAndLastStateModifiedDate =
-                ccdSearchService.searchWithQueryAndGroupByStateAndLastStateModifiedDate(
-                    query, user, serviceAuth);
+                ccdSearchService.countAllCasesByStateAndLastModifiedDate(query, user, serviceAuth);
             String reportName = LocalDateTime.now().format(dateFormatter) + REPORT_CSV;
             ImmutableList.Builder<String> preparedData =
                 prepareReportData(mapByStateAndLastStateModifiedDate, reportName);
@@ -92,9 +91,14 @@ public class SystemGenerateCurrentStateCountsReport implements Runnable {
 
             for (Map.Entry<String, Map<String, Long>> stateEntry : mapByStateAndLastStateModifiedDate.entrySet()) {
                 String state = stateEntry.getKey();
-                for (Map.Entry<String, Long> dateEntry : stateEntry.getValue().entrySet()) {
-                    String lastStateModifiedDate = dateEntry.getKey();
-                    Long count = dateEntry.getValue();
+                var caseCountsSortedByDate = stateEntry.getValue().entrySet()
+                    .stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .toList();
+
+                for (Map.Entry<String, Long> dateCaseCount : caseCountsSortedByDate) {
+                    String lastStateModifiedDate = dateCaseCount.getKey();
+                    Long count = dateCaseCount.getValue();
 
                     fileData.add(state + "," + lastStateModifiedDate + "," + count + ROW_DELIMITER);
                     rowCount++;
