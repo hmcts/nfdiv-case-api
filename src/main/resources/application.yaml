@@ -55,6 +55,7 @@ uk:
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
+          webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
           smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
         templates:
           english:
@@ -180,7 +181,7 @@ uk:
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '0e70b66c-dba8-4b7d-8f2e-9f1d05614310'
             APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '5c9afec8-9cb3-4688-aad9-602800e0f514'
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'd4eb2375-2d61-4a08-88b0-457430056c18'
-            NOC_TO_SOLS_EMAIL_NEW_SOL: 'e19d3227-84eb-4b43-afa0-05de1e089003'
+            NOC_TO_SOLS_EMAIL_NEW_SOL: '77995dff-d5ad-48ee-a3a8-676dd1a878e3'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '98c2a7a4-79c4-410c-909d-10db0108fe8d'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '1b1f508d-2d91-447c-836b-d9ec0da004b1'
             AUTOMATED_DAILY_REPORT: '641cb2b6-5895-46c6-886c-8696096e1a43'
@@ -306,7 +307,7 @@ uk:
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: '09a78fbf-05d5-465a-8ba5-f7c1cae1686b' #TODO - Welsh translation needed
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '7d86d77b-125e-4ea6-ac09-d9aa0b755714'
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'b3786fd2-4a72-4c5f-b4ed-6635647b1520'
-            NOC_TO_SOLS_EMAIL_NEW_SOL: '7fd68c22-f0cc-41ce-af9e-be9f732eab3a'
+            NOC_TO_SOLS_EMAIL_NEW_SOL: '5fb73af1-33e6-4d0c-ab39-6c32263cbf43'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '977d2857-dcf1-4bc2-97fb-f9b1e13af907'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
 s2s-authorised:
