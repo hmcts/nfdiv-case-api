@@ -248,7 +248,7 @@ def generateDefinitions() {
   // Copy the new xlsx file from the resources folder
   dir("${WORKSPACE}/resources") {
     // Ensure the directory exists and has the expected file
-    sh "cp ccd-DIVORCE.xlsx ${WORKSPACE}/build/ccd-config/"
+    sh "cp ccd-OLD-DIVORCE.xlsx ${WORKSPACE}/build/ccd-config/"
   }
 
   // Archive the artifacts, including the newly copied xlsx file

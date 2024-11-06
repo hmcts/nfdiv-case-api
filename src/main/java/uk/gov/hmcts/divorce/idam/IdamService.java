@@ -24,10 +24,10 @@ public class IdamService {
     private String systemUpdatePassword;
 
     @Value("${idam.divorce.username}")
-    private String divorceUserName;
+    private String oldDivorceUserName;
 
     @Value("${idam.divorce.password}")
-    private String divorcePassword;
+    private String oldDivorcePassword;
 
     @Autowired
     private IdamClient idamClient;
@@ -49,9 +49,9 @@ public class IdamService {
         User user = null;
 
         try {
-            user = retrieveUser(getCachedIdamOauth2Token(divorceUserName, divorcePassword));
+            user = retrieveUser(getCachedIdamOauth2Token(oldDivorceUserName, oldDivorcePassword));
         } catch (FeignException e) {
-            log.info("Exception in retrieveOldSystemUpdateUserDetails {} for user:{}", e.getCause(), divorceUserName);
+            log.info("Exception in retrieveOldSystemUpdateUserDetails {} for user:{}", e.getCause(), oldDivorceUserName);
         }
         return user;
     }

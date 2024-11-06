@@ -87,7 +87,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         lib.importJsonDefinition(new File("build/definitions/NFD"));
         lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
 
-        Path filePath = Paths.get("resources/ccd-DIVORCE.xlsx");
+        Path filePath = Paths.get("resources/ccd-OLD-DIVORCE.xlsx");
         byte[] defDivorce = Files.readAllBytes(filePath);
         lib.importDefinition(defDivorce);
     }

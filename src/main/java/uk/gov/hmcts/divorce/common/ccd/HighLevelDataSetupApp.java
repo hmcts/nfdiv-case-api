@@ -52,7 +52,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     @Override
     protected boolean shouldTolerateDataSetupFailure() {
         var env = getDataSetupEnvironment();
-        
+
         return CcdEnvironment.PERFTEST == env || CcdEnvironment.DEMO == env || CcdEnvironment.ITHC == env;
     }
 
@@ -78,7 +78,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
         return List.of(
             "build/ccd-config/ccd-" + NoFaultDivorce.getCaseType() + "-" + environmentName + ".xlsx",
             "build/ccd-config/ccd-" + BulkActionCaseTypeConfig.getCaseType() + "-" + environmentName + ".xlsx",
-            "build/ccd-config/ccd-DIVORCE.xlsx"
+            "build/ccd-config/ccd-OLD-DIVORCE.xlsx"
         );
     }
 }
