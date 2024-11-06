@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.payment.PaymentClient;
 import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
+import uk.gov.hmcts.divorce.systemupdate.service.CoreCaseDataApiWithStateModifiedDate;
 import uk.gov.hmcts.divorce.systemupdate.service.ScheduledTaskRunner;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -40,6 +41,7 @@ import java.util.TimeZone;
         FeesAndPaymentsClient.class,
         DocAssemblyClient.class,
         CoreCaseDataApi.class,
+        CoreCaseDataApiWithStateModifiedDate.class,
         CaseAssignmentApi.class,
         CaseDocumentClientApi.class,
         OrganisationClient.class,
@@ -65,6 +67,8 @@ public class CaseApiApplication implements CommandLineRunner {
         if (System.getenv("TASK_NAME") != null) {
             instance.close();
         }
+
+
     }
 
     @Override
