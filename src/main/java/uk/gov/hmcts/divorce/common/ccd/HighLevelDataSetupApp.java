@@ -50,6 +50,13 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     }
 
     @Override
+    protected boolean shouldTolerateDataSetupFailure() {
+        var env = getDataSetupEnvironment();
+        
+        return CcdEnvironment.PERFTEST == env || CcdEnvironment.DEMO == env || CcdEnvironment.ITHC == env;
+    }
+
+    @Override
     public void addCcdRoles() {
         for (CcdRoleConfig roleConfig : CCD_ROLES_NEEDED_FOR_NFD) {
             try {

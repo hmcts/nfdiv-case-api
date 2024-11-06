@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
@@ -325,6 +327,17 @@ public class CaseData {
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
 
+    @CCD(
+        label = "Case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class}
+    )
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
@@ -569,6 +582,13 @@ public class CaseData {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
             finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
         }
+    }
+
+    @JsonIgnore
+    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
+        return targetList.stream()
+            .map(ListValue::getValue)
+            .collect(toList());
     }
 
     @JsonIgnore
