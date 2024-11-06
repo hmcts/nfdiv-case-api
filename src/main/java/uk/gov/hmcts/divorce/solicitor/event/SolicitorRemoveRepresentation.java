@@ -132,8 +132,8 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
 
         final CaseData data = details.getData();
 
-        String applicantName = isApplicant1Solicitor(details.getId()) ?
-            data.getApplicant1().getFullName() : data.getApplicant2().getFullName();
+        String applicantName = isApplicant1Solicitor(details.getId())
+            ? data.getApplicant1().getFullName() : data.getApplicant2().getFullName();
 
         return SubmittedCallbackResponse.builder()
             .confirmationHeader(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER)

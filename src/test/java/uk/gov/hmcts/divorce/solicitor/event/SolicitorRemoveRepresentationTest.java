@@ -89,8 +89,8 @@ class SolicitorRemoveRepresentationTest {
 
     @Test
     void shouldApplyNoticeOfChangeDecisionForApplicant1() {
-        var details = getCaseDetails();
-        var beforeDetails = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
         details.setId(TEST_CASE_ID);
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(
             Organisation.builder()
@@ -123,8 +123,8 @@ class SolicitorRemoveRepresentationTest {
 
     @Test
     void shouldApplyNoticeOfChangeDecisionForApplicant2() {
-        var details = getCaseDetails();
-        var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
         details.setId(TEST_CASE_ID);
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(
             Organisation.builder()
@@ -157,8 +157,8 @@ class SolicitorRemoveRepresentationTest {
 
     @Test
     void shouldReturnConfirmationTextContainingApplicant1Details() {
-        var details = getCaseDetails();
-        var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant1();
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
@@ -168,16 +168,16 @@ class SolicitorRemoveRepresentationTest {
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
-        assert(result.getConfirmationHeader()).equals(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
-        assert(result.getConfirmationBody()).equals(
+        assertThat(result.getConfirmationHeader()).equals(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
+        assertThat(result.getConfirmationBody()).equals(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
         );
     }
 
     @Test
     void shouldReturnConfirmationTextContainingApplicant2Details() {
-        var details = getCaseDetails();
-        var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant2();
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
@@ -187,8 +187,8 @@ class SolicitorRemoveRepresentationTest {
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
-        assert(result.getConfirmationHeader()).equals(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
-        assert(result.getConfirmationBody()).equals(
+        assertThat(result.getConfirmationHeader()).equals(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
+        assertThat(result.getConfirmationBody()).equals(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
         );
     }
