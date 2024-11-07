@@ -108,8 +108,8 @@ class IdamServiceTest {
     }
 
     private void setDivorceUserCredentials() {
-        ReflectionTestUtils.setField(idamService, "divorceUserName", TEST_SYSTEM_UPDATE_USER_EMAIL);
-        ReflectionTestUtils.setField(idamService, "divorcePassword", TEST_SYSTEM_USER_PASSWORD);
+        ReflectionTestUtils.setField(idamService, "oldDivorceUserName", TEST_SYSTEM_UPDATE_USER_EMAIL);
+        ReflectionTestUtils.setField(idamService, "oldDivorcePassword", TEST_SYSTEM_USER_PASSWORD);
     }
 
     private UserInfo userDetails() {
