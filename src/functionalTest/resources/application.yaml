@@ -11,8 +11,6 @@ azure:
 
 test-url: ${TEST_URL:http://localhost:4013}
 
-report-email: ${REPORT_EMAIL:dummy}
-
 uk:
   gov:
     notify:

@@ -159,7 +159,6 @@ public class CommonContent {
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
         return templateVars;
     }
 
@@ -174,8 +173,6 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
-        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
         return templateVars;
     }
