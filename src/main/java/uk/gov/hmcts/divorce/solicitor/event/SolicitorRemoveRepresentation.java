@@ -108,14 +108,7 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
             : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
         final Function<CaseData, Applicant> applicant = isRepresentingApplicant1 ? CaseData::getApplicant1 : CaseData::getApplicant2;
 
-        details.getData().setNoticeOfChange(
-            NoticeOfChange.builder()
-                .whichApplicant(
-                    isRepresentingApplicant1
-                        ? WhichApplicant.APPLICANT_1
-                        : WhichApplicant.APPLICANT_2
-                ).build()
-        );
+        recordNoticeOfChangePartyInCaseData(details, isRepresentingApplicant1);
 
         removeSolicitorDetailsFromCaseData(applicant.apply(details.getData()), orgPolicyRole);
 
@@ -151,13 +144,24 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
         notificationDispatcher.sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
 
-        String applicantName = wasRepresentingApplicant1
+        String litigantName = wasRepresentingApplicant1
             ? data.getApplicant1().getFullName() : data.getApplicant2().getFullName();
 
         return SubmittedCallbackResponse.builder()
             .confirmationHeader(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER)
-            .confirmationBody(String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicantName))
+            .confirmationBody(String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, litigantName))
             .build();
+    }
+
+    private void recordNoticeOfChangePartyInCaseData(CaseDetails<CaseData, State> details, boolean isRepresentingApplicant1) {
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder()
+                .whichApplicant(
+                    isRepresentingApplicant1
+                        ? WhichApplicant.APPLICANT_1
+                        : WhichApplicant.APPLICANT_2
+                ).build()
+        );
     }
 
     private void removeSolicitorDetailsFromCaseData(Applicant applicant, UserRole solicitorRole) {
