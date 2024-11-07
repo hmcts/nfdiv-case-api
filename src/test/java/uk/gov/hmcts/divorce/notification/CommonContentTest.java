@@ -104,12 +104,13 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(4)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "divorce.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
-                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
@@ -122,12 +123,13 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(4)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "dissolution.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
-                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
@@ -328,8 +330,8 @@ class CommonContentTest {
         assertThat(result)
             .isNotEmpty()
             .contains(
-                entry(PARTNER, "gwraig")
-            );
+                entry(PARTNER, "gwraig"),
+                entry(SMART_SURVEY, result.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
