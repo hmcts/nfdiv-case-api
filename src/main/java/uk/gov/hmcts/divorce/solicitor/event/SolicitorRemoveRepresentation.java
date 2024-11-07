@@ -52,7 +52,8 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
             + "- You will no longer have access to this case\n"
             + "- If the case had been shared with any colleagues, they will also lose access\n"
             + "- Linked cases are not affected. To remove a legal representative from a \n"
-            + "linked case, go to that case and repeat this action";
+            + "linked case, go to that case and repeat this action"
+            + "- All other parties on the case will be notified about the change.";
     public static final String REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER = "# Representative removed\n";
 
     public static final String REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL =
@@ -74,8 +75,6 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
             .event(SOLICITOR_REMOVE_REPRESENTATION)
             .forStates(POST_SUBMISSION_STATES)
             .name("Stop representing client")
-            .showSummary()
-            .showEventNotes()
             .description(SOLICITOR_REMOVE_REPRESENTATION)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
