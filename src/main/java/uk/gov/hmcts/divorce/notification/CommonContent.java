@@ -360,6 +360,7 @@ public class CommonContent {
         templateVars.put(NAME, beforeApplicant.getSolicitor().getName());
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
         return templateVars;
     }
 
