@@ -12,15 +12,18 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
+import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -68,6 +71,10 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
 
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
 
+    private final NocSolRemovedSelfNotifications nocSolRemovedSelfNotifications;
+
+    private final NotificationDispatcher notificationDispatcher;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -101,6 +108,15 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
             : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
         final Function<CaseData, Applicant> applicant = isRepresentingApplicant1 ? CaseData::getApplicant1 : CaseData::getApplicant2;
 
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder()
+                .whichApplicant(
+                    isRepresentingApplicant1
+                        ? WhichApplicant.APPLICANT_1
+                        : WhichApplicant.APPLICANT_2
+                ).build()
+        );
+
         removeSolicitorDetailsFromCaseData(applicant.apply(details.getData()), orgPolicyRole);
 
         changeOfRepresentativeService.buildChangeOfRepresentative(
@@ -130,8 +146,12 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
         log.info("{} submitted callback invoked for Case Id: {}", SOLICITOR_REMOVE_REPRESENTATION, details.getId());
 
         final CaseData data = details.getData();
+        boolean wasRepresentingApplicant1 = data.getNoticeOfChange().getWhichApplicant() == WhichApplicant.APPLICANT_1;
 
-        String applicantName = isApplicant1Solicitor(details.getId())
+        notificationDispatcher.sendNOC(nocSolRemovedSelfNotifications, details.getData(),
+            beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
+
+        String applicantName = wasRepresentingApplicant1
             ? data.getApplicant1().getFullName() : data.getApplicant2().getFullName();
 
         return SubmittedCallbackResponse.builder()

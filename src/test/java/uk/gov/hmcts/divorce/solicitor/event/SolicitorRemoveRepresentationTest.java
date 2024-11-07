@@ -11,15 +11,19 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
+import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
-import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
@@ -70,11 +74,14 @@ class SolicitorRemoveRepresentationTest {
     @Mock
     private CcdAccessService ccdAccessService;
 
-    @InjectMocks
-    private SolicitorRemoveRepresentation noticeOfChange;
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private ApplicantNotification applicantNotification;
+    private NocSolRemovedSelfNotifications nocSolRemovedSelfNotifications;
+
+    @InjectMocks
+    private SolicitorRemoveRepresentation noticeOfChange;
 
     @Test
     void configure() {
@@ -156,18 +163,20 @@ class SolicitorRemoveRepresentationTest {
     }
 
     @Test
-    void shouldReturnConfirmationTextContainingApplicant1Details() {
+    void shouldSendNotificationAndReturnConfirmationTextContainingApplicant1Details() {
         final var details = getCaseDetails();
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant1();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+        );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
-
         var result = noticeOfChange.submitted(details, beforeDetails);
 
+        verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
+            beforeDetails.getData(), details.getId(), true, NoticeType.ORG_REMOVED);
         assertThat(result.getConfirmationHeader()).isEqualTo(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
         assertThat(result.getConfirmationBody()).isEqualTo(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
@@ -175,18 +184,20 @@ class SolicitorRemoveRepresentationTest {
     }
 
     @Test
-    void shouldReturnConfirmationTextContainingApplicant2Details() {
+    void shouldSendNotificationAndReturnConfirmationTextContainingApplicant2Details() {
         final var details = getCaseDetails();
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant2();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).build()
+        );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
-
         var result = noticeOfChange.submitted(details, beforeDetails);
 
+        verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
+            beforeDetails.getData(), details.getId(), false, NoticeType.ORG_REMOVED);
         assertThat(result.getConfirmationHeader()).isEqualTo(REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER);
         assertThat(result.getConfirmationBody()).isEqualTo(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
