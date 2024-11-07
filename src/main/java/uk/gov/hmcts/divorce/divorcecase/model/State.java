@@ -529,7 +529,8 @@ public enum State {
         RequestedInformationSubmitted,
         Submitted,
         Withdrawn,
-        Rejected
+        Rejected,
+        Archived
     ));
 
     public static final State[] AOS_STATES = {
