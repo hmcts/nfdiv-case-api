@@ -74,7 +74,7 @@ public class SolicitorAppliedForConditionalOrderNotification implements Applican
     }
 
     private Map<String, String> solicitorTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, applicant);
 
         templateVars.put(IS_CONDITIONAL_ORDER, YES);
         templateVars.put(IS_FINAL_ORDER, NO);

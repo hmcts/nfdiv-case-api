@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -37,7 +38,8 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
         if (caseData.getApplicationType().isSole()) {
             log.info("Notifying Applicant1's Solicitor that an Answer has been received from the respondent");
 
-            var templateVars = commonContent.basicTemplateVars(caseData, id);
+            Applicant applicant = caseData.getApplicant1();
+            var templateVars = commonContent.basicTemplateVars(caseData, id, applicant);
             templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
             templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
             templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
@@ -51,7 +53,7 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
                 solicitor.getEmail(),
                 SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED,
                 templateVars,
-                caseData.getApplicant1().getLanguagePreference(),
+                applicant.getLanguagePreference(),
                 id
             );
         }

@@ -128,7 +128,7 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getBasicTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
@@ -147,7 +147,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -158,7 +158,7 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getBasicTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
@@ -177,7 +177,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test

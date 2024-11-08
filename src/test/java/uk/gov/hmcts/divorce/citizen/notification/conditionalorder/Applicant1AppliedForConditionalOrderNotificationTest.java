@@ -329,7 +329,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         );
         final Map<String, String> templateVars = getBasicTemplateVars();
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(templateVars);
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(templateVars);
         setMockClock(clock);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -348,7 +348,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -479,7 +479,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
         setSubmittedDate(data, List.of(APPLICANT1));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
         setMockClock(clock);
 
@@ -501,7 +501,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -520,7 +520,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT1));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
@@ -545,7 +545,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     @Test

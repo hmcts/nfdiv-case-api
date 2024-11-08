@@ -115,7 +115,7 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
     }
 
     private Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
-        var templateVars = commonContent.basicTemplateVars(caseData, id);
+        var templateVars = commonContent.basicTemplateVars(caseData, id, caseData.getApplicant2());
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);

@@ -68,7 +68,7 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             .applicationType(JOINT_APPLICATION)
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, caseId)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, caseId, caseData.getApplicant1())).thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(caseId)).thenReturn(SIGN_IN_DIVORCE_TEST_URL);
 
         notification.sendToApplicant1Solicitor(caseData, caseId);
@@ -81,7 +81,7 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             eq(caseId)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(caseData, caseId);
+        verify(commonContent).basicTemplateVars(caseData, caseId, caseData.getApplicant1());
         verify(commonContent).getProfessionalUsersSignInUrl(caseId);
     }
 
@@ -109,7 +109,7 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             .applicationType(JOINT_APPLICATION)
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, caseId)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, caseId, caseData.getApplicant2())).thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(caseId)).thenReturn(SIGN_IN_DIVORCE_TEST_URL);
 
         notification.sendToApplicant2Solicitor(caseData, caseId);
@@ -122,7 +122,7 @@ class SolicitorAppliedForConditionalOrderNotificationTest {
             eq(caseId)
         );
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(caseData, caseId);
+        verify(commonContent).basicTemplateVars(caseData, caseId, caseData.getApplicant2());
         verify(commonContent).getProfessionalUsersSignInUrl(caseId);
     }
 }

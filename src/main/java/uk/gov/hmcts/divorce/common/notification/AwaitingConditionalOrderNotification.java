@@ -145,7 +145,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant);
 
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));

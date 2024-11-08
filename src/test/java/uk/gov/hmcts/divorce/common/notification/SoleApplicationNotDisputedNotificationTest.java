@@ -205,7 +205,7 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getMainTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getMainTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
         soleApplicationNotDisputedNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -228,7 +228,7 @@ public class SoleApplicationNotDisputedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -238,7 +238,7 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         ReflectionTestUtils.setField(soleApplicationNotDisputedNotification, "holdingOffsetDays", HOLDING_OFFSET_DAYS);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getMainTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getMainTemplateVars());
 
         soleApplicationNotDisputedNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -268,7 +268,7 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         ReflectionTestUtils.setField(soleApplicationNotDisputedNotification, "holdingOffsetDays", HOLDING_OFFSET_DAYS);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getMainTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getMainTemplateVars());
 
         soleApplicationNotDisputedNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 

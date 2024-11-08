@@ -111,7 +111,7 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -123,7 +123,7 @@ class ApplicationSubmittedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -137,7 +137,7 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -149,7 +149,7 @@ class ApplicationSubmittedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     @Test
