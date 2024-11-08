@@ -12,7 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
-import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_REMOVE_REPRESENTATION = "solicitor-remove-representation";
 
@@ -71,7 +71,7 @@ public class SolicitorRemoveRepresentation implements CCDConfig<CaseData, State,
 
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
 
-    private final NocSolRemovedSelfNotifications nocSolRemovedSelfNotifications;
+    private final NocSolRemovedSelfAsRepresentativeNotification nocSolRemovedSelfNotifications;
 
     private final NotificationDispatcher notificationDispatcher;
 

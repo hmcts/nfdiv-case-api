@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
-import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
@@ -39,9 +39,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICI
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorRemoveRepresentation.REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorRemoveRepresentation.REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorRemoveRepresentation.SOLICITOR_REMOVE_REPRESENTATION;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.SOLICITOR_REMOVE_REPRESENTATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedB
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorRemoveRepresentationTest {
+class SolicitorStopRepresentingClientTest {
 
     @Mock
     private NoticeOfChangeService noticeOfChangeService;
@@ -78,10 +78,10 @@ class SolicitorRemoveRepresentationTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private NocSolRemovedSelfNotifications nocSolRemovedSelfNotifications;
+    private NocSolRemovedSelfAsRepresentativeNotification nocSolRemovedSelfNotifications;
 
     @InjectMocks
-    private SolicitorRemoveRepresentation noticeOfChange;
+    private SolicitorStopRepresentingClient noticeOfChange;
 
     @Test
     void configure() {

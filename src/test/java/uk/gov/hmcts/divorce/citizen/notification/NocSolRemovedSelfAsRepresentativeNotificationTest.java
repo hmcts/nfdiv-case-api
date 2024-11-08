@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 
 @ExtendWith(MockitoExtension.class)
-class NocSolRemovedSelfNotificationsTest {
+class NocSolRemovedSelfAsRepresentativeNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -43,7 +43,7 @@ class NocSolRemovedSelfNotificationsTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private NocSolRemovedSelfNotifications notificationHandler;
+    private NocSolRemovedSelfAsRepresentativeNotification notificationHandler;
 
     private Map<String, String> getSolTemplateVars(Applicant applicant) {
         Map<String, String> templateVars = getTemplateVars(applicant);
@@ -72,7 +72,7 @@ class NocSolRemovedSelfNotificationsTest {
 
         verify(notificationService).sendEmail(
             eq(caseData.getApplicant1().getSolicitor().getEmail()),
-            eq(EmailTemplateName.NOC_TO_SOLS_EMAIL_OLD_SOL_REMOVED_SELF),
+            eq(EmailTemplateName.NOC_TO_SOLS_EMAIL_SOL_REMOVED_SELF_AS_REPRESENTATIVE),
             anyMap(),
             eq(caseData.getApplicant1().getLanguagePreference()),
             eq(id)
@@ -93,7 +93,7 @@ class NocSolRemovedSelfNotificationsTest {
 
         verify(notificationService).sendEmail(
             eq(caseData.getApplicant2().getSolicitor().getEmail()),
-            eq(EmailTemplateName.NOC_TO_SOLS_EMAIL_OLD_SOL_REMOVED_SELF),
+            eq(EmailTemplateName.NOC_TO_SOLS_EMAIL_SOL_REMOVED_SELF_AS_REPRESENTATIVE),
             anyMap(),
             eq(caseData.getApplicant2().getLanguagePreference()),
             eq(id)
