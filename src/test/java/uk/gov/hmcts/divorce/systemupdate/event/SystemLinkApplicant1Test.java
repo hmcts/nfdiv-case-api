@@ -56,7 +56,7 @@ public class SystemLinkApplicant1Test {
         final CaseData caseData = caseData();
         caseData.setCaseInviteApp1(
             CaseInviteApp1.builder()
-                .accessCode("D8BC9AQR")
+                .accessCodeApplicant1("D8BC9AQR")
                 .applicant1UserId("Applicant1Id")
                 .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -68,7 +68,7 @@ public class SystemLinkApplicant1Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemLinkApplicant1.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getCaseInviteApp1().accessCode()).isNull();
+        assertThat(response.getData().getCaseInviteApp1().accessCodeApplicant1()).isNull();
         assertThat(response.getData().getApplicant1().getOffline()).isEqualTo(YesOrNo.NO);
         verify(ccdAccessService).linkApplicant1(eq("auth header"), eq(TEST_CASE_ID), eq("Applicant1Id"));
     }

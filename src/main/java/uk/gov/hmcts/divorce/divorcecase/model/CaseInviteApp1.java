@@ -5,7 +5,7 @@ import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 
 public record CaseInviteApp1(
     String applicant1InviteEmailAddress,
-    String accessCode,
+    String accessCodeApplicant1,
     String applicant1UserId) {
 
     @Builder()

@@ -54,7 +54,7 @@ class InviteApplicantToCaseNotificationTest {
 
         CaseInviteApp1 invite = CaseInviteApp1.builder()
             .applicant1InviteEmailAddress(data.getApplicant1().getEmail())
-            .accessCode("12345678")
+            .accessCodeApplicant1("12345678")
             .build();
         data.setCaseInviteApp1(invite);
 

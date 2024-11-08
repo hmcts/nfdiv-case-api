@@ -134,6 +134,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
         final CaseData caseDataBefore = CaseData.builder()
             .applicant2(Applicant.builder()
                 .offline(YES)
+                .email("test@test.com")
                 .build())
             .build();
 
@@ -172,7 +173,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, detailsBefore);
 
         verify(emailUpdateService).processUpdateForApplicant2(details);
-        verify(emailUpdateService).sendNotificationToOldEmail(detailsBefore, TEST_USER_EMAIL, true);
+        verify(emailUpdateService).sendNotificationToOldEmail(detailsBefore, TEST_USER_EMAIL, false);
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
 

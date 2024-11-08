@@ -134,6 +134,7 @@ public class CaseworkerUpdateApplicant1EmailTest {
         final CaseData caseDataBefore = CaseData.builder()
             .applicant1(Applicant.builder()
                 .offline(YES)
+                .email("test@test.com")
                 .build())
             .build();
 
@@ -158,7 +159,7 @@ public class CaseworkerUpdateApplicant1EmailTest {
                 .email(TEST_USER_EMAIL)
                 .build())
             .caseInviteApp1(CaseInviteApp1.builder()
-                .accessCode("ABCD1234")
+                .accessCodeApplicant1("ABCD1234")
                 .applicant1InviteEmailAddress(TEST_USER_EMAIL)
                 .build())
             .build();

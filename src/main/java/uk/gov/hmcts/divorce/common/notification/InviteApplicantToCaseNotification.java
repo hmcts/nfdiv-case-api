@@ -37,7 +37,7 @@ public class InviteApplicantToCaseNotification {
         Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
 
         Map<String, String> templateVars = templateVars(caseData,caseId,applicant,partner);
-        templateVars.put(ACCESS_CODE, isApplicant1 ? caseData.getCaseInviteApp1().accessCode()
+        templateVars.put(ACCESS_CODE, isApplicant1 ? caseData.getCaseInviteApp1().accessCodeApplicant1()
             : caseData.getCaseInvite().accessCode());
 
         notificationService.sendEmail(

@@ -40,9 +40,9 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processUpdateForApplicant1(details);
 
         verify(inviteApplicantToCaseNotification).send(caseData, TEST_CASE_ID, true);
-        assertThat(newDetails.getData().getCaseInviteApp1().accessCode()).isNotBlank();
-        assertThat(newDetails.getData().getCaseInviteApp1().accessCode().length()).isEqualTo(8);
-        assertThat(newDetails.getData().getCaseInviteApp1().accessCode()).doesNotContain("I", "O", "U", "0", "1");
+        assertThat(newDetails.getData().getCaseInviteApp1().accessCodeApplicant1()).isNotBlank();
+        assertThat(newDetails.getData().getCaseInviteApp1().accessCodeApplicant1().length()).isEqualTo(8);
+        assertThat(newDetails.getData().getCaseInviteApp1().accessCodeApplicant1()).doesNotContain("I", "O", "U", "0", "1");
     }
 
     @Test
@@ -53,7 +53,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processUpdateForApplicant1(details);
+        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processUpdateForApplicant2(details);
 
         verify(inviteApplicantToCaseNotification).send(caseData, TEST_CASE_ID, false);
         assertThat(newDetails.getData().getCaseInvite().accessCode()).isNotBlank();
