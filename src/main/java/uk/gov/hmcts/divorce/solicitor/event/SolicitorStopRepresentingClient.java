@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_REMOVE_REPRESENTATION = "solicitor-remove-representation";
+    public static final String SOLICITOR_STOP_REPRESENTING_CLIENT = "solicitor-stop-representation";
 
     private static final String WARNING_LABEL = "### If you're no longer representing a client \n\n"
             + "- You will no longer have access to this case\n"
@@ -79,10 +79,10 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         new PageBuilder(configBuilder
-            .event(SOLICITOR_REMOVE_REPRESENTATION)
+            .event(SOLICITOR_STOP_REPRESENTING_CLIENT)
             .forStates(POST_SUBMISSION_STATES)
             .name("Stop representing client")
-            .description(SOLICITOR_REMOVE_REPRESENTATION)
+            .description(SOLICITOR_STOP_REPRESENTING_CLIENT)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -99,7 +99,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_REMOVE_REPRESENTATION, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_STOP_REPRESENTING_CLIENT, details.getId());
 
         final boolean isRepresentingApplicant1 = isApplicant1Solicitor(details.getId());
         final UserRole orgPolicyRole = isRepresentingApplicant1 ? APPLICANT_1_SOLICITOR : APPLICANT_2_SOLICITOR;
@@ -115,7 +115,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         changeOfRepresentativeService.buildChangeOfRepresentative(
             details.getData(),
             beforeDetails.getData(),
-            ChangeOfRepresentationAuthor.SOLICITOR_REMOVE_REPRESENTATION.getValue(),
+            ChangeOfRepresentationAuthor.SOLICITOR_STOP_REPRESENTING_CLIENT.getValue(),
             isRepresentingApplicant1
         );
 
@@ -136,7 +136,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} submitted callback invoked for Case Id: {}", SOLICITOR_REMOVE_REPRESENTATION, details.getId());
+        log.info("{} submitted callback invoked for Case Id: {}", SOLICITOR_STOP_REPRESENTING_CLIENT, details.getId());
 
         final CaseData data = details.getData();
         boolean wasRepresentingApplicant1 = data.getNoticeOfChange().getWhichApplicant() == WhichApplicant.APPLICANT_1;

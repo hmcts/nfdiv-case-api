@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICI
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.REPRESENTATIVE_REMOVED_CONFIRMATION_HEADER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.SOLICITOR_REMOVE_REPRESENTATION;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStopRepresentingClient.SOLICITOR_STOP_REPRESENTING_CLIENT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -91,7 +91,7 @@ class SolicitorStopRepresentingClientTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_REMOVE_REPRESENTATION);
+            .contains(SOLICITOR_STOP_REPRESENTING_CLIENT);
     }
 
     @Test
@@ -120,7 +120,7 @@ class SolicitorStopRepresentingClientTest {
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(
             details.getData(),
             beforeDetails.getData(),
-            ChangeOfRepresentationAuthor.SOLICITOR_REMOVE_REPRESENTATION.getValue(),
+            ChangeOfRepresentationAuthor.SOLICITOR_STOP_REPRESENTING_CLIENT.getValue(),
             true
         );
         verify(noticeOfChangeService).revokeCaseAccess(TEST_CASE_ID, beforeDetails.getData().getApplicant1(), roles);
@@ -154,7 +154,7 @@ class SolicitorStopRepresentingClientTest {
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(
             details.getData(),
             beforeDetails.getData(),
-            ChangeOfRepresentationAuthor.SOLICITOR_REMOVE_REPRESENTATION.getValue(),
+            ChangeOfRepresentationAuthor.SOLICITOR_STOP_REPRESENTING_CLIENT.getValue(),
             false
         );
         verify(noticeOfChangeService).revokeCaseAccess(TEST_CASE_ID, beforeDetails.getData().getApplicant2(), roles);
