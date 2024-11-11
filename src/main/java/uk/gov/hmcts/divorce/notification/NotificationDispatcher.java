@@ -135,9 +135,11 @@ public class NotificationDispatcher {
         RequestForInformationResponseParties requestForInformationResponseParties =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().getRequestForInformationResponseParties();
 
-        if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)) {
+        if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)
+            || RequestForInformationResponseParties.APPLICANT1SOLICITOR.equals(requestForInformationResponseParties)) {
             requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
-        } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)) {
+        } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)
+            || RequestForInformationResponseParties.APPLICANT2SOLICITOR.equals(requestForInformationResponseParties)) {
             requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);
         } else {
             throw new NotificationTemplateException(
