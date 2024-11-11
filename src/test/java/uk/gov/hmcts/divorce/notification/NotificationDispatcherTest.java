@@ -540,7 +540,7 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1() {
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1WhenCitizenResponds() {
         CaseData caseData = caseData();
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
         caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
@@ -554,7 +554,22 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1SolicitorWhenRepresented() {
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1WhenSolicitorResponds() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2SOLICITOR);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1SolicitorWhenRepresentedAndCitizenResponds() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
@@ -569,7 +584,23 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2() {
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant1SolicitorWhenRepresentedAndSolicitorResponds() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.setApplicant2(applicantRepresentedBySolicitor());
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2SOLICITOR);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2WhenCitizenResponds() {
         CaseData caseData = caseData();
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
@@ -583,13 +614,44 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2SolicitorWhenRepresented() {
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2WhenSolicitorResponds() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1SOLICITOR);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2SolicitorWhenRepresentedAndCitizenResponds() {
         CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
         caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
         RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
         requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationPartnerResponseEmailToApplicant2SolicitorWhenRepresentedAndSolicitorResponds() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1SOLICITOR);
         caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
 
         notificationDispatcher.sendRequestForInformationResponsePartnerNotification(applicantNotification, caseData, TEST_CASE_ID);
