@@ -167,7 +167,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .label("LabelHorizontalLine1", HORIZONTAL_RULE)
             .done();
@@ -188,7 +187,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
                 .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .label("LabelHorizontalLine2", HORIZONTAL_RULE)
             .done();
@@ -224,13 +222,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         if (!solicitorValidationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(solicitorValidationErrors)
-                .build();
-        }
-
-        if (!validApplicantContactDetails(caseDataBefore, caseData)) {
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
                 .build();
         }
 
@@ -298,27 +289,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         });
 
         return solicitorDetailRemovedErrors;
-    }
-
-    private boolean validApplicantContactDetails(CaseData caseDataBefore, CaseData caseData) {
-
-        if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
-            if (!caseDataBefore.getApplicant1().isRepresented()
-                && !caseData.getApplicant1().isApplicantOffline()
-                && (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank())) {
-                return false;
-            }
-        }
-
-        if (caseDataBefore.getApplicant2().getEmail() != null && !caseDataBefore.getApplicant2().getEmail().isBlank()) {
-            if (!caseDataBefore.getApplicant2().isRepresented()
-                && !caseData.getApplicant2().isApplicantOffline()
-                && (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank())) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private boolean isValidCombination(final CaseData caseData) {

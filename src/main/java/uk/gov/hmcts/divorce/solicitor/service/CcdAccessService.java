@@ -91,6 +91,8 @@ public class CcdAccessService {
     public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
+        removeUsersWithRole(caseId, List.of(APPLICANT_2.getRole()));
+
         caseAssignmentApi.addCaseUserRoles(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
@@ -103,6 +105,8 @@ public class CcdAccessService {
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void linkApplicant1(String caseworkerUserToken, Long caseId, String applicant1UserId) {
         User systemUpdateUser = idamService.retrieveUser(caseworkerUserToken);
+
+        removeUsersWithRole(caseId, List.of(CREATOR.getRole()));
 
         caseAssignmentApi.addCaseUserRoles(
             systemUpdateUser.getAuthToken(),

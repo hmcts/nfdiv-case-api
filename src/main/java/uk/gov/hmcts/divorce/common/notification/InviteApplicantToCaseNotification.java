@@ -28,8 +28,12 @@ public class InviteApplicantToCaseNotification {
     @Autowired
     private NotificationService notificationService;
 
-    public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
-    public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+    private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
+    private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+    private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
+    private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
+    private static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
+    private static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
 
     public void send(final CaseData caseData, final Long caseId, final boolean isApplicant1) {
 
@@ -39,6 +43,23 @@ public class InviteApplicantToCaseNotification {
         Map<String, String> templateVars = templateVars(caseData,caseId,applicant,partner);
         templateVars.put(ACCESS_CODE, isApplicant1 ? caseData.getCaseInviteApp1().accessCodeApplicant1()
             : caseData.getCaseInvite().accessCode());
+
+        if (isApplicant1) {
+            templateVars.put(CREATE_ACCOUNT_LINK,
+                config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
+        } else {
+            if (caseData.getApplicationType().isSole()) {
+                templateVars.put(CREATE_ACCOUNT_LINK,
+                    config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL
+                        : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
+            } else {
+                templateVars.put(CREATE_ACCOUNT_LINK,
+                    config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL
+                        : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+            }
+        }
+
+
 
         notificationService.sendEmail(
             applicant.getEmail(),
