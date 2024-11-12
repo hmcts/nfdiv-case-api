@@ -22,7 +22,8 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     username: ${NFD_DB_USERNAME:postgres}
     password: ${NFD_DB_PASSWORD:postgres}
-
+  flyway:
+    enabled: ${DATABASE_MIGRATION:false}
   application:
     name: NFDIV Case API
   config:
