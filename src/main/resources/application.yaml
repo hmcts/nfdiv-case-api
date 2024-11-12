@@ -18,10 +18,11 @@ management:
       enabled: ${ENABLE_CDAM:true}
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:6432/nfd
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${NFD_DB_HOST:localhost}:${NFD_DB_PORT:6432}/${NFD_DB_NAME:nfd}${CMC_DB_CONNECTION_OPTIONS:}
     type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    username: ${NFD_DB_USERNAME:-postgres}
+    password: ${NFD_DB_PASSWORD:-postgres}
 
   application:
     name: NFDIV Case API
