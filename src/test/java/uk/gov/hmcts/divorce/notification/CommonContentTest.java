@@ -64,6 +64,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSION
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_CY_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
@@ -102,12 +104,13 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(4)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "divorce.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
-                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
@@ -120,12 +123,13 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(4)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "dissolution.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
-                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
@@ -326,8 +330,8 @@ class CommonContentTest {
         assertThat(result)
             .isNotEmpty()
             .contains(
-                entry(PARTNER, "gwraig")
-            );
+                entry(PARTNER, "gwraig"),
+                entry(SMART_SURVEY, result.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
@@ -671,6 +675,36 @@ class CommonContentTest {
         assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
         assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+    }
+
+    @Test
+    void testNocSolsTemplateVarsEnglishContactForm() {
+        Solicitor solicitor = Solicitor.builder()
+            .name("Solicitor Name")
+            .build();
+        Applicant applicant = Applicant.builder()
+            .solicitor(solicitor)
+            .languagePreferenceWelsh(NO)
+            .build();
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_URL, "https://engUrl"));
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+
+        assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://engUrl");
+    }
+
+    @Test
+    void testNocSolsTemplateVarsWelshContactForm() {
+        Solicitor solicitor = Solicitor.builder()
+            .name("Solicitor Name")
+            .build();
+        Applicant applicant = Applicant.builder()
+            .solicitor(solicitor)
+            .languagePreferenceWelsh(YES)
+            .build();
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_CY_URL, "https://welshUrl"));
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+
+        assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://welshUrl");
     }
 }
 

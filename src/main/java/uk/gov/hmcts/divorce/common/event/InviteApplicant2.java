@@ -15,8 +15,10 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.EnumSet;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -45,7 +47,7 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder
             .event(INVITE_APPLICANT_2)
-            .forStateTransition(Draft, AwaitingApplicant2Response)
+            .forStateTransition(EnumSet.of(Draft, Archived), AwaitingApplicant2Response)
             .name("Invite Applicant 2")
             .description("Invite Applicant 2")
             .showCondition("applicationType=\"jointApplication\"")

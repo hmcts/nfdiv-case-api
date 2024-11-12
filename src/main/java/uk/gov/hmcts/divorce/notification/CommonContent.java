@@ -62,6 +62,7 @@ public class CommonContent {
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL = "signin url";
     public static final String WEBFORM_URL = "webformUrl";
+    public static final String WEBFORM_CY_URL = "webformCyUrl";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String SIGN_IN_PROFESSIONAL_USERS_URL = "signInProfessionalUsersUrl";
@@ -133,6 +134,9 @@ public class CommonContent {
     public static final String SMART_SURVEY = "smartSurvey";
     public static final String GENERAL_FEE = "generalFee";
     public static final String FINAL_ORDER_FEE = "fee";
+    public static final String WEB_FORM_TEXT = "webformText";
+    public static final String CONTACT_TEXT = "[Contact us using our online form]";
+    public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
 
     @Autowired
     private DocmosisCommonContent docmosisCommonContent;
@@ -155,6 +159,7 @@ public class CommonContent {
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(SMART_SURVEY, getSmartSurvey());
         return templateVars;
     }
 
@@ -169,6 +174,8 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
+        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
         return templateVars;
     }
@@ -342,6 +349,7 @@ public class CommonContent {
                 ? applicant.getSolicitor().getReference()
                 : NOT_PROVIDED);
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         return templateVars;
     }
 
@@ -371,5 +379,13 @@ public class CommonContent {
     public void setIsDivorceAndIsDissolutionVariables(CaseData caseData, Map<String, String> templateVars) {
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+    }
+
+    public String getContactWebFormText(LanguagePreference languagePreference) {
+        if (languagePreference == WELSH) {
+            return CONTACT_TEXT_WELSH + "(" + config.getTemplateVars().get(WEBFORM_CY_URL) + ")";
+        } else {
+            return CONTACT_TEXT + "(" + config.getTemplateVars().get(WEBFORM_URL) + ")";
+        }
     }
 }
