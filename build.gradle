@@ -1,3 +1,5 @@
+import uk.gov.hmcts.rse.ManifestTask
+
 buildscript {
   repositories {
     mavenLocal()
@@ -256,6 +258,8 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
+  implementation "org.flywaydb:flyway-core:9.22.3"
+
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -282,8 +286,11 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
   implementation group: 'org.springframework.retry', name: 'spring-retry'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.1.4'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+  implementation 'com.zaxxer:HikariCP:6.0.0'
 
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.25'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.1-RELEASE'
@@ -293,6 +300,8 @@ dependencies {
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  cftlibTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
   testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
@@ -430,6 +439,8 @@ bootWithCCD {
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
     environment 'XUI_MO_PORT', '3009'
+    environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
+    environment 'CCD_POCS_URL', 'http://localhost:4013'
   }
 }
 

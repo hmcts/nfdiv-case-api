@@ -116,7 +116,8 @@ public class RetiredFields {
             );
         }
 
-        data.put("dataVersion", getVersion());
+        // SOW014 - old data migration mechanism likely obsolete in the new system
+        //        data.put("dataVersion", getVersion());
 
         return data;
     }

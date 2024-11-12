@@ -17,6 +17,12 @@ management:
     case-document-am-api:
       enabled: ${ENABLE_CDAM:true}
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:6432/nfd
+    username: postgres
+    password: postgres
+    type: com.zaxxer.hikari.HikariDataSource
+
   application:
     name: NFDIV Case API
   config:
