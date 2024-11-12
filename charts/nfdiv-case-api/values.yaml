@@ -5,6 +5,9 @@ nfdiv-frontend:
 idam-pr:
   enabled: false
 
+ccd:
+  enabled: false
+
 ccd-def-cleanup:
   enabled: false
 

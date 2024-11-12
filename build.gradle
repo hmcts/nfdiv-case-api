@@ -470,6 +470,7 @@ cftlibTest {
   environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
   environment 'CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES', 'nfdiv_case_api'
   environment 'DATA_STORE_S2S_AUTHORISED_SERVICES', 'ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service'
+  environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
 }
 
 tasks.withType(Test).configureEach {
