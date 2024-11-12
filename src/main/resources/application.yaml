@@ -20,8 +20,8 @@ spring:
   datasource:
     url: jdbc:postgresql://${NFD_DB_HOST:localhost}:${NFD_DB_PORT:6432}/${NFD_DB_NAME:nfd}${CMC_DB_CONNECTION_OPTIONS:}
     driverClassName: org.postgresql.Driver
-    username: ${NFD_DB_USERNAME:-postgres}
-    password: ${NFD_DB_PASSWORD:-postgres}
+    username: ${NFD_DB_USERNAME:postgres}
+    password: ${NFD_DB_PASSWORD:postgres}
 
   application:
     name: NFDIV Case API
