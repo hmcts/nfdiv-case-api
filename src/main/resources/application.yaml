@@ -19,7 +19,7 @@ management:
 spring:
   datasource:
     url: jdbc:postgresql://${NFD_DB_HOST:localhost}:${NFD_DB_PORT:6432}/${NFD_DB_NAME:nfd}${CMC_DB_CONNECTION_OPTIONS:}
-    driverClassName: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
     username: ${NFD_DB_USERNAME:postgres}
     password: ${NFD_DB_PASSWORD:postgres}
 
