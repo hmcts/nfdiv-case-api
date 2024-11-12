@@ -91,6 +91,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .should(QueryBuilders.termQuery(field, name + " ")) // Append space
             .should(QueryBuilders.termQuery(field, " " + name + " ")); // Prepend and append space
     }
+
     List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
                                                                            MarriageDetails marriageDetails) {
         //NFDIV-4512 adding extra searches to cope with prepended and trailing space on the names
