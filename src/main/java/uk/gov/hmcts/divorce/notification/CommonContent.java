@@ -164,7 +164,7 @@ public class CommonContent {
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
-        getPhoneAndOpeningTimes(applicant, templateVars);
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -182,7 +182,7 @@ public class CommonContent {
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
-        getPhoneAndOpeningTimes(applicant, templateVars);
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
 
         return templateVars;
     }
@@ -218,7 +218,7 @@ public class CommonContent {
         templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
 
-        getPhoneAndOpeningTimes(applicant, templateVars);
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -397,8 +397,8 @@ public class CommonContent {
         }
     }
 
-    public void getPhoneAndOpeningTimes(Applicant applicant, Map<String, String> templateVars) {
-        if (applicant == null || applicant.getLanguagePreference() != WELSH) {
+    public void getPhoneAndOpeningTimes(LanguagePreference recipientLanguagePreference, Map<String, String> templateVars) {
+        if (recipientLanguagePreference != WELSH) {
             templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         } else {
             templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
