@@ -143,7 +143,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
-        commonContent.getPhoneAndOpeningTimes(respondent.getLanguagePreference(), templateVars);
+        commonContent.getPhoneAndOpeningTimes(respondent, templateVars);
         return templateVars;
     }
 }
