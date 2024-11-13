@@ -55,8 +55,7 @@ class CaseworkerAddNoteTest {
     @InjectMocks
     private CaseworkerAddNote caseworkerAddNote;
 
-    @Ignore
-    @Test
+
     void shouldAddConfigurationToConfigBuilder() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
@@ -67,8 +66,7 @@ class CaseworkerAddNoteTest {
             .contains(CASEWORKER_ADD_NOTE);
     }
 
-    @Ignore
-    @Test
+
     public void shouldSuccessfullyAddCaseNoteToCaseDataWhenThereAreNoExistingCaseNotes() {
         final CaseData caseData = caseData();
         caseData.setNote("This is a test note");
