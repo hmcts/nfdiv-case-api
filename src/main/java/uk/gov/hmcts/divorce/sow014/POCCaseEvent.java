@@ -1,8 +1,9 @@
 package uk.gov.hmcts.divorce.sow014;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.Map;
 import lombok.Data;
+
+import java.util.Map;
 
 @Data
 public class POCCaseEvent {
