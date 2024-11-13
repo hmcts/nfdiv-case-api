@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
