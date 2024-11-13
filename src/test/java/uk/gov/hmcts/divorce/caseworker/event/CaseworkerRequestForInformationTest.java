@@ -416,7 +416,9 @@ class CaseworkerRequestForInformationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -433,7 +435,9 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant1(applicantRepresentedBySolicitor());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -450,7 +454,9 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant1(applicantRepresentedBySolicitor());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_SOLICITOR_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_SOLICITOR_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -468,7 +474,9 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant2(getApplicant(MALE));
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -486,7 +494,9 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant2(applicantRepresentedBySolicitor());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -504,7 +514,9 @@ class CaseworkerRequestForInformationTest {
         caseData.setApplicant2(applicantRepresentedBySolicitor());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_SOLICITOR_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_SOLICITOR_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -520,6 +532,38 @@ class CaseworkerRequestForInformationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_PROVIDED_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorWhenEmptyOtherEmailOnSoleCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress("");
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_PROVIDED_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorWhenShortOtherEmailOnSoleCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress("a@b.c");
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -891,7 +935,9 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -910,7 +956,9 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -929,7 +977,9 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_SOLICITOR_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_SOLICITOR_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -949,7 +999,9 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -969,7 +1021,9 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_USER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_USER_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -989,7 +1043,9 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_SOLICITOR_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(
+            TEST_SOLICITOR_EMAIL.toUpperCase()
+        );
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -1007,6 +1063,42 @@ class CaseworkerRequestForInformationTest {
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
             RequestForInformationJointParties.OTHER
         );
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_PROVIDED_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorWhenEmptyOtherEmailOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
+            RequestForInformationJointParties.OTHER
+        );
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress("");
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_PROVIDED_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorWhenShortOtherEmailOnJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
+            RequestForInformationJointParties.OTHER
+        );
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress("a@b.c");
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
