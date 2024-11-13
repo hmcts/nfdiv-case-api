@@ -35,10 +35,10 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformat
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NOT_ONLINE_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NO_VALID_EMAIL_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NO_VALID_EMAIL_PROVIDED_ERROR;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.SOLICITOR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.THE_APPLICANT;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -96,8 +96,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + THE_APPLICANT);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + THE_APPLICANT,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -112,8 +115,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + THE_APPLICANT + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + THE_APPLICANT + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -128,8 +134,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_1,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -144,8 +153,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -161,8 +173,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -177,8 +192,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -194,8 +212,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -210,8 +231,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -227,8 +251,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_1,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -244,8 +271,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -262,10 +292,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NOT_ONLINE_ERROR + APPLICANT_1,
-            NOT_ONLINE_ERROR + APPLICANT_2
+            NOT_ONLINE_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -283,10 +314,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR,
-            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR
+            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -304,10 +336,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NOT_ONLINE_ERROR + APPLICANT_1,
-            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR
+            NOT_ONLINE_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -325,10 +358,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NOT_ONLINE_ERROR + APPLICANT_1 + SOLICITOR,
-            NOT_ONLINE_ERROR + APPLICANT_2
+            NOT_ONLINE_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -358,8 +392,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + THE_APPLICANT,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -392,8 +429,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + THE_APPLICANT + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -426,7 +466,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -445,7 +485,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -464,7 +504,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -484,7 +524,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -504,7 +544,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -524,7 +564,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -600,8 +640,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_1,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -634,8 +677,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -666,8 +712,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -700,8 +749,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -734,10 +786,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NO_VALID_EMAIL_ERROR + APPLICANT_1,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2
+            NO_VALID_EMAIL_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -755,8 +808,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -773,8 +829,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_1,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -814,10 +873,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -838,8 +898,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -859,8 +922,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR);
+        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).contains(
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+        );
     }
 
     @Test
@@ -880,10 +946,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NO_VALID_EMAIL_ERROR + APPLICANT_1,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR
+            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -904,10 +971,11 @@ class CaseworkerRequestForInformationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
+        assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors()).contains(
             NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2
+            NO_VALID_EMAIL_ERROR + APPLICANT_2,
+            USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
         );
     }
 
@@ -945,7 +1013,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -966,7 +1034,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -987,7 +1055,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -1009,7 +1077,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -1031,7 +1099,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
@@ -1053,7 +1121,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
     }
 
     @Test
