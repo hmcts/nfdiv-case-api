@@ -294,7 +294,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private Map<String, String> commonSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData,
                                                                                final Long caseId, Applicant applicant) {
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, applicant);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, applicant.getLanguagePreference());
 
         templateVars.put(CASE_ID, caseId.toString());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
@@ -316,11 +316,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             ? caseData.getApplicant1().getSolicitor().getReference()
             : "not provided";
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, applicant);
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, languagePreference);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
-        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData, applicant.getLanguagePreference()));
+        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData, languagePreference));
         templateVars.put(SOLICITOR_REFERENCE, solicitorReference);
         return templateVars;
     }

@@ -113,7 +113,8 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(SIGN_IN_PROFESSIONAL_USERS_URL);
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
@@ -149,7 +150,8 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -185,7 +187,8 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
@@ -227,7 +230,8 @@ class AwaitingConditionalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);

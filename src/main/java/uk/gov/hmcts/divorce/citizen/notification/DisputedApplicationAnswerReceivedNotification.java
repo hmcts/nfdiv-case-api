@@ -39,7 +39,7 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
             log.info("Notifying Applicant1's Solicitor that an Answer has been received from the respondent");
 
             Applicant applicant = caseData.getApplicant1();
-            var templateVars = commonContent.basicTemplateVars(caseData, id, applicant);
+            var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
             templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
             templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
             templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));

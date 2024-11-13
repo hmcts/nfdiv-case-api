@@ -153,7 +153,7 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
 
     private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));

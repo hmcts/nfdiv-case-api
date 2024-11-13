@@ -107,7 +107,7 @@ public class ApplicationSubmittedNotification implements ApplicantNotification {
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant);
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);

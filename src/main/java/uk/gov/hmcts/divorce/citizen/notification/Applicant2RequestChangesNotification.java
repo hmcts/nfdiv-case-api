@@ -59,7 +59,7 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
         log.info("Notifying applicant 1 solicitor that applicant 2 has requested changes: {}", id);
 
         final Applicant applicant1 = caseData.getApplicant1();
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant1);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant1.getLanguagePreference());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, applicant1.getSolicitor().getName());

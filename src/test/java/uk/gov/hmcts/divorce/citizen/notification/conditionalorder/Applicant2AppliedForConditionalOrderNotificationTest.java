@@ -310,7 +310,7 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT2));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2()))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
             .thenReturn(getMainTemplateVars());
 
         setMockClock(clock);
@@ -333,7 +333,7 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference());
     }
 
     @Test
@@ -362,7 +362,7 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT2));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
@@ -387,7 +387,7 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
     }
 
     private void setSubmittedDate(CaseData caseData, List<String> applicants) {
