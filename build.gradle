@@ -326,11 +326,6 @@ dependencies {
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
 
-  testImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
-  testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: versions.testcontainers
-  testImplementation group: 'com.h2database', name: 'h2', version: '2.3.232'
-  testImplementation("org.simplify4u:slf4j2-mock:2.3.0")
-
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
 
@@ -490,10 +485,6 @@ configurations.cftlibTestImplementation {
   exclude group: 'ch.qos.logback', module: 'logback-classic'
 }
 
-configurations.testImplementation {
-  exclude group: 'ch.qos.logback', module: 'logback-classic'
-}
-
 task installChromium(type: JavaExec) {
   // group = "Execution"
   // description = "Run the main class with JavaExecTask"
@@ -505,7 +496,6 @@ task installChromium(type: JavaExec) {
 configurations.all {
   exclude group: 'com.vaadin.external.google', module: 'android-json'
 }
-
 
 tasks.cftlibTest.dependsOn(installChromium)
 
