@@ -171,7 +171,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
     private void addEmailToList(String email, List<String> emailAddresses) {
         if (null != email) {
-            emailAddresses.add(email);
+            emailAddresses.add(email.toLowerCase().trim());
         }
     }
 
@@ -193,10 +193,15 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     }
 
     private void isOtherEmailValid(CaseData caseData, String email, List<String> errors) {
-        if (isEmpty(email)) {
+        if (null == email) {
             errors.add(NO_VALID_EMAIL_PROVIDED_ERROR);
-        } else if (doesEmailMatchApplicantOrSolicitor(caseData, email)) {
-            errors.add(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+        } else {
+            String cleanEmail = email.toLowerCase().trim();
+            if (isEmpty(cleanEmail) || cleanEmail.length() < 6) { //shortest valid web email address = ?@?.??
+                errors.add(NO_VALID_EMAIL_PROVIDED_ERROR);
+            } else if (doesEmailMatchApplicantOrSolicitor(caseData, cleanEmail)) {
+                errors.add(PROVIDED_EMAIL_MUST_NOT_MATCH_EMAIL_ON_CASE_ERROR);
+            }
         }
     }
 
