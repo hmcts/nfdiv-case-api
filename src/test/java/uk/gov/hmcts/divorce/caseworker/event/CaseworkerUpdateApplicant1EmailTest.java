@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant1Email.CASEWORKER_UPDATE_APP1_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -179,30 +180,39 @@ public class CaseworkerUpdateApplicant1EmailTest {
 
     @Test
     void shouldNotCallUpdateEmailServiceWhenRepresented() {
-        final CaseData caseDataBefore = CaseData.builder()
-            .applicant1(Applicant.builder()
-                .offline(YES)
-                .solicitorRepresented(YES)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .offline(YES)
-                .email(TEST_USER_EMAIL)
                 .solicitorRepresented(YES)
                 .build())
             .build();
+
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.aboutToSubmit(details, detailsBefore);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotCallUpdateEmailServiceWhenNotRepresentedAndEmailNotPresent() {
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .offline(YES)
+                .solicitorRepresented(NO)
+                .build())
+            .build();
+
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.aboutToSubmit(details, details);
 
         verifyNoInteractions(emailUpdateService);
     }

@@ -47,7 +47,7 @@ public class SystemLinkApplicant1 implements CCDConfig<CaseData, State, UserRole
 
         CaseData data = details.getData();
 
-        log.info("Linking Applicant 1 to Case {}", data.getHyphenatedCaseRef());
+        log.info("Linking Applicant 1 to Case {}", details.getId());
         ccdAccessService.linkApplicant1(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId(),

@@ -78,12 +78,15 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("aboutToSubmit callback invoked for {}, Case Id: {}", CASEWORKER_UPDATE_APP1_EMAIL, details.getId());
+        log.info("{} aboutToSubmit callback invoked for Case Id: {}", CASEWORKER_UPDATE_APP1_EMAIL, details.getId());
 
         CaseData caseData = details.getData();
         CaseData caseDataBefore = beforeDetails.getData();
 
-        if (!caseData.getApplicant1().isRepresented()) {
+        boolean shouldSendInviteToApp1 = shouldSendInvite(caseData);
+
+        if (!caseData.getApplicant1().isRepresented() && shouldSendInviteToApp1) {
+            log.info("Sending new invite to applicant/applicant1  for Case Id: {}", details.getId());
             final CaseDetails<CaseData, State> result = emailUpdateService.processUpdateForApplicant1(details);
             String newEmail = caseData.getApplicant1().getEmail();
 
@@ -109,6 +112,13 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
                 && (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank())) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    private boolean shouldSendInvite(CaseData caseData) {
+        if (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank()) {
+            return false;
         }
         return true;
     }

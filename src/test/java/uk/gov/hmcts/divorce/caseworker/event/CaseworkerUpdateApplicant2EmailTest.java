@@ -11,10 +11,14 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.EmailUpdateService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.LocalDate;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,6 +142,8 @@ public class CaseworkerUpdateApplicant2EmailTest {
                 .build())
             .build();
 
+        caseDataBefore.setApplicationType(ApplicationType.JOINT_APPLICATION);
+
         final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         detailsBefore.setId(TEST_CASE_ID);
         detailsBefore.setData(caseDataBefore);
@@ -148,6 +154,8 @@ public class CaseworkerUpdateApplicant2EmailTest {
                 .email(TEST_USER_EMAIL)
                 .build())
             .build();
+
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -164,6 +172,8 @@ public class CaseworkerUpdateApplicant2EmailTest {
                 .build())
             .build();
 
+        expectedCaseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+
         final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
         expectedDetails.setData(expectedCaseData);
         expectedDetails.setId(TEST_CASE_ID);
@@ -178,32 +188,119 @@ public class CaseworkerUpdateApplicant2EmailTest {
     }
 
     @Test
-    void shouldNotCallUpdateEmailServiceWhenRepresented() {
-        final CaseData caseDataBefore = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .offline(YES)
-                .solicitorRepresented(YES)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
-        final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .offline(YES)
-                .email(TEST_USER_EMAIL)
-                .solicitorRepresented(YES)
-                .build())
-            .build();
+    void shouldNotSendInviteWhenSoleApplicationAndRepresented() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, true, true, true);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, detailsBefore);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
 
         verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotSendInviteWhenJointApplicationAndRepresented() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.JOINT_APPLICATION, false, true, true);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotSendInviteWhenJointApplicationAndNotRepresentedAndEmailNotPresent() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.JOINT_APPLICATION, false, false, false);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotSendInviteWhenSoleApplicationAndNotRepresentedAndCaseNotIssued() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, false, false, true);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotSendInviteWhenSoleApplicationAndNotRepresentedAndEmailNotAvailable() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, false, false, false);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldSendInviteWhenSoleApplicationAndNotRepresentedAndCaseIssuedAndEmailAvailable() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, true, false, true);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(emailUpdateService.processUpdateForApplicant2(details)).thenReturn(details);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verify(emailUpdateService).processUpdateForApplicant2(details);
+    }
+
+    @Test
+    void shouldSendInviteWhenJointApplicationAndNotRepresentedAndEmailPresent() {
+        CaseData caseData = getCaseDataForTest(ApplicationType.JOINT_APPLICATION, false, false, true);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(emailUpdateService.processUpdateForApplicant2(details)).thenReturn(details);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verify(emailUpdateService).processUpdateForApplicant2(details);
+    }
+
+    CaseData getCaseDataForTest(ApplicationType applicationType, boolean caseIssued, boolean isRepresented, boolean emailPresent) {
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .build())
+            .applicationType(applicationType)
+            .application(Application.builder()
+                .build())
+            .build();
+
+        if (caseIssued) {
+            caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        }
+        if (isRepresented) {
+            caseData.getApplicant2().setSolicitorRepresented(YES);
+        }
+        if (emailPresent) {
+            caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+        }
+
+        return caseData;
     }
 }

@@ -89,8 +89,10 @@ public final class TestConstants {
 
     public static final String SIGN_IN_DIVORCE_TEST_URL = "divorceTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL = "applicant2DivorceTestUrl";
+    public static final String RESPONDENT_SIGN_IN_DIVORCE_TEST_URL = "respondentDivorceTestUrl";
     public static final String SIGN_IN_DISSOLUTION_TEST_URL = "dissolutionTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL = "applicant2DissolutionTestUrl";
+    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_TEST_URL = "respondentDissolutionTestUrl";
 
     public static final String EMPTY_STRING = "";
 

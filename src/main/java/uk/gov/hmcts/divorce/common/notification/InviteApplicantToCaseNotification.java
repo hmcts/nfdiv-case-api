@@ -30,8 +30,8 @@ public class InviteApplicantToCaseNotification {
 
     private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
-    private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
-    private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
+    public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
+    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     private static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
 
@@ -40,7 +40,7 @@ public class InviteApplicantToCaseNotification {
         Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
         Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
 
-        Map<String, String> templateVars = templateVars(caseData,caseId,applicant,partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(ACCESS_CODE, isApplicant1 ? caseData.getCaseInviteApp1().accessCodeApplicant1()
             : caseData.getCaseInvite().accessCode());
 
@@ -59,8 +59,6 @@ public class InviteApplicantToCaseNotification {
             }
         }
 
-
-
         notificationService.sendEmail(
             applicant.getEmail(),
             REINVITE_CITIZEN_TO_CASE,
@@ -68,13 +66,5 @@ public class InviteApplicantToCaseNotification {
             applicant.getLanguagePreference(),
             caseId
         );
-    }
-
-    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(CREATE_ACCOUNT_LINK,
-            config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
-
-        return templateVars;
     }
 }

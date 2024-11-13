@@ -205,8 +205,25 @@ public class CcdAccessServiceTest {
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
             .thenReturn(systemUpdateUser);
 
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
+
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        var response = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("NOT_THIS_ONE").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+
+        when(caseAssignmentApi.getUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            )
+        ).thenReturn(response);
 
         when(caseAssignmentApi.addCaseUserRoles(
                 eq(SYSTEM_UPDATE_AUTH_TOKEN),
@@ -219,7 +236,56 @@ public class CcdAccessServiceTest {
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
-        verify(authTokenGenerator).generate();
+        verify(authTokenGenerator, times(2)).generate();
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
+    }
+
+    @Test
+    public void shouldNotThrowAnyExceptionWhenLinkApplicant1ToApplicationIsInvoked() {
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(systemUpdateUser);
+
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
+
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        var response = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("NOT_THIS_ONE").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("NOT_THIS_ONE").build()
+            ))
+            .build();
+
+        when(caseAssignmentApi.getUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            )
+        ).thenReturn(response);
+
+        when(caseAssignmentApi.addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            )
+        ).thenReturn(any());
+
+        assertThatCode(() -> ccdAccessService.linkApplicant1(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+            .doesNotThrowAnyException();
+
+        verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
+        verify(authTokenGenerator, times(2)).generate();
         verify(caseAssignmentApi)
             .addCaseUserRoles(
                 eq(SYSTEM_UPDATE_AUTH_TOKEN),

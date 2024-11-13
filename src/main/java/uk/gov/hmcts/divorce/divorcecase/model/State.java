@@ -537,5 +537,12 @@ public enum State {
         AwaitingBailiffService,
         IssuedToBailiff
     };
+
+    public static final EnumSet<State> STATES_FOR_LINKING_APP2 = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
 }
 
