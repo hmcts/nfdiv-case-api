@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -44,4 +46,15 @@ public class RequestForInformationResponseDraft {
         access = {DefaultAccess.class}
     )
     private YesOrNo rfiDraftResponseCannotUploadDocs;
+
+    @JsonIgnore
+    public void addDocument(DivorceDocument responseDoc) {
+        if (this.getRfiDraftResponseDocs() == null || this.getRfiDraftResponseDocs().isEmpty()) {
+            this.setRfiDraftResponseDocs(new ArrayList<>());
+        }
+
+        ListValue<DivorceDocument> responseDocListValue = new ListValue<>();
+        responseDocListValue.setValue(responseDoc);
+        this.getRfiDraftResponseDocs().add(0, responseDocListValue);
+    }
 }

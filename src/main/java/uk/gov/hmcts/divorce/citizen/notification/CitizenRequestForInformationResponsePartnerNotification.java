@@ -48,13 +48,9 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
 
-        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-            ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
-            : REQUEST_FOR_INFORMATION_RESPONSE_PARTNER;
-
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            emailTemplateName,
+            getEmailTemplateName(latestResponse),
             applicantTemplateContent(
                 caseData,
                 caseId,
@@ -73,13 +69,9 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
 
-        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-            ? REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY_COULD_NOT_UPLOAD
-            : REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY;
-
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
-            emailTemplateName,
+            getSolicitorEmailTemplateName(latestResponse),
             solicitorTemplateContent(
                 caseData,
                 caseId,
@@ -98,13 +90,9 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
 
-        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-            ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
-            : REQUEST_FOR_INFORMATION_RESPONSE_PARTNER;
-
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
-            emailTemplateName,
+            getEmailTemplateName(latestResponse),
             applicantTemplateContent(
                 caseData,
                 caseId,
@@ -123,13 +111,9 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
 
-        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-            ? REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY_COULD_NOT_UPLOAD
-            : REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY;
-
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
-            emailTemplateName,
+            getSolicitorEmailTemplateName(latestResponse),
             solicitorTemplateContent(
                 caseData,
                 caseId,
@@ -172,5 +156,29 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
+    }
+
+    private EmailTemplateName getEmailTemplateName(RequestForInformationResponse requestForInformationResponse) {
+        if (requestForInformationResponse.isOffline()) {
+            return YES.equals(requestForInformationResponse.getRfiOfflineResponseAllDocumentsUploaded())
+                ? REQUEST_FOR_INFORMATION_RESPONSE_PARTNER
+                : REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS;
+        } else {
+            return YES.equals(requestForInformationResponse.getRequestForInformationResponseCannotUploadDocs())
+                ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
+                : REQUEST_FOR_INFORMATION_RESPONSE_PARTNER;
+        }
+    }
+
+    private EmailTemplateName getSolicitorEmailTemplateName(RequestForInformationResponse requestForInformationResponse) {
+        if (requestForInformationResponse.isOffline()) {
+            return YES.equals(requestForInformationResponse.getRfiOfflineResponseAllDocumentsUploaded())
+                ? REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY
+                : REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY_COULD_NOT_UPLOAD;
+        } else {
+            return YES.equals(requestForInformationResponse.getRequestForInformationResponseCannotUploadDocs())
+                ? REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY_COULD_NOT_UPLOAD
+                : REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY;
+        }
     }
 }

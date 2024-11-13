@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +18,8 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
+import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -31,12 +34,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubty
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
@@ -50,6 +59,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -57,6 +67,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_ERROR;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -65,6 +76,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.CO_D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -72,13 +84,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InBulkActionCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
@@ -93,6 +109,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addOfflineResponseToLatestRequestForInformation;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addRfiResponseDocumentToCaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildOfflineDraft;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setSendNotificationFlagOnLatestOfflineResponse;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerOfflineDocumentVerifiedTest {
@@ -108,6 +130,12 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
     @Mock
     private Applicant1AppliedForConditionalOrderNotification app1AppliedForConditionalOrderNotification;
+
+    @Mock
+    private CitizenRequestForInformationResponseNotification citizenRequestForInformationResponseNotification;
+
+    @Mock
+    private CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
 
     @Mock
     private CcdUpdateService ccdUpdateService;
@@ -1111,7 +1139,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"D10,AOS_D10", "D84,CO_D84", "D36,FO_D36", ","})
+    @CsvSource({"D10,AOS_D10", "D84,CO_D84", "D36,FO_D36", "RFIR,RFI_RESPONSE", ","})
     void shouldSetTypeOfDocumentAttachedFromScannedDocumentSubtype(final ScannedDocumentSubtypes subtype,
                                                                    final OfflineDocumentReceived typeOfDocumentAttached) {
         final CaseData caseData = CaseData.builder()
@@ -1129,7 +1157,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"AOS_D10", "CO_D84", "FO_D36"})
+    @CsvSource({"AOS_D10", "CO_D84", "FO_D36", "RFI_RESPONSE"})
     void shouldNotOverwriteTypeOfDocumentAttachedIfScannedDocumentSubtypeNull(final OfflineDocumentReceived typeOfDocumentAttached) {
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder()
@@ -1373,5 +1401,269 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldThrowErrorIfNoRFIOnCaseWhenRequestForInformationResponseSelected() {
+        CaseData caseData = caseData();
+        caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_ERROR);
+    }
+
+    @Test
+    void shouldClearDefaultRequestForInformationOfflineResponseDraft() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true, false);
+        addRfiResponseDocumentToCaseData(caseDetails.getData(), clock);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getRequestForInformationList().getRequestForInformationOfflineResponseDraft())
+            .isEqualTo(new RequestForInformationOfflineResponseDraft());
+    }
+
+    @Test
+    void shouldSetStateToRequestedInformationSubmittedWhenAllDocumentsUploaded() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, true, false);
+        addRfiResponseDocumentToCaseData(caseDetails.getData(), clock);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(RequestedInformationSubmitted);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingRequestedInformationWhenAllDocumentsNotUploaded() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        buildOfflineDraft(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT, true, false, false, false);
+        addRfiResponseDocumentToCaseData(caseDetails.getData(), clock);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingRequestedInformation);
+    }
+
+    @Test
+    void shouldNotSendNotificationsOnWhenSendNotificationFlagSetToNo() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), false);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotificationsOnSoleCaseIfRfiSentToOther() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationSoleParties.OTHER, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.OTHER);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotificationsOnJointCaseIfRfiSentToOther() {
+        CaseDetails<CaseData, State> caseDetails =
+            getRequestForInformationCaseDetails(RequestForInformationJointParties.OTHER, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.OTHER);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartyOnlyOnSoleCase() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartyOnlyOnJointCaseWhenRfiNotSentToBothParties() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT1, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToRespondingPartyFails() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartyAndPartnerOnJointCaseWhenRfiSentToBothParties() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToRespondingPartyFailsOnJointCaseWhenRfiSentToBothParties() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+        verify(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldReturnErrorWhenSendNotificationToRespondingPartyPartnerFailsOnJointCaseWhenRfiSentToBothParties() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                citizenRequestForInformationResponsePartnerNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+    }
+
+    @Test
+    void shouldReturnErrorsWhenSendNotificationsFailOnJointCaseWhenRfiSentToBothParties() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseJointParties.APPLICANT1);
+        setSendNotificationFlagOnLatestOfflineResponse(caseDetails.getData(), true);
+        caseDetails.getData().getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponseNotification(
+            citizenRequestForInformationResponseNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        doThrow(NotificationTemplateException.class).when(notificationDispatcher).sendRequestForInformationResponsePartnerNotification(
+            citizenRequestForInformationResponsePartnerNotification,
+            caseDetails.getData(),
+            TEST_CASE_ID
+        );
+
+        caseworkerOfflineDocumentVerified.submitted(caseDetails, caseDetails);
+
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
+        Assertions.assertThrows(NotificationTemplateException.class, () -> {
+            notificationDispatcher.sendRequestForInformationResponsePartnerNotification(
+                citizenRequestForInformationResponsePartnerNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+            );
+        });
     }
 }

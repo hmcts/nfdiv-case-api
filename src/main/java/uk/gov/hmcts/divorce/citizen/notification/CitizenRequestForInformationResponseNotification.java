@@ -37,13 +37,9 @@ public class CitizenRequestForInformationResponseNotification implements Applica
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
 
-        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-            ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
-            : REQUEST_FOR_INFORMATION_RESPONSE;
-
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            emailTemplateName,
+            getEmailTemplateName(latestResponse),
             applicantTemplateContent(
                 caseData,
                 caseId,
@@ -62,13 +58,9 @@ public class CitizenRequestForInformationResponseNotification implements Applica
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
 
-        EmailTemplateName emailTemplateName = YES.equals(latestResponse.getRequestForInformationResponseCannotUploadDocs())
-            ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
-            : REQUEST_FOR_INFORMATION_RESPONSE;
-
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
-            emailTemplateName,
+            getEmailTemplateName(latestResponse),
             applicantTemplateContent(
                 caseData,
                 caseId,
@@ -89,5 +81,17 @@ public class CitizenRequestForInformationResponseNotification implements Applica
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
+    }
+
+    private EmailTemplateName getEmailTemplateName(RequestForInformationResponse requestForInformationResponse) {
+        if (requestForInformationResponse.isOffline()) {
+            return YES.equals(requestForInformationResponse.getRfiOfflineResponseAllDocumentsUploaded())
+                ? REQUEST_FOR_INFORMATION_RESPONSE
+                : REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS;
+        } else {
+            return YES.equals(requestForInformationResponse.getRequestForInformationResponseCannotUploadDocs())
+                ? REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS
+                : REQUEST_FOR_INFORMATION_RESPONSE;
+        }
     }
 }
