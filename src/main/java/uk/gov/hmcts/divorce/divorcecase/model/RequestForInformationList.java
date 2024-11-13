@@ -81,6 +81,12 @@ public class RequestForInformationList {
     private RequestForInformationOfflineResponseDraft requestForInformationOfflineResponseDraft
         = new RequestForInformationOfflineResponseDraft();
 
+    @CCD(
+        label = "Authorised Request For Information Response Party",
+        access = {DefaultAccess.class}
+    )
+    private RequestForInformationAuthParty requestForInformationAuthParty;
+
     @JsonIgnore
     public RequestForInformation getLatestRequest() {
         return this.getRequestsForInformation().get(0).getValue();
@@ -98,5 +104,7 @@ public class RequestForInformationList {
         } else {
             this.getRequestsForInformation().add(0, newRequest);
         }
+
+        this.setRequestForInformationAuthParty(requestForInformation.getAuthorisedResponseParty());
     }
 }
