@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,7 +29,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Component
-@Slf4j
 public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_ADD_NOTE = "caseworker-add-note";
 
@@ -70,8 +68,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker add notes callback invoked for Case Id: {}", details.getId());
-
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
         var caseData = details.getData();

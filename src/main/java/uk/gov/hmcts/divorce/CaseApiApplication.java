@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce;
 
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -54,7 +53,6 @@ import java.util.TimeZone;
 @EnableScheduling
 @EnableRetry
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
-@Slf4j
 public class CaseApiApplication implements CommandLineRunner {
 
     @Autowired
