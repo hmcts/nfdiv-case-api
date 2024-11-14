@@ -35,7 +35,7 @@ java:
     image:
       registry: hmctspublic.azurecr.io
       repository: imported/bitnami/postgresql
-      tag: '16'
+      tag: '15'
     primary:
       persistence:
         enabled: false
