@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -48,6 +49,12 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public static final String NO_VALID_EMAIL_PROVIDED_ERROR = "You must provide a valid email address.";
     public static final String USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR =
         "Please use create general letter event to request information from offline parties.";
+    public static final String USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR =
+        "Please use create general letter event to request information from the respondent or their solicitor.";
+
+    public static final String USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR =
+        "Please use create general email event to request information from the respondent or their solicitor.";
+    public static final String USE_CORRECT_PARTY_ERROR = "Please use the correct option to contact online parties.";
 
     private final RequestForInformationNotification requestForInformationNotification;
 
@@ -181,21 +188,50 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
     }
 
-    private boolean doesEmailMatchApplicantOrSolicitor(CaseData caseData, String email) {
-        final Applicant applicant1 = caseData.getApplicant1();
-        final Applicant applicant2 = caseData.getApplicant2();
+    private void doesEmailMatch(String email, Applicant applicant, CaseData caseData, List<String> errors) {
+        final boolean appIsRespondent = SOLE_APPLICATION.equals(caseData.getApplicationType())
+            && applicant.equals(caseData.getApplicant2());
 
-        List<String> emailAddresses = new ArrayList<>();
-        addEmailToList(applicant1.getEmail(), emailAddresses);
-        if (applicant1.isRepresented()) {
-            addEmailToList(applicant1.getSolicitor().getEmail(), emailAddresses);
-        }
-        addEmailToList(applicant2.getEmail(), emailAddresses);
-        if (applicant2.isRepresented()) {
-            addEmailToList(applicant2.getSolicitor().getEmail(), emailAddresses);
-        }
+        if (null != applicant.getEmail() && email.equals(applicant.getEmail().toLowerCase().trim())) {
+            if (appIsRespondent) {
+                errors.add(
+                    applicant.isApplicantOffline()
+                        ? USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR
+                        : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR
+                );
+            } else {
+                errors.add(
+                    applicant.isApplicantOffline()
+                        ? USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+                        : USE_CORRECT_PARTY_ERROR
+                );
+            }
+        } else if (applicant.isRepresented()
+            && null != applicant.getSolicitor().getEmail()
+            && email.equals(applicant.getSolicitor().getEmail().toLowerCase().trim())) {
 
-        return !emailAddresses.isEmpty() && emailAddresses.contains(email);
+            if (appIsRespondent) {
+                errors.add(
+                    applicant.getSolicitor().hasAgreedToReceiveEmails()
+                        ? USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR
+                        : USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR
+                    );
+            } else {
+                errors.add(
+                    applicant.getSolicitor().hasAgreedToReceiveEmails()
+                        ? USE_CORRECT_PARTY_ERROR
+                        : USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+                );
+            }
+        }
+    }
+
+    private void doesEmailMatchApplicantOrSolicitor(CaseData caseData, String email, List<String> errors) {
+        final int errorSize = errors.size();
+        doesEmailMatch(email, caseData.getApplicant1(), caseData, errors);
+        if (errors.size() == errorSize) {
+            doesEmailMatch(email, caseData.getApplicant2(), caseData, errors);
+        }
     }
 
     private void isOtherEmailValid(CaseData caseData, String email, List<String> errors) {
@@ -205,8 +241,8 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             String cleanEmail = email.toLowerCase().trim();
             if (isEmpty(cleanEmail) || cleanEmail.length() < 6) { //shortest valid web email address = ?@?.??
                 errors.add(NO_VALID_EMAIL_PROVIDED_ERROR);
-            } else if (doesEmailMatchApplicantOrSolicitor(caseData, cleanEmail)) {
-                errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
+            } else {
+                doesEmailMatchApplicantOrSolicitor(caseData, cleanEmail, errors);
             }
         }
     }
