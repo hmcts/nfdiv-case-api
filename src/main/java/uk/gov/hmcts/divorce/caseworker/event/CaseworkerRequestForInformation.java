@@ -209,7 +209,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                     applicant.getSolicitor().hasAgreedToReceiveEmails()
                         ? USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
                         : USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + "."
-                    );
+                );
             } else {
                 errors.add(
                     applicant.getSolicitor().hasAgreedToReceiveEmails()
