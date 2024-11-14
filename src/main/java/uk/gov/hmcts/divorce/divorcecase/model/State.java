@@ -527,6 +527,21 @@ public enum State {
         AwaitingAmendedApplication
     ));
 
+    public static final EnumSet<State> PRE_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
+       Draft,
+       AwaitingHWFDecision,
+       AwaitingHWFEvidence,
+       AwaitingHWFPartPayment,
+       AwaitingDocuments,
+       AwaitingApplicant1Response,
+       AwaitingApplicant2Response,
+       Applicant2Approved,
+       InformationRequested,
+       AwaitingRequestedInformation,
+       RequestedInformationSubmitted,
+       Submitted
+    ));
+
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
         AwaitingApplicant1Response,
