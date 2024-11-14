@@ -4,7 +4,8 @@ nfdiv-frontend:
 
 idam-pr:
   enabled: false
-
+wiremock:
+  enabled: false
 ccd:
   enabled: false
 xui-webapp:

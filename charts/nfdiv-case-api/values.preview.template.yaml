@@ -9,7 +9,7 @@ java:
     NFD_DB_HOST: ${SERVICE_NAME}-postgresql
     NFD_DB_USERNAME: ${POSTGRES_USER}
     NFD_DB_PASSWORD: ${POSTGRES_PASSWORD}
-    NFD_DB_CONNECTION_OPTIONS: '?sslmode=allow'
+    NFD_DB_CONNECTION_OPTIONS: "?stringtype=unspecified"
     AAC_MANAGE_CASE_ASSIGNMENT_BASEURL: http://${SERVICE_NAME}-aac-manage-case-assignment
     DATABASE_MIGRATION: false
   keyVaults:
@@ -109,6 +109,7 @@ ccd:
     idamApiUrl: https://idam-api.aat.platform.hmcts.net
     idamWebUrl: https://idam-web-public.aat.platform.hmcts.net
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+    postgresHostname: ${SERVICE_NAME}-postgresql
   ccd-api-gateway-web:
     nodejs:
       image: hmctspublic.azurecr.io/ccd/api-gateway-web:latest
@@ -131,22 +132,32 @@ ccd:
         enabled: false
       environment:
         CASE_DOCUMENT_AM_API_ATTACH_DOCUMENT_ENABLED: false
-        DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DATA_STORE_IDAM_KEY: ${CCD_DATA_STORE_S2S_SECRET}
+        DATA_STORE_DB_OPTIONS: "?stringtype=unspecified"
         DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_gw,ccd_ps,bulk_scan_orchestrator,ccpay_bubble,ctsc_work_allocation,em_ccd_orchestrator,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,aac_manage_case_assignment
-        IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
-        IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
-        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/realms/root/realms/hmcts
-        CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: nfdiv_case_api,aac_manage_case_assignment
-        CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
         IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET: ${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET}
         IDAM_DATA_STORE_SYSTEM_USER_USERNAME: ${IDAM_DATA_STORE_SYSTEM_USER_USERNAME}
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
         CCD_MULTIPARTY_FIX_ENABLED: false
         CCD_MULTIPARTY_EVENTS: DEFENDANT_RESPONSE,ACKNOWLEDGE_CLAIM,CLAIMANT_RESPONSE
-        ROLE_ASSIGNMENT_URL: http://am-role-assignment-service-aat.service.core-compute-aat.internal
       keyVaults: [ ]
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
+  ccd-message-publisher:
+    java:
+      environment:
+        DATA_STORE_DB_OPTIONS: "?stringtype=unspecified"
+        CCD_CASE_EVENTS_DESTINATION: ccd-case-events
+      secrets: [ ]
+  am-role-assignment-service:
+    java:
+      environment:
+        ROLE_ASSIGNMENT_DB_OPTIONS: "?stringtype=unspecified"
+      secrets: [ ]
+  ccd-user-profile-api:
+    java:
+      environment:
+        USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
+      secrets: [ ]
   ccd-definition-store-api:
     java:
       imagePullPolicy: Always
@@ -188,7 +199,7 @@ xui-webapp:
       SERVICES_CCD_COMPONENT_API: http://${SERVICE_NAME}-ccd-api-gw
       SERVICES_CCD_DATA_STORE_API: http://${SERVICE_NAME}-ccd-data-store-api
       SERVICES_TERMS_AND_CONDITIONS: http://xui-terms-and-conditions-${SERVICE_FQDN}.service.core-compute-preview.internal
-      JURISDICTIONS: NFD
+      JURISDICTIONS: DIVORCE
       LAUNCH_DARKLY_CLIENT_ID: ~
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${SERVICE_NAME}-aac-manage-case-assignment
 aac-manage-case-assignment:
@@ -219,3 +230,18 @@ aac-manage-case-assignment:
       NOTIFY_MCA_API_KEY: ${NOTIFY_MCA_API_KEY}
     autoscaling:
       enabled: false
+wiremock:
+  enabled: true
+  image: "wiremock/wiremock"
+  applicationPort: 8080
+  imagePullPolicy: Always
+  releaseNameOverride : ${SERVICE_NAME}-wiremock
+  ingressHost: wiremock-${SERVICE_NAME}.preview.platform.hmcts.net
+  volumes:
+    - name: wiremock-mocks
+      configMap:
+        name: ${SERVICE_NAME}-wiremock-wm
+  volumeMounts:
+    - name: wiremock-mocks
+      mountPath: /home/wiremock/mappings
+      subPath: mappings
