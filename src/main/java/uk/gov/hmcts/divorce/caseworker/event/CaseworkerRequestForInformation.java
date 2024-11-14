@@ -50,10 +50,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public static final String USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR =
         "Please use create general letter event to request information from offline parties.";
     public static final String USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR =
-        "Please use create general letter event to request information from the respondent or their solicitor.";
+        "Please use create general letter event to request information from the respondent";
 
     public static final String USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR =
-        "Please use create general email event to request information from the respondent or their solicitor.";
+        "Please use create general email event to request information from the respondent";
     public static final String USE_CORRECT_PARTY_ERROR = "Please use the correct option to contact online parties.";
 
     private final RequestForInformationNotification requestForInformationNotification;
@@ -196,8 +196,8 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             if (appIsRespondent) {
                 errors.add(
                     applicant.isApplicantOffline()
-                        ? USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR
-                        : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR
+                        ? USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + "."
+                        : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + "."
                 );
             } else {
                 errors.add(
@@ -213,8 +213,8 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             if (appIsRespondent) {
                 errors.add(
                     applicant.getSolicitor().hasAgreedToReceiveEmails()
-                        ? USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR
-                        : USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR
+                        ? USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
+                        : USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + "."
                     );
             } else {
                 errors.add(

@@ -587,7 +587,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + ".");
     }
 
     @Test
@@ -607,7 +607,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + ".");
     }
 
     @Test
@@ -627,7 +627,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + ".");
     }
 
     @Test
@@ -648,7 +648,7 @@ class CaseworkerRequestForInformationTest {
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR);
+        assertThat(response.getErrors()).contains(USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + ".");
     }
 
     @Test
