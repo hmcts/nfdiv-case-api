@@ -129,7 +129,7 @@ ccd:
       secrets: []
   ccd-data-store-api:
     java:
-      image: 'hmctspublic.azurecr.io/ccd/data-store-api:pr-2496-39bf8d2-20241111190845'
+      image: 'hmctspublic.azurecr.io/ccd/data-store-api:latest'
       autoscaling:
         enabled: false
       environment:
