@@ -182,12 +182,6 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
     }
 
-    private void addEmailToList(String email, List<String> emailAddresses) {
-        if (null != email) {
-            emailAddresses.add(email.toLowerCase().trim());
-        }
-    }
-
     private void doesEmailMatch(String email, Applicant applicant, CaseData caseData, List<String> errors) {
         final boolean appIsRespondent = SOLE_APPLICATION.equals(caseData.getApplicationType())
             && applicant.equals(caseData.getApplicant2());
