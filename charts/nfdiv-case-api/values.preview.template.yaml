@@ -35,7 +35,7 @@ java:
     image:
       registry: hmctspublic.azurecr.io
       repository: imported/bitnami/postgresql
-      tag: '11.6.0'
+      tag: '16'
     primary:
       persistence:
         enabled: false
