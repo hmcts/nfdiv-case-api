@@ -29,6 +29,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -58,7 +59,7 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION_RESPONSE)
-            .forAllStates()
+            .forStates(PRE_ISSUE_STATES)
             .name("Add Text Only RFI Response")
             .description("Add Text Only RFI Response")
             .aboutToStartCallback(this::aboutToStart)

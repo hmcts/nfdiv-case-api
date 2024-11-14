@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -57,7 +58,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION)
-            .forAllStates()
+            .forStates(PRE_ISSUE_STATES)
             .name("Request For Information")
             .description("Request for information")
             .showSummary()
