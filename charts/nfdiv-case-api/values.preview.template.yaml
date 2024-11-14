@@ -129,6 +129,7 @@ ccd:
       secrets: []
   ccd-data-store-api:
     java:
+      image: 'hmctspublic.azurecr.io/ccd/data-store-api:pr-2496-39bf8d2-20241111190845'
       autoscaling:
         enabled: false
       environment:
@@ -142,6 +143,9 @@ ccd:
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
         CCD_MULTIPARTY_FIX_ENABLED: false
         CCD_MULTIPARTY_EVENTS: DEFENDANT_RESPONSE,ACKNOWLEDGE_CLAIM,CLAIMANT_RESPONSE
+        POC_FEATURE_ENABLED: true
+        CCD_POC_CASE_TYPES: nfd
+        POC_APIS_URL: ${SERVICE_FQDN}
       secrets: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   ccd-message-publisher:
