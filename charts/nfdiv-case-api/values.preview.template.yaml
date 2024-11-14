@@ -121,13 +121,13 @@ ccd:
         PROXY_DOCUMENT_MANAGEMENT: http://dm-store-aat.service.core-compute-aat.internal
       ingressHost: gateway-${SERVICE_FQDN}
       ingressIP: ${INGRESS_IP}
-      keyVaults: [ ]
+      secrets: []
+  ccd-admin-web:
+    nodejs:
+      environment:
+      secrets: []
   ccd-data-store-api:
     java:
-      imagePullPolicy: Always
-      devcpuRequests: 500m
-      devmemoryRequests: 2048Mi
-      devmemoryLimits: 4096Mi
       autoscaling:
         enabled: false
       environment:
@@ -140,38 +140,29 @@ ccd:
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
         CCD_MULTIPARTY_FIX_ENABLED: false
         CCD_MULTIPARTY_EVENTS: DEFENDANT_RESPONSE,ACKNOWLEDGE_CLAIM,CLAIMANT_RESPONSE
-      keyVaults: [ ]
+      secrets: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   ccd-message-publisher:
     java:
       environment:
         DATA_STORE_DB_OPTIONS: "?stringtype=unspecified"
         CCD_CASE_EVENTS_DESTINATION: ccd-case-events
-      secrets: [ ]
+      secrets: []
   am-role-assignment-service:
     java:
       environment:
         ROLE_ASSIGNMENT_DB_OPTIONS: "?stringtype=unspecified"
-      secrets: [ ]
+      secrets: []
   ccd-user-profile-api:
     java:
       environment:
         USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
-      secrets: [ ]
+      secrets: []
   ccd-definition-store-api:
     java:
-      imagePullPolicy: Always
-      devcpuRequests: 500m
-      devmemoryRequests: 512Mi
-      devcpuLimits: 2
-      devmemoryLimits: 1Gi
       environment:
-        DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
-        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
-        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        DEFINITION_STORE_TX_TIMEOUT_DEFAULT: 60
-        WELSH_TRANSLATION_ENABLED: false
-      keyVaults: [ ]
+        DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
+      secrets: []
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
   postgresql:
     persistence:
