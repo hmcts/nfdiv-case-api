@@ -68,6 +68,7 @@ import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -1414,6 +1415,19 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_ERROR);
+    }
+
+    @Test
+    void shouldThrowErrorIfCaseHasBeenIssuedWhenRequestForInformationResponseSelected() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
+        CaseData caseData = caseDetails.getData();
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
     }
 
     @Test

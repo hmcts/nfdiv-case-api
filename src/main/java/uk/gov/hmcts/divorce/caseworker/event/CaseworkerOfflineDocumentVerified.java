@@ -104,6 +104,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private static final String ALWAYS_HIDE = "typeOfDocumentAttached=\"ALWAYS_HIDE\"";
     public static final String NO_REQUEST_FOR_INFORMATION_ERROR =
         "There is no Request for Information on the case.";
+    public static final String NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR =
+        "Request for information can only be used before the case is issued.";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Notification for Case Id {} failed with message: {}";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
@@ -237,15 +239,20 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                                                                   CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         final CaseData data = details.getData();
-        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())
-            && (
-                data.getRequestForInformationList().getRequestsForInformation() == null
-                || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
-            )
-        ) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR))
-                .build();
+        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
+            if (data.getRequestForInformationList().getRequestsForInformation() == null
+                    || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
+            ) {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR))
+                    .build();
+            }
+
+            if (data.getApplication().getIssueDate() != null) {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR))
+                    .build();
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
