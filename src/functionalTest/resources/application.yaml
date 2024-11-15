@@ -6,9 +6,11 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:nfd;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:init.sql'
+    url: jdbc:h2:mem:nfd
     username: sa
     password: password
+  flyway:
+    enabled: false
 # because functional tests load up SpringBootTest
 azure:
   application-insights:
