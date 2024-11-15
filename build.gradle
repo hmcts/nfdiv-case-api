@@ -328,7 +328,6 @@ dependencies {
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
   testImplementation group: 'com.h2database', name: 'h2', version: '2.3.232'
-  testImplementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.21.1'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
