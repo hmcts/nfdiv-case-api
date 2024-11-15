@@ -32,8 +32,10 @@ public class EmailUpdateService {
 
         Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
 
-        //Do not sent invite if applicant offline or new email is null
-        if (applicant.getEmail() == null || applicant.getEmail().isBlank() || applicant.isApplicantOffline()) {
+        //Do not sent invite if applicant represented or offline or new email is null
+        if (applicant.getEmail() == null || applicant.getEmail().isBlank()
+            || applicant.isApplicantOffline()
+            || applicant.isRepresented()) {
             return caseDetails;
         }
 

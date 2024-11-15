@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.EmailUpdatedNotification;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -50,6 +51,36 @@ class EmailUpdateServiceTest {
     void shouldNotProgressWhenEmailForApplicantIsBlank() {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setEmail("");
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
+
+        verifyNoInteractions(inviteApplicantToCaseNotification);
+        verifyNoInteractions(emailUpdatedNotification);
+    }
+
+    @Test
+    void shouldNotProgressWhenApplicantIsOffline() {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setOffline(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
+
+        verifyNoInteractions(inviteApplicantToCaseNotification);
+        verifyNoInteractions(emailUpdatedNotification);
+    }
+
+    @Test
+    void shouldNotProgressWhenApplicantIsRepresented() {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
