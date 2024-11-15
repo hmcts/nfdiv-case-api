@@ -6,7 +6,7 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:nfd
+    url: jdbc:h2:mem:nfd;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:init.sql'
     username: sa
     password: password
 # because functional tests load up SpringBootTest
