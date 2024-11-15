@@ -11,19 +11,13 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.EmailUpdateService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-
-import java.time.LocalDate;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant2Email.CASEWORKER_UPDATE_APP2_EMAIL;
@@ -52,7 +46,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
     }
 
     @Test
-    void shouldReturnErrorsIfApplicant2EmailHasBeenRemovedInOnlineCase() {
+    void shouldReturnErrorsIfApplicant2EmailHasBeenRemoved() {
         final CaseData caseDataBefore = CaseData.builder()
             .applicant2(Applicant.builder()
                 .email(TEST_USER_EMAIL)
@@ -74,15 +68,14 @@ public class CaseworkerUpdateApplicant2EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, detailsBefore);
 
         assertThat(response.getErrors())
-            .isEqualTo(singletonList("Please use the 'Update offline status' event before removing the email address."));
+            .isEqualTo(singletonList("Email address should not be removed or blanked out."));
     }
 
     @Test
-    void shouldAllowApplicant2EmailRemovalInOfflineCase() {
+    void shouldNotReturnErrorsIfApplicant2EmailUnchanged() {
         final CaseData caseDataBefore = CaseData.builder()
             .applicant2(Applicant.builder()
                 .email(TEST_USER_EMAIL)
-                .offline(YES)
                 .build())
             .build();
 
@@ -91,37 +84,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
         detailsBefore.setData(caseDataBefore);
 
         final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .offline(YES)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, detailsBefore);
-
-        assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
-    void shouldAllowApplicant2EmailRemovalIfRepresentedCase() {
-        final CaseData caseDataBefore = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .email(TEST_USER_EMAIL)
-                .solicitorRepresented(YES)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
-        final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .solicitorRepresented(YES)
-                .build())
+            .applicant2(Applicant.builder().email(TEST_USER_EMAIL).build())
             .build();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -135,19 +98,6 @@ public class CaseworkerUpdateApplicant2EmailTest {
 
     @Test
     void shouldCallUpdateEmailServiceAndReturnCaseData() {
-        final CaseData caseDataBefore = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .offline(YES)
-                .email("test@test.com")
-                .build())
-            .build();
-
-        caseDataBefore.setApplicationType(ApplicationType.JOINT_APPLICATION);
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
                 .offline(YES)
@@ -155,152 +105,14 @@ public class CaseworkerUpdateApplicant2EmailTest {
                 .build())
             .build();
 
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        final CaseData expectedCaseData = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .offline(YES)
-                .email(TEST_USER_EMAIL)
-                .build())
-            .caseInvite(CaseInvite.builder()
-                .accessCode("ABCD1234")
-                .applicant2InviteEmailAddress(TEST_USER_EMAIL)
-                .build())
-            .build();
-
-        expectedCaseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(expectedCaseData);
-        expectedDetails.setId(TEST_CASE_ID);
-
-        when(emailUpdateService.processUpdateForApplicant2(details)).thenReturn(expectedDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, detailsBefore);
-
-        verify(emailUpdateService).processUpdateForApplicant2(details);
-        verify(emailUpdateService).sendNotificationToOldEmail(detailsBefore, TEST_USER_EMAIL, false);
-        assertThat(response.getData()).isEqualTo(expectedCaseData);
-    }
-
-    @Test
-    void shouldNotSendInviteWhenSoleApplicationAndRepresented() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, true, true, true);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
+        when(emailUpdateService.processEmailUpdate(details, details, false)).thenReturn(details);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
 
-        verifyNoInteractions(emailUpdateService);
-    }
-
-    @Test
-    void shouldNotSendInviteWhenJointApplicationAndRepresented() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.JOINT_APPLICATION, false, true, true);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
-
-        verifyNoInteractions(emailUpdateService);
-    }
-
-    @Test
-    void shouldNotSendInviteWhenJointApplicationAndNotRepresentedAndEmailNotPresent() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.JOINT_APPLICATION, false, false, false);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
-
-        verifyNoInteractions(emailUpdateService);
-    }
-
-    @Test
-    void shouldNotSendInviteWhenSoleApplicationAndNotRepresentedAndCaseNotIssued() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, false, false, true);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
-
-        verifyNoInteractions(emailUpdateService);
-    }
-
-    @Test
-    void shouldNotSendInviteWhenSoleApplicationAndNotRepresentedAndEmailNotAvailable() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, false, false, false);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
-
-        verifyNoInteractions(emailUpdateService);
-    }
-
-    @Test
-    void shouldSendInviteWhenSoleApplicationAndNotRepresentedAndCaseIssuedAndEmailAvailable() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.SOLE_APPLICATION, true, false, true);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        when(emailUpdateService.processUpdateForApplicant2(details)).thenReturn(details);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
-
-        verify(emailUpdateService).processUpdateForApplicant2(details);
-    }
-
-    @Test
-    void shouldSendInviteWhenJointApplicationAndNotRepresentedAndEmailPresent() {
-        CaseData caseData = getCaseDataForTest(ApplicationType.JOINT_APPLICATION, false, false, true);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        when(emailUpdateService.processUpdateForApplicant2(details)).thenReturn(details);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
-
-        verify(emailUpdateService).processUpdateForApplicant2(details);
-    }
-
-    CaseData getCaseDataForTest(ApplicationType applicationType, boolean caseIssued, boolean isRepresented, boolean emailPresent) {
-        final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .build())
-            .applicationType(applicationType)
-            .application(Application.builder()
-                .build())
-            .build();
-
-        if (caseIssued) {
-            caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
-        }
-        if (isRepresented) {
-            caseData.getApplicant2().setSolicitorRepresented(YES);
-        }
-        if (emailPresent) {
-            caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
-        }
-
-        return caseData;
+        verify(emailUpdateService).processEmailUpdate(details, details, false);
     }
 }

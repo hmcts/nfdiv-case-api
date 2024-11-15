@@ -62,10 +62,10 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
         CaseData caseData = details.getData();
         CaseData caseDataBefore = detailsBefore.getData();
 
-        if (!validApplicant2ContactDetails(caseDataBefore, caseData)) {
+        if (!validApplicant2Update(caseDataBefore, caseData)) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
+                .errors(singletonList("Email address should not be removed or blanked out."))
                 .build();
         }
 
@@ -80,48 +80,17 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
     ) {
         log.info("{} aboutToSubmit callback invoked for Case Id: {}", CASEWORKER_UPDATE_APP2_EMAIL, details.getId());
 
-        CaseData caseData = details.getData();
-        CaseData caseDataBefore = beforeDetails.getData();
-
-        boolean shouldSendInviteToApp2 = shouldSendInvite(caseData);
-
-        if (!caseData.getApplicant2().isRepresented() && shouldSendInviteToApp2) {
-            log.info("Sending new invite to applicant2/respondent for Case Id: {}", details.getId());
-            final CaseDetails<CaseData, State> result = emailUpdateService.processUpdateForApplicant2(details);
-            String newEmail = caseData.getApplicant2().getEmail();
-
-            if (caseDataBefore.getApplicant2().getEmail() != null
-                && !caseDataBefore.getApplicant2().getEmail().isBlank()) {
-                emailUpdateService.sendNotificationToOldEmail(beforeDetails, newEmail, false);
-            }
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(result.getData())
-                .build();
-        }
+        final CaseDetails<CaseData, State> result = emailUpdateService.processEmailUpdate(details, beforeDetails, false);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(result.getData())
             .build();
     }
 
-    private boolean validApplicant2ContactDetails(CaseData caseDataBefore, CaseData caseData) {
+    private boolean validApplicant2Update(CaseData caseDataBefore, CaseData caseData) {
 
-        if (caseDataBefore.getApplicant2().getEmail() != null && !caseDataBefore.getApplicant2().getEmail().isBlank()) {
-            if (!caseDataBefore.getApplicant2().isRepresented()
-                && !caseData.getApplicant2().isApplicantOffline()
-                && (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean shouldSendInvite(CaseData caseData) {
-        if (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank()) {
-            return false;
-        }
-
-        if (caseData.getApplicationType().isSole() && (caseData.getApplication().getIssueDate() == null)) {
+        if (caseDataBefore.getApplicant2().getEmail() != null && !caseDataBefore.getApplicant2().getEmail().isBlank()
+            && (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank())) {
             return false;
         }
         return true;

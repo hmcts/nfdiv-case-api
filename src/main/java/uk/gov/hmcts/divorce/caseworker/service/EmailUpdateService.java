@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.EmailUpdatedNotification;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
@@ -23,48 +24,52 @@ public class EmailUpdateService {
     @Autowired
     NotificationDispatcher notificationDispatcher;
 
-    public CaseDetails<CaseData, State> processUpdateForApplicant1(final CaseDetails<CaseData, State> caseDetails) {
+    public CaseDetails<CaseData, State> processEmailUpdate(final CaseDetails<CaseData, State> caseDetails,
+                                                      final CaseDetails<CaseData, State> beforeCaseDetails,
+                                                      boolean isApplicant1) {
 
         final CaseData data = caseDetails.getData();
 
-        CaseInviteApp1 invite = CaseInviteApp1.builder()
-            .applicant1InviteEmailAddress(data.getApplicant1().getEmail())
-            .build()
-            .generateAccessCode();
-        data.setCaseInviteApp1(invite);
+        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
 
-        triggerNotificationToApplicant1(caseDetails);
+        //Do not sent invite if applicant offline or new email is null
+        if (applicant.getEmail() == null || applicant.getEmail().isBlank() || applicant.isApplicantOffline()) {
+            return caseDetails;
+        }
+
+        //Do not send invite to respondent if sole application and case hasn't been issued
+        if (data.getApplicationType().isSole() && (data.getApplication().getIssueDate() == null) && !isApplicant1) {
+            return  caseDetails;
+        }
+
+        createCaseInvite(data, isApplicant1);
+
+        sendInviteToApplicantEmail(data, caseDetails.getId(), isApplicant1);
+
+        sendNotificationToOldEmail(beforeCaseDetails, applicant.getEmail(), isApplicant1);
 
         return caseDetails;
     }
 
-    public CaseDetails<CaseData, State> processUpdateForApplicant2(final CaseDetails<CaseData, State> caseDetails) {
-
-        final CaseData data = caseDetails.getData();
-
-        CaseInvite invite = CaseInvite.builder()
-            .applicant2InviteEmailAddress(data.getApplicant2().getEmail())
-            .build()
-            .generateAccessCode();
-        data.setCaseInvite(invite);
-
-        triggerNotificationToApplicant2(caseDetails);
-
-        return caseDetails;
+    public void createCaseInvite(final CaseData data, boolean isApplicant1) {
+        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        if (isApplicant1) {
+            CaseInviteApp1 invite = CaseInviteApp1.builder()
+                .applicant1InviteEmailAddress(applicant.getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInviteApp1(invite);
+        } else {
+            CaseInvite invite = CaseInvite.builder()
+                .applicant2InviteEmailAddress(applicant.getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInvite(invite);
+        }
     }
 
-    public void triggerNotificationToApplicant1(final CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
-        final Long caseId = caseDetails.getId();
-
-        inviteApplicantToCaseNotification.send(caseData, caseId, true);
-    }
-
-    public void triggerNotificationToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
-        final CaseData caseData = caseDetails.getData();
-        final Long caseId = caseDetails.getId();
-
-        inviteApplicantToCaseNotification.send(caseData, caseId, false);
+    public void sendInviteToApplicantEmail(final CaseData caseData, Long id, boolean isApplicant1) {
+        inviteApplicantToCaseNotification.send(caseData, id, isApplicant1);
     }
 
     public void sendNotificationToOldEmail(final CaseDetails<CaseData, State> caseDetails,

@@ -26,17 +26,19 @@ public class EmailUpdatedNotification {
 
         Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
         Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
-        templateVars.put("old email", applicant.getEmail());
-        templateVars.put("new email", newEmail);
+        if (applicant.getEmail() != null && !applicant.getEmail().isBlank()) {
+            Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
+            templateVars.put("old email", applicant.getEmail());
+            templateVars.put("new email", newEmail);
 
-        notificationService.sendEmail(
-            applicant.getEmail(),
-            CITIZEN_EMAIL_UPDATED,
-            templateVars,
-            applicant.getLanguagePreference(),
-            caseId
-        );
-        log.info("Successfully sent email updated notification for case id: {}", caseId);
+            notificationService.sendEmail(
+                applicant.getEmail(),
+                CITIZEN_EMAIL_UPDATED,
+                templateVars,
+                applicant.getLanguagePreference(),
+                caseId
+            );
+            log.info("Successfully sent email updated notification for case id: {}", caseId);
+        }
     }
 }
