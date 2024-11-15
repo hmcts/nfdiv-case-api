@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE_K
 public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String FIND_MATCHES = "caseworker-find-matches";
+    public static final String WILDCARD_SEARCH = ".*";
     private final CcdSearchService ccdSearchService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -83,39 +84,56 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     }
 
-    // Helper method to create term queries with variations for spaces
-    private BoolQueryBuilder createNameMatchQuery(String field, String name) {
-        return QueryBuilders.boolQuery()
-            .should(QueryBuilders.termQuery(field, name)) // Exact match
-            .should(QueryBuilders.termQuery(field, " " + name)) // Prepend space
-            .should(QueryBuilders.termQuery(field, name + " ")) // Append space
-            .should(QueryBuilders.termQuery(field, " " + name + " ")); // Prepend and append space
+    public String[] normalizeAndSplit(String name) {
+        // remove brackets and anything inside them
+        String nameWithoutStuffInBrackets = name.replaceAll("\\([^)]*\\)", "");
+
+        // replace multiple consecutive "/" with a single "/" because we might have multiple names due to translations
+        String nameWithoutExtraSlashes = nameWithoutStuffInBrackets.replaceAll("/+", "/");
+
+        // remove illegal characters that we've spotted in prod data
+        String illegalCharacters = ".=!*_";
+
+        // check for / and split to more names if it's there : prod data has this
+        String cleanedName = nameWithoutExtraSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
+        return cleanedName.contains("/") ? cleanedName.split("\\s*/\\s*") : new String[]{cleanedName};
     }
 
-    List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
-                                                                           MarriageDetails marriageDetails) {
-        //NFDIV-4512 adding extra searches to cope with prepended and trailing space on the names
-        String applicant1Name = marriageDetails.getApplicant1Name().trim();
-        String applicant2Name = marriageDetails.getApplicant2Name().trim();
+    String generateRegexPattern(String name) {
+        // Split the cleaned name into parts by whitespace
+        String[] nameParts = name.split("\\s+");
+        // Join the parts into a regex pattern with .* between tokens
+        return WILDCARD_SEARCH + String.join(WILDCARD_SEARCH, nameParts) + WILDCARD_SEARCH;
+    }
 
-        BoolQueryBuilder nameMatchQuery1 = QueryBuilders.boolQuery()
-            .filter(createNameMatchQuery("data.marriageApplicant1Name.keyword", applicant1Name))
-            .filter(createNameMatchQuery("data.marriageApplicant2Name.keyword", applicant2Name));
+    public List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
+                                                                                  MarriageDetails marriageDetails) {
+        // clean the names
+        String[] applicant1Names = normalizeAndSplit(marriageDetails.getApplicant1Name());
+        String[] applicant2Names = normalizeAndSplit(marriageDetails.getApplicant2Name());
 
-        BoolQueryBuilder nameMatchQuery2 = QueryBuilders.boolQuery()
-            .filter(createNameMatchQuery("data.marriageApplicant1Name.keyword", applicant2Name))
-            .filter(createNameMatchQuery("data.marriageApplicant2Name.keyword", applicant1Name));
+        BoolQueryBuilder nameMatching = QueryBuilders.boolQuery();
 
-        BoolQueryBuilder nameMatching = QueryBuilders.boolQuery()
-            .should(nameMatchQuery1)
-            .should(nameMatchQuery2);
+        // handle all combinations of name1 and name2
+        for (String name1 : applicant1Names) {
+            for (String name2 : applicant2Names) {
+                // applicant1 might be applicant2 on another case and vice versa
+                BoolQueryBuilder sameOrderCombo = QueryBuilders.boolQuery()
+                    .filter(createRegexQuery("data.marriageApplicant1Name.keyword", name1))
+                    .filter(createRegexQuery("data.marriageApplicant2Name.keyword", name2));
 
+                BoolQueryBuilder oppOrderCombo = QueryBuilders.boolQuery()
+                    .filter(createRegexQuery("data.marriageApplicant1Name.keyword", name2))
+                    .filter(createRegexQuery("data.marriageApplicant2Name.keyword", name1));
+
+                nameMatching.should(sameOrderCombo).should(oppOrderCombo);
+            }
+        }
         LocalDate marriageDate = marriageDetails.getDate();
-
         List<String> stateValues = POST_SUBMISSION_STATES.stream().map(State::name).toList();
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termsQuery(STATE_KEY,stateValues))
+            .filter(QueryBuilders.termsQuery(STATE_KEY, stateValues))
             .mustNot(QueryBuilders.termQuery(REFERENCE_KEY, String.valueOf(details.getId())))
             .filter(QueryBuilders.termQuery("data.marriageDate", marriageDate.format(ES_DATE_FORMATTER)))
             .filter(nameMatching);
@@ -124,6 +142,15 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         final var serviceAuth = authTokenGenerator.generate();
         return ccdSearchService.searchForAllCasesWithQuery(boolQuery, user, serviceAuth);
     }
+
+    // Helper method to create name match query
+    private BoolQueryBuilder createRegexQuery(String field, String cleanedName) {
+        String[] nameParts = cleanedName.split("\\s+");
+        String regexpPattern = ".*" + String.join(".*", nameParts) + ".*";
+        return QueryBuilders.boolQuery()
+            .should(QueryBuilders.regexpQuery(field, regexpPattern));
+    }
+
 
     public List<CaseMatch> transformToMatchingCasesList(
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails) {
