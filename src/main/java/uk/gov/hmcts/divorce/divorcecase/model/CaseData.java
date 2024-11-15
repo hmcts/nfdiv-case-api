@@ -613,7 +613,7 @@ public class CaseData {
 
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
-            .value(generalApplication)
+            .value(generalApplication.toBuilder().build())
             .build();
 
         if (isNull(this.getGeneralApplications())) {
@@ -621,5 +621,7 @@ public class CaseData {
         } else {
             this.getGeneralApplications().add(0, generalApplicationListValue);
         }
+
+        generalApplication.setGeneralApplicationTypeOtherComments(null);
     }
 }

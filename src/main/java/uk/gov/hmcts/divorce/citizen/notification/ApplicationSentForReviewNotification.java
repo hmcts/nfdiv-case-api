@@ -28,9 +28,11 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_FIRM;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
@@ -138,7 +140,8 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-
+        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
+        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
         return templateVars;
     }
 }
