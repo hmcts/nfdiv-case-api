@@ -23,6 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.CONDITIONAL_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.CONDITIONAL_REFERENCE_NUMBER;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE;
@@ -34,6 +36,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DISSOLUTION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DIVORCE;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SERVE_HUSBAND_ANOTHER_WAY;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow.DEED_POLL;
@@ -93,6 +96,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
@@ -126,6 +131,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
@@ -166,6 +173,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH),
@@ -193,6 +202,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(WELSH),
@@ -218,6 +229,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH),
@@ -273,9 +286,12 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
+                hasEntry(SERVE_HUSBAND_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
@@ -308,6 +324,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, FORMATTED_TEST_CASE_ID),
+                hasEntry(CONDITIONAL_COURT_EMAIL, "courtEmail"),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES)
@@ -338,9 +356,12 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, CommonContent.NO),
+                hasEntry(CONDITIONAL_REFERENCE_NUMBER, ""),
+                hasEntry(CONDITIONAL_COURT_EMAIL, ""),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, CommonContent.NO),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
+                hasEntry(SERVE_HUSBAND_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
