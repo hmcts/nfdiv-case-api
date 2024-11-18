@@ -17,7 +17,7 @@ newVersion="n/a"
 
 if [ "${ENVIRONMENT}" == "preview" ] || [ "${ENVIRONMENT}" == "aat" ]; then
   version=$(curl --insecure --silent --show-error -X GET \
-    ${CCD_DEFINITION_STORE_API_BASE_URL:-http://localhost:4451}/api/data/case-type/CIVIL/version \
+    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/CIVIL/version \
     -H "Authorization: Bearer ${userToken}" \
     -H "ServiceAuthorization: Bearer ${serviceToken}" || echo 'bypass-if-error')
 
