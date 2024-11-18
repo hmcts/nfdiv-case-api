@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,12 +28,14 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -227,5 +230,18 @@ class CaseworkerFindMatchesTest {
             String expectedName = (i == 0) ? "Willy Wonka" : "Mr Ritchie";
             assertTrue(pattern.matcher(expectedName).matches(), cleanedName[i]);
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'part1 / part2', 2",                           // 1 slash will be 2 names
+        "'part1 / part2 / part3 / part4', 4", // 3 slashes, split to 4
+        "'part1 / part2 / part3 / part4 / part5', 4", // 4 slashes, still split to 4
+        "'namewithoutslash', 1" // No slashes
+    })
+    void testNormalizeAndSplit(String input, int expectedSplits) {
+        String[] result = caseworkerFindMatches.normalizeAndSplit(input);
+
+        assertEquals(expectedSplits, result.length);
     }
 }

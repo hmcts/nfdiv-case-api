@@ -96,7 +96,10 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         // check for / and split to more names if it's there : prod data has this
         String cleanedName = nameWithoutExtraSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
-        return cleanedName.contains("/") ? cleanedName.split("\\s*/\\s*") : new String[]{cleanedName};
+        return cleanedName.contains("/")
+            ? cleanedName.split("\\s*/\\s*", 4)  // Split into at most 4 parts to avoid getting into bad calc
+            : new String[]{cleanedName};
+
     }
 
     String generateRegexPattern(String name) {
