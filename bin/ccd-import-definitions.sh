@@ -8,16 +8,10 @@ echo "Script Path ${scriptPath}"
 root_dir=$(realpath $(dirname ${0})/..)
 build_dir=${root_dir}/build/ccd-config
 
-mkdir -p ${build_dir}
-
-docker logout hmctspublic.azurecr.io
-
-for dir in $(find ${root_dir}/build/definitions/ -maxdepth 1 -mindepth  1 -type d -exec basename {} \;)
+for file in $(find ${build_dir}/ -name "*.xlsx" \;)
 do
-  config_dir=${root_dir}/build/definitions/${dir}
-  definitionOutputFile=${build_dir}/ccd-${dir}-${CCD_DEF_NAME:-dev}.xlsx
-
-  (${scriptPath}/ccd-import-definition.sh $config_dir $definitionOutputFile)
+   echo "files for upload is " + file
+  (${scriptPath}/ccd-import-definition.sh $build_dir $definitionOutputFile)
 done
 
 wait
