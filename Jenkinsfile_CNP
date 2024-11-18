@@ -199,6 +199,7 @@ withPipeline(type, product, component) {
     env.CCD_DEF_NAME = "preview"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
+    env.BEFTA_S2S_CLIENT_ID = "ccd_data"
     builder.gradle('generateCCDConfig --rerun-tasks')
     generateDefinitions()
     uploadDefinitions()

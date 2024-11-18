@@ -238,9 +238,8 @@ def versions = [
   jackson      : '2.18.1',
   junit        : '5.11.3',
   junitPlatform: '1.11.3',
-  lombok       : '1.18.34',
-  springBoot   : springBoot.class.package.implementationVersion,
-  testcontainers    : '1.20.2'
+  lombok       : '1.18.36',
+  springBoot   : springBoot.class.package.implementationVersion
 ]
 
 ext.libraries = [
