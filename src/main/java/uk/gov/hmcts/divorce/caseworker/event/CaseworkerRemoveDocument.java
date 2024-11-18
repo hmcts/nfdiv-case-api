@@ -161,7 +161,8 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             generalAppDocs = uploadedDocsToRemove
                 .stream()
                 .filter(divorceDocumentListValue ->
-                    divorceDocumentListValue.getValue().getDocumentType().equals(DocumentType.GENERAL_APPLICATION))
+                    divorceDocumentListValue.getValue().getDocumentType() != null
+                        && divorceDocumentListValue.getValue().getDocumentType().equals(DocumentType.GENERAL_APPLICATION))
                 .collect(Collectors.toList());
         }
 
