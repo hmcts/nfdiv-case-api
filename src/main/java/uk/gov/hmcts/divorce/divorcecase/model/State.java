@@ -232,6 +232,13 @@ public enum State {
     AwaitingFinalOrderPayment,
 
     @CCD(
+        label = "Awaiting response to HWF decision",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingResponseToHwfDecision,
+
+    @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -258,13 +265,6 @@ public enum State {
         access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingAnswer,
-
-    @CCD(
-        label = "Awaiting response to HWF decision",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingResponseToHwfDecision,
 
     @CCD(
         label = "AwaitingJS/Nullity",

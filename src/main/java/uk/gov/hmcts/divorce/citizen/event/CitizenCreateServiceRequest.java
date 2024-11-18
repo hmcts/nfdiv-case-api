@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHwfDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -34,7 +35,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CITIZEN_CREATE_SERVICE_REQUEST)
-            .forStates(AwaitingPayment, AwaitingFinalOrderPayment)
+            .forStates(AwaitingPayment, AwaitingFinalOrderPayment, AwaitingResponseToHwfDecision)
             .showCondition(NEVER_SHOW)
             .name("Create Payment Service Request")
             .description("Create Payment Service Request")
@@ -48,7 +49,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
 
         final State state = details.getState();
 
-        if (AwaitingPayment.equals(state)) {
+        if (AwaitingPayment.equals(state) || AwaitingResponseToHwfDecision.equals(state)) {
             prepareServiceRequestForApplicationPayment(details.getData(), details.getId());
         } else if (AwaitingFinalOrderPayment.equals(state)) {
             prepareServiceRequestForFinalOrderPayment(details.getData(), details.getId());
