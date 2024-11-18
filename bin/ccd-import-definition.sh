@@ -25,4 +25,4 @@ upload_http_code=$(echo "$uploadResponse" | tail -n1)
 upload_response_content=$(echo "$uploadResponse" | sed '$d')
 
 echo "File upload status : ${upload_http_code} "
-echo "Upload response content : ${upload_response_content}
+echo "Upload response content : ${upload_response_content}"
