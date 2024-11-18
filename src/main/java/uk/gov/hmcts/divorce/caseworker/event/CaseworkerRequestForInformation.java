@@ -25,8 +25,19 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -65,7 +76,19 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION)
-            .forStates(PRE_ISSUE_STATES)
+            .forStates(Draft,
+                AwaitingHWFDecision,
+                AwaitingHWFEvidence,
+                AwaitingHWFPartPayment,
+                AwaitingPayment,
+                AwaitingDocuments,
+                AwaitingApplicant1Response,
+                AwaitingApplicant2Response,
+                Applicant2Approved,
+                InformationRequested,
+                AwaitingRequestedInformation,
+                RequestedInformationSubmitted,
+                Submitted)
             .name("Request For Information")
             .description("Request for information")
             .showSummary()

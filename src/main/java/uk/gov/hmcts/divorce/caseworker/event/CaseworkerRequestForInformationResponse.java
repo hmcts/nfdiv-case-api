@@ -28,9 +28,19 @@ import java.util.Collections;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -59,7 +69,19 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION_RESPONSE)
-            .forStates(PRE_ISSUE_STATES)
+            .forStates(Draft,
+                AwaitingHWFDecision,
+                AwaitingHWFEvidence,
+                AwaitingHWFPartPayment,
+                AwaitingPayment,
+                AwaitingDocuments,
+                AwaitingApplicant1Response,
+                AwaitingApplicant2Response,
+                Applicant2Approved,
+                InformationRequested,
+                AwaitingRequestedInformation,
+                RequestedInformationSubmitted,
+                Submitted)
             .name("Add Text Only RFI Response")
             .description("Add Text Only RFI Response")
             .aboutToStartCallback(this::aboutToStart)
