@@ -18,7 +18,7 @@ do
   definitionOutputFile=${build_dir}/ccd-${dir}-${CCD_DEF_NAME:-dev}.xlsx
 
   (${scriptPath}/generate-ccd-definition.sh $config_dir $definitionOutputFile "-e *-nonprod.json,*-testing.json") &
-  (${scriptPath}/ccd-import-definition.sh $config_dir $definitionOutputFile
+  (${scriptPath}/ccd-import-definition.sh $config_dir $definitionOutputFile)
 done
 
   (${scriptPath}/add-roles.sh
