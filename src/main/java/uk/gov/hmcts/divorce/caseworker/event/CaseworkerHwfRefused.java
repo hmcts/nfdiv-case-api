@@ -32,7 +32,9 @@ public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_REFUSED)
             .forStateTransition(
-                EnumSet.of(AwaitingDocuments, AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment),
+                EnumSet.of(
+                    AwaitingDocuments, AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment, AwaitingResponseToHwfDecision
+                ),
                 AwaitingResponseToHwfDecision
             )
             .name("HWF refused")
