@@ -175,6 +175,8 @@ withPipeline(type, product, component) {
     env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
+    env.BEFTA_S2S_CLIENT_ID = "ccd_data"
 
     setCommonEnvVariables()
   }
@@ -191,6 +193,10 @@ withPipeline(type, product, component) {
     setCommonEnvVariables()
   }
 
+  before('smoketest:preview') {
+    builder.gradle('generateCCDConfig --rerun-tasks')
+    generateDefinitions()
+  }
   afterAlways('functionalTest:aat') {
     env.ENVIRONMENT="prod"
     env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
