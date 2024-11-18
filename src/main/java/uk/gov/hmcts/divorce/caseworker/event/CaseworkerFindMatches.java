@@ -93,11 +93,12 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         // remove illegal characters that we've spotted in prod data
         String illegalCharacters = ".=!*_";
-
+        String nameWithoutSpacesAroundSlashes = nameWithoutExtraSlashes.replaceAll("\\s*/\\s*", "/");
+        String cleanedName = nameWithoutSpacesAroundSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
         // check for / and split to more names if it's there : prod data has this
-        String cleanedName = nameWithoutExtraSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
+
         return cleanedName.contains("/")
-            ? cleanedName.split("\\s*/\\s*", 4)  // Split into at most 4 parts to avoid getting into bad calc
+            ? cleanedName.split("/", 4)  // Split into at most 4 parts to avoid getting into bad calc
             : new String[]{cleanedName};
 
     }
