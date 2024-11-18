@@ -17,9 +17,7 @@ do
   config_dir=${root_dir}/build/definitions/${dir}
   definitionOutputFile=${build_dir}/ccd-${dir}-${CCD_DEF_NAME:-dev}.xlsx
 
-  (${scriptPath}/generate-ccd-definition.sh $config_dir $definitionOutputFile "-e *-nonprod.json,*-testing.json") &
   (${scriptPath}/ccd-import-definition.sh $config_dir $definitionOutputFile)
 done
-
 
 wait

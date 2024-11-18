@@ -194,8 +194,9 @@ withPipeline(type, product, component) {
   }
 
   before('smoketest:preview') {
-//    builder.gradle('generateCCDConfig --rerun-tasks')
-//    generateDefinitions()
+    builder.gradle('generateCCDConfig --rerun-tasks')
+    generateDefinitions()
+    uploadDefinitions()
   }
   afterAlways('functionalTest:aat') {
     env.ENVIRONMENT="prod"
@@ -255,5 +256,12 @@ def generateDefinitions() {
   }
   dir("${WORKSPACE}") {
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
+  }
+}
+
+def uploadDefinitions() {
+  dir("${WORKSPACE}/bin") {
+    sh "./add-roles.sh"
+    sh "./ccd-import-definitions.sh"
   }
 }
