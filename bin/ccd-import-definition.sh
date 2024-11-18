@@ -15,14 +15,14 @@ serviceToken=$(${dir}/idam-lease-service-token.sh ccd_gw $(docker run --rm hmcts
 version="n/a"
 newVersion="n/a"
 
-if [ "${ENVIRONMENT}" == "preview" ] || [ "${ENVIRONMENT}" == "aat" ]; then
-  version=$(curl --insecure --silent --show-error -X GET \
-    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/NFD/version \
-    -H "Authorization: Bearer ${userToken}" \
-    -H "ServiceAuthorization: Bearer ${serviceToken}" || echo 'bypass-if-error')
-
-  echo "Current version is ${version}"
-fi
+#if [ "${ENVIRONMENT}" == "preview" ] || [ "${ENVIRONMENT}" == "aat" ]; then
+#  version=$(curl --insecure --silent --show-error -X GET \
+#    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/NFD/version \
+#    -H "Authorization: Bearer ${userToken}" \
+#    -H "ServiceAuthorization: Bearer ${serviceToken}" || echo 'bypass-if-error')
+#
+#  echo "Current version is ${version}"
+#fi
 
 uploadResponse=$(curl --insecure --silent -w "\n%{http_code}"  --show-error --max-time 60  -X POST \
   ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/import \
