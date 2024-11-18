@@ -530,4 +530,50 @@ public class CaseworkerRemoveDocumentTest {
         assertThat(response.getData().getGeneralApplications().get(1)
             .getValue().getGeneralApplicationDocuments()).isNotEmpty();
     }
+
+    @Test
+    void shouldRemoveNoDocumentFromCurrentGeneralApplicationWhenDocumentTypeNotSet() {
+        final ListValue<DivorceDocument> doc1 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+            "general_application.pdf",
+            GENERAL_APPLICATION
+        );
+
+        final ListValue<DivorceDocument> doc2 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004",
+            "co_application.pdf",
+            CONDITIONAL_ORDER_APPLICATION
+        );
+        doc2.getValue().setDocumentType(null);
+
+        GeneralApplication generalApplication =  GeneralApplication.builder()
+            .generalApplicationDocuments(List.of(doc1))
+            .generalApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+            .build();
+
+        CaseData beforeCaseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .documentsUploaded(List.of(doc1, doc2))
+                .build())
+            .generalApplication(generalApplication)
+            .build();
+
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .data(beforeCaseData)
+            .build();
+
+        CaseData currentCaseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .documentsUploaded(List.of(doc1)).build())
+            .generalApplication(generalApplication)
+            .build();
+
+        CaseDetails<CaseData, State> currentDetails = CaseDetails.<CaseData, State>builder()
+            .data(currentCaseData)
+            .build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments()).isNotEmpty();
+    }
 }
