@@ -68,7 +68,8 @@ public class CaseworkerUpdateApplicant1EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, detailsBefore);
 
         assertThat(response.getErrors())
-            .isEqualTo(singletonList("Email address should not be removed or blanked out."));
+            .isEqualTo(singletonList("You cannot leave the email field blank. "
+                + "You can only use this event to update the email of the party."));
     }
 
     @Test

@@ -33,6 +33,7 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
 
     private static final String EMAIL_LABEL = "${%s} email address";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
+    private static final String NEVER_SHOW = "applicant1Email=\"NEVER_SHOW\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -51,7 +52,9 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
             .page("updateApp1Email")
             .pageLabel("Update applicant/applicant1 email")
             .complex(CaseData::getApplicant1)
-            .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
+                .readonlyNoSummary(Applicant::getOffline,NEVER_SHOW)
+                .label("willNotReceiveInvite", getInviteNotSentLabel(),"applicant1Offline = \"Yes\"")
             .done();
     }
 
@@ -65,7 +68,8 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
         if (!validApplicant1Update(caseDataBefore, caseData)) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("Email address should not be removed or blanked out."))
+                .errors(singletonList("You cannot leave the email field blank. "
+                    + "You can only use this event to update the email of the party."))
                 .build();
         }
 
@@ -98,5 +102,10 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
 
     private String getLabel(final String label, final Object... value) {
         return String.format(label, value);
+    }
+
+    private String getInviteNotSentLabel() {
+        return "*The party is offline. You can update their email but they will not be invited to the case. "
+            + "Please use Notice of Change to invite them to gain access to the case online.*";
     }
 }
