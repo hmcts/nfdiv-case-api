@@ -6,7 +6,7 @@ username=${1}
 password=${2}
 
 IDAM_API_URL=${IDAM_API_BASE_URL:-http://localhost:5000}
-IDAM_URL=${IDAM_STUB_LOCALHOST:-$IDAM_API_URL}
+IDAM_URL=${e:-$IDAM_API_URL}
 
 clientSecret=${CCD_API_GATEWAY_IDAM_CLIENT_SECRET:-ccd_gateway_secret}
 redirectUri=${CCD_IDAM_REDIRECT_URL:-http://localhost:3451/oauth2redirect}
@@ -16,4 +16,4 @@ else
   code=stubbed-value
 fi
 
-curl --insecure --fail --show-error --silent -X POST -H "Content-Type: application/x-www-form-urlencoded" --user "ccd_gateway:${clientSecret}" "${IDAM_URL}/oauth2/token?code=${code}&redirect_uri=${redirectUri}&grant_type=authorization_code" -d "" | docker run --rm --interactive ghcr.io/jqlang/jq:latest -r .access_token
+curl -v --insecure --fail --show-error --silent -X POST -H "Content-Type: application/x-www-form-urlencoded" --user "ccd_gateway:${clientSecret}" "${IDAM_URL}/oauth2/token?code=${code}&redirect_uri=${redirectUri}&grant_type=authorization_code" -d "" | docker run --rm --interactive ghcr.io/jqlang/jq:latest -r .access_token
