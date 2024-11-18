@@ -17,7 +17,7 @@ newVersion="n/a"
 
 if [ "${ENVIRONMENT}" == "preview" ] || [ "${ENVIRONMENT}" == "aat" ]; then
   version=$(curl --insecure --silent --show-error -X GET \
-    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/CIVIL/version \
+    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/NFD/version \
     -H "Authorization: Bearer ${userToken}" \
     -H "ServiceAuthorization: Bearer ${serviceToken}" || echo 'bypass-if-error')
 
@@ -25,7 +25,7 @@ if [ "${ENVIRONMENT}" == "preview" ] || [ "${ENVIRONMENT}" == "aat" ]; then
 fi
 
 uploadResponse=$(curl --insecure --silent -w "\n%{http_code}"  --show-error --max-time 60  -X POST \
-  ${CCD_DEFINITION_STORE_API_BASE_URL:-http://localhost:4451}/import \
+  ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/import \
   -H "Authorization: Bearer ${userToken}" \
   -H "ServiceAuthorization: Bearer ${serviceToken}" \
   -F "file=@${filepath};filename=${uploadFilename}" || echo 'bypass-if-error')
@@ -42,7 +42,7 @@ if [ "${ENVIRONMENT}" == "preview" ] || [ "${ENVIRONMENT}" == "aat" ]; then
   sleep 45
 
   newVersion=$(curl --insecure --silent --show-error -X GET \
-    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/CIVIL/version \
+    ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/data/case-type/NFD/version \
     -H "Authorization: Bearer ${userToken}" \
     -H "ServiceAuthorization: Bearer ${serviceToken}" || echo 'bypass-if-error')
 
