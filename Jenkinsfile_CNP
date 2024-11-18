@@ -195,7 +195,7 @@ withPipeline(type, product, component) {
 
   before('smoketest:preview') {
     env.DEFINITION_STORE_URL_BASE="ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
-    CCD_IDAM_REDIRECT_URL="https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect"
+    env.CCD_IDAM_REDIRECT_URL="https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect"
     env.CCD_DEF_NAME = "preview"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
