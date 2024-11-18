@@ -194,8 +194,8 @@ withPipeline(type, product, component) {
   }
 
   before('smoketest:preview') {
-    builder.gradle('generateCCDConfig --rerun-tasks')
-    generateDefinitions()
+//    builder.gradle('generateCCDConfig --rerun-tasks')
+//    generateDefinitions()
   }
   afterAlways('functionalTest:aat') {
     env.ENVIRONMENT="prod"
