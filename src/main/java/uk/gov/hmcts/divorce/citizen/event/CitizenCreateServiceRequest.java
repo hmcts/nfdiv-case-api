@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -62,20 +63,25 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
     private void prepareServiceRequestForApplicationPayment(CaseData data, long caseId) {
         Application application = data.getApplication();
 
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
+        application.setApplicationFeeOrderSummary(orderSummary);
+
         String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
             data, caseId, data.getCitizenPaymentCallbackUrl()
         );
-
         application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
 
     private void prepareServiceRequestForFinalOrderPayment(CaseData data, long caseId) {
         FinalOrder finalOrder = data.getFinalOrder();
 
+        final OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
+        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+
         String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
             data, caseId, data.getCitizenPaymentCallbackUrl(), finalOrder.getApplicant2FinalOrderFeeOrderSummary()
         );
-
         finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
     }
 }
