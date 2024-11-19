@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -93,12 +94,10 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         // remove illegal characters that we've spotted in prod data
         String illegalCharacters = ".=!*_";
-        String nameWithoutSpacesAroundSlashes = nameWithoutExtraSlashes.replaceAll(" +/", "/").replaceAll("/ +", "/");
-        String cleanedName = nameWithoutSpacesAroundSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
+        String cleanedName = nameWithoutExtraSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
         // check for / and split to more names if it's there : prod data has this
-
         return cleanedName.contains("/")
-            ? cleanedName.split("/", 4)  // Split into at most 4 parts to avoid getting into bad calc
+            ? Arrays.stream(cleanedName.split("/", 4)).map(String::trim).toArray(String[]::new)
             : new String[]{cleanedName};
 
     }
