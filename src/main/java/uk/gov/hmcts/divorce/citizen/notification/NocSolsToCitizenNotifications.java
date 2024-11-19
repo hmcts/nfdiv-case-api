@@ -1,0 +1,169 @@
+package uk.gov.hmcts.divorce.citizen.notification;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
+import uk.gov.hmcts.divorce.document.print.model.Print;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.NotificationService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.URL_TO_LINK_CASE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.NOC_INVITE_CITIZEN;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+
+@RequiredArgsConstructor
+@Component
+@Slf4j
+public class NocSolsToCitizenNotifications implements ApplicantNotification {
+
+    private final NotificationService notificationService;
+    private final CommonContent commonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final EmailTemplatesConfig config;
+    private final CaseDataDocumentService caseDataDocumentService;
+    private final BulkPrintService bulkPrintService;
+
+    private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
+    private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+    public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
+    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
+    private static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
+    private static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
+    private static final String LETTER_TYPE_INVITE_CITIZEN = "invite-citizen";
+
+
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
+        log.info("Sending email invite to applicant/applicant1 : {}", id);
+
+        Map<String, String> templateVars = commonContent.nocCitizenTemplateVars(id, caseData.getApplicant1());
+        templateVars.put(ACCESS_CODE, caseData.getCaseInviteApp1().accessCodeApplicant1());
+        templateVars.put(CREATE_ACCOUNT_LINK,
+            config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            NOC_INVITE_CITIZEN,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference(),
+            id
+        );
+    }
+
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
+        log.info("Sending email invite to respondent/applicant2 : {}", id);
+
+        Map<String, String> templateVars = commonContent.nocCitizenTemplateVars(id, caseData.getApplicant1());
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
+        if (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+            templateVars.put(CREATE_ACCOUNT_LINK,
+                config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
+        } else {
+            templateVars.put(CREATE_ACCOUNT_LINK,
+                config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+        }
+
+        notificationService.sendEmail(
+            caseData.getApplicant2().getEmail(),
+            NOC_INVITE_CITIZEN,
+            templateVars,
+            caseData.getApplicant2().getLanguagePreference(),
+            id
+        );
+    }
+
+    @Override
+    public void sendToApplicant1Offline(final CaseData caseData, Long id) {
+        log.info("Sending letter invite to applicant/applicant1 : {}", id);
+        generateNoCNotificationLetterAndSend(caseData, id, caseData.getApplicant1(), true);
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, Long id) {
+        log.info("Sending letter invite to applicant/applicant1 : {}", id);
+        generateNoCNotificationLetterAndSend(caseData, id, caseData.getApplicant2(), false);
+    }
+
+
+    private void generateNoCNotificationLetterAndSend(CaseData caseData, Long caseId, Applicant applicant, boolean isApplicant1) {
+
+        Document generatedDocument = generateDocument(caseId, applicant, caseData, isApplicant1);
+
+        Letter letter = new  Letter(generatedDocument, 1);
+        String caseIdString = String.valueOf(caseId);
+
+        final Print print = new Print(
+                List.of(letter),
+                caseIdString,
+                caseIdString,
+                LETTER_TYPE_INVITE_CITIZEN,
+                applicant.getFullName(),
+                applicant.getAddressOverseas()
+        );
+
+        final UUID letterId = bulkPrintService.print(print);
+
+        log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+    }
+
+    private Document generateDocument(final long caseId,
+                                      final Applicant applicant,
+                                      final CaseData caseData,
+                                      final boolean isApplicant1) {
+
+        return caseDataDocumentService.renderDocument(getTemplateContent(caseData, caseId, applicant, isApplicant1),
+                caseId,
+                NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID,
+                applicant.getLanguagePreference(),
+                NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME);
+    }
+
+    private Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant, boolean isApplicant1) {
+        Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
+        templateContent.put(FIRST_NAME, applicant.getFirstName());
+        templateContent.put(LAST_NAME, applicant.getLastName());
+        templateContent.put(CASE_REFERENCE, formatId(caseId));
+
+        if (isApplicant1) {
+            templateContent.put(ACCESS_CODE, caseData.getCaseInviteApp1().accessCodeApplicant1());
+            templateContent.put(URL_TO_LINK_CASE,
+                config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
+        } else {
+            templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
+            if (caseData.getApplicationType().isSole()) {
+                templateContent.put(URL_TO_LINK_CASE,
+                    config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL
+                        : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
+            } else {
+                templateContent.put(URL_TO_LINK_CASE,
+                    config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL
+                        : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
+            }
+        }
+
+        return templateContent;
+    }
+}

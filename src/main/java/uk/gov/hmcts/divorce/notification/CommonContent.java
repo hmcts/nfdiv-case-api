@@ -347,6 +347,7 @@ public class CommonContent {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         return templateVars;
     }
 
