@@ -33,6 +33,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -149,28 +152,32 @@ public class CommonContent {
                                                 final Applicant applicant,
                                                 final Applicant partner) {
         Map<String, String> templateVars = new HashMap<>();
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+
         templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, getPartner(caseData, partner, applicant.getLanguagePreference()));
+        templateVars.put(PARTNER, getPartner(caseData, partner, languagePreference));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+
+        getPhoneAndOpeningTimes(languagePreference, templateVars);
         return templateVars;
     }
 
-    public Map<String, String> basicTemplateVars(final CaseData caseData, final Long caseId) {
+    public Map<String, String> basicTemplateVars(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
 
         final Map<String, String> templateVars = new HashMap<>();
-        final Applicant applicant = caseData.getApplicant1();
+        final Applicant applicant1 = caseData.getApplicant1();
         final Applicant respondent = caseData.getApplicant2();
 
-        templateVars.put(APPLICANT_NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
+        templateVars.put(APPLICANT_NAME, join(" ", applicant1.getFirstName(), applicant1.getLastName()));
         templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
@@ -178,11 +185,13 @@ public class CommonContent {
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
+        getPhoneAndOpeningTimes(languagePreference, templateVars);
+
         return templateVars;
     }
 
     public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
-        Map<String, String> templateVars = basicTemplateVars(data, id);
+        Map<String, String> templateVars = basicTemplateVars(data, id, applicant.getLanguagePreference());
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SOLICITOR_REFERENCE,
             isNotEmpty(applicant.getSolicitor().getReference())
@@ -212,6 +221,7 @@ public class CommonContent {
         templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
 
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -387,6 +397,14 @@ public class CommonContent {
             return CONTACT_TEXT_WELSH + "(" + config.getTemplateVars().get(WEBFORM_CY_URL) + ")";
         } else {
             return CONTACT_TEXT + "(" + config.getTemplateVars().get(WEBFORM_URL) + ")";
+        }
+    }
+
+    public void getPhoneAndOpeningTimes(LanguagePreference recipientLanguagePreference, Map<String, String> templateVars) {
+        if (recipientLanguagePreference != WELSH) {
+            templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        } else {
+            templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         }
     }
 }
