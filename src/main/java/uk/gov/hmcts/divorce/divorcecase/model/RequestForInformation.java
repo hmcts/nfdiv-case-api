@@ -109,6 +109,22 @@ public class RequestForInformation {
     }
 
     @JsonIgnore
+    public RequestForInformationAuthParty getAuthorisedResponseParty() {
+        final RequestForInformationSoleParties soleParties = this.getRequestForInformationSoleParties();
+        final RequestForInformationJointParties jointParties = this.getRequestForInformationJointParties();
+        if (RequestForInformationSoleParties.APPLICANT.equals(soleParties)
+            || RequestForInformationJointParties.APPLICANT1.equals(jointParties)) {
+            return RequestForInformationAuthParty.APPLICANT1;
+        } else if (RequestForInformationJointParties.APPLICANT2.equals(jointParties)) {
+            return RequestForInformationAuthParty.APPLICANT2;
+        } else if (RequestForInformationJointParties.BOTH.equals(jointParties)) {
+            return RequestForInformationAuthParty.BOTH;
+        }
+
+        return RequestForInformationAuthParty.OTHER;
+    }
+
+    @JsonIgnore
     private void setNameAndEmail(Applicant applicant, Boolean setSecondary) {
         final boolean isRepresented = applicant.isRepresented();
         final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
@@ -134,5 +150,10 @@ public class RequestForInformation {
         } else {
             this.getRequestForInformationResponses().add(0, newResponse);
         }
+    }
+
+    @JsonIgnore
+    public RequestForInformationResponse getLatestResponse() {
+        return this.getRequestForInformationResponses().get(0).getValue();
     }
 }

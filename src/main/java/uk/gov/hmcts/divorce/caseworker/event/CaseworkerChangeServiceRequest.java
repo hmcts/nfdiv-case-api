@@ -22,6 +22,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
@@ -54,7 +55,14 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CHANGE_SERVICE_REQUEST)
-            .forStates(Submitted, AwaitingDocuments, InformationRequested, RequestedInformationSubmitted, AwaitingHWFDecision)
+            .forStates(
+                Submitted,
+                AwaitingDocuments,
+                AwaitingRequestedInformation,
+                InformationRequested,
+                RequestedInformationSubmitted,
+                AwaitingHWFDecision
+            )
             .name("Change service request")
             .description("Change service request")
             .showSummary()

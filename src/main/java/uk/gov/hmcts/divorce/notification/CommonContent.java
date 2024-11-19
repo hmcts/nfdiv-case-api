@@ -160,7 +160,10 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
-        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEBFORM_URL,
+            WELSH.equals(applicant.getLanguagePreference())
+                ? config.getTemplateVars().get(WEBFORM_CY_URL)
+                : config.getTemplateVars().get(WEBFORM_URL));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         return templateVars;
     }
