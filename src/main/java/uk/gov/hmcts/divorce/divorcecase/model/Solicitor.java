@@ -149,8 +149,4 @@ public class Solicitor {
         }
         return this.address;
     }
-
-    public boolean hasAgreedToReceiveEmails() {
-        return this.agreeToReceiveEmailsCheckbox != null && this.agreeToReceiveEmailsCheckbox.contains(Prayer.CONFIRM);
-    }
 }

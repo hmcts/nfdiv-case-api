@@ -25,7 +25,19 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -64,7 +76,19 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION)
-            .forAllStates()
+            .forStates(Draft,
+                AwaitingHWFDecision,
+                AwaitingHWFEvidence,
+                AwaitingHWFPartPayment,
+                AwaitingPayment,
+                AwaitingDocuments,
+                AwaitingApplicant1Response,
+                AwaitingApplicant2Response,
+                Applicant2Approved,
+                InformationRequested,
+                AwaitingRequestedInformation,
+                RequestedInformationSubmitted,
+                Submitted)
             .name("Request For Information")
             .description("Request for information")
             .showSummary()
@@ -206,15 +230,15 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
             if (appIsRespondent) {
                 errors.add(
-                    applicant.getSolicitor().hasAgreedToReceiveEmails()
-                        ? USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
-                        : USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + "."
+                    applicant.isApplicantOffline()
+                        ? USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + "."
+                        : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
                 );
             } else {
                 errors.add(
-                    applicant.getSolicitor().hasAgreedToReceiveEmails()
-                        ? USE_CORRECT_PARTY_ERROR
-                        : USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+                    applicant.isApplicantOffline()
+                        ? USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+                        : USE_CORRECT_PARTY_ERROR
                 );
             }
         }
@@ -261,22 +285,16 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
     }
 
-    private boolean isApplicantFlaggedOffline(Applicant applicant) {
-        return applicant.isRepresented()
-            ? !applicant.getSolicitor().hasAgreedToReceiveEmails()
-            : applicant.isApplicantOffline();
-    }
-
     private void isApplicantOnline(CaseData caseData, Applicant applicant, List<String> errors) {
-        if (isApplicantFlaggedOffline(applicant)) {
+        if (applicant.isApplicantOffline()) {
             errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, applicant));
             errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
         }
     }
 
     private void areBothApplicantsOnline(CaseData caseData, List<String> errors) {
-        boolean applicant1Offline = isApplicantFlaggedOffline(caseData.getApplicant1());
-        boolean applicant2Offline = isApplicantFlaggedOffline(caseData.getApplicant2());
+        boolean applicant1Offline = caseData.getApplicant1().isApplicantOffline();
+        boolean applicant2Offline = caseData.getApplicant2().isApplicantOffline();
         if (applicant1Offline) {
             errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant1()));
         }
