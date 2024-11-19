@@ -28,6 +28,9 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
 
     public static final String CASEWORKER_UPDATE_APP1_EMAIL = "caseworker-update-app1-email";
 
+    public static final String WILL_NOT_SEND_INVITE = "*The party is offline. You can update their email but they will not be "
+        + "invited to the case. Please use Notice of Change to invite them to gain access to the case online.*";
+
     @Autowired
     private EmailUpdateService emailUpdateService;
 
@@ -54,7 +57,7 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
             .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .readonlyNoSummary(Applicant::getOffline,NEVER_SHOW)
-                .label("willNotReceiveInvite", getInviteNotSentLabel(),"applicant1Offline = \"Yes\"")
+                .label("willNotReceiveInvite", WILL_NOT_SEND_INVITE,"applicant1Offline = \"Yes\"")
             .done();
     }
 
@@ -102,10 +105,5 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
 
     private String getLabel(final String label, final Object... value) {
         return String.format(label, value);
-    }
-
-    private String getInviteNotSentLabel() {
-        return "*The party is offline. You can update their email but they will not be invited to the case. "
-            + "Please use Notice of Change to invite them to gain access to the case online.*";
     }
 }

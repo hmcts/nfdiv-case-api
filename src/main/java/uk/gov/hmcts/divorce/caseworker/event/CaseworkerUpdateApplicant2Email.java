@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant1Email.WILL_NOT_SEND_INVITE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -54,7 +55,7 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
             .complex(CaseData::getApplicant2)
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .readonlyNoSummary(Applicant::getOffline,NEVER_SHOW)
-                .label("willNotReceiveInvite", getInviteNotSentLabel(),"applicant2Offline = \"Yes\"")
+                .label("willNotReceiveInvite", WILL_NOT_SEND_INVITE,"applicant2Offline = \"Yes\"")
             .done();
     }
 
@@ -102,10 +103,5 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
 
     private String getLabel(final String label, final Object... value) {
         return String.format(label, value);
-    }
-
-    private String getInviteNotSentLabel() {
-        return "*The party is offline. You can update their email but they will not be invited to the case. "
-            + "Please use Notice of Change to invite them to gain access to the case online.*";
     }
 }
