@@ -232,7 +232,7 @@ public enum State {
     AwaitingFinalOrderPayment,
 
     @CCD(
-        label = "Awaiting response to HWF decision",
+        label = "Awaiting response to HWF Decision",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccessExcludingCAA.class}
     )

@@ -42,7 +42,7 @@ class SetStateAfterSubmissionTest {
     private SetStateAfterSubmission setStateAfterSubmission;
 
     @Test
-    void shouldSetAwaitingHwfDecisionStateIfSoleCitizenNeedsHelpWithFeesAndHasNotPaid() {
+    void shouldSetAwaitingHwfDecisionStateIfSoleCitizenNeedsHelpWithFees() {
 
         final Application application = Application.builder()
             .applicant1HelpWithFees(HelpWithFees.builder()
