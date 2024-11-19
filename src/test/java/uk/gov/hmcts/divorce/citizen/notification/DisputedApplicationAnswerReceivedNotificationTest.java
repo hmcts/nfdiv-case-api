@@ -62,8 +62,7 @@ class DisputedApplicationAnswerReceivedNotificationTest {
             Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build()
         );
         data.getApplication().setIssueDate(LocalDate.now());
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()
-                .getLanguagePreference())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -92,8 +91,7 @@ class DisputedApplicationAnswerReceivedNotificationTest {
         );
         data.getApplication().setIssueDate(LocalDate.now());
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()
-                .getLanguagePreference())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn("http://professional-signin-url/" + TEST_CASE_ID);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);

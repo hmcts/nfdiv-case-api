@@ -49,10 +49,9 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
     }
 
     private Map<String, String> respondentSolicitorTemplateVars(CaseData caseData, Long id) {
+        var templateVars = commonContent.basicTemplateVars(caseData, id);
 
         Applicant respondent = caseData.getApplicant2();
-
-        var templateVars = commonContent.basicTemplateVars(caseData, id, respondent.getLanguagePreference());
 
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));

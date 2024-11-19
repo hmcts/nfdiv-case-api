@@ -110,7 +110,7 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     }
 
     private Map<String, String> solicitorsFinalOrderTemplateVars(final CaseData caseData, final Long caseId, Applicant applicant) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, applicant.getLanguagePreference());
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
         templateVars.put(IS_CONDITIONAL_ORDER, NO);
         templateVars.put(IS_FINAL_ORDER, YES);

@@ -46,9 +46,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -103,20 +100,17 @@ class CommonContentTest {
 
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
 
-        final Map<String, String> templateVars =
-                commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(7)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "divorce.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY));
+                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test
@@ -127,16 +121,15 @@ class CommonContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DISSOLUTION_COURT_EMAIL, "dissolution.court@email.com"));
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID, null);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
-        assertThat(templateVars).isNotEmpty().hasSize(7)
+        assertThat(templateVars).isNotEmpty().hasSize(6)
             .contains(
                 entry(COURT_EMAIL, "dissolution.court@email.com"),
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT));
+                entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)));
     }
 
     @Test

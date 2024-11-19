@@ -145,7 +145,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
+        var templateVars = commonContent.basicTemplateVars(caseData, id);
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);

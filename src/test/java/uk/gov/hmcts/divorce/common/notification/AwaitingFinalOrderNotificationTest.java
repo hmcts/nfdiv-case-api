@@ -319,8 +319,7 @@ class AwaitingFinalOrderNotificationTest {
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
         data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
-                .thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         awaitingFinalOrderNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -359,8 +358,7 @@ class AwaitingFinalOrderNotificationTest {
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
         data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
-                .thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         awaitingFinalOrderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);

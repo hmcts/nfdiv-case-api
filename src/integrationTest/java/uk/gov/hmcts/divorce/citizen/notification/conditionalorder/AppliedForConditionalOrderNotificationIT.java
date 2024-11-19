@@ -128,7 +128,7 @@ public class AppliedForConditionalOrderNotificationIT {
         Map<String, String> templateContent = appliedForConditionalOrderNotification.solicitorTemplateVars(
             caseData,
             TEST_CASE_ID,
-            caseData.getApplicant1());
+            caseData.getApplicant1().getSolicitor());
 
         assertThat(templateContent).contains(
             entry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),

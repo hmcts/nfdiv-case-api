@@ -142,8 +142,6 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
-
-        commonContent.getPhoneAndOpeningTimes(respondent.getLanguagePreference(), templateVars);
         return templateVars;
     }
 }
