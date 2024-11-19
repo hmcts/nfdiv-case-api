@@ -64,7 +64,7 @@ public class AppliedForConditionalOrderNotification {
     }
 
     protected Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant);
+        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
         Solicitor solicitor = applicant.getSolicitor();
 
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
@@ -77,7 +77,7 @@ public class AppliedForConditionalOrderNotification {
     }
 
     protected Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, String whichPartner) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(data, id, applicant);
+        Map<String, String> templateVars = commonContent.basicTemplateVars(data, id, applicant.getLanguagePreference());
         templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(RESPONSE_DUE_DATE,
             coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));

@@ -233,7 +233,8 @@ class SoleApplicationDisputedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getMainTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn(getMainTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
         soleApplicationDisputedNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -257,7 +258,7 @@ class SoleApplicationDisputedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
     }
 
     @Test
@@ -267,7 +268,8 @@ class SoleApplicationDisputedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getMainTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn(getMainTemplateVars());
 
         soleApplicationDisputedNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -299,7 +301,8 @@ class SoleApplicationDisputedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getMainTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn(getMainTemplateVars());
 
         soleApplicationDisputedNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 

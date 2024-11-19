@@ -147,7 +147,8 @@ class RespondentApplyForFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(SOLE_APPLICATION);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("test-url");
 

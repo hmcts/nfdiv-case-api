@@ -106,7 +106,8 @@ class CommonContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1());
+        final Map<String, String> templateVars =
+                commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
 
         assertThat(templateVars).isNotEmpty().hasSize(7)
             .contains(

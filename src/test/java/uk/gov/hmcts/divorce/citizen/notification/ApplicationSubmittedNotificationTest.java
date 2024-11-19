@@ -111,7 +111,8 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()
+                .getLanguagePreference())).thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -123,7 +124,7 @@ class ApplicationSubmittedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
     }
 
     @Test
@@ -137,7 +138,8 @@ class ApplicationSubmittedNotificationTest {
             .email(TEST_SOLICITOR_EMAIL)
             .build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2())).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2()
+                .getLanguagePreference())).thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -149,7 +151,7 @@ class ApplicationSubmittedNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference());
     }
 
     @Test
