@@ -149,7 +149,7 @@ ccd:
         CCD_MULTIPARTY_EVENTS: DEFENDANT_RESPONSE,ACKNOWLEDGE_CLAIM,CLAIMANT_RESPONSE
         POC_FEATURE_ENABLED: true
         CCD_POC_CASE_TYPES: nfd
-        POC_APIS_URL: ${SERVICE_FQDN}
+        POC_APIS_URL: "https://${SERVICE_FQDN}"
       secrets: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   ccd-message-publisher:
