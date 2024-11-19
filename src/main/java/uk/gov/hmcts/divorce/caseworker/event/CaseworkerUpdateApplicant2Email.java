@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant1Email.WILL_NOT_SEND_INVITE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -41,7 +40,7 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_APP2_EMAIL)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Update applicant2 email")
+            .name("Update Resp or App 2 Email")
             .description("Update respondent/applicant2 email")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
@@ -54,8 +53,6 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
             .pageLabel("Update respondent/applicant2 email")
             .complex(CaseData::getApplicant2)
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .readonlyNoSummary(Applicant::getOffline,NEVER_SHOW)
-                .label("willNotReceiveInvite", WILL_NOT_SEND_INVITE,"applicant2Offline = \"Yes\"")
             .done();
     }
 

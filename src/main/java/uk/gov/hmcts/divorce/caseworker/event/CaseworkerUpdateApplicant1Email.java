@@ -28,22 +28,18 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
 
     public static final String CASEWORKER_UPDATE_APP1_EMAIL = "caseworker-update-app1-email";
 
-    public static final String WILL_NOT_SEND_INVITE = "*The party is offline. You can update their email but they will not be "
-        + "invited to the case. Please use Notice of Change to invite them to gain access to the case online.*";
-
     @Autowired
     private EmailUpdateService emailUpdateService;
 
     private static final String EMAIL_LABEL = "${%s} email address";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
-    private static final String NEVER_SHOW = "applicant1Email=\"NEVER_SHOW\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_APP1_EMAIL)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Update applicant1 email")
+            .name("Update App or App1 Email")
             .description("Update applicant/applicant1 email")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
@@ -56,8 +52,6 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
             .pageLabel("Update applicant/applicant1 email")
             .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .readonlyNoSummary(Applicant::getOffline,NEVER_SHOW)
-                .label("willNotReceiveInvite", WILL_NOT_SEND_INVITE,"applicant1Offline = \"Yes\"")
             .done();
     }
 

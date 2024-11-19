@@ -63,21 +63,6 @@ class EmailUpdateServiceTest {
     }
 
     @Test
-    void shouldNotProgressWhenApplicantIsOffline() {
-        final CaseData caseData = validApplicant1CaseData();
-        caseData.getApplicant1().setOffline(YesOrNo.YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
-
-        verifyNoInteractions(inviteApplicantToCaseNotification);
-        verifyNoInteractions(emailUpdatedNotification);
-    }
-
-    @Test
     void shouldNotProgressWhenApplicantIsRepresented() {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
