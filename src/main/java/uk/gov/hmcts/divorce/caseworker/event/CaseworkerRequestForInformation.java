@@ -230,15 +230,15 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
             if (appIsRespondent) {
                 errors.add(
-                    applicant.getSolicitor().hasAgreedToReceiveEmails()
-                        ? USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
-                        : USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + "."
+                    applicant.isApplicantOffline()
+                        ? USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR + SOLICITOR + "."
+                        : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
                 );
             } else {
                 errors.add(
-                    applicant.getSolicitor().hasAgreedToReceiveEmails()
-                        ? USE_CORRECT_PARTY_ERROR
-                        : USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+                    applicant.isApplicantOffline()
+                        ? USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
+                        : USE_CORRECT_PARTY_ERROR
                 );
             }
         }
@@ -285,22 +285,16 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
     }
 
-    private boolean isApplicantFlaggedOffline(Applicant applicant) {
-        return applicant.isRepresented()
-            ? !applicant.getSolicitor().hasAgreedToReceiveEmails()
-            : applicant.isApplicantOffline();
-    }
-
     private void isApplicantOnline(CaseData caseData, Applicant applicant, List<String> errors) {
-        if (isApplicantFlaggedOffline(applicant)) {
+        if (applicant.isApplicantOffline()) {
             errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, applicant));
             errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
         }
     }
 
     private void areBothApplicantsOnline(CaseData caseData, List<String> errors) {
-        boolean applicant1Offline = isApplicantFlaggedOffline(caseData.getApplicant1());
-        boolean applicant2Offline = isApplicantFlaggedOffline(caseData.getApplicant2());
+        boolean applicant1Offline = caseData.getApplicant1().isApplicantOffline();
+        boolean applicant2Offline = caseData.getApplicant2().isApplicantOffline();
         if (applicant1Offline) {
             errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant1()));
         }
