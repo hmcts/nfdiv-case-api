@@ -137,7 +137,7 @@ public class CaseController {
                      WHERE case_data.version = EXCLUDED.version;
                 """,
             "DIVORCE",
-            "NFD",
+            "NFD-4154",
             state,
             mapper.writeValueAsString(caseDetails.get("case_data")),
             mapper.writeValueAsString(caseDetails.get("data_classification")),
@@ -225,7 +225,7 @@ public class CaseController {
             event.getEventId(),
             "user-id",
             currentView.get("id"),
-            "NFD",
+            "NFD-4154",
             version,
             currentView.get("state"),
             "a-first-name",
