@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotifi
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -157,7 +158,7 @@ class SystemPronounceCaseTest {
     }
 
     @Test
-    void shouldSkipDocGenerationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
+    void shouldSkipDocGenerationAndNotificationWhenOnlineCoDocumentAlreadyExistsAndNoChangesToConditionalOrder() {
         final CaseData caseData = caseData();
 
         setConditionalOrder(caseData);
@@ -170,7 +171,7 @@ class SystemPronounceCaseTest {
         underTest.aboutToSubmit(details, details);
 
         verifyNoMoreInteractions(generateConditionalOrderPronouncedDocument);
-        verify(notificationDispatcher).send(notification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
@@ -212,13 +213,56 @@ class SystemPronounceCaseTest {
             .build();
 
         List<ListValue<DivorceDocument>> docs = List.of(coDocumentListValue);
-
         caseData.getDocuments().setDocumentsGenerated(docs);
+        buildConditionalOrder(caseData);
+    }
 
+    @Test
+    void shouldGenerateConditionalOrderGrantedDocsWhenFinalOrderIsNull() {
+        final CaseData caseData = caseData();
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
+        buildConditionalOrder(caseData);
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID
+            )
+            .data(caseData)
+            .build();
+
+        when(generateConditionalOrderPronouncedDocument.apply(details)).thenReturn(details);
+        underTest.aboutToSubmit(details, details);
+        verify(notificationDispatcher).send(any(), eq(caseData), eq(details.getId()));
+    }
+
+    private void buildConditionalOrder(CaseData caseData) {
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .pronouncementJudge("judgeName")
+            .pronouncementJudge("JudgeName")
             .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(LocalDateTime.now())
             .build());
+    }
+
+    @Test
+    void shouldNotGenerateDocsOrSendNotificationWhenFinalOrderDateHasValue() {
+        final CaseData caseData = caseData();
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
+        buildConditionalOrder(caseData);
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build());
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        Map<String, Object> mockCaseDataMap = Map.of(
+            "conditionalOrder", Map.of("court", "Birmingham", "dateAndTimeOfHearing", LocalDateTime.now().toString())
+        );
+
+        buildConditionalOrder(caseData);
+
+        underTest.aboutToSubmit(details, details);
+
+        verifyNoInteractions(generateConditionalOrderPronouncedDocument);
+        verifyNoInteractions(notificationDispatcher);
     }
 }
