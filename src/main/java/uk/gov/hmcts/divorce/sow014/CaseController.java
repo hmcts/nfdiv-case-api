@@ -44,35 +44,37 @@ public class CaseController {
         produces = "application/json"
     )
     public String getCase(@PathVariable("caseRef") long caseRef) {
-        return db.queryForObject(
-            """
-                select
-                    (((r - 'data') - 'marked_by_logstash') - 'reference') - 'resolved_ttl'
-                    || jsonb_build_object('case_data', (
-                    r->'data'
-                    || jsonb_build_object('notes', notes)
-                    ))
-                    || jsonb_build_object('id', reference)
-                    || jsonb_build_object('last_state_modified_date', last_state_modified_date)
-                    || jsonb_build_object('last_modified', last_modified)
-                from (
-                select
-                  reference,
-                  coalesce(n.notes, '[]'::jsonb) as notes,
-                  coalesce(last_event.created_date, c.created_date) as last_modified,
-                  last_state_modified_date,
-                   to_jsonb(c) r
-                 from case_data c
-                      left join notes_by_case n using(reference)
-                     left join lateral (
-                      select created_date from case_event
-                      where case_reference = c.reference
-                      order by id desc limit 1
-                    ) last_event on true
-                 where reference = ?
-                ) s
-                """,
-            new Object[]{caseRef}, String.class);
+        String caseData = db.queryForObject(
+                """
+                        select
+                            (((r - 'data') - 'marked_by_logstash') - 'reference') - 'resolved_ttl'
+                            || jsonb_build_object('case_data', (
+                            r->'data'
+                            || jsonb_build_object('notes', notes)
+                            ))
+                            || jsonb_build_object('id', reference)
+                            || jsonb_build_object('last_state_modified_date', last_state_modified_date)
+                            || jsonb_build_object('last_modified', last_modified)
+                        from (
+                        select
+                          reference,
+                          coalesce(n.notes, '[]'::jsonb) as notes,
+                          coalesce(last_event.created_date, c.created_date) as last_modified,
+                          last_state_modified_date,
+                           to_jsonb(c) r
+                         from case_data c
+                              left join notes_by_case n using(reference)
+                             left join lateral (
+                              select created_date from case_event
+                              where case_reference = c.reference
+                              order by id desc limit 1
+                            ) last_event on true
+                         where reference = ?
+                        ) s
+                        """,
+                new Object[]{caseRef}, String.class);
+        log.info("case data: {}", caseData);
+        return caseData;
     }
 
     @SneakyThrows
