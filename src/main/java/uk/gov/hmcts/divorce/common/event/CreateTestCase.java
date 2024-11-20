@@ -46,6 +46,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     private static final String TEST_CREATE = "create-test-application";
     private static final String SOLE_APPLICATION = "classpath:data/sole.json";
     private static final String JOINT_APPLICATION = "classpath:data/joint.json";
+    public static volatile boolean submittedCallbackTriggered = false;
 
     @Autowired
     private CcdAccessService ccdAccessService;
@@ -63,6 +64,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
         if (env.contains(ENVIRONMENT_AAT)) {
             roles.add(SOLICITOR);
+            roles.add(CASE_WORKER);
         }
 
         new PageBuilder(configBuilder
@@ -132,6 +134,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> before) {
+        submittedCallbackTriggered = true;
         var data = details.getData();
         var caseId = details.getId();
         var app2Id = data.getCaseInvite().applicant2UserId();

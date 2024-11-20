@@ -1,3 +1,5 @@
+import uk.gov.hmcts.rse.ManifestTask
+
 buildscript {
   repositories {
     mavenLocal()
@@ -25,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.11'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1460'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1453'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -189,7 +191,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
-  '**/uk/gov/hmcts/divorce/divorcecase/tab/**'
+  '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
+  '**/sow014/**/*',
+  '**/CaseworkerAddNote.java'
 ]
 
 sonarqube {
@@ -256,6 +260,8 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
+  implementation "org.flywaydb:flyway-core:9.22.3"
+
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -282,8 +288,11 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
   implementation group: 'org.springframework.retry', name: 'spring-retry'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.1.4'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+  implementation 'com.zaxxer:HikariCP:6.0.0'
 
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.25'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.1-RELEASE'
@@ -293,6 +302,8 @@ dependencies {
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  cftlibTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
   testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
@@ -315,6 +326,8 @@ dependencies {
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.3'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
+  testImplementation group: 'com.h2database', name: 'h2', version: '2.3.232'
+  testImplementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.21.1'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -430,6 +443,8 @@ bootWithCCD {
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
     environment 'XUI_MO_PORT', '3009'
+    environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
+    environment 'CCD_POCS_URL', 'http://localhost:4013'
   }
 }
 
@@ -459,6 +474,7 @@ cftlibTest {
   environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
   environment 'CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES', 'nfdiv_case_api'
   environment 'DATA_STORE_S2S_AUTHORISED_SERVICES', 'ccd_gw,fpl_case_service,ccd_data,ccd_ps,divorce_frontend,payment-api,xui_webapp,nfdiv_case_api,ccd_case_document_am_api,am_role_assignment_service'
+  environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
 }
 
 tasks.withType(Test).configureEach {

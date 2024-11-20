@@ -4,10 +4,16 @@ nfdiv-frontend:
 
 idam-pr:
   enabled: false
-
+wiremock:
+  enabled: false
+ccd:
+  enabled: false
+xui-webapp:
+  enabled: false
+aac-manage-case-assignment:
+  enabled: false
 ccd-def-cleanup:
   enabled: false
-
 java:
   applicationPort: 4013
   image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
