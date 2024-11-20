@@ -12,9 +12,13 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -53,6 +57,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private final SolicitorValidationService solicitorValidationService;
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+    private final NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
     private final NotificationDispatcher notificationDispatcher;
 
     @Override
@@ -94,6 +99,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
                         .done()
                     .done()
+                .optional(Applicant::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
                 .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
                 .done()
@@ -115,6 +121,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
                         .done()
                     .done()
+                .optional(Applicant::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
                 .done();
@@ -127,14 +134,30 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         CaseData data = details.getData();
         List<String> errors = new ArrayList<>();
 
+        final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
+        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+
+        if (data.getNoticeOfChange().getAreTheyRepresented().equals(NO)) {
+            CaseData beforeData = detailsBefore.getData();
+            final Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
+
+            if (beforeApplicant.getEmail() != null && !beforeApplicant.getEmail().isBlank()
+                && (applicant.getEmail() == null || applicant.getEmail().isBlank())) {
+
+                errors.add("Email address cannot be removed. It can only be updated.");
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(data)
+                    .errors(errors)
+                    .build();
+            }
+        }
+
         if (data.getNoticeOfChange().isNotAddingNewDigitalSolicitor()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .build();
         }
 
-        final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
-        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         String email = applicant.getSolicitor().getEmail();
         String orgId = applicant.getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationId();
 
@@ -189,6 +212,13 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         //this can move to submitted once we have more NOC data on casedata
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
             beforeData, details.getId(), isApplicant1, noticeType);
+
+        if ((noticeType == NoticeType.ORG_REMOVED) && shouldSendInviteToParty(data)) {
+            //Send email to party with case invites
+            generateCaseInvite(data, isApplicant1, applicant);
+            notificationDispatcher.sendNOCToParty(nocSolsToCitizenNotifications, details.getData(), details.getId(),
+                isApplicant1);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(correctRepresentationDetails(details.getData(), beforeData))
@@ -304,5 +334,33 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         solicitor.setOrganisationPolicy(defaultOrgPolicy);
         return solicitor;
+    }
+
+    private boolean shouldSendInviteToParty(final CaseData data) {
+        if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+            return true;
+        }
+        if ((data.getApplicationType() == ApplicationType.JOINT_APPLICATION)
+            && !data.getApplicant1().isApplicantOffline()
+            && !data.getApplicant2().isApplicantOffline()) {
+            return true;
+        }
+        return false;
+    }
+
+    private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {
+        if (isApplicant1) {
+            CaseInviteApp1 invite = CaseInviteApp1.builder()
+                .applicant1InviteEmailAddress(applicant.getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInviteApp1(invite);
+        } else {
+            CaseInvite invite = CaseInvite.builder()
+                .applicant2InviteEmailAddress(applicant.getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInvite(invite);
+        }
     }
 }
