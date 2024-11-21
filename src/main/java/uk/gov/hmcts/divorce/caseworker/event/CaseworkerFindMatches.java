@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -89,19 +90,20 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         // remove "name changed by Deed Poll" ignoring case
         String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
-        // split on illegal characters as they are in prod data
-        String illegalCharacters = "\\.=!\\*_/\\(\\):'`,;#%@";
+        // split on illegal characters as they are in prod data - had to escape some with \\ as they are special chars in regex
+        String illegalCharacters = "\\.\\-\"=!\\s*/\\(\\):'`,;#%@|\\[\\]_";
 
-        // Check if the name contains any illegal characters directly in the if condition
+        // check if the name contains any illegal characters directly in the if condition
         if (illegalCharacters.chars().anyMatch(c -> nameWithoutDeedPollStatement.indexOf(c) >= 0)) {
             // split to separate names for search wherever there are illegal characters
             return Arrays.stream(nameWithoutDeedPollStatement.split("[" + illegalCharacters + "]"))
                 .map(String::trim)
                 .filter(part -> !part.isEmpty()) // ignore empty parts
+                .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // split on spaces
                 .toArray(String[]::new);
         } else {
             // return the name as it is because it's clean
-            return new String[]{nameWithoutDeedPollStatement};
+            return new String[] {nameWithoutDeedPollStatement};
         }
     }
 
