@@ -19,14 +19,16 @@ public class CallbackEnumerator {
         var cfg = configs.stream().filter(x -> x.getCaseType().equals("NFD")).findFirst();
         submittedCallbacks = new HashSet<>();
         aboutToSubmitCallbacks = new HashSet<>();
-        cfg.get().getEvents().forEach((x, y) -> {
-            if (y.getAboutToSubmitCallback() != null) {
-                aboutToSubmitCallbacks.add(x);
-            }
-            if (y.getSubmittedCallback() != null) {
-                submittedCallbacks.add(x);
-            }
-        });
+        if (cfg.isPresent()) {
+            cfg.get().getEvents().forEach((x, y) -> {
+                if (y.getAboutToSubmitCallback() != null) {
+                    aboutToSubmitCallbacks.add(x);
+                }
+                if (y.getSubmittedCallback() != null) {
+                    submittedCallbacks.add(x);
+                }
+            });
+        }
     }
 
     public boolean hasAboutToSubmitCallbackForEvent(String event) {
