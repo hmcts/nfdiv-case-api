@@ -221,12 +221,13 @@ class CaseworkerFindMatchesTest {
     @MethodSource("provideTestInputs")
     void testRegexPatternAfterClean(String input) {
         // Assert that all inputs match to "Willy Wonka"
+        String[] expectedNames = new String[]{"Willy", "Wonka", "Mr", "Ritchie"};
         String[] cleanedName = caseworkerFindMatches.normalizeAndSplit(input);
         for (int i = 0; i < cleanedName.length; i++) {
             String regexPattern = caseworkerFindMatches.generateRegexPattern(cleanedName[i]);
             Pattern pattern = Pattern.compile(regexPattern);
             // Verify that the regex matches the cleaned name
-            String expectedName = (i == 0) ? "Willy Wonka" : "Mr Ritchie";
+            String expectedName = expectedNames[i];
             assertTrue(pattern.matcher(expectedName).matches(), cleanedName[i]);
         }
     }

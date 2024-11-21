@@ -90,28 +90,12 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         // remove "name changed by Deed Poll" ignoring case
         String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
-        // split on illegal characters as they are in prod data - had to escape some with \\ as they are special chars in regex
-        String illegalCharacters = "\\.\\-\"=!\\s*/\\(\\):'`,;#%@|\\[\\]_";
-
-        // check if the name contains any illegal characters directly in the if condition
-        if (illegalCharacters.chars().anyMatch(c -> nameWithoutDeedPollStatement.indexOf(c) >= 0)) {
-            // split to separate names for search wherever there are illegal characters
-            return Arrays.stream(nameWithoutDeedPollStatement.split("[" + illegalCharacters + "]"))
-                .map(String::trim)
-                .filter(part -> !part.isEmpty()) // ignore empty parts
-                .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // split on spaces
-                .toArray(String[]::new);
-        } else {
-            // return the name as it is because it's clean
-            return new String[] {nameWithoutDeedPollStatement};
-        }
-    }
-
-    String generateRegexPattern(String name) {
-        // Split the cleaned name into parts by whitespace
-        String[] nameParts = name.split("\\s+");
-        // Join the parts into a regex pattern with .* between tokens
-        return WILDCARD_SEARCH + String.join(WILDCARD_SEARCH, nameParts) + WILDCARD_SEARCH;
+        // split to separate names for search wherever there are non alphanumeric characters
+        return Arrays.stream(nameWithoutDeedPollStatement.split("[^a-zA-Z0-9]+"))
+            .map(String::trim)
+            .filter(part -> !part.isEmpty()) // ignore empty parts
+            .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // split on spaces
+            .toArray(String[]::new);
     }
 
     public List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
@@ -153,10 +137,13 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     // Helper method to create name match query
     private BoolQueryBuilder createRegexQuery(String field, String cleanedName) {
-        String[] nameParts = cleanedName.split("\\s+");
-        String regexpPattern = ".*" + String.join(".*", nameParts) + ".*";
         return QueryBuilders.boolQuery()
-            .should(QueryBuilders.regexpQuery(field, regexpPattern));
+            .should(QueryBuilders.regexpQuery(field, generateRegexPattern(cleanedName)));
+    }
+
+    String generateRegexPattern(String name) {
+        // Join the parts into a regex pattern with .* between tokens
+        return WILDCARD_SEARCH + name + WILDCARD_SEARCH;
     }
 
 
