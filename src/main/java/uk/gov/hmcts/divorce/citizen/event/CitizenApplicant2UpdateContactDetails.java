@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -75,6 +76,8 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
             boolean contactPrivacyChanged = updatedData.getApplicant2().isConfidentialContactDetails()
                 != data.getApplicant2().isConfidentialContactDetails();
             data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
+            data.getApplicant2().setInRefuge(updatedData.getApplicant2().isConfidentialContactDetails()
+                    ? updatedData.getApplicant2().getInRefuge() : YesOrNo.NO);
 
             boolean addressChanged = isAddressChanged(data, updatedData);
             data.getApplicant2().setAddress(updatedData.getApplicant2().getAddress());

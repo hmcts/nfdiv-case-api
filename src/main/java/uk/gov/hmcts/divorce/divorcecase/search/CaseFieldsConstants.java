@@ -24,6 +24,8 @@ public final class CaseFieldsConstants {
     public static final String ALTERNATIVE_SERVICE_TYPE = "alternativeServiceType";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String APPLICANT_2_ADDRESS = "applicant2Address";
+    public static final String APPLICANT_1_IN_REFUGE = "applicant1InRefuge";
+    public static final String APPLICANT_2_IN_REFUGE = "applicant2InRefuge";
     public static final String CCD_REFERENCE = "[CASE_REFERENCE]";
     public static final String CASE_STATE = "[STATE]";
     public static final String DUE_DATE = "dueDate";
