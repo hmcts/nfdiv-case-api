@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.notification;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
