@@ -89,7 +89,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         if (ccdAccessService.isApplicant2(httpServletRequest.getHeader(AUTHORIZATION), caseId)) {
             log.info("Request made by applicant to switch to sole for case id: {}", caseId);
             switchToSoleService.switchApplicantData(data);
-            switchToSoleService.switchUserRoles(data, caseId);
+            switchToSoleService.switchUserRoles(beforeDetails.getData(), caseId);
         }
 
         // triggered by system update user coming from Offline Document Verified
@@ -97,7 +97,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             switchToSoleService.switchApplicantData(data);
             if (!data.getApplication().isPaperCase()) {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);
-                switchToSoleService.switchUserRoles(data, caseId);
+                switchToSoleService.switchUserRoles(beforeDetails.getData(), caseId);
             }
         }
 
