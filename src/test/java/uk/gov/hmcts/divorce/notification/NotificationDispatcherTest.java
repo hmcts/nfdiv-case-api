@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -279,6 +280,92 @@ class NotificationDispatcherTest {
         notificationDispatcher.sendNOC(applicantNotification, caseData, previousCaseData, caseId, isApplicant1, noticeType);
 
         verify(applicantNotification, never()).sendToApplicant2OldSolicitor(previousCaseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp1WhenEmailIsNull() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(new Applicant());
+        caseData.getApplicant1().setEmail(null);
+
+        final boolean isApplicant1 = true;
+
+        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant1(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp1WhenEmailIsBlank() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(new Applicant());
+        caseData.getApplicant1().setEmail("");
+
+        final boolean isApplicant1 = true;
+
+        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant1(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendOnlineAndOfflineNoCInviteToApp1WhenEmailPresent() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(new Applicant());
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+
+        final boolean isApplicant1 = true;
+
+        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification).sendToApplicant1(caseData, caseId);
+        verify(applicantNotification).sendToApplicant1Offline(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp2WhenEmailIsNull() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant2(new Applicant());
+        caseData.getApplicant2().setEmail(null);
+
+        final boolean isApplicant1 = false;
+
+        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp2WhenEmailIsBlank() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant2(new Applicant());
+        caseData.getApplicant2().setEmail("");
+
+        final boolean isApplicant1 = false;
+
+        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendOnlineAndOfflineNoCInviteTooApp2WhenEmailPresent() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant2(new Applicant());
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        final boolean isApplicant1 = false;
+
+        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification).sendToApplicant2(caseData, caseId);
+        verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);
     }
 
     public static class TestNotification implements ApplicantNotification {

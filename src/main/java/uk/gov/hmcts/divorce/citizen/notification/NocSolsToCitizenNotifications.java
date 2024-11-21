@@ -75,7 +75,7 @@ public class NocSolsToCitizenNotifications implements ApplicantNotification {
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending email invite to respondent/applicant2 : {}", id);
 
-        Map<String, String> templateVars = commonContent.nocCitizenTemplateVars(id, caseData.getApplicant1());
+        Map<String, String> templateVars = commonContent.nocCitizenTemplateVars(id, caseData.getApplicant2());
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         if (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
             templateVars.put(CREATE_ACCOUNT_LINK,
