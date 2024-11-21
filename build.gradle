@@ -352,7 +352,7 @@ dependencies {
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
   jooqCodegen group: 'org.testcontainers', name: 'postgresql', version: '1.20.3'
   jooqCodegen group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
-  jooqCodegen project(':lib:flyway')
+  jooqCodegen project('flyway')
 
 }
 
