@@ -210,7 +210,7 @@ class CaseworkerFindMatchesTest {
             "Willy Wonka.=",                      // Illegal characters at the end
             "Willy Wonka***",                     // Trailing asterisks
             "Willy Wonka!",                       // Exclamation mark at the end
-            "Willy Wonka (formerly waldo)",          // Parentheses at the end
+            "Willy Wonka (Mr. Ritchie)",          // Parentheses at the end
             "Willy Wonka.=",                  // Mix of illegal characters
             "_Willy Wonka_",                  // Underscores around the name
             "Willy Wonka / Mr. Ritchie "
@@ -233,10 +233,15 @@ class CaseworkerFindMatchesTest {
 
     @ParameterizedTest
     @CsvSource({
-        "'part1 / part2', 2",                           // 1 slash will be 2 names
-        "'part1 / part2 / part3 / part4', 4", // 3 slashes, split to 4
-        "'part1 / part2 / part3 / part4 / part5', 4", // 4 slashes, still split to 4
-        "'namewithoutslash', 1" // No slashes
+        "'John Doe / Jane Smith', 2",                        // 1 slash -> split into 2 parts
+        "'Alice ; Bob, Charlie', 3",                         // 2 illegal chars ( ; ,) -> split into 3 parts
+        "'John Doe; ** Jane Smith', 2",                        // 1 slash -> split into 2 parts
+        "'part1 (part2) part3 / part4 : part5', 5",          // 4 illegal chars ( ( ) / : ) -> split into 5 parts
+        "'namewithoutslash', 1",                             // No illegal chars -> 1 part
+        "'hello!world', 2",                                  // 1 illegal char (!) -> split into 2 parts
+        "'Alice,,,Bob', 2",                                  // 2 commas -> split into 2 parts
+        "'first %last ( name changed by deed poll )', 2",     // "name changed by deed poll" is removed -> 2 parts
+        "'hello world//example', 2"                          // 1 double slash (//) -> split into 2 parts
     })
     void testNormalizeAndSplit(String input, int expectedSplits) {
         String[] result = caseworkerFindMatches.normalizeAndSplit(input);

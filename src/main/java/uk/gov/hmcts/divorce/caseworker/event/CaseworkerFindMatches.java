@@ -86,20 +86,23 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
     }
 
     public String[] normalizeAndSplit(String name) {
-        // remove brackets and anything inside them
-        String nameWithoutStuffInBrackets = name.replaceAll("\\([^)]*\\)", "");
+        // remove "name changed by Deed Poll" ignoring case
+        String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
-        // replace multiple consecutive "/" with a single "/" because we might have multiple names due to translations
-        String nameWithoutExtraSlashes = nameWithoutStuffInBrackets.replaceAll("/+", "/");
+        // split on illegal characters as they are in prod data
+        String illegalCharacters = "\\.=!\\*_/\\(\\):'`,;#%@";
 
-        // remove illegal characters that we've spotted in prod data
-        String illegalCharacters = ".=!*_";
-        String cleanedName = nameWithoutExtraSlashes.replaceAll("[" + illegalCharacters + "]", "").trim();
-        // check for / and split to more names if it's there : prod data has this
-        return cleanedName.contains("/")
-            ? Arrays.stream(cleanedName.split("/", 4)).map(String::trim).toArray(String[]::new)
-            : new String[]{cleanedName};
-
+        // Check if the name contains any illegal characters directly in the if condition
+        if (illegalCharacters.chars().anyMatch(c -> nameWithoutDeedPollStatement.indexOf(c) >= 0)) {
+            // split to separate names for search wherever there are illegal characters
+            return Arrays.stream(nameWithoutDeedPollStatement.split("[" + illegalCharacters + "]"))
+                .map(String::trim)
+                .filter(part -> !part.isEmpty()) // ignore empty parts
+                .toArray(String[]::new);
+        } else {
+            // return the name as it is because it's clean
+            return new String[]{nameWithoutDeedPollStatement};
+        }
     }
 
     String generateRegexPattern(String name) {
