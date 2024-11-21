@@ -1,3 +1,4 @@
+import uk.gov.hmcts.rse.AuthMode
 import uk.gov.hmcts.rse.ManifestTask
 
 buildscript {
@@ -28,6 +29,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.11'
   id 'com.github.hmcts.rse-cft-lib' version '0.19.1453'
+  id 'org.jooq.jooq-codegen-gradle' version '3.19.15'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -42,6 +44,11 @@ ccd {
 }
 
 sourceSets {
+  main {
+    java {
+      srcDirs jooqCodegen.outputs
+    }
+  }
   functionalTest {
     java {
       compileClasspath += main.output
@@ -299,6 +306,8 @@ dependencies {
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
+  implementation 'io.pebbletemplates:pebble-spring-boot-starter:3.2.2'
+  implementation 'org.jooq:jooq:3.19.15'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -341,6 +350,10 @@ dependencies {
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
   cftlibTestImplementation 'com.microsoft.playwright:playwright:1.48.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
+  jooqCodegen group: 'org.testcontainers', name: 'postgresql', version: '1.20.3'
+  jooqCodegen group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+  jooqCodegen project(':lib:flyway')
+
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -445,6 +458,7 @@ bootWithCCD {
     environment 'XUI_MO_PORT', '3009'
     environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
     environment 'CCD_POCS_URL', 'http://localhost:4013'
+    environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
   }
 }
 
@@ -515,3 +529,31 @@ task fortifyScan(type: JavaExec) {
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
 
+jooq {
+  configuration {
+    jdbc {
+      url = 'jdbc:tc:postgresql:15.8:///databasename?TC_INITFUNCTION=uk.gov.hmcts.rse.Migrator::init'
+      driver = 'org.testcontainers.jdbc.ContainerDatabaseDriver'
+    }
+    generator {
+      database {
+        recordVersionFields = "version"
+        schemata {
+          schema {
+            inputSchema = 'public'
+          }
+          schema {
+            inputSchema = 'ccd'
+          }
+        }
+      }
+      target {
+        packageName = "org.jooq.nfdiv"
+      }
+    }
+  }
+}
+
+jooqCodegen {
+  inputs.files project.file('nfdiv/src/main/resources/db/migration')
+}

@@ -31,4 +31,9 @@ public class CaseNote {
         typeOverride = TextArea
     )
     private String note;
+
+    @CCD(showCondition = "date=\"NEVER_SHOW\"")
+    private int version;
+    @CCD(showCondition = "date=\"NEVER_SHOW\"")
+    private int id;
 }

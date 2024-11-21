@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.sow014;
+package uk.gov.hmcts.divorce.sow014.lib;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

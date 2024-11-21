@@ -12,9 +12,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -71,6 +73,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .event(TEST_CREATE)
             .initialState(Draft)
             .name("Create test case")
+            .aboutToStartCallback(this::start)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
@@ -91,6 +94,23 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
             .done();
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> start(CaseDetails<CaseData, State> caseDetails) {
+        var data = caseDetails.getData();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
+        data.setCaseInvite(
+            CaseInvite.builder()
+                .applicant2InviteEmailAddress("TEST_SOLICITOR@mailinator.com")
+                .applicant2UserId("93b108b7-4b26-41bf-ae8f-6e356efb11b3")
+                .build()
+        );
+        data.getApplication().setStateToTransitionApplicationTo(State.AwaitingApplicant1Response);
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseDetails.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
@@ -125,6 +145,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         fixture.getApplicant2().setSolicitorRepresented(details.getData().getApplicant2().getSolicitorRepresented());
         fixture.setCaseInvite(details.getData().getCaseInvite());
         fixture.setHyphenatedCaseRef(fixture.formatCaseRef(details.getId()));
+
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(fixture)

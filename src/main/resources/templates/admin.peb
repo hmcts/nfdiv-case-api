@@ -1,0 +1,16 @@
+# Admin panel
+
+{% if failedJobs is empty %}
+## No failed background jobs to report
+{% else %}
+
+  ## {{failedJobs | length }} failed jobs
+
+  | Attempted at | Event | State | Message | Operation ID |
+  | ----- | ------ | ---- | ---- | ----- |
+  {% for job in failedJobs %}
+  | {{ job.attemptedAt | date("yyyy-MM-dd HH:mm:ss") }} | [{{job.eventId}}](/cases/case-details/{{ caseRef }}/event/{{ job.id }}/history) | {{ job.stateId }} | {{ job.exceptionMessage }} | [Azure Operation ID](https://portal.azure.com/#blade/AppInsightsExtension/BladeRedirect/BladeName/searchV1/ResourceId/%252Fsubscriptions%252F8999dec3-0104-4a27-94ee-6588559729d1%252FresourceGroups%252Fccd-shared-prod%252Fproviders%252FMicrosoft.Insights%252Fcomponents%252Fccd-prod/BladeInputs/%7B%22tables%22%3A%5B%22availabilityResults%22%2C%22requests%22%2C%22exceptions%22%2C%22pageViews%22%2C%22traces%22%2C%22customEvents%22%2C%22dependencies%22%5D%2C%22timeContextWhereClause%22%3A%22%7C%20where%20timestamp%20%3E%20datetime(%5C%222024-11-16T22%3A17%3A59.006Z%5C%22)%20and%20timestamp%20%3C%20datetime(%5C%222024-11-17T22%3A17%3A59.006Z%5C%22)%22%2C%22filterWhereClause%22%3A%22%7C%20where%20*%20has%20%5C%22foo%5C%22%7C%20order%20by%20timestamp%20desc%22%2C%22originalParams%22%3A%7B%22eventTypes%22%3A%5B%7B%22value%22%3A%22availabilityResult%22%2C%22tableName%22%3A%22availabilityResults%22%2C%22label%22%3A%22Availability%22%7D%2C%7B%22value%22%3A%22request%22%2C%22tableName%22%3A%22requests%22%2C%22label%22%3A%22Request%22%7D%2C%7B%22value%22%3A%22exception%22%2C%22tableName%22%3A%22exceptions%22%2C%22label%22%3A%22Exception%22%7D%2C%7B%22value%22%3A%22pageView%22%2C%22tableName%22%3A%22pageViews%22%2C%22label%22%3A%22Page%20View%22%7D%2C%7B%22value%22%3A%22trace%22%2C%22tableName%22%3A%22traces%22%2C%22label%22%3A%22Trace%22%7D%2C%7B%22value%22%3A%22customEvent%22%2C%22tableName%22%3A%22customEvents%22%2C%22label%22%3A%22Custom%20Event%22%7D%2C%7B%22value%22%3A%22dependency%22%2C%22tableName%22%3A%22dependencies%22%2C%22label%22%3A%22Dependency%22%7D%5D%2C%22timeContext%22%3A%7B%22durationMs%22%3A86400000%7D%2C%22filter%22%3A%5B%5D%2C%22searchPhrase%22%3A%7B%22originalPhrase%22%3A%22foo%22%2C%22_tokens%22%3A%5B%7B%22conjunction%22%3A%22and%22%2C%22value%22%3A%22foo%22%2C%22isNot%22%3Afalse%2C%22kql%22%3A%22%20*%20has%20%5C%22foo%5C%22%22%7D%5D%7D%2C%22sort%22%3A%22desc%22%7D%7D) |
+  {% endfor %}
+{% endif %}
+
+

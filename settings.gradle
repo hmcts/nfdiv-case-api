@@ -10,3 +10,9 @@ pluginManagement {
 }
 
 rootProject.name = 'nfdiv-case-api'
+new File(rootDir, "lib").listFiles().each {
+    if (it.isDirectory()) {
+        include ":lib:${it.name}"
+    }
+}
+

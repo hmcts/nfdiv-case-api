@@ -1,0 +1,16 @@
+# This is the lead case of *{{subcases[0].name}}* with {{ total | numberformat("###,###") }} subcases
+
+## Showing {{subcases | length }} recently changed cases
+
+
+
+| Reference | Forename | Surname | Last Modified |
+| ---- | ------ | ---- | ---- |
+{% for case in subcases %}
+  {% if case.subCaseId == case.leadCaseId %}
+    |{{ case.subCaseId }} | {{ case.applicant1firstname }} | {{ case.applicant1lastname }} | {{ case.lastmodified | date("yyyy-MM-dd HH:mm:ss") }} |
+  {% else %}
+    |[{{ case.subCaseId }}](/cases/case-details/{{ case.subCaseId }}#Lead%20Case) |{{ case.applicant1firstname }} | {{ case.applicant1lastname }} | {{ case.lastmodified | date("yyyy-MM-dd HH:mm:ss") }} |
+  {% endif %}
+{% endfor %}
+
