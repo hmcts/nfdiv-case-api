@@ -1,11 +1,12 @@
 package uk.gov.hmcts.divorce.sow014.lib;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.ResolvedCCDConfig;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class CallbackEnumerator {
@@ -34,6 +35,7 @@ public class CallbackEnumerator {
     public boolean hasAboutToSubmitCallbackForEvent(String event) {
         return aboutToSubmitCallbacks.contains(event);
     }
+
     public boolean hasSubmittedCallbackForEvent(String event) {
         return submittedCallbacks.contains(event);
     }

@@ -2,11 +2,6 @@ package uk.gov.hmcts.divorce.sow014.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.Set;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
@@ -20,6 +15,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackResponse;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -63,7 +64,7 @@ public class SubmittedCallbackExecutor {
                 .skipLocked()
                 .fetchOptional();
 
-            if(r.isPresent()) {
+            if (r.isPresent()) {
                 try {
                     execute(r.get());
                     tx.dsl()
@@ -105,7 +106,7 @@ public class SubmittedCallbackExecutor {
         final HttpHeaders httpHeaders = new HttpHeaders();
 
         var headers = mapper.readValue(callback.getHeaders().data(), ObjectNode.class);
-        headers.fieldNames().forEachRemaining( k -> {
+        headers.fieldNames().forEachRemaining(k -> {
             if (passThroughHeaders.contains(k.toLowerCase())) {
                 httpHeaders.add(k, headers.get(k).asText());
             } else {

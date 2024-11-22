@@ -1,9 +1,7 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
-import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,12 +14,16 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
+import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
+
+import java.util.ArrayList;
+
+import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
-import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 @Component
 @Slf4j
@@ -32,7 +34,7 @@ public class RetryCallback implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     @Lazy
-    private JdbcTemplate t;
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,14 +58,14 @@ public class RetryCallback implements CCDConfig<CaseData, State, UserRole> {
         var choices = new ArrayList<DynamicRadioListElement>();
         // Search subcases by applicantFirstName
         db.selectFrom(FAILED_JOBS)
-            .where( FAILED_JOBS.REFERENCE.eq(details.getId())
+            .where(FAILED_JOBS.REFERENCE.eq(details.getId())
             )
             .fetch()
             .forEach(fetch -> choices.add(
                 DynamicRadioListElement.builder()
-                .code(fetch.getJobId().toString())
-                .label(fetch.getEventId() + " - " + fetch.getExceptionMessage().substring(0, 10))
-                .build()));
+                    .code(fetch.getJobId().toString())
+                    .label(fetch.getEventId() + " - " + fetch.getExceptionMessage().substring(0, 10))
+                    .build()));
 
         MyRadioList radioList = MyRadioList.builder()
             .value(choices.get(0))
@@ -83,11 +85,11 @@ public class RetryCallback implements CCDConfig<CaseData, State, UserRole> {
 
         var choice = details.getData().getCallbackJobs().getValue();
 
-        t.update("""
-        update ccd.submitted_callback_queue
-         set attempted_at = null
-         where id = ?
-        """, Long.valueOf(choice.getCode()));
+        jdbcTemplate.update("""
+            update ccd.submitted_callback_queue
+             set attempted_at = null
+             where id = ?
+            """, Long.valueOf(choice.getCode()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

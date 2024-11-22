@@ -4,6 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
+import lombok.SneakyThrows;
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -11,16 +20,12 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.SneakyThrows;
-import org.jooq.DSLContext;
+
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
-import static org.jooq.nfdiv.public_.Tables.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
+import static org.jooq.nfdiv.public_.Tables.CASE_NOTES;
+import static org.jooq.nfdiv.public_.Tables.DERIVED_CASES;
+import static org.jooq.nfdiv.public_.Tables.MULTIPLES;
+import static org.jooq.nfdiv.public_.Tables.SUB_CASES;
 
 @Component
 public class NFDCaseRepository implements CaseRepository {
@@ -73,9 +78,9 @@ public class NFDCaseRepository implements CaseRepository {
         // Fetch first 50
         var total = db.fetchCount(SUB_CASES, SUB_CASES.LEAD_CASE_ID.eq(caseRef));
         var subCases = db.selectFrom(SUB_CASES)
-                .where(SUB_CASES.LEAD_CASE_ID.eq(caseRef))
-                .limit(50)
-                .fetch();
+            .where(SUB_CASES.LEAD_CASE_ID.eq(caseRef))
+            .limit(50)
+            .fetch();
         if (subCases.isNotEmpty()) {
             caseData.put("leadCase", "Yes");
 
@@ -116,18 +121,16 @@ public class NFDCaseRepository implements CaseRepository {
 
     private List<ListValue<CaseNote>> loadNotes(long caseRef) {
         return db.select()
-           .from(CASE_NOTES)
-           .where(CASE_NOTES.REFERENCE.eq(caseRef))
-           .orderBy(CASE_NOTES.DATE.desc())
-           .fetchInto(CaseNote.class)
-           .stream().map(n -> new ListValue<>(null, n))
-           .toList();
+            .from(CASE_NOTES)
+            .where(CASE_NOTES.REFERENCE.eq(caseRef))
+            .orderBy(CASE_NOTES.DATE.desc())
+            .fetchInto(CaseNote.class)
+            .stream().map(n -> new ListValue<>(null, n))
+            .toList();
     }
 
     @SneakyThrows
     private String renderExampleTab(long caseRef, List<ListValue<CaseNote>> notes) {
-        PebbleTemplate compiledTemplate = pebl.getTemplate("notes");
-        Writer writer = new StringWriter();
 
         long uptimeInSeconds = ManagementFactory.getRuntimeMXBean().getUptime() / 1000;
         Map<String, Object> context = new HashMap<>();
@@ -135,6 +138,8 @@ public class NFDCaseRepository implements CaseRepository {
         context.put("age", uptimeInSeconds);
         context.put("notes", notes);
 
+        PebbleTemplate compiledTemplate = pebl.getTemplate("notes");
+        Writer writer = new StringWriter();
         compiledTemplate.evaluate(writer, context);
 
         return writer.toString();

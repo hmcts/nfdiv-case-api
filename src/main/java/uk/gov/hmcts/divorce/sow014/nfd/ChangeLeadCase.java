@@ -1,10 +1,7 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
-import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import static org.jooq.impl.DSL.upper;
-import static org.jooq.nfdiv.public_.Tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -16,14 +13,20 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
+import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
+
+import java.util.ArrayList;
+
+import static org.jooq.impl.DSL.upper;
+import static org.jooq.nfdiv.public_.Tables.MULTIPLES;
+import static org.jooq.nfdiv.public_.Tables.SUB_CASES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
-import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 @Component
 @Slf4j
@@ -54,13 +57,14 @@ public class ChangeLeadCase implements CCDConfig<CaseData, State, UserRole> {
             .mandatory(CaseData::getCaseSearchResults);
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> searchCases(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
+    private AboutToStartOrSubmitResponse<CaseData, State> searchCases(CaseDetails<CaseData, State> details,
+                                                                      CaseDetails<CaseData, State> beforeDetails) {
 
         var choices = new ArrayList<DynamicRadioListElement>();
         // Search subcases by applicantFirstName
         db.selectFrom(SUB_CASES)
-            .where( SUB_CASES.LEAD_CASE_ID.eq(details.getId())
-                    .and(upper(SUB_CASES.APPLICANT1FIRSTNAME).eq(upper(details.getData().getCaseSearchTerm())))
+            .where(SUB_CASES.LEAD_CASE_ID.eq(details.getId())
+                .and(upper(SUB_CASES.APPLICANT1FIRSTNAME).eq(upper(details.getData().getCaseSearchTerm())))
             )
             .limit(100)
             .fetch()
