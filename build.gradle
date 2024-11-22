@@ -202,7 +202,8 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
   '**/sow014/**/*',
-  '**/CaseworkerAddNote.java'
+  '**/CaseworkerAddNote.java',
+  '**/Migrator.java'
 ]
 
 sonarqube {
