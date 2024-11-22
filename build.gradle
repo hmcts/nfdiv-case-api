@@ -11,6 +11,9 @@ buildscript {
         excludeGroup "com.github.ben-manes.versions"
       }
     }
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '3.2.1263'
@@ -27,7 +30,7 @@ plugins {
   id 'org.sonarqube' version '5.1.0.4882'
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'hmcts.ccd.sdk' version '5.5.11'
+  id 'hmcts.ccd.sdk' version '5.5.12'
   id 'com.github.hmcts.rse-cft-lib' version '0.19.1453'
   id 'org.jooq.jooq-codegen-gradle' version '3.19.15'
 }
@@ -35,6 +38,7 @@ plugins {
 apply plugin: 'cz.habarta.typescript-generator'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: "hmcts.ccd.sdk"
 
 group = 'uk.gov.hmcts'
 version = '0.0.1'

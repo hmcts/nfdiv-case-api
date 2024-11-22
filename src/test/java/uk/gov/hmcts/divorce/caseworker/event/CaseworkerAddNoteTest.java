@@ -114,7 +114,7 @@ class CaseworkerAddNoteTest {
         notes.add(ListValue
             .<CaseNote>builder()
             .id("1")
-            .value(new CaseNote("TestFirstName TestSurname", caseNoteAddedDate, "This is a test note 1"))
+            .value(new CaseNote("TestFirstName TestSurname", caseNoteAddedDate, "This is a test note 1", 1, 1))
             .build());
 
         caseData.setNotes(notes);
