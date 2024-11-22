@@ -93,15 +93,28 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     }
 
+    // Helper method to create term queries with variations for spaces
+    private BoolQueryBuilder createNameMatchQuery(String field, String name) {
+        return QueryBuilders.boolQuery()
+            .should(QueryBuilders.termQuery(field, name)) // Exact match
+            .should(QueryBuilders.termQuery(field, " " + name)) // Prepend space
+            .should(QueryBuilders.termQuery(field, name + " ")) // Append space
+            .should(QueryBuilders.termQuery(field, " " + name + " ")); // Prepend and append space
+    }
+
     List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
-                                                                                   MarriageDetails marriageDetails) {
+                                                                           MarriageDetails marriageDetails) {
+        //NFDIV-4512 adding extra searches to cope with prepended and trailing space on the names
+        String applicant1Name = marriageDetails.getApplicant1Name().trim();
+        String applicant2Name = marriageDetails.getApplicant2Name().trim();
+
         BoolQueryBuilder nameMatchQuery1 = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant1Name()))
-            .filter(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant2Name()));
+            .filter(createNameMatchQuery("data.marriageApplicant1Name.keyword", applicant1Name))
+            .filter(createNameMatchQuery("data.marriageApplicant2Name.keyword", applicant2Name));
 
         BoolQueryBuilder nameMatchQuery2 = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant2Name()))
-            .filter(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant1Name()));
+            .filter(createNameMatchQuery("data.marriageApplicant1Name.keyword", applicant2Name))
+            .filter(createNameMatchQuery("data.marriageApplicant2Name.keyword", applicant1Name));
 
         BoolQueryBuilder nameMatching = QueryBuilders.boolQuery()
             .should(nameMatchQuery1)
@@ -139,13 +152,13 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
                         ? caseData.getApplicant1().getAddress().getPostCode() : null)
                 .applicant2Postcode(
                     caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostCode() != null
-                    ? caseData.getApplicant2().getAddress().getPostCode() : null)
+                        ? caseData.getApplicant2().getAddress().getPostCode() : null)
                 .applicant1Town(
                     caseData.getApplicant1().getAddress() != null && caseData.getApplicant1().getAddress().getPostTown() != null
-                    ? caseData.getApplicant1().getAddress().getPostTown() : null)
+                        ? caseData.getApplicant1().getAddress().getPostTown() : null)
                 .applicant2Town(
                     caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostTown() != null
-                    ? caseData.getApplicant2().getAddress().getPostTown() : null)
+                        ? caseData.getApplicant2().getAddress().getPostTown() : null)
                 .caseLink(CaseLink.builder()
                     .caseReference(String.valueOf(caseDetail.getId()))
                     .build())
