@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -241,13 +242,13 @@ public class Application {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant1DeleteAccess.class}
     )
     private OrderSummary applicationFeeOrderSummary;
 
     @CCD(
         label = "Application Fee Service Request Reference",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant1DeleteAccess.class}
     )
     private String applicationFeeServiceRequestReference;
 
