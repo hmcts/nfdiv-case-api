@@ -235,12 +235,12 @@ class CaseworkerFindMatchesTest {
     @ParameterizedTest
     @CsvSource({
         "'John Doe / Jane Smith', 4",                        // 1 slash -> split into 4 parts
-        "'Alice ; Bob, Charlie', 3",                         // 2 illegal chars ( ; ,) -> split into 3 parts
+        "'Alice ; Bob, Charlieé', 3",                         // 2 illegal chars ( ; ,) -> split into 3 parts
         "'John Doe; ** Jane Smith', 4",                        // 1 slash -> split into 4 parts
         "'part1 (part2) part3 / part4 : part5', 5",          // 4 illegal chars ( ( ) / : ) -> split into 5 parts
         "'namewithoutslash', 1",                             // No illegal chars -> 1 part
         "'hello!world', 2",                                  // 1 illegal char (!) -> split into 2 parts
-        "'Alice,,,Bob', 2",                                  // 2 commas -> split into 2 parts
+        "'Aliçia,,,Bob', 2",                                  // 2 commas -> split into 2 parts
         "'first %last ( name changed by deed poll )', 2",     // "name changed by deed poll" is removed -> 2 parts
         "'hello world//example', 3",                          // 1 double slash (//) -> split into 3 parts
         "'hello world [hi world]', 4"                          // 2 illegal chars -> split into 4 parts
