@@ -46,7 +46,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplica
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.*;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -528,24 +534,20 @@ class CaseworkerNoticeOfChangeTest {
             caseData, details.getId(),true);
     }
 
-    /*@Test
-    void shouldSendCaseInviteToCitizenWhenJointApplicationAndSolicitorRemovedAndBothAppOnline() {
+    @Test
+    void shouldNotSendCaseInviteToCitizenWhenJointApplicationAndSolicitorRemoved() {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
         CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
-
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(new Applicant());
-        caseData.getApplicant1().setOffline(NO);
-        caseData.getApplicant2().setOffline(NO);
-
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
         noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        verify(notificationDispatcher, times(1)).sendNOCToParty(nocSolsToCitizenNotifications,
+        verify(notificationDispatcher,never()).sendNOCToParty(nocSolsToCitizenNotifications,
             caseData, details.getId(),true);
-    }*/
+    }
+
 
     private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {
         NoticeOfChange noticeOfChange = new NoticeOfChange();

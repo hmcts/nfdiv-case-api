@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
@@ -44,13 +45,11 @@ public class NocSolsToCitizenNotifications implements ApplicantNotification {
     private final CaseDataDocumentService caseDataDocumentService;
     private final BulkPrintService bulkPrintService;
 
-    private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
-    private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+    public static final String LETTER_TYPE_INVITE_CITIZEN = "invite-citizen";
     public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     private static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
-    private static final String LETTER_TYPE_INVITE_CITIZEN = "invite-citizen";
 
 
     @Override
@@ -73,25 +72,22 @@ public class NocSolsToCitizenNotifications implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending email invite to respondent/applicant2 : {}", id);
+        log.info("Sending email invite to respondent : {}", id);
 
         Map<String, String> templateVars = commonContent.nocCitizenTemplateVars(id, caseData.getApplicant2());
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         if (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
             templateVars.put(CREATE_ACCOUNT_LINK,
                 config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
-        } else {
-            templateVars.put(CREATE_ACCOUNT_LINK,
-                config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
-        }
 
-        notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
-            NOC_INVITE_CITIZEN,
-            templateVars,
-            caseData.getApplicant2().getLanguagePreference(),
-            id
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2().getEmail(),
+                NOC_INVITE_CITIZEN,
+                templateVars,
+                caseData.getApplicant2().getLanguagePreference(),
+                id
+            );
+        }
     }
 
     @Override
@@ -102,8 +98,10 @@ public class NocSolsToCitizenNotifications implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, Long id) {
-        log.info("Sending letter invite to applicant/applicant1 : {}", id);
-        generateNoCNotificationLetterAndSend(caseData, id, caseData.getApplicant2(), false);
+        if (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+            log.info("Sending letter invite to respondent : {}", id);
+            generateNoCNotificationLetterAndSend(caseData, id, caseData.getApplicant2(), false);
+        }
     }
 
 
@@ -148,22 +146,15 @@ public class NocSolsToCitizenNotifications implements ApplicantNotification {
         templateContent.put(CASE_REFERENCE, formatId(caseId));
 
         if (isApplicant1) {
-            templateContent.put(ACCESS_CODE, caseData.getCaseInviteApp1().accessCodeApplicant1());
+            templateContent.put(DocmosisTemplateConstants.ACCESS_CODE, caseData.getCaseInviteApp1().accessCodeApplicant1());
             templateContent.put(URL_TO_LINK_CASE,
                 config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
         } else {
-            templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
-            if (caseData.getApplicationType().isSole()) {
-                templateContent.put(URL_TO_LINK_CASE,
-                    config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL
-                        : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
-            } else {
-                templateContent.put(URL_TO_LINK_CASE,
-                    config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL
-                        : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
-            }
+            templateContent.put(DocmosisTemplateConstants.ACCESS_CODE, caseData.getCaseInvite().accessCode());
+            templateContent.put(URL_TO_LINK_CASE,
+                config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL
+                    : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
         }
-
         return templateContent;
     }
 }

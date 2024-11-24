@@ -8,12 +8,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -27,26 +30,29 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications.LETTER_TYPE_INVITE_CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.LETTER_TYPE_GRANT_OF_REPRESENTATION;
-import static uk.gov.hmcts.divorce.notification.CommonContent.*;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.*;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.RESPONDENT_SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class NocSolsToCitizenNotificationsTest {
@@ -68,6 +74,9 @@ class NocSolsToCitizenNotificationsTest {
 
     @Mock
     private EmailTemplatesConfig config;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Captor
     ArgumentCaptor<Print> printCaptor;
@@ -131,44 +140,19 @@ class NocSolsToCitizenNotificationsTest {
     }
 
     @Test
-    void testSendToApplicant2InJointApplication() {
-        CaseData caseData = createMockCaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        Long id = 1L;
-
-        when(commonContent.nocCitizenTemplateVars(id, caseData.getApplicant2()
-        )).thenReturn(getTemplateVars(caseData.getApplicant2()));
-
-        when(config.getTemplateVars()).thenReturn(getConfigTemplateVars());
-
-        notificationHandler.sendToApplicant2(caseData, id);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(EmailTemplateName.NOC_INVITE_CITIZEN),
-            argThat(allOf(
-                hasEntry(ACCESS_CODE, "87654321"),
-                hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL)
-            )),
-            eq(caseData.getApplicant2().getLanguagePreference()),
-            eq(id)
-        );
-        verify(commonContent).nocCitizenTemplateVars(id, caseData.getApplicant2());
-    }
-
-    @Test
     void testSendToApplicant1Offline() {
         CaseData caseData = createMockCaseData();
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = getBasicDocmosisTemplateContent(ENGLISH);
 
         when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
 
-
-
         when(config.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        Document nocConfirmationDocument =
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(templateContent);
+
+        Document inviteDocument =
             Document.builder()
                 .url("testUrl")
                 .filename("testFileName")
@@ -178,25 +162,69 @@ class NocSolsToCitizenNotificationsTest {
         when(caseDataDocumentService.renderDocument(
             templateContent,
             TEST_CASE_ID,
-            NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID,
+            NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID,
             ENGLISH,
-            NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME))
-            .thenReturn(nocConfirmationDocument);
+            NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME))
+            .thenReturn(inviteDocument);
         notificationHandler.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
         final Print print = printCaptor.getValue();
 
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
-        assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_GRANT_OF_REPRESENTATION);
+        assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_INVITE_CITIZEN);
         assertThat(print.getLetters()).hasSize(1);
-        assertThat(print.getLetters().get(0).getDocument()).isSameAs(nocConfirmationDocument);
+        assertThat(print.getLetters().get(0).getDocument()).isSameAs(inviteDocument);
         verify(caseDataDocumentService)
             .renderDocument(
                 templateContent,
                 TEST_CASE_ID,
-                NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID,
-                ENGLISH, NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME);
+                NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID,
+                ENGLISH, NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME);
+    }
+
+    @Test
+    void testSendToApplicant2Offline() {
+        CaseData caseData = createMockCaseData();
+
+        final Map<String, Object> templateContent = getBasicDocmosisTemplateContent(WELSH);
+
+        when(bulkPrintService.print(printCaptor.capture())).thenReturn(UUID.randomUUID());
+
+        when(config.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant2().getLanguagePreference())).thenReturn(templateContent);
+
+        Document inviteDocument =
+            Document.builder()
+                .url("testUrl")
+                .filename("testFileName")
+                .binaryUrl("binaryUrl")
+                .build();
+
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID,
+            WELSH,
+            NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME))
+            .thenReturn(inviteDocument);
+        notificationHandler.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        final Print print = printCaptor.getValue();
+
+        assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
+        assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_INVITE_CITIZEN);
+        assertThat(print.getLetters()).hasSize(1);
+        assertThat(print.getLetters().get(0).getDocument()).isSameAs(inviteDocument);
+        verify(caseDataDocumentService)
+            .renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID,
+                WELSH, NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME);
     }
 
     private CaseData createMockCaseData() {

@@ -340,11 +340,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
             return true;
         }
-        if ((data.getApplicationType() == ApplicationType.JOINT_APPLICATION)
-            && !data.getApplicant1().isApplicantOffline()
-            && !data.getApplicant2().isApplicantOffline()) {
-            return true;
-        }
         return false;
     }
 
