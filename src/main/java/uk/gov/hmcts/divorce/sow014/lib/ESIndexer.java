@@ -32,13 +32,18 @@ public class ESIndexer implements CommandLineRunner {
     @Value("${es.host}")
     private String esHost;
 
+    @Value("${es.search.enabled}")
+    private boolean searchEnabled;
+
     @Override
     public void run(String... args) throws Exception {
-        var t = new Thread(this::index);
-        t.setDaemon(true);
-        t.setUncaughtExceptionHandler(this.failFast);
-        t.setName("****NFD ElasticSearch indexer");
-        t.start();
+        if (searchEnabled) {
+            var t = new Thread(this::index);
+            t.setDaemon(true);
+            t.setUncaughtExceptionHandler(this.failFast);
+            t.setName("****NFD ElasticSearch indexer");
+            t.start();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -95,7 +100,8 @@ public class ESIndexer implements CommandLineRunner {
                     // 'global search' index.
                     // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
                     var mapper = new ObjectMapper();
-                    Map<String, Object> map = mapper.readValue(row, new TypeReference<>() {});
+                    Map<String, Object> map = mapper.readValue(row, new TypeReference<>() {
+                    });
                     var data = (Map<String, Map<String, Object>>) map.get("data");
                     if (data.containsKey("SearchCriteria")) {
                         filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",

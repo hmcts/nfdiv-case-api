@@ -621,3 +621,5 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
 es:
   host: ${ES_HOST:localhost}
+  search:
+    enabled: ${ES_SEARCH_ENABLED:false}
