@@ -31,6 +31,8 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
@@ -141,9 +143,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             CaseData beforeData = detailsBefore.getData();
             final Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
 
-            if (beforeApplicant.getEmail() != null && !beforeApplicant.getEmail().isBlank()
-                && (applicant.getEmail() == null || applicant.getEmail().isBlank())) {
-
+            if (isNotBlank(beforeApplicant.getEmail()) && isBlank(applicant.getEmail())) {
                 errors.add("Email address cannot be removed. It can only be updated.");
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(data)
@@ -216,7 +216,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         if ((noticeType == NoticeType.ORG_REMOVED) && shouldSendInviteToParty(data)) {
             //Send email to party with case invites
             generateCaseInvite(data, isApplicant1, applicant);
-            notificationDispatcher.sendNOCToParty(nocSolsToCitizenNotifications, details.getData(), details.getId(),
+            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
                 isApplicant1);
         }
 
@@ -337,10 +337,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     }
 
     private boolean shouldSendInviteToParty(final CaseData data) {
-        if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
-            return true;
-        }
-        return false;
+        return data.getApplicationType() == ApplicationType.SOLE_APPLICATION;
     }
 
     private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {

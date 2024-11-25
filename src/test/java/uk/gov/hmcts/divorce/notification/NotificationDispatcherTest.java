@@ -291,7 +291,7 @@ class NotificationDispatcherTest {
 
         final boolean isApplicant1 = true;
 
-        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
 
         verify(applicantNotification, never()).sendToApplicant1(caseData, caseId);
     }
@@ -305,7 +305,7 @@ class NotificationDispatcherTest {
 
         final boolean isApplicant1 = true;
 
-        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
 
         verify(applicantNotification, never()).sendToApplicant1(caseData, caseId);
     }
@@ -319,7 +319,7 @@ class NotificationDispatcherTest {
 
         final boolean isApplicant1 = true;
 
-        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
 
         verify(applicantNotification).sendToApplicant1(caseData, caseId);
         verify(applicantNotification).sendToApplicant1Offline(caseData, caseId);
@@ -334,7 +334,7 @@ class NotificationDispatcherTest {
 
         final boolean isApplicant1 = false;
 
-        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
 
         verify(applicantNotification, never()).sendToApplicant2(caseData, caseId);
     }
@@ -348,7 +348,7 @@ class NotificationDispatcherTest {
 
         final boolean isApplicant1 = false;
 
-        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
 
         verify(applicantNotification, never()).sendToApplicant2(caseData, caseId);
     }
@@ -362,7 +362,7 @@ class NotificationDispatcherTest {
 
         final boolean isApplicant1 = false;
 
-        notificationDispatcher.sendNOCToParty(applicantNotification, caseData, caseId, isApplicant1);
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
 
         verify(applicantNotification).sendToApplicant2(caseData, caseId);
         verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);

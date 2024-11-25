@@ -530,7 +530,7 @@ class CaseworkerNoticeOfChangeTest {
 
         noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        verify(notificationDispatcher, times(1)).sendNOCToParty(nocSolsToCitizenNotifications,
+        verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),true);
     }
 
@@ -544,7 +544,7 @@ class CaseworkerNoticeOfChangeTest {
 
         noticeOfChange.aboutToSubmit(details, beforeDetails);
 
-        verify(notificationDispatcher,never()).sendNOCToParty(nocSolsToCitizenNotifications,
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),true);
     }
 
