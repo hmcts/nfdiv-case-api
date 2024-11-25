@@ -15,6 +15,7 @@ java:
     DATABASE_MIGRATION: true
     ES_HOST: elastic-search-${SERVICE_FQDN}
     ES_SEARCH_ENABLED: true
+    MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED: false
   keyVaults:
     nfdiv:
       secrets:
