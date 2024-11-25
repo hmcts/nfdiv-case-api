@@ -21,6 +21,7 @@
         "id": "${json-unit.any-string}",
         "value": {
           "feeCode": "FEE002",
+          "serviceRequestReference":"test-service-reference",
           "amount": 55000,
           "status": "success",
           "channel": "online"
