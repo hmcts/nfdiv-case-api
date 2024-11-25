@@ -3,6 +3,9 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -28,8 +31,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -194,5 +200,54 @@ class CaseworkerFindMatchesTest {
         mockCaseData.put("marriageApplicant2Name", NAME_TWO);
         mockCaseData.put("marriageDate", "2000-01-01");
         return mockCaseData;
+    }
+
+    // Test input trying to match all possibles encountered in prod
+    static List<String> provideTestInputs() {
+        return List.of(
+            "Willy Wonka ",                        // Trailing space
+            "Willy Wonka (name changed by Deed Poll)", // Parentheses with trailing space
+            "Willy Wonka.=",                      // Illegal characters at the end
+            "Willy Wonka***",                     // Trailing asterisks
+            "Willy Wonka!",                       // Exclamation mark at the end
+            "Willy Wonka (Mr. Ritchie)",          // Parentheses at the end
+            "Willy Wonka.=",                  // Mix of illegal characters
+            "_Willy Wonka_",                  // Underscores around the name
+            "Willy Wonka / Mr. Ritchie "
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestInputs")
+    void testRegexPatternAfterClean(String input) {
+        // Assert that all inputs match to "Willy Wonka"
+        String[] expectedNames = new String[]{"Willy", "Wonka", "Mr", "Ritchie"};
+        String[] cleanedName = caseworkerFindMatches.normalizeAndSplit(input);
+        for (int i = 0; i < cleanedName.length; i++) {
+            String regexPattern = caseworkerFindMatches.generateRegexPattern(cleanedName[i]);
+            Pattern pattern = Pattern.compile(regexPattern);
+            // Verify that the regex matches the cleaned name
+            String expectedName = expectedNames[i];
+            assertTrue(pattern.matcher(expectedName).matches(), cleanedName[i]);
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'John Doe / Jane Smith', 4",                        // 1 slash -> split into 4 parts
+        "'Alice ; Bob, Charlieé', 3",                         // 2 illegal chars ( ; ,) -> split into 3 parts
+        "'John Doe; ** Jane Smith', 4",                        // 1 slash -> split into 4 parts
+        "'part1 (part2) part3 / part4 : part5', 5",          // 4 illegal chars ( ( ) / : ) -> split into 5 parts
+        "'namewithoutslash', 1",                             // No illegal chars -> 1 part
+        "'hello!world', 2",                                  // 1 illegal char (!) -> split into 2 parts
+        "'Aliçia,,,Bob', 2",                                  // 2 commas -> split into 2 parts
+        "'first %last ( name changed by deed poll )', 2",     // "name changed by deed poll" is removed -> 2 parts
+        "'hello world//example', 3",                          // 1 double slash (//) -> split into 3 parts
+        "'hello world [hi world]', 4"                          // 2 illegal chars -> split into 4 parts
+    })
+    void testNormalizeAndSplit(String input, int expectedSplits) {
+        String[] result = caseworkerFindMatches.normalizeAndSplit(input);
+
+        assertEquals(expectedSplits, result.length);
     }
 }
