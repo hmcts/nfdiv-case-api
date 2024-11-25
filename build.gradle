@@ -35,6 +35,10 @@ apply plugin: 'io.spring.dependency-management'
 group = 'uk.gov.hmcts'
 version = '0.0.1'
 
+ccd {
+  configDir = file('ccd-definitions/definitions')
+}
+
 sourceSets {
   functionalTest {
     java {
