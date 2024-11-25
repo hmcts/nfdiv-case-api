@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_2;
@@ -50,6 +52,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -67,6 +70,8 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+    @Mock
+    private NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -500,6 +505,49 @@ class CaseworkerNoticeOfChangeTest {
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(),true, NoticeType.ORG_REMOVED);
     }
+
+    @Test
+    void shouldReturnErrorWhenSolicitorBeingRemovedAndCitizenEmailBeingBlanked() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail("");
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        var result = noticeOfChange.midEvent(details, beforeDetails);
+
+        assertThat(result.getErrors()).hasSize(1);
+        assertThat(result.getErrors()).contains("Email address cannot be removed. It can only be updated.");
+    }
+
+    @Test
+    void shouldSendCaseInviteToCitizenWhenSoleApplicationAndSolicitorRemoved() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteToCitizenWhenJointApplicationAndSolicitorRemoved() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.setApplicationType(JOINT_APPLICATION);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
 
     private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {
         NoticeOfChange noticeOfChange = new NoticeOfChange();
