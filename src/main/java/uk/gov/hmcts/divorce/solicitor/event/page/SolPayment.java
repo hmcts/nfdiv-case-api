@@ -41,6 +41,7 @@ public class SolPayment implements CcdPageConfiguration {
                 "Amount to pay: **£${solApplicationFeeInPounds}**")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getApplicationFeeOrderSummary)
+                .readonly(Application::getApplicationFeeServiceRequestReference, "solPaymentHowToPay=\"NEVER\"")
                 .mandatory(Application::getSolPaymentHowToPay)
             .done();
     }
