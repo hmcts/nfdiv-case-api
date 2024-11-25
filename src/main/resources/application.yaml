@@ -620,6 +620,6 @@ bulk-action:
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 
 es:
-  host: ${ES_HOST:localhost}
+  host: ${ES_HOST:http://localhost:9200}
   search:
     enabled: ${ES_SEARCH_ENABLED:false}

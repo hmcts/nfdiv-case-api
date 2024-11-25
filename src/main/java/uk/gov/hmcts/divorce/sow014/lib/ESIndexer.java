@@ -54,7 +54,7 @@ public class ESIndexer implements CommandLineRunner {
 
         try {
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-            new HttpHost(esHost, 9200)));
+            new HttpHost(esHost)));
             try (Connection c = db.getDataSource().getConnection()) {
                 c.setAutoCommit(false);
                 while (true) {
