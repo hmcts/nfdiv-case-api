@@ -94,7 +94,7 @@ public class RespondentApplyForFinalOrderNotification implements ApplicantNotifi
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        var templateVars = commonContent.basicTemplateVars(caseData, id);
+        var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));

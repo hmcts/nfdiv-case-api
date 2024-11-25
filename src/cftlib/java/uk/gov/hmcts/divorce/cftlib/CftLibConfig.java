@@ -32,7 +32,8 @@ public class CftLibConfig implements CFTLibConfigurer {
             "dummysystemupdate@test.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-systemupdate"),
             "role.assignment.admin@gmail.com", List.of("caseworker"),
             "data.store.idam.system.user@gmail.com", List.of("caseworker"),
-            "divorce_as_caseworker_admin@mailinator.com", List.of("caseworker-divorce", "caseworker-divorce-superuser"));
+            "divorce_as_caseworker_admin@mailinator.com", List.of("caseworker-divorce", "caseworker-divorce-superuser"),
+            "FUNCTIONAL_TEST_SYSTEM_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-systemupdate"));
 
         for (var entry : users.entrySet()) {
             lib.createIdamUser(entry.getKey(), entry.getValue().toArray(new String[0]));

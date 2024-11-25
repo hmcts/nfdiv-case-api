@@ -419,7 +419,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -449,7 +450,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -478,7 +480,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -505,7 +508,8 @@ public class ApplicationIssuedNotificationTest {
             .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -534,7 +538,8 @@ public class ApplicationIssuedNotificationTest {
 
         caseData.getApplicant2().getSolicitor().setReference("TEST");
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -565,7 +570,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -629,7 +635,8 @@ public class ApplicationIssuedNotificationTest {
                 .build())
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
         when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("divorce");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
@@ -667,7 +674,8 @@ public class ApplicationIssuedNotificationTest {
                 .build())
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
         when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("dissolution");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
