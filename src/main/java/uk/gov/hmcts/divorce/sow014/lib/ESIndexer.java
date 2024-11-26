@@ -26,19 +26,24 @@ import java.util.Set;
 @Slf4j
 public class ESIndexer {
 
-    @Autowired
     private JdbcTemplate db;
 
-    @Value("${es.host}")
     private String esHost;
 
-    @Value("${es.search.enabled}")
     private boolean searchEnabled;
 
     @Autowired
     @SneakyThrows
-    public ESIndexer() {
+    public ESIndexer(@Value("${es.search.enabled}") boolean searchEnabled,
+                     @Value("${es.host}") String esHost,
+                     JdbcTemplate db) {
+        this.searchEnabled = searchEnabled;
+        this.esHost = esHost;
+        this.db = db;
+
         log.info("Initializing ES Indexer");
+        log.info("searchEnabled {}", searchEnabled);
+
         if (searchEnabled) {
             var t = new Thread(this::index);
             t.setDaemon(true);
@@ -56,7 +61,7 @@ public class ESIndexer {
         log.info("Starting ES Indexer");
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
             new HttpHost(esHost)));
-        log.info("es client {}", client.getLowLevelClient().getHttpClient().toString());
+        log.info("es client {}", client.getLowLevelClient().getHttpClient());
         try (Connection c = db.getDataSource().getConnection()) {
             c.setAutoCommit(false);
             while (true) {
