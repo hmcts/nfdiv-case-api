@@ -123,10 +123,14 @@ public class ESIndexer implements CommandLineRunner {
                         }
                     }
                     if (request.numberOfActions() > 0) {
+                        log.info("trying to update index with request {}", request);
+
                         var r = client.bulk(request, RequestOptions.DEFAULT);
                         if (r.hasFailures()) {
                             throw new RuntimeException("**** Cftlib elasticsearch indexing error(s): "
                                 + r.buildFailureMessage());
+                        } else {
+                            log.info("index updated with status {}", r.status());
                         }
                     }
                     c.commit();
