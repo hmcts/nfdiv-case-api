@@ -38,12 +38,14 @@ public class ESIndexer {
     @Autowired
     @SneakyThrows
     public ESIndexer() {
+        log.info("Initializing ES Indexer");
         if (searchEnabled) {
             var t = new Thread(this::index);
             t.setDaemon(true);
             t.setUncaughtExceptionHandler(this.failFast);
             t.setName("****NFD ElasticSearch indexer");
             t.start();
+            log.info("ES Indexer started");
         }
     }
 
@@ -51,9 +53,10 @@ public class ESIndexer {
     @SneakyThrows
     private void index() {
 
-
+        log.info("Starting ES Indexer");
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
             new HttpHost(esHost)));
+        log.info("es client {}", client.getLowLevelClient().getHttpClient().toString());
         try (Connection c = db.getDataSource().getConnection()) {
             c.setAutoCommit(false);
             while (true) {
