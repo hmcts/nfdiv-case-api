@@ -161,7 +161,7 @@ public class ESIndexer {
         log.info("*** Cftlib thread " + thread.getName() + " terminated with an unhandled exception ***");
         log.info("Logs are available in build/cftlib/logs");
         log.info("For further support visit https://moj.enterprise.slack.com/archives/C033F1GDD6Z");
-        Runtime.getRuntime().halt(-1);
+//        Runtime.getRuntime().halt(-1);
     };
 }
 
