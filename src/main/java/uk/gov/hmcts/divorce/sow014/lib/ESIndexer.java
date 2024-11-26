@@ -13,11 +13,9 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +24,7 @@ import java.util.Set;
 // but saving up to ~1GB of RAM.
 @Component
 @Slf4j
-public class ESIndexer implements CommandLineRunner {
+public class ESIndexer {
 
     @Autowired
     private JdbcTemplate db;
@@ -37,8 +35,8 @@ public class ESIndexer implements CommandLineRunner {
     @Value("${es.search.enabled}")
     private boolean searchEnabled;
 
-    @Override
-    public void run(String... args) throws Exception {
+    @Autowired
+    public ESIndexer() {
         if (searchEnabled) {
             var t = new Thread(this::index);
             t.setDaemon(true);
@@ -53,8 +51,8 @@ public class ESIndexer implements CommandLineRunner {
     private void index() {
 
         try {
-        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-            new HttpHost(esHost)));
+            RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
+                new HttpHost(esHost)));
             try (Connection c = db.getDataSource().getConnection()) {
                 c.setAutoCommit(false);
                 while (true) {
@@ -63,32 +61,32 @@ public class ESIndexer implements CommandLineRunner {
                     // Replicates the behaviour of the previous logstash configuration.
                     // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
                     var results = c.prepareStatement("""
-                    with updated as (
-                      delete from es_queue es where id in (select id from es_queue limit 2000)
-                      returning id
-                    )
-                      select reference as id, case_type_id, index_id, row_to_json(row)::jsonb as row
-                      from (
-                        select
-                          now() as "@timestamp",
-                          version::text as "@version",
-                          cd.case_type_id,
-                          cd.created_date,
-                          ce.data,
-                          ce.data_classification,
-                          jurisdiction,
-                          cd.reference,
-                          ce.created_date as last_modified,
-                          last_state_modified_date,
-                          supplementary_data,
-                          lower(cd.case_type_id) || '_cases' as index_id,
-                          cd.state,
-                          cd.security_classification
-                       from updated
-                        join case_event ce using(id)
-                        join case_data cd on cd.reference = ce.case_reference
-                    ) row
-                    """).executeQuery();
+                        with updated as (
+                          delete from es_queue es where id in (select id from es_queue limit 2000)
+                          returning id
+                        )
+                          select reference as id, case_type_id, index_id, row_to_json(row)::jsonb as row
+                          from (
+                            select
+                              now() as "@timestamp",
+                              version::text as "@version",
+                              cd.case_type_id,
+                              cd.created_date,
+                              ce.data,
+                              ce.data_classification,
+                              jurisdiction,
+                              cd.reference,
+                              ce.created_date as last_modified,
+                              last_state_modified_date,
+                              supplementary_data,
+                              lower(cd.case_type_id) || '_cases' as index_id,
+                              cd.state,
+                              cd.security_classification
+                           from updated
+                            join case_event ce using(id)
+                            join case_data cd on cd.reference = ce.case_reference
+                        ) row
+                        """).executeQuery();
 
                     BulkRequest request = new BulkRequest();
                     while (results.next()) {
@@ -127,8 +125,7 @@ public class ESIndexer implements CommandLineRunner {
 
                         var r = client.bulk(request, RequestOptions.DEFAULT);
                         if (r.hasFailures()) {
-                            throw new RuntimeException("**** Cftlib elasticsearch indexing error(s): "
-                                + r.buildFailureMessage());
+                            log.info("failed to index, **** Cftlib elasticsearch indexing error(s): {}", r.buildFailureMessage());
                         } else {
                             log.info("index updated with status {}", r.status());
                         }
