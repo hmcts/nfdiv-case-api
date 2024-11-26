@@ -59,8 +59,9 @@ public class ESIndexer {
     private void index() {
 
         log.info("Starting ES Indexer");
-        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-            new HttpHost(esHost)));
+        try(RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
+            new HttpHost(esHost))))
+        {
         log.info("es client {}", client.getLowLevelClient().getHttpClient());
         try (Connection c = db.getDataSource().getConnection()) {
             c.setAutoCommit(false);
@@ -142,6 +143,10 @@ public class ESIndexer {
                 c.commit();
             }
         }
+        } catch (Exception e) {
+            //Do nothing
+            log.info("failed to index", e.getMessage());
+        }
     }
 
     public void filter(Map<String, Map<String, Object>> map, String... forKeys) {
@@ -152,10 +157,10 @@ public class ESIndexer {
     }
 
     public static final Thread.UncaughtExceptionHandler failFast = (thread, exception) -> {
-        exception.printStackTrace();
-        System.out.println("*** Cftlib thread " + thread.getName() + " terminated with an unhandled exception ***");
-        System.out.println("Logs are available in build/cftlib/logs");
-        System.out.println("For further support visit https://moj.enterprise.slack.com/archives/C033F1GDD6Z");
+        log.info("stack trace {}", exception.getStackTrace());
+        log.info("*** Cftlib thread " + thread.getName() + " terminated with an unhandled exception ***");
+        log.info("Logs are available in build/cftlib/logs");
+        log.info("For further support visit https://moj.enterprise.slack.com/archives/C033F1GDD6Z");
         Runtime.getRuntime().halt(-1);
     };
 }
