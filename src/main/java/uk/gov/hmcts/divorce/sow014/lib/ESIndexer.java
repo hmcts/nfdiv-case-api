@@ -146,7 +146,7 @@ public class ESIndexer {
         }
         } catch (Exception e) {
             //Do nothing
-            log.info("failed to index", e.getMessage());
+            log.info("failed to index {}", e);
         }
     }
 
