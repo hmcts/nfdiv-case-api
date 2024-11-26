@@ -154,3 +154,7 @@ logging:
     org:
       springframework:
         cache: TRACE
+es:
+  host: nfdiv-case-api-pr-4154-es-master:9200
+  search:
+    enabled: true
