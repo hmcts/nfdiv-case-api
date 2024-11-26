@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -157,7 +158,7 @@ public class ESIndexer {
     }
 
     public static final Thread.UncaughtExceptionHandler failFast = (thread, exception) -> {
-        log.info("stack trace {}", exception.getMessage());
+        log.info("stack trace {}", Arrays.stream(exception.getStackTrace()).findFirst().orElse(null));
         log.info("*** Cftlib thread " + thread.getName() + " terminated with an unhandled exception ***");
         log.info("Logs are available in build/cftlib/logs");
         log.info("For further support visit https://moj.enterprise.slack.com/archives/C033F1GDD6Z");
