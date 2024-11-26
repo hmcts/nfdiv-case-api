@@ -61,7 +61,7 @@ public class ESIndexer {
 
         log.info("Starting ES Indexer");
         try(RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-            new HttpHost(esHost, 9200, "http")));)
+            new HttpHost(esHost)));)
         {
         log.info("es client {}", client.getLowLevelClient().getHttpClient());
         try (Connection c = db.getDataSource().getConnection()) {
