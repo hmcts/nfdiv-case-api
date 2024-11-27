@@ -13,7 +13,7 @@ java:
     NFD_DB_CONNECTION_OPTIONS: "?stringtype=unspecified"
     AAC_MANAGE_CASE_ASSIGNMENT_BASEURL: http://${SERVICE_NAME}-aac-manage-case-assignment
     DATABASE_MIGRATION: true
-    ES_HOST: http://${SERVICE_NAME}-es:9200
+    ES_HOST: http://${SERVICE_NAME}-es-master
     ES_SEARCH_ENABLED: true
     MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED: false
   keyVaults:
