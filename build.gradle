@@ -250,7 +250,7 @@ ext.libraries = [
 
 dependencies {
 // uncomment for local version
-//  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+// implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.2'
@@ -292,7 +292,6 @@ dependencies {
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.apache.commons', name: 'commons-jcs3-core', version: '3.2.1'
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
