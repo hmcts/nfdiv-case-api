@@ -78,7 +78,7 @@ public class Applicant1AppliedForConditionalOrderNotification
             notificationService.sendEmail(
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER,
-                solicitorTemplateVars(caseData, id, caseData.getApplicant1().getSolicitor()),
+                solicitorTemplateVars(caseData, id, caseData.getApplicant1()),
                 caseData.getApplicant1().getLanguagePreference(),
                 id
             );
