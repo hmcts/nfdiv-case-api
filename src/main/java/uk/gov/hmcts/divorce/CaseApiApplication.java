@@ -30,7 +30,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication(
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
-        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign","uk.gov.hmcts.divorce.idam"}
+        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign"}
 )
 @EnableFeignClients(
     clients = {
