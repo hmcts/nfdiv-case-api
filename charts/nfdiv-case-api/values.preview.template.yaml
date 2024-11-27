@@ -87,7 +87,7 @@ ccd:
   enabled: true
   ccd:
     elastic:
-      enabled: true
+      enabled: false
     adminWeb:
       enabled: false
     apiGatewayWeb:
@@ -191,16 +191,7 @@ ccd:
     persistence:
       enabled: false
 
-  elasticsearch:
-    nameOverride: ${SERVICE_NAME}-es
-    imageTag: "7.17.1"
-    initResources:
-      limits:
-        cpu: "500m"
-        memory: "512Mi"
-      requests:
-        cpu: "25m"
-        memory: "512Mi"
+
   logstash:
     image: hmctspublic.azurecr.io/ccd/logstash
     imageTag: "latest"
@@ -308,3 +299,30 @@ wiremock:
     - name: wiremock-mocks
       mountPath: /home/wiremock/mappings
       subPath: mappings
+
+
+elasticsearch:
+  enabled: true
+  nameOverride: ${SERVICE_NAME}-es
+  imageTag: "8.5.1"
+  initResources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "25m"
+      memory: "512Mi"
+  clusterName: "es"
+  replicas: 1
+  minimumMasterNodes: 1
+  antiAffinity: "soft"
+  esJavaOpts: "-Xmx512m -Xms512m"
+  # Their tests delete the pod after succeeding, we pass --logs to the test command which fail if the pod has already been deleted
+  # The tests do pass, at least as of 2023-01-19
+  tests:
+    enabled: false
+  persistence:
+    enabled: false
+  ingress:
+    enabled: false
+    className: traefik
