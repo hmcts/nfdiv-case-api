@@ -194,13 +194,6 @@ ccd:
   elasticsearch:
     nameOverride: ${SERVICE_NAME}-es
     imageTag: "7.17.1"
-    ingress:
-      enabled: true
-      className: traefik
-      hosts:
-       - host: es-${SERVICE_FQDN}
-         paths:
-           - path: /
     initResources:
       limits:
         cpu: "500m"
