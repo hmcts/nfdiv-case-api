@@ -56,7 +56,7 @@ public class RespondentSolicitorReminderNotificationTest {
                 .reference("ref")
                 .email("sol@gm.com")
             .build());
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
             .thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("test-url");
@@ -91,7 +91,7 @@ public class RespondentSolicitorReminderNotificationTest {
             .name("sol")
             .email("sol@gm.com")
             .build());
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
             .thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("test-url");

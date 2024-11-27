@@ -40,6 +40,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
@@ -146,6 +148,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
         templateVars.put(SMART_SURVEY, "link");
         templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -195,6 +198,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
         templateVars.put(SMART_SURVEY, null);
         templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -238,6 +242,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
         templateVars.put(SMART_SURVEY, null);
         templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -288,6 +293,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
         templateVars.put(SMART_SURVEY, null);
         templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -331,6 +337,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
         templateVars.put(SMART_SURVEY, null);
         templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
