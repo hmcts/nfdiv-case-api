@@ -38,7 +38,4 @@ dependencies:
     version: 0.0.5
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: wiremock.enabled
-  - name: elasticsearch
-    version: 7.17.3
-    repository: 'https://helm.elastic.co'
-    condition: elasticsearch.enabled
+
