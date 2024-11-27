@@ -47,7 +47,9 @@ def secrets = [
                 secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
                 secret('idam-systemupdate-username', 'IDAM_SYSTEM_UPDATE_USERNAME'),
                 secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD'),
-                secret('report-email', 'REPORT_EMAIL')
+                secret('report-email', 'REPORT_EMAIL'),
+                secret('idam-old-divorce-user', 'IDAM_OLD_DIVORCE_USERNAME'),
+                secret('idam-old-divorce-password', 'IDAM_OLD_DIVORCE_PASSWORD')
         ]
 ]
 
@@ -242,6 +244,14 @@ def generateDefinitions() {
   dir("${WORKSPACE}/bin") {
     sh "./ccd-build-definition.sh"
   }
+
+  // Copy the new xlsx file from the resources folder
+  dir("${WORKSPACE}/resources") {
+    // Ensure the directory exists and has the expected file
+    sh "cp ccd-OLD-DIVORCE.xlsx ${WORKSPACE}/build/ccd-config/"
+  }
+
+  // Archive the artifacts, including the newly copied xlsx file
   dir("${WORKSPACE}") {
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
