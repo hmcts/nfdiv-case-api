@@ -156,8 +156,8 @@ ccd:
         CCD_POC_CASE_TYPES: NFD-4154
         POC_APIS_URL: "https://${SERVICE_FQDN}"
         ELASTIC_SEARCH_ENABLED: true
-        ELASTIC_SEARCH_HOSTS: es-${SERVICE_FQDN}
-        ELASTIC_SEARCH_DATA_NODES_HOSTS: http://es-${SERVICE_FQDN}
+        ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
+        ELASTIC_SEARCH_DATA_NODES_HOSTS: http://${SERVICE_NAME}-es-master:9200
       secrets: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   ccd-message-publisher:
@@ -183,7 +183,7 @@ ccd:
         DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
         DEFINITION_STORE_DB_PASSWORD: ${POSTGRES_PASSWORD}
         ELASTIC_SEARCH_ENABLED: true
-        ELASTIC_SEARCH_HOST: http://es-${SERVICE_FQDN}
+        ELASTIC_SEARCH_HOST: http://${SERVICE_NAME}-es-master:9200
         ELASTIC_SEARCH_CASE_INDEX_MAPPING_FIELDS_LIMIT: 12000
       secrets: []
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
