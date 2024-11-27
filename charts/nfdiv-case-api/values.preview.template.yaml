@@ -304,7 +304,7 @@ wiremock:
 elasticsearch:
   enabled: true
   nameOverride: ${SERVICE_NAME}-es
-  imageTag: "8.5.1"
+  imageTag: "7.17.3"
   initResources:
     limits:
       cpu: "500m"
