@@ -183,7 +183,7 @@ ccd:
         DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
         DEFINITION_STORE_DB_PASSWORD: ${POSTGRES_PASSWORD}
         ELASTIC_SEARCH_ENABLED: true
-        ELASTIC_SEARCH_HOST: http://${SERVICE_NAME}-es-master:9200
+        ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
         ELASTIC_SEARCH_CASE_INDEX_MAPPING_FIELDS_LIMIT: 12000
       secrets: []
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
@@ -194,13 +194,13 @@ ccd:
   elasticsearch:
     nameOverride: ${SERVICE_NAME}-es
     imageTag: "7.17.1"
-#    ingress:
-#      enabled: true
-#      className: traefik
-#      hosts:
-#       - host: es-${SERVICE_FQDN}
-#         paths:
-#           - path: /
+    ingress:
+      enabled: true
+      className: traefik
+      hosts:
+       - host: es-${SERVICE_FQDN}
+         paths:
+           - path: /
     initResources:
       limits:
         cpu: "500m"
