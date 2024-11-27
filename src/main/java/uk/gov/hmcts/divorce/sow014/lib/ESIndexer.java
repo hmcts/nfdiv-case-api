@@ -9,6 +9,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +61,13 @@ public class ESIndexer {
     private void index() {
 
         log.info("Starting ES Indexer");
-        try(RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-            new HttpHost(esHost)));)
+        RestClientBuilder builder = RestClient.builder(new HttpHost(esHost, 9200));
+        RestClientBuilder.RequestConfigCallback requestConfigCallback = requestConfigBuilder ->
+            requestConfigBuilder.setConnectTimeout(5000)
+                .setSocketTimeout(60000);
+        builder.setRequestConfigCallback(requestConfigCallback);
+
+        try(RestHighLevelClient client = new RestHighLevelClient(builder))
         {
         log.info("es client {}", client.getLowLevelClient().getHttpClient());
         try (Connection c = db.getDataSource().getConnection()) {
