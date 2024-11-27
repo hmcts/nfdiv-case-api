@@ -544,53 +544,5 @@ public class CcdSearchService {
 
         return aggregatedResults;
     }
-
-    public List<CaseDetails> searchForOldDivorceCasesWithQuery(final BoolQueryBuilder query,
-                                                               final User user,
-                                                               final String serviceAuth) {
-
-        final Set<CaseDetails> allCaseDetails = new HashSet<>();
-        int from = 0;
-        int totalResults = pageSize;
-
-        try {
-            while (totalResults == pageSize && allCaseDetails.size() <= totalMaxResults) {
-                final SearchResult searchResult = searchOldDivorceCasesWithQuery(from, pageSize, query, user, serviceAuth);
-
-                log.info("Search result old divorce cases is {}", searchResult.toString());
-                final List<CaseDetails> pageResults = searchResult.getCases();
-                allCaseDetails.addAll(pageResults);
-
-                from += pageSize;
-                totalResults = pageResults.size();
-            }
-        } catch (final FeignException e) {
-            final String message = String.format(
-                "Failed to complete search for Old Divorce Cases with query %s", query.toString());
-            log.info(message, e);
-            throw new CcdSearchCaseException(message, e);
-        }
-        log.info("old cases query returned {} for query {}", allCaseDetails.size(), query.toString());
-        return allCaseDetails.stream().toList();
-    }
-
-    private SearchResult searchOldDivorceCasesWithQuery(final int from,
-                                                        final int size,
-                                                        final BoolQueryBuilder query,
-                                                        final User user,
-                                                        final String serviceAuth) {
-
-        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-            .searchSource()
-            .sort(DUE_DATE, ASC)
-            .query(query)
-            .from(from)
-            .size(size);
-
-        return coreCaseDataApi.searchCases(
-            user.getAuthToken(),
-            serviceAuth,
-            "DIVORCE",
-            sourceBuilder.toString());
-    }
 }
+

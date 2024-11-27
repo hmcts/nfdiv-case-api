@@ -47,9 +47,6 @@ idam:
     id: 'divorce'
     secret: BBBBBBBBBBBBBBBB
     redirect_uri: http://localhost:3001/oauth2/callback
-  divorce:
-    username: ${IDAM_OLD_DIVORCE_USERNAME:dummysystemupdate@test.com}
-    password: ${IDAM_OLD_DIVORCE_PASSWORD:dummy}
 
 s2s-authorised:
   services: ccd_data,bulk_scan_processor,bulk_scan_orchestrator
